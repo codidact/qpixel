@@ -35,13 +35,13 @@ $(document).on('ready page:load', function() {
     if(state.voteId > -1) {
       // We've already voted; cancel the vote.
       $.ajax({
-        'url': '/votes/' + voteId,
+        'url': '/votes/' + state.voteId,
         'type': 'DELETE',
         'state': state
       })
       .done(function(data) {
         if(data === "OK") {
-          $(this.state.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '-clear.png');
+          $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-clear.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/-1');
         }
         else {
