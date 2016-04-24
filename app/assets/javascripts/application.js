@@ -32,8 +32,11 @@ $(document).on('ready page:load', function() {
       target: self
     };
 
+    console.log(state);
+
     if(state.voteId > -1) {
       // We've already voted; cancel the vote.
+      console.log("deleting vote");
       $.ajax({
         'url': '/votes/' + state.voteId,
         'type': 'DELETE',
@@ -57,6 +60,7 @@ $(document).on('ready page:load', function() {
     }
     else {
       // We have yet to vote, so cast one.
+      console.log("creating vote");
       $.ajax({
         'url': '/votes/new',
         'type': 'POST',
