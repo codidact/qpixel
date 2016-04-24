@@ -7,7 +7,7 @@
     <p><a href="/questions/<%= question.id %>"><%= question.title %></a></p>
     <p>
       <% question.tags.each do |tag| %>
-        <span class="tag"><%= tag %></span>
+        <a href="/questions/tagged/<%= tag %>"><span class="tag"><%= tag %></span></a>
       <% end %>
     </p>
   </div>
