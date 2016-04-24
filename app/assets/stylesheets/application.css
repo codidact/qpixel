@@ -47,7 +47,15 @@
   text-align: right;
 }
 
-.toplevel-links a {
+.gray {
+  color: #777;
+}
+
+.smaller {
+  font-size: 0.8em;
+}
+
+.toplevel-links a.toplevel {
   display: inline-block;
   background: #0080b7;
   padding: 10px;
@@ -55,7 +63,7 @@
   transition: all 0.2s ease;
   margin-top: 17px;
 }
-.toplevel-links a:hover {
+.toplevel-links a.toplevel:hover {
   display: inline-block;
   background: #00a4ea;
   padding: 10px;

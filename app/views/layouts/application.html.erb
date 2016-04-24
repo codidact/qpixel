@@ -21,13 +21,18 @@
         <% end %>
       </div>
       <div class="toplevel-links">
+        <% if user_signed_in? %>
+          <div class="user">
+            <a href="/users/<%= current_user.id %>"><%= current_user.username %></a>
+            <span class="smaller gray">(<%= current_user.reputation %>)</span> —
+            <%= link_to "sign out", destroy_user_session_path, method: :delete, class: "smaller" %>
         <% if user_is_admin %>
-          <a href="/admin">Admin</a>
+          <a class="toplevel" href="/admin">Admin</a>
         <% end %>
         <% if user_is_mod %>
-          <a href="/mod">Moderator</a>
+          <a class="toplevel" href="/mod">Moderator</a>
         <% end %>
-        <a href="/questions">Questions</a>
+        <a class="toplevel" href="/questions">Questions</a>
       </div>
     </div>
     <span class="clearfix"></span>
