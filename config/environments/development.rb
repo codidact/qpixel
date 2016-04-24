@@ -42,4 +42,7 @@ Rails.application.configure do
   # Configure web console
   config.web_console.whitelisted_ips = "82.69.87.121"
   config.web_console.whiny_requests  = false
+
+  # ActionMailer needs some defaults
+  config.action_mailer.default_url_options = { host: 'stage.artofcode.co.uk', port: 80 }
 end
