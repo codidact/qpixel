@@ -87,3 +87,10 @@
 div.field {
   padding: 7px;
 }
+
+span.tag {
+  display: inline-block;
+  background: #aae5ff;
+  color: #00557a;
+  padding: 5px;
+}

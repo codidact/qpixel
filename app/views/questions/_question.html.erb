@@ -1,0 +1,14 @@
+<div class="question">
+  <div class="q-info-box">
+    <p class="large-text"><%= question.score %></p>
+    <p>score</p>
+  </div>
+  <div class="q-info-box">
+    <p><a href="/questions/<%= question.id %>"><%= question.title %></a></p>
+    <p>
+      <% question.tags.each do |tag| %>
+        <span class="tag"><%= tag %></span>
+      <% end %>
+    </p>
+  </div>
+</div>
