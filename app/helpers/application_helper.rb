@@ -7,4 +7,12 @@ module ApplicationHelper
       return nil
     end
   end
+
+  def user_is_mod
+    return user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+  end
+
+  def user_is_admin
+    return user_signed_in? && current_user.is_admin
+  end
 end
