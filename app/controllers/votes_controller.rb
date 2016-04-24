@@ -1,7 +1,7 @@
 class VotesController < ApplicationController
   before_action :authenticate_user!
 
-  def new
+  def create
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
     existing = Vote.where(:post => post, :user => current_user)
 
