@@ -1,0 +1,6 @@
+<% content_for :title, "Tag: #{params[:tag]}" %>
+
+<h3>Questions tagged <%= params[:tag] %></h3>
+<% @questions.each do |question| %>
+  <%= render 'question', :question => question %>
+<% end %>
