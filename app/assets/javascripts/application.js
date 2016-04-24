@@ -69,9 +69,8 @@ $(document).on('ready page:load', function() {
       })
       .done(function(data) {
         if(data['status'] == "OK") {
-          console.log("OK");
-          $(this.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
-          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
+          $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
+          $(this.state.target).attr('data-vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
         }
         else {
           alert("Could not cast vote - please try again. Message: " + data);
