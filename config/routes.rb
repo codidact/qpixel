@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users, :controllers => { :registrations => 'users/registrations' }
 
+  root                                  :to => 'questions#index'
+
   get    'admin',                       :to => 'admin#index'
   get    'admin/settings',              :to => 'site_settings#index'
   get    'admin/settings/:id/edit',     :to => 'site_settings#edit'
