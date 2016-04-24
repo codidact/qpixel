@@ -13,6 +13,7 @@ class SiteSettingsController < ApplicationController
   def update
     @setting = SiteSetting.find params[:id]
     @setting.update(setting_params)
+    redirect_to url_for(:controller => :site_settings, :action => :index)
   end
 
   private
