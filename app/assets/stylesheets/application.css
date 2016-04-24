@@ -47,6 +47,11 @@
   text-align: right;
 }
 
+.toplevel-links .user {
+  float: left;
+  margin-right: 10px;
+}
+
 .toplevel-links a {
   color: white;
   text-decoration: underline;
