@@ -5,7 +5,7 @@ class VotesController < ApplicationController
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
     existing = Vote.where(:post => post, :user => current_user)
 
-    if existing.count > 0:
+    if existing.count > 0
       if existing.first.vote_type == params[:vote_type].to_i
         render :plain => "You have already voted.", :status => 409 and return
       else
