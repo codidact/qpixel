@@ -1,9 +1,7 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  # def new
-  #   super
-  # end
-
-  # def create
-  #   super
-  # end
+  def create
+    super
+    @user.reputation = 1
+    @user.save!
+  end
 end
