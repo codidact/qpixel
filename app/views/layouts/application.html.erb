@@ -10,16 +10,16 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="site-logo">
-        <%= get_setting('SiteLogoPath') or raw("<h1>#{get_setting('SiteName')}</h1>") %>
-      </div>
-      <div class="toplevel-links">
-
-      </div>
-      <span class="clearfix"></span>
+  <div class="header">
+    <div class="site-logo">
+      <%= get_setting('SiteLogoPath') or raw("<h1>#{get_setting('SiteName')}</h1>") %>
     </div>
+    <div class="toplevel-links">
+
+    </div>
+    <span class="clearfix"></span>
+  </div>
+  <div class="container">
     <div class="content">
       <div class="content-bar">
         <%= yield %>
@@ -28,9 +28,9 @@
 
       </div>
     </div>
-    <div class="footer">
+  </div>
+  <div class="footer">
 
-    </div>
   </div>
 </body>
 </html>
