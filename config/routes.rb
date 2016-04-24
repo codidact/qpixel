@@ -1,12 +1,4 @@
 Rails.application.routes.draw do
-  get 'votes/new'
-
-  get 'votes/destroy'
-
-  get 'users/index'
-
-  get 'users/show'
-
   devise_for :users, :controllers => { :registrations => 'users/registrations' }
 
   root                                  :to => 'questions#index'
@@ -22,4 +14,10 @@ Rails.application.routes.draw do
   get    'questions',                   :to => 'questions#index'
   get    'questions/tagged/:tag',       :to => 'questions#tagged'
   get    'questions/:id',               :to => 'questions#show'
+
+  get    'users',                       :to => 'users#index'
+  get    'users/:id',                   :to => 'users#show'
+
+  post   'votes/new',                   :to => 'votes#create'
+  delete 'votes/:id',                   :to => 'votes#destroy'
 end
