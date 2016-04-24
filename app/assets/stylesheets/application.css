@@ -32,12 +32,12 @@
   padding: 10px;
 }
 
-.header > .site-logo {
+.header .site-logo {
   float: left;
   width: 25%;
 }
 
-.header > .toplevel-links {
+.header .toplevel-links {
   float: right;
   width: 70%;
 }
