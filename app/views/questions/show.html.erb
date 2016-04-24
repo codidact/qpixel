@@ -1,20 +1,3 @@
 <% content_for :title, @question.title.truncate(50) %>
 
-<h3><%= @question.title %></h3>
-<hr/>
-<div class="q-container">
-  <div class="vote-box">
-
-  </div>
-  <div class="body-box">
-    <%= @question.body %>
-    <hr/>
-    <% @question.tags.each do |tag| %>
-      <a href="/questions/tagged/<%= tag %>"><span class="tag"><%= tag %></span></a>
-    <% end %>
-  </div>
-  <span class="clearfix"></span>
-  <div class="post-info">
-
-  </div>
-</div>
+<%= render 'expanded', :question => @question %>

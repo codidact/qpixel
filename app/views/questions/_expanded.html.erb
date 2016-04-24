@@ -1,0 +1,22 @@
+<h3><%= question.title %></h3>
+<hr/>
+<div class="q-container">
+  <div class="vote-box">
+
+  </div>
+  <div class="body-box">
+    <%= question.body %>
+  </div>
+  <span class="clearfix"></span>
+  <hr/>
+  <div class="post-info">
+    <div class="post-tags">
+      <% question.tags.each do |tag| %>
+        <a href="/questions/tagged/<%= tag %>"><span class="tag"><%= tag %></span></a>
+      <% end %>
+    </div>
+    <div class="post-author">
+
+    </div>
+  </div>
+</div>

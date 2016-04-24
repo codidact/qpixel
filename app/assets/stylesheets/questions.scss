@@ -16,3 +16,33 @@ p.large-text {
 p.center {
   text-align: center;
 }
+
+.q-container {
+  width: 95%;
+  padding: 10px;
+}
+
+.vote-box {
+  float: left;
+  width: 10%;
+  min-width: 50px;
+}
+
+.body-box {
+  float: right;
+  width: 85%;
+}
+
+.post-info {
+  width: 100%;
+}
+
+.post-tags {
+  width: 50%;
+  float: left;
+}
+
+.post-author {
+  width: 45%;
+  float: right;
+}
