@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  get 'votes/new'
+
+  get 'votes/destroy'
+
+  get 'users/index'
+
+  get 'users/show'
+
   devise_for :users, :controllers => { :registrations => 'users/registrations' }
 
   root                                  :to => 'questions#index'
