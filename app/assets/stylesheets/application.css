@@ -89,6 +89,11 @@ div.field {
   padding: 7px;
 }
 
+.post-container {
+  width: 95%;
+  padding: 10px;
+}
+
 span.tag {
   display: inline-block;
   background: #aae5ff;
