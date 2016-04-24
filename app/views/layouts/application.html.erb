@@ -13,7 +13,11 @@
   <div class="header">
     <div class="container">
       <div class="site-logo">
-        <%= get_setting('SiteLogoPath') or raw("<h1>#{get_setting('SiteName')}</h1>") %>
+        <% if get_setting('SiteLogoPath') %>
+          <a href="/"><img src="<%= get_setting('SiteLogoPath') %>" /></a>
+        <% else %>
+          <a href="/"><%= get_setting('SiteName') %></a>
+        <% end %>
       </div>
       <div class="toplevel-links">
 
