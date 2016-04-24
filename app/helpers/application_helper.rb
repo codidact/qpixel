@@ -4,7 +4,7 @@ module ApplicationHelper
       setting = SiteSetting.find_by_name name
       return setting.value
     rescue
-      raise ActionController::RoutingError.new('Internal Server Error')
+      return nil
     end
   end
 end
