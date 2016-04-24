@@ -1,5 +1,5 @@
 <h3>Questions</h3>
 <% @questions.each do |question| %>
-  <%= render '_question', :question => question %>
+  <%= render 'question', :question => question %>
 <% end %>
 <%= will_paginate @questions %>
