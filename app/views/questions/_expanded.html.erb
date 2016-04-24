@@ -19,7 +19,7 @@
     </div>
     <div class="post-author">
       Posted <span data-livestamp="<%= question.created_at %>">at <%= question.created_at %></span>
-      by <a href="/users/<%= question.user.id %>"><%= question.user.id %></a> (<%= question.user.reputation %>)
+      by <a href="/users/<%= question.user.id %>"><%= question.user.username %></a> (<%= question.user.reputation %>)
     </div>
   </div>
 </div>
