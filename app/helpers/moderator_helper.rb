@@ -1,0 +1,2 @@
+module ModeratorHelper
+end
