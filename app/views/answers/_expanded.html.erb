@@ -6,13 +6,14 @@
   </div>
   <div class="body-box">
     <%= answer.body %>
+    <hr/>
+    <div class="post-info">
+      <div class="post-author">
+        Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
+        by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
+      </div>
+    </div>
   </div>
   <span class="clearfix"></span>
   <hr/>
-  <div class="post-info">
-    <div class="post-author">
-      Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
-      by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
-    </div>
-  </div>
 </div>
