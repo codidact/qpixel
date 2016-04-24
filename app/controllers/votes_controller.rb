@@ -1,5 +1,5 @@
 class VotesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :auth_for_voting
 
   def create
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
@@ -39,4 +39,11 @@ class VotesController < ApplicationController
     vote.destroy
     render :plain => "OK"
   end
+
+  private
+    def auth_for_voting
+      if !user_signed_in?
+        render :plain => "You must be logged in to vote.", :status => 403 and return
+      end
+    end
 end
