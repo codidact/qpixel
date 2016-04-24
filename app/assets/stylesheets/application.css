@@ -22,6 +22,17 @@
 
 .header {
   margin-bottom: 20px;
+  clear: both;
+}
+
+.header > .site-logo {
+  float: left;
+  width: 25%;
+}
+
+.header > .toplevel-links {
+  float: right;
+  width: 70%;
 }
 
 .content {
