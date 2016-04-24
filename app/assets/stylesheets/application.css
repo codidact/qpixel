@@ -47,12 +47,14 @@
   background: #0080b7;
   padding: 10px;
   color: white;
+  transition: all 0.2s ease;
 }
 .toplevel-links a:hover {
   display: inline-block;
   background: #00a4ea;
   padding: 10px;
   color: white;
+  transition: all 0.2s ease;
 }
 
 .content {
