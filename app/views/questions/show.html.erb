@@ -5,5 +5,5 @@
 <h4><%= pluralize(@question.answers.count, "answer") %></h4>
 <hr/>
 <% @question.answers.each do |answer| %>
-  <%= render 'answers/_expanded', :answer => answer %>
+  <%= render 'answers/expanded', :answer => answer %>
 <% end %>
