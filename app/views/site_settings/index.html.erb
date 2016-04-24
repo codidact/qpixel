@@ -1,0 +1,25 @@
+<h3>Site Settings</h3>
+<p>This is everything. Everything that controls the operation of the site can be found here, if you look hard enough.</p>
+
+<table class="table-striped">
+  <thead>
+    <tr>
+      <th>Setting ID</th>
+      <th>Setting Name</th>
+      <th>Setting Value</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @settings.each do |setting| %>
+      <tr>
+        <td><%= setting.id %></td>
+        <td><%= setting.name %></td>
+        <td><%= setting.value %></td>
+        <td><a href="/admin/settings/<%= setting.id %>/edit">Edit</a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate @settings %>
