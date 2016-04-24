@@ -22,7 +22,7 @@ $(document).on('ready page:load', function() {
     var self = $(this);
 
     // Vote data is stored on the element as "VoteType/PostId/PostType/VoteId".
-    var vote = self.attr("data-vote");
+    var vote = self.data("vote");
     var voteSplat = vote.split("/");
     var state = {
       voteType: voteSplat[0],
@@ -74,7 +74,7 @@ $(document).on('ready page:load', function() {
       .done(function(data) {
         if(data['status'] == "OK") {
           $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
-          $(this.state.target).attr('data-vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
+          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
         }
         else {
           alert("Could not cast vote - please try again. Message: " + data);
