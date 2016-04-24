@@ -22,7 +22,7 @@ $(document).on('ready page:load', function() {
     var self = $(this);
 
     // Vote data is stored on the element as "VoteType/PostId/PostType/VoteId".
-    var vote = self.data("vote");
+    var vote = self.attr("data-vote");
     var voteSplat = vote.split("/");
     var state = {
       voteType: voteSplat[0],
