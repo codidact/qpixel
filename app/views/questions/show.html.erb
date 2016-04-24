@@ -8,8 +8,9 @@
   </div>
   <div class="body-box">
     <%= @question.body %>
+    <hr/>
     <% @question.tags.each do |tag| %>
-      <a href="/questions/tagged/<%= tag %>"><span class="tag"><% tag %></span></a>
+      <a href="/questions/tagged/<%= tag %>"><span class="tag"><%= tag %></span></a>
     <% end %>
   </div>
   <span class="clearfix"></span>
