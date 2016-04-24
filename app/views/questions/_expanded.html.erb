@@ -2,9 +2,9 @@
 <hr/>
 <div class="post-container">
   <div class="vote-box">
-    <p><img src="/assets/up-clear.png" height="48" /></p>
+    <p><img id="question-<%= answer.id %>-up"src="/assets/up-clear.png" height="48" /></p>
     <p class="large-text center"><%= question.score %></p>
-    <p><img src="/assets/down-clear.png" height="48" /></p>
+    <p><img id="question-<%= answer.id %>-down"src="/assets/down-clear.png" height="48" /></p>
   </div>
   <div class="body-box">
     <%= question.body %>
