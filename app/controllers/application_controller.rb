@@ -5,13 +5,13 @@ class ApplicationController < ActionController::Base
 
   protected
     def verify_moderator
-      if !user_signed_in? || !(user.is_moderator || user.is_admin)
+      if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
         raise ActionController::RoutingError.new('Not Found') and return
       end
     end
 
     def verify_admin
-      if !user_signed_in? || !user.is_admin
+      if !user_signed_in? || !current_user.is_admin
         raise ActionController::RoutingError.new('Not Found') and return
       end
     end
