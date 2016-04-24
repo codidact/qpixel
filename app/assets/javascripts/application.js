@@ -61,15 +61,15 @@ $(document).on('ready page:load', function() {
         'url': '/votes/new',
         'type': 'POST',
         'data': {
-          'post_type': postType,
-          'post_id': postId,
-          'vote_type': voteType
+          'post_type': state.postType,
+          'post_id': state.postId,
+          'vote_type': state.voteType
         },
-        'target': self
+        'state': state
       })
       .done(function(data) {
         if(data['status'] == "OK") {
-          $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '-fill.png');
+          $(this.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
         }
         else {
