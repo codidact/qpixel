@@ -121,3 +121,7 @@ span.tag {
   color: #00557a;
   padding: 5px;
 }
+
+.vote-button {
+  cursor: pointer;
+}
