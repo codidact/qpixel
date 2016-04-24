@@ -47,6 +47,15 @@
   text-align: right;
 }
 
+.toplevel-links a {
+  color: white;
+  text-decoration: underline;
+}
+.toplevel-links a:hover {
+  color: white;
+  text-decoration: none;
+}
+
 .gray {
   color: #777;
 }
