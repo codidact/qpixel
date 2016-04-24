@@ -29,12 +29,16 @@
   clear: both;
   background: #00557a;
   color: white;
-  padding: 10px;
+  padding: 10px 10px 17px 10px;
 }
 
 .header .site-logo {
   float: left;
   width: 25%;
+}
+
+.site-logo img {
+  max-height: 69px;
 }
 
 .header .toplevel-links {
@@ -48,6 +52,7 @@
   padding: 10px;
   color: white;
   transition: all 0.2s ease;
+  margin-top: 17px;
 }
 .toplevel-links a:hover {
   display: inline-block;
@@ -55,6 +60,7 @@
   padding: 10px;
   color: white;
   transition: all 0.2s ease;
+  margin-top: 17px;
 }
 
 .content {
