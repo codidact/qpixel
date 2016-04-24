@@ -11,11 +11,13 @@
 </head>
 <body>
   <div class="header">
-    <div class="site-logo">
-      <%= get_setting('SiteLogoPath') or raw("<h1>#{get_setting('SiteName')}</h1>") %>
-    </div>
-    <div class="toplevel-links">
+    <div class="container">
+      <div class="site-logo">
+        <%= get_setting('SiteLogoPath') or raw("<h1>#{get_setting('SiteName')}</h1>") %>
+      </div>
+      <div class="toplevel-links">
 
+      </div>
     </div>
     <span class="clearfix"></span>
   </div>
@@ -30,7 +32,9 @@
     </div>
   </div>
   <div class="footer">
+    <div class="container">
 
+    </div>
   </div>
 </body>
 </html>
