@@ -3,7 +3,7 @@ class SiteSettingsController < ApplicationController
   before_action :verify_admin
 
   def index
-    @settings = SiteSetting.all
+    @settings = SiteSetting.all.paginate(:page => params[:page], :per_page => 20)
   end
 
   def edit
