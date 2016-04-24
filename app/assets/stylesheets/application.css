@@ -23,6 +23,7 @@
 .header {
   margin-bottom: 20px;
   clear: both;
+  background: #acacac;
 }
 
 .header > .site-logo {
@@ -51,5 +52,5 @@
 }
 
 .footer {
-
+  clear: both;
 }
