@@ -83,3 +83,7 @@
   background: #777777;
   color: white;
 }
+
+div.field {
+  padding: 7px;
+}
