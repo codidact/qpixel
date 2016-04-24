@@ -14,6 +14,10 @@
  *= require_self
  */
 
+.clearfix {
+  clear: both;
+}
+
 .container {
   width: 85%;
   margin-left: auto;
@@ -34,6 +38,11 @@
 .header > .toplevel-links {
   float: right;
   width: 70%;
+}
+
+.toplevel-links a {
+  display: inline-block;
+  background:
 }
 
 .content {
