@@ -24,11 +24,12 @@ p.center {
 
 .vote-box {
   float: left;
-  width: 50px;
+  width: 48px;
 }
 
 .body-box {
   float: right;
+  width: calc(100% - 50px);
 }
 
 .post-info {
