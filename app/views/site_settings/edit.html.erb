@@ -1,3 +1,5 @@
+<% content_for :title, "Edit Setting" %>
+
 <h3>Edit Setting: <%= @setting.name %></h3>
 <p>Current value: <%= @setting.value %></p>
 <%= form_for @setting, :url => { :controller => :site_settings, :action => :update } do |f| %>

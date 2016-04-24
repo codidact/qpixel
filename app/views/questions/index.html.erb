@@ -1,3 +1,5 @@
+<% content_for :title, "Questions" %>
+
 <h3>Questions</h3>
 <% @questions.each do |question| %>
   <%= render 'question', :question => question %>
