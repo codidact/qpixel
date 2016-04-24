@@ -14,7 +14,7 @@ class VotesController < ApplicationController
         vote.vote_type = params[:vote_type].to_i
         vote.save!
 
-        state = { :status => "OK", :vote_id => vote.id }
+        state = { :status => "modified", :vote_id => vote.id }
         render :json => state and return
       end
     end

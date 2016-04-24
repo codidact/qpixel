@@ -76,6 +76,13 @@ $(document).on('ready page:load', function() {
           $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
         }
+        else if(data['status'] == "modified") {
+          $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
+          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
+          $("#" + (this.state.postType == 'a' ? 'answer-' : 'question-') + this.state.postId + (this.state.voteType == 0 ? '-down' : '-up'))
+            .data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/-1')
+            .attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-clear.png');
+        }
         else {
           alert("Could not cast vote - please try again. Message: " + data);
           console.error("Vote cast failed: " + data);
