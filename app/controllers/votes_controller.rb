@@ -2,7 +2,7 @@ class VotesController < ApplicationController
   before_action :authenticate_user!
 
   def new
-    post = params[:post_type] == "answer" ? Answer.find params[:post_id] : Question.find params[:post_id]
+    post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
     existing = Vote.where(:post => post, :user => current_user)
 
     if existing.count > 0:
@@ -31,7 +31,7 @@ class VotesController < ApplicationController
     if vote.user != current_user
       render :plain => "You are not authorized to remove this vote.", :status => 403 and return
     end
-    
+
     vote.destroy
     render :plain => "OK"
   end
