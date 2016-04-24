@@ -24,21 +24,25 @@ $(document).on('ready page:load', function() {
     // Vote data is stored on the element as "VoteType/PostId/PostType/VoteId".
     var vote = self.data("vote");
     var voteSplat = vote.split("/");
-    var voteType = voteSplat[0],
-        postId = voteSplat[1],
-        postType = voteSplat[2],
-        voteId = voteSplat[3];
+    var state = {
+      voteType: voteSplat[0],
+      postId: voteSplat[1],
+      postType: voteSplat[2],
+      voteId: voteSplat[3],
+      target: self
+    };
 
     if(voteId > -1) {
       // We've already voted; cancel the vote.
       $.ajax({
         'url': '/votes/' + voteId,
         'type': 'DELETE',
-        'target': self
+        'state': state
       })
       .done(function(data) {
         if(data === "OK") {
-          $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '_clear.png');
+          $(this.state.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '-clear.png');
+          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/-1');
         }
         else {
           alert("Could not undo vote - please try again. Message: " + data);
@@ -64,8 +68,9 @@ $(document).on('ready page:load', function() {
         'target': self
       })
       .done(function(data) {
-        if(data === "OK") {
-          $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '_fill.png');
+        if(data['status'] == "OK") {
+          $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '-fill.png');
+          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
         }
         else {
           alert("Could not cast vote - please try again. Message: " + data);

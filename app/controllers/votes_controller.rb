@@ -13,7 +13,9 @@ class VotesController < ApplicationController
         vote = existing.first
         vote.vote_type = params[:vote_type].to_i
         vote.save!
-        render :plain => "OK" and return
+
+        state = { :status => "OK", :vote_id => vote.id }
+        render :json => state and return
       end
     end
 
@@ -22,7 +24,9 @@ class VotesController < ApplicationController
     vote.post = post
     vote.vote_type = params[:vote_type]
     vote.save!
-    render :plain => "OK"
+
+    state = { :status => "OK", :vote_id => vote.id }
+    render :json => state and return
   end
 
   def destroy
