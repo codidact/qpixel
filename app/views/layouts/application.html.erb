@@ -26,6 +26,11 @@
             <a href="/users/<%= current_user.id %>"><%= current_user.username %></a>
             <span class="smaller gray">(<%= current_user.reputation %>)</span> —
             <%= link_to "sign out", destroy_user_session_path, method: :delete, class: "smaller" %>
+          </div>
+        <% else %>
+          <%= link_to "sign in", new_user_session_path, class: "smaller" %> |
+          <%= link_to "sign up", new_user_registration_path, class: "smaller" %>
+        <% end %>
         <% if user_is_admin %>
           <a class="toplevel" href="/admin">Admin</a>
         <% end %>
