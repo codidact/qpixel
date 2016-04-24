@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   post   'admin/settings/:id/edit',     :to => 'site_settings#update'
   patch  'admin/settings/:id/edit',     :to => 'site_settings#update'
 
-  get    'questions'                    :to => 'questions#index'
-  get    'questions/:id'                :to => 'questions#show'
+  get    'questions',                   :to => 'questions#index'
+  get    'questions/:id',               :to => 'questions#show'
 end
