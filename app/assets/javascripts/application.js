@@ -41,12 +41,12 @@ $(document).on('ready page:load', function() {
           $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '_clear.png');
         }
         else {
-          alert("Could not undo vote - please try again.");
+          alert("Could not undo vote - please try again. Message: " + data);
           console.error("Vote undo failed: " + data);
         }
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        alert("Could not undo vote - please try again.");
+        alert("Could not undo vote - please try again. Message: " + jqXHR.reponseText);
         console.error("Vote undo failed: status " + jqXHR.status);
         console.log(jqXHR);
       });
@@ -68,12 +68,12 @@ $(document).on('ready page:load', function() {
           $(this.target).attr('src', '/assets/' + (voteType == '0' ? 'up' : 'down') + '_fill.png');
         }
         else {
-          alert("Could not cast vote - please try again.");
+          alert("Could not cast vote - please try again. Message: " + data);
           console.error("Vote cast failed: " + data);
         }
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        alert("Could not cast vote - please try again.");
+        alert("Could not cast vote - please try again. Message: " + jqXHR.responseText);
         console.error("Vote cast failed: status " + jqXHR.status);
         console.log(jqXHR);
       });
