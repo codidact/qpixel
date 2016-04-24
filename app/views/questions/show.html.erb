@@ -1,7 +1,7 @@
 <% content_for :title, @question.title.truncate(50) %>
 
 <%= render 'expanded', :question => @question %>
-<span class="clearfix"></span>
+<span class="clearfix"></span><br/>
 <h4><%= pluralize(@question.answers.count, "answer") %></h4>
 <hr/>
 <% @question.answers.each do |answer| %>
