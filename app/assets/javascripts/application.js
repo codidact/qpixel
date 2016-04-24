@@ -32,7 +32,7 @@ $(document).on('ready page:load', function() {
       target: self
     };
 
-    if(voteId > -1) {
+    if(state.voteId > -1) {
       // We've already voted; cancel the vote.
       $.ajax({
         'url': '/votes/' + voteId,
