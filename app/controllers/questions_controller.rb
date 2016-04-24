@@ -6,4 +6,8 @@ class QuestionsController < ApplicationController
   def show
     @question = Question.find params[:id]
   end
+
+  def tagged
+    @questions = Question.where('tags like ?', "%#{params[:tag]}%")
+  end
 end
