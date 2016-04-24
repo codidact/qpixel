@@ -27,7 +27,8 @@
 .header {
   margin-bottom: 20px;
   clear: both;
-  background: #acacac;
+  background: #ebf2f5;
+  padding: 10px;
 }
 
 .header > .site-logo {
