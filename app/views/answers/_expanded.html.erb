@@ -1,7 +1,7 @@
 <div class="post-container">
   <div class="vote-box">
     <p>
-      <% if my_vote(answer) && my_vote(answer).vote_type == 0 %>
+      <% if my_vote(answer) && my_vote(answer).vote_type == 1 %>
         <img class="vote-button" data-vote="1/<%= answer.id %>/a/<%= my_vote(answer).id %>"
              id="answer-<%= answer.id %>-up" src="/assets/up-fill.png" height="48" />
       <% else %>
@@ -10,7 +10,7 @@
     </p>
     <p class="post-score large-text center"><%= answer.score %></p>
     <p>
-      <% if my_vote(answer) && my_vote(answer).vote_type == 1 %>
+      <% if my_vote(answer) && my_vote(answer).vote_type == -1 %>
         <img class="vote-button" data-vote="-1/<%= answer.id %>/a/<%= my_vote(answer).id %>"
              id="answer-<%= answer.id %>-down" src="/assets/down-fill.png" height="48" />
       <% else %>
