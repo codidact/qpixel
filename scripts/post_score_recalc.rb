@@ -17,9 +17,5 @@ def get_post
 end
 
 post = get_post
-
-upvotes = post.votes.where(:vote_type => 0).count
-downvotes = post.votes.where(:vote_type => 1).count
-
-post.score = upvotes - downvotes
+post.score = post.votes.sum(:vote_type)
 post.save!
