@@ -129,16 +129,18 @@ span.tag {
 .pagination .previous-page, .pagination .current, .pagination a {
   display: inline-block;
   background: #bbb;
-  border: #777;
+  border: 1px solid #777;
   border-radius: 3px;
   text-decoration: none;
+  padding: 5px;
 }
 .pagination .previous-page:hover, .pagination .current:hover, .pagination a:hover {
   display: inline-block;
   background: #999;
-  border: #777;
+  border: 1px solid #777;
   border-radius: 3px;
   text-decoration: none;
+  padding: 5px;
 }
 
 .pagination .current {
