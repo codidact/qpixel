@@ -53,6 +53,7 @@ class VotesController < ApplicationController
       post.user.save!
     end
 
+    state[:post_score] = post.score
     render :json => state
   end
 
@@ -82,7 +83,7 @@ class VotesController < ApplicationController
     vote.post.user.save!
 
     vote.destroy
-    render :plain => "OK"
+    render :json => { :status => "OK", :post_score => post.score }
   end
 
   private
