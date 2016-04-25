@@ -1,2 +1,12 @@
-<h1>Users#index</h1>
-<p>Find me in app/views/users/index.html.erb</p>
+<% content_for :title, "Users" %>
+
+<h3>Users</h3>
+<% groups = @users.in_groups_of(4) %>
+<% groups.each do |group| %>
+  <div class="users-row">
+    <% group.each do |user| %>
+      <%= render 'user', :user => user %>
+    <% end %>
+  </div>
+  <span class="clearfix"></span>
+<% end %>
