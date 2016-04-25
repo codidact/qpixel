@@ -63,6 +63,24 @@ class VotesController < ApplicationController
       render :plain => "You are not authorized to remove this vote.", :status => 403 and return
     end
 
+    if vote.vote_type == 0
+      vote.post.score -= 1
+      if vote.post_type == 'Answer'
+        vote.post.user.reputation -= get_setting('AnswerUpVoteRep').to_i or 0
+      else
+        vote.post.user.reputation -= get_setting('QuestionUpVoteRep').to_i or 0
+      end
+    else
+      vote.post.score += 1
+      if vote.post_type == 'Answer'
+        vote.post.user.reputation -= get_setting('AnswerDownVoteRep').to_i or 0
+      else
+        vote.post.user.reputation -= get_setting('QuestionDownVoteRep').to_i or 0
+      end
+    end
+    vote.post.save!
+    vote.post.user.save!
+
     vote.destroy
     render :plain => "OK"
   end
