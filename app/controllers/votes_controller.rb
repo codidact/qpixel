@@ -19,18 +19,40 @@ class VotesController < ApplicationController
         vote.save!
 
         state = { :status => "modified", :vote_id => vote.id }
-        render :json => state and return
       end
+    else
+      vote = Vote.new
+      vote.user = current_user
+      vote.post = post
+      vote.vote_type = params[:vote_type]
+      vote.save!
+
+      state = { :status => "OK", :vote_id => vote.id }
     end
 
-    vote = Vote.new
-    vote.user = current_user
-    vote.post = post
-    vote.vote_type = params[:vote_type]
-    vote.save!
+    if vote.vote_type == 0
+      post.score += 1
+      post.save!
 
-    state = { :status => "OK", :vote_id => vote.id }
-    render :json => state and return
+      if params[:post_type] == "a"
+        post.user.reputation += get_setting('AnswerUpVoteRep').to_i or 0
+      else
+        post.user.reputation += get_setting('QuestionUpVoteRep').to_i or 0
+      end
+      post.user.save!
+    else
+      post.score -= 1
+      post.save!
+
+      if params[:post_type] == "a"
+        post.user.reputation += get_setting('AnswerDownVoteRep').to_i or 0
+      else
+        post.user.reputation += get_setting('QuestionDownVoteRep').to_i or 0
+      end
+      post.user.save!
+    end
+
+    render :json => state
   end
 
   def destroy
