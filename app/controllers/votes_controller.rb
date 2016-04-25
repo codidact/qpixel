@@ -3,63 +3,45 @@ class VotesController < ApplicationController
 
   def create
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
-    existing = Vote.where(:post => post, :user => current_user)
+    vote = post.votes.find_or_initialize_by(:user => current_user)
 
     if post.user == current_user
-      render :plain => "You may not vote on your own posts.", :status => 403 and return
+      (render :plain => "You may not vote on your own posts.", :status => 403 and return) unless get_setting('AllowSelfVotes') == "true"
     end
 
-    if existing.count > 0
-      if existing.first.vote_type == params[:vote_type].to_i
-        render :plain => "You have already voted.", :status => 409 and return
-      else
-        # There's already a vote by this user on this post, so we may as well update that instead of removing it.
-        render :plain => "Vote preconditions failed; contact administration.", :status => 412 unless existing.count == 1
-        vote = existing.first
-        vote.vote_type = params[:vote_type].to_i
-        vote.save!
-
-        if vote.vote_type == 0
-          post.score += 1
-        else
-          post.score -= 1
-        end
-
-        state = { :status => "modified", :vote_id => vote.id }
-      end
+    if vote.vote_type == params[:vote_type].to_i
+      # already voted
+      render :plain => "You have already voted.", :status => 409 and return
     else
-      vote = Vote.new
-      vote.user = current_user
-      vote.post = post
-      vote.vote_type = params[:vote_type]
+      modified = false
+      if vote.vote_type
+        # modify vote
+        modified = true
+      end
+      vote.vote_type = params[:vote_type].to_i
       vote.save!
-
-      state = { :status => "OK", :vote_id => vote.id }
+      state = { :status => (modified ? "modified" : "OK"), :vote_id => vote.id }
     end
 
-    if vote.vote_type == 0
-      post.score += 1
-      post.save!
-
-      if params[:post_type] == "a"
-        post.user.reputation += get_setting('AnswerUpVoteRep').to_i or 0
-      else
-        post.user.reputation += get_setting('QuestionUpVoteRep').to_i or 0
-      end
-      post.user.save!
-    else
-      post.score -= 1
-      post.save!
-
-      if params[:post_type] == "a"
-        post.user.reputation += get_setting('AnswerDownVoteRep').to_i or 0
-      else
-        post.user.reputation += get_setting('QuestionDownVoteRep').to_i or 0
-      end
-      post.user.save!
-    end
-
+    post.score = post.votes.sum(:vote_type)
+    post.save!
     state[:post_score] = post.score
+
+    if vote.vote_type == 1
+      if vote.post_type == 'Answer'
+        post.user.reputation += get_setting('AnswerUpVoteRep')
+      else
+        post.user.reputation += get_setting('QuestionUpVoteRep')
+      end
+    else
+      if vote.post_type == 'Answer'
+        post.user.reputation += get_setting('AnswerDownVoteRep')
+      else
+        post.user.reputation += get_setting('QuestionDownVoteRep')
+      end
+    end
+    post.user.save!
+
     render :json => state
   end
 
@@ -70,21 +52,20 @@ class VotesController < ApplicationController
       render :plain => "You are not authorized to remove this vote.", :status => 403 and return
     end
 
-    if vote.vote_type == 0
-      vote.post.score -= 1
+    if vote.vote_type == 1
       if vote.post_type == 'Answer'
         vote.post.user.reputation -= get_setting('AnswerUpVoteRep').to_i or 0
       else
         vote.post.user.reputation -= get_setting('QuestionUpVoteRep').to_i or 0
       end
     else
-      vote.post.score += 1
       if vote.post_type == 'Answer'
         vote.post.user.reputation -= get_setting('AnswerDownVoteRep').to_i or 0
       else
         vote.post.user.reputation -= get_setting('QuestionDownVoteRep').to_i or 0
       end
     end
+    vote.post.score = vote.post.votes.sum(:vote_type)
     vote.post.save!
     vote.post.user.save!
 
