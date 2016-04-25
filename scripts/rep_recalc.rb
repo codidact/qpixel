@@ -15,6 +15,8 @@ au = get_setting('AnswerUpVoteRep').to_i
 ad = get_setting('AnswerDownVoteRep').to_i
 
 u = User.find ARGV[0]
+u.reputation = 1
+u.save!
 
 u.questions.each do |p|
   upvotes = p.votes.where(:vote_type => 0).count
