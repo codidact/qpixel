@@ -19,6 +19,12 @@ class VotesController < ApplicationController
         vote.vote_type = params[:vote_type].to_i
         vote.save!
 
+        if vote.vote_type == 0
+          post.score += 1
+        else
+          post.score -= 1
+        end
+
         state = { :status => "modified", :vote_id => vote.id }
       end
     else
