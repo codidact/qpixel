@@ -65,11 +65,12 @@ class VotesController < ApplicationController
         vote.post.user.reputation -= get_setting('QuestionDownVoteRep').to_i or 0
       end
     end
+    vote.destroy
+
     vote.post.score = vote.post.votes.sum(:vote_type)
     vote.post.save!
     vote.post.user.save!
-
-    vote.destroy
+    
     render :json => { :status => "OK", :post_score => vote.post.score }
   end
 
