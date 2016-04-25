@@ -46,7 +46,7 @@ $(document).on('ready page:load', function() {
         if(data['status'] === "OK") {
           $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-clear.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/-1');
-          $(this.state.target).closest('.post-score').text(data['post_score']);
+          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
         else {
           alert("Could not undo vote - please try again. Message: " + data);
@@ -76,7 +76,7 @@ $(document).on('ready page:load', function() {
         if(data['status'] == "OK") {
           $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
-          $(this.state.target).closest('.post-score').text(data['post_score']);
+          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
         else if(data['status'] == "modified") {
           $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '0' ? 'up' : 'down') + '-fill.png');
@@ -84,7 +84,7 @@ $(document).on('ready page:load', function() {
           $("#" + (this.state.postType == 'a' ? 'answer-' : 'question-') + this.state.postId + (this.state.voteType == 0 ? '-down' : '-up'))
             .data('vote', (1-this.state.voteType) + '/' + this.state.postId + '/' + this.state.postType + '/-1')
             .attr('src', '/assets/' + (this.state.voteType == '0' ? 'down' : 'up') + '-clear.png');
-          $(this.state.target).closest('.post-score').text(data['post_score']);
+          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
         else {
           alert("Could not cast vote - please try again. Message: " + data);
