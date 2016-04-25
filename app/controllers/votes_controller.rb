@@ -29,15 +29,15 @@ class VotesController < ApplicationController
 
     if vote.vote_type == 1
       if vote.post_type == 'Answer'
-        post.user.reputation += get_setting('AnswerUpVoteRep')
+        post.user.reputation += get_setting('AnswerUpVoteRep').to_i
       else
-        post.user.reputation += get_setting('QuestionUpVoteRep')
+        post.user.reputation += get_setting('QuestionUpVoteRep').to_i
       end
     else
       if vote.post_type == 'Answer'
-        post.user.reputation += get_setting('AnswerDownVoteRep')
+        post.user.reputation += get_setting('AnswerDownVoteRep').to_i
       else
-        post.user.reputation += get_setting('QuestionDownVoteRep')
+        post.user.reputation += get_setting('QuestionDownVoteRep').to_i
       end
     end
     post.user.save!
