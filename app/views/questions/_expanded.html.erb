@@ -11,7 +11,7 @@
            id="question-<%= question.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
-    <p class="large-text center"><%= question.score %></p>
+    <p class="post-score large-text center"><%= question.score %></p>
     <p>
       <% if my_vote(question) && my_vote(question).vote_type == 1 %>
         <img class="vote-button" data-vote="1/<%= question.id %>/q/<%= my_vote(question).id %>"
