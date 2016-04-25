@@ -125,3 +125,26 @@ span.tag {
 .vote-button {
   cursor: pointer;
 }
+
+.pagination .previous-page, .pagination .current, .pagination a {
+  display: inline-block;
+  background: #bbb;
+  border: #777;
+  border-radius: 3px;
+  text-decoration: none;
+}
+.pagination .previous-page:hover, .pagination .current:hover, .pagination a:hover {
+  display: inline-block;
+  background: #999;
+  border: #777;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+.pagination .current {
+  background: #0080b7;
+  color: white;
+}
+.pagination .current:hover {
+  background: #00a4ea;
+}
