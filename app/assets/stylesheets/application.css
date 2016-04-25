@@ -133,6 +133,7 @@ span.tag {
   border-radius: 3px;
   text-decoration: none;
   padding: 5px;
+  cursor: pointer;
 }
 .pagination .previous-page:hover, .pagination .current:hover, .pagination a:hover {
   display: inline-block;
@@ -141,6 +142,7 @@ span.tag {
   border-radius: 3px;
   text-decoration: none;
   padding: 5px;
+  cursor: pointer;
 }
 
 .pagination .current {
