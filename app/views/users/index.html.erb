@@ -5,7 +5,7 @@
 <% groups.each do |group| %>
   <div class="users-row">
     <% group.each do |user| %>
-      <%= render 'user', :user => user %>
+      <%= render 'user', :user => user unless user.nil? %>
     <% end %>
   </div>
   <span class="clearfix"></span>
