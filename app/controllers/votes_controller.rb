@@ -17,6 +17,7 @@ class VotesController < ApplicationController
       if vote.vote_type
         # modify vote
         modified = true
+        calc_rep(vote, post, -1)
       end
       vote.vote_type = params[:vote_type].to_i
       vote.save!
@@ -27,20 +28,7 @@ class VotesController < ApplicationController
     post.save!
     state[:post_score] = post.score
 
-    if vote.vote_type == 1
-      if vote.post_type == 'Answer'
-        post.user.reputation += get_setting('AnswerUpVoteRep').to_i
-      else
-        post.user.reputation += get_setting('QuestionUpVoteRep').to_i
-      end
-    else
-      if vote.post_type == 'Answer'
-        post.user.reputation += get_setting('AnswerDownVoteRep').to_i
-      else
-        post.user.reputation += get_setting('QuestionDownVoteRep').to_i
-      end
-    end
-    post.user.save!
+    calc_rep(vote, post, 1)
 
     render :json => state
   end
@@ -70,7 +58,7 @@ class VotesController < ApplicationController
     vote.post.score = vote.post.votes.sum(:vote_type)
     vote.post.save!
     vote.post.user.save!
-    
+
     render :json => { :status => "OK", :post_score => vote.post.score }
   end
 
@@ -79,5 +67,22 @@ class VotesController < ApplicationController
       if !user_signed_in?
         render :plain => "You must be logged in to vote.", :status => 403 and return
       end
+    end
+
+    def calc_rep(vote, post, modifier)
+      if vote.vote_type == 1
+        if vote.post_type == 'Answer'
+          post.user.reputation += modifier * get_setting('AnswerUpVoteRep').to_i
+        else
+          post.user.reputation += modifier * get_setting('QuestionUpVoteRep').to_i
+        end
+      else
+        if vote.post_type == 'Answer'
+          post.user.reputation += modifier * get_setting('AnswerDownVoteRep').to_i
+        else
+          post.user.reputation += modifier * get_setting('QuestionDownVoteRep').to_i
+        end
+      end
+      post.user.save!
     end
 end
