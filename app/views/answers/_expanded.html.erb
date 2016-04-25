@@ -2,19 +2,19 @@
   <div class="vote-box">
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == 0 %>
-        <img class="vote-button" data-vote="0/<%= answer.id %>/a/<%= my_vote(answer).id %>"
+        <img class="vote-button" data-vote="1/<%= answer.id %>/a/<%= my_vote(answer).id %>"
              id="answer-<%= answer.id %>-up" src="/assets/up-fill.png" height="48" />
       <% else %>
-        <img class="vote-button" data-vote="0/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-up" src="/assets/up-clear.png" height="48" />
+        <img class="vote-button" data-vote="1/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
     <p class="post-score large-text center"><%= answer.score %></p>
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == 1 %>
-        <img class="vote-button" data-vote="1/<%= answer.id %>/a/<%= my_vote(answer).id %>"
+        <img class="vote-button" data-vote="-1/<%= answer.id %>/a/<%= my_vote(answer).id %>"
              id="answer-<%= answer.id %>-down" src="/assets/down-fill.png" height="48" />
       <% else %>
-        <img class="vote-button" data-vote="1/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-down" src="/assets/down-clear.png" height="48" />
+        <img class="vote-button" data-vote="-1/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-down" src="/assets/down-clear.png" height="48" />
       <% end %>
     </p>
   </div>
