@@ -14,6 +14,7 @@ class VotesController < ApplicationController
         render :plain => "You have already voted.", :status => 409 and return
       else
         # There's already a vote by this user on this post, so we may as well update that instead of removing it.
+        render :plain => "Vote preconditions failed; contact administration.", :status => 412 unless existing.count == 1
         vote = existing.first
         vote.vote_type = params[:vote_type].to_i
         vote.save!
