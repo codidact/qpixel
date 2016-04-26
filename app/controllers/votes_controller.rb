@@ -1,6 +1,13 @@
 class VotesController < ApplicationController
   before_action :auth_for_voting
 
+  # Authenticated web action. Casts a vote on behalf of a user. This is just about the most complex action in the application. Forbids
+  # self-voting by default, but this is configurable by site setting. Also prevents duplicate votes of the same type by
+  # the same user on one post; handles a user changing their vote, and deals with re-calculating post scores and user
+  # reputation after the vote has been cast.
+  #
+  # Intended as an API action to be called from client-side JavaScript, rather than to be directly accessed - this
+  # is only accessible on a POST route, and returns JSON for further client-side processing.
   def create
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
     vote = post.votes.find_or_initialize_by(:user => current_user)
@@ -33,6 +40,8 @@ class VotesController < ApplicationController
     render :json => state
   end
 
+  # Authenticated web action. Removes a vote that has already been cast, and handles re-calculating post scores and user reputation.
+  # Again, intended as an API action - is only accessible via DELETE requests, and returns JSON.
   def destroy
     vote = Vote.find params[:id]
 
@@ -63,12 +72,19 @@ class VotesController < ApplicationController
   end
 
   private
+    # A stripped-down <tt>:authenticate_user!</tt> that is used only for voting - we don't want to be redirected to
+    # login if there isn't a user logged in, but we do want to prevent unauthenticated voting. Simply returns a 403
+    # Forbidden with response text if the user is not logged in.
     def auth_for_voting
       if !user_signed_in?
         render :plain => "You must be logged in to vote.", :status => 403 and return
       end
     end
 
+    # Given a vote and a post, calculates and applies the reputation changes necessitated by that vote. Handles
+    # both the different vote and post types. The <tt>modifier</tt> parameter enables the <tt>create</tt> action to
+    # reverse a vote (for the case where a user changes their vote) before applying a new vote; this is what keeps
+    # the reputation bugs at bay.
     def calc_rep(vote, post, modifier)
       if vote.vote_type == 1
         if vote.post_type == 'Answer'
