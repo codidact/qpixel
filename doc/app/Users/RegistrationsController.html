@@ -85,6 +85,10 @@
 
   <section class="description">
     
+<p>An extended version of the Devise registrations controller, which is
+overridden so that we can add additional defaults before completing
+actions.</p>
+
   </section>
 
   
@@ -133,7 +137,7 @@ newly-created user.</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/users/registrations_controller.rb, line 4</span>
+            <pre><span class="ruby-comment"># File app/controllers/users/registrations_controller.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-ivar">@user</span>.<span class="ruby-identifier">reputation</span> = <span class="ruby-value">1</span>

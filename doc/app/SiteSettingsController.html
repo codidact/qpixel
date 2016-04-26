@@ -89,6 +89,10 @@
 
   <section class="description">
     
+<p>Web controller. Provides authenticated actions for use by administrators in
+controlling the site settings (which in turn control the operation and
+display of some aspects of the site).</p>
+
   </section>
 
   
@@ -130,7 +134,7 @@ editing.</p>
 
           
           <div class="method-source-code" id="edit-source">
-            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 11</span>
+            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">edit</span>
   <span class="ruby-ivar">@setting</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -164,7 +168,7 @@ site settings.</p>
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 6</span>
+            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
   <span class="ruby-ivar">@settings</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">20</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -199,7 +203,7 @@ user to a single site setting. Redirects on completion back to the
 
           
           <div class="method-source-code" id="update-source">
-            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 17</span>
+            <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
   <span class="ruby-ivar">@setting</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
   <span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">setting_params</span>)

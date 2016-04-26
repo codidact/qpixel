@@ -87,6 +87,9 @@
 
   <section class="description">
     
+<p>Web controller. Provides actions for using voting features - essentially a
+stripped-down and renamed version of the standard resource set.</p>
+
   </section>
 
   
@@ -136,7 +139,7 @@ returns JSON for further client-side processing.</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/votes_controller.rb, line 11</span>
+            <pre><span class="ruby-comment"># File app/controllers/votes_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-identifier">post</span> = (<span class="ruby-identifier">params</span>[<span class="ruby-value">:post_type</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&quot;a&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:post_id</span>]) <span class="ruby-operator">:</span> <span class="ruby-constant">Question</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:post_id</span>]))
   <span class="ruby-identifier">vote</span> = <span class="ruby-identifier">post</span>.<span class="ruby-identifier">votes</span>.<span class="ruby-identifier">find_or_initialize_by</span>(<span class="ruby-value">:user</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">current_user</span>)
@@ -199,7 +202,7 @@ an API action - is only accessible via DELETE requests, and returns JSON.</p>
 
           
           <div class="method-source-code" id="destroy-source">
-            <pre><span class="ruby-comment"># File app/controllers/votes_controller.rb, line 45</span>
+            <pre><span class="ruby-comment"># File app/controllers/votes_controller.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
   <span class="ruby-identifier">vote</span> = <span class="ruby-constant">Vote</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
 

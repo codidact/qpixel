@@ -93,6 +93,10 @@
 
   <section class="description">
     
+<p>Web controller. Provides actions that relate to questions - this is
+essentially the standard set of resources, plus a couple for the extra
+question lists (such as listing by tag).</p>
+
   </section>
 
   
@@ -139,7 +143,7 @@ error.</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 29</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>] = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">question_params</span>
@@ -183,7 +187,7 @@ the database for use by the view.</p>
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 5</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
   <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -217,7 +221,7 @@ creation in the view.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
@@ -251,7 +255,7 @@ parameter <code>id</code>.</p>
 
           
           <div class="method-source-code" id="show-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 10</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -285,7 +289,7 @@ specified in the query string parameter <code>tag</code>.</p>
 
           
           <div class="method-source-code" id="tagged-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 16</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">tagged</span>
   <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;tags like ?&#39;</span>, <span class="ruby-node">&quot;%#{params[:tag]}%&quot;</span>)
 <span class="ruby-keyword">end</span></pre>

@@ -78,6 +78,9 @@
 
   <section class="description">
     
+<p>Provides helper methods for use by views under
+<code>QuestionsController</code>.</p>
+
   </section>
 
   
@@ -120,7 +123,7 @@ isn&#39;t one.</p>
 
           
           <div class="method-source-code" id="my_vote-source">
-            <pre><span class="ruby-comment"># File app/helpers/questions_helper.rb, line 4</span>
+            <pre><span class="ruby-comment"># File app/helpers/questions_helper.rb, line 5</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">my_vote</span>(<span class="ruby-identifier">question</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">user_signed_in?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">question</span>.<span class="ruby-identifier">votes</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:user</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">current_user</span>).<span class="ruby-identifier">first</span>
