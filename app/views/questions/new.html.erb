@@ -1,5 +1,5 @@
 <h3>Ask a Question</h3>
-<% if @question.errors %>
+<% if @question.errors.any? %>
   <div class="text-danger error-messages">
     <p>The following <%= "error".pluralize(@question.errors.count) %> prevented the question from being posted:</p>
     <ul>
