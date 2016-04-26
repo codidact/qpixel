@@ -1,3 +1,5 @@
+# Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
+# couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create]
 

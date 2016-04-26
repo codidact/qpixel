@@ -1,3 +1,5 @@
+# Web controller. Provides authenticated actions for use by administrators in controlling the site settings (which in
+# turn control the operation and display of some aspects of the site).
 class SiteSettingsController < ApplicationController
   before_action :authenticate_user!
   before_action :verify_admin

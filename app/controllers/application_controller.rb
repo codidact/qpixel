@@ -1,3 +1,6 @@
+# Application controller. This is the overarching control center for the application, which every web controller
+# inherits from. Any application-wide code-based configuration is done here, as well as providing controller helper
+# methods and global callbacks.
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

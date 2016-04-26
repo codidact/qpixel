@@ -1,3 +1,5 @@
+# Web controller. Provides actions for using voting features - essentially a stripped-down and renamed version of the
+# standard resource set.
 class VotesController < ApplicationController
   before_action :auth_for_voting
 
