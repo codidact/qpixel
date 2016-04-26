@@ -1,0 +1,17 @@
+<h3>Ask a Question</h3>
+<%= form_for @question, :url => { :controller => :questions, :action => :create } do |f| %>
+  <div class="field">
+    <%= f.label :title, "Title your question:" %><br/>
+    <%= f.text_field :title %>
+  </div>
+  <div class="field">
+    <%= f.text_area :body %>
+  </div>
+  <div class="field">
+    <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.text_field :tags %>
+  </div>
+  <div class="field">
+    <%= f.submit "Ask!" %>
+  </div>
+<% end %>
