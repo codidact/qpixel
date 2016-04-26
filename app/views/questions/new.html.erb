@@ -1,4 +1,15 @@
 <h3>Ask a Question</h3>
+<% if @question.errors %>
+  <div class="text-danger error-messages">
+    <p>The following <%= "error".pluralize(@question.errors.count) %> prevented the question from being posted:</p>
+    <ul>
+      <% @question.errors.full_messages.each do |e| %>
+        <li><%= e %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <%= form_for @question, :url => { :controller => :questions, :action => :create } do |f| %>
   <div class="field">
     <%= f.label :title, "Title your question:" %><br/>

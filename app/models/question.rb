@@ -5,4 +5,6 @@ class Question < ActiveRecord::Base
   has_many :votes, :as => :post
 
   serialize :tags, Array
+
+  validates :title, :body, :tags, :presence => true
 end
