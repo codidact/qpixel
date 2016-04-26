@@ -13,7 +13,9 @@ default_settings = [
   [ 'QuestionDownVoteRep', '-2' ],
   [ 'AnswerUpVoteRep', '10' ],
   [ 'AnswerDownVoteRep', '-2' ],
-  [ 'AllowSelfVotes', 'false' ]
+  [ 'AllowSelfVotes', 'false' ],
+  [ 'AskingGuidance', '<p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly '\
+                      'or entirely based on opinions</li><li>are well written</li></ul>' ]
 ]
 
 default_settings.each do |name, value|
