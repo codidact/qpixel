@@ -116,13 +116,15 @@
 
         <div class="method-description">
           
-          
+          <p>Identical to <code>ApplicationController#get_setting</code>. Retrieves the
+value of a site setting based on the name, or <code>nil</code> if it
+couldn&#39;t be found.</p>
           
           
 
           
           <div class="method-source-code" id="get_setting-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 2</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 4</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">get_setting</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">setting</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">find_by_name</span> <span class="ruby-identifier">name</span>
@@ -154,13 +156,14 @@
 
         <div class="method-description">
           
-          
+          <p>Similar to <code>ApplicationController#verify_admin</code>, but doesn&#39;t
+raise errors. Simply returns yea or nay.</p>
           
           
 
           
           <div class="method-source-code" id="user_is_admin-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 15</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">user_is_admin</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">user_signed_in?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>
 <span class="ruby-keyword">end</span></pre>
@@ -187,13 +190,14 @@
 
         <div class="method-description">
           
-          
+          <p>Similar to <code>ApplicationController#verify_moderator</code>, but
+doesn&#39;t raise errors if the user is not a moderator.</p>
           
           
 
           
           <div class="method-source-code" id="user_is_mod-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 11</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">user_is_mod</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">user_signed_in?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_moderator</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>)
 <span class="ruby-keyword">end</span></pre>
