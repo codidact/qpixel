@@ -5,7 +5,7 @@
     <%= f.text_field :title, class: "form-control" %>
   </div>
   <div class="field">
-    <%= f.text_area :body, "", class: "form-control", rows: 15 %>
+    <%= f.text_area :body, { class: "form-control", rows: 15 } %>
   </div>
   <div class="field">
     <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
