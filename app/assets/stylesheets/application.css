@@ -92,12 +92,14 @@
 .content-bar {
   width: 70%;
   min-width: 700px;
+  float: left;
 }
 
 .sidebar {
   width: 25%;
   min-width: 250px;
   padding-left: 10px;
+  float: right;
 }
 
 .footer {
@@ -151,4 +153,8 @@ span.tag {
 }
 .pagination .current:hover {
   background: #00a4ea;
+}
+
+.padded {
+  padding: 10px;
 }
