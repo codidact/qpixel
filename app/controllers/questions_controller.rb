@@ -20,6 +20,7 @@ class QuestionsController < ApplicationController
   def create
     params[:question][:tags] = params[:question][:tags].split(" ")
     @question = Question.new question_params
+    @question.tags = params[:question][:tags]
     @question.user = current_user
     @question.score = 0
     if @question.save
