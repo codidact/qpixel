@@ -1,3 +1,5 @@
+<% content_for :title, "Ask a Question" %>
+
 <h3>Ask a Question</h3>
 <% if @question.errors.any? %>
   <div class="text-danger error-messages">
@@ -25,4 +27,12 @@
   <div class="field">
     <%= f.submit "Ask!", class: "btn btn-primary" %>
   </div>
+<% end %>
+
+<% if get_setting('AskingGuidance') %>
+  <% content_for :sidebar do %>
+    <div class="bg-warning">
+      <%= raw(get_setting('AskingGuidance')) %>
+    </div>
+  <% end %>
 <% end %>
