@@ -1,3 +1,4 @@
+# Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
   # Identical to <tt>ApplicationController#get_setting</tt>. Retrieves the value of a site setting based on the name, or
   # <tt>nil</tt> if it couldn't be found.
