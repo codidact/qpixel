@@ -6,7 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Provides a location for application-wide configuration options.
 module Qpixel
+  # Direct descendant of the base <tt>Rails::Application</tt>, and the overall parent class of the application.
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
