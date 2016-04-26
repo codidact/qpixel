@@ -21,6 +21,7 @@ class QuestionsController < ApplicationController
     params[:question][:tags] = params[:question][:tags].split(" ")
     @question = Question.new question_params
     @question.user = current_user
+    @question.score = 0
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
