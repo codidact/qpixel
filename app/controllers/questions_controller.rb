@@ -1,4 +1,6 @@
 class QuestionsController < ApplicationController
+  before_action :authenticate_user!, :only => [:new, :create]
+
   def index
     @questions = Question.all.paginate(:page => params[:page], :per_page => 50)
   end
@@ -10,4 +12,23 @@ class QuestionsController < ApplicationController
   def tagged
     @questions = Question.where('tags like ?', "%#{params[:tag]}%")
   end
+
+  def new
+    @question = Question.new
+  end
+
+  def create
+    @question = Question.new question_params
+    @question.user = current_user
+    if @question.save
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
+    else
+      flash[:error] = "Your question could not be posted - please try again."
+    end
+  end
+
+  private
+    def question_params
+      params.require(:question).permit(:body, :title, :tags)
+    end
 end
