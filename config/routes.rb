@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get    'mod',                         :to => 'moderator#index'
 
   get    'questions',                   :to => 'questions#index'
+  get    'questions/ask',               :to => 'questions#new'
+  post   'questions/ask',               :to => 'questions#create'
   get    'questions/tagged/:tag',       :to => 'questions#tagged'
   get    'questions/:id',               :to => 'questions#show'
 
