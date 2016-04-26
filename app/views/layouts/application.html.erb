@@ -38,6 +38,7 @@
           <a class="toplevel" href="/mod">Moderator</a>
         <% end %>
         <a class="toplevel" href="/questions">Questions</a>
+        <a class="toplevel" href="/questions/ask">Ask!</a>
       </div>
     </div>
     <span class="clearfix"></span>
@@ -50,7 +51,7 @@
         <%= yield %>
       </div>
       <div class="sidebar">
-
+        <%= yield(:sidebar) %>
       </div>
     </div>
   </div>
