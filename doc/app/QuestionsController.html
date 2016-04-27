@@ -153,8 +153,7 @@ error.</p>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">flash</span>[<span class="ruby-value">:error</span>] = <span class="ruby-string">&quot;Your question could not be posted - please try again.&quot;</span>
-    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:new</span>)
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -282,8 +281,8 @@ parameter <code>id</code>.</p>
 
         <div class="method-description">
           
-          <p>Web action. Retrieves a list of all questions where the tags contain a tag
-specified in the query string parameter <code>tag</code>.</p>
+          <p>Web action. Retrieves a paginated list of all questions where the tags
+contain a tag specified in the query string parameter <code>tag</code>.</p>
           
           
 
@@ -291,7 +290,7 @@ specified in the query string parameter <code>tag</code>.</p>
           <div class="method-source-code" id="tagged-source">
             <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">tagged</span>
-  <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;tags like ?&#39;</span>, <span class="ruby-node">&quot;%#{params[:tag]}%&quot;</span>)
+  <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;tags like ?&#39;</span>, <span class="ruby-node">&quot;%#{params[:tag]}%&quot;</span>).<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
