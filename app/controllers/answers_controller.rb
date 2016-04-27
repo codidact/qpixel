@@ -6,6 +6,7 @@ class AnswersController < ApplicationController
   # Authenticated web action. Creates a new answer as a resource for form creation in the view.
   def new
     @answer = Answer.new
+    @question = Question.find params[:id]
   end
 
   # Authenticated web action. Based on the data submitted from the <tt>new</tt> view, creates a new answer. Assumes

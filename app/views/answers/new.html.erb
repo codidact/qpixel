@@ -1,0 +1,21 @@
+<% content_for :title, "Answer Question \"#{@question.title.truncate(50)}\"" %>
+
+<h3>Your Answer</h3>
+<%= form_for @answer, url: { :controller => :answers, :action => :create } do |f| %>
+  <div class="field">
+    <%= f.text_area :body, { class: "form-control", rows: 15 } %>
+  </div>
+  <div class="field">
+    <%= f.submit "Post Answer" %>
+  </div>
+<% end %>
+
+<h3>Question</h3>
+<%= render 'questions/expanded', :question => @question %>
+
+<% content_for :sidebar do %>
+  <div class="bg-warning padded">
+    <h5><strong>Hints &amp; Tips</strong></h5>
+    <%= get_setting('AnsweringGuidance') %>
+  </div>
+<% end %>
