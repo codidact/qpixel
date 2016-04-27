@@ -2,6 +2,8 @@
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create]
+  before_action :set_question, :only => [:show, :edit, :update]
+  before_action(only: [:edit, :update]) { check_your_post_privilege(@question) }
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
@@ -10,7 +12,6 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
-    @question = Question.find params[:id]
   end
 
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string
@@ -41,11 +42,36 @@ class QuestionsController < ApplicationController
     end
   end
 
+  # Authenticated web action. Retrieves a single question for editing. Permission to perform this action is based on
+  # three conditions: either (a) the editing user is the OP; (b) the editing user is a mod or admin; or (c) the editing
+  # user has is at or over the editing privilege threshold (the <tt>EditPrivilegeThreshold</tt> setting.)
+  def edit
+  end
+
+  def update
+    params[:question][:tags] = params[:question][:tags].split(" ")
+    if @question.update question_params
+      @question.tags = params[:question][:tags]
+      if @question.save
+        redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
+      else
+        render :edit
+      end
+    else
+      render :edit
+    end
+  end
+
   private
     # Sanitizes parameters for use by <tt>Question.create</tt> or <tt>Question.update</tt>. The only attributes that
     # users should be able to submit are <tt>:body</tt>, <tt>:title</tt>, and <tt>:tags</tt>; any other attributes
     # can either be inferred or defaulted to correct values.
     def question_params
       params.require(:question).permit(:body, :title, :tags)
+    end
+
+    # Retrives the question identified by the query string parameter <tt>id</tt>.
+    def set_question
+      @question = Question.find params[:id]
     end
 end
