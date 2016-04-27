@@ -16,6 +16,7 @@ class AnswersController < ApplicationController
     @question = Question.find params[:id]
     @answer.question = @question
     @answer.user = current_user
+    @answer.score = 0
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => params[:id])
     else
