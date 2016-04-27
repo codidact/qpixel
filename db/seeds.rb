@@ -15,7 +15,10 @@ default_settings = [
   [ 'AnswerDownVoteRep', '-2' ],
   [ 'AllowSelfVotes', 'false' ],
   [ 'AskingGuidance', '<p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly '\
-                      'or entirely based on opinions</li><li>are well written</li></ul>' ]
+                      'or entirely based on opinions</li><li>are well written</li></ul>' ],
+  [ 'AnsweringGuidance', '<p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts '\
+                         'that don\'t address the problem clutter up the thread</li><li><strong>explain why you\'re '\
+                         'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ]
 ]
 
 default_settings.each do |name, value|
