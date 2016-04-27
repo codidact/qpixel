@@ -13,7 +13,9 @@
   <div class="bg-warning padded">
     <h5><strong>Question Actions</strong></h5>
     <ul>
-      <li><a href="/questions/<%= @question.id %>/edit">Edit</a></li>
+      <% if check_your_post_privilege(@question, 'Edit') %>
+        <li><a href="/questions/<%= @question.id %>/edit">Edit</a></li>
+      <% end %>
     </ul>
   </div>
 <% end %>
