@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get    'questions/:id',               :to => 'questions#show'
   get    'questions/:id/edit',          :to => 'questions#edit'
   post   'questions/:id/edit',          :to => 'questions#update'
+  patch  'questions/:id/edit',          :to => 'questions#update'
 
   get    'users',                       :to => 'users#index'
   get    'users/:id',                   :to => 'users#show'
