@@ -3,7 +3,7 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create]
   before_action :set_question, :only => [:show, :edit, :update]
-  before_action(only: [:edit, :update]) { check_your_post_privilege(@question) }
+  before_action(only: [:edit, :update]) { check_your_post_privilege(@question, 'Edit') }
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
