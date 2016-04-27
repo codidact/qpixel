@@ -37,8 +37,7 @@ class QuestionsController < ApplicationController
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
-      flash[:error] = "Your question could not be posted - please try again."
-      redirect_to url_for(:controller => :questions, :action => :new)
+      render :new
     end
   end
 
