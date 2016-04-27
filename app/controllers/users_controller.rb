@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   # Web action. Retrieves a paginated list of all users.
   def index
-    @users = User.all.paginate(:page => params[:page], :per_page => 50, :order => params[:order])
+    @users = User.all.paginate(:page => params[:page], :per_page => 50).order(params[:sort])
   end
 
   # Web action. Retrieves a single user.
