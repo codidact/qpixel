@@ -48,6 +48,8 @@ class QuestionsController < ApplicationController
   def edit
   end
 
+  # Based on the information submitted from the <tt>edit</tt> view, updates the question. In a similar fashion to
+  # <tt>create</tt>, updates the tags explicitly because the standard <tt>update</tt> call can't be relied on.
   def update
     params[:question][:tags] = params[:question][:tags].split(" ")
     if @question.update question_params
