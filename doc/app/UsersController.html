@@ -133,7 +133,7 @@ and its override controllers (see <code>app/controllers/users/*</code>).</p>
           <div class="method-source-code" id="index-source">
             <pre><span class="ruby-comment"># File app/controllers/users_controller.rb, line 5</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
-  <span class="ruby-ivar">@users</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>, <span class="ruby-value">:order</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:order</span>])
+  <span class="ruby-ivar">@users</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>).<span class="ruby-identifier">order</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:sort</span>])
 <span class="ruby-keyword">end</span></pre>
           </div>
           

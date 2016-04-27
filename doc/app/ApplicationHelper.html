@@ -63,6 +63,8 @@
 
   <ul class="link-list" role="directory">
     
+    <li ><a href="#method-i-check_your_post_privilege">#check_your_post_privilege</a>
+    
     <li ><a href="#method-i-get_setting">#get_setting</a>
     
     <li ><a href="#method-i-user_is_admin">#user_is_admin</a>
@@ -104,6 +106,49 @@
        <header>
          <h3>Public Instance Methods</h3>
        </header>
+
+    
+      <div id="method-i-check_your_post_privilege" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">check_your_post_privilege</span><span
+            class="method-args">(post, privilege)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Basically identical to
+<code>ApplicationController#check_your_post_privilege</code> (sorry, I had
+to call it that), but as a helper for views.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="check_your_post_privilege-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">check_your_post_privilege</span>(<span class="ruby-identifier">post</span>, <span class="ruby-identifier">privilege</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">post</span>.<span class="ruby-identifier">user</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">current_user</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_moderator</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">reputation</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">get_setting</span>(<span class="ruby-node">&quot;#{privilege}PrivilegeThreshold&quot;</span>).<span class="ruby-identifier">to_i</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
 
     
       <div id="method-i-get_setting" class="method-detail ">
