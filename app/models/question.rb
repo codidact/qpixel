@@ -1,15 +1,25 @@
 # Represents a question. Questions are attached to a user account, and have many answers, a score, and can be voted on.
 class Question < ActiveRecord::Base
+  # Attached to a user account.
   belongs_to :user
 
+  # Can be answered.
   has_many :answers
+
+  # Can be voted on as a Post.
   has_many :votes, :as => :post
 
+  # Tags are not a string, they're a group of strings - sounds like an array to me.
   serialize :tags, Array
 
+  # Can't be having questions without titles, bodies, or tags.
   validates :title, :body, :tags, :presence => true
+
+  # It doesn't make sense to have 1-character posts, so let's have some minimums. And maximums, for that matter.
   validates :title, length: { minimum: 15, maximum: 255 }
   validates :body, length: { minimum: 30, maximum: 30000 }
+
+  # Tags are not a string, but that does make validation a little irritating.
   validate :maximum_tags
   validate :maximum_tag_length
 
