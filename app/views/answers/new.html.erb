@@ -1,6 +1,17 @@
 <% content_for :title, "Answer Question \"#{@question.title.truncate(50)}\"" %>
 
 <h3>Your Answer</h3>
+<% if @answer.errors.any? %>
+  <div class="text-danger error-messages">
+    <p>The following <%= "error".pluralize(@answer.errors.count) %> prevented the answer from being posted:</p>
+    <ul>
+      <% @answer.errors.full_messages.each do |e| %>
+        <li><%= e %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <%= form_for @answer, url: { :controller => :answers, :action => :create } do |f| %>
   <div class="field">
     <%= f.text_area :body, { class: "form-control", rows: 15 } %>
