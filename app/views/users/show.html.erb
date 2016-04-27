@@ -1,2 +1,23 @@
-<h1>Users#show</h1>
-<p>Find me in app/views/users/show.html.erb</p>
+<% content_for :title, "User #{@user.username}" %>
+
+<h3><%= @user.username %></h3>
+<h4><%= @user.reputation %> reputation</h4>
+<div class="profile-row">
+  <div class="profile-module module-66">
+    <h4>Questions</h4>
+    <% @user.questions.each do |q| %>
+      <%= render 'questions/question', :question => q %>
+    <% end %>
+  </div>
+  <div class="profile-module module-33">
+    <h4>Votes</h4>
+    <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
+    <ul>
+      <li><%= @user.votes.where(:vote_type => 1) %> up <%= "vote".pluralize(@user.votes.where(:vote_type => 1).count) %></li>
+      <li><%= @user.votes.where(:vote_type => -1) %> down <%= "vote".pluralize(@user.votes.where(:vote_type => -1).count) %></li>
+      <li><%= @user.votes.where(:post_type => 'Question') %> question <%= "vote".pluralize(@user.votes.where(:post_type => 'Question').count) %></li>
+      <li><%= @user.votes.where(:post_type => 'Answer') %> answer <%= "vote".pluralize(@user.votes.where(:post_type => 'Answer').count) %></li>
+    </ul>
+  </div>
+</div>
+<span class="clearfix"></span>
