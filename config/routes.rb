@@ -22,4 +22,7 @@ Rails.application.routes.draw do
 
   post   'votes/new',                   :to => 'votes#create'
   delete 'votes/:id',                   :to => 'votes#destroy'
+
+  get    'questions/answer/:id',        :to => 'answers#new'
+  post   'questions/answer/:id',        :to => 'answers#create'
 end
