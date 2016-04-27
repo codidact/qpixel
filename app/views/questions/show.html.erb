@@ -8,3 +8,12 @@
   <%= render 'answers/expanded', :answer => answer %>
 <% end %>
 <a href="/questions/answer/<%= @question.id %>" class="btn btn-primary">Answer this Question</a>
+
+<% content_for :sidebar do %>
+  <div class="bg-warning padded">
+    <h5><strong>Question Actions</strong></h5>
+    <ul>
+      <li><a href="/questions/<%= @question.id %>/edit">Edit</a></li>
+    </ul>
+  </div>
+<% end %>
