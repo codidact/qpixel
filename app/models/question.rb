@@ -13,9 +13,13 @@ class Question < ActiveRecord::Base
   validate :maximum_tags
 
   private
+    # Restricts the number of tags on any question to a maximum of 5, and a minimum of 1. This can't be achieved by any
+    # of the standard validation helpers, since <tt>tags</tt> is an array.
     def maximum_tags
       if tags.length > 5
         errors.add(:tags, "can't have more than 5 tags")
+      elsif tags.length < 1
+        errors.add(:tags, "must have at least one tag")
       end
     end
 end
