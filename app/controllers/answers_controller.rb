@@ -21,4 +21,11 @@ class AnswersController < ApplicationController
       render :new
     end
   end
+
+  private
+    # Sanitized parameters for use by question operations. All we need to let through here is the answer body - the user
+    # shouldn't be able to supply any other information.
+    def answer_params
+      params.require(:answer).permit(:body)
+    end
 end
