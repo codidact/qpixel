@@ -4,3 +4,4 @@
 <% @questions.each do |question| %>
   <%= render 'question', :question => question %>
 <% end %>
+<%= will_paginate @questions %>

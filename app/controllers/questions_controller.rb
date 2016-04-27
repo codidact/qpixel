@@ -13,10 +13,10 @@ class QuestionsController < ApplicationController
     @question = Question.find params[:id]
   end
 
-  # Web action. Retrieves a list of all questions where the tags contain a tag specified in the query string parameter
-  # <tt>tag</tt>.
+  # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string
+  # parameter <tt>tag</tt>.
   def tagged
-    @questions = Question.where('tags like ?', "%#{params[:tag]}%")
+    @questions = Question.where('tags like ?', "%#{params[:tag]}%").paginate(:page => params[:page], :per_page => 50)
   end
 
   # Authenticated web action. Creates a new question as a resource for form creation in the view.
