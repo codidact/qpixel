@@ -1,0 +1,28 @@
+<% content_for :title, "Editing '#{@question.title.truncate(50)}'" %>
+
+<h3>Edit Question</h3>
+<%= form_for @question, url: { :controller => :questions, :action => :update } do |f| %>
+  <div class="field">
+    <%= f.label :title, "Title your question:" %><br/>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+  <div class="field">
+    <%= f.text_area :body, { class: "form-control", rows: 15 } %>
+  </div>
+  <div class="field">
+    <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.text_field :tags, class: "form-control" %>
+  </div>
+  <div class="field">
+    <%= f.submit "Update", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<% if get_setting('AskingGuidance') %>
+  <% content_for :sidebar do %>
+    <div class="bg-warning padded">
+      <h5><strong>Asking Guidance</strong></h5>
+      <%= raw(get_setting('AskingGuidance')) %>
+    </div>
+  <% end %>
+<% end %>
