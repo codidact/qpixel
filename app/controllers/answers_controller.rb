@@ -13,7 +13,7 @@ class AnswersController < ApplicationController
   # that the route to this action contains the question id, and uses that to assign the answer to a question.
   def create
     @answer = Answer.new answer_params
-    @answer.question = params[:id]
+    @answer.question = Question.find params[:id]
     @answer.user = current_user
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => params[:id])
