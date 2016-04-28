@@ -22,6 +22,14 @@ default_settings = [
   [ 'AdministratorContactEmail', 'contact@example.com' ]
 ]
 
+default_privileges = [
+  [ 'Edit', 500 ]
+]
+
 default_settings.each do |name, value|
   SiteSetting.create(name: name, value: value)
+end
+
+default_privileges.each do |name, threshold|
+  Privilege.create(name: name, threshold: threshold)
 end
