@@ -40,8 +40,13 @@
     <% if with_actions %>
       <div class="clearfix padded"></div>
       <a href="/questions/<% question.id %>/edit" class="btn btn-info">Edit</a>
-      <%= link_to "Delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
+      <% if !question.is_deleted %>
+        <%= link_to "Delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
           :method => :delete, data: { :confirm => 'Are you sure you want to delete this question?' }, class: "btn btn-danger" %>
+      <% else %>
+        <%= link_to "Undelete", url_for(:controller => :questions, :action => :undelete, :id => question.id),
+          :method => :patch, data: { :confirm => 'Undelete this question, making it visible to regular users?' } class: "btn btn-danger" %>
+      <% end %>
     <% end %>
   </div>
 </div>
