@@ -37,5 +37,11 @@
       Posted <span title="<%= question.created_at %>" data-livestamp="<%= question.created_at %>">at <%= question.created_at %></span>
       by <a href="/users/<%= question.user.id %>"><%= question.user.username %></a> (<%= question.user.reputation %>)
     </div>
+    <% if with_actions %>
+      <div class="clearfix padded"></div>
+      <a href="/questions/<% question.id %>/edit" class="btn btn-info">Edit</a>
+      <%= link_to "Delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
+          :method => :delete, data: { :confirm => 'Are you sure you want to delete this question?' }, class: "btn btn-danger" %>
+    <% end %>
   </div>
 </div>
