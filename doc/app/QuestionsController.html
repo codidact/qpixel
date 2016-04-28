@@ -72,6 +72,8 @@
     
     <li ><a href="#method-i-create">#create</a>
     
+    <li ><a href="#method-i-destroy">#destroy</a>
+    
     <li ><a href="#method-i-edit">#edit</a>
     
     <li ><a href="#method-i-index">#index</a>
@@ -81,6 +83,8 @@
     <li ><a href="#method-i-show">#show</a>
     
     <li ><a href="#method-i-tagged">#tagged</a>
+    
+    <li ><a href="#method-i-undelete">#undelete</a>
     
     <li ><a href="#method-i-update">#update</a>
     
@@ -147,7 +151,7 @@ error.</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 32</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>] = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">question_params</span>
@@ -158,6 +162,47 @@ error.</p>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-destroy" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">destroy</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web action. Marks the question as &#39;deleted&#39; - that
+is, sets the <code>is_deleted</code> field to true.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="destroy-source">
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+  <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">is_deleted</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">flash</span>[<span class="ruby-value">:error</span>] = <span class="ruby-string">&quot;The question could not be deleted.&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -193,8 +238,9 @@ the editing user has is at or over the editing privilege threshold (the
 
           
           <div class="method-source-code" id="edit-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 48</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">edit</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -226,7 +272,7 @@ the database for use by the view.</p>
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 9</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
   <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -260,7 +306,7 @@ creation in the view.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 24</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
@@ -294,7 +340,7 @@ parameter <code>id</code>.</p>
 
           
           <div class="method-source-code" id="show-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -327,9 +373,51 @@ contain a tag specified in the query string parameter <code>tag</code>.</p>
 
           
           <div class="method-source-code" id="tagged-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 19</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">tagged</span>
   <span class="ruby-ivar">@questions</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;tags like ?&#39;</span>, <span class="ruby-node">&quot;%#{params[:tag]}%&quot;</span>).<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-undelete" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">undelete</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web action. Basically the opposite of <code>:destroy</code> -
+removes the <code>is_deleted</code> flag from the question, making it
+visible from default scope again.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="undelete-source">
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">undelete</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+  <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">is_deleted</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">flash</span>[<span class="ruby-value">:error</span>] = <span class="ruby-string">&quot;The question could not be undeleted.&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -354,17 +442,18 @@ contain a tag specified in the query string parameter <code>tag</code>.</p>
 
         <div class="method-description">
           
-          <p>Based on the information submitted from the <code>edit</code> view, updates
-the question. In a similar fashion to <code>create</code>, updates the tags
-explicitly because the standard <code>update</code> call can&#39;t be
-relied on.</p>
+          <p>Authenticated web action. Based on the information submitted from the
+<code>edit</code> view, updates the question. In a similar fashion to
+<code>create</code>, updates the tags explicitly because the standard
+<code>update</code> call can&#39;t be relied on.</p>
           
           
 
           
           <div class="method-source-code" id="update-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 53</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
   <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>] = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">update</span> <span class="ruby-identifier">question_params</span>
     <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">tags</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>]

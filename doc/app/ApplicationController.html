@@ -70,7 +70,7 @@
 
   <ul class="link-list" role="directory">
     
-    <li ><a href="#method-i-check_your_post_privilege">#check_your_post_privilege</a>
+    <li ><a href="#method-i-check_your_privilege">#check_your_privilege</a>
     
     <li ><a href="#method-i-configure_permitted_parameters">#configure_permitted_parameters</a>
     
@@ -119,11 +119,11 @@ helper methods and global callbacks.</p>
        </header>
 
     
-      <div id="method-i-check_your_post_privilege" class="method-detail ">
+      <div id="method-i-check_your_privilege" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">check_your_post_privilege</span><span
-            class="method-args">(post, privilege)</span>
+          <span class="method-name">check_your_privilege</span><span
+            class="method-args">(name)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -132,27 +132,17 @@ helper methods and global callbacks.</p>
 
         <div class="method-description">
           
-          <p>Checks whether or not the current user has the privileges to perform a
-specific action on a specific post. This method is intended to be used for
-standard actions - that is, those that aren&#39;t admin/mod only. Assumes
-that the OP is permitted to perform any such action on their own post. Also
-assumes that the user is already signed in, so use this method only after
-an authentication verification, such as <code>:authenticate_user!</code>.</p>
+          
           
           
 
           
-          <div class="method-source-code" id="check_your_post_privilege-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 53</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">check_your_post_privilege</span>(<span class="ruby-identifier">post</span>, <span class="ruby-identifier">privilege</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">post</span>.<span class="ruby-identifier">user</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">current_user</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_moderator</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">reputation</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">get_setting</span>(<span class="ruby-node">&quot;#{privilege}PrivilegeThreshold&quot;</span>).<span class="ruby-identifier">to_i</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">RoutingError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Forbidden&#39;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>
+          <div class="method-source-code" id="check_your_privilege-source">
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-identifier">name</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>)
+    <span class="ruby-comment"># Redirecting on errors :(</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:errors</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:forbidden</span>, <span class="ruby-value">:privilege_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

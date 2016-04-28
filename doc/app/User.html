@@ -139,7 +139,7 @@ both admins and mods are assumed to have the privilege.</p>
   <span class="ruby-identifier">privilege</span> = <span class="ruby-constant">Privilege</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>).<span class="ruby-identifier">first</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">privileges</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">privilege</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">is_admin</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">is_moderator</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">reputation</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">privilege</span>.<span class="ruby-identifier">threshold</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">privilege</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reputation</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">privilege</span>.<span class="ruby-identifier">threshold</span>
     <span class="ruby-identifier">privileges</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">privilege</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
   <span class="ruby-keyword">else</span>
