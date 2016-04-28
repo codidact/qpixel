@@ -1,28 +1,27 @@
-== README
+== QPixel
+Rails Q&A software... because I can. This is based on Stack Exchange, though is deliberately a little differently
+designed and written. (duh, theirs is in C# ASP.NET MVC...)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+To get started, you will need:
 
-Things you may want to cover:
+- A Linux server (or Windows, though if you can make Rails run smoothly on Windows you're doing better than me)
+- Ruby <tt>2.2.1p85</tt>
+- Rails 4.2.6
 
-* Ruby version
+Run <tt>bundle install</tt> to install the required gems.
 
-* System dependencies
+Run the following commands, in sequence, to set up the database.
 
-* Configuration
+    rake db:create
+    rake db:schema:load
+    rake db:migrate
+    rake db:seed
 
-* Database creation
+To start the server, use
 
-* Database initialization
+    rails s -p 80
 
-* How to run the test suite
+If any of the above commands don't work, try using them under <tt>sudo</tt> (or, if your Ruby installation uses RVM, you
+can try <tt>rvmsudo</tt>).
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Most site setting are configurable through the admin interface or through privilege thresholds.
