@@ -1,8 +1,8 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
-  before_action :set_question, :only => [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
+  before_action :set_question, :only => [:show, :edit, :update, :destroy, :undelete]
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
@@ -74,6 +74,19 @@ class QuestionsController < ApplicationController
       redirect_to url_for(:controller => :questions, :action => :index)
     else
       flash[:error] = "The question could not be deleted."
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
+    end
+  end
+
+  # Authenticated web action. Basically the opposite of <tt>:destroy</tt> - removes the <tt>is_deleted</tt> flag from
+  # the question, making it visible from default scope again.
+  def undelete
+    check_your_privilege('Delete')
+    @question.is_deleted = false
+    if @question.save
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
+    else
+      flash[:error] = "The question could not be undeleted."
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     end
   end
