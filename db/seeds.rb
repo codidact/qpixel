@@ -19,7 +19,7 @@ default_settings = [
   [ 'AnsweringGuidance', '<p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts '\
                          'that don\'t address the problem clutter up the thread</li><li><strong>explain why you\'re '\
                          'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ],
-  [ 'EditPrivilegeThreshold', 500 ]
+  [ 'AdministratorContactEmail', 'contact@example.com' ]
 ]
 
 default_settings.each do |name, value|

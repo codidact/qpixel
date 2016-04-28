@@ -48,7 +48,8 @@ class ApplicationController < ActionController::Base
 
     def check_your_privilege(name)
       unless current_user.has_privilege?(name)
-        raise ActionController::RoutingError.new('Forbidden') and return
+        # Redirecting on errors :(
+        redirect_to url_for(:controller => :errors, :action => :forbidden, :privilege_name => name) and return
       end
     end
 end

@@ -28,4 +28,10 @@ Rails.application.routes.draw do
 
   get    'questions/answer/:id',        :to => 'answers#new'
   post   'questions/answer/:id',        :to => 'answers#create'
+
+  match  '/403',                        :to => 'errors#forbidden',                :via => :all
+  match  '/404',                        :to => 'errors#not_found',                :via => :all
+  match  '/409',                        :to => 'errors#conflict',                 :via => :all
+  match  '/422',                        :to => 'errors#unprocessable_entity',     :via => :all
+  match  '/500',                        :to => 'errors#internal_server_error',    :via => :all
 end
