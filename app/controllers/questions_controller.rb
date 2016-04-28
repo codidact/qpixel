@@ -88,6 +88,15 @@ class QuestionsController < ApplicationController
 
     # Retrives the question identified by the query string parameter <tt>id</tt>.
     def set_question
-      @question = Question.find params[:id]
+      begin
+        @question = Question.find params[:id]
+      rescue
+        if current_user.has_privilege?('ViewDeleted')
+          @question ||= Question.unscoped.find params[:id]
+        end
+        if @question.nil?
+          raise ActionController::RoutingError.new('Not Found')
+        end
+      end
     end
 end

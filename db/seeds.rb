@@ -23,7 +23,9 @@ default_settings = [
 ]
 
 default_privileges = [
-  [ 'Edit', 500 ]
+  [ 'Edit', 500 ],
+  [ 'Delete', 1000 ],
+  [ 'ViewDeleted', 1000 ]
 ]
 
 default_settings.each do |name, value|
