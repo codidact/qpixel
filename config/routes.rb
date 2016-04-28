@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get    'questions/:id/edit',          :to => 'questions#edit'
   post   'questions/:id/edit',          :to => 'questions#update'
   patch  'questions/:id/edit',          :to => 'questions#update'
+  delete 'questions/:id/delete',        :to => 'questions#destroy'
+  patch  'questions/:id/delete',        :to => 'questions#undelete'
 
   get    'users',                       :to => 'users#index'
   get    'users/:id',                   :to => 'users#show'
