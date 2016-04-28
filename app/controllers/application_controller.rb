@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
 
     def check_your_privilege(name)
       unless current_user.has_privilege?(name)
-        raise ActionController::RoutingError.new('Not Found') and return
+        raise ActionController::RoutingError.new('Forbidden') and return
       end
     end
 end
