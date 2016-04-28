@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
     privilege = Privilege.where(:name => name).first
     if privileges.include?(privilege) || is_admin || is_moderator
       return true
-    elsif reputation >= privilege.threshold
+    elsif privilege && reputation >= privilege.threshold
       privileges << privilege
       return true
     else
