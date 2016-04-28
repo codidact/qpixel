@@ -9,4 +9,9 @@ class User < ActiveRecord::Base
   has_many :answers
   has_many :votes
   has_many :privileges
+
+  def has_privilege?(name)
+    matching = privileges.where(:name => name)
+    return matching.count == 1
+  end
 end
