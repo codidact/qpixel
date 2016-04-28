@@ -1,8 +1,8 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create, :edit, :update]
-  before_action :set_question, :only => [:show, :edit, :update]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy]
+  before_action :set_question, :only => [:show, :edit, :update, :destroy]
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
@@ -48,8 +48,9 @@ class QuestionsController < ApplicationController
     check_your_privilege('Edit')
   end
 
-  # Based on the information submitted from the <tt>edit</tt> view, updates the question. In a similar fashion to
-  # <tt>create</tt>, updates the tags explicitly because the standard <tt>update</tt> call can't be relied on.
+  # Authenticated web action. Based on the information submitted from the <tt>edit</tt> view, updates the question.
+  # In a similar fashion to <tt>create</tt>, updates the tags explicitly because the standard <tt>update</tt> call
+  # can't be relied on.
   def update
     check_your_privilege('Edit')
     params[:question][:tags] = params[:question][:tags].split(" ")
@@ -62,6 +63,18 @@ class QuestionsController < ApplicationController
       end
     else
       render :edit
+    end
+  end
+
+  # Authenticated web action. Marks the question as 'deleted' - that is, sets the <tt>is_deleted</tt> field to true.
+  def destroy
+    check_your_privilege('Delete')
+    @question.is_deleted = true
+    if @question.save
+      redirect_to url_for(:controller => :questions, :action => :index)
+    else
+      flash[:error] = "The question could not be deleted."
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     end
   end
 
