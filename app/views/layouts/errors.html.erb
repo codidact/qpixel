@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= get_setting('SiteName') %> - <%= yield(:title) %></title>
+  <title><%= get_setting('SiteName') %> - <%= yield(:error_name) %></title>
   <%= stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
@@ -49,8 +49,6 @@
       <p class="notice text-info"><%= notice %></p>
       <p class="error text-danger"><%= flash[:error] %></p>
       <div class="content-bar">
-        <% content_for :title, yield(:error_name) %>
-
         <h3><%= yield(:error_name) %></h3>
         <hr/>
         <p><%= raw(yield(:error_message)) %></p>
