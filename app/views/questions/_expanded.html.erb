@@ -45,7 +45,7 @@
           :method => :delete, data: { :confirm => 'Are you sure you want to delete this question?' }, class: "btn btn-danger" %>
       <% else %>
         <%= link_to "Undelete", url_for(:controller => :questions, :action => :undelete, :id => question.id),
-          :method => :patch, data: { :confirm => 'Undelete this question, making it visible to regular users?' } class: "btn btn-danger" %>
+          :method => :patch, data: { :confirm => 'Undelete this question, making it visible to regular users?' }, class: "btn btn-danger" %>
       <% end %>
     <% end %>
   </div>
