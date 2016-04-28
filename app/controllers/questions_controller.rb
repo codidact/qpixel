@@ -71,7 +71,7 @@ class QuestionsController < ApplicationController
     check_your_privilege('Delete')
     @question.is_deleted = true
     if @question.save
-      redirect_to url_for(:controller => :questions, :action => :index)
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
       flash[:error] = "The question could not be deleted."
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
