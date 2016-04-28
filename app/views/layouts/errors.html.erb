@@ -1,8 +1,12 @@
-<% content_for :title, yield(:error_name) %>
+<%= render layout: 'application' do %>
 
-<h3><%= yield(:error_name) %></h3>
-<hr/>
-<p><%= raw(yield(:error_message)) %></p>
+  <% content_for :title, yield(:error_name) %>
 
-<p>If you believe you encountered this page in error, or you want to report a fault, you can contact the administrator
-  at <%= get_setting('AdministratorContactEmail') %>.</p>
+  <h3><%= yield(:error_name) %></h3>
+  <hr/>
+  <p><%= raw(yield(:error_message)) %></p>
+
+  <p>If you believe you encountered this page in error, or you want to report a fault, you can contact the administrator
+    at <%= get_setting('AdministratorContactEmail') %>.</p>
+
+<% end %>
