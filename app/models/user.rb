@@ -10,8 +10,19 @@ class User < ActiveRecord::Base
   has_many :votes
   has_many :privileges
 
+  # Checks whether or not a user has the given privilege. For efficiency, initially checks if the privilege is in the
+  # user's <tt>privileges</tt> association and returns true if so; otherwise checks reputation and assigns the
+  # privilege if the user has enough rep. This method should not be used to secure administrator-only privileges, as
+  # both admins and mods are assumed to have the privilege.
   def has_privilege?(name)
-    matching = privileges.where(:name => name)
-    return matching.count == 1
+    privilege = Privilege.where(:name => name).first
+    if privileges.include?(privilege) || is_admin || is_moderator
+      return true
+    elsif reputation >= privilege.threshold
+      privileges << privilege
+      return true
+    else
+      return false
+    end
   end
 end
