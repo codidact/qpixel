@@ -137,8 +137,10 @@ question.</p>
             <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-ivar">@answer</span> = <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">answer_params</span>
-  <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">question</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">question</span> = <span class="ruby-ivar">@question</span>
   <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">user</span> = <span class="ruby-identifier">current_user</span>
+  <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">score</span> = <span class="ruby-value">0</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@answer</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
   <span class="ruby-keyword">else</span>

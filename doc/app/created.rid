@@ -1,7 +1,7 @@
-Wed, 27 Apr 2016 21:15:39 +0000
+Thu, 28 Apr 2016 15:41:28 +0000
 README.rdoc	Sun, 24 Apr 2016 10:29:37 +0000
 app/controllers/admin_controller.rb	Tue, 26 Apr 2016 21:05:41 +0000
-app/controllers/answers_controller.rb	Wed, 27 Apr 2016 19:09:55 +0000
+app/controllers/answers_controller.rb	Wed, 27 Apr 2016 21:26:59 +0000
 app/controllers/application_controller.rb	Wed, 27 Apr 2016 20:26:03 +0000
 app/controllers/moderator_controller.rb	Tue, 26 Apr 2016 21:05:41 +0000
 app/controllers/questions_controller.rb	Wed, 27 Apr 2016 21:15:36 +0000
@@ -19,7 +19,8 @@ app/helpers/site_settings_helper.rb	Tue, 26 Apr 2016 21:05:41 +0000
 app/helpers/users_helper.rb	Tue, 26 Apr 2016 21:05:41 +0000
 app/helpers/votes_helper.rb	Tue, 26 Apr 2016 21:05:41 +0000
 app/models/answer.rb	Wed, 27 Apr 2016 18:51:19 +0000
+app/models/privilege.rb	Thu, 28 Apr 2016 15:41:22 +0000
 app/models/question.rb	Wed, 27 Apr 2016 18:51:19 +0000
 app/models/site_setting.rb	Tue, 26 Apr 2016 21:13:41 +0000
-app/models/user.rb	Wed, 27 Apr 2016 17:42:57 +0000
+app/models/user.rb	Thu, 28 Apr 2016 15:41:22 +0000
 app/models/vote.rb	Tue, 26 Apr 2016 21:13:41 +0000

@@ -64,7 +64,17 @@
 
     
     
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
     
+    <li ><a href="#method-i-has_privilege-3F">#has_privilege?</a>
+    
+  </ul>
+</div>
+
   </div>
 </nav>
 
@@ -94,6 +104,60 @@ Devise) is concerned, has many questions, answers, and votes.</p>
     
 
     
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-has_privilege-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_privilege?</span><span
+            class="method-args">(name)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Checks whether or not a user has the given privilege. For efficiency,
+initially checks if the privilege is in the user&#39;s
+<code>privileges</code> association and returns true if so; otherwise
+checks reputation and assigns the privilege if the user has enough rep.
+This method should not be used to secure administrator-only privileges, as
+both admins and mods are assumed to have the privilege.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_privilege-3F-source">
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>)
+  <span class="ruby-identifier">privilege</span> = <span class="ruby-constant">Privilege</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>).<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">privileges</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">privilege</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">is_admin</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">is_moderator</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">reputation</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">privilege</span>.<span class="ruby-identifier">threshold</span>
+    <span class="ruby-identifier">privileges</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">privilege</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
   </section>
 </main>
 
