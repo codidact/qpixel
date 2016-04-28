@@ -1,9 +1,8 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update]
   before_action :set_question, :only => [:show, :edit, :update]
-  before_action(only: [:edit, :update]) { check_your_post_privilege(@question, 'Edit') }
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
@@ -46,11 +45,13 @@ class QuestionsController < ApplicationController
   # three conditions: either (a) the editing user is the OP; (b) the editing user is a mod or admin; or (c) the editing
   # user has is at or over the editing privilege threshold (the <tt>EditPrivilegeThreshold</tt> setting.)
   def edit
+    check_your_privilege('Edit')
   end
 
   # Based on the information submitted from the <tt>edit</tt> view, updates the question. In a similar fashion to
   # <tt>create</tt>, updates the tags explicitly because the standard <tt>update</tt> call can't be relied on.
   def update
+    check_your_privilege('Edit')
     params[:question][:tags] = params[:question][:tags].split(" ")
     if @question.update question_params
       @question.tags = params[:question][:tags]

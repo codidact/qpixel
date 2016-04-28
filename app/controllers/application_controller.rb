@@ -46,19 +46,9 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    # Checks whether or not the current user has the privileges to perform a specific action on a specific post. This
-    # method is intended to be used for standard actions - that is, those that aren't admin/mod only. Assumes that the
-    # OP is permitted to perform any such action on their own post. Also assumes that the user is already signed in,
-    # so use this method only after an authentication verification, such as <tt>:authenticate_user!</tt>.
-    def check_your_post_privilege(post, privilege)
-      if post.user == current_user
-        return true
-      elsif current_user.is_moderator || current_user.is_admin
-        return true
-      elsif current_user.reputation >= get_setting("#{privilege}PrivilegeThreshold").to_i
-        return true
-      else
-        raise ActionController::RoutingError.new('Forbidden') and return
+    def check_your_privilege(name)
+      unless current_user.has_privilege?(name)
+        raise ActionController::RoutingError.new('Not Found') and return
       end
     end
 end
