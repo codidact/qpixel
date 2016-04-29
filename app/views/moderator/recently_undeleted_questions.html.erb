@@ -1,0 +1,8 @@
+<% content_for :title, "Recently Undeleted Questions" %>
+
+<h3>Recently Undeleted Questions</h3>
+<% @questions.each do |q| %>
+  <%= render 'questions/question', :question => q %>
+<% end %>
+
+<%= will_paginate @questions %>
