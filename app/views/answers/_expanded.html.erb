@@ -1,4 +1,4 @@
-<div class="post-container">
+<div class="post-container <%= "deleted-content" if answer.is_deleted %>">
   <div class="vote-box">
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == 1 %>
