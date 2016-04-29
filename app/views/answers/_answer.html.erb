@@ -1,0 +1,14 @@
+<div class="question">
+  <div class="q-info-box">
+    <p class="large-text center"><%= answer.score %></p>
+    <p>score</p>
+  </div>
+  <div class="q-info-box">
+    <p><a href="/questions/<%= answer.question.id %>"><%= question.title %></a></p>
+    <p>
+      Answered <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>"><%= answer.created_at %></span>
+      by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a>
+    </p>
+  </div>
+  <span class="clearfix"></span>
+</div>
