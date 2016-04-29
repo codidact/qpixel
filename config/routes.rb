@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   get    'answers/:id/edit',            :to => 'answers#edit'
   post   'answers/:id/edit',            :to => 'answers#update'
   patch  'answers/:id/edit',            :to => 'answers#update'
-  delete 'answers/:id/delete',          :to => 'answers#delete'
+  delete 'answers/:id/delete',          :to => 'answers#destroy'
   patch  'answers/:id/delete',          :to => 'answers#undelete'
 
   # Nobody likes errors. Relegate them way down here.
