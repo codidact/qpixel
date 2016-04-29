@@ -7,4 +7,4 @@
 <% @question.answers.each do |answer| %>
   <%= render 'answers/expanded', :answer => answer %>
 <% end %>
-<a href="/questions/answer/<%= @question.id %>" class="btn btn-primary">Answer this Question</a>
+<a href="/questions/<%= @question.id %>/answer" class="btn btn-primary">Answer this Question</a>
