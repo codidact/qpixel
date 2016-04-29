@@ -30,6 +30,11 @@ Rails.application.routes.draw do
 
   get    'questions/answer/:id',        :to => 'answers#new'
   post   'questions/answer/:id',        :to => 'answers#create'
+  get    'answers/:id/edit',            :to => 'answers#edit'
+  post   'answers/:id/edit',            :to => 'answers#update'
+  patch  'answers/:id/edit',            :to => 'answers#update'
+  delete 'answers/:id/delete',          :to => 'answers#delete'
+  patch  'answers/:id/delete',          :to => 'answers#undelete'
 
   match  '/403',                        :to => 'errors#forbidden',                :via => :all
   match  '/404',                        :to => 'errors#not_found',                :via => :all
