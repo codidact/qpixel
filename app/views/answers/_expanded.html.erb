@@ -26,6 +26,15 @@
         Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
         by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
       </div>
+      <div class="padded clearfix"></div>
+      <a href="/answers/<%= question.id %>/edit" class="btn btn-info">Edit</a>
+      <% if !answer.is_deleted %>
+        <%= link_to "Delete", url_for(:controller => :answers, :action => :destroy, :id => answer.id),
+          :method => :delete, data: { :confirm => 'Are you sure you want to delete this answer?' }, class: "btn btn-danger" %>
+      <% else %>
+        <%= link_to "Undelete", url_for(:controller => :answers, :action => :undelete, :id => answer.id),
+          :method => :patch, data: { :confirm => 'Undelete this answer, making it visible to regular users?' }, class: "btn btn-danger" %>
+      <% end %>
     </div>
   </div>
   <span class="clearfix"></span>
