@@ -71,6 +71,7 @@ class QuestionsController < ApplicationController
     check_your_privilege('Delete')
     @question.is_deleted = true
     @question.deleted_at = DateTime.now
+    calculate_reputation(@question.user, @question, -1)
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
@@ -85,6 +86,7 @@ class QuestionsController < ApplicationController
     check_your_privilege('Delete')
     @question.is_deleted = false
     @question.deleted_at = DateTime.now
+    calculate_reputation(@question.user, @question, 1)
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
@@ -113,5 +115,14 @@ class QuestionsController < ApplicationController
           raise ActionController::RoutingError.new('Not Found')
         end
       end
+    end
+
+    # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
+    # reputation. If it's -1, we take it away.
+    def calculate_reputation(user, post, direction)
+      upvote_rep = post.votes.where(:vote_type => 1).count * get_setting('QuestionUpVoteRep').to_i
+      downvote_rep = post.votes.where(:vote_type => -1).count * get_setting('QuestionDownVoteRep').to_i
+      user.reputation += direction * (upvote_rep + downvote_rep)
+      user.save!
     end
 end

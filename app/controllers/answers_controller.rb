@@ -44,6 +44,8 @@ class AnswersController < ApplicationController
   def destroy
     check_your_privilege('Delete')
     @answer.is_deleted = true
+    @answer.deleted_at = DateTime.now
+    calculate_reputation(@answer.user, @answer, -1)
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
     else
@@ -56,6 +58,8 @@ class AnswersController < ApplicationController
   def undelete
     check_your_privilege('Delete')
     @answer.is_deleted = false
+    @answer.deleted_at = DateTime.now
+    calculate_reputation(@answer.user, @answer, 1)
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
     else
@@ -73,5 +77,14 @@ class AnswersController < ApplicationController
 
     def set_answer
       @answer = Answer.find params[:id]
+    end
+
+    # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
+    # reputation. If it's -1, we take it away.
+    def calculate_reputation(user, post, direction)
+      upvote_rep = post.votes.where(:vote_type => 1).count * get_setting('AnswerUpVoteRep').to_i
+      downvote_rep = post.votes.where(:vote_type => -1).count * get_setting('AnswerDownVoteRep').to_i
+      user.reputation += direction * (upvote_rep + downvote_rep)
+      user.save!
     end
 end
