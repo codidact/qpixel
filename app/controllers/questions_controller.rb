@@ -70,6 +70,7 @@ class QuestionsController < ApplicationController
   def destroy
     check_your_privilege('Delete')
     @question.is_deleted = true
+    @question.deleted_at = DateTime.now
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
@@ -83,6 +84,7 @@ class QuestionsController < ApplicationController
   def undelete
     check_your_privilege('Delete')
     @question.is_deleted = false
+    @question.deleted_at = DateTime.now
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
