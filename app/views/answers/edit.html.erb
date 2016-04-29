@@ -22,7 +22,7 @@
 <% end %>
 
 <h3>Question</h3>
-<%= render 'questions/expanded', :question => @question, :with_actions => false %>
+<%= render 'questions/expanded', :question => @answer.question, :with_actions => false %>
 
 <% content_for :sidebar do %>
   <div class="bg-primary padded">
