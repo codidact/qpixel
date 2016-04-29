@@ -1,7 +1,8 @@
 # Web controller. Provides actions that relate to answers. Pretty much the standard set of resources, really - it's
 # questions that have a few more actions.
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
+  before_action :set_answer, :only => [:edit, :update, :destroy, :undelete]
 
   # Authenticated web action. Creates a new answer as a resource for form creation in the view.
   def new
@@ -24,10 +25,34 @@ class AnswersController < ApplicationController
     end
   end
 
+  # Authenticated web action. Retrieves a single answer for editing.
+  def edit
+    check_your_privilege('Edit')
+  end
+
+  # Authenticated web aciton. Based on the information given in <tt>:edit</tt>, updates the answer.
+  def update
+    check_your_privilege('Edit')
+  end
+
+  # Authenticated web action. Deletes an answer - that is, applies the <tt>is_deleted</tt> attribute to it.
+  def destroy
+    check_your_privilege('Delete')
+  end
+
+  # Authenticated web action. Removes the <tt>is_deleted</tt> attribute from an answer - that is, undeletes it.
+  def undelete
+    check_your_privilege('Delete')
+  end
+
   private
     # Sanitized parameters for use by question operations. All we need to let through here is the answer body - the user
     # shouldn't be able to supply any other information.
     def answer_params
       params.require(:answer).permit(:body)
+    end
+
+    def set_answer
+      @answer = Answer.find params[:id]
     end
 end
