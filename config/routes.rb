@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 
   # Mods are also pretty important, I guess.
   get    'mod',                         :to => 'moderator#index'
+  get    'mod/deleted/questions',       :to => 'moderator#recently_deleted_questions'
+  get    'mod/deleted/answers',         :to => 'moderator#recently_deleted_answers'
+  get    'mod/undeleted/questions',     :to => 'moderator#recently_undeleted_questions'
+  get    'mod/undeleted/answers',       :to => 'moderator#recently_undeleted_answers'
 
   # Questions have a lot of actions...
   get    'questions',                   :to => 'questions#index'
