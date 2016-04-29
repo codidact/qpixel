@@ -72,7 +72,15 @@
     
     <li ><a href="#method-i-create">#create</a>
     
+    <li ><a href="#method-i-destroy">#destroy</a>
+    
+    <li ><a href="#method-i-edit">#edit</a>
+    
     <li ><a href="#method-i-new">#new</a>
+    
+    <li ><a href="#method-i-undelete">#undelete</a>
+    
+    <li ><a href="#method-i-update">#update</a>
     
   </ul>
 </div>
@@ -134,7 +142,7 @@ question.</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 15</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
   <span class="ruby-ivar">@answer</span> = <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">answer_params</span>
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
@@ -146,6 +154,73 @@ question.</p>
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-destroy" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">destroy</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web action. Deletes an answer - that is, applies the
+<code>is_deleted</code> attribute to it.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="destroy-source">
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-edit" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">edit</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web action. Retrieves a single answer for editing.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="edit-source">
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">edit</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -177,10 +252,78 @@ creation in the view.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@answer</span> = <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@question</span> = <span class="ruby-constant">Question</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-undelete" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">undelete</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web action. Removes the <code>is_deleted</code> attribute
+from an answer - that is, undeletes it.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="undelete-source">
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 44</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">undelete</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Authenticated web aciton. Based on the information given in
+<code>:edit</code>, updates the answer.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/controllers/answers_controller.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
