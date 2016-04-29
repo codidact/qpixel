@@ -18,11 +18,11 @@ class ModeratorController < ApplicationController
 
   # Administrative web action. Gets a list of recently undeleted questions so that moderators can review undeletions.
   def recently_undeleted_questions
-    @questions = Question.unscoped.where(:is_deleted => false, :deleted_at => 'is not null').paginate(:page => params[:page], :per_page => 50)
+    @questions = Question.unscoped.where(:is_deleted => false).where.not(:deleted_at => nil).paginate(:page => params[:page], :per_page => 50)
   end
 
   # Administrative web action. Gets a list of recently undeleted answers so that moderators can review undeletions.
   def recently_undeleted_answers
-    @answers = Answer.where(:is_deleted => false, :deleted_at => 'is not null').paginate(:page => params[:page], :per_page => 50)
+    @answers = Answer.where(:is_deleted => false).where.not(:deleted_at => nil).paginate(:page => params[:page], :per_page => 50)
   end
 end
