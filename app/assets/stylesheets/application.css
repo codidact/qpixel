@@ -14,6 +14,10 @@
  *= require_self
  */
 
+body {
+  margin-bottom: 20px;
+}
+
 .clearfix {
   clear: both;
 }
@@ -115,6 +119,7 @@ div.field {
 .post-container {
   width: 95%;
   padding: 10px;
+  margin-bottom: 10px;
 }
 
 span.tag {
