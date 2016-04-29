@@ -33,16 +33,35 @@ class AnswersController < ApplicationController
   # Authenticated web aciton. Based on the information given in <tt>:edit</tt>, updates the answer.
   def update
     check_your_privilege('Edit')
+    if @answer.update answer_params
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
+    else
+      render :edit
+    end
   end
 
   # Authenticated web action. Deletes an answer - that is, applies the <tt>is_deleted</tt> attribute to it.
   def destroy
     check_your_privilege('Delete')
+    @answer.is_deleted = true
+    if @answer.save
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
+    else
+      flash[:error] = "The answer could not be deleted."
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
+    end
   end
 
   # Authenticated web action. Removes the <tt>is_deleted</tt> attribute from an answer - that is, undeletes it.
   def undelete
     check_your_privilege('Delete')
+    @answer.is_deleted = false
+    if @answer.save
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
+    else
+      flash[:error] = "The answer could not be undeleted."
+      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
+    end
   end
 
   private
