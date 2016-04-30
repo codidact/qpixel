@@ -120,25 +120,29 @@ $(document).on('ready page:load', function() {
     });
   });
 
-  $("a.notification", document).bind("click", function(ev) {
-    ev.preventDefault();
-    var self = $(this);
-    $.ajax({
-      'type': 'POST',
-      'url': '/notifications/' + self.data("id") + '/read',
-      'src': self
-    })
-    .done(function(data) {
-      if(data['status'] !== 'success') {
-        console.error("Failed to mark notification as read.");
-      }
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      console.log(jqXHR.responseText);
-    })
-    .always(function(a, b, c) {
-      location.href = $(this.src).attr("href");
-    });
+  $(document).on("DOMNodeInserted", function(ev) {
+    if($(ev.target).is("a.notification")) {
+      $("a.notification", document).bind("click", function(ev) {
+        ev.preventDefault();
+        var self = $(this);
+        $.ajax({
+          'type': 'POST',
+          'url': '/notifications/' + self.data("id") + '/read',
+          'src': self
+        })
+        .done(function(data) {
+          if(data['status'] !== 'success') {
+            console.error("Failed to mark notification as read.");
+          }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR.responseText);
+        })
+        .always(function(a, b, c) {
+          location.href = $(this.src).attr("href");
+        });
+      });
+    }
   });
 
 });
