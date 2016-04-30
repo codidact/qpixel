@@ -4,16 +4,55 @@ class NotificationsController < ApplicationController
 
   # Authenticated web/API action. Retrieves a list of active notifications for the current user.
   def index
-
+    @notifications = Notification.where(:user => current_user, :is_read => false).paginate(:page => params[:page], :per_page => 100)
+    respond_to do |format|
+      format.html { render :index }
+      format.json { render :json => @notifications }
+    end
   end
 
   # Authenticated web/API action. Marks a single notification as read.
   def read
-
+    @notification = Notification.find params[:id]
+    @notification.is_read = true
+    if @notification.save
+      respond_to do |format|
+        format.html {
+          flash[:notice] = "Marked as read."
+          render :index
+        }
+        format.json { render :json => { :status => 'success' } }
+      end
+    else
+      respond_to do |format|
+        format.html {
+          flash[:error] = "Failed to mark read."
+          render :index
+        }
+        format.json { render :json => { :status => 'failed' } }
+      end
+    end
   end
 
   # Authenticated web/API action. Marks all the current user's unread notifications as read.
   def read_all
-
+    @notifications = Notification.where(:user => current_user, :is_read => false)
+    if @notifications.update_all(is_read: false)
+      respond_to do |format|
+        format.html {
+          flash[:notice] = "Marked all as read."
+          render :index
+        }
+        format.json { render :json => { :status => 'success' } }
+      end
+    else
+      respond_to do |format|
+        format.html {
+          flash[:error] = "Failed to mark all read."
+          render :index
+        }
+        format.json { render :json => { :status => 'failed' } }
+      end
+    end
   end
 end
