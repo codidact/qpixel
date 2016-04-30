@@ -162,6 +162,7 @@ span.tag {
 
 .padded {
   padding: 10px;
+  margin: 10px 0;
 }
 
 .deleted-content {
@@ -170,4 +171,8 @@ span.tag {
 
 span.notifications {
   cursor: pointer;
+}
+
+.bg-primary a, .bg-primary a:hover {
+  color: white;
 }
