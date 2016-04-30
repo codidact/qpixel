@@ -127,7 +127,7 @@ $(document).on('ready page:load', function() {
         var self = $(this);
         $.ajax({
           'type': 'POST',
-          'url': '/notifications/' + self.data("id") + '/read',
+          'url': '/notifications/' + self.data("id") + '/read.json',
           'src': self
         })
         .done(function(data) {
