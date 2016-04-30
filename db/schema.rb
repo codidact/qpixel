@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160429160144) do
+ActiveRecord::Schema.define(version: 20160430085520) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -26,6 +26,17 @@ ActiveRecord::Schema.define(version: 20160429160144) do
 
   add_index "answers", ["question_id"], name: "index_answers_on_question_id"
   add_index "answers", ["user_id"], name: "index_answers_on_user_id"
+
+  create_table "notifications", force: :cascade do |t|
+    t.string   "content"
+    t.string   "link"
+    t.boolean  "is_read"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
+  end
+
+  add_index "notifications", ["user_id"], name: "index_notifications_on_user_id"
 
   create_table "privileges", force: :cascade do |t|
     t.datetime "created_at", null: false
