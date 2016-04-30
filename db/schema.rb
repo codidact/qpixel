@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160430085520) do
+ActiveRecord::Schema.define(version: 20160430092324) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -30,9 +30,9 @@ ActiveRecord::Schema.define(version: 20160430085520) do
   create_table "notifications", force: :cascade do |t|
     t.string   "content"
     t.string   "link"
-    t.boolean  "is_read"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean  "is_read",    default: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "user_id"
   end
 

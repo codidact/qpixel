@@ -105,10 +105,11 @@ $(document).on('ready page:load', function() {
     $.ajax({
       'type': 'GET',
       'url': '/users/me/notifications.json',
-      'dd': $(this).children("dropdown-menu")
+      'dd': $(this)
     })
     .done(function(data) {
-      $dropdown = $(this.dd);
+      $dropdown = $(this.dd).children("ul.dropdown-menu").first();
+      console.log($dropdown);
       $dropdown.html("");
       for(var i = 0; i < data.length; i++) {
         $dropdown.append("<li><a href='" + data[i].link + "'>" + data[i].content + "</a></li>");
