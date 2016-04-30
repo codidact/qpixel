@@ -122,8 +122,18 @@ $(document).on('ready page:load', function() {
 
   $("ul.dropdown a.notification").bind("click", function(ev) {
     ev.preventDefault();
-    $.post("/notifications/" + $(this).data("id") + "/read")
-    location.href = $(this).attr("href");
+    var self = $(this);
+    $.ajax({
+      'type': 'POST',
+      'url': '/notifications/' + self.data("id") + '/read',
+      'src': self
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log(jqXHR.responseText);
+    })
+    .always(function(a, b, c) {
+      location.href = $(this.src).attr("href");
+    });
   });
 
 });
