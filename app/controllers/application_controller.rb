@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :find_hot_questions
 
   protected
     # Re-configures the parameters that the Devise parameter sanitizer will allow through. By default, this is only the
@@ -50,6 +51,13 @@ class ApplicationController < ActionController::Base
       unless current_user.has_privilege?(name) || (current_user.has_post_privilege?(name, post) if post)
         # Redirecting on errors :(
         redirect_to url_for(:controller => :errors, :action => :forbidden, :privilege_name => name) and return
+      end
+    end
+
+  private
+    def find_hot_questions
+      @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
+        Question.where(:created_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount'))
       end
     end
 end

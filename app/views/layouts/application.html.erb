@@ -64,6 +64,14 @@
       </div>
       <div class="sidebar">
         <%= yield(:sidebar) %>
+        <div class="padded bg-primary">
+          <h4>Hot Questions</h4>
+          <ul>
+            <% @hot_questions.each do |q| %>
+              <li><a href="/questions/<%= q.id %>"><%= q.title %></a></li>
+            <% end %>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
