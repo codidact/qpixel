@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  content: MyString
+  link: MyString
+  is_read: false
+
+two:
+  content: MyString
+  link: MyString
+  is_read: false
