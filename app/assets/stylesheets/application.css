@@ -167,3 +167,7 @@ span.tag {
 .deleted-content {
   background: #f2dede;
 }
+
+span.notifications {
+  cursor: pointer;
+}

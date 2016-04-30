@@ -99,4 +99,10 @@ $(document).on('ready page:load', function() {
     }
   });
 
+
+  // Notifications handling
+  $("span.notifications").bind("click", function(ev) {
+    
+  });
+
 });
