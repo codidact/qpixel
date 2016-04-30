@@ -121,7 +121,7 @@ $(document).on('ready page:load', function() {
   });
 
   $(document).on("DOMNodeInserted", function(ev) {
-    if($(ev.target).is("a.notification")) {
+    if($(ev.target).is("li") && $(ev.target).children("a.notification").length > 0) {
       $("a.notification", document).bind("click", function(ev) {
         ev.preventDefault();
         var self = $(this);
