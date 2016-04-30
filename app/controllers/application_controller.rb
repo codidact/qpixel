@@ -46,8 +46,8 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    def check_your_privilege(name)
-      unless current_user.has_privilege?(name)
+    def check_your_privilege(name, post = nil)
+      unless current_user.has_privilege?(name) || (current_user.has_post_privilege?(name, post) if post)
         # Redirecting on errors :(
         redirect_to url_for(:controller => :errors, :action => :forbidden, :privilege_name => name) and return
       end

@@ -27,6 +27,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Basically the same as <tt>User#has_privilege?</tt>, but checks privileges with relation to the post as well. OPs
+  # always have every privilege on their own posts.
+  def has_post_privilege?(name, post)
+    if post.user == self
+      return true
+    else
+      return self.has_privilege?(name)
+    end
+  end
+
   # Creates and adds a notification to the instance user's notification stack.
   def create_notification(content, link)
     notification = Notification.create(content: content, link: link)
