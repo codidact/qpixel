@@ -18,6 +18,7 @@ class AnswersController < ApplicationController
     @answer.question = @question
     @answer.user = current_user
     @answer.score = 0
+    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => params[:id])
     else
