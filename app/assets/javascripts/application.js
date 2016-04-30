@@ -128,6 +128,11 @@ $(document).on('ready page:load', function() {
       'url': '/notifications/' + self.data("id") + '/read',
       'src': self
     })
+    .done(function(data) {
+      if(data['status'] !== 'success') {
+        console.error("Failed to mark notification as read.");
+      }
+    })
     .fail(function(jqXHR, textStatus, errorThrown) {
       console.log(jqXHR.responseText);
     })
