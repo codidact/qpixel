@@ -26,4 +26,9 @@ class User < ActiveRecord::Base
       return false
     end
   end
+
+  def create_notification(content, link)
+    notification = Notification.create(content: content, link: link)
+    notifications << notification
+  end
 end
