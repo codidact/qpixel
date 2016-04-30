@@ -111,13 +111,19 @@ $(document).on('ready page:load', function() {
       $dropdown = $(this.dd).children("ul.dropdown-menu").first();
       $dropdown.html("");
       for(var i = 0; i < data.length; i++) {
-        $dropdown.append("<li><a href='" + data[i].link + "'>" + data[i].content + "</a></li>");
+        $dropdown.append("<li><a class='notification' data-id='" + data[i].id + "' href='" + data[i].link + "'>" + data[i].content + "</a></li>");
       }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
       $(this.dd).html("<li><em>Could not retrieve notifications - try again later.</em></li>");
       console.log(jqXHR.responseText);
     });
+  });
+
+  $("ul.dropdown a.notification").bind("click", function(ev) {
+    ev.preventDefault();
+    $.post("/notifications/" + $(this).data("id") + "/read")
+    location.href = $(this).attr("href");
   });
 
 });
