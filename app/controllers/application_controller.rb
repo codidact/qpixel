@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
   private
     def find_hot_questions
       @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
-        Question.where(:created_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount'))
+        Question.where(:created_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
       end
     end
 end
