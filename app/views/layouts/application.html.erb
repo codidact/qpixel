@@ -23,7 +23,15 @@
       <div class="toplevel-links">
         <% if user_signed_in? %>
           <% if current_user.unread_notifications > 0 %>
-            <span class="notifications badge"><%= current_user.unread_notifications %></span>
+            <span class="dropdown notifications">
+              <span class="badge dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                1
+                <span class="caret"></span>
+              </span>
+              <ul class="dropdown-menu">
+                <li>...</li>
+              </ul>
+            </span>
           <% end %>
           <a href="/users/<%= current_user.id %>"><%= current_user.username %></a>
           <span class="smaller gray">(<%= current_user.reputation %>)</span> —
