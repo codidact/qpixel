@@ -102,7 +102,22 @@ $(document).on('ready page:load', function() {
 
   // Notifications handling
   $("span.notifications").bind("click", function(ev) {
-    
+    $.ajax({
+      'type': 'GET',
+      'url': '/users/me/notifications',
+      'dd': $(this).children("dropdown-menu")
+    })
+    .done(function(data) {
+      $dropdown = $(this.dd);
+      $dropdown.html("");
+      for(var i = 0; i < data.length; i++) {
+        $dropdown.append("<li><a href='" + data[i].link + "'>" + data[i].content + "</a></li>");
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      $(this.dd).html("<li><em>Could not retrieve notifications - try again later.</em></li>");
+      console.log(jqXHR.responseText);
+    });
   });
 
 });
