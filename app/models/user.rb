@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :answers
   has_many :votes
   has_many :privileges
+  has_many :notifications
 
   # Checks whether or not a user has the given privilege. For efficiency, initially checks if the privilege is in the
   # user's <tt>privileges</tt> association and returns true if so; otherwise checks reputation and assigns the
