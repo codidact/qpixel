@@ -173,6 +173,9 @@ span.notifications {
   cursor: pointer;
 }
 
+.bg-primary a {
+  text-decoration: underline;
+}
 .bg-primary a, .bg-primary a:hover {
   color: white;
 }
