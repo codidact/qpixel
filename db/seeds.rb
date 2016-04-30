@@ -19,7 +19,8 @@ default_settings = [
   [ 'AnsweringGuidance', '<p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts '\
                          'that don\'t address the problem clutter up the thread</li><li><strong>explain why you\'re '\
                          'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ],
-  [ 'AdministratorContactEmail', 'contact@example.com' ]
+  [ 'AdministratorContactEmail', 'contact@example.com' ],
+  [ 'HotQuestionsCount', 5 ]
 ]
 
 default_privileges = [
