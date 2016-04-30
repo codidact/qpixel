@@ -109,7 +109,6 @@ $(document).on('ready page:load', function() {
     })
     .done(function(data) {
       $dropdown = $(this.dd).children("ul.dropdown-menu").first();
-      console.log($dropdown);
       $dropdown.html("");
       for(var i = 0; i < data.length; i++) {
         $dropdown.append("<li><a href='" + data[i].link + "'>" + data[i].content + "</a></li>");
