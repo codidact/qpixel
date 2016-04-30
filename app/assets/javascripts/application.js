@@ -104,7 +104,7 @@ $(document).on('ready page:load', function() {
   $("span.notifications").bind("click", function(ev) {
     $.ajax({
       'type': 'GET',
-      'url': '/users/me/notifications',
+      'url': '/users/me/notifications.json',
       'dd': $(this).children("dropdown-menu")
     })
     .done(function(data) {
