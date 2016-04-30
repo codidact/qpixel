@@ -27,8 +27,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Creates and adds a notification to the instance user's notification stack.
   def create_notification(content, link)
     notification = Notification.create(content: content, link: link)
     notifications << notification
+  end
+
+  # Returns a count of unread notifications for the instance user. Does not return the notifications themselves; that
+  # should be done by calling the API action from <tt>NotificationsController#index</tt>.
+  def unread_notifications
+    return notifications.where(:is_read => false).count
   end
 end

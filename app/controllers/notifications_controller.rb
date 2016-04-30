@@ -4,7 +4,7 @@ class NotificationsController < ApplicationController
 
   # Authenticated web/API action. Retrieves a list of active notifications for the current user.
   def index
-    @notifications = Notification.where(:user => current_user, :is_read => false).paginate(:page => params[:page], :per_page => 100)
+    @notifications = Notification.where(:user => current_user, :is_read => false).paginate(:page => params[:page], :per_page => 100).order('created_at DESC')
     respond_to do |format|
       format.html { render :index }
       format.json { render :json => @notifications }
