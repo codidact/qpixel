@@ -31,9 +31,14 @@ Rails.application.routes.draw do
   delete 'questions/:id/delete',        :to => 'questions#destroy'
   patch  'questions/:id/delete',        :to => 'questions#undelete'
 
-  # Most of the users stuff is Devised, but it doesn't provide an index or profile.
+  # Most of the users stuff is Devised, but it doesn't provide an index or profile, or notifications.
   get    'users',                       :to => 'users#index'
   get    'users/:id',                   :to => 'users#show'
+  get    'users/me/notifications',      :to => 'notifications#index'
+
+  # Notifications-specific routes that don't really fit with the /users namespace.
+  post   'notifications/:id/read',      :to => 'notifications#read'
+  post   'notifications/read_all',      :to => 'notifications#read_all'
 
   # Surprisingly few routes for voting, considering its complexity.
   post   'votes/new',                   :to => 'votes#create'
