@@ -120,7 +120,7 @@ $(document).on('ready page:load', function() {
     });
   });
 
-  $("ul.dropdown a.notification").bind("click", function(ev) {
+  $("a.notification", document).bind("click", function(ev) {
     ev.preventDefault();
     var self = $(this);
     $.ajax({
