@@ -8,10 +8,12 @@ class CommentsController < ApplicationController
     @comment = Comment.new comment_params
     @comment.user = current_user
     if @comment.save
+      id = @comment.post_type == 'Question' ? @comment.post.id : @comment.post.question.id
+      @comment.post.user.create_notification("New comment on one of your posts", "/questions/#{id}")
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(:controller => :questions, :action => :show, :id => id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(:controller => :questions, :action => :show, :id => id)
       end
     else
       flash[:error] = "Comment failed to save."
