@@ -23,7 +23,7 @@
       <div class="toplevel-links">
         <% if user_signed_in? %>
           <% if @open_flags %>
-            <span class="badge flag-indicator"><%= @open_flags %></span>
+            <a href="/mod/flags"><span class="badge flag-indicator"><%= @open_flags %></span></a>
           <% end %>
           <% if current_user.unread_notifications > 0 %>
             <span class="dropdown notifications">
