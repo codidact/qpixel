@@ -6,6 +6,9 @@ class CommentsController < ApplicationController
   # Authenticated API action. Creates a comment based on the data passed.
   def create
     @comment = Comment.new comment_params
+    post = params[:post_type] == 'Question' ? Question.find(params[:post_id]) : Answer.find(params[:post_id])
+    @comment.post = post
+    @comment.user = current_user
     if @comment.save
       render :json => { :status => 'success' }, :status => 201
     else

@@ -53,6 +53,12 @@ Rails.application.routes.draw do
   delete 'answers/:id/delete',          :to => 'answers#destroy'
   patch  'answers/:id/delete',          :to => 'answers#undelete'
 
+  # Comments aren't that important, really.
+  post   'comments/new',                :to => 'comments#create'
+  patch  'comments/:id/edit',           :to => 'comments#update'
+  delete 'comments/:id/delete',         :to => 'comments#destroy'
+  patch  'comments/:id/delete',         :to => 'comments#undelete'
+
   # Nobody likes errors. Relegate them way down here.
   match  '/403',                        :to => 'errors#forbidden',                :via => :all
   match  '/404',                        :to => 'errors#not_found',                :via => :all
