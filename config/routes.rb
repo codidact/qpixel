@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get    'admin/settings/:id/edit',     :to => 'site_settings#edit'
   post   'admin/settings/:id/edit',     :to => 'site_settings#update'
   patch  'admin/settings/:id/edit',     :to => 'site_settings#update'
+  get    'admin/flags',                 :to => 'flags#queue'
+  post   'admin/flags/:id/resolve',     :to => 'flags#resolve'
 
   # Mods are also pretty important, I guess.
   get    'mod',                         :to => 'moderator#index'
@@ -52,6 +54,9 @@ Rails.application.routes.draw do
   patch  'answers/:id/edit',            :to => 'answers#update'
   delete 'answers/:id/delete',          :to => 'answers#destroy'
   patch  'answers/:id/delete',          :to => 'answers#undelete'
+
+  # Most of the flagging stuff comes under the admin routes, but this one doesn't fit.
+  post   'flags/new',                   :to => 'flags#new'
 
   # Comments aren't that important, really.
   post   'comments/new',                :to => 'comments#create'
