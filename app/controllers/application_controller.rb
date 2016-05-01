@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :find_hot_questions
+  before_action :set_globals
 
   protected
     # Re-configures the parameters that the Devise parameter sanitizer will allow through. By default, this is only the
@@ -55,9 +55,12 @@ class ApplicationController < ActionController::Base
     end
 
   private
-    def find_hot_questions
+    def set_globals
       @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
         Question.where(:updated_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
+      end
+      if user.is_mod || user.is_admin
+        @open_flags = Flag.where(:flag_status => nil).count
       end
     end
 end

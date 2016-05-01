@@ -184,3 +184,7 @@ span.notifications {
   padding: 5px;
   border-bottom: 1px solid #eee;
 }
+
+.flag-indicator {
+  background: #337ab7 !important;
+}
