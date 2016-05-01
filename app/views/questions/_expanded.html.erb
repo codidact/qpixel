@@ -48,7 +48,7 @@
           <%= link_to "Undelete", url_for(:controller => :questions, :action => :undelete, :id => question.id),
             :method => :patch, data: { :confirm => 'Undelete this question, making it visible to regular users?' }, class: "btn btn-danger" %>
         <% end %>
-        <a class="flag-link" data-post-type="Question" data-post-id="<%= question.id %>">flag</a>
+        <a href="#" class="flag-link" data-post-type="Question" data-post-id="<%= question.id %>">flag</a>
       </div>
       <hr/>
       <div class="comments-container">

@@ -145,4 +145,8 @@ $(document).on('ready page:load', function() {
     }
   });
 
+  $("a.flag-link").bind("click", function(ev) {
+
+  });
+
 });
