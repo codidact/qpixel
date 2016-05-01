@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
       @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
         Question.where(:updated_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
       end
-      if user.is_mod || user.is_admin
+      if user_signed_in? && (current_user.is_mod || current_user.is_admin)
         @open_flags = Flag.where(:flag_status => nil).count
       end
     end
