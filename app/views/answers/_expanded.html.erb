@@ -44,6 +44,14 @@
       <% question.comments.each do |comment| %>
         <%= render 'comments/comment', :comment => comment %>
       <% end %>
+      <%= form_for Comment.new, url: { :controller => :comments, :action => :create } do |f| %>
+        <div class="field">
+          <%= f.text_area :content, { class: "form-control", rows: 3 } %>
+        </div>
+        <div class="field">
+          <%= f.submit "Add Comment", class: "btn btn-default" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
