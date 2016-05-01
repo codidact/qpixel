@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160501101156) do
+ActiveRecord::Schema.define(version: 20160501103643) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20160501101156) do
     t.integer  "post_id"
     t.string   "post_type"
     t.string   "content"
+    t.boolean  "is_deleted"
   end
 
   add_index "comments", ["post_type", "post_id"], name: "index_comments_on_post_type_and_post_id"
