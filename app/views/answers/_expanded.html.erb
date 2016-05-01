@@ -38,7 +38,7 @@
       Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
       by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
     </div>
-    <div class="padded clearfix"></div>
+    <div class="clearfix"></div>
     <hr/>
     <div class="comments-container">
       <% answer.comments.each do |comment| %>
