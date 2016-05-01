@@ -29,7 +29,7 @@
       by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
     </div>
     <div class="padded clearfix"></div>
-    <div>
+    <div class="padded">
       <a href="/answers/<%= answer.id %>/edit" class="btn btn-info">Edit</a>
       <% if !answer.is_deleted %>
         <%= link_to "Delete", url_for(:controller => :answers, :action => :destroy, :id => answer.id),
