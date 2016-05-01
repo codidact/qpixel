@@ -41,7 +41,7 @@
     </div>
     <hr/>
     <div class="comments-container">
-      <% question.comments.each do |comment| %>
+      <% answer.comments.each do |comment| %>
         <%= render 'comments/comment', :comment => comment %>
       <% end %>
       <%= form_for Comment.new, url: { :controller => :comments, :action => :create } do |f| %>
