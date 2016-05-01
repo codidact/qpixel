@@ -1,0 +1,22 @@
+<% content_for :title, "Moderator Flag Queue" %>
+
+<h3>Moderator Flag Queue</h3>
+<p>Below is a list of posts that users have flagged. Users are asked to provide a reason when flagging posts for
+  moderator attention; use that to help you determine what needs to be done.</p>
+
+<% @flags.each do |flag| %>
+  <div class="flag">
+    <% if flag.post_type == 'Question' %>
+      <%= render 'questions/question', :question => flag.post %>
+    <% else %>
+      <%= render 'answers/answer', :answer => flag.post %>
+    <% end %>
+    <p><strong>Reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+    <p>
+      <a href="#" class="flag-resolve btn btn-success" data-result='helpful'>Helpful</a>
+      <a href="#" class="flag-resolve btn btn-danger" data-result='declined'>Declined</a>
+    </p>
+  </div>
+<% end %>
+
+<%= will_paginate @flags %>
