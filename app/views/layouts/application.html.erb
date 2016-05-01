@@ -24,6 +24,7 @@
         <% if user_signed_in? %>
           <% if @open_flags %>
             <span class="badge flag-indicator"><%= @open_flags %></span>
+          <% end %>
           <% if current_user.unread_notifications > 0 %>
             <span class="dropdown notifications">
               <span class="badge dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
