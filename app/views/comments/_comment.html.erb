@@ -3,5 +3,8 @@
     <%= comment.content %> &mdash;
     <span class="author"><a href="/users/<%= comment.user.id %>"><%= comment.user.username %></a></span>
     <span title="<%= comment.created_at %>" data-livestamp="<%= comment.created_at %>"><%= comment.created_at %></span>
+    <% if user_signed_in? && comment.user == current_user %>
+      &mdash; <%= link_to "delete", url_for(:controller => :comments, :action => :destroy, :id => comment.id)
+                  :method => :delete, data: { confirm: "Delete this comment?" } %>
   </p>
 </div>
