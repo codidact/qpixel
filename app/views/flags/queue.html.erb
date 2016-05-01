@@ -13,8 +13,8 @@
     <% end %>
     <p><strong>Reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
     <p>
-      <a href="#" class="flag-resolve btn btn-success" data-result='helpful'>Helpful</a>
-      <a href="#" class="flag-resolve btn btn-danger" data-result='declined'>Declined</a>
+      <a href="#" class="flag-resolve btn btn-success" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+      <a href="#" class="flag-resolve btn btn-danger" data-result='declined' data-flag-id="<%= flag.id %>">Declined</a>
     </p>
   </div>
 <% end %>

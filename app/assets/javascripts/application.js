@@ -175,4 +175,35 @@ $(document).on('ready page:load', function() {
     });
   });
 
+  $("a.flag-resolve").bind("click", function(ev) {
+    ev.preventDefault();
+    var self = $(this);
+    var id = self.data("flag-id");
+    var data = {
+      'result': self.data("result"),
+      'message': window.prompt("Add some optional feedback on this flag:")
+    }
+
+    $.ajax({
+      'type': 'POST',
+      'url': '/mod/flags/' + id + '/resolve',
+      'data': data,
+      'el': self
+    })
+    .done(function(response) {
+      if(response['status'] !== 'success') {
+        alert("Failed to dismiss flag: " + response['message']);
+      }
+      else {
+        $(this.el).parent().parent().fadeOut(200, function() {
+          $(this).remove();
+        });
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      alert("Failed to dismiss flag: status " + jqXHR.status);
+      console.log(jqXHR.responseText);
+    });
+  });
+
 });
