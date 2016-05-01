@@ -39,7 +39,7 @@
     </div>
     <% if with_actions %>
       <div class="clearfix padded"></div>
-      <div class="">
+      <div class="padded">
         <a href="/questions/<%= question.id %>/edit" class="btn btn-info">Edit</a>
         <% if !question.is_deleted %>
           <%= link_to "Delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
