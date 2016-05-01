@@ -6,7 +6,7 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
-    @questions = Question.all.order('created_at DESC').paginate(:page => params[:page], :per_page => 50)
+    @questions = Question.all.order('created_at DESC').paginate(:page => params[:page], :per_page => 25)
   end
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
