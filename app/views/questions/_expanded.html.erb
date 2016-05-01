@@ -55,6 +55,8 @@
           <%= render 'comments/comment', :comment => comment %>
         <% end %>
         <%= form_for Comment.new, url: { :controller => :comments, :action => :create } do |f| %>
+          <%= f.hidden_field :post_type, :value => 'Question' %>
+          <%= f.hidden_field :post_id, :value => question.id %>
           <div class="field">
             <%= f.text_area :content, { class: "form-control", rows: 3 } %>
           </div>
