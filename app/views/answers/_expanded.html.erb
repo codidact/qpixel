@@ -39,6 +39,7 @@
           :method => :patch, data: { :confirm => 'Undelete this answer, making it visible to regular users?' }, class: "btn btn-danger" %>
       <% end %>
     </div>
+    <hr/>
     <div class="comments-container">
       <% question.comments.each do |comment| %>
         <%= render 'comments/comment', :comment => comment %>

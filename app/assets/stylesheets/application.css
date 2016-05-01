@@ -179,3 +179,8 @@ span.notifications {
 .bg-primary a, .bg-primary a:hover {
   color: white;
 }
+
+.comment {
+  padding: 10px;
+  border-bottom: 1px solid #777;
+}
