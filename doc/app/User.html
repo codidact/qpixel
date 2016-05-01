@@ -70,7 +70,13 @@
 
   <ul class="link-list" role="directory">
     
+    <li ><a href="#method-i-create_notification">#create_notification</a>
+    
+    <li ><a href="#method-i-has_post_privilege-3F">#has_post_privilege?</a>
+    
     <li ><a href="#method-i-has_privilege-3F">#has_privilege?</a>
+    
+    <li ><a href="#method-i-unread_notifications">#unread_notifications</a>
     
   </ul>
 </div>
@@ -110,6 +116,80 @@ Devise) is concerned, has many questions, answers, and votes.</p>
        </header>
 
     
+      <div id="method-i-create_notification" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_notification</span><span
+            class="method-args">(content, link)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Creates and adds a notification to the instance user&#39;s notification
+stack.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="create_notification-source">
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create_notification</span>(<span class="ruby-identifier">content</span>, <span class="ruby-identifier">link</span>)
+  <span class="ruby-identifier">notification</span> = <span class="ruby-constant">Notification</span>.<span class="ruby-identifier">create</span>(<span class="ruby-identifier">content</span><span class="ruby-operator">:</span> <span class="ruby-identifier">content</span>, <span class="ruby-identifier">link</span><span class="ruby-operator">:</span> <span class="ruby-identifier">link</span>)
+  <span class="ruby-identifier">notifications</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">notification</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-has_post_privilege-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_post_privilege?</span><span
+            class="method-args">(name, post)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Basically the same as <code>User#has_privilege?</code>, but checks
+privileges with relation to the post as well. OPs always have every
+privilege on their own posts.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_post_privilege-3F-source">
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_post_privilege?</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">post</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">post</span>.<span class="ruby-identifier">user</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">self</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-i-has_privilege-3F" class="method-detail ">
         
         <div class="method-heading">
@@ -134,7 +214,7 @@ both admins and mods are assumed to have the privilege.</p>
 
           
           <div class="method-source-code" id="has_privilege-3F-source">
-            <pre><span class="ruby-comment"># File app/models/user.rb, line 17</span>
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-identifier">privilege</span> = <span class="ruby-constant">Privilege</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>).<span class="ruby-identifier">first</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">privileges</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">privilege</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">is_admin</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">is_moderator</span>
@@ -145,6 +225,41 @@ both admins and mods are assumed to have the privilege.</p>
   <span class="ruby-keyword">else</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-unread_notifications" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">unread_notifications</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns a count of unread notifications for the instance user. Does not
+return the notifications themselves; that should be done by calling the API
+action from <code>NotificationsController#index</code>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="unread_notifications-source">
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 48</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">unread_notifications</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">notifications</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:is_read</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>).<span class="ruby-identifier">count</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           

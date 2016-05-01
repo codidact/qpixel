@@ -123,7 +123,7 @@ helper methods and global callbacks.</p>
         
         <div class="method-heading">
           <span class="method-name">check_your_privilege</span><span
-            class="method-args">(name)</span>
+            class="method-args">(name, post = nil)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -138,9 +138,9 @@ helper methods and global callbacks.</p>
 
           
           <div class="method-source-code" id="check_your_privilege-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 49</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-identifier">name</span>)
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>)
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">post</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">has_privilege?</span>(<span class="ruby-identifier">name</span>) <span class="ruby-operator">||</span> (<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">has_post_privilege?</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">post</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">post</span>)
     <span class="ruby-comment"># Redirecting on errors :(</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:errors</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:forbidden</span>, <span class="ruby-value">:privilege_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
@@ -178,7 +178,7 @@ app/controllers/users/*) controller.</p>
 
           
           <div class="method-source-code" id="configure_permitted_parameters-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 15</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_permitted_parameters</span>
   <span class="ruby-identifier">devise_parameter_sanitizer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sign_up</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">u</span>.<span class="ruby-identifier">permit</span>(<span class="ruby-value">:email</span>, <span class="ruby-value">:password</span>, <span class="ruby-value">:password_confirmation</span>, <span class="ruby-value">:username</span>) }
 <span class="ruby-keyword">end</span></pre>
@@ -216,7 +216,7 @@ Internal Server Error for an error that is usually recoverable.</p>
 
           
           <div class="method-source-code" id="get_setting-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 40</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">get_setting</span>(<span class="ruby-identifier">name</span>)
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">setting</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">find_by_name</span> <span class="ruby-identifier">name</span>
@@ -256,7 +256,7 @@ to be a higher level than moderators, so returns false for moderators.</p>
 
           
           <div class="method-source-code" id="verify_admin-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 30</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">verify_admin</span>
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_signed_in?</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">RoutingError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Not Found&#39;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>
@@ -295,7 +295,7 @@ to moderator resources, so returns true for administrators.</p>
 
           
           <div class="method-source-code" id="verify_moderator-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 22</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">verify_moderator</span>
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_signed_in?</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span>(<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_moderator</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">is_admin</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">RoutingError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Not Found&#39;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>

@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 
-<title>class AdminController - Rails Application Documentation</title>
+<title>class CommentsController - Rails Application Documentation</title>
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "./";
@@ -70,7 +70,7 @@
 
   <ul class="link-list" role="directory">
     
-    <li ><a href="#method-i-index">#index</a>
+    <li ><a href="#method-i-create">#create</a>
     
   </ul>
 </div>
@@ -78,14 +78,14 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-AdminController">
-  <h1 id="class-AdminController" class="class">
-    class AdminController
+<main role="main" aria-labelledby="class-CommentsController">
+  <h1 id="class-CommentsController" class="class">
+    class CommentsController
   </h1>
 
   <section class="description">
     
-<p>Web controller. Provides authenticated actions for use by administrators.</p>
+<p>Provides mainly API actions for using and making comments.</p>
 
   </section>
 
@@ -108,10 +108,10 @@
        </header>
 
     
-      <div id="method-i-index" class="method-detail ">
+      <div id="method-i-create" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">index</span><span
+          <span class="method-name">create</span><span
             class="method-args">()</span>
           
           <span class="method-click-advice">click to toggle source</span>
@@ -121,16 +121,20 @@
 
         <div class="method-description">
           
-          <p>Administrative web action. No dynamic content - this is purely
-representative of the existence of a (relatively) static view for this
-path.</p>
+          <p>Authenticated API action. Creates a comment based on the data passed.</p>
           
           
 
           
-          <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/admin_controller.rb, line 5</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File app/controllers/comments_controller.rb, line 6</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
+  <span class="ruby-ivar">@comment</span> = <span class="ruby-constant">Comment</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">comment_params</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@comment</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;success&#39;</span> }, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">201</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;failed&#39;</span>, <span class="ruby-value">:message</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Comment failed to save.&#39;</span> }, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">500</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           

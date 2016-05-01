@@ -196,8 +196,10 @@ is, sets the <code>is_deleted</code> field to true.</p>
           <div class="method-source-code" id="destroy-source">
             <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
-  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>, <span class="ruby-ivar">@question</span>)
   <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">is_deleted</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">deleted_at</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span>
+  <span class="ruby-identifier">calculate_reputation</span>(<span class="ruby-ivar">@question</span>.<span class="ruby-identifier">user</span>, <span class="ruby-ivar">@question</span>, <span class="ruby-value">-1</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">else</span>
@@ -240,7 +242,7 @@ the editing user has is at or over the editing privilege threshold (the
           <div class="method-source-code" id="edit-source">
             <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">edit</span>
-  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>, <span class="ruby-ivar">@question</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -408,10 +410,12 @@ visible from default scope again.</p>
 
           
           <div class="method-source-code" id="undelete-source">
-            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 83</span>
+            <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 85</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">undelete</span>
-  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>)
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Delete&#39;</span>, <span class="ruby-ivar">@question</span>)
   <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">is_deleted</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">deleted_at</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span>
+  <span class="ruby-identifier">calculate_reputation</span>(<span class="ruby-ivar">@question</span>.<span class="ruby-identifier">user</span>, <span class="ruby-ivar">@question</span>, <span class="ruby-value">1</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">save</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:questions</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">else</span>
@@ -453,7 +457,7 @@ visible from default scope again.</p>
           <div class="method-source-code" id="update-source">
             <pre><span class="ruby-comment"># File app/controllers/questions_controller.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
-  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>)
+  <span class="ruby-identifier">check_your_privilege</span>(<span class="ruby-string">&#39;Edit&#39;</span>, <span class="ruby-ivar">@question</span>)
   <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>] = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>].<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">update</span> <span class="ruby-identifier">question_params</span>
     <span class="ruby-ivar">@question</span>.<span class="ruby-identifier">tags</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:question</span>][<span class="ruby-value">:tags</span>]
