@@ -6,5 +6,6 @@
     <% if user_signed_in? && comment.user == current_user %>
       &mdash; <%= link_to "delete", url_for(:controller => :comments, :action => :destroy, :id => comment.id),
                   :method => :delete, data: { confirm: "Delete this comment?" } %>
+    <% end %>
   </p>
 </div>
