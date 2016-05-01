@@ -12,6 +12,9 @@ class Question < ActiveRecord::Base
   # Can be voted on as a Post.
   has_many :votes, :as => :post
 
+  # Can be commented on as a Post.
+  has_many :comments, :as => :post
+
   # Tags are not a string, they're a group of strings - sounds like an array to me.
   serialize :tags, Array
 

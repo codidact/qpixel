@@ -9,6 +9,9 @@ class Answer < ActiveRecord::Base
   # Can be voted on as a Post.
   has_many :votes, :as => :post
 
+  # Can be commented on as a Post.
+  has_many :comments, :as => :post
+
   # Can't be having answers without bodies.
   validates :body, :presence => true
 
