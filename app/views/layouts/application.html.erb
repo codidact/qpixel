@@ -22,7 +22,7 @@
       </div>
       <div class="toplevel-links">
         <% if user_signed_in? %>
-          <% if @open_flags %>
+          <% if @open_flags && @open_flags > 0 %>
             <a href="/mod/flags"><span class="badge flag-indicator"><%= @open_flags %></span></a>
           <% end %>
           <% if current_user.unread_notifications > 0 %>
