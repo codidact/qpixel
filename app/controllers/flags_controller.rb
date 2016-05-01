@@ -1,7 +1,7 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :verify_moderator, :only => [:resolve]
+  before_action :verify_moderator, :only => [:resolve, :queue]
 
   # Authenticated API action. Creates a new flag with a reason, assigns it a post and a user, and puts it in the queue.
   def new

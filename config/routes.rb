@@ -11,8 +11,6 @@ Rails.application.routes.draw do
   get    'admin/settings/:id/edit',     :to => 'site_settings#edit'
   post   'admin/settings/:id/edit',     :to => 'site_settings#update'
   patch  'admin/settings/:id/edit',     :to => 'site_settings#update'
-  get    'admin/flags',                 :to => 'flags#queue'
-  post   'admin/flags/:id/resolve',     :to => 'flags#resolve'
 
   # Mods are also pretty important, I guess.
   get    'mod',                         :to => 'moderator#index'
@@ -20,6 +18,8 @@ Rails.application.routes.draw do
   get    'mod/deleted/answers',         :to => 'moderator#recently_deleted_answers'
   get    'mod/undeleted/questions',     :to => 'moderator#recently_undeleted_questions'
   get    'mod/undeleted/answers',       :to => 'moderator#recently_undeleted_answers'
+  get    'mod/flags',                   :to => 'flags#queue'
+  post   'mod/flags/:id/resolve',       :to => 'flags#resolve'
 
   # Questions have a lot of actions...
   get    'questions',                   :to => 'questions#index'
