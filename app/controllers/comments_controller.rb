@@ -6,21 +6,19 @@ class CommentsController < ApplicationController
   # Authenticated web action. Creates a comment based on the data passed.
   def create
     @comment = Comment.new comment_params
-    post = params[:post_type] == 'Question' ? Question.find(params[:post_id]) : Answer.find(params[:post_id])
-    @comment.post = post
     @comment.user = current_user
     if @comment.save
-      if params[:post_type] == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => post.id)
+      if @comment.post_type == 'Question'
+        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => post.question.id)
+        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
       end
     else
       flash[:error] = "Comment failed to save."
-      if params[:post_type] == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => post.id)
+      if @comment.post_type == 'Question'
+        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => post.question.id)
+        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
       end
     end
   end
@@ -84,7 +82,7 @@ class CommentsController < ApplicationController
   private
     # Sanitizes parameters for use in creating or updating comments.
     def comment_params
-      params.require(:comment).permit(:content)
+      params.require(:comment).permit(:content, :post_type, :post_id)
     end
 
     # Finds the comment with the given ID and sets it to the <tt>@comment</tt> variable.
