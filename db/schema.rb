@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160501103643) do
+ActiveRecord::Schema.define(version: 20160501150425) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -34,9 +34,33 @@ ActiveRecord::Schema.define(version: 20160501103643) do
     t.string   "post_type"
     t.string   "content"
     t.boolean  "is_deleted"
+    t.integer  "user_id"
   end
 
   add_index "comments", ["post_type", "post_id"], name: "index_comments_on_post_type_and_post_id"
+  add_index "comments", ["user_id"], name: "index_comments_on_user_id"
+
+  create_table "flag_statuses", force: :cascade do |t|
+    t.string   "result"
+    t.string   "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "flag_id"
+  end
+
+  add_index "flag_statuses", ["flag_id"], name: "index_flag_statuses_on_flag_id"
+
+  create_table "flags", force: :cascade do |t|
+    t.string   "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
+    t.integer  "post_id"
+    t.string   "post_type"
+  end
+
+  add_index "flags", ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id"
+  add_index "flags", ["user_id"], name: "index_flags_on_user_id"
 
   create_table "notifications", force: :cascade do |t|
     t.string   "content"
