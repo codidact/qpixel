@@ -19,7 +19,8 @@ class FlagsController < ApplicationController
 
   # Administrative web action. Provides a 'queue' of flags - i.e. a page containing any unresolved flags.
   def queue
-    @flags = Flag.where(:flag_status => nil).paginate(:page => params[:page], :per_page => 50)
+    @flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id')
+                 .where('flag_statuses.id is null').paginate(:page => params[:page], :per_page => 50)
   end
 
   # Administrative API action. Provides a route for moderators and administrators to resolve flags - that is, apply a
