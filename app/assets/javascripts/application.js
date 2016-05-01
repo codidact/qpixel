@@ -146,7 +146,33 @@ $(document).on('ready page:load', function() {
   });
 
   $("a.flag-link").bind("click", function(ev) {
+    ev.preventDefault();
+    var self = $(this);
+    var data = {
+      'post_type': self.data("post-type"),
+      'post_id': self.data("post-id"),
+      'reason': window.prompt("Why does this post require moderator attention?")
+    }
 
+    if(data['reason'].length < 10) {
+      alert("Please enter at least 10 characters.");
+      return;
+    }
+
+    $.ajax({
+      'type': 'POST',
+      'url': '/flags/new',
+      'data': data
+    })
+    .done(function(response) {
+      if(response['status'] !== 'success') {
+        alert("Failed to flag: " + response['message']);
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      alert("Failed to flag: status " + jqXHR.status);
+      console.log(jqXHR.responseText);
+    });
   });
 
 });
