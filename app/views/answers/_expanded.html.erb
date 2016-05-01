@@ -33,6 +33,7 @@
         <%= link_to "Undelete", url_for(:controller => :answers, :action => :undelete, :id => answer.id),
           :method => :patch, data: { :confirm => 'Undelete this answer, making it visible to regular users?' }, class: "btn btn-danger" %>
       <% end %>
+      <a class="flag-link" data-post-type="Answer" data-post-id="<%= answer.id %>">flag</a>
     </div>
     <div class="post-author">
       Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
