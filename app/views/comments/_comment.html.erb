@@ -1,0 +1,7 @@
+<div class="comment">
+  <p>
+    <%= comment.content %> &mdash;
+    <span class="author"><a href="/users/<%= comment.user.id %>"><%= comment.user.username %></span>
+    <span title="<%= comment.created_at %>" data-livestamp="<%= comment.created_at %>"><%= comment.created_at %></span>
+  </p>
+</div>
