@@ -57,5 +57,8 @@ class Question < ActiveRecord::Base
       if body.squeeze(" 	").length < 30
         errors.add(:body, "must be more than 30 non-whitespace characters long")
       end
+      if title.squeeze(" 	").length < 15
+        errors.add(:title, "must be more than 15 non-whitespace characters long")
+      end
     end
 end
