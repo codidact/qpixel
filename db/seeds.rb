@@ -21,7 +21,9 @@ default_settings = [
                          'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ],
   [ 'AdministratorContactEmail', 'contact@example.com' ],
   [ 'HotQuestionsCount', 5 ],
-  [ 'RepNotificationsActive', 'true' ]
+  [ 'RepNotificationsActive', 'true' ],
+  [ 'AdminBadgeCharacter', ''],
+  [ 'ModBadgeCharacter', '']
 ]
 
 default_privileges = [
