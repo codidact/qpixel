@@ -36,7 +36,7 @@
       <a href="#" class="flag-link" data-post-type="Answer" data-post-id="<%= answer.id %>">flag</a>
     </div>
     <div class="post-author">
-      Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at %>">at <%= answer.created_at %></span>
+      Posted <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at.to_time.iso8601 %>">at <%= answer.created_at %></span>
       by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a> (<%= answer.user.reputation %>)
     </div>
     <div class="clearfix"></div>

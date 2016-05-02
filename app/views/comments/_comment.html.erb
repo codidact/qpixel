@@ -2,7 +2,7 @@
   <p>
     <%= raw(sanitize(CommentsController.renderer.render(comment.content).gsub("\n", "<br/>"), scrubber: CommentScrubber.new)) %> &mdash;
     <span class="author"><a href="/users/<%= comment.user.id %>"><%= comment.user.username %></a></span>
-    <span title="<%= comment.created_at %>" data-livestamp="<%= comment.created_at %>"><%= comment.created_at %></span>
+    <span title="<%= comment.created_at %>" data-livestamp="<%= comment.created_at.to_time.iso8601 %>"><%= comment.created_at %></span>
     <% if user_signed_in? && (comment.user == current_user || user_is_mod) %>
       &mdash; <%= link_to "delete", url_for(:controller => :comments, :action => :destroy, :id => comment.id),
                   :method => :delete, data: { confirm: "Delete this comment?" } %>

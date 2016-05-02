@@ -34,7 +34,7 @@
       <% end %>
     </div>
     <div class="post-author">
-      Posted <span title="<%= question.created_at %>" data-livestamp="<%= question.created_at %>">at <%= question.created_at %></span>
+      Posted <span title="<%= question.created_at %>" data-livestamp="<%= question.created_at.to_time.iso8601 %>">at <%= question.created_at %></span>
       by <a href="/users/<%= question.user.id %>"><%= question.user.username %></a> (<%= question.user.reputation %>)
     </div>
     <% if with_actions %>
