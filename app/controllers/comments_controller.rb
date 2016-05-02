@@ -2,6 +2,12 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_comment, :only => [:update, :destroy, :undelete]
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
+
+  # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
+  def self.renderer
+    @@markdown_renderer
+  end
 
   # Authenticated web action. Creates a comment based on the data passed.
   def create
@@ -91,4 +97,19 @@ class CommentsController < ApplicationController
     def set_comment
       @comment = Comment.find params[:id]
     end
+end
+
+# Provides a custom HTML sanitization interface to use for cleaning up the HTML in questions.
+class CommentScrubber < Rails::Html::PermitScrubber
+  # Sets up the scrubber instance with permissible tags and attributes.
+  def initialize
+    super
+    self.tags = %w( p b i em strong strike del code )
+    self.attributes = %w( title )
+  end
+
+  # Defines which nodes should be skipped when sanitizing HTML.
+  def skip_node?(node)
+    node.text?
+  end
 end
