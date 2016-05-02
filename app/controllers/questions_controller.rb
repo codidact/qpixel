@@ -17,6 +17,9 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
+    if user_signed_in? && current_user.has_privilege?('ViewDeleted')
+      @answers = Answer.unscoped.where(:question => @question)
+    end
   end
 
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string

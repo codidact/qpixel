@@ -4,8 +4,8 @@
 <span class="clearfix"></span><br/>
 <h4><%= pluralize(@question.answers.where(:is_deleted => false).count, "answer") %></h4>
 <hr/>
-<% if check_your_privilege('ViewDeleted') %>
-  <% @question.answers.unscoped.each do |answer| %>
+<% if @answers %>
+  <% @answers.each do |answer| %>
     <%= render 'answers/expanded', :answer => answer %>
   <% end %>
 <% else %>
