@@ -29,6 +29,8 @@ class Question < ActiveRecord::Base
   validate :maximum_tags
   validate :maximum_tag_length
 
+  validate :stripped_minimum
+
   private
     # Restricts the number of tags on any question to a maximum of 5, and a minimum of 1. This can't be achieved by any
     # of the standard validation helpers, since <tt>tags</tt> is an array.
@@ -47,6 +49,13 @@ class Question < ActiveRecord::Base
         if tag.length > 20
           errors.add(:tags, "can't be more than 20 characters long each")
         end
+      end
+    end
+
+    # Verifies that the length of the body is over 30 characters after removing excessive whitespace characters.
+    def stripped_minimum
+      if body.squeeze(" 	").length < 30:
+        errors.add(:body, "must be more than 30 non-whitespace characters long")
       end
     end
 end
