@@ -105,7 +105,7 @@ class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
     self.tags = %w( a b i em strong strike del code )
-    self.attributes = %w( title )
+    self.attributes = %w( href title )
   end
 
   # Defines which nodes should be skipped when sanitizing HTML.
