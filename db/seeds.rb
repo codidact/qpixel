@@ -20,7 +20,8 @@ default_settings = [
                          'that don\'t address the problem clutter up the thread</li><li><strong>explain why you\'re '\
                          'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ],
   [ 'AdministratorContactEmail', 'contact@example.com' ],
-  [ 'HotQuestionsCount', 5 ]
+  [ 'HotQuestionsCount', 5 ],
+  [ 'RepNotificationsActive', 'true' ]
 ]
 
 default_privileges = [
