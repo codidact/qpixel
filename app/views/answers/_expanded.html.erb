@@ -19,7 +19,7 @@
     </p>
   </div>
   <div class="body-box">
-    <%= answer.body %>
+    <%= AnswersController.renderer.render(answer.body).gsub("\n", "<br/>") %>
   </div>
   <span class="clearfix"></span>
   <hr/>
