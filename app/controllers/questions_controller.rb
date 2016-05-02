@@ -132,3 +132,18 @@ class QuestionsController < ApplicationController
       user.save!
     end
 end
+
+# Provides a custom HTML sanitization interface to use for cleaning up the HTML in questions.
+class QuestionScrubber < Rails::Html::PermitScrubber
+  # Sets up the scrubber instance with permissible tags and attributes.
+  def initialize
+    super
+    self.tags = %w( p b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li )
+    self.attributes = %w( href title src height width )
+  end
+
+  # Defines which nodes should be skipped when sanitizing HTML.
+  def skip_node?(node)
+    node.text?
+  end
+end

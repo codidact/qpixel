@@ -23,7 +23,7 @@
     </p>
   </div>
   <div class="body-box">
-    <%= raw(QuestionsController.renderer.render(question.body).gsub("\n", "<br/>")) %>
+    <%= raw(sanitize(QuestionsController.renderer.render(question.body).gsub("\n", "<br/>"), scrubber: QuestionScrubber.new)) %>
   </div>
   <span class="clearfix"></span>
   <hr/>
