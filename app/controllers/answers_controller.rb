@@ -1,13 +1,20 @@
+require 'redcarpet'
+
 # Web controller. Provides actions that relate to answers. Pretty much the standard set of resources, really - it's
 # questions that have a few more actions.
 class AnswersController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_answer, :only => [:edit, :update, :destroy, :undelete]
-
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
+  
   # Authenticated web action. Creates a new answer as a resource for form creation in the view.
   def new
     @answer = Answer.new
     @question = Question.find params[:id]
+  end
+
+  def self.renderer
+    @@markdown_renderer
   end
 
   # Authenticated web action. Based on the data submitted from the <tt>new</tt> view, creates a new answer. Assumes
