@@ -19,7 +19,7 @@
     </p>
   </div>
   <div class="body-box">
-    <%= raw(sanitize(AnswersController.renderer.render(answer.body).gsub("\n", "<br/>"), scrubber: AnswerScrubber.new)) %>
+    <%= raw(sanitize(AnswersController.renderer.render(answer.body), scrubber: AnswerScrubber.new)) %>
   </div>
   <span class="clearfix"></span>
   <hr/>
