@@ -4,13 +4,14 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_answer, :only => [:edit, :update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
-  
+
   # Authenticated web action. Creates a new answer as a resource for form creation in the view.
   def new
     @answer = Answer.new
     @question = Question.find params[:id]
   end
 
+  # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
   def self.renderer
     @@markdown_renderer
   end

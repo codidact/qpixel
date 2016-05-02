@@ -3,6 +3,12 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_question, :only => [:show, :edit, :update, :destroy, :undelete]
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
+
+  # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
+  def self.renderer
+    @@markdown_renderer
+  end
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
