@@ -34,4 +34,15 @@ module ApplicationHelper
       return false
     end
   end
+
+  # Basically identical to <tt>ApplicationController#check_your_privilege</tt>, but again as a helper for views.
+  def check_your_privilege(privilege)
+    if current_user.is_moderator || current_user.is_admin
+      return true
+    elsif current_user.reputation >= get_setting("#{privilege}PrivilegeThreshold").to_i
+      return true
+    else
+      return false
+    end
+  end
 end
