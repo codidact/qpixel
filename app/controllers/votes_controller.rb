@@ -90,17 +90,19 @@ class VotesController < ApplicationController
     def calc_rep(vote, post, modifier)
       if vote.vote_type == 1
         if vote.post_type == 'Answer'
-          post.user.reputation += modifier * get_setting('AnswerUpVoteRep').to_i
+          rep_add = modifier * get_setting('AnswerUpVoteRep').to_i
         else
-          post.user.reputation += modifier * get_setting('QuestionUpVoteRep').to_i
+          rep_add = modifier * get_setting('QuestionUpVoteRep').to_i
         end
       else
         if vote.post_type == 'Answer'
-          post.user.reputation += modifier * get_setting('AnswerDownVoteRep').to_i
+          rep_add = modifier * get_setting('AnswerDownVoteRep').to_i
         else
-          post.user.reputation += modifier * get_setting('QuestionDownVoteRep').to_i
+          rep_add = modifier * get_setting('QuestionDownVoteRep').to_i
         end
       end
+      post.user.reputation += rep_add
+      post.user.create_notification((rep_add > 0 ? "+#{rep_add}" : "-#{rep_add}"), url_for(:controller => :questions, :action => :show, :id => post.id))
       post.user.save!
     end
 end
