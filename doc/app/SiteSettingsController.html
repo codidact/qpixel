@@ -205,8 +205,13 @@ user to a single site setting. Redirects on completion back to the
           <div class="method-source-code" id="update-source">
             <pre><span class="ruby-comment"># File app/controllers/site_settings_controller.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
+  <span class="ruby-identifier">requires_sanitization</span> = [<span class="ruby-string">&#39;AskingGuidance&#39;</span>, <span class="ruby-string">&#39;AnsweringGuidance&#39;</span>]
   <span class="ruby-ivar">@setting</span> = <span class="ruby-constant">SiteSetting</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
   <span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">setting_params</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">requires_sanitization</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">name</span>)
+    <span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">value</span> = <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">helpers</span>.<span class="ruby-identifier">sanitize</span>(<span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">value</span>, <span class="ruby-identifier">scrubber</span><span class="ruby-operator">:</span> <span class="ruby-constant">SiteSettingScrubber</span>.<span class="ruby-identifier">new</span>)
+    <span class="ruby-ivar">@setting</span>.<span class="ruby-identifier">save!</span>
+  <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-value">:controller</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:site_settings</span>, <span class="ruby-value">:action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:index</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>

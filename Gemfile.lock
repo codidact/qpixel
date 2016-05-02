@@ -113,6 +113,7 @@ GEM
     rake (11.1.2)
     rdoc (4.2.2)
       json (~> 1.4)
+    redcarpet (3.3.4)
     responders (2.1.2)
       railties (>= 4.2.0, < 5.1)
     sass (3.4.22)
@@ -162,6 +163,8 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   rails (= 4.2.6)
+  rails-html-sanitizer
+  redcarpet
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring

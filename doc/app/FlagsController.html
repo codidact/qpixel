@@ -134,7 +134,16 @@ post and a user, and puts it in the queue.</p>
           <div class="method-source-code" id="new-source">
             <pre><span class="ruby-comment"># File app/controllers/flags_controller.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">new</span>
-
+  <span class="ruby-ivar">@flag</span> = <span class="ruby-constant">Flag</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">reason</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:reason</span>]
+  <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">post_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:post_id</span>]
+  <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">post_type</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:post_type</span>]
+  <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">user</span> = <span class="ruby-identifier">current_user</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;success&#39;</span> }, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">201</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;failed&#39;</span>, <span class="ruby-value">:message</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Flag failed to save.&#39;</span> }, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">500</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -166,9 +175,10 @@ page containing any unresolved flags.</p>
 
           
           <div class="method-source-code" id="queue-source">
-            <pre><span class="ruby-comment"># File app/controllers/flags_controller.rb, line 12</span>
+            <pre><span class="ruby-comment"># File app/controllers/flags_controller.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">queue</span>
-
+  <span class="ruby-ivar">@flags</span> = <span class="ruby-constant">Flag</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-string">&#39;left outer join flag_statuses on flags.id = flag_statuses.flag_id&#39;</span>)
+               .<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;flag_statuses.id is null&#39;</span>).<span class="ruby-identifier">paginate</span>(<span class="ruby-value">:page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:page</span>], <span class="ruby-value">:per_page</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">50</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -200,9 +210,15 @@ administrators to resolve flags - that is, apply a status to them.</p>
 
           
           <div class="method-source-code" id="resolve-source">
-            <pre><span class="ruby-comment"># File app/controllers/flags_controller.rb, line 18</span>
+            <pre><span class="ruby-comment"># File app/controllers/flags_controller.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">resolve</span>
-
+  <span class="ruby-ivar">@flag</span> = <span class="ruby-constant">Flag</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">flag_status</span> = <span class="ruby-constant">FlagStatus</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">result</span><span class="ruby-operator">:</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:result</span>], <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:message</span>])
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@flag</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;success&#39;</span> }
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;failed&#39;</span>, <span class="ruby-value">:message</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Failed to save new status.&#39;</span> }, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">500</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
