@@ -102,7 +102,7 @@ class VotesController < ApplicationController
         end
       end
       post.user.reputation += rep_add
-      post.user.create_notification((rep_add > 0 ? "+#{rep_add}" : "-#{rep_add}"), url_for(:controller => :questions, :action => :show, :id => post.id))
+      post.user.create_notification((rep_add > 0 ? "+#{rep_add}" : "-#{rep_add}"), url_for(:controller => :questions, :action => :show, :id => (post.is_a? Question ? post.id : post.question.id)))
       post.user.save!
     end
 end
