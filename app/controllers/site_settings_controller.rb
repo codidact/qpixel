@@ -17,8 +17,13 @@ class SiteSettingsController < ApplicationController
   # Authenticated administrator web action. Applies new values submitted by the user to a single site setting. Redirects
   # on completion back to the <tt>index</tt> action.
   def update
+    requires_sanitization = ['AskingGuidance', 'AnsweringGuidance']
     @setting = SiteSetting.find params[:id]
     @setting.update(setting_params)
+    if requires_sanitization.include?(@setting.name)
+      @setting.value = sanitize(@setting.value, scrubber: SiteSettingScrubber.new)
+      @setting.save!
+    end
     redirect_to url_for(:controller => :site_settings, :action => :index)
   end
 
@@ -28,4 +33,19 @@ class SiteSettingsController < ApplicationController
     def setting_params
       params.require(:site_setting).permit(:name, :value)
     end
+end
+
+# Provides a custom HTML sanitization interface to use for cleaning up the HTML in site settings.
+class SiteSettingScrubber < Rails::Html::PermitScrubber
+  # Sets up the scrubber instance with permissible tags and attributes.
+  def initialize
+    super
+    self.tags = %w( p b i em strong ul ol li a )
+    self.attributes = %w( href title )
+  end
+
+  # Defines which nodes should be skipped when sanitizing HTML.
+  def skip_node?(node)
+    node.text?
+  end
 end
