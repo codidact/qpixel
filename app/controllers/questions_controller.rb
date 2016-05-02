@@ -138,7 +138,7 @@ class QuestionScrubber < Rails::Html::PermitScrubber
   # Sets up the scrubber instance with permissible tags and attributes.
   def initialize
     super
-    self.tags = %w( p b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li )
+    self.tags = %w( a p b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li )
     self.attributes = %w( href title src height width )
   end
 

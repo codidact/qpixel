@@ -104,7 +104,7 @@ class CommentScrubber < Rails::Html::PermitScrubber
   # Sets up the scrubber instance with permissible tags and attributes.
   def initialize
     super
-    self.tags = %w( b i em strong strike del code )
+    self.tags = %w( a b i em strong strike del code )
     self.attributes = %w( title )
   end
 
