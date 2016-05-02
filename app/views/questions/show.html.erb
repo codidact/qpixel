@@ -9,7 +9,7 @@
     <%= render 'answers/expanded', :answer => answer %>
   <% end %>
 <% else %>
-  <% @question.answers.each do |answer| %>
+  <% @question.answers.order(params[:sort] || 'score desc').each do |answer| %>
     <%= render 'answers/expanded', :answer => answer %>
   <% end %>
 <% end %>

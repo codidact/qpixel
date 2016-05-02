@@ -18,7 +18,7 @@ class QuestionsController < ApplicationController
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
     if user_signed_in? && current_user.has_privilege?('ViewDeleted')
-      @answers = Answer.unscoped.where(:question => @question)
+      @answers = Answer.unscoped.where(:question => @question).order(params[:sort] || 'score desc')
     end
   end
 
