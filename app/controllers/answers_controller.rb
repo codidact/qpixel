@@ -83,7 +83,7 @@ class AnswersController < ApplicationController
     end
 
     def set_answer
-      @answer = Answer.find params[:id]
+      @answer = Answer.unscoped.find params[:id]
     end
 
     # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
