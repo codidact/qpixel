@@ -54,7 +54,7 @@ class Question < ActiveRecord::Base
 
     # Verifies that the length of the body is over 30 characters after removing excessive whitespace characters.
     def stripped_minimum
-      if body.squeeze(" 	").length < 30:
+      if body.squeeze(" 	").length < 30
         errors.add(:body, "must be more than 30 non-whitespace characters long")
       end
     end
