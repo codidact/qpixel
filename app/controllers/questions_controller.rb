@@ -80,8 +80,8 @@ class QuestionsController < ApplicationController
     check_your_privilege('Delete', @question)
     @question.is_deleted = true
     @question.deleted_at = DateTime.now
-    calculate_reputation(@question.user, @question, -1)
     if @question.save
+      calculate_reputation(@question.user, @question, -1)
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
       flash[:error] = "The question could not be deleted."
@@ -95,8 +95,8 @@ class QuestionsController < ApplicationController
     check_your_privilege('Delete', @question)
     @question.is_deleted = false
     @question.deleted_at = DateTime.now
-    calculate_reputation(@question.user, @question, 1)
     if @question.save
+      calculate_reputation(@question.user, @question, 1)
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
       flash[:error] = "The question could not be undeleted."

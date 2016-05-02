@@ -52,8 +52,8 @@ class AnswersController < ApplicationController
     check_your_privilege('Delete', @answer)
     @answer.is_deleted = true
     @answer.deleted_at = DateTime.now
-    calculate_reputation(@answer.user, @answer, -1)
     if @answer.save
+      calculate_reputation(@answer.user, @answer, -1)
       redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
     else
       flash[:error] = "The answer could not be deleted."
@@ -66,8 +66,8 @@ class AnswersController < ApplicationController
     check_your_privilege('Delete', @answer)
     @answer.is_deleted = false
     @answer.deleted_at = DateTime.now
-    calculate_reputation(@answer.user, @answer, 1)
     if @answer.save
+      calculate_reputation(@answer.user, @answer, 1)
       redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
     else
       flash[:error] = "The answer could not be undeleted."
