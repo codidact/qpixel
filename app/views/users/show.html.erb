@@ -20,4 +20,12 @@
     </ul>
   </div>
 </div>
+<div class="profile-row">
+  <div class="profile-module module-66">
+    <h4>Answers</h4>
+    <% @user.answers.each do |a| %>
+      <%= render 'answers/answer', :answer => a %>
+    <% end %>
+  </div>
+</div>
 <span class="clearfix"></span>
