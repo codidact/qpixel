@@ -103,7 +103,7 @@ class VotesController < ApplicationController
       end
       post.user.reputation += rep_add
       if get_setting('RepNotificationsActive') == 'true'
-        post.user.create_notification("#{rep_add} #{post.title}", url_for(:controller => :questions, :action => :show, :id => (vote.post_type == 'Question' ? post.id : post.question.id)))
+        post.user.create_notification("#{rep_add}", url_for(:controller => :questions, :action => :show, :id => (vote.post_type == 'Question' ? post.id : post.question.id)))
       end
       post.user.save!
     end
