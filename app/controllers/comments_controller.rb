@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
     @comment.user = current_user
     if @comment.save
       id = @comment.post_type == 'Question' ? @comment.post.id : @comment.post.question.id
-      @comment.post.user.create_notification("New comment on one of your posts", "/questions/#{id}")
+      @comment.post.user.create_notification("New comment on #{(@comment.post_type == "Question" ? @comment.post.title : @comment.post.question.title)}", "/questions/#{id}")
       if @comment.post_type == 'Question'
         redirect_to url_for(:controller => :questions, :action => :show, :id => id)
       else
