@@ -12,7 +12,7 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
-    @questions = Question.all.order('created_at DESC').paginate(:page => params[:page], :per_page => 25)
+    @questions = Question.all.order('updated_at DESC').paginate(:page => params[:page], :per_page => 25)
   end
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
@@ -25,7 +25,7 @@ class QuestionsController < ApplicationController
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string
   # parameter <tt>tag</tt>.
   def tagged
-    @questions = Question.where('tags like ?', "%#{params[:tag]}%").paginate(:page => params[:page], :per_page => 50)
+    @questions = Question.where('tags like ?', "%#{params[:tag]}%").order('updated_at DESC').paginate(:page => params[:page], :per_page => 50)
   end
 
   # Authenticated web action. Creates a new question as a resource for form creation in the view.
