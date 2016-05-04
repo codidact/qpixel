@@ -24,7 +24,7 @@
   <div class="profile-module module-66">
     <h4>Answers</h4>
     <% @user.answers.each do |a| %>
-      <%= render 'answers/answer', :answer => a if a && a.id %>
+      <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
     <% end %>
   </div>
 </div>
