@@ -16,6 +16,13 @@ class CommentsController < ApplicationController
     if @comment.save
       id = @comment.post_type == 'Question' ? @comment.post.id : @comment.post.question.id
       @comment.post.user.create_notification("New comment on one of your posts", "/questions/#{id}")
+
+      match = @comment.content.match(/@(?<name>\S+) /)
+      if match && match[:name]
+        user = User.find_by_username(match[:name])
+        user.create_notification("You were mentioned in a comment", "/questions/#{id}")
+      end
+
       if @comment.post_type == 'Question'
         redirect_to url_for(:controller => :questions, :action => :show, :id => id)
       else
