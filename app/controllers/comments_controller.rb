@@ -20,7 +20,7 @@ class CommentsController < ApplicationController
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
         user = User.find_by_username(match[:name])
-        user.create_notification("You were mentioned in a comment", "/questions/#{id}")
+        user.create_notification("You were mentioned in a comment", "/questions/#{id}") if user
       end
 
       if @comment.post_type == 'Question'
