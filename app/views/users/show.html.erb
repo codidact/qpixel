@@ -6,7 +6,7 @@
   <div class="profile-module module-66">
     <h4>Questions</h4>
     <% @user.questions.each do |q| %>
-      <%= render 'questions/question', :question => q %>
+      <%= render 'questions/question', :question => q if q && q.id %>
     <% end %>
   </div>
   <div class="profile-module module-33">
@@ -24,7 +24,7 @@
   <div class="profile-module module-66">
     <h4>Answers</h4>
     <% @user.answers.each do |a| %>
-      <%= render 'answers/answer', :answer => a %>
+      <%= render 'answers/answer', :answer => a if a && a.id %>
     <% end %>
   </div>
 </div>
