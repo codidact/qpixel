@@ -32,10 +32,20 @@ default_privileges = [
   [ 'ViewDeleted', 1000 ]
 ]
 
+default_post_history_types = [
+  [ 'Edit', 'A post was updated from an older revision to a newer one.', 'edited' ],
+  [ 'Delete', 'A post\'s state was changed from normal to being deleted.', 'deleted' ],
+  [ 'Undelete', 'A post\'s state was changed from being deleted back to normal.', 'undeleted' ]
+]
+
 default_settings.each do |name, value|
   SiteSetting.create(name: name, value: value)
 end
 
 default_privileges.each do |name, threshold|
   Privilege.create(name: name, threshold: threshold)
+end
+
+default_post_history_types.each do |name, description, action_name|
+  PostHistoryType.create(name: name, description: description, action_name: action_name)
 end
