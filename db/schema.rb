@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160501203952) do
+ActiveRecord::Schema.define(version: 20160507112646) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -72,6 +72,30 @@ ActiveRecord::Schema.define(version: 20160501203952) do
   end
 
   add_index "notifications", ["user_id"], name: "index_notifications_on_user_id"
+
+  create_table "post_histories", force: :cascade do |t|
+    t.integer  "post_history_type_id"
+    t.integer  "user_id"
+    t.string   "title"
+    t.string   "body"
+    t.string   "tags"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.integer  "post_id"
+    t.string   "post_type"
+  end
+
+  add_index "post_histories", ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
+  add_index "post_histories", ["post_type", "post_id"], name: "index_post_histories_on_post_type_and_post_id"
+  add_index "post_histories", ["user_id"], name: "index_post_histories_on_user_id"
+
+  create_table "post_history_types", force: :cascade do |t|
+    t.string   "name"
+    t.string   "description"
+    t.string   "action_name"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "privileges", force: :cascade do |t|
     t.datetime "created_at", null: false
