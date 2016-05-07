@@ -1,9 +1,9 @@
 <div class="question">
-  <div class="q-info-box">
+  <div class="q-info-box vote-box">
     <p class="large-text center"><%= question.score %></p>
     <p>score</p>
   </div>
-  <div class="q-info-box">
+  <div class="q-info-box title-box">
     <p><a href="/questions/<%= question.id %>"><%= question.title %></a></p>
     <p>
       <% question.tags.each do |tag| %>
