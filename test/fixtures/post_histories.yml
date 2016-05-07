@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  post_history_type_id: 
+  user_id: 
+  title: MyString
+  body: MyString
+  tags: MyString
+
+two:
+  post_history_type_id: 
+  user_id: 
+  title: MyString
+  body: MyString
+  tags: MyString
