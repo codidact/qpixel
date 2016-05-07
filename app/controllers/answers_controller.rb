@@ -40,7 +40,7 @@ class AnswersController < ApplicationController
   # Authenticated web aciton. Based on the information given in <tt>:edit</tt>, updates the answer.
   def update
     check_your_privilege('Edit', @answer)
-    PostHistory.answer_edited(@answer)
+    PostHistory.answer_edited(@answer, current_user)
     if @answer.update answer_params
       redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id)
     else
@@ -51,7 +51,7 @@ class AnswersController < ApplicationController
   # Authenticated web action. Deletes an answer - that is, applies the <tt>is_deleted</tt> attribute to it.
   def destroy
     check_your_privilege('Delete', @answer)
-    PostHistory.answer_deleted(@answer)
+    PostHistory.answer_deleted(@answer, current_user)
     @answer.is_deleted = true
     @answer.deleted_at = DateTime.now
     if @answer.save
@@ -66,7 +66,7 @@ class AnswersController < ApplicationController
   # Authenticated web action. Removes the <tt>is_deleted</tt> attribute from an answer - that is, undeletes it.
   def undelete
     check_your_privilege('Delete', @answer)
-    PostHistory.answer_undeleted(@answer)
+    PostHistory.answer_undeleted(@answer, current_user)
     @answer.is_deleted = false
     @answer.deleted_at = DateTime.now
     if @answer.save

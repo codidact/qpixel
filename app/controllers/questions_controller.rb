@@ -63,7 +63,7 @@ class QuestionsController < ApplicationController
   def update
     check_your_privilege('Edit', @question)
     params[:question][:tags] = params[:question][:tags].split(" ")
-    PostHistory.question_edited(@question)
+    PostHistory.question_edited(@question, current_user)
     if @question.update question_params
       @question.tags = params[:question][:tags]
       if @question.save
@@ -79,7 +79,7 @@ class QuestionsController < ApplicationController
   # Authenticated web action. Marks the question as 'deleted' - that is, sets the <tt>is_deleted</tt> field to true.
   def destroy
     check_your_privilege('Delete', @question)
-    PostHistory.question_deleted(@question)
+    PostHistory.question_deleted(@question, current_user)
     @question.is_deleted = true
     @question.deleted_at = DateTime.now
     if @question.save
@@ -95,7 +95,7 @@ class QuestionsController < ApplicationController
   # the question, making it visible from default scope again.
   def undelete
     check_your_privilege('Delete', @question)
-    PostHistory.question_undeleted(@question)
+    PostHistory.question_undeleted(@question, current_user)
     @question.is_deleted = false
     @question.deleted_at = DateTime.now
     if @question.save
