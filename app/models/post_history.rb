@@ -1,6 +1,6 @@
 class PostHistory < ActiveRecord::Base
-  has_one :post_history_type
-  has_one :user
+  belongs_to :post_history_type
+  belongs_to :user
   belongs_to :post, :polymorphic => true
 
   def self.question_edited(question, user)
