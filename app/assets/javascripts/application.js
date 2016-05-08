@@ -120,6 +120,27 @@ $(document).on('ready page:load', function() {
     });
   });
 
+  $("span.notifications.open").bind("click", function(ev) {
+    $.ajax({
+      'type': 'POST',
+      'url': '/notifications/read_all',
+      'target': $(this)
+    })
+    .done(function(data) {
+      if(data['status'] !== 'success') {
+        console.error("Failed to mark all notifications as read: " + data['status']);
+      }
+      else {
+        $(this.target).fadeOut(200, function() {
+          $(this).remove();
+        });
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.error("Failed to mark all notifications as read: status " + jqXHR.status);
+    });
+  });
+
   $(document).on("DOMNodeInserted", function(ev) {
     if($(ev.target).is("li") && $(ev.target).children("a.notification").length > 0) {
       $("a.notification", document).bind("click", function(ev) {
