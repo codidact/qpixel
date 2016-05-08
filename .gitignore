@@ -17,3 +17,9 @@
 /tmp
 
 config/initializers/devise.rb
+
+key/
+key/*
+
+certificates/
+certificates/*
