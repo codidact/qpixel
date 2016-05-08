@@ -118,26 +118,25 @@ $(document).on('ready page:load', function() {
       $(this.dd).html("<li><em>Could not retrieve notifications - try again later.</em></li>");
       console.log(jqXHR.responseText);
     });
-  });
-
-  $("span.notifications.open").bind("click", function(ev) {
-    $.ajax({
-      'type': 'POST',
-      'url': '/notifications/read_all',
-      'target': $(this)
-    })
-    .done(function(data) {
-      if(data['status'] !== 'success') {
-        console.error("Failed to mark all notifications as read: " + data['status']);
-      }
-      else {
-        $(this.target).fadeOut(200, function() {
-          $(this).remove();
-        });
-      }
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      console.error("Failed to mark all notifications as read: status " + jqXHR.status);
+    $("span.notifications.open").bind("click", function(ev) {
+      $.ajax({
+        'type': 'POST',
+        'url': '/notifications/read_all',
+        'target': $(this)
+      })
+      .done(function(data) {
+        if(data['status'] !== 'success') {
+          console.error("Failed to mark all notifications as read: " + data['status']);
+        }
+        else {
+          $(this.target).fadeOut(200, function() {
+            $(this).remove();
+          });
+        }
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        console.error("Failed to mark all notifications as read: status " + jqXHR.status);
+      });
     });
   });
 
