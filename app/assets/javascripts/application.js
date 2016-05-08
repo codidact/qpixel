@@ -99,29 +99,32 @@ $(document).on('ready page:load', function() {
     }
   });
 
+  var notificationsOpen = false;
 
   // Notifications handling
   $("span.notifications").bind("click", function(ev) {
-    $.ajax({
-      'type': 'GET',
-      'url': '/users/me/notifications.json',
-      'dd': $(this)
-    })
-    .done(function(data) {
-      $dropdown = $(this.dd).children("ul.dropdown-menu").first();
-      $dropdown.html("");
-      for(var i = 0; i < data.length; i++) {
-        $dropdown.append("<li><a class='notification' data-id='" + data[i].id + "' href='" + data[i].link + "'>" + data[i].content + "</a></li>");
-      }
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      $(this.dd).html("<li><em>Could not retrieve notifications - try again later.</em></li>");
-      console.log(jqXHR.responseText);
-    });
-    $("span.notifications.open").bind("click", function(ev) {
+    if(notifcationsOpen === false) {
+      $.ajax({
+        'type': 'GET',
+        'url': '/users/me/notifications.json',
+        'dd': $(this)
+      })
+      .done(function(data) {
+        $dropdown = $(this.dd).children("ul.dropdown-menu").first();
+        $dropdown.html("");
+        for(var i = 0; i < data.length; i++) {
+          $dropdown.append("<li><a class='notification' data-id='" + data[i].id + "' href='" + data[i].link + "'>" + data[i].content + "</a></li>");
+        }
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        $(this.dd).html("<li><em>Could not retrieve notifications - try again later.</em></li>");
+        console.log(jqXHR.responseText);
+      });
+    }
+    else {
       $.ajax({
         'type': 'POST',
-        'url': '/notifications/read_all',
+        'url': '/notifications/read_all.json',
         'target': $(this)
       })
       .done(function(data) {
@@ -137,7 +140,8 @@ $(document).on('ready page:load', function() {
       .fail(function(jqXHR, textStatus, errorThrown) {
         console.error("Failed to mark all notifications as read: status " + jqXHR.status);
       });
-    });
+    }
+    notificationsOpen = !notificationsOpen;
   });
 
   $(document).on("DOMNodeInserted", function(ev) {
