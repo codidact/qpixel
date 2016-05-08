@@ -103,7 +103,7 @@ $(document).on('ready page:load', function() {
 
   // Notifications handling
   $("span.notifications").bind("click", function(ev) {
-    if(notifcationsOpen === false) {
+    if(window.notifcationsOpen === false) {
       $.ajax({
         'type': 'GET',
         'url': '/users/me/notifications.json',
