@@ -37,7 +37,7 @@ class NotificationsController < ApplicationController
   # Authenticated web/API action. Marks all the current user's unread notifications as read.
   def read_all
     @notifications = Notification.where(:user => current_user, :is_read => false)
-    if @notifications.update_all(is_read: false)
+    if @notifications.update_all(is_read: true)
       respond_to do |format|
         format.html {
           flash[:notice] = "Marked all as read."
