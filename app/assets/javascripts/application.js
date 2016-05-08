@@ -99,7 +99,7 @@ $(document).on('ready page:load', function() {
     }
   });
 
-  var notificationsOpen = false;
+  window.notificationsOpen = false;
 
   // Notifications handling
   $("span.notifications").bind("click", function(ev) {
