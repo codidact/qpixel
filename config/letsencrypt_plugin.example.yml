@@ -1,0 +1,18 @@
+default: &default
+  endpoint: 'https://acme-v01.api.letsencrypt.org/'
+  email: '<YOUR ADMIN EMAIL>'
+  domain: '<YOUR DOMAIN>'
+
+  private_key: 'key/keyfile.pem'
+
+  output_cert_dir: 'certificates'
+  challenge_dir_name: 'challenge'
+
+production:
+  <<: *default
+
+development:
+  <<: *default
+
+test:
+  <<: *default
