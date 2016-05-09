@@ -29,6 +29,13 @@ Generate an RSA private key (no larger than 4096 bytes):
 
     openssl genrsa 4096 > key/keyfile.pem
 
+Copy the example config to a real config file:
+
+    cp config/letsencrypt_plugin.example.yml config/letsencrypt_plugin.yml
+
+You will then need to edit the config file (<tt>config/letsencrypt_plugin.yml</tt>) and insert your administration
+email address and your domain where they're marked.
+
 Run the Rake task to get SSL certificates:
 
     rake letsencrypt_plugin
