@@ -26,3 +26,5 @@ certificates/*
 
 challenge/
 challenge/*
+
+config/letsencrypt_plugin.yml
