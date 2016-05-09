@@ -2,6 +2,8 @@
 Rails Q&A software... because I can. This is based on Stack Exchange, though is deliberately a little differently
 designed and written. (duh, theirs is in C# ASP.NET MVC...)
 
+=== Dependencies & Database
+
 To get started, you will need:
 
 - A Linux server (or Windows, though if you can make Rails run smoothly on Windows you're doing better than me)
@@ -17,11 +19,28 @@ Run the following commands, in sequence, to set up the database.
     rake db:migrate
     rake db:seed
 
+=== SSL via Let's Encrypt
+
+If you want to set up the Let's Encrypt plugin, you need a few more commands. Make the required directories:
+
+    mkdir key challenge certificates
+
+Generate an RSA private key (no larger than 4096 bytes):
+
+    openssl genrsa 4096 > key/keyfile.pem
+
+Run the Rake task to get SSL certificates:
+
+    rake letsencrypt_plugin
+
+=== Start the Server
+
 To start the server, use
 
     rails s -p 80
 
 If any of the above commands don't work, try using them under <tt>sudo</tt> (or, if your Ruby installation uses RVM, you
-can try <tt>rvmsudo</tt>).
+can try <tt>rvmsudo</tt>). Beware of doing this with the Let's Encrypt plugin commands - if you do this, you will also
+need to run the application server under <tt>sudo</tt> or <tt>rvmsudo</tt>.
 
 Most site setting are configurable through the admin interface or through privilege thresholds.
