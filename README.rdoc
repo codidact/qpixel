@@ -46,8 +46,18 @@ To start the server, use
 
     rails s -p 80
 
-If any of the above commands don't work, try using them under <tt>sudo</tt> (or, if your Ruby installation uses RVM, you
-can try <tt>rvmsudo</tt>). Beware of doing this with the Let's Encrypt plugin commands - if you do this, you will also
-need to run the application server under <tt>sudo</tt> or <tt>rvmsudo</tt>.
+If you're on a machine that has multiple public-facing IPs, you'll need to specify which one to bind to using the
+<tt>-b</tt> switch: on Amazon EC2, I need to use <tt>rails s -p 80 -b 172.31.33.173</tt> to get it to run successfully.
 
-Most site setting are configurable through the admin interface or through privilege thresholds.
+=== Troubleshooting
+
+- If any of the above commands don't work, try using them under <tt>sudo</tt> (or, if your Ruby installation uses RVM,
+  you can try <tt>rvmsudo</tt>). Beware of doing this with the Let's Encrypt plugin commands - if you do this, you will
+  also need to run the application server under <tt>sudo</tt> or <tt>rvmsudo</tt>.
+
+- Beware of firewalls: if your server has a firewall that defaults to 'everything closed' mode, you will need to open
+  some ports in it to be able to run across the public Internet. On Amazon EC2 this is the case - the security group
+  governs the incoming and outgoing connections rules. You'll need to open whichever port you're running on - if that's
+  normal HTTP, you want 80; if it's HTTPS you need 443.
+
+- Most site settings are configurable through the admin interface or through privilege thresholds.
