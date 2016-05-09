@@ -36,9 +36,14 @@ Copy the example config to a real config file:
 You will then need to edit the config file (<tt>config/letsencrypt_plugin.yml</tt>) and insert your administration
 email address and your domain where they're marked.
 
+At this point you'll need to have a server running for the Let's Encrypt plugin to send and receive data from, so start
+a normal HTTP server using `rails s -p 80` (see Start the Server, below, for more info on that command).
+
 Run the Rake task to get SSL certificates:
 
     rake letsencrypt_plugin
+
+You can now kill the HTTP server if you wish to.
 
 === Start the Server
 
