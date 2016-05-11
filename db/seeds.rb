@@ -23,7 +23,12 @@ default_settings = [
   [ 'HotQuestionsCount', 5 ],
   [ 'RepNotificationsActive', 'true' ],
   [ 'AdminBadgeCharacter', ''],
-  [ 'ModBadgeCharacter', '']
+  [ 'ModBadgeCharacter', ''],
+  [ 'IRCHostname', 'localhost'],
+  [ 'IRCPort', '6667'],
+  [ 'IRCServerID', '8AB'],
+  [ 'IRCServerName', 'qpixel.qpixel'],
+  [ 'IRCPass', 'asdf']
 ]
 
 default_privileges = [
