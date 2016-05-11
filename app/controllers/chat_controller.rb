@@ -103,6 +103,7 @@ class ChatController < ApplicationController
           end
           socket.puts(":#{get_setting("IRCServerID")} SVSNICK #{message[-1]} #{ident.username} #{Time.now.to_i}")
           socket.puts(":#{get_setting("IRCServerID") + "AAAAAA"} PRIVMSG #{id} :Authenticated. Welcome!")
+          @tokens.delete(login)
         else
           socket.puts(":#{get_setting("IRCServerID") + "AAAAAA"} PRIVMSG #{id} :Invalid token.")
         end
