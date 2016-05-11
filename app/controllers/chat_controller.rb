@@ -115,6 +115,7 @@ class ChatController < ApplicationController
   end
 
   def new_token
+    @tokens.delete_if { |key, value| value == current_user }
     id = SecureRandom.hex(8)
     @tokens[id] = current_user
     return id 
