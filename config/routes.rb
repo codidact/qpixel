@@ -67,6 +67,9 @@ Rails.application.routes.draw do
   delete 'comments/:id/delete',         :to => 'comments#destroy'
   patch  'comments/:id/delete',         :to => 'comments#undelete'
 
+  # Chat stuff
+  get 'chat',                           :to => 'chat#index'
+
   # Nobody likes errors. Relegate them way down here.
   match  '/403',                        :to => 'errors#forbidden',                :via => :all
   match  '/404',                        :to => 'errors#not_found',                :via => :all
