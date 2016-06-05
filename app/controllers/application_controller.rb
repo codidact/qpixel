@@ -13,7 +13,9 @@ class ApplicationController < ActionController::Base
     # default user fields. We additionally have a username, which needs to be allowed through. This method is called
     # before every action taken from a Devise (or inherited Devise, such as app/controllers/users/*) controller.
     def configure_permitted_parameters
-      devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:email, :password, :password_confirmation, :username) }
+      devise_parameter_sanitizer.permit(:sign_up) do |user|
+        user.permit(:email, :password, :password_confirmation, :username)
+      end
     end
 
     # Verifies that the currently signed in user is, in fact, a moderator. This method assumes that it is used as a
