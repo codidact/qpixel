@@ -56,10 +56,12 @@ class ApplicationController < ActionController::Base
 
   private
     def set_globals
+      puts "[GLOB] User signed in: #{user_signed_in?}"
       @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
         Question.where(:updated_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
       end
       if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+        puts "[GLOB] User is administrative"
         @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count
       end
     end
