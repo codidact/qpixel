@@ -20,6 +20,8 @@ class QuestionsController < ApplicationController
     if user_signed_in? && current_user.has_privilege?('ViewDeleted')
       @answers = Answer.unscoped.where(:question => @question).order(params[:sort] || 'score desc')
     end
+    @upvotes = @question.votes.where(:vote_type => 1).count
+    @downvotes = @question.votes.where(:vote_type => -1).count
   end
 
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string
