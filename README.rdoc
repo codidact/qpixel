@@ -1,4 +1,4 @@
-== QPixel
+== QPixel {<img src="https://circleci.com/gh/ArtOfCode-/qpixel.svg?style=svg" alt="CircleCI" />}[https://circleci.com/gh/ArtOfCode-/qpixel]
 Rails Q&A software... because I can. This is based on Stack Exchange, though is deliberately a little differently
 designed and written. (duh, theirs is in C# ASP.NET MVC...)
 
