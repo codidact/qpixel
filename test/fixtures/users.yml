@@ -9,32 +9,12 @@ standard_user:
   email: "standard@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &1 2016-03-18 16:25:50.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *1
-  last_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2 2016-03-10 14:06:43.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *2
-  created_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &3 2015-08-23 23:29:39.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *3
-  updated_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &4 2016-03-31 15:09:34.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *4
+  current_sign_in_at: 2016-03-18 16:25:50.000000Z
+  last_sign_in_at: 2016-03-18 16:25:50.000000Z
+  created_at: 2016-03-18 16:25:50.000000Z
+  updated_at: 2016-03-18 16:25:50.000000Z
   reset_password_token: abcdefghijklmnopqrstuvwxyz
-  reset_password_sent_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &5 2016-03-16 19:42:53.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *5
+  reset_password_sent_at: 2016-03-18 16:25:50.000000Z
   is_admin: false
   is_moderator: false
   reputation: 1
@@ -45,32 +25,12 @@ editor:
   email: "editor@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &1 2016-03-18 16:25:50.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *1
-  last_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2 2016-03-10 14:06:43.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *2
-  created_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &3 2015-08-23 23:29:39.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *3
-  updated_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &4 2016-03-31 15:09:34.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *4
+  current_sign_in_at: 2016-03-18 16:25:50.000000Z
+  last_sign_in_at: 2016-03-18 16:25:50.000000Z
+  created_at: 2016-03-18 16:25:50.000000Z
+  updated_at: 2016-03-18 16:25:50.000000Z
   reset_password_token: abcdefghijklmnopqrstuvwxyz
-  reset_password_sent_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &5 2016-03-16 19:42:53.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *5
+  reset_password_sent_at: 2016-03-18 16:25:50.000000Z
   is_admin: false
   is_moderator: false
   reputation: 501
@@ -81,32 +41,12 @@ deleter:
   email: "delete@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &1 2016-03-18 16:25:50.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *1
-  last_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2 2016-03-10 14:06:43.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *2
-  created_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &3 2015-08-23 23:29:39.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *3
-  updated_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &4 2016-03-31 15:09:34.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *4
+  current_sign_in_at: 2016-03-18 16:25:50.000000Z
+  last_sign_in_at: 2016-03-18 16:25:50.000000Z
+  created_at: 2016-03-18 16:25:50.000000Z
+  updated_at: 2016-03-18 16:25:50.000000Z
   reset_password_token: abcdefghijklmnopqrstuvwxyz
-  reset_password_sent_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &5 2016-03-16 19:42:53.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *5
+  reset_password_sent_at: 2016-03-18 16:25:50.000000Z
   is_admin: false
   is_moderator: false
   reputation: 1001
@@ -117,32 +57,12 @@ moderator:
   email: "moderator@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &1 2016-03-18 16:25:50.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *1
-  last_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2 2016-03-10 14:06:43.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *2
-  created_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &3 2015-08-23 23:29:39.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *3
-  updated_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &4 2016-03-31 15:09:34.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *4
+  current_sign_in_at: 2016-03-18 16:25:50.000000Z
+  last_sign_in_at: 2016-03-18 16:25:50.000000Z
+  created_at: 2016-03-18 16:25:50.000000Z
+  updated_at: 2016-03-18 16:25:50.000000Z
   reset_password_token: abcdefghijklmnopqrstuvwxyz
-  reset_password_sent_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &5 2016-03-16 19:42:53.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *5
+  reset_password_sent_at: 2016-03-18 16:25:50.000000Z
   is_admin: false
   is_moderator: true
   reputation: 1
@@ -153,32 +73,12 @@ admin:
   email: "standard@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &1 2016-03-18 16:25:50.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *1
-  last_sign_in_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &2 2016-03-10 14:06:43.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *2
-  created_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &3 2015-08-23 23:29:39.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *3
-  updated_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &4 2016-03-31 15:09:34.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *4
+  current_sign_in_at: 2016-03-18 16:25:50.000000Z
+  last_sign_in_at: 2016-03-18 16:25:50.000000Z
+  created_at: 2016-03-18 16:25:50.000000Z
+  updated_at: 2016-03-18 16:25:50.000000Z
   reset_password_token: abcdefghijklmnopqrstuvwxyz
-  reset_password_sent_at: !ruby/object:ActiveSupport::TimeWithZone
-    utc: &5 2016-03-16 19:42:53.000000000 Z
-    zone: !ruby/object:ActiveSupport::TimeZone
-      name: Etc/UTC
-    time: *5
+  reset_password_sent_at: 2016-03-18 16:25:50.000000Z
   is_admin: true
   is_moderator: false
   reputation: 1
