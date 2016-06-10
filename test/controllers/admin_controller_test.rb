@@ -19,7 +19,7 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test "should deny standard users access" do
-    sign_in users(:standar_user)
+    sign_in users(:standard_user)
     AdminController.action_methods.each do |path|
       assert_raises ActionController::RoutingError do
         get path
