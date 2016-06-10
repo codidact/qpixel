@@ -1,6 +1,9 @@
 machine:
   ruby:
     version: ruby-2.3.0
+checkout:
+  post:
+    - cp config/letsencrypt_plugin.example.yml config/letsencrypt_plugin.yml
 database:
   pre:
     - bundle exec rake db:seed
