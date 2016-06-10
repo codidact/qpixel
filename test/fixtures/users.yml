@@ -75,7 +75,7 @@ admin:
   sign_in_count: 1337
   current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
   last_sign_in_at: <%= 5.days.ago.to_s :db %>
-  created_at: <%= 5.months.ag.to_s :dbo %>
+  created_at: <%= 5.months.ago.to_s :db %>
   updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: 8guzb8cl59y5aa9jmexg
   reset_password_sent_at: <%= 5.days.ago.to_s :db %>
