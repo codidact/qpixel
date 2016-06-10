@@ -9,12 +9,12 @@ standard_user:
   email: "standard@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: <%= 5.minutes.ago %>
-  last_sign_in_at: <%= 5.days.ago %>
-  created_at: <%= 5.months.ago %>
-  updated_at: <%= 5.weeks.ago %>
+  current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
+  last_sign_in_at: <%= 5.days.ago.to_s :db %>
+  created_at: <%= 5.months.ago.to_s :db %>
+  updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: mxvzrdi45nvc2790386q
-  reset_password_sent_at: <%= 5.days.ago %>
+  reset_password_sent_at: <%= 5.days.ago.to_s :db %>
   is_admin: false
   is_moderator: false
   reputation: 1
@@ -25,12 +25,12 @@ editor:
   email: "editor@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: <%= 5.minutes.ago %>
-  last_sign_in_at: <%= 5.days.ago %>
-  created_at: <%= 5.months.ago %>
-  updated_at: <%= 5.weeks.ago %>
+  current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
+  last_sign_in_at: <%= 5.days.ago.to_s :db %>
+  created_at: <%= 5.months.ago.to_s :db %>
+  updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: gr82cb7y09pkmidvpxab
-  reset_password_sent_at: <%= 5.days.ago %>
+  reset_password_sent_at: <%= 5.days.ago.to_s :db %>
   is_admin: false
   is_moderator: false
   reputation: 501
@@ -41,12 +41,12 @@ deleter:
   email: "delete@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: <%= 5.minutes.ago %>
-  last_sign_in_at: <%= 5.days.ago %>
-  created_at: <%= 5.months.ago %>
-  updated_at: <%= 5.weeks.ago %>
+  current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
+  last_sign_in_at: <%= 5.days.ago.to_s :db %>
+  created_at: <%= 5.months.ago.to_s :db %>
+  updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: 2vf7wd286uaeg7zncqvg
-  reset_password_sent_at: <%= 5.days.ago %>
+  reset_password_sent_at: <%= 5.days.ago.to_s :db %>
   is_admin: false
   is_moderator: false
   reputation: 1001
@@ -57,12 +57,12 @@ moderator:
   email: "moderator@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: <%= 5.minutes.ago %>
-  last_sign_in_at: <%= 5.days.ago %>
-  created_at: <%= 5.months.ago %>
-  updated_at: <%= 5.weeks.ago %>
+  current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
+  last_sign_in_at: <%= 5.days.ago.to_s :db %>
+  created_at: <%= 5.months.ago.to_s :db %>
+  updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: mtetmrlobkzimmvqt2nn
-  reset_password_sent_at: <%= 5.days.ago %>
+  reset_password_sent_at: <%= 5.days.ago.to_s :db %>
   is_admin: false
   is_moderator: true
   reputation: 1
@@ -73,12 +73,12 @@ admin:
   email: "admin@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
-  current_sign_in_at: <%= 5.minutes.ago %>
-  last_sign_in_at: <%= 5.days.ago %>
-  created_at: <%= 5.months.ago %>
-  updated_at: <%= 5.weeks.ago %>
+  current_sign_in_at: <%= 5.minutes.ago.to_s :db %>
+  last_sign_in_at: <%= 5.days.ago.to_s :db %>
+  created_at: <%= 5.months.ag.to_s :dbo %>
+  updated_at: <%= 5.weeks.ago.to_s :db %>
   reset_password_token: 8guzb8cl59y5aa9jmexg
-  reset_password_sent_at: <%= 5.days.ago %>
+  reset_password_sent_at: <%= 5.days.ago.to_s :db %>
   is_admin: true
   is_moderator: false
   reputation: 1
