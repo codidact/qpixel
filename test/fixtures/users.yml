@@ -70,7 +70,7 @@ moderator:
 
 
 admin:
-  email: "standard@qpixel-test.net"
+  email: "admin@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"
   sign_in_count: 1337
   current_sign_in_at: 2016-03-18 16:25:50.000000Z
