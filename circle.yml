@@ -1,0 +1,9 @@
+machine:
+  ruby:
+    version: ruby-2.3.0
+database:
+  pre:
+    - bundle exec rake db:seed
+  post:
+    - bundle exec rake test:prepare
+    - bundle exec rake db:migrate
