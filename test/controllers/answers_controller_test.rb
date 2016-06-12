@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class AnswersControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
+
   test "should get new answer page" do
     get :new, :id => questions(:one).id
     assert_not_nil assigns(:answer)
