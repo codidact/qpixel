@@ -1,0 +1,9 @@
+one:
+  title: ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags:
+    - ABCDEF
+    - GHIJKL
+    - MNOPQR
+  score: 0
+  user: standard_user
