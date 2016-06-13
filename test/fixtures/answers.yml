@@ -3,3 +3,9 @@ one:
   score: 0
   question: one
   user: standard_user
+
+two:
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  score: 0
+  question: one
+  user: editor
