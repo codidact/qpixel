@@ -51,44 +51,74 @@ class AnswersControllerTest < ActionController::TestCase
     assert_response(302)
   end
 
-  test "should require authentication to answer" do
+  test "should require authentication to get new page" do
     sign_out :user
     get :new, :id => questions(:one).id
     assert_response(302)
+  end
+
+  test "should require authenitcation to create answer" do
+    sign_out :user
     post :create, :id => questions(:one).id
     assert_response(302)
   end
 
-  test "should require edit privileges to edit" do
+  test "should require authentication to get edit page" do
     sign_out :user
     get :edit, :id => answers(:one).id
     assert_response(302)
+  end
+
+  test "should require authentication to update answer" do
+    sign_out :user
     patch :update, :id => answers(:one).id
     assert_response(302)
+  end
 
+  test "should require user to have edit privileges to get edit page" do
     sign_in users(:standard_user)
     get :edit, :id => answers(:one).id
     assert_response(401)
+  end
+
+  test "should require user to have edit privileges to update answer" do
+    sign_in users(:standard_user)
     patch :update, :id => answers(:one).id
     assert_response(401)
   end
 
-  test "should require delete privileges to delete" do
+  test "should require authentication to delete" do
     sign_out :user
     delete :destroy, :id => answers(:one).id
     assert_response(302)
+  end
+
+  test "should require authentication to undelete" do
+    sign_out :user
     delete :undelete, :id => answers(:one).id
     assert_response(302)
+  end
 
+  test "should require above standard privileges to delete" do
     sign_in users(:standard_user)
     delete :destroy, :id => answers(:one).id
     assert_response(401)
+  end
+
+  test "should require above standard privileges to undelete" do
+    sign_in users(:standard_user)
     delete :undelete, :id => answers(:one).id
     assert_response(401)
+  end
 
+  test "should require above edit privileges to delete" do
     sign_in users(:editor)
     delete :destroy, :id => answers(:one).id
     assert_response(401)
+  end
+
+  test "should require above edit privileges to undelete" do
+    sign_in users(:editor)
     delete :undelete, :id => answers(:one).id
     assert_response(401)
   end
