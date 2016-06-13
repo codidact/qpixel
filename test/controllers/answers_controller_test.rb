@@ -55,7 +55,7 @@ class AnswersControllerTest < ActionController::TestCase
     sign_out :user
     get :new, :id => questions(:one).id
     assert_response(302)
-    post :create  # no params because we should get redirected before they're checked
+    post :create, :id => questions(:one).id
     assert_response(302)
   end
 
