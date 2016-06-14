@@ -37,7 +37,7 @@ class AnswersControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     delete :destroy, :id => answers(:one).id
     assert_not_nil assigns(:answer)
-    assert_equal assigns(:answer).is_deleted, true
+    assert_equal true, assigns(:answer).is_deleted
     assert_not_nil assigns(:answer).deleted_at
     assert_response(302)
   end
@@ -46,7 +46,7 @@ class AnswersControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     delete :undelete, :id => answers(:one).id
     assert_not_nil assigns(:answer)
-    assert_equal assigns(:answer).is_deleted, false
+    assert_equal false, assigns(:answer).is_deleted
     assert_not_nil assigns(:answer).deleted_at
     assert_response(302)
   end
