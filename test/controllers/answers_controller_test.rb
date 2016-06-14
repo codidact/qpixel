@@ -123,6 +123,34 @@ class AnswersControllerTest < ActionController::TestCase
     assert_response(401)
   end
 
+  test "should allow author to get edit page" do
+    sign_in users(:standard_user)
+    get :edit, :id => answers(:one).id
+    assert_not_nil assigns(:answer)
+    assert_response(200)
+  end
+
+  test "should allow author to update answer" do
+    sign_in users(:standard_user)
+    patch :update, :answer => { :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, :id => answers(:one).id
+    assert_not_nil assigns(:answer)
+    assert_response(302)
+  end
+
+  test "should allow author to delete answer" do
+    sign_in users(:standard_user)
+    delete :destroy, :id => answers(:one).id
+    assert_not_nil assigns(:answer)
+    assert_response(302)
+  end
+
+  test "should allow author to undelete answer" do
+    sign_in users(:standard_user)
+    delete :undelete, :id => answers(:one).id
+    assert_not_nil assigns(:answer)
+    assert_response(302)
+  end
+
   test "should block short answers" do
     sign_in users(:standard_user)
     post :create, :answer => { :body => "ABCDEF" }, :id => questions(:one).id
