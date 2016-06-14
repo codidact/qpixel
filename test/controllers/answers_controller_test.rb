@@ -77,13 +77,13 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should require user to have edit privileges to get edit page" do
     sign_in users(:standard_user)
-    get :edit, :id => answers(:one).id
+    get :edit, :id => answers(:two).id
     assert_response(401)
   end
 
   test "should require user to have edit privileges to update answer" do
     sign_in users(:standard_user)
-    patch :update, :id => answers(:one).id
+    patch :update, :id => answers(:two).id
     assert_response(401)
   end
 
@@ -101,13 +101,13 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should require above standard privileges to delete" do
     sign_in users(:standard_user)
-    delete :destroy, :id => answers(:one).id
+    delete :destroy, :id => answers(:two).id
     assert_response(401)
   end
 
   test "should require above standard privileges to undelete" do
     sign_in users(:standard_user)
-    delete :undelete, :id => answers(:one).id
+    delete :undelete, :id => answers(:two).id
     assert_response(401)
   end
 
