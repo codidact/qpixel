@@ -122,4 +122,22 @@ class AnswersControllerTest < ActionController::TestCase
     delete :undelete, :id => answers(:one).id
     assert_response(401)
   end
+
+  test "should block short answers" do
+    sign_in users(:standard_user)
+    post :create, :answer => { :body => "ABCDEF" }, :id => questions(:one).id
+    assert_response(422)
+  end
+
+  test "should block whitespace answers" do
+    sign_in users(:standard_user)
+    post :create, :answer => { :body => " "*31 }, :id => questions(:one).id
+    assert_response(422)
+  end
+
+  test "should block long answers" do
+    sign_in users(:standard_user)
+    post :create, :answer => { :body => "A"*(3e4+1) }, :id => questions(:one).id
+    assert_response(422)
+  end
 end

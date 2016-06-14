@@ -28,7 +28,7 @@ class AnswersController < ApplicationController
     if @answer.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => params[:id]) and return
     else
-      render :new
+      render :new, :status => 422
     end
   end
 
