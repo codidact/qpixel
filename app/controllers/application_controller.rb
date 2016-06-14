@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
+  before_action :apply_block_list
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
 
@@ -58,6 +59,10 @@ class ApplicationController < ActionController::Base
       return true
     end
 
+    def current_ip_list
+      return [request.env['HTTP_X_REAL_IP'], request.env['HTTP_X_FORWARDED_FOR'], request.env['REMOTE_ADDR']]
+    end
+
   private
     def set_globals
       @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
@@ -65,6 +70,15 @@ class ApplicationController < ActionController::Base
       end
       if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
         @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count
+      end
+    end
+
+    def apply_block_list
+      blocked = get_setting('BlockedIpAddresses').split /[\s,]/
+      current_ip_list.each do |ip|
+        if blocked.include? ip
+          head :unauthorized and return
+        end
       end
     end
 end

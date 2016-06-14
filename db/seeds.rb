@@ -28,7 +28,8 @@ default_settings = [
   [ 'IRCPort', '6667'],
   [ 'IRCServerID', '8AB'],
   [ 'IRCServerName', 'qpixel.qpixel'],
-  [ 'IRCPass', 'asdf']
+  [ 'IRCPass', 'asdf'],
+  [ 'BlockedIpAddresses', '' ]
 ]
 
 default_privileges = [
