@@ -9,4 +9,27 @@ class CommentsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:comment)
     assert_response(302)
   end
+
+  test "should update existing comment" do
+    sign_in users(:standard_user)
+    patch :update, :id => comments(:one).id, :comment => { :content => "ABCDEF GHIJKL MNOPQR STUVWX YZ" }
+    assert_not_nil assigns(:comment)
+    assert_response(302)
+  end
+
+  test "should mark comment deleted" do
+    sign_in users(:moderator)
+    delete :destroy, :id => comments(:one).id
+    assert_not_nil assigns(:comment)
+    assert_equal true, assigns(:comment).is_deleted
+    assert_response(302)
+  end
+
+  test "should mark comment undeleted" do
+    sign_in users(:moderator)
+    delete :undelete, :id => comments(:one).id
+    assert_not_nil assigns(:comment)
+    assert_equal false, assigns(:comment).is_deleted
+    assert_response(302)
+  end
 end
