@@ -2,6 +2,7 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_comment, :only => [:update, :destroy, :undelete]
+  before_action :check_privilege, :only => [:update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
 
   # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
@@ -103,6 +104,13 @@ class CommentsController < ApplicationController
     # Finds the comment with the given ID and sets it to the <tt>@comment</tt> variable.
     def set_comment
       @comment = Comment.unscoped.find params[:id]
+    end
+
+    # Checks that the user trying to access the action has the required privilege - author or moderator/admin.
+    def check_privilege
+      unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
+        render :template => 'errors/forbidden', :status => 401
+      end
     end
 end
 
