@@ -13,7 +13,7 @@ class AdminControllerTest < ActionController::TestCase
     sign_out :user
     AdminController.action_methods.each do |path|
       get path
-      assert_response(302)
+      assert_response(404)
     end
   end
 
