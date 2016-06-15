@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
     # administrators.
     def verify_moderator
       if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-        raise ActionController::RoutingError.new('Not Found') and return
+        render :template => 'errors/not_found', :status => 404 and return
       end
     end
 
@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
     # Not Found if not. Admins are assumed to be a higher level than moderators, so returns false for moderators.
     def verify_admin
       if !user_signed_in? || !current_user.is_admin
-        raise ActionController::RoutingError.new('Not Found') and return
+        render :template => 'errors/not_found', :status => 404 and return
       end
     end
 
