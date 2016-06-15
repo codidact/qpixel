@@ -36,4 +36,52 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal false, assigns(:comment).is_deleted
     assert_response(302)
   end
+
+  test "should require authentication to post comment" do
+    sign_out :user
+    post :create
+    assert_response(302)
+  end
+
+  test "should prevent users from editing comments from another" do
+    sign_in users(:editor)  # Editor only applies to main posts, not comments.
+    patch :update, :id => comments(:one).id
+    assert_response(401)
+  end
+
+  test "should prevent users from deleting comments from another" do
+    sign_in users(:editor)
+    delete :destroy, :id => comments(:one).id
+    assert_response(401)
+  end
+
+  test "should prevent users from undeleting comments from another" do
+    sign_in users(:editor)
+    delete :undelete, :id => comments(:one).id
+    assert_response(401)
+  end
+
+  test "should allow moderators to update comment" do
+    sign_in users(:moderator)
+    patch :update, :id => comments(:one).id, :comment => { :content => "ABCDEF GHIJKL MNOPQR STUVWX YZ" }
+    assert_not_nil assigns(:comment)
+    assert_not_nil assigns(:comment).post
+    assert_response(302)
+  end
+
+  test "should allow author to delete comment" do
+    sign_in users(:standard_user)
+    delete :destroy, :id => comments(:one).id
+    assert_not_nil assigns(:comment)
+    assert_equal true, assigns(:comment).is_deleted
+    assert_response(302)
+  end
+
+  test "should allow author to undelete comment" do
+    sign_in users(:standard_user)
+    delete :undelete, :id => comments(:one).id
+    assert_not_nil assigns(:comment)
+    assert_equal false, assigns(:comment).is_deleted
+    assert_response(302)
+  end
 end
