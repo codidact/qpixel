@@ -102,7 +102,7 @@ class CommentsController < ApplicationController
 
     # Finds the comment with the given ID and sets it to the <tt>@comment</tt> variable.
     def set_comment
-      @comment = Comment.find params[:id]
+      @comment = Comment.unscoped.find params[:id]
     end
 end
 
