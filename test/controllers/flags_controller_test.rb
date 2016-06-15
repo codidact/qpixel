@@ -8,7 +8,7 @@ class FlagsControllerTest < ActionController::TestCase
     post :new, :reason => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :post_id => answers(:two).id, :post_type => 'Answer'
     assert_not_nil assigns(:flag)
     assert_not_nil assigns(:flag).post
-    assert_equal 'success', JSON.parse(response.body)[:status]
+    assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(201)
   end
 
@@ -24,7 +24,7 @@ class FlagsControllerTest < ActionController::TestCase
     post :resolve, :id => flags(:one).id, :result => "ABCDEF", :message => "ABCDEF GHIJKL MNOPQR STUVWX YZ"
     assert_not_nil assigns(:flag)
     assert_not_nil assigns(:flag).flag_status
-    assert_equal 'success', JSON.parse(response.body)[:status]
+    assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
   end
 
