@@ -68,7 +68,7 @@ class QuestionsControllerTest < ActionController::TestCase
     delete :destroy, :id => questions(:one).id
     assert_not_nil assigns(:question)
     assert_equal true, assigns(:question).is_deleted
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should mark question undeleted" do
@@ -76,7 +76,7 @@ class QuestionsControllerTest < ActionController::TestCase
     delete :undelete, :id => questions(:one).id
     assert_not_nil assigns(:question)
     assert_equal false, assigns(:question).is_deleted
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should require authentication to get new question page" do
