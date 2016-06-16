@@ -32,7 +32,7 @@ class SiteSettingsControllerTest < ActionController::TestCase
     assert_response(302)
   end
 
-  test "should require authentication to access index"
+  test "should require authentication to access index" do
     sign_out :user
     get :index
     assert_response(401)
