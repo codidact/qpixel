@@ -9,7 +9,6 @@ class VotesControllerTest < ActionController::TestCase
     assert_equal 'OK', JSON.parse(response.body)['status']
     assert_equal 'Fixnum', JSON.parse(response.body)['vote_id'].class.name
     assert_equal 'Fixnum', JSON.parse(response.body)['post_score'].class.name
-    assert_equal 1, questions(:two).score
     assert_response(200)
   end
 
@@ -19,7 +18,6 @@ class VotesControllerTest < ActionController::TestCase
     assert_equal 'OK', JSON.parse(response.body)['status']
     assert_equal 'Fixnum', JSON.parse(response.body)['vote_id'].class.name
     assert_equal 'Fixnum', JSON.parse(response.body)['post_score'].class.name
-    assert_equal -1, questions(:two).score
     assert_response(200)
   end
 
@@ -29,7 +27,6 @@ class VotesControllerTest < ActionController::TestCase
     assert_equal 'modified', JSON.parse(response.body)['status']
     assert_equal 'Fixnum', JSON.parse(response.body)['vote_id'].class.name
     assert_equal 'Fixnum', JSON.parse(response.body)['post_score'].class.name
-    assert_equal -1, questions(:two).score
     assert_response(200)
   end
 
