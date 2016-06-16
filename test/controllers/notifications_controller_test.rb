@@ -39,6 +39,6 @@ class NotificationsControllerTest < ActionController::TestCase
   test "should require authentication to get index" do
     sign_out :user
     get :index, :format => :json
-    assert_response(302)
+    assert_response(401)  # Devise seems to respond 401 for JSON requests.
   end
 end
