@@ -35,36 +35,36 @@ class SiteSettingsControllerTest < ActionController::TestCase
   test "should require authentication to access index" do
     sign_out :user
     get :index
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require authentication to access edit page" do
     sign_out :user
     get :edit, :id => site_settings(:one).id
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require authentication to update setting" do
     sign_out :user
     patch :update, :id => site_settings(:one).id
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require admin status to access index" do
     sign_in users(:moderator)
     get :index
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require admin status to access edit page" do
     sign_in users(:moderator)
     get :edit, :id => site_settings(:one).id
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require admin status to update setting" do
     sign_in users(:moderator)
     patch :update, :id => site_settings(:one).id
-    assert_response(401)
+    assert_response(404)
   end
 end
