@@ -45,7 +45,7 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:question)
     assert_equal 0, assigns(:question).score
     assert_equal ["ABCDEF", "GHIJKL"], assigns(:question).tags
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should get edit question page" do
@@ -60,7 +60,7 @@ class QuestionsControllerTest < ActionController::TestCase
     patch :update, :id => questions(:one).id, :question => { :title => "ABCDEF GHIJKL MNOPQR", :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :tags => "MNOPQR STUVWX" }
     assert_not_nil assigns(:question)
     assert_equal ["MNOPQR", "STUVWX"], assigns(:question).tags
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should mark question deleted" do
