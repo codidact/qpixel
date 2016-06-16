@@ -20,6 +20,7 @@ class NotificationsController < ApplicationController
         format.html { render :template => 'errors/forbidden', :status => 401 }
         format.json { render :json => nil, :status => 401 }
       end
+      return
     end
 
     @notification.is_read = true
