@@ -16,7 +16,9 @@ class NotificationsController < ApplicationController
     @notification = Notification.find params[:id]
 
     unless @notification.user == current_user
-      render :template => 'errors/forbidden', :status => 401
+      respond_to do |format|
+        format.html { render :template => 'errors/forbidden', :status => 401 }
+        format.json { render :head => 401 }
     end
 
     @notification.is_read = true
