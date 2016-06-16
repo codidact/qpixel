@@ -51,24 +51,11 @@ class VotesController < ApplicationController
       render :plain => "You are not authorized to remove this vote.", :status => 403 and return
     end
 
-    if vote.vote_type == 1
-      if vote.post_type == 'Answer'
-        vote.post.user.reputation -= get_setting('AnswerUpVoteRep').to_i or 0
-      else
-        vote.post.user.reputation -= get_setting('QuestionUpVoteRep').to_i or 0
-      end
-    else
-      if vote.post_type == 'Answer'
-        vote.post.user.reputation -= get_setting('AnswerDownVoteRep').to_i or 0
-      else
-        vote.post.user.reputation -= get_setting('QuestionDownVoteRep').to_i or 0
-      end
-    end
-    vote.destroy
+    calc_rep(vote, vote.post, -1)
+    vote.destroy!
 
     vote.post.score = vote.post.votes.sum(:vote_type)
     vote.post.save!
-    vote.post.user.save!
 
     render :json => { :status => "OK", :post_score => vote.post.score }
   end
@@ -103,7 +90,7 @@ class VotesController < ApplicationController
       end
       post.user.reputation += rep_add
       if get_setting('RepNotificationsActive') == 'true'
-        post.user.create_notification("#{rep_add} #{(vote.post_type == "Question" ? post.title : post.question.title)}", url_for(:controller => :questions, :action => :show, :id => (vote.post_type == 'Question' ? post.id : post.question.id)))
+        post.user.create_notification("#{rep_add} rep: #{(vote.post_type == "Question" ? post.title : post.question.title)}", url_for(:controller => :questions, :action => :show, :id => (vote.post_type == 'Question' ? post.id : post.question.id)))
       end
       post.user.save!
     end
