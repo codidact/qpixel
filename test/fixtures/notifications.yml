@@ -2,3 +2,8 @@ one:
   content: ABCDEF GHIJKL MNOPQR STUVWX YZ
   link: /
   user: standard_user
+
+two:
+  content: ABCDEF GHIJKL MNOPQR STUVWX
+  link: /
+  user: standard_user

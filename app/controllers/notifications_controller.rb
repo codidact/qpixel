@@ -14,6 +14,11 @@ class NotificationsController < ApplicationController
   # Authenticated web/API action. Marks a single notification as read.
   def read
     @notification = Notification.find params[:id]
+
+    unless @notification.user == current_user
+      render :template => 'errors/forbidden', :status => 401
+    end
+
     @notification.is_read = true
     if @notification.save
       respond_to do |format|
