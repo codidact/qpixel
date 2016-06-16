@@ -1,6 +1,8 @@
 # Web controller. Provides authenticated actions for use by moderators. A lot of the stuff in here, and hence a lot of
 # the tools, are rather repetitive.
 class ModeratorController < ApplicationController
+  before_action :verify_moderator
+
   # Administrative web action. No dynamic content - this is purely representative of the existence of a (relatively)
   # static view for this path.
   def index
