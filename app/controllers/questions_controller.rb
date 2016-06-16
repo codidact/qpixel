@@ -56,14 +56,14 @@ class QuestionsController < ApplicationController
   # three conditions: either (a) the editing user is the OP; (b) the editing user is a mod or admin; or (c) the editing
   # user has is at or over the editing privilege threshold (the <tt>EditPrivilegeThreshold</tt> setting.)
   def edit
-    check_your_privilege('Edit', @question)
+    return unless check_your_privilege('Edit', @question)
   end
 
   # Authenticated web action. Based on the information submitted from the <tt>edit</tt> view, updates the question.
   # In a similar fashion to <tt>create</tt>, updates the tags explicitly because the standard <tt>update</tt> call
   # can't be relied on.
   def update
-    check_your_privilege('Edit', @question)
+    return unless check_your_privilege('Edit', @question)
     params[:question][:tags] = params[:question][:tags].split(" ")
     PostHistory.question_edited(@question, current_user)
     if @question.update question_params
@@ -80,7 +80,7 @@ class QuestionsController < ApplicationController
 
   # Authenticated web action. Marks the question as 'deleted' - that is, sets the <tt>is_deleted</tt> field to true.
   def destroy
-    check_your_privilege('Delete', @question)
+    return unless check_your_privilege('Delete', @question)
     PostHistory.question_deleted(@question, current_user)
     @question.is_deleted = true
     @question.deleted_at = DateTime.now
@@ -96,7 +96,7 @@ class QuestionsController < ApplicationController
   # Authenticated web action. Basically the opposite of <tt>:destroy</tt> - removes the <tt>is_deleted</tt> flag from
   # the question, making it visible from default scope again.
   def undelete
-    check_your_privilege('Delete', @question)
+    return unless check_your_privilege('Delete', @question)
     PostHistory.question_undeleted(@question, current_user)
     @question.is_deleted = false
     @question.deleted_at = DateTime.now
