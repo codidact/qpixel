@@ -50,7 +50,7 @@ class SiteSettingsControllerTest < ActionController::TestCase
     assert_response(401)
   end
 
-  test "should require admin status to access index"
+  test "should require admin status to access index" do
     sign_in users(:moderator)
     get :index
     assert_response(401)
