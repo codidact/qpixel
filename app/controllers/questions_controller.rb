@@ -126,7 +126,7 @@ class QuestionsController < ApplicationController
           @question ||= Question.unscoped.find params[:id]
         end
         if @question.nil?
-          raise ActionController::RoutingError.new('Not Found')
+          render :template => 'errors/not_found', :status => 404
         end
       end
     end
