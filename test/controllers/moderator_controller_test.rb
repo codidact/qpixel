@@ -53,7 +53,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_out :user
     ModeratorController.action_methods.each do |path|
       get path
-      assert_response(401)
+      assert_response(404)
     end
   end
 
@@ -61,7 +61,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     ModeratorController.action_methods.each do |path|
       get path
-      assert_response(401)
+      assert_response(404)
     end
   end
 end
