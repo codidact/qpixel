@@ -1,0 +1,7 @@
+one:
+  name: ABCDEF
+  value: ABCDEF GHIJKL
+
+sanitize:
+  name: AskingGuidance
+  value: "<script>alert('omg xss');</script>"
