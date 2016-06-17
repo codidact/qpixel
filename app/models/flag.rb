@@ -4,4 +4,6 @@ class Flag < ActiveRecord::Base
   belongs_to :user
 
   has_one :flag_status
+
+  validates :reason, length: { minimum: 30, maximum: 1000 }
 end
