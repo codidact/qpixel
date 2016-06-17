@@ -12,10 +12,10 @@ engines:
     enabled: true
     config:
       languages:
-      - ruby
-      - javascript
-      - python
-      - php
+        ruby:
+          mass_threshold: 70
+        javascript:
+          mass_threshold: 70
   eslint:
     enabled: true
   fixme:
@@ -43,3 +43,4 @@ exclude_paths:
 - db/
 - test/
 - vendor/
+- doc/
