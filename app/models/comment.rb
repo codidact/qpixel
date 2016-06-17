@@ -4,4 +4,6 @@ class Comment < ActiveRecord::Base
 
   belongs_to :post, :polymorphic => true
   belongs_to :user
+
+  validates :content, length: { minimum: 15, maximum: 500 }
 end
