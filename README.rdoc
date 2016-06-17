@@ -1,4 +1,4 @@
-== QPixel {<img src="https://circleci.com/gh/ArtOfCode-/qpixel.svg?style=svg" alt="CircleCI" />}[https://circleci.com/gh/ArtOfCode-/qpixel] {<img src="https://codeclimate.com/github/ArtOfCode-/qpixel/badges/gpa.svg" />}[https://codeclimate.com/github/ArtOfCode-/qpixel]
+== QPixel {<img src="https://circleci.com/gh/ArtOfCode-/qpixel.svg?style=svg" alt="CircleCI" />}[https://circleci.com/gh/ArtOfCode-/qpixel] {<img src="https://codeclimate.com/github/ArtOfCode-/qpixel/badges/gpa.svg" />}[https://codeclimate.com/github/ArtOfCode-/qpixel] {<img src="https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master" alt="Coverage Status" />}[https://coveralls.io/github/ArtOfCode-/qpixel?branch=master]
 Rails Q&A software... because I can. This is based on Stack Exchange, though is deliberately a little differently
 designed and written. (duh, theirs is in C# ASP.NET MVC...)
 
