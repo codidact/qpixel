@@ -6,7 +6,7 @@ before_script:
   - cp config/letsencrypt_plugin.example.yml config/letsencrypt_plugin.yml
   - bundle install --jobs $(nproc)  "${FLAGS[@]}"
   - bundle exec rake db:create db:schema:load
-  - bunlde exec rake test:prepare
+  - bundle exec rake test:prepare
   - bundle exec rake db:migrate
   - bundle exec rake db:seed
 
