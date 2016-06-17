@@ -3,6 +3,8 @@ require 'test_helper'
 class UsersRegistrationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
+  tests Users::RegistrationsController
+
   test "should initialize user repuatation to 1 on create" do
     sign_out :user
     post :create, :user => { :email => "new@qpixel-test.net", :password => "ABCDEFGH", :password_confirmation => "ABCDEFGH", :username => "ABCDEF" }
