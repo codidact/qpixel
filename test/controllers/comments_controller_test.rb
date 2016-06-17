@@ -84,4 +84,28 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal false, assigns(:comment).is_deleted
     assert_response(302)
   end
+
+  test "should create notification for mentioned user" do
+    sign_in users(:standard_user)
+    post :create, :comment => { :post_id => questions(:one).id, :post_type => 'Question', :content => "@admin ABCDEF GHIJKL MNOPQR STUVWX YZ" }
+    assert_not_nil assigns(:comment)
+    assert_equal 1, users(:admin).notifications.count
+    assert_response(302)
+  end
+
+  test "should prevent short comments" do
+    sign_in users(:standard_user)
+    post :create, :comment => { :post_id => questions(:one).id, :post_type => 'Question', :content => 'a' }
+    assert_not_nil assigns(:comment)
+    assert_equal 'Comment failed to save.', flash[:error]
+    assert_response(302)
+  end
+
+  test "should prevent long comments" do
+    sign_in users(:standard_user)
+    post :create, :comment => { :post_id => answers(:one).id, :post_type => 'Answer', :content => 'a'*501 }
+    assert_not_nil assigns(:comment)
+    assert_equal 'Comment failed to save.', flash[:error]
+    assert_response(302)
+  end
 end
