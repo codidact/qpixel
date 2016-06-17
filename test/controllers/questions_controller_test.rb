@@ -144,4 +144,39 @@ class QuestionsControllerTest < ActionController::TestCase
     get :show, :id => questions(:deleted).id
     assert_response(404)
   end
+
+  test "should prevent questions having more than 5 tags" do
+    sign_in users(:standard_user)
+    post :create, :question => { :title => "ABCDEF GHIJKL MNOPQR", :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :tags => "ABCDEF GHIJKL MNOPQR STUVWX YZ ABC" }
+    assert_not_nil assigns(:question).errors
+    assert_response(400)
+  end
+
+  test "should prevent questions having no tags" do
+    sign_in users(:standard_user)
+    post :create, :question => { :title => "ABCDEF GHIJKL MNOPQR", :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :tags => "" }
+    assert_not_nil assigns(:question).errors
+    assert_response(400)
+  end
+
+  test "should prevent tags being too long" do
+    sign_in users(:standard_user)
+    post :create, :question => { :title => "ABCDEF GHIJKL MNOPQR", :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :tags => "123456789012345678901" }
+    assert_not_nil assigns(:question).errors
+    assert_response(400)
+  end
+
+  test "should prevent body being whitespace" do
+    sign_in users(:standard_user)
+    post :create, :question => { :title => "ABCDEF GHIJKL MNOPQR", :body => " "*31, :tags => "ABCDEF" }
+    assert_not_nil assigns(:question).errors
+    assert_response(400)
+  end
+
+  test "should prevent title being whitespace" do
+    sign_in users(:standard_user)
+    post :create, :question => { :title => " "*16, :body => "ABCDEF GHIJKL MNOPQR STUVWX YZ", :tags => "123456789012345678901" }
+    assert_not_nil assigns(:question).errors
+    assert_response(400)
+  end
 end

@@ -48,7 +48,7 @@ class QuestionsController < ApplicationController
     if @question.save
       redirect_to url_for(:controller => :questions, :action => :show, :id => @question.id)
     else
-      render :new
+      render :new, :status => 400
     end
   end
 
