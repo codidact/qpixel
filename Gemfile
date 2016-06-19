@@ -40,6 +40,8 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'rails-html-sanitizer'
 gem 'letsencrypt_plugin'
 
+gem 'whenever', :require => false
+
 gem 'coveralls', require: false
 
 group :development, :test do
