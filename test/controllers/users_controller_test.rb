@@ -34,13 +34,13 @@ class UsersControllerTest < ActionController::TestCase
     sign_out :user
     get :mod, :id => users(:standard_user).id
     assert_nil assigns(:user)
-    assert_response(401)
+    assert_response(404)
   end
 
   test "should require moderator status to access mod tools" do
     sign_in users(:standard_user)
     get :mod, :id => users(:standard_user).id
     assert_nil assigns(:user)
-    assert_response(401)
+    assert_response(404)
   end
 end
