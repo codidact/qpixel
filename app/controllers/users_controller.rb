@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
   # Web action. Retrieves a single user.
   def show
-    if user_signed_in? && get_setting('RestrictDBIntensiveOps') != 'true'
+    if user_signed_in? || get_setting('RestrictDBIntensiveOps') != 'true'
       @user = User.find params[:id]
     end
   end
