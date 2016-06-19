@@ -1,4 +1,6 @@
 class SuspiciousVote < ActiveRecord::Base
+  validates :from_user, uniqueness: { scope: [:to_user] }
+
   def self.pending
     SuspiciousVote.where(:was_investigated => false)
   end
