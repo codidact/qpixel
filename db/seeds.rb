@@ -29,7 +29,8 @@ default_settings = [
   [ 'IRCServerID', '8AB'],
   [ 'IRCServerName', 'qpixel.qpixel'],
   [ 'IRCPass', 'asdf'],
-  [ 'BlockedIpAddresses', '' ]
+  [ 'BlockedIpAddresses', '' ],
+  [ 'RestrictDBIntensiveOps', 'true' ]
 ]
 
 default_privileges = [

@@ -1,31 +1,40 @@
-<% content_for :title, "User #{@user.username}" %>
+<% if @user.nil? %>
+  <% content_for :title, "Requires Login" %>
 
-<h3><%= @user.username %></h3>
-<h4><%= @user.reputation %> reputation</h4>
-<div class="profile-row">
-  <div class="profile-module module-66">
-    <h4>Questions</h4>
-    <% @user.questions.each do |q| %>
-      <%= render 'questions/question', :question => q if q && q.id %>
-    <% end %>
+  <h3>This page requires you to log in.</h3>
+  <p>Because viewing user profiles is very resource-intensive on the server and database, it has been restricted to
+    logged-in users only by the administrator of this site.</p>
+  <p><%= link_to "Go to login", new_user_session_path %></p>
+<% else %>
+  <% content_for :title, "User #{@user.username}" %>
+
+  <h3><%= @user.username %></h3>
+  <h4><%= @user.reputation %> reputation</h4>
+  <div class="profile-row">
+    <div class="profile-module module-66">
+      <h4>Questions</h4>
+      <% @user.questions.each do |q| %>
+        <%= render 'questions/question', :question => q if q && q.id %>
+      <% end %>
+    </div>
+    <div class="profile-module module-33">
+      <h4>Votes</h4>
+      <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
+      <ul>
+        <li><%= @user.votes.where(:vote_type => 1).count %> up</li>
+        <li><%= @user.votes.where(:vote_type => -1).count %> down</li>
+        <li><%= @user.votes.where(:post_type => 'Question').count %> question</li>
+        <li><%= @user.votes.where(:post_type => 'Answer').count %> answer</li>
+      </ul>
+    </div>
   </div>
-  <div class="profile-module module-33">
-    <h4>Votes</h4>
-    <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
-    <ul>
-      <li><%= @user.votes.where(:vote_type => 1).count %> up</li>
-      <li><%= @user.votes.where(:vote_type => -1).count %> down</li>
-      <li><%= @user.votes.where(:post_type => 'Question').count %> question</li>
-      <li><%= @user.votes.where(:post_type => 'Answer').count %> answer</li>
-    </ul>
+  <div class="profile-row">
+    <div class="profile-module module-66">
+      <h4>Answers</h4>
+      <% @user.answers.each do |a| %>
+        <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
+      <% end %>
+    </div>
   </div>
-</div>
-<div class="profile-row">
-  <div class="profile-module module-66">
-    <h4>Answers</h4>
-    <% @user.answers.each do |a| %>
-      <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
-    <% end %>
-  </div>
-</div>
-<span class="clearfix"></span>
+  <span class="clearfix"></span>
+<% end %>
