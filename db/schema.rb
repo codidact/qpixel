@@ -11,16 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160507112646) do
+ActiveRecord::Schema.define(version: 20160619161305) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
     t.integer  "score"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.integer  "question_id"
     t.integer  "user_id"
-    t.boolean  "is_deleted"
+    t.boolean  "is_deleted",  default: false
     t.datetime "deleted_at"
   end
 
@@ -28,12 +28,12 @@ ActiveRecord::Schema.define(version: 20160507112646) do
   add_index "answers", ["user_id"], name: "index_answers_on_user_id"
 
   create_table "comments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "post_id"
     t.string   "post_type"
     t.string   "content"
-    t.boolean  "is_deleted"
+    t.boolean  "is_deleted", default: false
     t.integer  "user_id"
   end
 
@@ -76,9 +76,6 @@ ActiveRecord::Schema.define(version: 20160507112646) do
   create_table "post_histories", force: :cascade do |t|
     t.integer  "post_history_type_id"
     t.integer  "user_id"
-    t.string   "title"
-    t.string   "body"
-    t.string   "tags"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
     t.integer  "post_id"
@@ -157,6 +154,7 @@ ActiveRecord::Schema.define(version: 20160507112646) do
     t.integer  "user_id"
     t.integer  "post_id"
     t.string   "post_type"
+    t.integer  "recv_user"
   end
 
   add_index "votes", ["post_type", "post_id"], name: "index_votes_on_post_type_and_post_id"
