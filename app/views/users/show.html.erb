@@ -15,15 +15,21 @@
     <a href="/users/<%= @user.id %>/mod">Moderator Tools</a>
   <% end %>
 
+  <hr/>
+
   <h4><%= pluralize(@user.questions.count, 'Question') %></h4>
-  <% @user.questions.each do |q| %>
+  <% @user.questions.limit(5).each do |q| %>
     <%= render 'questions/question', :question => q if q && q.id %>
   <% end %>
 
+  <hr/>
+
   <h4><%= pluralize(@user.answers.count, 'Answer') %></h4>
-  <% @user.answers.each do |a| %>
+  <% @user.answers.limit(5).each do |a| %>
     <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
   <% end %>
+
+  <hr/>
 
   <h4>Votes</h4>
   <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
