@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   get    'mod/undeleted/answers',       :to => 'moderator#recently_undeleted_answers'
   get    'mod/flags',                   :to => 'flags#queue'
   post   'mod/flags/:id/resolve',       :to => 'flags#resolve'
+  get    'mod/votes',                   :to => 'suspicious_votes#index'
+  get    'mod/votes/:id',               :to => 'suspicious_votes#user'
 
   # Questions have a lot of actions...
   get    'questions',                   :to => 'questions#index'
