@@ -3,7 +3,7 @@ class CreateSuspiciousVotes < ActiveRecord::Migration
     create_table :suspicious_votes do |t|
       t.integer :from_user
       t.integer :to_user
-      t.boolean :was_investigated
+      t.boolean :was_investigated, default: false
       t.integer :investigated_by
       t.timestamp :investigated_at
       t.integer :suspicious_count
