@@ -8,7 +8,7 @@ class SuspiciousVote < ActiveRecord::Base
       votes = u.votes.group(:recv_user).count(:recv_user)
       total = u.votes.count
       votes.each do |recv_id, cnt|
-        cert = total / cnt ** 2
+        cert = total.to_f / cnt.to_f ** 2
         if cert < 0.5 && recv_id != -1
           puts "#{u.id} => #{recv_id} suspicious (#{cnt}/#{total}) (#{cert})"
           sv = SuspiciousVote.new
