@@ -37,6 +37,24 @@ class CommentsControllerTest < ActionController::TestCase
     assert_response(302)
   end
 
+  test "should mark question comment deleted" do
+    sign_in users(:moderator)
+    delete :destroy, :id => comments(:two).id
+    assert_not_nil assigns(:comment)
+    assert_not_nil assigns(:comment).post
+    assert_equal true, assigns(:comment).is_deleted
+    assert_response(302)
+  end
+
+  test "should mark question comment undeleted" do
+    sign_in users(:moderator)
+    delete :undelete, :id => comments(:two).id
+    assert_not_nil assigns(:comment)
+    assert_not_nil assigns(:comment).post
+    assert_equal false, assigns(:comment).is_deleted
+    assert_response(302)
+  end
+
   test "should require authentication to post comment" do
     sign_out :user
     post :create
@@ -104,6 +122,22 @@ class CommentsControllerTest < ActionController::TestCase
   test "should prevent long comments" do
     sign_in users(:standard_user)
     post :create, :comment => { :post_id => answers(:one).id, :post_type => 'Answer', :content => 'a'*501 }
+    assert_not_nil assigns(:comment)
+    assert_equal 'Comment failed to save.', flash[:error]
+    assert_response(302)
+  end
+
+  test "should prevent updating to short comment" do
+    sign_in users(:standard_user)
+    post :update, :id => comments(:one).id, :comment => { :post_id => answers(:one).id, :post_type => 'Answer', :content => 'a' }
+    assert_not_nil assigns(:comment)
+    assert_equal 'Comment failed to update.', flash[:error]
+    assert_response(302)
+  end
+
+  test "should prevent updating to long comment" do
+    sign_in users(:standard_user)
+    post :update, :id => comments(:two).id :comment => { :post_id => questions(:one).id, :post_type => 'Question', :content => 'a'*501 }
     assert_not_nil assigns(:comment)
     assert_equal 'Comment failed to save.', flash[:error]
     assert_response(302)

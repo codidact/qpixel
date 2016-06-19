@@ -2,3 +2,8 @@ one:
   user: standard_user
   post: one (Answer)
   content: ABCDEF GHIJKL MNOPQR
+
+two:
+  user: standard_user
+  post: one (Question)
+  content: ABCDEF GHIJKL MNOPQR
