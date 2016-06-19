@@ -12,18 +12,17 @@
       <th>Receving User</th>
       <th>Suspicious/Total Votes</th>
       <th>Certainty Factor</th>
-      <th colspan="2"></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     <% @suspicious_votes.each do |sv| %>
       <tr>
-        <td><a href="/users/<%= sv.from_user %>/mod"><%= @from_users.find(sv.from_user).username %></a></td>
-        <td><a href="/users/<%= sv.to_user %>/mod"><%= @to_users.find(sv.to_user).username %></a></td>
+        <td><a href="/mod/votes/<%= sv.from_user %>"><%= @from_users.find(sv.from_user).username %></a></td>
+        <td><a href="/mod/votes/<%= sv.to_user %>"><%= @to_users.find(sv.to_user).username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
-        <td><a href="/mod/votes/<%= sv.from_user %>">User Votes (<%= @from_users.find(sv.from_user).username %>)</a></td>
-        <td><a href="/mod/votes/<%= sv.to_user %>">User Votes (<%= @to_users.find(sv.to_user).username %>)</a></td>
+        <td><%= link_to "Done", url_for(:controller => :suspicious_votes, :action => :investigated), :method => :patch, :remote => true %></td>
       </tr>
     <% end %>
   </tbody>
