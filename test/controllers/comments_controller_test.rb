@@ -139,7 +139,7 @@ class CommentsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :update, :id => comments(:two).id, :comment => { :post_id => questions(:one).id, :post_type => 'Question', :content => 'a'*501 }
     assert_not_nil assigns(:comment)
-    assert_equal 'Comment failed to save.', flash[:error]
+    assert_equal 'Comment failed to update.', flash[:error]
     assert_response(302)
   end
 end
