@@ -10,31 +10,27 @@
 
   <h3><%= @user.username %></h3>
   <h4><%= @user.reputation %> reputation</h4>
-  <div class="profile-row">
-    <div class="profile-module module-66">
-      <h4>Questions</h4>
-      <% @user.questions.each do |q| %>
-        <%= render 'questions/question', :question => q if q && q.id %>
-      <% end %>
-    </div>
-    <div class="profile-module module-33">
-      <h4>Votes</h4>
-      <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
-      <ul>
-        <li><%= @user.votes.where(:vote_type => 1).count %> up</li>
-        <li><%= @user.votes.where(:vote_type => -1).count %> down</li>
-        <li><%= @user.votes.where(:post_type => 'Question').count %> question</li>
-        <li><%= @user.votes.where(:post_type => 'Answer').count %> answer</li>
-      </ul>
-    </div>
-  </div>
-  <div class="profile-row">
-    <div class="profile-module module-66">
-      <h4>Answers</h4>
-      <% @user.answers.each do |a| %>
-        <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
-      <% end %>
-    </div>
-  </div>
-  <span class="clearfix"></span>
+
+  <% if user_is_mod %>
+    <a href="/users/<%= @user.id %>/mod">Moderator Tools</a>
+  <% end %>
+
+  <h4><%= pluralize(@user.questions.count, 'Question') %></h4>
+  <% @user.questions.each do |q| %>
+    <%= render 'questions/question', :question => q if q && q.id %>
+  <% end %>
+
+  <h4><%= pluralize(@user.answers.count, 'Answer') %></h4>
+  <% @user.answers.each do |a| %>
+    <%= render 'answers/answer', :answer => a if a && a.question && a.question.id %>
+  <% end %>
+
+  <h4>Votes</h4>
+  <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
+  <ul>
+    <li><%= @user.votes.where(:vote_type => 1).count %> up</li>
+    <li><%= @user.votes.where(:vote_type => -1).count %> down</li>
+    <li><%= @user.votes.where(:post_type => 'Question').count %> question</li>
+    <li><%= @user.votes.where(:post_type => 'Answer').count %> answer</li>
+  </ul>
 <% end %>
