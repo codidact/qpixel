@@ -1,0 +1,2 @@
+class SuspiciousVotesController < ApplicationController
+end

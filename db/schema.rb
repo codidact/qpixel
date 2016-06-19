@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160619161305) do
+ActiveRecord::Schema.define(version: 20160619162714) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -123,6 +123,18 @@ ActiveRecord::Schema.define(version: 20160619161305) do
     t.string   "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "suspicious_votes", force: :cascade do |t|
+    t.integer  "from_user"
+    t.integer  "to_user"
+    t.boolean  "was_investigated", default: false
+    t.integer  "investigated_by"
+    t.datetime "investigated_at"
+    t.integer  "suspicious_count"
+    t.integer  "total_count"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   create_table "users", force: :cascade do |t|
