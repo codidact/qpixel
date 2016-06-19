@@ -22,4 +22,25 @@ class UsersControllerTest < ActionController::TestCase
     assert_nil assigns(:user)
     assert_response(200)
   end
+
+  test "should get mod tools page" do
+    sign_in users(:moderator)
+    get :mod, :id => users(:standard_user).id
+    assert_not_nil assigns(:user)
+    assert_response(200)
+  end
+
+  test "should require authentication to access mod tools" do
+    sign_out :user
+    get :mod, :id => users(:standard_user).id
+    assert_nil assigns(:user)
+    assert_response(401)
+  end
+
+  test "should require moderator status to access mod tools" do
+    sign_in users(:standard_user)
+    get :mod, :id => users(:standard_user).id
+    assert_nil assigns(:user)
+    assert_response(401)
+  end
 end

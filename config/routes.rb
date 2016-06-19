@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   # Most of the users stuff is Devised, but it doesn't provide an index or profile, or notifications.
   get    'users',                       :to => 'users#index'
   get    'users/:id',                   :to => 'users#show'
+  get    'users/:id/mod',               :to => 'users#mod'
   get    'users/me/notifications',      :to => 'notifications#index'
 
   # Notifications-specific routes that don't really fit with the /users namespace.
