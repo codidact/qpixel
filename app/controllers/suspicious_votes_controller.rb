@@ -4,6 +4,8 @@ class SuspiciousVotesController < ApplicationController
 
   def index
     @suspicious_votes = SuspiciousVote.pending
+    @from_users = User.where(:id => @suspicious_votes.pluck(:from_user))
+    @to_users = User.where(:id => @suspicious_votes.pluck(:to_user))
   end
 
   def user

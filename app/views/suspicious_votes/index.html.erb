@@ -1,0 +1,28 @@
+<h3>Suspicious Voting Patterns</h3>
+<p>This page lists voting patterns identified as suspicious by an automated algorithm that is run once a day for every
+  user. It lists the casting and receiving users, as well as the numbers of suspicious and total votes. Lastly, there's
+  a 'certainty factor' calculated by the algorithm - lower values are more suspicious.</p>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Voting User</th>
+      <th>Receving User</th>
+      <th>Suspicious/Total Votes</th>
+      <th>Certainty Factor</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @suspicious_votes.each do |sv| %>
+      <tr>
+        <td><a href="/users/<%= sv.from_user %>/mod"><%= @from_users[sv.from_user].username %></a></td>
+        <td><a href="/users/<%= sv.to_user %>/mod"><%= @to_users[sv.to_user].username %></a></td>
+        <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
+        <td><%= (sv.total_count / sv.suspiciout_count ** 2).round(2) %></td>
+        <td><a href="/mod/votes/<%= sv.from_user %>">User Votes (<%= @from_users[sv.from_user].username %>)</a></td>
+        <td><a href="/mod/votes/<%= sv.to_user %>">User Votes (<%= @to_users[sv.to_user].username %>)</a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
