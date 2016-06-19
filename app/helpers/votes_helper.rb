@@ -5,7 +5,7 @@ module VotesHelper
       votes = u.votes.group(:recv_user).count(:recv_user)
       total = u.votes.count
       votes.each do |recv_id, cnt|
-        if (total / count**2) < 0.5 && recv_id != -1
+        if (total / cnt**2) < 0.5 && recv_id != -1
           sv = SuspiciousVotes.new
           sv.from_user = u.id
           sv.to_user = recv_id
