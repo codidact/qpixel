@@ -29,6 +29,7 @@ class VotesController < ApplicationController
         calc_rep(vote, post, -1)
       end
       vote.vote_type = params[:vote_type].to_i
+      vote.recv_user = post.user.id
       vote.save!
       state = { :status => (modified ? "modified" : "OK"), :vote_id => vote.id }
     end
