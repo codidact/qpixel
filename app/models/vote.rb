@@ -10,7 +10,7 @@ class Vote < ActiveRecord::Base
       total = u.votes.count
       votes.each do |recv_id, cnt|
         if (total / cnt**2) < 0.5 && recv_id != -1
-          sv = SuspiciousVotes.new
+          sv = SuspiciousVote.new
           sv.from_user = u.id
           sv.to_user = recv_id
           sv.suspicious_count = cnt
