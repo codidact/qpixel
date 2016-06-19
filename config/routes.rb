@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   post   'mod/flags/:id/resolve',       :to => 'flags#resolve'
   get    'mod/votes',                   :to => 'suspicious_votes#index'
   patch  'mod/votes/investigated/:id',  :to => 'suspicious_votes#investigated'
-  get    'mod/votes/:id',               :to => 'suspicious_votes#user'
+  get    'mod/votes/user/:id',               :to => 'suspicious_votes#user'
 
   # Questions have a lot of actions...
   get    'questions',                   :to => 'questions#index'
