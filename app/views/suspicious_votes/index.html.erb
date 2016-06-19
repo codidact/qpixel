@@ -16,12 +16,12 @@
   <tbody>
     <% @suspicious_votes.each do |sv| %>
       <tr>
-        <td><a href="/users/<%= sv.from_user %>/mod"><%= @from_users[sv.from_user].username %></a></td>
-        <td><a href="/users/<%= sv.to_user %>/mod"><%= @to_users[sv.to_user].username %></a></td>
+        <td><a href="/users/<%= sv.from_user %>/mod"><%= @from_users.find(sv.from_user).username %></a></td>
+        <td><a href="/users/<%= sv.to_user %>/mod"><%= @to_users.find(sv.to_user).username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count / sv.suspicious_count ** 2).round(2) %></td>
-        <td><a href="/mod/votes/<%= sv.from_user %>">User Votes (<%= @from_users[sv.from_user].username %>)</a></td>
-        <td><a href="/mod/votes/<%= sv.to_user %>">User Votes (<%= @to_users[sv.to_user].username %>)</a></td>
+        <td><a href="/mod/votes/<%= sv.from_user %>">User Votes (<%= @from_users.find(sv.from_user).username %>)</a></td>
+        <td><a href="/mod/votes/<%= sv.to_user %>">User Votes (<%= @to_users.find(sv.to_user).username %>)</a></td>
       </tr>
     <% end %>
   </tbody>
