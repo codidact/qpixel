@@ -110,7 +110,9 @@ class QuestionsController < ApplicationController
   end
 
   def feed
-    @questions = Question.all.order(:created_at => :desc).limit(25)
+    @questions = Rails.cache.fetch("questions_rss", :expires_in => 5.minutes) do
+      Question.all.order(:created_at => :desc).limit(25)
+    end
     respond_to do |format|
       format.rss { render :layout => false }
     end
