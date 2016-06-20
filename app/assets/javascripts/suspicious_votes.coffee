@@ -4,7 +4,7 @@
 
 $(document).on('ready page:load', () ->
 
-  $('a[data-remote]').on('ajax:success', (e, data, status, xhr) ->
+  $('a[data-remote].sv').on('ajax:success', (e, data, status, xhr) ->
     $(this).parents('tr').fadeOut(200, () ->
       $(this).remove()
     )
