@@ -226,6 +226,9 @@ $(document).on('ready page:load', function() {
       if(response['status'] !== 'success') {
         QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
       }
+      else {
+        QPixel.createNotification('info', '<strong>Thanks!</strong> A moderator will review your flag.', this.target);
+      }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
       QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
