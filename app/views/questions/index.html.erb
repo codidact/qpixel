@@ -1,4 +1,7 @@
 <% content_for :title, "Questions" %>
+<% content_for :head do %>
+  <link rel="alternate" type="application/rss+xml" title="Questions RSS Feed" href="/questions/feed.rss">
+<% end %>
 
 <h3>Questions</h3>
 <% @questions.each do |question| %>

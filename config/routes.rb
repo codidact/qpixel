@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
   # Questions have a lot of actions...
   get    'questions',                   :to => 'questions#index'
+  get    'questions/feed',              :to => 'questions#feed'
   get    'questions/ask',               :to => 'questions#new'
   post   'questions/ask',               :to => 'questions#create'
   get    'questions/tagged/:tag',       :to => 'questions#tagged'

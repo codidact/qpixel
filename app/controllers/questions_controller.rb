@@ -109,6 +109,13 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def feed
+    @questions = Question.all.order(:created_at => :desc).limit(25)
+    respond_to do |format|
+      format.rss { render :layout => false }
+    end
+  end
+
   private
     # Sanitizes parameters for use by <tt>Question.create</tt> or <tt>Question.update</tt>. The only attributes that
     # users should be able to submit are <tt>:body</tt>, <tt>:title</tt>, and <tt>:tags</tt>; any other attributes
