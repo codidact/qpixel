@@ -5,5 +5,5 @@ class Flag < ActiveRecord::Base
 
   has_one :flag_status
 
-  validates :reason, length: { minimum: 30, maximum: 1000 }
+  validates :reason, length: { minimum: 10, maximum: 1000 }
 end

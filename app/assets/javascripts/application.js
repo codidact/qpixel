@@ -82,12 +82,12 @@ $(document).on('ready page:load', function() {
           $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
         else {
-          alert("Could not undo vote - please try again. Message: " + data);
+          QPixel.createNotifiction('danger', "<strong>Failed:</strong> " + data, this.state.target);
           console.error("Vote undo failed: " + data);
         }
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        alert("Could not undo vote - please try again. Message: " + jqXHR.reponseText);
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.responseText + '(' + jqXHR.status + ')', this.state.target);
         console.error("Vote undo failed: status " + jqXHR.status);
         console.log(jqXHR);
       });
@@ -120,12 +120,12 @@ $(document).on('ready page:load', function() {
           $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
         else {
-          alert("Could not cast vote - please try again. Message: " + data);
+          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + data, this.state.target);
           console.error("Vote cast failed: " + data);
         }
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        alert("Could not cast vote - please try again. Message: " + jqXHR.responseText);
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.responseText + '(' + jqXHR.status + ')', this.state.target);
         console.error("Vote cast failed: status " + jqXHR.status);
         console.log(jqXHR);
       });
@@ -212,22 +212,23 @@ $(document).on('ready page:load', function() {
     }
 
     if(data['reason'].length < 10) {
-      alert("Please enter at least 10 characters.");
+      QPixel.createNotification('danger', "Please enter at least 10 characters.", self);
       return;
     }
 
     $.ajax({
       'type': 'POST',
       'url': '/flags/new',
-      'data': data
+      'data': data,
+      'target': self
     })
     .done(function(response) {
       if(response['status'] !== 'success') {
-        alert("Failed to flag: " + response['message']);
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
       }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      alert("Failed to flag: status " + jqXHR.status);
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
       console.log(jqXHR.responseText);
     });
   });
@@ -249,7 +250,7 @@ $(document).on('ready page:load', function() {
     })
     .done(function(response) {
       if(response['status'] !== 'success') {
-        alert("Failed to dismiss flag: " + response['message']);
+        QPixel.createNotification('danger', "<strong>Failed:</strong> " + response['message'], this.el);
       }
       else {
         $(this.el).parent().parent().fadeOut(200, function() {
@@ -258,7 +259,7 @@ $(document).on('ready page:load', function() {
       }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      alert("Failed to dismiss flag: status " + jqXHR.status);
+      QPixel.createNotification('danger', "<strong>Failed:</strong> " + jqXHR.status, this.el);
       console.log(jqXHR.responseText);
     });
   });
