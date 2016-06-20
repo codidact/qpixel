@@ -19,6 +19,10 @@ Run the following commands, in sequence, to set up the database.
     rake db:migrate
     rake db:seed
 
+To set up scheduled tasks, run this command to populate your crontab file:
+
+    whenever --update-crontab
+
 === SSL via Let's Encrypt
 
 If you want to set up the Let's Encrypt plugin, you need a few more commands. Make the required directories:
