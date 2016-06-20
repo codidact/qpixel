@@ -3,11 +3,12 @@
   <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
 </ul>
 
-<a class="text-danger show-danger-zone" href="#">Danger Zone</a>
-<div class="danger-zone">
-  <div class="alert alert-danger">
-    <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
+<a class="text-danger show-danger-zone" href="#">Show Danger Zone</a>
+<div class="danger-zone panel panel-danger">
+  <div class="panel-heading"><strong>Danger Zone</strong></div>
+  <div class="panel-body">
+    <p class="text-danger"><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
       after initiating an action.</p>
+    <%= link_to "Destroy User", url_for(:controller => :users, :action => :destroy, :id => @user.id), :method => :delete, :remote => true, :class => "destroy-user btn btn-danger" %>
   </div>
-  <%= link_to "Destroy User", url_for(:controller => :users, :action => :destroy, :id => @user.id), :method => :delete, :remote => true, :class => "destroy-user btn btn-danger" %>
 </div>
