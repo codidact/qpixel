@@ -1,3 +1,5 @@
+<% content_for :title, "Moderator Tools: #{@user.username}" %>
+
 <h3>Moderator Tools: <%= @user.username %></h3>
 <ul>
   <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
