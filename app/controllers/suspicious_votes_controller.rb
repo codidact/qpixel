@@ -9,6 +9,7 @@ class SuspiciousVotesController < ApplicationController
   end
 
   def user
+    @user = User.find params[:id]
     @from = SuspiciousVote.pending.where('from_user = ?', params[:id])
     @to = SuspiciousVote.pending.where('to_user = ?', params[:id])
   end

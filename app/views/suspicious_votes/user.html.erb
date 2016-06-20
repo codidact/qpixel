@@ -1,0 +1,35 @@
+<% content_for :title, "Suspicious Votes for #{@user.username}" %>
+
+<h3>Suspicious Voting Patterns</h3>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Voting User</th>
+      <th>Receving User</th>
+      <th>Suspicious/Total Votes</th>
+      <th>Certainty Factor</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @from.each do |sv| %>
+      <tr>
+        <td><a href="/mod/votes/user/<%= sv.from_user %>"><%= @from_users.where(:id => sv.from_user).try(:username) %></a></td>
+        <td><a href="/mod/votes/user/<%= sv.to_user %>"><%= @to_users.where(:id => sv.to_user).try(:username) %></a></td>
+        <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
+        <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
+        <td><%= link_to "Done", url_for(:controller => :suspicious_votes, :action => :investigated, :id => sv.id), :class => 'btn btn-success', :method => :patch, :remote => true %></td>
+      </tr>
+    <% end %>
+    <% @to.each do |sv| %>
+      <tr>
+        <td><a href="/mod/votes/user/<%= sv.from_user %>"><%= @from_users.where(:id => sv.from_user).try(:username) %></a></td>
+        <td><a href="/mod/votes/user/<%= sv.to_user %>"><%= @to_users.where(:id => sv.to_user).try(:username) %></a></td>
+        <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
+        <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
+        <td><%= link_to "Done", url_for(:controller => :suspicious_votes, :action => :investigated, :id => sv.id), :class => 'btn btn-success', :method => :patch, :remote => true %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
