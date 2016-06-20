@@ -7,6 +7,7 @@ $(document).on('ready page:load', () ->
   $('div.danger-zone').hide()
 
   $('a.show-danger-zone').on('click', (ev) ->
+    $(this).remove()
     $('div.danger-zone').slideDown(200)
   )
 
