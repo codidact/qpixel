@@ -12,17 +12,17 @@ $(document).on('ready page:load', () ->
   )
 
   $('a[data-remote].destroy-user').on('ajax:success', (ev, data, status, xhr) ->
-    $('div.delete-actions').parent().append('<p class="text-success">User was successfully removed.</p> <a href="/users">Return to user index.</a>')
+    QPixel.createNotification('success', '<p>User was successfully removed. <a href="/users">Return to user index.</a></p>', $(this))
     $('div.delete-actions').remove()
   ).on('ajax:error', (ev, xhr, status, error) ->
-    $(this).after('<p class="text-danger"><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>')
+    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>', $(this))
   )
 
   $('a[data-remote].soft-delete').on('ajax:success', (ev, data, status, xhr) ->
-    $('div.delete-actions').parent().append('<p class="text-success">User was successfully removed.</p> <a href="/users">Return to user index.</a>')
+    QPixel.createNotification('success', '<p>User was successfully removed. <a href="/users">Return to user index.</a></p>', $(this))
     $('div.delete-actions').remove()
   ).on('ajax:error', (rv, xhr, status, error) ->
-    $(this).after('<p class="text-danger"><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>')
+    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>', $(this))
   )
 
 )
