@@ -27,7 +27,7 @@ var QPixel = {
         'left': offset.right,
         'z-index': 100,
         'max-width': '400px',
-        'box-shadow': '2px 2px 2px #aaa',
+        'box-shadow': '0 0 10px 2px #aaa',
         'cursor': 'pointer'
       })
       .on('click', function(ev) {
