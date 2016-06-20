@@ -14,8 +14,9 @@ xml.rss :version => "2.0" do
           xml.name question.user.username
           xml.uri "http://#{request.host}/users/#{question.user.id}"
         end
-        xml.pubDate question.created_at.to_s(:rfc822)
-        xml.link "http://#{request.host}/questions/#{question.id}"
+        xml.published question.created_at.to_s(:rfc822)
+        xml.updated question.updated_at.to_s(:rfc822)
+        xml.link :href => "http://#{request.host}/questions/#{question.id}"
         xml.summary question.body.truncate(200)
       end
     end
