@@ -19,7 +19,7 @@
     <% @suspicious_votes.each do |sv| %>
       <tr>
         <td><a href="/mod/votes/user/<%= sv.from_user %>"><%= @from_users[sv.from_user].username %></a></td>
-        <td><a href="/mod/votes/user/<%= sv.to_user %>"><%= @to_users.[sv.to_user].username %></a></td>
+        <td><a href="/mod/votes/user/<%= sv.to_user %>"><%= @to_users[sv.to_user].username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
         <td><%= link_to "Done", url_for(:controller => :suspicious_votes, :action => :investigated, :id => sv.id), :class => 'btn btn-success', :method => :patch, :remote => true %></td>
