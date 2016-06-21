@@ -28,3 +28,14 @@ deleted:
   score: 0
   user: editor
   is_deleted: true
+
+closed:
+  title: ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags:
+    - ABCDEF
+    - GHIJKL
+    - MNOPQR
+  score: 0
+  is_closed: true
+  user: standard_user
