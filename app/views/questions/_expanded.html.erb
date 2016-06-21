@@ -45,7 +45,7 @@
           <%= link_to "close", url_for(:controller => :questions, :action => :close, :id => question.id),
             :method => :patch, :remote => true %>
         <% else %>
-          <%= link_to "reopen" url_for(:controller => :questions, :action => :reopen, :id => question.id),
+          <%= link_to "reopen", url_for(:controller => :questions, :action => :reopen, :id => question.id),
             :method => :patch, :remote => true %>
         <% end %> /
         <% if !question.is_deleted %>
