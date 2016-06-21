@@ -1,7 +1,7 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
+  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete, :close, :reopen]
   before_action :set_question, :only => [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
 
@@ -119,11 +119,29 @@ class QuestionsController < ApplicationController
   end
 
   def close
+    if @question.is_closed
+      render :json => { :status => 'failed', :message => 'Cannot close a closed question.' }, :status => 422
+    end
 
+    if @question.update(:is_closed => true, :closed_by => current_user, :closed_at => Time.now)
+      PostHistory.question_closed(@question, current_user)
+      render :json => { :status => 'success' }
+    else
+      render :json => { :status => 'failed', :message => 'Question state could not be saved.' }, :status => 500
+    end
   end
 
   def reopen
+    if !@question.is_closed
+      render :json => { :status => 'failed', :message => 'Cannot reopen an open question.' }, :status => 422
+    end
 
+    if @question.update(:is_closed => false, :closed_by => current_user, :closed_at => Time.now)
+      PostHistory.question_reopened(@question, current_user)
+      render :json => { :status => 'success' }
+    else
+      render :json => { :status => 'failed', :message => 'Question state could not be saved.' }, :status => 500
+    end
   end
 
   private
