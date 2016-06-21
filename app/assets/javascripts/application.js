@@ -107,7 +107,7 @@ $(document).on('ready page:load', function() {
       })
       .done(function(data) {
         if(data['status'] === "OK") {
-          $(this.state.target).attr('src', '/assets/' + (this.state.voteType == '1' ? 'up' : 'down') + '-fill.png');
+          $(this.state.target).attr('src', '/assets/' + (this.state.voteType === '1' ? 'up' : 'down') + '-fill.png');
           $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
           $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
         }
