@@ -15,14 +15,14 @@ $(document).on('ready page:load', () ->
     QPixel.createNotification('success', '<p>User was successfully removed. <a href="/users">Return to user index.</a></p>', $(this))
     $('div.delete-actions').remove()
   ).on('ajax:error', (ev, xhr, status, error) ->
-    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>', $(this))
+    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + xhr.responseText['message'] + '</p>', $(this))
   )
 
   $('a[data-remote].soft-delete').on('ajax:success', (ev, data, status, xhr) ->
     QPixel.createNotification('success', '<p><strong>Complete.</strong> ' + data['message'] + ' <a href="/users">Return to user index.</a></p>', $(this))
     $('div.delete-actions').remove()
   ).on('ajax:error', (rv, xhr, status, error) ->
-    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + JSON.parse(xhr.responseText)['message'] + '</p>', $(this))
+    QPixel.createNotification('danger', '<p><strong>Failed:</strong> ' + xhr.responseText['message'] + '</p>', $(this))
   )
 
 )
