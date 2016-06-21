@@ -28,3 +28,6 @@ challenge/
 challenge/*
 
 config/letsencrypt_plugin.yml
+
+coverage/
+coverage/*
