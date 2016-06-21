@@ -42,7 +42,7 @@ class UsersController < ApplicationController
 
     @transfer_user = User.find params[:transfer]
 
-    needs_transfer = ['questions', 'answers', 'comments', 'votes']
+    needs_transfer = ['questions', 'answers', 'votes']
 
     # User.reflections is a list of associations on the User model.
     User.reflections.keys.each do |assoc|
@@ -55,7 +55,9 @@ class UsersController < ApplicationController
             obj.destroy
           else
             obj.user_id = @transfer_user.id
-            obj.save
+            if !obj.save
+              render :json => { :status => 'failed', :message => "Failed to transfer #{assoc} #{obj.id}" }, :status => 500 and return
+            end
           end
         end
       else
@@ -64,7 +66,9 @@ class UsersController < ApplicationController
       end
     end
 
-    @user.destroy
+    if !@user.destroy
+      render :json => { :status => 'failed', :message => "Failed to destroy UID #{@user.id}" }, :status => 500 and return
+    end
 
     render :json => { :status => 'success', :message => 'Ask a database administrator to verify the deletion is complete.' }
   end
