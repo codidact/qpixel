@@ -13,4 +13,7 @@
     <%= render 'answers/expanded', :answer => answer %>
   <% end %>
 <% end %>
-<a href="/questions/<%= @question.id %>/answer" class="btn btn-primary">Answer this Question</a>
+
+<% unless @question.is_closed %>
+  <a href="/questions/<%= @question.id %>/answer" class="btn btn-primary">Answer this Question</a>
+<% end %>
