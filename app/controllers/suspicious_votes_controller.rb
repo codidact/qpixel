@@ -8,8 +8,8 @@ class SuspiciousVotesController < ApplicationController
 
   def user
     @user = User.find params[:id]
-    @from = SuspiciousVote.pending.where('from_user = ?', params[:id])
-    @to = SuspiciousVote.pending.where('to_user = ?', params[:id])
+    @from = SuspiciousVote.pending.where(:from_user => @user)
+    @to = SuspiciousVote.pending.where(:to_user => @user)
   end
 
   def investigated
