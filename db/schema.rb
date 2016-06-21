@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621102440) do
+ActiveRecord::Schema.define(version: 20160621145835) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -122,6 +122,9 @@ ActiveRecord::Schema.define(version: 20160621102440) do
     t.integer  "user_id"
     t.boolean  "is_deleted", default: false
     t.datetime "deleted_at"
+    t.boolean  "is_closed"
+    t.integer  "closed_by"
+    t.datetime "closed_at"
   end
 
   add_index "questions", ["user_id"], name: "index_questions_on_user_id"
