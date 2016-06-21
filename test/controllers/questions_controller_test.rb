@@ -211,14 +211,14 @@ class QuestionsControllerTest < ActionController::TestCase
   end
 
   test "should require privileges to close question" do
-    sign_in user(:standard_user)
+    sign_in users(:standard_user)
     patch :close, :id => questions(:one).id
     assert_equal 'failed', JSON.parse(response.body)['status']
     assert_response(401)
   end
 
   test "should require privileges to reopen question" do
-    sign_in user(:standard_user)
+    sign_in users(:standard_user)
     patch :reopen, :id => questions(:closed).id
     assert_equal 'failed', JSON.parse(response.body)['status']
     assert_response(401)
