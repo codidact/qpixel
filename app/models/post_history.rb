@@ -15,6 +15,14 @@ class PostHistory < ActiveRecord::Base
     self.new_question_event('Undelete', question, user)
   end
 
+  def self.question_closed(question, user)
+    self.new_question_event('Close', question, user)
+  end
+
+  def self.question_reopened(question, user)
+    self.new_question_event('Reopen', question, user)
+  end
+
   def self.answer_edited(answer, user)
     self.new_answer_event('Edit', answer, user)
   end

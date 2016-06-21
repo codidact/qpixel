@@ -43,7 +43,9 @@ default_privileges = [
 default_post_history_types = [
   [ 'Edit', 'A post was updated from an older revision to a newer one.', 'edited' ],
   [ 'Delete', 'A post\'s state was changed from normal to being deleted.', 'deleted' ],
-  [ 'Undelete', 'A post\'s state was changed from being deleted back to normal.', 'undeleted' ]
+  [ 'Undelete', 'A post\'s state was changed from being deleted back to normal.', 'undeleted' ],
+  [ 'Close', 'A post was set to prevent new answers.', 'closed' ],
+  [ 'Reopen', 'A post was set to allow new answers.', 'reopened' ]
 ]
 
 default_settings.each do |name, value|
