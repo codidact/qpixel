@@ -68,7 +68,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should soft-delete user" do
     sign_in users(:admin)
-    delete :soft_delete, :id => users(:standard_user).id
+    delete :soft_delete, :id => users(:editor).id
     assert_not_nil assigns(:user)
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
