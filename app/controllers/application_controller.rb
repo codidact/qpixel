@@ -50,10 +50,9 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    def check_your_privilege(name, post = nil)
+    def check_your_privilege(name, post = nil, render_error = true)
       unless current_user.has_privilege?(name) || (current_user.has_post_privilege?(name, post) if post)
-        # Redirecting on errors :(
-        render :template => 'errors/forbidden', :privilege_name => name, :status => 401
+        render :template => 'errors/forbidden', :privilege_name => name, :status => 401 if render_error
         return false
       end
       return true

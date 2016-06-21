@@ -119,7 +119,7 @@ class QuestionsController < ApplicationController
   end
 
   def close
-    unless check_your_privilege('Close')
+    unless check_your_privilege('Close', nil, false)
       render :json => { :status => 'failed', :message => 'You must have the Close privilege to close questions.' }, :status => 401 and return
     end
 
@@ -136,7 +136,7 @@ class QuestionsController < ApplicationController
   end
 
   def reopen
-    unless check_your_privilege('Close')
+    unless check_your_privilege('Close', nil, false)
       render :json => { :status => 'failed', :message => 'You must have the Close privilege to reopen questions.' }, :status => 401 and return
     end
 
