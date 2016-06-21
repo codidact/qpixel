@@ -55,6 +55,8 @@ class UsersController < ApplicationController
         objects.destroy_all
       end
     end
+
+    render :json => { :status => 'success', :message => 'Ask a database administrator to verify the deletion is complete.' }
   end
 
   private
