@@ -14,6 +14,7 @@
   </thead>
   <tbody>
     <% @from.each do |sv| %>
+      <% next unless sv.to_user.present? %>
       <tr>
         <td><a href="/mod/votes/user/<%= @user.id %>"><%= @user.username %></a></td>
         <td><a href="/mod/votes/user/<%= sv.to_user.id %>"><%= sv.to_user.username %></a></td>
@@ -23,6 +24,7 @@
       </tr>
     <% end %>
     <% @to.each do |sv| %>
+      <% next unless sv.from_user.present? %>
       <tr>
         <td><a href="/mod/votes/user/<%= sv.from_user.id %>"><%= sv.from_user.username %></a></td>
         <td><a href="/mod/votes/user/<%= @user.id %>"><%= @user.username %></a></td>

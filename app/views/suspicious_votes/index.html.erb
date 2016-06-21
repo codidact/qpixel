@@ -17,6 +17,7 @@
   </thead>
   <tbody>
     <% @suspicious_votes.each do |sv| %>
+      <% next unless sv.from_user.present? && sv.to_user.present? %>
       <tr>
         <td><a href="/mod/votes/user/<%= sv.from_user.id %>"><%= sv.from_user.username %></a></td>
         <td><a href="/mod/votes/user/<%= sv.to_user.id %>"><%= sv.to_user.username %></a></td>
