@@ -16,7 +16,7 @@ class Question < ActiveRecord::Base
   has_many :comments, :as => :post
 
   # Closed by a user.
-  belongs_to :closed_by, foreign_key: 'closed_by_id', class: 'User'
+  belongs_to :closed_by, :foreign_key => 'closed_by_id', :class_name => 'User'
 
   # Tags are not a string, they're a group of strings - sounds like an array to me.
   serialize :tags, Array
