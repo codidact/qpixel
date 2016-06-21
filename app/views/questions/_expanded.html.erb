@@ -60,7 +60,7 @@
       <hr/>
       <% if question.is_closed %>
         <div class="alert alert-warning">
-          <h4>Question Closed</h4>
+          <h4><strong>Question Closed</strong></h4>
           <p>This question was closed by <strong><a href="/users/<%= question.closed_by.id %>"><%= question.closed_by.username %></a></strong>.
             New answers cannot be added.</p>
         </div>
