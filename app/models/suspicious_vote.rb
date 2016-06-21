@@ -17,8 +17,8 @@ class SuspiciousVote < ActiveRecord::Base
         if cert < 0.5 && recv_id != -1
           puts "#{u.id} => #{recv_id} suspicious (#{cnt}/#{total}) (#{cert})"
           sv = SuspiciousVote.new
-          sv.from_user = u.id
-          sv.to_user = recv_id
+          sv.from_user_id = u.id
+          sv.to_user_id = recv_id
           sv.suspicious_count = cnt
           sv.total_count = total
           sv.save
