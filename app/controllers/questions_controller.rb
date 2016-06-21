@@ -2,7 +2,7 @@
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
-  before_action :set_question, :only => [:show, :edit, :update, :destroy, :undelete]
+  before_action :set_question, :only => [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
 
   # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
@@ -116,6 +116,14 @@ class QuestionsController < ApplicationController
     respond_to do |format|
       format.rss { render :layout => false }
     end
+  end
+
+  def close
+
+  end
+
+  def reopen
+
   end
 
   private
