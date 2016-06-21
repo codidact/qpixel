@@ -44,7 +44,7 @@ class UsersController < ApplicationController
       if needs_transfer.include?(assoc)
         objects.each do |obj|
           # Keep posts that score above 0 (but transfer them to @transfer_user), destroy the rest.
-          unless obj.respond_to? :score && obj.score >= 0
+          unless obj.respond_to?(:score) && obj.score >= 0
             obj.destroy
           else
             obj.user_id = @transfer_user.id
