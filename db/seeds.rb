@@ -35,6 +35,7 @@ default_settings = [
 ]
 
 default_privileges = [
+  [ 'Close', 250 ],
   [ 'Edit', 500 ],
   [ 'Delete', 1000 ],
   [ 'ViewDeleted', 1000 ]

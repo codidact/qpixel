@@ -179,4 +179,62 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
+
+  test "should close question" do
+    sign_in users(:closer)
+    patch :close, :id => questions(:one).id
+    assert_not_nil assigns(:question)
+    assert_equal true, assigns(:question).is_closed
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert_response(200)
+  end
+
+  test "should reopen question" do
+    sign_in users(:closer)
+    patch :close, :id => questions(:closed).id
+    assert_not_nil assigns(:question)
+    assert_equal false, assigns(:question).is_closed
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert_response(200)
+  end
+
+  test "should require authentication to close question" do
+    sign_out :user
+    patch :close, :id => questions(:one).id
+    assert_response(302)
+  end
+
+  test "should require authentication to reopen question" do
+    sign_out :user
+    patch :reopen, :id => questions(:closed).id
+    assert_response(302)
+  end
+
+  test "should require privileges to close question" do
+    sign_in user(:standard_user)
+    patch :close, :id => questions(:one).id
+    assert_equal 'failed', JSON.parse(response.body)['status']
+    assert_response(401)
+  end
+
+  test "should require privileges to reopen question" do
+    sign_in user(:standard_user)
+    patch :reopen, :id => questions(:closed).id
+    assert_equal 'failed', JSON.parse(response.body)['status']
+    assert_response(401)
+  end
+
+  test "should prevent closed questions being closed" do
+    sign_in users(:closer)
+    patch :close, :id => questions(:closed).id
+    assert_equal 'failed', JSON.parse(response.body)['status']
+    assert_response(422)
+  end
+
+  test "should prevent open questions being reopened" do
+    sign_in users(:closer)
+    patch :reopen, :id => questions(:one).id
+    assert_equal 'failed', JSON.parse(response.body)['status']
+    assert_response(422)
+  end
 end

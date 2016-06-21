@@ -15,6 +15,16 @@ standard_user:
   username: "standard_user"
 
 
+closer:
+  email: "closer@qpixel-test.net"
+  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  sign_in_count: 1337
+  is_admin: false
+  is_moderator: false
+  reputation: 251
+  username: "closer"
+
+
 editor:
   email: "editor@qpixel-test.net"
   encrypted_password: "abcdefghijklmnopqrstuvwxyz"

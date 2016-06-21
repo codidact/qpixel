@@ -40,7 +40,9 @@ Rails.application.routes.draw do
   post   'questions/:id/edit',          :to => 'questions#update'
   patch  'questions/:id/edit',          :to => 'questions#update'
   delete 'questions/:id/delete',        :to => 'questions#destroy'
-  patch  'questions/:id/delete',        :to => 'questions#undelete'
+  delete 'questions/:id/undelete',      :to => 'questions#undelete'
+  patch  'questions/:id/close',         :to => 'questions#close'
+  patch  'questions/:id/reopen',        :to => 'questions#reopen'
 
   # Most of the users stuff is Devised, but it doesn't provide an index or profile, or notifications.
   get    'users',                       :to => 'users#index'
