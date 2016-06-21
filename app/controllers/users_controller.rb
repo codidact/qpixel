@@ -33,6 +33,10 @@ class UsersController < ApplicationController
   end
 
   def soft_delete
+    if @user.is_admin || @user.is_moderator
+      render :json => { :status => 'failed', :message => 'Admins and moderators cannot be deleted.' }, :status => 422 and return
+    end
+
     @transfer_user = User.find params[:transfer]
 
     needs_transfer = ['questions', 'answers', 'comments', 'votes']
@@ -55,6 +59,8 @@ class UsersController < ApplicationController
         objects.destroy_all
       end
     end
+
+    @user.destroy
 
     render :json => { :status => 'success', :message => 'Ask a database administrator to verify the deletion is complete.' }
   end
