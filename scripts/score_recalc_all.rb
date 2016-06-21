@@ -5,7 +5,7 @@ Question.all.each do |q|
 end
 
 Answer.all.each do |a|
-  puts a.question.id
+  puts a.question.id if a.question
   a.score = a.votes.sum(:vote_type)
   a.save!
 end

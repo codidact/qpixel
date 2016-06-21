@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621093334) do
+ActiveRecord::Schema.define(version: 20160621102440) do
 
   create_table "answers", force: :cascade do |t|
     t.string   "body"
@@ -103,6 +103,14 @@ ActiveRecord::Schema.define(version: 20160621093334) do
   end
 
   add_index "privileges", ["user_id"], name: "index_privileges_on_user_id"
+
+  create_table "privileges_users", id: false, force: :cascade do |t|
+    t.integer "privilege_id", null: false
+    t.integer "user_id",      null: false
+  end
+
+  add_index "privileges_users", ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id"
+  add_index "privileges_users", ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id"
 
   create_table "questions", force: :cascade do |t|
     t.string   "title"
