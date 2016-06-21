@@ -28,8 +28,11 @@ class UsersController < ApplicationController
       render :json => { :status => 'failed', :message => 'Admins and moderators cannot be destroyed.' }, :status => 422 and return
     end
 
-    @user.destroy!
-    render :json => { :status => 'success' }
+    if @user.destroy!
+      render :json => { :status => 'success' }
+    else
+      render :json => { :status => 'failed', :message => 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' }, :status => 500
+    end
   end
 
   def soft_delete
