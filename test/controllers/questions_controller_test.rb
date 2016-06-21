@@ -191,7 +191,7 @@ class QuestionsControllerTest < ActionController::TestCase
 
   test "should reopen question" do
     sign_in users(:closer)
-    patch :close, :id => questions(:closed).id
+    patch :reopen, :id => questions(:closed).id
     assert_not_nil assigns(:question)
     assert_equal false, assigns(:question).is_closed
     assert_equal 'success', JSON.parse(response.body)['status']
