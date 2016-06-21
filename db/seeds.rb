@@ -30,7 +30,8 @@ default_settings = [
   [ 'IRCServerName', 'qpixel.qpixel'],
   [ 'IRCPass', 'asdf'],
   [ 'BlockedIpAddresses', '' ],
-  [ 'RestrictDBIntensiveOps', 'true' ]
+  [ 'RestrictDBIntensiveOps', 'true' ],
+  [ 'SoftDeleteTransferUser', '0' ]
 ]
 
 default_privileges = [
