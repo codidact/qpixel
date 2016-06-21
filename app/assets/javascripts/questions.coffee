@@ -5,7 +5,7 @@
 $(document).on('ready page:load', () ->
 
   $('a[data-remote].close-question').on('ajax:success', (ev, data, status, xhr) ->
-    $('div.comments-container').before('<div class="alert alert-warning question-closed"><h4><strong>Question Closed</strong></h4>
+    $('div.comments-container').first().before('<div class="alert alert-warning question-closed"><h4><strong>Question Closed</strong></h4>
       <p>This question was closed by <strong>' + data['closed_by'] + '</strong>. New answers cannot be added.</p></div>')
     QPixel.createNotification('success', 'This question has been closed.', $(this))
   ).on('ajax:error', (ev, xhr, status, error) ->
