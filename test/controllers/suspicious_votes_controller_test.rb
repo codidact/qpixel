@@ -7,8 +7,6 @@ class SuspiciousVotesControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     get :index
     assert_not_nil assigns(:suspicious_votes)
-    assert_not_nil assigns(:from_users)
-    assert_not_nil assigns(:to_users)
     assert_response(200)
   end
 
@@ -25,8 +23,6 @@ class SuspiciousVotesControllerTest < ActionController::TestCase
     sign_out :user
     get :index
     assert_nil assigns(:suspicious_votes)
-    assert_nil assigns(:from_users)
-    assert_nil assigns(:to_users)
     assert_response(404)
   end
 
@@ -43,8 +39,6 @@ class SuspiciousVotesControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     get :index
     assert_nil assigns(:suspicious_votes)
-    assert_nil assigns(:from_users)
-    assert_nil assigns(:to_users)
     assert_response(404)
   end
 
