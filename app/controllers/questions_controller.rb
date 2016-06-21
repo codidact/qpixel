@@ -129,7 +129,7 @@ class QuestionsController < ApplicationController
 
     if @question.update(:is_closed => true, :closed_by => current_user, :closed_at => Time.now)
       PostHistory.question_closed(@question, current_user)
-      render :json => { :status => 'success' }
+      render :json => { :status => 'success', :closed_by => "<a href='/users/#{current_user.id}'>#{current_user.username}</a>" }
     else
       render :json => { :status => 'failed', :message => 'Question state could not be saved.' }, :status => 500
     end

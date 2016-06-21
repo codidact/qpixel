@@ -43,10 +43,10 @@
         <a href="/questions/<%= question.id %>/edit">edit</a> /
         <% if !question.is_closed %>
           <%= link_to "close", url_for(:controller => :questions, :action => :close, :id => question.id),
-            :method => :patch, :remote => true %>
+            :method => :patch, :remote => true, :class => 'close-question' %>
         <% else %>
           <%= link_to "reopen", url_for(:controller => :questions, :action => :reopen, :id => question.id),
-            :method => :patch, :remote => true %>
+            :method => :patch, :remote => true, :class => 'reopen-question' %>
         <% end %> /
         <% if !question.is_deleted %>
           <%= link_to "delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
@@ -58,6 +58,13 @@
         <a href="#" class="flag-link" data-post-type="Question" data-post-id="<%= question.id %>">flag</a>
       </div>
       <hr/>
+      <% if question.is_closed %>
+        <div class="alert alert-warning">
+          <h4>Question Closed</h4>
+          <p>This question was closed by <strong><a href="/users/<%= question.closed_by.id %>"><%= question.closed_by.username %></a></strong>.
+            New answers cannot be added.</p>
+        </div>
+      <% end %>
       <div class="comments-container">
         <% question.comments.each do |comment| %>
           <%= render 'comments/comment', :comment => comment %>
