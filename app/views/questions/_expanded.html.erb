@@ -40,7 +40,7 @@
     <% if with_actions %>
       <div class="clearfix padded"></div>
       <div class="padded">
-        <a href="/questions/<%= question.id %>/edit" class="btn btn-info">edit</a> /
+        <a href="/questions/<%= question.id %>/edit">edit</a> /
         <% if !question.is_closed %>
           <%= link_to "close", url_for(:controller => :questions, :action => :close, :id => question.id),
             :method => :patch, :remote => true %>
