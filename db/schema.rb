@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621145835) do
+ActiveRecord::Schema.define(version: 20191109211244) do
 
-  create_table "answers", force: :cascade do |t|
+  create_table "answers", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "body"
     t.integer  "score"
     t.datetime "created_at",                  null: false
@@ -22,12 +21,11 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.integer  "user_id"
     t.boolean  "is_deleted",  default: false
     t.datetime "deleted_at"
+    t.index ["question_id"], name: "index_answers_on_question_id", using: :btree
+    t.index ["user_id"], name: "index_answers_on_user_id", using: :btree
   end
 
-  add_index "answers", ["question_id"], name: "index_answers_on_question_id"
-  add_index "answers", ["user_id"], name: "index_answers_on_user_id"
-
-  create_table "comments", force: :cascade do |t|
+  create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.integer  "post_id"
@@ -35,58 +33,53 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.string   "content"
     t.boolean  "is_deleted", default: false
     t.integer  "user_id"
+    t.index ["post_type", "post_id"], name: "index_comments_on_post_type_and_post_id", using: :btree
+    t.index ["user_id"], name: "index_comments_on_user_id", using: :btree
   end
 
-  add_index "comments", ["post_type", "post_id"], name: "index_comments_on_post_type_and_post_id"
-  add_index "comments", ["user_id"], name: "index_comments_on_user_id"
-
-  create_table "flag_statuses", force: :cascade do |t|
+  create_table "flag_statuses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "result"
     t.string   "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "flag_id"
+    t.index ["flag_id"], name: "index_flag_statuses_on_flag_id", using: :btree
   end
 
-  add_index "flag_statuses", ["flag_id"], name: "index_flag_statuses_on_flag_id"
-
-  create_table "flags", force: :cascade do |t|
+  create_table "flags", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "user_id"
     t.integer  "post_id"
     t.string   "post_type"
+    t.index ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id", using: :btree
+    t.index ["user_id"], name: "index_flags_on_user_id", using: :btree
   end
 
-  add_index "flags", ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id"
-  add_index "flags", ["user_id"], name: "index_flags_on_user_id"
-
-  create_table "notifications", force: :cascade do |t|
+  create_table "notifications", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "content"
     t.string   "link"
     t.boolean  "is_read",    default: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.integer  "user_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id", using: :btree
   end
 
-  add_index "notifications", ["user_id"], name: "index_notifications_on_user_id"
-
-  create_table "post_histories", force: :cascade do |t|
+  create_table "post_histories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "post_history_type_id"
     t.integer  "user_id"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
     t.integer  "post_id"
     t.string   "post_type"
+    t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id", using: :btree
+    t.index ["post_type", "post_id"], name: "index_post_histories_on_post_type_and_post_id", using: :btree
+    t.index ["user_id"], name: "index_post_histories_on_user_id", using: :btree
   end
 
-  add_index "post_histories", ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
-  add_index "post_histories", ["post_type", "post_id"], name: "index_post_histories_on_post_type_and_post_id"
-  add_index "post_histories", ["user_id"], name: "index_post_histories_on_user_id"
-
-  create_table "post_history_types", force: :cascade do |t|
+  create_table "post_history_types", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
     t.string   "description"
     t.string   "action_name"
@@ -94,49 +87,46 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.datetime "updated_at",  null: false
   end
 
-  create_table "privileges", force: :cascade do |t|
+  create_table "privileges", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "user_id"
     t.string   "name"
     t.integer  "threshold"
+    t.index ["user_id"], name: "index_privileges_on_user_id", using: :btree
   end
 
-  add_index "privileges", ["user_id"], name: "index_privileges_on_user_id"
-
-  create_table "privileges_users", id: false, force: :cascade do |t|
+  create_table "privileges_users", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "privilege_id", null: false
     t.integer "user_id",      null: false
+    t.index ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id", using: :btree
+    t.index ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id", using: :btree
   end
 
-  add_index "privileges_users", ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id"
-  add_index "privileges_users", ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id"
-
-  create_table "questions", force: :cascade do |t|
+  create_table "questions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "title"
     t.string   "body"
-    t.text     "tags"
+    t.text     "tags",         limit: 65535
     t.integer  "score"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
     t.integer  "user_id"
-    t.boolean  "is_deleted", default: false
+    t.boolean  "is_deleted",                 default: false
     t.datetime "deleted_at"
     t.boolean  "is_closed"
-    t.integer  "closed_by"
+    t.integer  "closed_by_id"
     t.datetime "closed_at"
+    t.index ["user_id"], name: "index_questions_on_user_id", using: :btree
   end
 
-  add_index "questions", ["user_id"], name: "index_questions_on_user_id"
-
-  create_table "site_settings", force: :cascade do |t|
+  create_table "site_settings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
-    t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text     "value",      limit: 65535
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  create_table "suspicious_votes", force: :cascade do |t|
+  create_table "suspicious_votes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "from_user_id"
     t.integer  "to_user_id"
     t.boolean  "was_investigated", default: false
@@ -148,7 +138,7 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.datetime "updated_at",                       null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
@@ -165,12 +155,11 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.boolean  "is_admin"
     t.integer  "reputation"
     t.string   "username"
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-
-  create_table "votes", force: :cascade do |t|
+  create_table "votes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -178,9 +167,8 @@ ActiveRecord::Schema.define(version: 20160621145835) do
     t.integer  "post_id"
     t.string   "post_type"
     t.integer  "recv_user"
+    t.index ["post_type", "post_id"], name: "index_votes_on_post_type_and_post_id", using: :btree
+    t.index ["user_id"], name: "index_votes_on_user_id", using: :btree
   end
-
-  add_index "votes", ["post_type", "post_id"], name: "index_votes_on_post_type_and_post_id"
-  add_index "votes", ["user_id"], name: "index_votes_on_user_id"
 
 end
