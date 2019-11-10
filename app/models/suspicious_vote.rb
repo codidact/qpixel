@@ -1,11 +1,11 @@
 class SuspiciousVote < ActiveRecord::Base
-  belongs_to :from_user, :foreign_key => "from_user_id", :class_name => "User"
-  belongs_to :to_user, :foreign_key => "to_user_id", :class_name => "User"
+  belongs_to :from_user, foreign_key: "from_user_id", class_name: "User"
+  belongs_to :to_user, foreign_key: "to_user_id", class_name: "User"
 
   validates :from_user, uniqueness: { scope: [:to_user] }
 
   def self.pending
-    SuspiciousVote.where(:was_investigated => false)
+    SuspiciousVote.where(was_investigated: false)
   end
 
   def self.check_for_vote_fraud

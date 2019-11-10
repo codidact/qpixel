@@ -5,7 +5,7 @@ module AnswersHelper
   # guess).
   def my_vote(answer)
     if user_signed_in?
-      return answer.votes.where(:user => current_user).first
+      return answer.votes.where(user: current_user).first
     end
     return nil
   end

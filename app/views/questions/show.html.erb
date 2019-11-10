@@ -1,16 +1,16 @@
 <% content_for :title, @question.title.truncate(50) %>
 
-<%= render 'expanded', :question => @question, :with_actions => true %>
+<%= render 'expanded', question: @question, with_actions: true %>
 <span class="clearfix"></span><br/>
-<h4><%= pluralize(@question.answers.where(:is_deleted => false).count, "answer") %></h4>
+<h4><%= pluralize(@question.answers.where(is_deleted: false).count, "answer") %></h4>
 <hr/>
 <% if @answers %>
   <% @answers.each do |answer| %>
-    <%= render 'answers/expanded', :answer => answer %>
+    <%= render 'answers/expanded', answer: answer %>
   <% end %>
 <% else %>
   <% @question.answers.order(params[:sort] || 'score desc').each do |answer| %>
-    <%= render 'answers/expanded', :answer => answer %>
+    <%= render 'answers/expanded', answer: answer %>
   <% end %>
 <% end %>
 

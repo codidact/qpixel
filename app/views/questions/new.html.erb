@@ -12,7 +12,7 @@
   </div>
 <% end %>
 
-<%= form_for @question, :url => { :controller => :questions, :action => :create } do |f| %>
+<%= form_for @question, url: { controller: :questions, action: :create } do |f| %>
   <div class="field">
     <%= f.label :title, "Title your question:" %><br/>
     <%= f.text_field :title, class: "form-control" %>

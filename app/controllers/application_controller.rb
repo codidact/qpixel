@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
     # administrators.
     def verify_moderator
       if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-        render :template => 'errors/not_found', :status => 404 and return
+        render template: 'errors/not_found', status: 404 and return
       end
     end
 
@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
     # Not Found if not. Admins are assumed to be a higher level than moderators, so returns false for moderators.
     def verify_admin
       if !user_signed_in? || !current_user.is_admin
-        render :template => 'errors/not_found', :status => 404 and return
+        render template: 'errors/not_found', status: 404 and return
       end
     end
 
@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
 
     def check_your_privilege(name, post = nil, render_error = true)
       unless current_user.has_privilege?(name) || (current_user.has_post_privilege?(name, post) if post)
-        render :template => 'errors/forbidden', :privilege_name => name, :status => 401 if render_error
+        render template: 'errors/forbidden', privilege_name: name, status: 401 if render_error
         return false
       end
       return true
@@ -64,8 +64,8 @@ class ApplicationController < ActionController::Base
 
   private
     def set_globals
-      @hot_questions = Rails.cache.fetch("hot_questions", :expires_in => 30.minutes) do
-        Question.where(:updated_at => 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
+      @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
+        Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
       end
       if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
         @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count

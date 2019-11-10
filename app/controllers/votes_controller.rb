@@ -12,15 +12,15 @@ class VotesController < ApplicationController
   # is only accessible on a POST route, and returns JSON for further client-side processing.
   def create
     post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
-    vote = post.votes.find_or_initialize_by(:user => current_user)
+    vote = post.votes.find_or_initialize_by(user: current_user)
 
     if post.user == current_user
-      (render :plain => "You may not vote on your own posts.", :status => 403 and return) unless get_setting('AllowSelfVotes') == "true"
+      (render plain: "You may not vote on your own posts.", status: 403 and return) unless get_setting('AllowSelfVotes') == "true"
     end
 
     if vote.vote_type == params[:vote_type].to_i
       # already voted
-      render :plain => "You have already voted.", :status => 409 and return
+      render plain: "You have already voted.", status: 409 and return
     else
       modified = false
       if vote.vote_type
@@ -31,7 +31,7 @@ class VotesController < ApplicationController
       vote.vote_type = params[:vote_type].to_i
       vote.recv_user = post.user.id
       vote.save!
-      state = { :status => (modified ? "modified" : "OK"), :vote_id => vote.id }
+      state = { status: (modified ? "modified" : "OK"), vote_id: vote.id }
     end
 
     post.score = post.votes.sum(:vote_type)
@@ -40,7 +40,7 @@ class VotesController < ApplicationController
 
     calc_rep(vote, post, 1)
 
-    render :json => state
+    render json: state
   end
 
   # Authenticated web action. Removes a vote that has already been cast, and handles re-calculating post scores and user reputation.
@@ -49,7 +49,7 @@ class VotesController < ApplicationController
     vote = Vote.find params[:id]
 
     if vote.user != current_user
-      render :plain => "You are not authorized to remove this vote.", :status => 403 and return
+      render plain: "You are not authorized to remove this vote.", status: 403 and return
     end
 
     calc_rep(vote, vote.post, -1)
@@ -58,7 +58,7 @@ class VotesController < ApplicationController
     vote.post.score = vote.post.votes.sum(:vote_type)
     vote.post.save!
 
-    render :json => { :status => "OK", :post_score => vote.post.score }
+    render json: { status: "OK", post_score: vote.post.score }
   end
 
   private
@@ -67,7 +67,7 @@ class VotesController < ApplicationController
     # Forbidden with response text if the user is not logged in.
     def auth_for_voting
       if !user_signed_in?
-        render :plain => "You must be logged in to vote.", :status => 403 and return
+        render plain: "You must be logged in to vote.", status: 403 and return
       end
     end
 
@@ -91,7 +91,7 @@ class VotesController < ApplicationController
       end
       post.user.reputation += rep_add
       if get_setting('RepNotificationsActive') == 'true'
-        post.user.create_notification("#{rep_add} rep: #{(vote.post_type == "Question" ? post.title : post.question.title)}", url_for(:controller => :questions, :action => :show, :id => (vote.post_type == 'Question' ? post.id : post.question.id)))
+        post.user.create_notification("#{rep_add} rep: #{(vote.post_type == "Question" ? post.title : post.question.title)}", url_for(controller: :questions, action: :show, id: (vote.post_type == 'Question' ? post.id : post.question.id)))
       end
       post.user.save!
     end

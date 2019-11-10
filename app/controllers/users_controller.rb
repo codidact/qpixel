@@ -1,12 +1,12 @@
 # Web controller. Provides actions that relate to users. Does not deal with accounts, registrations, sessions etc., as
 # that's all handled by Devise and its override controllers (see <tt>app/controllers/users/*</tt>).
 class UsersController < ApplicationController
-  before_action :verify_moderator, :only => [:mod, :destroy, :soft_delete]
-  before_action :set_user, :only => [:mod, :destroy, :soft_delete]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
+  before_action :set_user, only: [:mod, :destroy, :soft_delete]
 
   # Web action. Retrieves a paginated list of all users.
   def index
-    @users = User.all.paginate(:page => params[:page], :per_page => 50).order(params[:sort])
+    @users = User.all.paginate(page: params[:page], per_page: 50).order(params[:sort])
   end
 
   # Web action. Retrieves a single user.
@@ -21,23 +21,23 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.votes.count > 100
-      render :json => { :status => 'failed', :message => 'Users with more than 100 votes cannot be destroyed.' }, :status => 422 and return
+      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' }, status: 422 and return
     end
 
     if @user.is_admin || @user.is_moderator
-      render :json => { :status => 'failed', :message => 'Admins and moderators cannot be destroyed.' }, :status => 422 and return
+      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' }, status: 422 and return
     end
 
     if @user.destroy!
-      render :json => { :status => 'success' }
+      render json: { status: 'success' }
     else
-      render :json => { :status => 'failed', :message => 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' }, :status => 500
+      render json: { status: 'failed', message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' }, status: 500
     end
   end
 
   def soft_delete
     if @user.is_admin || @user.is_moderator
-      render :json => { :status => 'failed', :message => 'Admins and moderators cannot be deleted.' }, :status => 422 and return
+      render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' }, status: 422 and return
     end
 
     @transfer_user = User.find params[:transfer]
@@ -56,7 +56,7 @@ class UsersController < ApplicationController
           else
             obj.user_id = @transfer_user.id
             if !obj.save
-              render :json => { :status => 'failed', :message => "Failed to transfer #{assoc} #{obj.id}" }, :status => 500 and return
+              render json: { status: 'failed', message: "Failed to transfer #{assoc} #{obj.id}" }, status: 500 and return
             end
           end
         end
@@ -67,10 +67,10 @@ class UsersController < ApplicationController
     end
 
     if !@user.destroy
-      render :json => { :status => 'failed', :message => "Failed to destroy UID #{@user.id}" }, :status => 500 and return
+      render json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: 500 and return
     end
 
-    render :json => { :status => 'success', :message => 'Ask a database administrator to verify the deletion is complete.' }
+    render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
   end
 
   private

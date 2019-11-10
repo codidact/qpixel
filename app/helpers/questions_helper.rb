@@ -4,7 +4,7 @@ module QuestionsHelper
   # or <tt>nil</tt> if there isn't one.
   def my_vote(question)
     if user_signed_in?
-      return question.votes.where(:user => current_user).first
+      return question.votes.where(user: current_user).first
     end
     return nil
   end

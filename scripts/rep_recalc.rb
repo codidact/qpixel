@@ -19,8 +19,8 @@ u.reputation = 1
 u.save!
 
 u.questions.each do |p|
-  upvotes = p.votes.where(:vote_type => 1).count
-  downvotes = p.votes.where(:vote_type => -1).count
+  upvotes = p.votes.where(vote_type: 1).count
+  downvotes = p.votes.where(vote_type: -1).count
   p.user.reputation += qu * upvotes
   p.user.reputation += qd * downvotes
   puts "Questions: #{upvotes} up, #{downvotes} down => #{qu*upvotes}, #{qd*downvotes} rep"
@@ -28,8 +28,8 @@ u.questions.each do |p|
 end
 
 u.answers.each do |p|
-  upvotes = p.votes.where(:vote_type => 1).count
-  downvotes = p.votes.where(:vote_type => -1).count
+  upvotes = p.votes.where(vote_type: 1).count
+  downvotes = p.votes.where(vote_type: -1).count
   p.user.reputation += au * upvotes
   p.user.reputation += ad * downvotes
   puts "Answers: #{upvotes} up, #{downvotes} down => #{au*upvotes}, #{ad*downvotes} rep"

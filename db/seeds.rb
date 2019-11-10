@@ -24,11 +24,6 @@ default_settings = [
   [ 'RepNotificationsActive', 'true' ],
   [ 'AdminBadgeCharacter', ''],
   [ 'ModBadgeCharacter', ''],
-  [ 'IRCHostname', 'localhost'],
-  [ 'IRCPort', '6667'],
-  [ 'IRCServerID', '8AB'],
-  [ 'IRCServerName', 'qpixel.qpixel'],
-  [ 'IRCPass', 'asdf'],
   [ 'BlockedIpAddresses', '' ],
   [ 'RestrictDBIntensiveOps', 'true' ],
   [ 'SoftDeleteTransferUser', '0' ]

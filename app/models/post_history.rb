@@ -1,7 +1,7 @@
 class PostHistory < ActiveRecord::Base
   belongs_to :post_history_type
   belongs_to :user
-  belongs_to :post, :polymorphic => true
+  belongs_to :post
 
   def self.question_edited(question, user)
     self.new_question_event('Edit', question, user)

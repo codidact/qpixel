@@ -1,8 +1,8 @@
 # Web controller. Provides actions that relate to answers. Pretty much the standard set of resources, really - it's
 # questions that have a few more actions.
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, :only => [:new, :create, :edit, :update, :destroy, :undelete]
-  before_action :set_answer, :only => [:edit, :update, :destroy, :undelete]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete]
+  before_action :set_answer, only: [:edit, :update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
 
   # Authenticated web action. Creates a new answer as a resource for form creation in the view.
@@ -26,9 +26,9 @@ class AnswersController < ApplicationController
     @answer.score = 0
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
-      redirect_to url_for(:controller => :questions, :action => :show, :id => params[:id]) and return
+      redirect_to url_for(controller: :questions, action: :show, id: params[:id]) and return
     else
-      render :new, :status => 422
+      render :new, status: 422
     end
   end
 
@@ -42,7 +42,7 @@ class AnswersController < ApplicationController
     return unless check_your_privilege('Edit', @answer)
     PostHistory.answer_edited(@answer, current_user)
     if @answer.update answer_params
-      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
     else
       render :edit
     end
@@ -56,10 +56,10 @@ class AnswersController < ApplicationController
     @answer.deleted_at = DateTime.now
     if @answer.save
       calculate_reputation(@answer.user, @answer, -1)
-      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
     else
       flash[:error] = "The answer could not be deleted."
-      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
     end
   end
 
@@ -71,10 +71,10 @@ class AnswersController < ApplicationController
     @answer.deleted_at = DateTime.now
     if @answer.save
       calculate_reputation(@answer.user, @answer, 1)
-      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
     else
       flash[:error] = "The answer could not be undeleted."
-      redirect_to url_for(:controller => :questions, :action => :show, :id => @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
     end
   end
 
@@ -92,8 +92,8 @@ class AnswersController < ApplicationController
     # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
     # reputation. If it's -1, we take it away.
     def calculate_reputation(user, post, direction)
-      upvote_rep = post.votes.where(:vote_type => 1).count * get_setting('AnswerUpVoteRep').to_i
-      downvote_rep = post.votes.where(:vote_type => -1).count * get_setting('AnswerDownVoteRep').to_i
+      upvote_rep = post.votes.where(vote_type: 1).count * get_setting('AnswerUpVoteRep').to_i
+      downvote_rep = post.votes.where(vote_type: -1).count * get_setting('AnswerDownVoteRep').to_i
       user.reputation += direction * (upvote_rep + downvote_rep)
       user.save!
     end

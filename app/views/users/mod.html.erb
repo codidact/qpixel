@@ -12,9 +12,9 @@
     <p class="text-danger"><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
       after initiating an action.</p>
     <div class="delete-actions">
-      <%= link_to "Destroy User", url_for(:controller => :users, :action => :destroy, :id => @user.id), :method => :delete, :remote => true, :class => "destroy-user btn btn-danger" %>
+      <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id), method: :delete, remote: true, class: "destroy-user btn btn-danger" %>
       <% if user_is_admin %>
-        <%= link_to "Soft-Delete", url_for(:controller => :users, :action => :soft_delete, :id => @user.id, :transfer => get_setting('SoftDeleteTransferUser')), :method => :delete, :remote => true, :class => "soft-delete btn btn-danger" %>
+        <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id, transfer: get_setting('SoftDeleteTransferUser')), method: :delete, remote: true, class: "soft-delete btn btn-danger" %>
       <% end %>
     </div>
   </div>

@@ -2,7 +2,7 @@
 
 <h3>Recently Deleted Answers</h3>
 <% @answers.each do |a| %>
-  <%= render 'answers/answer', :answer => a %>
+  <%= render 'answers/answer', answer: a %>
 <% end %>
 
 <%= will_paginate @answers %>

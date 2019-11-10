@@ -7,9 +7,9 @@
 <% @flags.each do |flag| %>
   <div class="flag">
     <% if flag.post_type == 'Question' %>
-      <%= render 'questions/question', :question => Question.unscoped.where(:id => flag.post_id).first %>
+      <%= render 'questions/question', question: Question.unscoped.where(id: flag.post_id).first %>
     <% else %>
-      <%= render 'answers/answer', :answer => Answer.unscoped.where(:id => flag.post_id).first %>
+      <%= render 'answers/answer', answer: Answer.unscoped.where(id: flag.post_id).first %>
     <% end %>
     <p><strong>Reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
     <p>

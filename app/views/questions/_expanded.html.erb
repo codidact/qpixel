@@ -42,18 +42,18 @@
       <div class="padded">
         <a href="/questions/<%= question.id %>/edit">edit</a> /
         <% if !question.is_closed %>
-          <%= link_to "close", url_for(:controller => :questions, :action => :close, :id => question.id),
-            :method => :patch, :remote => true, :class => 'close-question' %>
+          <%= link_to "close", url_for(controller: :questions, action: :close, id: question.id),
+            method: :patch, remote: true, class: 'close-question' %>
         <% else %>
-          <%= link_to "reopen", url_for(:controller => :questions, :action => :reopen, :id => question.id),
-            :method => :patch, :remote => true, :class => 'reopen-question' %>
+          <%= link_to "reopen", url_for(controller: :questions, action: :reopen, id: question.id),
+            method: :patch, remote: true, class: 'reopen-question' %>
         <% end %> /
         <% if !question.is_deleted %>
-          <%= link_to "delete", url_for(:controller => :questions, :action => :destroy, :id => question.id),
-            :method => :delete, data: { :confirm => 'Are you sure you want to delete this question?' }, :class => "text-danger" %>
+          <%= link_to "delete", url_for(controller: :questions, action: :destroy, id: question.id),
+            method: :delete, data: { confirm: 'Are you sure you want to delete this question?' }, class: "text-danger" %>
         <% else %>
-          <%= link_to "undelete", url_for(:controller => :questions, :action => :undelete, :id => question.id),
-            :method => :patch, data: { :confirm => 'Undelete this question, making it visible to regular users?' }, :class => "text-danger" %>
+          <%= link_to "undelete", url_for(controller: :questions, action: :undelete, id: question.id),
+            method: :patch, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "text-danger" %>
         <% end %> /
         <a href="#" class="flag-link" data-post-type="Question" data-post-id="<%= question.id %>">flag</a>
       </div>
@@ -67,11 +67,11 @@
       <% end %>
       <div class="comments-container">
         <% question.comments.each do |comment| %>
-          <%= render 'comments/comment', :comment => comment %>
+          <%= render 'comments/comment', comment: comment %>
         <% end %>
-        <%= form_for Comment.new, url: { :controller => :comments, :action => :create } do |f| %>
-          <%= f.hidden_field :post_type, :value => 'Question' %>
-          <%= f.hidden_field :post_id, :value => question.id %>
+        <%= form_for Comment.new, url: { controller: :comments, action: :create } do |f| %>
+          <%= f.hidden_field :post_type, value: 'Question' %>
+          <%= f.hidden_field :post_id, value: question.id %>
           <div class="field">
             <%= f.text_area :content, { class: "form-control", rows: 3 } %>
           </div>

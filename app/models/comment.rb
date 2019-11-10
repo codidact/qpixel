@@ -2,7 +2,7 @@
 class Comment < ActiveRecord::Base
   default_scope { where(is_deleted: false) }
 
-  belongs_to :post, :polymorphic => true
+  belongs_to :post
   belongs_to :user
 
   validates :content, length: { minimum: 15, maximum: 500 }

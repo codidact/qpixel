@@ -5,7 +5,7 @@ class SiteSettingsController < ApplicationController
 
   # Authenticated administrator web action. Retrieves a paginated list of all site settings.
   def index
-    @settings = SiteSetting.all.paginate(:page => params[:page], :per_page => 20)
+    @settings = SiteSetting.all.paginate(page: params[:page], per_page: 20)
   end
 
   # Authenticated administrator web action. Retrieves a single site setting for editing.
@@ -23,7 +23,7 @@ class SiteSettingsController < ApplicationController
       @setting.value = ActionController::Base.helpers.sanitize(@setting.value, scrubber: SiteSettingScrubber.new)
       @setting.save!
     end
-    redirect_to url_for(:controller => :site_settings, :action => :index)
+    redirect_to url_for(controller: :site_settings, action: :index)
   end
 
   private

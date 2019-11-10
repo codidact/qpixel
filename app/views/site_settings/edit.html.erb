@@ -2,7 +2,7 @@
 
 <h3>Edit Setting: <%= @setting.name %></h3>
 <p>Current value: <%= @setting.value %></p>
-<%= form_for @setting, :url => { :controller => :site_settings, :action => :update } do |f| %>
+<%= form_for @setting, url: { controller: :site_settings, action: :update } do |f| %>
   <% if @setting.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@setting.errors.count, "error") %> prevented this setting from being saved:</h2>

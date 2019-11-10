@@ -12,21 +12,21 @@ class SiteSettingsControllerTest < ActionController::TestCase
 
   test "should get edit setting page" do
     sign_in users(:admin)
-    get :edit, :id => site_settings(:one).id
+    get :edit, id: site_settings(:one).id
     assert_not_nil assigns(:setting)
     assert_response(200)
   end
 
   test "should update existing setting" do
     sign_in users(:admin)
-    patch :update, :id => site_settings(:one).id, :site_setting => { :value => "ABCDEF" }
+    patch :update, id: site_settings(:one).id, site_setting: { value: "ABCDEF" }
     assert_not_nil assigns(:setting)
     assert_response(302)
   end
 
   test "should sanitize raw html strings" do
     sign_in users(:admin)
-    patch :update, :id => site_settings(:sanitize).id, :site_setting => { :value => "<script>alert('omg xss2');</script>" }
+    patch :update, id: site_settings(:sanitize).id, site_setting: { value: "<script>alert('omg xss2');</script>" }
     assert_not_nil assigns(:setting)
     assert_not assigns(:setting).value.include?("<script>")
     assert_response(302)
@@ -40,13 +40,13 @@ class SiteSettingsControllerTest < ActionController::TestCase
 
   test "should require authentication to access edit page" do
     sign_out :user
-    get :edit, :id => site_settings(:one).id
+    get :edit, id: site_settings(:one).id
     assert_response(404)
   end
 
   test "should require authentication to update setting" do
     sign_out :user
-    patch :update, :id => site_settings(:one).id
+    patch :update, id: site_settings(:one).id
     assert_response(404)
   end
 
@@ -58,13 +58,13 @@ class SiteSettingsControllerTest < ActionController::TestCase
 
   test "should require admin status to access edit page" do
     sign_in users(:moderator)
-    get :edit, :id => site_settings(:one).id
+    get :edit, id: site_settings(:one).id
     assert_response(404)
   end
 
   test "should require admin status to update setting" do
     sign_in users(:moderator)
-    patch :update, :id => site_settings(:one).id
+    patch :update, id: site_settings(:one).id
     assert_response(404)
   end
 end

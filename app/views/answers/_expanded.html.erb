@@ -8,8 +8,8 @@
         <img class="vote-button" data-vote="1/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
-    <% @upvotes = answer.votes.where(:vote_type => 1).count %>
-    <% @downvotes = answer.votes.where(:vote_type => -1).count %>
+    <% @upvotes = answer.votes.where(vote_type: 1).count %>
+    <% @downvotes = answer.votes.where(vote_type: -1).count %>
     <p class="post-score large-text center" title="+<%= @upvotes %>/-<%= @downvotes %>"><%= answer.score %></p>
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == -1 %>
@@ -29,11 +29,11 @@
     <div class="post-tags">
       <a href="/answers/<%= answer.id %>/edit">edit</a> /
       <% if !answer.is_deleted %>
-        <%= link_to "delete", url_for(:controller => :answers, :action => :destroy, :id => answer.id),
-          :method => :delete, data: { :confirm => 'Are you sure you want to delete this answer?' }, class: "text-danger" %>
+        <%= link_to "delete", url_for(controller: :answers, action: :destroy, id: answer.id),
+          method: :delete, data: { confirm: 'Are you sure you want to delete this answer?' }, class: "text-danger" %>
       <% else %>
-        <%= link_to "undelete", url_for(:controller => :answers, :action => :undelete, :id => answer.id),
-          :method => :patch, data: { :confirm => 'Undelete this answer, making it visible to regular users?' }, class: "text-danger" %>
+        <%= link_to "undelete", url_for(controller: :answers, action: :undelete, id: answer.id),
+          method: :patch, data: { confirm: 'Undelete this answer, making it visible to regular users?' }, class: "text-danger" %>
       <% end %> /
       <a href="#" class="flag-link" data-post-type="Answer" data-post-id="<%= answer.id %>">flag</a>
     </div>
@@ -45,11 +45,11 @@
     <hr/>
     <div class="comments-container">
       <% answer.comments.each do |comment| %>
-        <%= render 'comments/comment', :comment => comment %>
+        <%= render 'comments/comment', comment: comment %>
       <% end %>
-      <%= form_for Comment.new, url: { :controller => :comments, :action => :create } do |f| %>
-        <%= f.hidden_field :post_type, :value => 'Answer' %>
-        <%= f.hidden_field :post_id, :value => answer.id %>
+      <%= form_for Comment.new, url: { controller: :comments, action: :create } do |f| %>
+        <%= f.hidden_field :post_type, value: 'Answer' %>
+        <%= f.hidden_field :post_id, value: answer.id %>
         <div class="field">
           <%= f.text_area :content, { class: "form-control", rows: 3 } %>
         </div>

@@ -10,30 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191109211244) do
-
-  create_table "answers", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "body"
-    t.integer  "score"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-    t.integer  "question_id"
-    t.integer  "user_id"
-    t.boolean  "is_deleted",  default: false
-    t.datetime "deleted_at"
-    t.index ["question_id"], name: "index_answers_on_question_id", using: :btree
-    t.index ["user_id"], name: "index_answers_on_user_id", using: :btree
-  end
+ActiveRecord::Schema.define(version: 20191110193734) do
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.integer  "post_id"
-    t.string   "post_type"
     t.string   "content"
     t.boolean  "is_deleted", default: false
     t.integer  "user_id"
-    t.index ["post_type", "post_id"], name: "index_comments_on_post_type_and_post_id", using: :btree
+    t.index ["post_id"], name: "index_comments_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_comments_on_user_id", using: :btree
   end
 
@@ -52,8 +38,7 @@ ActiveRecord::Schema.define(version: 20191109211244) do
     t.datetime "updated_at", null: false
     t.integer  "user_id"
     t.integer  "post_id"
-    t.string   "post_type"
-    t.index ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id", using: :btree
+    t.index ["post_id"], name: "index_flags_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_flags_on_user_id", using: :btree
   end
 
@@ -73,9 +58,8 @@ ActiveRecord::Schema.define(version: 20191109211244) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
     t.integer  "post_id"
-    t.string   "post_type"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id", using: :btree
-    t.index ["post_type", "post_id"], name: "index_post_histories_on_post_type_and_post_id", using: :btree
+    t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_post_histories_on_user_id", using: :btree
   end
 
@@ -85,6 +69,27 @@ ActiveRecord::Schema.define(version: 20191109211244) do
     t.string   "action_name"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "post_types", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+  end
+
+  create_table "posts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "title"
+    t.text     "body",          limit: 65535,             null: false
+    t.string   "tags"
+    t.integer  "score",                       default: 0, null: false
+    t.integer  "parent_id"
+    t.integer  "user_id"
+    t.boolean  "closed"
+    t.integer  "closed_by_id"
+    t.datetime "closed_at"
+    t.boolean  "deleted"
+    t.integer  "deleted_by_id"
+    t.datetime "deleted_at"
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
   create_table "privileges", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -101,22 +106,6 @@ ActiveRecord::Schema.define(version: 20191109211244) do
     t.integer "user_id",      null: false
     t.index ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id", using: :btree
     t.index ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id", using: :btree
-  end
-
-  create_table "questions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "title"
-    t.string   "body"
-    t.text     "tags",         limit: 65535
-    t.integer  "score"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-    t.integer  "user_id"
-    t.boolean  "is_deleted",                 default: false
-    t.datetime "deleted_at"
-    t.boolean  "is_closed"
-    t.integer  "closed_by_id"
-    t.datetime "closed_at"
-    t.index ["user_id"], name: "index_questions_on_user_id", using: :btree
   end
 
   create_table "site_settings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -165,9 +154,8 @@ ActiveRecord::Schema.define(version: 20191109211244) do
     t.datetime "updated_at", null: false
     t.integer  "user_id"
     t.integer  "post_id"
-    t.string   "post_type"
     t.integer  "recv_user"
-    t.index ["post_type", "post_id"], name: "index_votes_on_post_type_and_post_id", using: :btree
+    t.index ["post_id"], name: "index_votes_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_votes_on_user_id", using: :btree
   end
 

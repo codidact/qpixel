@@ -16,7 +16,7 @@ gem 'devise'
 gem 'will_paginate'
 gem 'rails-html-sanitizer'
 
-gem 'whenever', :require => false
+gem 'whenever', require: false
 
 gem 'coveralls', require: false
 

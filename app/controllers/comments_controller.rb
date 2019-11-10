@@ -1,8 +1,8 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_comment, :only => [:update, :destroy, :undelete]
-  before_action :check_privilege, :only => [:update, :destroy, :undelete]
+  before_action :set_comment, only: [:update, :destroy, :undelete]
+  before_action :check_privilege, only: [:update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
 
   # Supplies a pre-constructed Markdown renderer for use in rendering Markdown from views.
@@ -25,16 +25,16 @@ class CommentsController < ApplicationController
       end
 
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => id)
+        redirect_to url_for(controller: :questions, action: :show, id: id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => id)
+        redirect_to url_for(controller: :questions, action: :show, id: id)
       end
     else
       flash[:error] = "Comment failed to save."
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     end
   end
@@ -43,16 +43,16 @@ class CommentsController < ApplicationController
   def update
     if @comment.update comment_params
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     else
       flash[:error] = "Comment failed to update."
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     end
   end
@@ -62,16 +62,16 @@ class CommentsController < ApplicationController
     @comment.is_deleted = true
     if @comment.save
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     else
       flash[:error] = "Comment marked deleted, but not saved - status unknown."
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     end
   end
@@ -81,16 +81,16 @@ class CommentsController < ApplicationController
     @comment.is_deleted = false
     if @comment.save
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     else
       flash[:error] = "Comment marked undeleted, but not saved - status unknown."
       if @comment.post_type == 'Question'
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(:controller => :questions, :action => :show, :id => @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
       end
     end
   end
@@ -109,7 +109,7 @@ class CommentsController < ApplicationController
     # Checks that the user trying to access the action has the required privilege - author or moderator/admin.
     def check_privilege
       unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
-        render :template => 'errors/forbidden', :status => 401
+        render template: 'errors/forbidden', status: 401
       end
     end
 end
