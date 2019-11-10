@@ -17,11 +17,9 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
-    if user_signed_in? && current_user.has_privilege?('ViewDeleted')
-      @answers = Answer.unscoped.where(question: @question).order(params[:sort] || 'score desc')
-    end
-    @upvotes = @question.votes.where(vote_type: 1).count
-    @downvotes = @question.votes.where(vote_type: -1).count
+    check_your_privilege('ViewDeleted', @question) or return
+    @upvotes = @question.votes.where(vote_type: 1).count || 0
+    @downvotes = @question.votes.where(vote_type: -1).count || 0
   end
 
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string
@@ -78,11 +76,11 @@ class QuestionsController < ApplicationController
     end
   end
 
-  # Authenticated web action. Marks the question as 'deleted' - that is, sets the <tt>is_deleted</tt> field to true.
+  # Authenticated web action. Marks the question as 'deleted' - that is, sets the <tt>deleted</tt> field to true.
   def destroy
     return unless check_your_privilege('Delete', @question)
     PostHistory.question_deleted(@question, current_user)
-    @question.is_deleted = true
+    @question.deleted = true
     @question.deleted_at = DateTime.now
     if @question.save
       calculate_reputation(@question.user, @question, -1)
@@ -93,12 +91,12 @@ class QuestionsController < ApplicationController
     end
   end
 
-  # Authenticated web action. Basically the opposite of <tt>:destroy</tt> - removes the <tt>is_deleted</tt> flag from
+  # Authenticated web action. Basically the opposite of <tt>:destroy</tt> - removes the <tt>deleted</tt> flag from
   # the question, making it visible from default scope again.
   def undelete
     return unless check_your_privilege('Delete', @question)
     PostHistory.question_undeleted(@question, current_user)
-    @question.is_deleted = false
+    @question.deleted = false
     @question.deleted_at = DateTime.now
     if @question.save
       calculate_reputation(@question.user, @question, 1)
@@ -123,11 +121,11 @@ class QuestionsController < ApplicationController
       render json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 401 and return
     end
 
-    if @question.is_closed
+    if @question.closed
       render json: { status: 'failed', message: 'Cannot close a closed question.' }, status: 422 and return
     end
 
-    if @question.update(is_closed: true, closed_by: current_user, closed_at: Time.now)
+    if @question.update(closed: true, closed_by: current_user, closed_at: Time.now)
       PostHistory.question_closed(@question, current_user)
       render json: { status: 'success', closed_by: "<a href='/users/#{current_user.id}'>#{current_user.username}</a>" }
     else
@@ -140,11 +138,11 @@ class QuestionsController < ApplicationController
       render json: { status: 'failed', message: 'You must have the Close privilege to reopen questions.' }, status: 401 and return
     end
 
-    if !@question.is_closed
+    if !@question.closed
       render json: { status: 'failed', message: 'Cannot reopen an open question.' }, status: 422 and return
     end
 
-    if @question.update(is_closed: false, closed_by: current_user, closed_at: Time.now)
+    if @question.update(closed: false, closed_by: current_user, closed_at: Time.now)
       PostHistory.question_reopened(@question, current_user)
       render json: { status: 'success' }
     else

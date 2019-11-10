@@ -1,6 +1,6 @@
 <h3><%= question.title %></h3>
 <hr/>
-<div class="post-container <%= "deleted-content" if question.is_deleted %>">
+<div class="post-container <%= "deleted-content" if question.deleted %>">
   <div class="vote-box">
     <p>
       <% if my_vote(question) && my_vote(question).vote_type == 1 %>
@@ -41,14 +41,14 @@
       <div class="clearfix padded"></div>
       <div class="padded">
         <a href="/questions/<%= question.id %>/edit">edit</a> /
-        <% if !question.is_closed %>
+        <% if !question.closed %>
           <%= link_to "close", url_for(controller: :questions, action: :close, id: question.id),
             method: :patch, remote: true, class: 'close-question' %>
         <% else %>
           <%= link_to "reopen", url_for(controller: :questions, action: :reopen, id: question.id),
             method: :patch, remote: true, class: 'reopen-question' %>
         <% end %> /
-        <% if !question.is_deleted %>
+        <% if !question.deleted %>
           <%= link_to "delete", url_for(controller: :questions, action: :destroy, id: question.id),
             method: :delete, data: { confirm: 'Are you sure you want to delete this question?' }, class: "text-danger" %>
         <% else %>
@@ -58,7 +58,7 @@
         <a href="#" class="flag-link" data-post-type="Question" data-post-id="<%= question.id %>">flag</a>
       </div>
       <hr/>
-      <% if question.is_closed %>
+      <% if question.closed %>
         <div class="alert alert-warning question-closed">
           <h4><strong>Question Closed</strong></h4>
           <p>This question was closed by <strong><a href="/users/<%= question.closed_by.id %>"><%= question.closed_by.username %></a></strong>.
@@ -70,7 +70,6 @@
           <%= render 'comments/comment', comment: comment %>
         <% end %>
         <%= form_for Comment.new, url: { controller: :comments, action: :create } do |f| %>
-          <%= f.hidden_field :post_type, value: 'Question' %>
           <%= f.hidden_field :post_id, value: question.id %>
           <div class="field">
             <%= f.text_area :content, { class: "form-control", rows: 3 } %>

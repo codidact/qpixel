@@ -1,9 +1,9 @@
 one:
   user: standard_user
-  post: one (Answer)
+  post: answer_one
   content: ABCDEF GHIJKL MNOPQR
 
 two:
   user: standard_user
-  post: one (Question)
+  post: question_one
   content: ABCDEF GHIJKL MNOPQR

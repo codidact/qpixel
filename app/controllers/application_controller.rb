@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
     end
 
     def check_your_privilege(name, post = nil, render_error = true)
-      unless current_user.has_privilege?(name) || (current_user.has_post_privilege?(name, post) if post)
+      unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
         render template: 'errors/forbidden', privilege_name: name, status: 401 if render_error
         return false
       end

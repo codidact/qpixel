@@ -1,4 +1,4 @@
-<div class="post-container <%= "deleted-content" if answer.is_deleted %>">
+<div class="post-container <%= "deleted-content" if answer.deleted %>">
   <div class="vote-box">
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == 1 %>
@@ -28,7 +28,7 @@
   <div class="post-info">
     <div class="post-tags">
       <a href="/answers/<%= answer.id %>/edit">edit</a> /
-      <% if !answer.is_deleted %>
+      <% if !answer.deleted %>
         <%= link_to "delete", url_for(controller: :answers, action: :destroy, id: answer.id),
           method: :delete, data: { confirm: 'Are you sure you want to delete this answer?' }, class: "text-danger" %>
       <% else %>
@@ -48,7 +48,6 @@
         <%= render 'comments/comment', comment: comment %>
       <% end %>
       <%= form_for Comment.new, url: { controller: :comments, action: :create } do |f| %>
-        <%= f.hidden_field :post_type, value: 'Answer' %>
         <%= f.hidden_field :post_id, value: answer.id %>
         <div class="field">
           <%= f.text_area :content, { class: "form-control", rows: 3 } %>

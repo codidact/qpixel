@@ -21,7 +21,7 @@ class AnswersController < ApplicationController
   def create
     @answer = Answer.new answer_params
     @question = Question.find params[:id]
-    @answer.question = @question
+    @answer.parent = @question
     @answer.user = current_user
     @answer.score = 0
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
@@ -42,39 +42,39 @@ class AnswersController < ApplicationController
     return unless check_your_privilege('Edit', @answer)
     PostHistory.answer_edited(@answer, current_user)
     if @answer.update answer_params
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     else
       render :edit
     end
   end
 
-  # Authenticated web action. Deletes an answer - that is, applies the <tt>is_deleted</tt> attribute to it.
+  # Authenticated web action. Deletes an answer - that is, applies the <tt>deleted</tt> attribute to it.
   def destroy
     return unless check_your_privilege('Delete', @answer)
     PostHistory.answer_deleted(@answer, current_user)
-    @answer.is_deleted = true
+    @answer.deleted = true
     @answer.deleted_at = DateTime.now
     if @answer.save
       calculate_reputation(@answer.user, @answer, -1)
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     else
       flash[:error] = "The answer could not be deleted."
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     end
   end
 
-  # Authenticated web action. Removes the <tt>is_deleted</tt> attribute from an answer - that is, undeletes it.
+  # Authenticated web action. Removes the <tt>deleted</tt> attribute from an answer - that is, undeletes it.
   def undelete
     return unless check_your_privilege('Delete', @answer)
     PostHistory.answer_undeleted(@answer, current_user)
-    @answer.is_deleted = false
+    @answer.deleted = false
     @answer.deleted_at = DateTime.now
     if @answer.save
       calculate_reputation(@answer.user, @answer, 1)
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     else
       flash[:error] = "The answer could not be undeleted."
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.question.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     end
   end
 

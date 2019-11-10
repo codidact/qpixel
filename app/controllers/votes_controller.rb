@@ -11,7 +11,7 @@ class VotesController < ApplicationController
   # Intended as an API action to be called from client-side JavaScript, rather than to be directly accessed - this
   # is only accessible on a POST route, and returns JSON for further client-side processing.
   def create
-    post = (params[:post_type] == "a" ? Answer.find(params[:post_id]) : Question.find(params[:post_id]))
+    post = Post.find(params[:post_id])
     vote = post.votes.find_or_initialize_by(user: current_user)
 
     if post.user == current_user
@@ -76,14 +76,15 @@ class VotesController < ApplicationController
     # reverse a vote (for the case where a user changes their vote) before applying a new vote; this is what keeps
     # the reputation bugs at bay.
     def calc_rep(vote, post, modifier)
+      post_type = vote.post.post_type_id
       if vote.vote_type == 1
-        if vote.post_type == 'Answer'
+        if post_type == 2
           rep_add = modifier * get_setting('AnswerUpVoteRep').to_i
         else
           rep_add = modifier * get_setting('QuestionUpVoteRep').to_i
         end
       else
-        if vote.post_type == 'Answer'
+        if post_type == 2
           rep_add = modifier * get_setting('AnswerDownVoteRep').to_i
         else
           rep_add = modifier * get_setting('QuestionDownVoteRep').to_i
@@ -91,7 +92,7 @@ class VotesController < ApplicationController
       end
       post.user.reputation += rep_add
       if get_setting('RepNotificationsActive') == 'true'
-        post.user.create_notification("#{rep_add} rep: #{(vote.post_type == "Question" ? post.title : post.question.title)}", url_for(controller: :questions, action: :show, id: (vote.post_type == 'Question' ? post.id : post.question.id)))
+        post.user.create_notification("#{rep_add} rep: #{(post_type == 1 ? post.title : post.parent.title)}", url_for(controller: :questions, action: :show, id: (post_type == 1 ? post.id : post.parent.id)))
       end
       post.user.save!
     end

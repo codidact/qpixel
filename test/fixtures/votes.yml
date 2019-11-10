@@ -1,4 +1,4 @@
 one:
   user: editor
-  post: one (Question)
+  post: question_one
   vote_type: 1

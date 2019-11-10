@@ -8,7 +8,6 @@ class FlagsController < ApplicationController
     @flag = Flag.new
     @flag.reason = params[:reason]
     @flag.post_id = params[:post_id]
-    @flag.post_type = params[:post_type]
     @flag.user = current_user
     if @flag.save
       render json: { status: 'success' }, status: 201
@@ -20,7 +19,7 @@ class FlagsController < ApplicationController
   # Administrative web action. Provides a 'queue' of flags - i.e. a page containing any unresolved flags.
   def queue
     @flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id')
-                 .where('flag_statuses.id is null').paginate(page: params[:page], per_page: 50)
+                 .where('flag_statuses.id is null').includes(:post).paginate(page: params[:page], per_page: 50)
   end
 
   # Administrative API action. Provides a route for moderators and administrators to resolve flags - that is, apply a

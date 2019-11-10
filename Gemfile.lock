@@ -109,6 +109,10 @@ GEM
       bundler (>= 1.3.0)
       railties (= 5.0.7.2)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.4)
+      actionpack (>= 5.0.1.x)
+      actionview (>= 5.0.1.x)
+      activesupport (>= 5.0.1.x)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -191,6 +195,7 @@ DEPENDENCIES
   jquery-rails
   mysql2 (~> 0.5)
   rails (~> 5)
+  rails-controller-testing
   rails-html-sanitizer
   redcarpet
   sass-rails (~> 5.0)

@@ -2,18 +2,13 @@
 
 <%= render 'expanded', question: @question, with_actions: true %>
 <span class="clearfix"></span><br/>
-<h4><%= pluralize(@question.answers.where(is_deleted: false).count, "answer") %></h4>
+<h4><%= pluralize(@question.answers.where(deleted: false).count, "answer") %></h4>
 <hr/>
-<% if @answers %>
-  <% @answers.each do |answer| %>
-    <%= render 'answers/expanded', answer: answer %>
-  <% end %>
-<% else %>
-  <% @question.answers.order(params[:sort] || 'score desc').each do |answer| %>
-    <%= render 'answers/expanded', answer: answer %>
-  <% end %>
+
+<% (current_user&.has_privilege?('ViewDeleted') ? @question.answers : @question.answers.undeleted).order(params[:sort] || 'score desc').each do |answer| %>
+  <%= render 'answers/expanded', answer: answer %>
 <% end %>
 
-<% unless @question.is_closed %>
+<% unless @question.closed %>
   <a href="/questions/<%= @question.id %>/answer" class="btn btn-primary">Answer this Question</a>
 <% end %>

@@ -99,7 +99,6 @@ $(document).on('ready page:load', function() {
         'url': '/votes/new',
         'type': 'POST',
         'data': {
-          'post_type': state.postType,
           'post_id': state.postId,
           'vote_type': state.voteType
         },
@@ -206,10 +205,9 @@ $(document).on('ready page:load', function() {
     ev.preventDefault();
     var self = $(this);
     var data = {
-      'post_type': self.data("post-type"),
       'post_id': self.data("post-id"),
       'reason': window.prompt("Why does this post require moderator attention?")
-    }
+    };
 
     if(data['reason'].length < 10) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.", self);

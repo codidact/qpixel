@@ -14,9 +14,10 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new comment_params
     @comment.user = current_user
+    post_type = @comment.post.post_type_id
     if @comment.save
-      id = @comment.post_type == 'Question' ? @comment.post.id : @comment.post.question.id
-      @comment.post.user.create_notification("New comment on #{(@comment.post_type == "Question" ? @comment.post.title : @comment.post.question.title)}", "/questions/#{id}")
+      id = post_type == 1 ? @comment.post.id : @comment.post.parent_id
+      @comment.post.user.create_notification("New comment on #{(post_type == 1 ? @comment.post.title : @comment.post.parent.title)}", "/questions/#{id}")
 
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
@@ -24,73 +25,76 @@ class CommentsController < ApplicationController
         user.create_notification("You were mentioned in a comment", "/questions/#{id}") if user
       end
 
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: id)
       else
         redirect_to url_for(controller: :questions, action: :show, id: id)
       end
     else
       flash[:error] = "Comment failed to save."
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     end
   end
 
   # Authenticated web action. Updates an existing comment with new data, based on the parameters passed to the request.
   def update
+    post_type = @comment.post.post_type_id
     if @comment.update comment_params
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     else
       flash[:error] = "Comment failed to update."
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     end
   end
 
-  # Authenticated web action. Deletes a comment by setting the <tt>is_deleted</tt> field to true.
+  # Authenticated web action. Deletes a comment by setting the <tt>deleted</tt> field to true.
   def destroy
-    @comment.is_deleted = true
+    @comment.deleted = true
+    post_type = @comment.post.post_type_id
     if @comment.save
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     else
       flash[:error] = "Comment marked deleted, but not saved - status unknown."
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     end
   end
 
-  # Authenticated web action. Undeletes a comment by returning the <tt>is_deleted</tt> field to false.
+  # Authenticated web action. Undeletes a comment by returning the <tt>deleted</tt> field to false.
   def undelete
-    @comment.is_deleted = false
+    @comment.deleted = false
+    post_type = @comment.post.post_type_id
     if @comment.save
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     else
       flash[:error] = "Comment marked undeleted, but not saved - status unknown."
-      if @comment.post_type == 'Question'
+      if post_type == 1
         redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
       else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.question.id)
+        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
       end
     end
   end

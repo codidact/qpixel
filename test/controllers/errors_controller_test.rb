@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ErrorsControllerTest < ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   test "should provide 404 response" do
     get :not_found

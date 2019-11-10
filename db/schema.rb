@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191110193734) do
+ActiveRecord::Schema.define(version: 20191110212601) do
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.integer  "post_id"
     t.string   "content"
-    t.boolean  "is_deleted", default: false
+    t.boolean  "deleted",    default: false
     t.integer  "user_id"
     t.index ["post_id"], name: "index_comments_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_comments_on_user_id", using: :btree
@@ -77,19 +77,20 @@ ActiveRecord::Schema.define(version: 20191110193734) do
 
   create_table "posts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "title"
-    t.text     "body",          limit: 65535,             null: false
+    t.text     "body",          limit: 65535,                 null: false
     t.string   "tags"
-    t.integer  "score",                       default: 0, null: false
+    t.integer  "score",                       default: 0,     null: false
     t.integer  "parent_id"
     t.integer  "user_id"
-    t.boolean  "closed"
+    t.boolean  "closed",                      default: false, null: false
     t.integer  "closed_by_id"
     t.datetime "closed_at"
-    t.boolean  "deleted"
+    t.boolean  "deleted",                     default: false, null: false
     t.integer  "deleted_by_id"
     t.datetime "deleted_at"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.integer  "post_type_id",                                null: false
   end
 
   create_table "privileges", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

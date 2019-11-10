@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ModeratorControllerTest < ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   test "should get index" do
     sign_in users(:moderator)
@@ -14,7 +14,7 @@ class ModeratorControllerTest < ActionController::TestCase
     get :recently_deleted_questions
     assert_not_nil assigns(:questions)
     assigns(:questions).each do |question|
-      assert_equal true, question.is_deleted
+      assert_equal true, question.deleted
     end
     assert_response(200)
   end
@@ -24,7 +24,7 @@ class ModeratorControllerTest < ActionController::TestCase
     get :recently_deleted_answers
     assert_not_nil assigns(:answers)
     assigns(:answers).each do |answer|
-      assert_equal true, answer.is_deleted
+      assert_equal true, answer.deleted
     end
     assert_response(200)
   end
@@ -34,7 +34,7 @@ class ModeratorControllerTest < ActionController::TestCase
     get :recently_undeleted_questions
     assert_not_nil assigns(:questions)
     assigns(:questions).each do |question|
-      assert_equal false, question.is_deleted
+      assert_equal false, question.deleted
     end
     assert_response(200)
   end
@@ -44,7 +44,7 @@ class ModeratorControllerTest < ActionController::TestCase
     get :recently_undeleted_answers
     assert_not_nil assigns(:answers)
     assigns(:answers).each do |answer|
-      assert_equal false, answer.is_deleted
+      assert_equal false, answer.deleted
     end
     assert_response(200)
   end

@@ -20,6 +20,10 @@ gem 'whenever', require: false
 
 gem 'coveralls', require: false
 
+group :test do
+  gem 'rails-controller-testing'
+end
+
 group :development, :test do
   gem 'byebug'
 end

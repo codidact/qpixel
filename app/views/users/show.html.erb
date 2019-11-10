@@ -18,7 +18,7 @@
 
 <h4><%= pluralize(@user.answers.count, 'Answer') %></h4>
 <% @user.answers.limit(5).each do |a| %>
-  <%= render 'answers/answer', answer: a if a&.question&.id %>
+  <%= render 'answers/answer', answer: a if a&.parent&.id %>
 <% end %>
 
 <hr/>
