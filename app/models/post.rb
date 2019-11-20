@@ -1,4 +1,4 @@
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   belongs_to :user
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', required: false

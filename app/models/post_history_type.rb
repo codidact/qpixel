@@ -1,3 +1,3 @@
-class PostHistoryType < ActiveRecord::Base
+class PostHistoryType < ApplicationRecord
   has_many :post_histories
 end

@@ -1,4 +1,4 @@
-class PostHistory < ActiveRecord::Base
+class PostHistory < ApplicationRecord
   belongs_to :post_history_type
   belongs_to :user
   belongs_to :post
