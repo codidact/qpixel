@@ -1,0 +1,5 @@
+- name: post_edited
+- name: post_deleted
+- name: post_undeleted
+- name: question_closed
+- name: question_reopened

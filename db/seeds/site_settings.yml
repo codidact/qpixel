@@ -1,0 +1,37 @@
+- name: SiteName
+  value: QPixel
+- name: SiteLogoPath
+  value: "/assets/logo.png"
+- name: QuestionUpVoteRep
+  value: 5
+- name: QuestionDownVoteRep
+  value: -2
+- name: AnswerUpVoteRep
+  value: 10
+- name: AnswerDownVoteRep
+  value: -2
+- name: AllowSelfVotes
+  value: false
+- name: AskingGuidance
+  value: >
+    <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
+    or entirely based on opinions</li><li>are well written</li></ul></p>
+- name: AnsweringGuidance
+  value: >
+    <p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts
+    that don't address the problem clutter up the thread</li><li><strong>explain why you're
+    right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul></p>
+- name: AdministratorContactEmail
+  value: contact@example.com
+- name: HotQuestionsCount
+  value: 5
+- name: RepNotificationsActive
+  value: true
+- name: AdminBadgeCharacter
+  value: ""
+- name: ModBadgeCharacter
+  value: ""
+- name: BlockedIpAddresses
+  value: ""
+- name: SoftDeleteTransferUser
+  value: 0

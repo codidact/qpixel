@@ -1,0 +1,8 @@
+- name: Close
+  threshold: 250
+- name: Edit
+  threshold: 500
+- name: Delete
+  threshold: 1000
+- name: ViewDeleted
+  threshold: 1000

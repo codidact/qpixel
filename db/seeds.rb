@@ -1,57 +1,24 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+# frozen_string_literal: true
 
-default_settings = [
-  [ 'SiteName', 'QPixel' ],
-  [ 'SiteLogoPath', '/assets/logo.png' ],
-  [ 'QuestionUpVoteRep', '5' ],
-  [ 'QuestionDownVoteRep', '-2' ],
-  [ 'AnswerUpVoteRep', '10' ],
-  [ 'AnswerDownVoteRep', '-2' ],
-  [ 'AllowSelfVotes', 'false' ],
-  [ 'AskingGuidance', '<p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly '\
-                      'or entirely based on opinions</li><li>are well written</li></ul>' ],
-  [ 'AnsweringGuidance', '<p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts '\
-                         'that don\'t address the problem clutter up the thread</li><li><strong>explain why you\'re '\
-                         'right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul>' ],
-  [ 'AdministratorContactEmail', 'contact@example.com' ],
-  [ 'HotQuestionsCount', 5 ],
-  [ 'RepNotificationsActive', 'true' ],
-  [ 'AdminBadgeCharacter', ''],
-  [ 'ModBadgeCharacter', ''],
-  [ 'BlockedIpAddresses', '' ],
-  [ 'RestrictDBIntensiveOps', 'true' ],
-  [ 'SoftDeleteTransferUser', '0' ]
-]
+Rails.application.eager_load!
 
-default_privileges = [
-  [ 'Close', 250 ],
-  [ 'Edit', 500 ],
-  [ 'Delete', 1000 ],
-  [ 'ViewDeleted', 1000 ]
-]
-
-default_post_history_types = [
-  [ 'Edit', 'A post was updated from an older revision to a newer one.', 'edited' ],
-  [ 'Delete', 'A post\'s state was changed from normal to being deleted.', 'deleted' ],
-  [ 'Undelete', 'A post\'s state was changed from being deleted back to normal.', 'undeleted' ],
-  [ 'Close', 'A post was set to prevent new answers.', 'closed' ],
-  [ 'Reopen', 'A post was set to allow new answers.', 'reopened' ]
-]
-
-default_settings.each do |name, value|
-  SiteSetting.create(name: name, value: value)
-end
-
-default_privileges.each do |name, threshold|
-  Privilege.create(name: name, threshold: threshold)
-end
-
-default_post_history_types.each do |name, description, action_name|
-  PostHistoryType.create(name: name, description: description, action_name: action_name)
+Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
+  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
+  type = basename.gsub('.yml', '').singularize.classify.constantize
+  begin
+    data = YAML.load_file(f)
+    created = 0
+    skipped = 0
+    data.each do |rd|
+      obj = type.create rd
+      if obj.errors.any?
+        skipped += 1
+      else
+        created += 1
+      end
+    end
+    puts "#{type}: Created #{created}, skipped #{skipped}"
+  rescue StandardError => e
+    puts "Got error #{e}. Continuing..."
+  end
 end

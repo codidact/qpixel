@@ -3,52 +3,17 @@ class PostHistory < ApplicationRecord
   belongs_to :user
   belongs_to :post
 
-  def self.question_edited(question, user)
-    self.new_question_event('Edit', question, user)
-  end
+  validates :name, uniqueness: true
 
-  def self.question_deleted(question, user)
-    self.new_question_event('Delete', question, user)
-  end
-
-  def self.question_undeleted(question, user)
-    self.new_question_event('Undelete', question, user)
-  end
-
-  def self.question_closed(question, user)
-    self.new_question_event('Close', question, user)
-  end
-
-  def self.question_reopened(question, user)
-    self.new_question_event('Reopen', question, user)
-  end
-
-  def self.answer_edited(answer, user)
-    self.new_answer_event('Edit', answer, user)
-  end
-
-  def self.answer_deleted(answer, user)
-    self.new_answer_event('Delete', answer, user)
-  end
-
-  def self.answer_undeleted(answer, user)
-    self.new_answer_event('Undelete', answer, user)
-  end
-
-  private
-    def self.new_question_event(type_name, question, user)
-      event = PostHistory.new
-      event.post_history_type = PostHistoryType.find_by_name type_name
-      event.user = user
-      event.post = question
-      event.save!
+  def self.method_missing(name, *args, &block)
+    unless args.length >= 2
+      raise NoMethodError.new
     end
-
-    def self.new_answer_event(type_name, answer, user)
-      event = PostHistory.new
-      event.post_history_type = PostHistoryType.find_by_name type_name
-      event.user = user
-      event.post = answer
-      event.save!
-    end
+    object = args[0]
+    user = args[1]
+    history_type_name = name.to_s
+    history_type = PostHistoryType.find_by(name: history_type_name)
+    raise NoMethodError.new if history_type.nil?
+    PostHistory.create(post_history_type: history_type, user: user, post: object)
+  end
 end
