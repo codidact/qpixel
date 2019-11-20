@@ -2,3 +2,8 @@ one:
   user: editor
   post: question_one
   vote_type: 1
+
+two:
+  user: deleter
+  post: question_one
+  vote_type: -1

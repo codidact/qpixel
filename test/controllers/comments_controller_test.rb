@@ -6,24 +6,24 @@ class CommentsControllerTest < ActionController::TestCase
   test "should create new comment" do
     sign_in users(:standard_user)
     post :create, params: { comment: { post_id: posts(:answer_two).id, content: "ABCDEF GHIJKL MNOPQR STUVWX YZ" } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_response(302)
   end
 
   test "should update existing comment" do
     sign_in users(:standard_user)
     patch :update, params: { id: comments(:one).id, comment: { content: "ABCDEF GHIJKL MNOPQR STUVWX YZ" } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_response(302)
   end
 
   test "should mark comment deleted" do
     sign_in users(:moderator)
     delete :destroy, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_equal true, assigns(:comment).deleted
     assert_response(302)
   end
@@ -31,8 +31,8 @@ class CommentsControllerTest < ActionController::TestCase
   test "should mark comment undeleted" do
     sign_in users(:moderator)
     delete :undelete, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_equal false, assigns(:comment).deleted
     assert_response(302)
   end
@@ -40,8 +40,8 @@ class CommentsControllerTest < ActionController::TestCase
   test "should mark question comment deleted" do
     sign_in users(:moderator)
     delete :destroy, params: { id: comments(:two).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_equal true, assigns(:comment).deleted
     assert_response(302)
   end
@@ -49,8 +49,8 @@ class CommentsControllerTest < ActionController::TestCase
   test "should mark question comment undeleted" do
     sign_in users(:moderator)
     delete :undelete, params: { id: comments(:two).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_equal false, assigns(:comment).deleted
     assert_response(302)
   end
@@ -82,15 +82,15 @@ class CommentsControllerTest < ActionController::TestCase
   test "should allow moderators to update comment" do
     sign_in users(:moderator)
     patch :update, params: { id: comments(:one).id, comment: { content: "ABCDEF GHIJKL MNOPQR STUVWX YZ" } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
+    assert_not assigns(:comment).nil?
+    assert_not assigns(:comment).post.nil?
     assert_response(302)
   end
 
   test "should allow author to delete comment" do
     sign_in users(:standard_user)
     delete :destroy, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal true, assigns(:comment).deleted
     assert_response(302)
   end
@@ -98,7 +98,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should allow author to undelete comment" do
     sign_in users(:standard_user)
     delete :undelete, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal false, assigns(:comment).deleted
     assert_response(302)
   end
@@ -106,7 +106,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should create notification for mentioned user" do
     sign_in users(:standard_user)
     post :create, params: { comment: { post_id: posts(:question_one).id, content: "@admin ABCDEF GHIJKL MNOPQR STUVWX YZ" } }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal 1, users(:admin).notifications.count
     assert_response(302)
   end
@@ -114,7 +114,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should prevent short comments" do
     sign_in users(:standard_user)
     post :create, params: { comment: { post_id: posts(:question_one).id, content: 'a' } }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal 'Comment failed to save.', flash[:error]
     assert_response(302)
   end
@@ -122,7 +122,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should prevent long comments" do
     sign_in users(:standard_user)
     post :create, params: { comment: { post_id: posts(:answer_one).id, content: 'a'*501 } }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal 'Comment failed to save.', flash[:error]
     assert_response(302)
   end
@@ -130,7 +130,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should prevent updating to short comment" do
     sign_in users(:standard_user)
     post :update, params: { id: comments(:one).id, comment: { post_id: posts(:answer_one).id, content: 'a' } }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal 'Comment failed to update.', flash[:error]
     assert_response(302)
   end
@@ -138,7 +138,7 @@ class CommentsControllerTest < ActionController::TestCase
   test "should prevent updating to long comment" do
     sign_in users(:standard_user)
     post :update, params: { id: comments(:two).id, comment: { post_id: posts(:question_one).id, content: 'a'*501 } }
-    assert_not_nil assigns(:comment)
+    assert_not assigns(:comment).nil?
     assert_equal 'Comment failed to update.', flash[:error]
     assert_response(302)
   end

@@ -17,7 +17,7 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
-    check_your_privilege('ViewDeleted', @question) or return
+    check_your_privilege('ViewDeleted', @question) or return if @question.deleted?
     @upvotes = @question.votes.where(vote_type: 1).count || 0
     @downvotes = @question.votes.where(vote_type: -1).count || 0
   end

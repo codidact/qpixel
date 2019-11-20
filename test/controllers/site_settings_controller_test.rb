@@ -6,28 +6,28 @@ class SiteSettingsControllerTest < ActionController::TestCase
   test "should get index page" do
     sign_in users(:admin)
     get :index
-    assert_not_nil assigns(:settings)
+    assert_not assigns(:settings).nil?
     assert_response(200)
   end
 
   test "should get edit setting page" do
     sign_in users(:admin)
     get :edit, params: { id: site_settings(:one).id }
-    assert_not_nil assigns(:setting)
+    assert_not assigns(:setting).nil?
     assert_response(200)
   end
 
   test "should update existing setting" do
     sign_in users(:admin)
     patch :update, params: { id: site_settings(:one).id, site_setting: { value: "ABCDEF" } }
-    assert_not_nil assigns(:setting)
+    assert_not assigns(:setting).nil?
     assert_response(302)
   end
 
   test "should sanitize raw html strings" do
     sign_in users(:admin)
     patch :update, params: { id: site_settings(:sanitize).id, site_setting: { value: "<script>alert('omg xss2');</script>" } }
-    assert_not_nil assigns(:setting)
+    assert_not assigns(:setting).nil?
     assert_not assigns(:setting).value.include?("<script>")
     assert_response(302)
   end

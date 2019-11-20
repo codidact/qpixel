@@ -7,15 +7,15 @@ class AnswersControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     get :new, params: { id: posts(:question_one).id }
     assert_response(200)
-    assert_not_nil assigns(:answer)
-    assert_not_nil assigns(:question)
+    assert_not assigns(:answer).nil?
+    assert_not assigns(:question).nil?
   end
 
   test "should create new answer" do
     sign_in users(:standard_user)
     post :create, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:question_one).id }
-    assert_not_nil assigns(:answer)
-    assert_not_nil assigns(:question)
+    assert_not assigns(:answer).nil?
+    assert_not assigns(:question).nil?
     assert_response(302)
   end
 
@@ -23,31 +23,31 @@ class AnswersControllerTest < ActionController::TestCase
     sign_in users(:editor)
     get :edit, params: { id: posts(:answer_one).id }
     assert_response(200)
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
   end
 
   test "should update existing answer" do
     sign_in users(:editor)
     patch :update, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_response(302)
   end
 
   test "should mark answer deleted" do
     sign_in users(:deleter)
     delete :destroy, params: { id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_equal true, assigns(:answer).deleted
-    assert_not_nil assigns(:answer).deleted_at
+    assert_not assigns(:answer).deleted_at.nil?
     assert_response(302)
   end
 
   test "should mark answer undeleted" do
     sign_in users(:deleter)
     delete :undelete, params: { id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_equal false, assigns(:answer).deleted
-    assert_not_nil assigns(:answer).deleted_at
+    assert_not assigns(:answer).deleted_at.nil?
     assert_response(302)
   end
 
@@ -126,28 +126,28 @@ class AnswersControllerTest < ActionController::TestCase
   test "should allow author to get edit page" do
     sign_in users(:standard_user)
     get :edit, params: { id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_response(200)
   end
 
   test "should allow author to update answer" do
     sign_in users(:standard_user)
     patch :update, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_response(302)
   end
 
   test "should allow author to delete answer" do
     sign_in users(:standard_user)
     delete :destroy, params: { id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_response(302)
   end
 
   test "should allow author to undelete answer" do
     sign_in users(:standard_user)
     delete :undelete, params: { id: posts(:answer_one).id }
-    assert_not_nil assigns(:answer)
+    assert_not assigns(:answer).nil?
     assert_response(302)
   end
 
