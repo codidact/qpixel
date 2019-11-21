@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy
-  has_many :privileges, dependent: :destroy
+  has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
   # Checks whether or not a user has the given privilege. For efficiency, initially checks if the privilege is in the

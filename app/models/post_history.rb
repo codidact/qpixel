@@ -3,8 +3,6 @@ class PostHistory < ApplicationRecord
   belongs_to :user
   belongs_to :post
 
-  validates :name, uniqueness: true
-
   def self.method_missing(name, *args, &block)
     unless args.length >= 2
       raise NoMethodError.new

@@ -17,7 +17,7 @@ Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
         created += 1
       end
     end
-    puts "#{type}: Created #{created}, skipped #{skipped}"
+    puts "#{type}: Created #{created}, skipped #{skipped}" unless Rails.env.test?
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."
   end
