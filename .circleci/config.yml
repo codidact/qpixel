@@ -14,8 +14,8 @@ jobs:
 
     steps:
       - run:
-        name: Install Git
-        command: |
+        - name: Install Git
+        - command: |
           apt-get -qq update
           apt-get -y install git
       - checkout
@@ -24,20 +24,20 @@ jobs:
             - qpixel-{{ checksum "Gemfile" }}
             - qpixel-
       - run:
-        name: Install Bundler & gems
-        command: |
+        - name: Install Bundler & gems
+        - command: |
           gem install bundler
           bundle install --path=~/gems
       - run:
-        name: Prepare database
-        command: |
+        - name: Prepare database
+        - command: |
           rails db:create
           rails db:schema:load
           rails db:migrate
           rails test:prepare
       - run:
-        name: Test
-        command: |
+        - name: Test
+        - command: |
           rails test
       - save_cache:
           key: qpixel-{{ checksum "Gemfile" }}
