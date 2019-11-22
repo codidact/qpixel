@@ -21,6 +21,7 @@ gem 'whenever', require: false
 gem 'coveralls', require: false
 
 group :test do
+  gem 'minitest', '~> 5.10.3'
   gem 'rails-controller-testing'
 end
 
