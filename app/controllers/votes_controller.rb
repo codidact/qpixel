@@ -49,30 +49,4 @@ class VotesController < ApplicationController
         render plain: "You must be logged in to vote.", status: 403 and return
       end
     end
-
-    # Given a vote and a post, calculates and applies the reputation changes necessitated by that vote. Handles
-    # both the different vote and post types. The <tt>modifier</tt> parameter enables the <tt>create</tt> action to
-    # reverse a vote (for the case where a user changes their vote) before applying a new vote; this is what keeps
-    # the reputation bugs at bay.
-    def calc_rep(vote, post, modifier)
-      post_type = vote.post.post_type_id
-      if vote.vote_type == 1
-        if post_type == 2
-          rep_add = modifier * get_setting('AnswerUpVoteRep').to_i
-        else
-          rep_add = modifier * get_setting('QuestionUpVoteRep').to_i
-        end
-      else
-        if post_type == 2
-          rep_add = modifier * get_setting('AnswerDownVoteRep').to_i
-        else
-          rep_add = modifier * get_setting('QuestionDownVoteRep').to_i
-        end
-      end
-      post.user.reputation += rep_add
-      if get_setting('RepNotificationsActive') == 'true'
-        post.user.create_notification("#{rep_add} rep: #{(post_type == 1 ? post.title : post.parent.title)}", url_for(controller: :questions, action: :show, id: (post_type == 1 ? post.id : post.parent.id)))
-      end
-      post.user.save!
-    end
 end
