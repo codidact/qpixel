@@ -50,10 +50,10 @@ class User < ApplicationRecord
   end
 
   def questions
-    posts.where(post_type_id: 1)
+    posts.where(post_type_id: Question.post_type_id)
   end
 
   def answers
-    posts.where(post_type_id: 2)
+    posts.where(post_type_id: Answer.post_type_id)
   end
 end

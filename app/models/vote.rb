@@ -24,7 +24,7 @@ class Vote < ApplicationRecord
 
   def rep_change(direction)
     post_type_ids = Rails.cache.fetch :post_type_ids do
-      PostType.all.map { |pt| [pt.name, pt.id] }.to_h
+      PostType.mapping
     end
     setting_names = {
         [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
