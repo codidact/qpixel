@@ -10,8 +10,8 @@ jobs:
 
     steps:
       - run: |
-          sudo apt-get -qq update
-          sudo apt-get -y install git
+          apt-get -qq update
+          apt-get -y install git
       - checkout
       - restore_cache:
           keys:
