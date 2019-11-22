@@ -31,14 +31,14 @@ jobs:
       - run:
           name: Prepare database
           command: |
-            rails db:create
-            rails db:schema:load
-            rails db:migrate
-            rails test:prepare
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
+            bundle exec rails db:migrate
+            bundle exec rails test:prepare
       - run:
           name: Test
           command: |
-            rails test
+            bundle exec rails test
       - save_cache:
           key: qpixel-{{ checksum "Gemfile" }}
           paths:
