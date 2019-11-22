@@ -1,5 +1,5 @@
 question_one:
-  post_type_id: 1
+  post_type: post_types(:question)
   title: ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
@@ -10,7 +10,7 @@ question_one:
   user: standard_user
 
 question_two:
-  post_type_id: 1
+  post_type: post_types(:question)
   title: ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
@@ -21,7 +21,7 @@ question_two:
   user: editor
 
 deleted:
-  post_type_id: 1
+  post_type: post_types(:question)
   title: ZY XWVUTS RQPONM LKJIHG FEDCBA
   body: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags:
@@ -33,7 +33,7 @@ deleted:
   deleted: true
 
 closed:
-  post_type_id: 1
+  post_type: post_types(:question)
   title: ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
@@ -45,14 +45,14 @@ closed:
   user: standard_user
 
 answer_one:
-  post_type_id: 2
+  post_type: post_types(:answer)
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0
   parent: question_one
   user: standard_user
 
 answer_two:
-  post_type_id: 2
+  post_type: post_types(:answer)
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0
   parent: question_one

@@ -1,0 +1,5 @@
+question:
+  name: Question
+
+answer:
+  name: Answer
