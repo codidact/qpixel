@@ -9,6 +9,8 @@ jobs:
     working_directory: ~/qpixel
 
     steps:
+      - run: |
+          sudo apt install git
       - checkout
       - restore_cache:
           keys:
