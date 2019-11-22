@@ -5,6 +5,8 @@ jobs:
       - image: ubuntu:18.04
       - image: ruby:2.6.3
       - image: mysql:8.0.18
+        environment:
+          MYSQL_ROOT_PASSWORD: root
 
     working_directory: ~/qpixel
 
