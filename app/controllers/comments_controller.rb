@@ -14,89 +14,45 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new comment_params
     @comment.user = current_user
-    post_type = @comment.post.post_type_id
+    root_id = @comment.root.id
     if @comment.save
-      id = post_type == 1 ? @comment.post.id : @comment.post.parent_id
-      @comment.post.user.create_notification("New comment on #{(post_type == 1 ? @comment.post.title : @comment.post.parent.title)}", "/questions/#{id}")
+      @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", "/questions/#{root_id}")
 
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
         user = User.find_by_username(match[:name])
-        user.create_notification("You were mentioned in a comment", "/questions/#{id}") if user
-      end
-
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: id)
+        user.create_notification("You were mentioned in a comment", "/questions/#{root_id}") if user
       end
     else
       flash[:error] = "Comment failed to save."
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
     end
+    redirect_to url_for(controller: :questions, action: :show, id: root_id)
   end
 
   # Authenticated web action. Updates an existing comment with new data, based on the parameters passed to the request.
   def update
-    post_type = @comment.post.post_type_id
-    if @comment.update comment_params
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
-    else
+    unless @comment.update comment_params
       flash[:error] = "Comment failed to update."
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
     end
+    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
   end
 
   # Authenticated web action. Deletes a comment by setting the <tt>deleted</tt> field to true.
   def destroy
     @comment.deleted = true
-    post_type = @comment.post.post_type_id
-    if @comment.save
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
-    else
+    unless @comment.save
       flash[:error] = "Comment marked deleted, but not saved - status unknown."
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
     end
+    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
   end
 
   # Authenticated web action. Undeletes a comment by returning the <tt>deleted</tt> field to false.
   def undelete
     @comment.deleted = false
-    post_type = @comment.post.post_type_id
-    if @comment.save
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
-    else
+    unless @comment.save
       flash[:error] = "Comment marked undeleted, but not saved - status unknown."
-      if post_type == 1
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.id)
-      else
-        redirect_to url_for(controller: :questions, action: :show, id: @comment.post.parent.id)
-      end
     end
+    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
   end
 
   private

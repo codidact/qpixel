@@ -2,10 +2,7 @@ class Question < Post
   default_scope { where(post_type_id: Question.post_type_id) }
 
   def self.post_type_id
-    type_ids = Rails.cache.fetch :post_type_ids do
-      PostType.mapping
-    end
-    type_ids['Question']
+    PostType.mapping['Question']
   end
 
   validates :title, :body, :tags, presence: true

@@ -11,8 +11,15 @@ class ActiveSupport::TestCase
 
   setup :load_seeds
 
+  teardown :clear_cache
+
   protected
-    def load_seeds
-      Rails.application.load_seed
-    end
+
+  def load_seeds
+    Rails.application.load_seed
+  end
+
+  def clear_cache
+    Rails.cache.clear
+  end
 end
