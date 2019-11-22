@@ -1,24 +1,23 @@
 <h3><%= question.title %></h3>
 <hr/>
-<div class="post-container <%= "deleted-content" if question.deleted %>">
+<div class="post-container <%= "deleted-content" if question.deleted %>" data-post-id="<%= question.id %>">
   <div class="vote-box">
+    <% existing_vote = my_vote(question) %>
     <p>
-      <% if my_vote(question) && my_vote(question).vote_type == 1 %>
-        <img class="vote-button" data-vote="1/<%= question.id %>/q/<%= my_vote(question).id %>"
+      <% if existing_vote&.vote_type == 1 %>
+        <img class="vote-button voted" data-vote-type="1" data-vote-id="<%= existing_vote.id %>"
              id="question-<%= question.id %>-up" src="/assets/up-fill.png" height="48" />
       <% else %>
-        <img class="vote-button" data-vote="1/<%= question.id %>/q/-1"
-           id="question-<%= question.id %>-up" src="/assets/up-clear.png" height="48" />
+        <img class="vote-button" data-vote-type="1" id="question-<%= question.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
     <p class="post-score large-text center" title="+<%= @upvotes %>/-<%= @downvotes %>"><%= question.score %></p>
     <p>
-      <% if my_vote(question) && my_vote(question).vote_type == -1 %>
-        <img class="vote-button" data-vote="-1/<%= question.id %>/q/<%= my_vote(question).id %>"
+      <% if existing_vote&.vote_type == -1 %>
+        <img class="vote-button voted" data-vote-type="-1" data-vote-id="<%= existing_vote.id %>"
              id="question-<%= question.id %>-down" src="/assets/down-fill.png" height="48" />
       <% else %>
-        <img class="vote-button" data-vote="-1/<%= question.id %>/q/-1"
-           id="question-<%= question.id %>-down" src="/assets/down-clear.png" height="48" />
+        <img class="vote-button" data-vote-type="-1" id="question-<%= question.id %>-down" src="/assets/down-clear.png" height="48" />
       <% end %>
     </p>
   </div>

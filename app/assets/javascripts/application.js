@@ -13,7 +13,13 @@
 //= require jquery_ujs
 //= require_tree .
 
-var QPixel = {
+window.QPixel = {
+  csrfToken: () => {
+    const token = $('meta[name="csrf-token"]').attr('content');
+    QPixel.csrfToken = () => token;
+    return token;
+  },
+
   createNotification: function(type, message, relativeElement) {
     var offset = QPixel.offset(relativeElement);
     $("<div></div>")
@@ -35,6 +41,7 @@ var QPixel = {
       })
       .appendTo(document.body);
   },
+
   offset: function(el) {
     var topLeft = $(el).offset();
     return {
@@ -46,89 +53,7 @@ var QPixel = {
   }
 };
 
-$(document).on('ready page:load', function() {
-
-  $(".vote-button").bind("click", function(ev) {
-    ev.preventDefault();
-    var self = $(this);
-
-    // Vote data is stored on the element as "VoteType/PostId/PostType/VoteId".
-    var vote = self.data("vote");
-    var voteSplat = vote.split("/");
-    var state = {
-      voteType: voteSplat[0],
-      postId: voteSplat[1],
-      postType: voteSplat[2],
-      voteId: voteSplat[3],
-      target: self
-    };
-
-    console.log(state);
-
-    if(state.voteId > -1) {
-      // We've already voted; cancel the vote.
-      console.log("deleting vote");
-      $.ajax({
-        'url': '/votes/' + state.voteId,
-        'type': 'DELETE',
-        'state': state
-      })
-      .done(function(data) {
-        if(data['status'] === "OK") {
-          $(this.state.target).attr('src', '/assets/' + (this.state.voteType === '1' ? 'up' : 'down') + '-clear.png');
-          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/-1');
-          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
-        }
-        else {
-          QPixel.createNotifiction('danger', "<strong>Failed:</strong> " + data, this.state.target);
-          console.error("Vote undo failed: " + data);
-        }
-      })
-      .fail(function(jqXHR, textStatus, errorThrown) {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.responseText + '(' + jqXHR.status + ')', this.state.target);
-        console.error("Vote undo failed: status " + jqXHR.status);
-        console.log(jqXHR);
-      });
-    }
-    else {
-      // We have yet to vote, so cast one.
-      console.log("creating vote");
-      $.ajax({
-        'url': '/votes/new',
-        'type': 'POST',
-        'data': {
-          'post_id': state.postId,
-          'vote_type': state.voteType
-        },
-        'state': state
-      })
-      .done(function(data) {
-        if(data['status'] === "OK") {
-          $(this.state.target).attr('src', '/assets/' + (this.state.voteType === '1' ? 'up' : 'down') + '-fill.png');
-          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
-          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
-        }
-        else if(data['status'] === "modified") {
-          $(this.state.target).attr('src', '/assets/' + (this.state.voteType === '1' ? 'up' : 'down') + '-fill.png');
-          $(this.state.target).data('vote', this.state.voteType + '/' + this.state.postId + '/' + this.state.postType + '/' + data['vote_id']);
-          $("#" + (this.state.postType === 'a' ? 'answer-' : 'question-') + this.state.postId + (this.state.voteType === '1' ? '-down' : '-up'))
-            .data('vote', (1-this.state.voteType) + '/' + this.state.postId + '/' + this.state.postType + '/-1')
-            .attr('src', '/assets/' + (this.state.voteType === '1' ? 'down' : 'up') + '-clear.png');
-          $(this.state.target).parent().siblings('.post-score').text(data['post_score']);
-        }
-        else {
-          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + data, this.state.target);
-          console.error("Vote cast failed: " + data);
-        }
-      })
-      .fail(function(jqXHR, textStatus, errorThrown) {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.responseText + '(' + jqXHR.status + ')', this.state.target);
-        console.error("Vote cast failed: status " + jqXHR.status);
-        console.log(jqXHR);
-      });
-    }
-  });
-
+$(document).on('ready', function() {
   window.notificationsOpen = false;
 
   // Notifications handling

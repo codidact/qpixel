@@ -12,33 +12,16 @@ class VotesController < ApplicationController
   # is only accessible on a POST route, and returns JSON for further client-side processing.
   def create
     post = Post.find(params[:post_id])
-    vote = post.votes.find_or_initialize_by(user: current_user)
 
-    if post.user == current_user
-      (render plain: "You may not vote on your own posts.", status: 403 and return) unless get_setting('AllowSelfVotes') == "true"
+    if post.user == current_user && get_setting('AllowSelfVotes') != "true"
+      render plain: "You may not vote on your own posts.", status: 403 and return
     end
 
-    if vote.vote_type == params[:vote_type].to_i
-      # already voted
-      render plain: "You have already voted.", status: 409 and return
-    else
-      modified = false
-      if vote.vote_type
-        # modify vote
-        modified = true
-        calc_rep(vote, post, -1)
-      end
-      vote.vote_type = params[:vote_type].to_i
-      vote.recv_user = post.user.id
-      vote.save!
-      state = { status: (modified ? "modified" : "OK"), vote_id: vote.id }
-    end
+    destroyed = post.votes.where(user: current_user).destroy_all
+    vote = post.votes.create!(user: current_user, vote_type: params[:vote_type].to_i, recv_user: post.user)
 
-    post.score = post.votes.sum(:vote_type)
-    post.save!
-    state[:post_score] = post.score
-
-    calc_rep(vote, post, 1)
+    modified = destroyed.size > 0
+    state = { status: (modified ? "modified" : "OK"), vote_id: vote.id, post_score: post.score }
 
     render json: state
   end
@@ -52,11 +35,7 @@ class VotesController < ApplicationController
       render plain: "You are not authorized to remove this vote.", status: 403 and return
     end
 
-    calc_rep(vote, vote.post, -1)
     vote.destroy!
-
-    vote.post.score = vote.post.votes.sum(:vote_type)
-    vote.post.save!
 
     render json: { status: "OK", post_score: vote.post.score }
   end

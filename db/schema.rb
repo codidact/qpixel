@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120170439) do
+ActiveRecord::Schema.define(version: 20191122124913) do
 
   create_table "comments", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.datetime "created_at",                 null: false
@@ -148,11 +148,11 @@ ActiveRecord::Schema.define(version: 20191120170439) do
 
   create_table "votes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer  "vote_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
     t.integer  "user_id"
     t.integer  "post_id"
-    t.integer  "recv_user"
+    t.integer  "recv_user_id"
     t.index ["post_id"], name: "index_votes_on_post_type_and_post_id", using: :btree
     t.index ["user_id"], name: "index_votes_on_user_id", using: :btree
   end
