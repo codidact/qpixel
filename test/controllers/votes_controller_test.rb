@@ -17,18 +17,18 @@ class VotesControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should modify existing vote" do
+  test "should return correct modified status" do
     sign_in users(:editor)
     post :create, params: { post_id: posts(:question_one).id, vote_type: -1 }
     assert_equal 'modified', JSON.parse(response.body)['status']
     assert_response(200)
   end
 
-  test "should prevent duplicate votes" do
+  test "should silently accept duplicate votes" do
     sign_in users(:editor)
     post :create, params: { post_id: posts(:question_one).id, vote_type: 1 }
-    assert_equal 'You have already voted.', response.body
-    assert_response(409)
+    assert_equal 'modified', JSON.parse(response.body)['status']
+    assert_response 200
   end
 
   test "should prevent self voting" do

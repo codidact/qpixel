@@ -2,8 +2,10 @@ one:
   user: editor
   post: question_one
   vote_type: 1
+  recv_user: standard_user
 
 two:
   user: deleter
   post: question_one
   vote_type: -1
+  recv_user: standard_user
