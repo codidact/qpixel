@@ -5,7 +5,7 @@ class Question < Post
     type_ids = Rails.cache.fetch :post_type_ids do
       PostType.mapping
     end
-    type_ids['Answer']
+    type_ids['Question']
   end
 
   validates :title, :body, :tags, presence: true
