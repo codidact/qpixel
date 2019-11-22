@@ -40,6 +40,10 @@ jobs:
             bundle exec rails db:migrate
             bundle exec rails test:prepare
       - run:
+          name: Current revision
+          command: |
+            git rev-parse $(git rev-parse --abbrev-ref HEAD)
+      - run:
           name: Test
           command: |
             bundle exec rails test
