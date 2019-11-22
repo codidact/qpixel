@@ -11,7 +11,9 @@ jobs:
     working_directory: ~/qpixel
 
     steps:
-      - run: |
+      - run:
+        name: Install Git
+        command: |
           apt-get -qq update
           apt-get -y install git
       - checkout
@@ -19,13 +21,21 @@ jobs:
           keys:
             - qpixel-{{ checksum "Gemfile" }}
             - qpixel-
-      - run: |
+      - run:
+        name: Install Bundler & gems
+        command: |
           gem install bundler
           bundle install --path=~/gems
+      - run:
+        name: Prepare database
+        command: |
           rails db:create
           rails db:schema:load
           rails db:migrate
           rails test:prepare
+      - run:
+        name: Test
+        command: |
           rails test
       - save_cache:
           key: qpixel-{{ checksum "Gemfile" }}
