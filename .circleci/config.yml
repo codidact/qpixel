@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.5-node
-      - image: circleci/mysql:8.0.18
+      - image: circleci/mysql:5.7.22
         environment:
           MYSQL_ROOT_HOST: '%'
           MYSQL_USER: 'root'
@@ -28,6 +28,10 @@ jobs:
           command: |
             gem install bundler
             bundle install --path=~/gems
+      - save_cache:
+          key: qpixel-{{ checksum "Gemfile" }}
+          paths:
+            - ~/gems
       - run:
           name: Prepare database
           command: |
@@ -39,7 +43,3 @@ jobs:
           name: Test
           command: |
             bundle exec rails test
-      - save_cache:
-          key: qpixel-{{ checksum "Gemfile" }}
-          paths:
-            - ~/gems
