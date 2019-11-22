@@ -2,11 +2,13 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: ubuntu:18.04
-      - image: ruby:2.6.3
-      - image: mysql:8.0.18
+      - image: circleci/ruby:2.5-node
+      - image: circleci/mysql:8.0.18
         environment:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_USER: 'root'
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: 'qpixel_test'
 
     working_directory: ~/qpixel
 
