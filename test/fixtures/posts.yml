@@ -42,6 +42,7 @@ closed:
     - MNOPQR
   score: 0
   closed: true
+  closed_by: closer
   user: standard_user
 
 answer_one:

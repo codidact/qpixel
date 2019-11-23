@@ -9,7 +9,7 @@ class UsersRegistrationsControllerTest < ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:user]
     sign_out :user
     post :create, params: { user: { email: "new@qpixel-test.net", password: "ABCDEFGH", password_confirmation: "ABCDEFGH", username: "ABCDEF" } }
-    assert_not assigns(:user).nil?
+    assert_not_nil assigns(:user)
     assert_equal 1, assigns(:user).reputation
     assert_response(302)
   end

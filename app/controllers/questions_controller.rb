@@ -12,12 +12,14 @@ class QuestionsController < ApplicationController
 
   # Web action. Retrieves a paginated list of all the questions currently in the database for use by the view.
   def index
-    @questions = Question.all.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+    @questions = Question.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
   # Web action. Retrieves a single question, specified by the query string parameter <tt>id</tt>.
   def show
-    check_your_privilege('ViewDeleted', @question) or return if @question.deleted?
+    if @question.deleted?
+      check_your_privilege('ViewDeleted', @question) or return
+    end
     @upvotes = @question.votes.where(vote_type: 1).count || 0
     @downvotes = @question.votes.where(vote_type: -1).count || 0
   end

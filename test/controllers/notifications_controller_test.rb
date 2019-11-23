@@ -6,14 +6,14 @@ class NotificationsControllerTest < ActionController::TestCase
   test "should get index as JSON" do
     sign_in users(:standard_user)
     get :index, params: { format: :json }
-    assert_not assigns(:notifications).nil?
+    assert_not_nil assigns(:notifications)
     assert_response(200)
   end
 
   test "should mark notification as read" do
     sign_in users(:standard_user)
     post :read, params: { id: notifications(:one).id, format: :json }
-    assert_not assigns(:notification).nil?
+    assert_not_nil assigns(:notification)
     assert_equal true, assigns(:notification).is_read
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
@@ -22,7 +22,7 @@ class NotificationsControllerTest < ActionController::TestCase
   test "should mark all notifications as read" do
     sign_in users(:standard_user)
     post :read_all, params: { format: :json }
-    assert_not assigns(:notifications).nil?
+    assert_not_nil assigns(:notifications)
     assigns(:notifications).each do |notification|
       assert_equal true, notification.is_read
     end

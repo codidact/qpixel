@@ -6,16 +6,16 @@ class SuspiciousVotesControllerTest < ActionController::TestCase
   test "should get suspicious vote index" do
     sign_in users(:moderator)
     get :index
-    assert_not assigns(:suspicious_votes).nil?
+    assert_not_nil assigns(:suspicious_votes)
     assert_response(200)
   end
 
   test "should get suspicious votes per user" do
     sign_in users(:moderator)
     get :user, params: { id: users(:standard_user).id }
-    assert_not assigns(:user).nil?
-    assert_not assigns(:from).nil?
-    assert_not assigns(:to).nil?
+    assert_not_nil assigns(:user)
+    assert_not_nil assigns(:from)
+    assert_not_nil assigns(:to)
     assert_response(200)
   end
 

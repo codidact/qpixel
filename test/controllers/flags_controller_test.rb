@@ -6,8 +6,8 @@ class FlagsControllerTest < ActionController::TestCase
   test "should create new flag" do
     sign_in users(:standard_user)
     post :new, params: { reason: "ABCDEF GHIJKL MNOPQR STUVWX YZ", post_id: posts(:answer_two).id, post_type: 'Answer' }
-    assert_not assigns(:flag).nil?
-    assert_not assigns(:flag).post.nil?
+    assert_not_nil assigns(:flag)
+    assert_not_nil assigns(:flag).post
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(201)
   end
@@ -15,15 +15,15 @@ class FlagsControllerTest < ActionController::TestCase
   test "should retrieve flag queue" do
     sign_in users(:moderator)
     get :queue
-    assert_not assigns(:flags).nil?
+    assert_not_nil assigns(:flags)
     assert_response(200)
   end
 
   test "should add status to flag" do
     sign_in users(:moderator)
     post :resolve, params: { id: flags(:one).id, result: "ABCDEF", message: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }
-    assert_not assigns(:flag).nil?
-    assert_not assigns(:flag).flag_status.nil?
+    assert_not_nil assigns(:flag)
+    assert_not_nil assigns(:flag).flag_status
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
   end

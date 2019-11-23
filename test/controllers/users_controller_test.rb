@@ -5,21 +5,21 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should get index" do
     get :index
-    assert_not assigns(:users).nil?
+    assert_not_nil assigns(:users)
     assert_response(200)
   end
 
   test "should get show user page" do
     sign_in users(:standard_user)
     get :show, params: { id: users(:standard_user).id }
-    assert_not assigns(:user).nil?
+    assert_not_nil assigns(:user)
     assert_response(200)
   end
 
   test "should get mod tools page" do
     sign_in users(:moderator)
     get :mod, params: { id: users(:standard_user).id }
-    assert_not assigns(:user).nil?
+    assert_not_nil assigns(:user)
     assert_response(200)
   end
 
@@ -40,7 +40,7 @@ class UsersControllerTest < ActionController::TestCase
   test "should destroy user" do
     sign_in users(:moderator)
     delete :destroy, params: { id: users(:standard_user).id }
-    assert_not assigns(:user).nil?
+    assert_not_nil assigns(:user)
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
   end
@@ -62,7 +62,7 @@ class UsersControllerTest < ActionController::TestCase
   test "should soft-delete user" do
     sign_in users(:admin)
     delete :soft_delete, params: { id: users(:standard_user).id, transfer: users(:editor).id }
-    assert_not assigns(:user).nil?
+    assert_not_nil assigns(:user)
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
   end
