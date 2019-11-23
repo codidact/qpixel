@@ -1,7 +1,7 @@
 - name: SiteName
   value: QPixel
 - name: SiteLogoPath
-  value: "/assets/logo.png"
+  value: /assets/logo.png
 - name: QuestionUpVoteRep
   value: 5
 - name: QuestionDownVoteRep
@@ -30,8 +30,6 @@
 - name: AdminBadgeCharacter
   value: ""
 - name: ModBadgeCharacter
-  value: ""
-- name: BlockedIpAddresses
   value: ""
 - name: SoftDeleteTransferUser
   value: 0
