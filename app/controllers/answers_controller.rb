@@ -19,14 +19,11 @@ class AnswersController < ApplicationController
   # Authenticated web action. Based on the data submitted from the <tt>new</tt> view, creates a new answer. Assumes
   # that the route to this action contains the question id, and uses that to assign the answer to a question.
   def create
-    @answer = Answer.new answer_params
     @question = Question.find params[:id]
-    @answer.parent = @question
-    @answer.user = current_user
-    @answer.score = 0
+    @answer = Answer.new answer_params.merge(parent: @question, user: current_user, score: 0)
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
-      redirect_to url_for(controller: :questions, action: :show, id: params[:id]) and return
+      redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
       render :new, status: 422
     end
@@ -34,15 +31,15 @@ class AnswersController < ApplicationController
 
   # Authenticated web action. Retrieves a single answer for editing.
   def edit
-    return unless check_your_privilege('Edit', @answer)
+    check_your_privilege('Edit', @answer)
   end
 
-  # Authenticated web aciton. Based on the information given in <tt>:edit</tt>, updates the answer.
+  # Authenticated web action. Based on the information given in <tt>:edit</tt>, updates the answer.
   def update
     return unless check_your_privilege('Edit', @answer)
     PostHistory.post_edited(@answer, current_user)
     if @answer.update answer_params
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
       render :edit
     end
@@ -52,30 +49,24 @@ class AnswersController < ApplicationController
   def destroy
     return unless check_your_privilege('Delete', @answer)
     PostHistory.post_deleted(@answer, current_user)
-    @answer.deleted = true
-    @answer.deleted_at = DateTime.now
-    if @answer.save
+    if @answer.update(deleted: true, deleted_at: DateTime.now)
       calculate_reputation(@answer.user, @answer, -1)
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     else
       flash[:error] = "The answer could not be deleted."
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     end
+    redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
   end
 
   # Authenticated web action. Removes the <tt>deleted</tt> attribute from an answer - that is, undeletes it.
   def undelete
     return unless check_your_privilege('Delete', @answer)
     PostHistory.post_undeleted(@answer, current_user)
-    @answer.deleted = false
-    @answer.deleted_at = DateTime.now
-    if @answer.save
+    if @answer.update(deleted: false, deleted_at: nil)
       calculate_reputation(@answer.user, @answer, 1)
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     else
       flash[:error] = "The answer could not be undeleted."
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id) and return
     end
+    redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
   end
 
   private
@@ -86,7 +77,7 @@ class AnswersController < ApplicationController
     end
 
     def set_answer
-      @answer = Answer.unscoped.find params[:id]
+      @answer = Answer.find params[:id]
     end
 
     # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
