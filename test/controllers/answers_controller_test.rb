@@ -47,7 +47,7 @@ class AnswersControllerTest < ActionController::TestCase
     delete :undelete, params: { id: posts(:answer_one).id }
     assert_not assigns(:answer).nil?
     assert_equal false, assigns(:answer).deleted
-    assert_not assigns(:answer).deleted_at.nil?
+    assert_equal nil, assigns(:answer).deleted_at
     assert_response(302)
   end
 

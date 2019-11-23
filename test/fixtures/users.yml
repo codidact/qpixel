@@ -11,7 +11,7 @@ standard_user:
   sign_in_count: 1337
   is_admin: false
   is_moderator: false
-  reputation: 1
+  reputation: 50
   username: "standard_user"
 
 

@@ -42,4 +42,12 @@ class VoteTest < ActiveSupport::TestCase
     assert_equal post.score, previous_score + expected_score_change
     assert_equal author.reputation, previous_rep + expected_rep_change
   end
+
+  test "Vote.total_rep_change should result in correct rep change for given votes" do
+    post = posts(:answer_one)
+    rep_change_up = SiteSetting.find_by(name: 'AnswerUpVoteRep')&.value&.to_i
+    rep_change_down = SiteSetting.find_by(name: 'AnswerDownVoteRep')&.value&.to_i
+    expected = 4 * rep_change_up + 1 * rep_change_down
+    assert_equal expected, Vote.total_rep_change(post.votes)
+  end
 end

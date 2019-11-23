@@ -49,9 +49,7 @@ class AnswersController < ApplicationController
   def destroy
     return unless check_your_privilege('Delete', @answer)
     PostHistory.post_deleted(@answer, current_user)
-    if @answer.update(deleted: true, deleted_at: DateTime.now)
-      calculate_reputation(@answer.user, @answer, -1)
-    else
+    unless @answer.update(deleted: true, deleted_at: DateTime.now)
       flash[:error] = "The answer could not be deleted."
     end
     redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
@@ -61,9 +59,7 @@ class AnswersController < ApplicationController
   def undelete
     return unless check_your_privilege('Delete', @answer)
     PostHistory.post_undeleted(@answer, current_user)
-    if @answer.update(deleted: false, deleted_at: nil)
-      calculate_reputation(@answer.user, @answer, 1)
-    else
+    unless @answer.update(deleted: false, deleted_at: nil)
       flash[:error] = "The answer could not be undeleted."
     end
     redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
@@ -78,15 +74,6 @@ class AnswersController < ApplicationController
 
     def set_answer
       @answer = Answer.find params[:id]
-    end
-
-    # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
-    # reputation. If it's -1, we take it away.
-    def calculate_reputation(user, post, direction)
-      upvote_rep = post.votes.where(vote_type: 1).count * get_setting('AnswerUpVoteRep').to_i
-      downvote_rep = post.votes.where(vote_type: -1).count * get_setting('AnswerDownVoteRep').to_i
-      user.reputation += direction * (upvote_rep + downvote_rep)
-      user.save!
     end
 end
 

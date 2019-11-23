@@ -9,3 +9,45 @@ two:
   post: question_one
   vote_type: -1
   recv_user: standard_user
+
+three:
+  user: editor
+  post: answer_one
+  vote_type: 1
+  recv_user: standard_user
+
+four:
+  user: closer
+  post: answer_one
+  vote_type: 1
+  recv_user: standard_user
+
+five:
+  user: deleter
+  post: answer_one
+  vote_type: 1
+  recv_user: standard_user
+
+six:
+  user: moderator
+  post: answer_one
+  vote_type: 1
+  recv_user: standard_user
+
+seven:
+  user: admin
+  post: answer_one
+  vote_type: -1
+  recv_user: standard_user
+
+old_answer_1:
+  user: closer
+  post: really_old_answer
+  vote_type: 1
+  recv_user: standard_user
+
+old_answer_2:
+  user: editor
+  post: really_old_answer
+  vote_type: 1
+  recv_user: standard_user

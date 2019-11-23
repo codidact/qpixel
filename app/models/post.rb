@@ -15,4 +15,20 @@ class Post < ApplicationRecord
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
+
+  after_save :modify_author_reputation
+
+  private
+
+  def modify_author_reputation
+    sc = saved_changes
+    if sc.include?('deleted') && sc['deleted'][0] != sc['deleted'][1] && created_at >= 60.days.ago
+      deleted = !!saved_changes['deleted']&.last
+      if deleted
+        user.update(reputation: user.reputation - Vote.total_rep_change(votes))
+      else
+        user.update(reputation: user.reputation + Vote.total_rep_change(votes))
+      end
+    end
+  end
 end
