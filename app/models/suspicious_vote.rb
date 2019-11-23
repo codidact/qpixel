@@ -10,7 +10,7 @@ class SuspiciousVote < ApplicationRecord
 
   def self.check_for_vote_fraud
     User.all.each do |u|
-      votes = u.votes.group(:recv_user).count(:recv_user)
+      votes = u.votes.group(:recv_user_id).count(:recv_user_id)
       total = u.votes.count
       votes.each do |recv_id, cnt|
         cert = total.to_f / cnt.to_f ** 2
