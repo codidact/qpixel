@@ -11,7 +11,8 @@
         <img class="vote-button" data-vote-type="1" id="question-<%= question.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
-    <p class="post-score large-text center" title="+<%= @upvotes %>/-<%= @downvotes %>"><%= question.score %></p>
+    <% votes = defined?(@votes) ? @votes : question.votes.group(:vote_type).count(:vote_type) %>
+    <p class="post-score large-text center" title="+<%= votes[1] %>/-<%= votes[-1] %>"><%= question.score %></p>
     <p>
       <% if existing_vote&.vote_type == -1 %>
         <img class="vote-button voted" data-vote-type="-1" data-vote-id="<%= existing_vote.id %>"

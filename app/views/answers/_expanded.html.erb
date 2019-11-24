@@ -8,9 +8,8 @@
         <img class="vote-button" data-vote="1/<%= answer.id %>/a/-1" id="answer-<%= answer.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
     </p>
-    <% @upvotes = answer.votes.where(vote_type: 1).count %>
-    <% @downvotes = answer.votes.where(vote_type: -1).count %>
-    <p class="post-score large-text center" title="+<%= @upvotes %>/-<%= @downvotes %>"><%= answer.score %></p>
+    <% votes = answer.votes.group(:vote_type).count(:vote_type) %>
+    <p class="post-score large-text center" title="+<%= votes[1] %>/-<%= votes[-1] %>"><%= answer.score %></p>
     <p>
       <% if my_vote(answer) && my_vote(answer).vote_type == -1 %>
         <img class="vote-button" data-vote="-1/<%= answer.id %>/a/<%= my_vote(answer).id %>"

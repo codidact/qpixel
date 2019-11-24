@@ -5,7 +5,7 @@
 <h4><%= pluralize(@question.answers.where(deleted: false).count, "answer") %></h4>
 <hr/>
 
-<% (current_user&.has_privilege?('ViewDeleted') ? @question.answers : @question.answers.undeleted).order(params[:sort] || 'score desc').each do |answer| %>
+<% @answers.each do |answer| %>
   <%= render 'answers/expanded', answer: answer %>
 <% end %>
 

@@ -20,8 +20,12 @@ class QuestionsController < ApplicationController
     if @question.deleted?
       check_your_privilege('ViewDeleted', @question) or return
     end
-    @upvotes = @question.votes.where(vote_type: 1).count || 0
-    @downvotes = @question.votes.where(vote_type: -1).count || 0
+    @votes = @question.votes.group(:vote_type).count(:vote_type)
+    @answers = if current_user&.has_privilege?('ViewDeleted')
+                 @question.answers
+               else
+                 @question.answers.undeleted
+               end.includes(:votes).order(Arel.sql('score DESC'))
   end
 
   # Web action. Retrieves a paginated list of all questions where the tags contain a tag specified in the query string

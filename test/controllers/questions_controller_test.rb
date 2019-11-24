@@ -13,8 +13,8 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should get show question page" do
     get :show, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)
-    assert_not_nil assigns(:upvotes)
-    assert_not_nil assigns(:downvotes)
+    assert_not_nil assigns(:votes)
+    assert_not_nil assigns(:answers)
     assert_response(200)
   end
 
@@ -22,8 +22,8 @@ class QuestionsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     get :show, params: { id: posts(:deleted).id }
     assert_not_nil assigns(:question)
-    assert_not_nil assigns(:upvotes)
-    assert_not_nil assigns(:downvotes)
+    assert_not_nil assigns(:votes)
+    assert_not_nil assigns(:answers)
     assert_response(200)
   end
 
@@ -32,8 +32,8 @@ class QuestionsControllerTest < ActionController::TestCase
     get :show, params: { id: posts(:closed).id }
     assert_response 200
     assert_not_nil assigns(:question)
-    assert_not_nil assigns(:upvotes)
-    assert_not_nil assigns(:downvotes)
+    assert_not_nil assigns(:votes)
+    assert_not_nil assigns(:answers)
   end
 
   test "should get tagged page" do
