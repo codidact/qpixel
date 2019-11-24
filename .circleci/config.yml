@@ -47,3 +47,5 @@ jobs:
           name: Test
           command: |
             bundle exec rails test
+      - store_test_results:
+          path: "~/qpixel/test/reports"

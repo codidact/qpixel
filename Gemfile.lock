@@ -96,6 +96,8 @@ GEM
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.10.3)
+    minitest-ci (3.4.0)
+      minitest (>= 5.0.6)
     mysql2 (0.5.2)
     nio4r (2.5.2)
     nokogiri (1.10.5)
@@ -200,6 +202,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails (~> 4.3.5)
   minitest (~> 5.10.3)
+  minitest-ci (~> 3.4.0)
   mysql2 (~> 0.5)
   puma (~> 3.12.1)
   rails (= 5.2.3)
