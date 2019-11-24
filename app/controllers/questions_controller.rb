@@ -181,8 +181,8 @@ class QuestionsController < ApplicationController
     # Calculates and changes any reputation changes a user has had from a post. If <tt>direction</tt> is 1, we add the
     # reputation. If it's -1, we take it away.
     def calculate_reputation(user, post, direction)
-      upvote_rep = post.votes.where(vote_type: 1).count * get_setting('QuestionUpVoteRep').to_i
-      downvote_rep = post.votes.where(vote_type: -1).count * get_setting('QuestionDownVoteRep').to_i
+      upvote_rep = post.votes.where(vote_type: 1).count * SiteSetting['QuestionUpVoteRep']
+      downvote_rep = post.votes.where(vote_type: -1).count * SiteSetting['QuestionDownVoteRep']
       user.reputation += direction * (upvote_rep + downvote_rep)
       user.save!
     end

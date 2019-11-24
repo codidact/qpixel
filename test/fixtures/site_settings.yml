@@ -1,7 +1,9 @@
 one:
   name: ABCDEF
   value: ABCDEF GHIJKL
+  value_type: string
 
 sanitize:
   name: AskingGuidance
   value: "<script>alert('omg xss');</script>"
+  value_type: string

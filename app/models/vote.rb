@@ -44,7 +44,7 @@ class Vote < ApplicationRecord
         [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
         [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep'
     }
-    rep_change = SiteSetting.find_by(name: setting_names[[post.post_type_id, vote_type]])&.value&.to_i || 0
+    rep_change = SiteSetting[setting_names[[post.post_type_id, vote_type]]] || 0
     recv_user.update!(reputation: recv_user.reputation + direction * rep_change)
   end
 

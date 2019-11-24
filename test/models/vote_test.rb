@@ -13,7 +13,7 @@ class VoteTest < ActiveSupport::TestCase
     [1, -1].each do |vote_type|
       previous_rep = posts(:question_two).user.reputation
       setting_name = vote_type == 1 ? 'QuestionUpVoteRep' : 'QuestionDownVoteRep'
-      expected_change = SiteSetting.find_by(name: setting_name)&.value&.to_i
+      expected_change = SiteSetting[setting_name]
       posts(:question_two).votes.create(user: users(:deleter), recv_user: posts(:question_two).user, vote_type: vote_type)
       assert_equal posts(:question_two).user.reputation, previous_rep + expected_change
     end
@@ -26,8 +26,8 @@ class VoteTest < ActiveSupport::TestCase
     previous_rep = author.reputation
     expected_score_change = +3 + -2
 
-    rep_change_up = SiteSetting.find_by(name: 'QuestionUpVoteRep')&.value&.to_i
-    rep_change_down = SiteSetting.find_by(name: 'QuestionDownVoteRep')&.value&.to_i
+    rep_change_up = SiteSetting['QuestionUpVoteRep']
+    rep_change_down = SiteSetting['QuestionDownVoteRep']
     expected_rep_change = 3 * rep_change_up + 2 * rep_change_down
 
     post.votes.create([
@@ -45,8 +45,8 @@ class VoteTest < ActiveSupport::TestCase
 
   test "Vote.total_rep_change should result in correct rep change for given votes" do
     post = posts(:answer_one)
-    rep_change_up = SiteSetting.find_by(name: 'AnswerUpVoteRep')&.value&.to_i
-    rep_change_down = SiteSetting.find_by(name: 'AnswerDownVoteRep')&.value&.to_i
+    rep_change_up = SiteSetting['AnswerUpVoteRep']
+    rep_change_down = SiteSetting['AnswerDownVoteRep']
     expected = 4 * rep_change_up + 1 * rep_change_down
     assert_equal expected, Vote.total_rep_change(post.votes)
   end

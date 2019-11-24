@@ -1,18 +1,10 @@
 # Rep Recalculator
 # Recalculates the reputation score for one user, specified by the ID given in the first command line argument.
 
-def get_setting(name)
-  begin
-    return SiteSetting.find_by_name(name).value
-  rescue
-    return nil
-  end
-end
-
-qu = get_setting('QuestionUpVoteRep').to_i
-qd = get_setting('QuestionDownVoteRep').to_i
-au = get_setting('AnswerUpVoteRep').to_i
-ad = get_setting('AnswerDownVoteRep').to_i
+qu = SiteSetting['QuestionUpVoteRep']
+qd = SiteSetting['QuestionDownVoteRep']
+au = SiteSetting['AnswerUpVoteRep']
+ad = SiteSetting['AnswerDownVoteRep']
 
 users = User.all
 

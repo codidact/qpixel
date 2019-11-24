@@ -13,7 +13,7 @@ class VotesController < ApplicationController
   def create
     post = Post.find(params[:post_id])
 
-    if post.user == current_user && get_setting('AllowSelfVotes') != "true"
+    if post.user == current_user && !SiteSetting['AllowSelfVotes']
       render plain: "You may not vote on your own posts.", status: 403 and return
     end
 

@@ -36,19 +36,6 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    # Retrieves the value of the site setting specified by <tt>name</tt>. This method is essentially a helper method
-    # for controllers; it is not intended as a callback action but rather as a procedural method call. Returns
-    # <tt>nil</tt> if the setting is not found; this is usually preferable to raising a processing error and having the
-    # server return 500 Internal Server Error for an error that is usually recoverable.
-    def get_setting(name)
-      begin
-        setting = SiteSetting.find_by_name name
-        return setting.value
-      rescue
-        return nil
-      end
-    end
-
     def check_your_privilege(name, post = nil, render_error = true)
       unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
         @privilege = Privilege.find_by(name: name)
@@ -61,7 +48,7 @@ class ApplicationController < ActionController::Base
   private
     def set_globals
       @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
-        Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(get_setting('HotQuestionsCount').to_i)
+        Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(SiteSetting['HotQuestionsCount'])
       end
       if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
         @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count

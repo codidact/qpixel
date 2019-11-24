@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= get_setting('SiteName') %> - <%= yield(:error_name) %></title>
+  <title><%= SiteSetting['SiteName'] %> - <%= yield(:error_name) %></title>
   <%= stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
@@ -14,10 +14,10 @@
   <div class="header">
     <div class="container">
       <div class="site-logo">
-        <% if get_setting('SiteLogoPath') %>
-          <a href="/"><img src="<%= get_setting('SiteLogoPath') %>" /></a>
+        <% if SiteSetting['SiteLogoPath'] %>
+          <a href="/"><img src="<%= SiteSetting['SiteLogoPath'] %>" /></a>
         <% else %>
-          <a href="/"><%= get_setting('SiteName') %></a>
+          <a href="/"><%= SiteSetting['SiteName'] %></a>
         <% end %>
       </div>
       <div class="toplevel-links">
@@ -54,7 +54,7 @@
         <p><%= raw(yield(:error_message)) %></p>
 
         <p>If you believe you encountered this page in error, or you want to report a fault, you can contact the administrator
-          at <%= get_setting('AdministratorContactEmail') %>.</p>
+          at <%= SiteSetting['AdministratorContactEmail'] %>.</p>
       </div>
       <div class="sidebar">
         <%= yield(:sidebar) %>

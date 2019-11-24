@@ -1,35 +1,50 @@
 - name: SiteName
   value: QPixel
+  value_type: string
 - name: SiteLogoPath
   value: /assets/logo.png
+  value_type: string
 - name: QuestionUpVoteRep
   value: 5
+  value_type: integer
 - name: QuestionDownVoteRep
   value: -2
+  value_type: integer
 - name: AnswerUpVoteRep
   value: 10
+  value_type: integer
 - name: AnswerDownVoteRep
   value: -2
+  value_type: integer
 - name: AllowSelfVotes
-  value: false
+  value: "false"
+  value_type: boolean
 - name: AskingGuidance
   value: >
     <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
     or entirely based on opinions</li><li>are well written</li></ul></p>
+  value_type: string
 - name: AnsweringGuidance
   value: >
     <p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts
     that don't address the problem clutter up the thread</li><li><strong>explain why you're
     right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul></p>
+  value_type: string
 - name: AdministratorContactEmail
   value: contact@example.com
+  value_type: string
 - name: HotQuestionsCount
   value: 5
+  value_type: integer
 - name: RepNotificationsActive
-  value: true
+  value: "true"
+  value_type: boolean
 - name: AdminBadgeCharacter
   value: ""
+  value_type: string
 - name: ModBadgeCharacter
   value: ""
+  value_type: string
 - name: SoftDeleteTransferUser
   value: 0
+  value_type: integer
