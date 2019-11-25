@@ -4,9 +4,6 @@ module AnswersHelper
   # saves having to clutter up the view getting hold of it every time (which is sort of the point of all helpers, I
   # guess).
   def my_vote(answer)
-    if user_signed_in?
-      return answer.votes.where(user: current_user).first
-    end
-    return nil
+    user_signed_in? ? answer.votes.where(user: current_user).first : nil
   end
 end
