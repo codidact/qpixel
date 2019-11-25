@@ -36,33 +36,14 @@ class UsersController < ApplicationController
       render json: {status: 'failed', message: 'Admins and moderators cannot be deleted.'}, status: 422 and return
     end
 
-    @transfer_user = User.find params[:transfer]
-
-    needs_transfer = ['questions', 'answers', 'votes']
-
-    # User.reflections is a list of associations on the User model.
-    User.reflections.keys.each do |assoc|
-      # @user.public_send calls the method specified, so if assoc == 'questions', objects == @user.questions
-      objects = @user.public_send(assoc)
-      if needs_transfer.include?(assoc)
-        objects.each do |obj|
-          # Keep posts that score above 0 (but transfer them to @transfer_user), destroy the rest.
-          if obj.respond_to?(:score) && obj.score < 0
-            obj.destroy
-          else
-            obj.user_id = @transfer_user.id
-            if !obj.save
-              render json: {status: 'failed', message: "Failed to transfer #{assoc} #{obj.id}"}, status: 500 and return
-            end
-          end
-        end
-      else
-        # If we don't need to transfer any of the objects of this type, just get rid of the lot.
-        objects.destroy_all
-      end
+    needs_transfer = ApplicationRecord.connection.tables.map { |t| [t, ApplicationRecord.connection.columns(t).map(&:name)] }
+                                      .to_h.select { |_, cs| cs.include?('user_id') }
+                                      .map { |k, _| k.singularize.classify.constantize rescue nil }.compact
+    needs_transfer.each do |model|
+      model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
     end
 
-    if !@user.destroy
+    unless @user.destroy
       render json: {status: 'failed', message: "Failed to destroy UID #{@user.id}"}, status: 500 and return
     end
 
