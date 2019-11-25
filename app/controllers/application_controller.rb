@@ -9,49 +9,42 @@ class ApplicationController < ActionController::Base
   before_action :set_globals
 
   protected
-    # Re-configures the parameters that the Devise parameter sanitizer will allow through. By default, this is only the
-    # default user fields. We additionally have a username, which needs to be allowed through. This method is called
-    # before every action taken from a Devise (or inherited Devise, such as app/controllers/users/*) controller.
-    def configure_permitted_parameters
-      devise_parameter_sanitizer.permit(:sign_up) do |user|
-        user.permit(:email, :password, :password_confirmation, :username)
-      end
-    end
 
-    # Verifies that the currently signed in user is, in fact, a moderator. This method assumes that it is used as a
-    # before_action callback on a mod-protected resource, so in the event that the user is not a moderator, a 404 Not
-    # Found error is thrown. Also assumes that administrators have access to moderator resources, so returns true for
-    # administrators.
-    def verify_moderator
-      if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-        render template: 'errors/not_found', status: 404 and return
-      end
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up) do |user|
+      user.permit(:email, :password, :password_confirmation, :username)
     end
+  end
 
-    # Very similar to verify_moderator. Verifies that the currently signed in user is an administrator; throws a 404
-    # Not Found if not. Admins are assumed to be a higher level than moderators, so returns false for moderators.
-    def verify_admin
-      if !user_signed_in? || !current_user.is_admin
-        render template: 'errors/not_found', status: 404 and return
-      end
+  def verify_moderator
+    if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
+      render template: 'errors/not_found', status: 404 and return
     end
+  end
 
-    def check_your_privilege(name, post = nil, render_error = true)
-      unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
-        @privilege = Privilege.find_by(name: name)
-        render 'errors/forbidden', layout: 'errors', privilege_name: name, status: 401 if render_error
-        return false
-      end
-      return true
+  def verify_admin
+    if !user_signed_in? || !current_user.is_admin
+      render template: 'errors/not_found', status: 404 and return
     end
+  end
+
+  def check_your_privilege(name, post = nil, render_error = true)
+    unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
+      @privilege = Privilege.find_by(name: name)
+      render 'errors/forbidden', layout: 'errors', privilege_name: name, status: 401 if render_error
+      return false
+    end
+    return true
+  end
 
   private
-    def set_globals
-      @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
-        Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(SiteSetting['HotQuestionsCount'])
-      end
-      if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
-        @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count
-      end
+
+  def set_globals
+    @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
+      Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
+    if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+      @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count
+    end
+  end
 end

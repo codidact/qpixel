@@ -3,27 +3,21 @@
 class ModeratorController < ApplicationController
   before_action :verify_moderator
 
-  # Administrative web action. No dynamic content - this is purely representative of the existence of a (relatively)
-  # static view for this path.
   def index
   end
 
-  # Administrative web action. Gets a list of recently deleted questions so that moderators can review deletions.
   def recently_deleted_questions
     @questions = Question.unscoped.where(deleted: true).order('deleted_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
-  # Administrative web action. Gets a list of recently deleted answers so that moderators can review deletions.
   def recently_deleted_answers
     @answers = Answer.where(deleted: true).order('deleted_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
-  # Administrative web action. Gets a list of recently undeleted questions so that moderators can review undeletions.
   def recently_undeleted_questions
     @questions = Question.unscoped.where(deleted: false).where.not(deleted_at: nil).paginate(page: params[:page], per_page: 50)
   end
 
-  # Administrative web action. Gets a list of recently undeleted answers so that moderators can review undeletions.
   def recently_undeleted_answers
     @answers = Answer.where(deleted: false).where.not(deleted_at: nil).paginate(page: params[:page], per_page: 50)
   end

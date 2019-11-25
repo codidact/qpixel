@@ -1,7 +1,3 @@
-# Post Score Recalculator
-# Recalculates the score for one post, specified by the ID given in the first command line parameter.
-# Pass the post type ("Answer" or "Question") as the second parameter.
-
 def get_post
   begin
     if ARGV[1].downcase == "answer"

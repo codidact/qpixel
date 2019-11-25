@@ -15,7 +15,7 @@ class Vote < ApplicationRecord
   def self.total_rep_change(col)
     col = col.includes(:post)
     settings = SiteSetting.where(name: ['QuestionUpVoteRep', 'QuestionDownVoteRep', 'AnswerUpVoteRep', 'AnswerDownVoteRep'])
-                          .map { |ss| [ss.name, ss.value] }.to_h
+                   .map { |ss| [ss.name, ss.value] }.to_h
     rep_changes = PostType.mapping.map do |k, v|
       vote_types = {1 => 'Up', -1 => 'Down'}
       [v, vote_types.map { |vt, readable| [vt, settings["#{k}#{readable}VoteRep"].to_i] }.to_h]

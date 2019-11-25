@@ -11,10 +11,6 @@ class User < ApplicationRecord
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
-  # Checks whether or not a user has the given privilege. For efficiency, initially checks if the privilege is in the
-  # user's <tt>privileges</tt> association and returns true if so; otherwise checks reputation and assigns the
-  # privilege if the user has enough rep. This method should not be used to secure administrator-only privileges, as
-  # both admins and mods are assumed to have the privilege.
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
     if privileges.include?(privilege) || is_admin || is_moderator
@@ -27,8 +23,6 @@ class User < ApplicationRecord
     end
   end
 
-  # Basically the same as <tt>User#has_privilege?</tt>, but checks privileges with relation to the post as well. OPs
-  # always have every privilege on their own posts.
   def has_post_privilege?(name, post)
     if post.user == self
       true
@@ -37,14 +31,11 @@ class User < ApplicationRecord
     end
   end
 
-  # Creates and adds a notification to the instance user's notification stack.
   def create_notification(content, link)
     notification = Notification.create(content: content, link: link)
     notifications << notification
   end
 
-  # Returns a count of unread notifications for the instance user. Does not return the notifications themselves; that
-  # should be done by calling the API action from <tt>NotificationsController#index</tt>.
   def unread_notifications
     notifications.where(is_read: false).count
   end

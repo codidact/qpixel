@@ -18,9 +18,9 @@ class SuspiciousVotesController < ApplicationController
     @sv.investigated_at = Time.now
     @sv.investigated_by = current_user.id
     if @sv.save
-      render json: { status: 'success' }
+      render json: {status: 'success'}
     else
-      render json: { status: 'failed' }, status: 500
+      render json: {status: 'failed'}, status: 500
     end
   end
 end

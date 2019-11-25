@@ -15,6 +15,7 @@ class Question < Post
   end
 
   private
+
   def maximum_tags
     if tags.length > 5
       errors.add(:tags, "can't have more than 5 tags")
@@ -32,10 +33,10 @@ class Question < Post
   end
 
   def stripped_minimum
-    if body.squeeze(" 	").length < 30
+    if body.squeeze("  ").length < 30
       errors.add(:body, "must be more than 30 non-whitespace characters long")
     end
-    if title.squeeze(" 	").length < 15
+    if title.squeeze("  ").length < 15
       errors.add(:title, "must be more than 15 non-whitespace characters long")
     end
   end

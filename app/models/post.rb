@@ -14,7 +14,7 @@ class Post < ApplicationRecord
 
   serialize :tags, Array
 
-  validates :body, presence: true, length: { minimum: 30, maximum: 30000 }
+  validates :body, presence: true, length: {minimum: 30, maximum: 30000}
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
