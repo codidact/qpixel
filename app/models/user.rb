@@ -21,7 +21,7 @@ class User < ApplicationRecord
       true
     elsif privilege && reputation >= privilege.threshold
       privileges << privilege
-      return true
+      true
     else
       false
     end

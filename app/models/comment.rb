@@ -4,10 +4,12 @@ class Comment < ApplicationRecord
 
   belongs_to :post
   belongs_to :user
+  has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
 
   validates :content, length: { minimum: 15, maximum: 500 }
 
   def root
-    post.post_type_id == Question.post_type_id ? post : post.parent
+    # If parent_question is nil, the comment is already on a question, so we can just return post.
+    parent_question || post
   end
 end
