@@ -10,26 +10,13 @@ class SiteSettingsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should get edit setting page" do
-    sign_in users(:admin)
-    get :edit, params: { id: site_settings(:one).id }
-    assert_not_nil assigns(:setting)
-    assert_response(200)
-  end
-
   test "should update existing setting" do
     sign_in users(:admin)
-    patch :update, params: { id: site_settings(:one).id, site_setting: { value: "ABCDEF" } }
+    post :update, params: { name: site_settings(:one).name, site_setting: { value: "ABCDEF" } }
+    assert_response 200
     assert_not_nil assigns(:setting)
-    assert_response(302)
-  end
-
-  test "should sanitize raw html strings" do
-    sign_in users(:admin)
-    patch :update, params: { id: site_settings(:sanitize).id, site_setting: { value: "<script>alert('omg xss2');</script>" } }
-    assert_not_nil assigns(:setting)
-    assert_not assigns(:setting).value.include?("<script>")
-    assert_response(302)
+    assert_equal 'ABCDEF', JSON.parse(response.body)['setting']['value']
+    assert_equal 'OK', JSON.parse(response.body)['status']
   end
 
   test "should require authentication to access index" do
@@ -38,33 +25,9 @@ class SiteSettingsControllerTest < ActionController::TestCase
     assert_response(404)
   end
 
-  test "should require authentication to access edit page" do
-    sign_out :user
-    get :edit, params: { id: site_settings(:one).id }
-    assert_response(404)
-  end
-
-  test "should require authentication to update setting" do
-    sign_out :user
-    patch :update, params: { id: site_settings(:one).id }
-    assert_response(404)
-  end
-
   test "should require admin status to access index" do
     sign_in users(:moderator)
     get :index
-    assert_response(404)
-  end
-
-  test "should require admin status to access edit page" do
-    sign_in users(:moderator)
-    get :edit, params: { id: site_settings(:one).id }
-    assert_response(404)
-  end
-
-  test "should require admin status to update setting" do
-    sign_in users(:moderator)
-    patch :update, params: { id: site_settings(:one).id }
     assert_response(404)
   end
 end
