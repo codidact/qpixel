@@ -18,12 +18,12 @@ class User < ApplicationRecord
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
     if privileges.include?(privilege) || is_admin || is_moderator
-      return true
+      true
     elsif privilege && reputation >= privilege.threshold
       privileges << privilege
       return true
     else
-      return false
+      false
     end
   end
 
@@ -31,9 +31,9 @@ class User < ApplicationRecord
   # always have every privilege on their own posts.
   def has_post_privilege?(name, post)
     if post.user == self
-      return true
+      true
     else
-      return self.has_privilege?(name)
+      self.has_privilege?(name)
     end
   end
 
@@ -46,7 +46,7 @@ class User < ApplicationRecord
   # Returns a count of unread notifications for the instance user. Does not return the notifications themselves; that
   # should be done by calling the API action from <tt>NotificationsController#index</tt>.
   def unread_notifications
-    return notifications.where(is_read: false).count
+    notifications.where(is_read: false).count
   end
 
   def questions
