@@ -9,6 +9,9 @@ class Post < ApplicationRecord
   has_many :post_histories
   has_many :flags
 
+  # TODO: Make AskingGuidance and AnsweringGuidance site settings support Markdown, and sanitize
+  # TODO: before display in views.
+
   serialize :tags, Array
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30000 }

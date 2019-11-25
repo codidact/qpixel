@@ -1,9 +1,13 @@
 <% content_for :title, "Site Settings" %>
 
 <h3>Site Settings</h3>
-<p>This is everything. Everything that controls the operation of the site can be found here, if you look hard enough.
-  See something that shouldn't be here, or something missing that should be here? Talk to a developer to get it deleted
-  or added.</p>
+<p>
+  The settings on this page control various aspects of the display or operation of the site. Change these
+  rarely and with care. Bear in mind that setting changes will generally not be retroactive - so if you change
+  the reputation values, they will only apply going forward - users' reputation will not be recalculated automatically.
+</p>
+
+<p>Click on a setting's value to edit it.</p>
 
 <table class="table table-striped">
   <thead>
@@ -19,8 +23,7 @@
       <tr>
         <td><%= setting.id %></td>
         <td><%= setting.name %></td>
-        <td><%= setting.value %></td>
-        <td><a href="/admin/settings/<%= setting.id %>/edit">Edit</a></td>
+        <td class="js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"><%= setting.typed %></td>
       </tr>
     <% end %>
   </tbody>

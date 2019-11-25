@@ -99,29 +99,25 @@ $(document).on('ready', function() {
     notificationsOpen = !notificationsOpen;
   });
 
-  $(document).on("DOMNodeInserted", function(ev) {
-    if($(ev.target).is("li") && $(ev.target).children("a.notification").length > 0) {
-      $("a.notification", document).bind("click", function(ev) {
-        ev.preventDefault();
-        var self = $(this);
-        $.ajax({
-          'type': 'POST',
-          'url': '/notifications/' + self.data("id") + '/read.json',
-          'src': self
-        })
-        .done(function(data) {
-          if(data['status'] !== 'success') {
-            console.error("Failed to mark notification as read.");
-          }
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-          console.log(jqXHR.responseText);
-        })
-        .always(function(a, b, c) {
-          location.href = $(this.src).attr("href");
-        });
-      });
-    }
+  $(document).on("click", "a.notification", function(ev) {
+    ev.preventDefault();
+    var self = $(this);
+    $.ajax({
+      'type': 'POST',
+      'url': '/notifications/' + self.data("id") + '/read.json',
+      'src': self
+    })
+    .done(function(data) {
+      if(data['status'] !== 'success') {
+        console.error("Failed to mark notification as read.");
+      }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log(jqXHR.responseText);
+    })
+    .always(function(a, b, c) {
+      location.href = $(this.src).attr("href");
+    });
   });
 
   $("a.flag-link").bind("click", function(ev) {

@@ -1,50 +1,90 @@
 - name: SiteName
   value: QPixel
   value_type: string
+  description: >
+    The main name for this site. Will appear in the page title, among other places.
+
 - name: SiteLogoPath
   value: /assets/logo.png
   value_type: string
+  description: >
+    The path, relative to the root of the domain, to the site's logo file. Can also be an absolute URL.
+
 - name: QuestionUpVoteRep
   value: 5
   value_type: integer
+  description: >
+    The reputation change to the post's author when a question is upvoted.
+
 - name: QuestionDownVoteRep
   value: -2
   value_type: integer
+  description: >
+    The reputation change to the post's author when a question is downvoted.
+
 - name: AnswerUpVoteRep
   value: 10
   value_type: integer
+  description: >
+    The reputation change to the post's author when an answer is upvoted.
+
 - name: AnswerDownVoteRep
   value: -2
   value_type: integer
+  description: >
+    The reputation change to the post's author when an answer is downvoted.
+
 - name: AllowSelfVotes
-  value: "false"
+  value: false
   value_type: boolean
+  description: >
+    Whether or not voting for your own posts is allowed.
+
 - name: AskingGuidance
   value: >
     <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
     or entirely based on opinions</li><li>are well written</li></ul></p>
   value_type: string
+  description: >
+    Guidance to help users ask a good question. Will be displayed in the sidebar on the ask a question
+    page. Supports Markdown, including a subset of HTML.
+
 - name: AnsweringGuidance
   value: >
     <p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts
     that don't address the problem clutter up the thread</li><li><strong>explain why you're
     right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul></p>
   value_type: string
+  description: >
+    Guidance to help users write a good answer. Will be displayed in the sidebar on the answer page.
+    Supports Markdown, including a subset of HTML.
+
 - name: AdministratorContactEmail
   value: contact@example.com
   value_type: string
+  description: >
+    A contact address for the owners or administrators of the site. Will be displayed on error pages.
+
 - name: HotQuestionsCount
   value: 5
   value_type: integer
-- name: RepNotificationsActive
-  value: "true"
-  value_type: boolean
+  description: >
+    How many "hot" questions to display in the sidebar.
+
 - name: AdminBadgeCharacter
   value: ""
   value_type: string
+  description: >
+    A character to display after an admin's username to distinguish their role.
+
 - name: ModBadgeCharacter
   value: ""
   value_type: string
+  description: >
+    A character to display after a moderator's username to distinguish their role.
+
 - name: SoftDeleteTransferUser
   value: 0
   value_type: integer
+  description: >
+    A user ID to which to transfer content when soft-deleting a user account.

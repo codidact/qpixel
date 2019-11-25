@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_24_214828) do
+ActiveRecord::Schema.define(version: 2019_11_25_145708) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -68,10 +68,12 @@ ActiveRecord::Schema.define(version: 2019_11_24_214828) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_post_history_types_on_name"
   end
 
   create_table "post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
+    t.index ["name"], name: "index_post_types_on_name"
   end
 
   create_table "posts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -97,6 +99,7 @@ ActiveRecord::Schema.define(version: 2019_11_24_214828) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.integer "threshold"
+    t.index ["name"], name: "index_privileges_on_name"
   end
 
   create_table "privileges_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -112,6 +115,8 @@ ActiveRecord::Schema.define(version: 2019_11_24_214828) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "value_type", null: false
+    t.text "description"
+    t.index ["name"], name: "index_site_settings_on_name"
   end
 
   create_table "suspicious_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

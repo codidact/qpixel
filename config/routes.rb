@@ -8,9 +8,8 @@ Rails.application.routes.draw do
   # Admins are important, let's make sure their routes override anything else.
   get    'admin',                       to: 'admin#index'
   get    'admin/settings',              to: 'site_settings#index'
-  get    'admin/settings/:id/edit',     to: 'site_settings#edit'
-  post   'admin/settings/:id/edit',     to: 'site_settings#update'
-  patch  'admin/settings/:id/edit',     to: 'site_settings#update'
+  get    'admin/settings/:name',        to: 'site_settings#show'
+  post   'admin/settings/:name',        to: 'site_settings#update'
   delete 'admin/users/delete/:id',      to: 'users#soft_delete'
 
   # Mods are also pretty important, I guess.
@@ -55,7 +54,7 @@ Rails.application.routes.draw do
   post   'votes/new',                   to: 'votes#create'
   delete 'votes/:id',                   to: 'votes#destroy'
 
-  # Answers don't have quite as many as questions.
+  # Answers don't have quite as many as actions.
   get    'questions/:id/answer',        to: 'answers#new'
   post   'questions/:id/answer',        to: 'answers#create'
   get    'answers/:id/edit',            to: 'answers#edit'

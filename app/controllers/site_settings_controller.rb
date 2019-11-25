@@ -5,25 +5,20 @@ class SiteSettingsController < ApplicationController
 
   # Authenticated administrator web action. Retrieves a paginated list of all site settings.
   def index
-    @settings = SiteSetting.all.paginate(page: params[:page], per_page: 20)
+    @settings = SiteSetting.all.paginate(page: params[:page], per_page: 20).order(name: :asc)
   end
 
-  # Authenticated administrator web action. Retrieves a single site setting for editing.
-  def edit
-    @setting = SiteSetting.find params[:id]
+  def show
+    @setting = SiteSetting.find_by name: params[:name]
+    render json: @setting&.as_json&.merge(typed: @setting.typed)
   end
 
   # Authenticated administrator web action. Applies new values submitted by the user to a single site setting. Redirects
   # on completion back to the <tt>index</tt> action.
   def update
-    requires_sanitization = ['AskingGuidance', 'AnsweringGuidance']
-    @setting = SiteSetting.find params[:id]
+    @setting = SiteSetting.find_by name: params[:name]
     @setting.update(setting_params)
-    if requires_sanitization.include?(@setting.name)
-      @setting.value = ActionController::Base.helpers.sanitize(@setting.value, scrubber: SiteSettingScrubber.new)
-      @setting.save!
-    end
-    redirect_to url_for(controller: :site_settings, action: :index)
+    render json: { status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed) }
   end
 
   private
