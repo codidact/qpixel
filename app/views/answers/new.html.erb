@@ -27,6 +27,6 @@
 <% content_for :sidebar do %>
   <div class="bg-primary padded">
     <h5><strong>Hints &amp; Tips</strong></h5>
-    <%= raw(SiteSetting['AnsweringGuidance']) %>
+    <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: SiteSettingScrubber.new)) %>
   </div>
 <% end %>
