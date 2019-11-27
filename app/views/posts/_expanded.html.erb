@@ -14,8 +14,8 @@
       <% else %>
         <img class="vote-button" data-vote-type="1" id="post-<%= post.id %>-up" src="/assets/up-clear.png" height="48" />
       <% end %>
-      <% votes = defined?(@votes) ? @votes : post.votes.group(:vote_type).count(:vote_type) %>
-      <span class="score" title="+<%= votes[1] %>/-<%= votes[-1] %>"><%= post.score %></span>
+      <% votes = post.votes.group(:vote_type).count(:vote_type) %>
+      <span class="score" title="+<%= votes[1] || 0 %>/-<%= votes[-1] || 0 %>"><%= post.score %></span>
       <% if existing_vote&.vote_type == -1 %>
         <img class="vote-button voted" data-vote-type="-1" data-vote-id="<%= existing_vote.id %>"
              id="post-<%= post.id %>-down" src="/assets/down-fill.png" height="48" />
@@ -25,7 +25,7 @@
     </div>
 
     <div class="post__body">
-      <%= raw(sanitize(post.body, scrubber: QuestionScrubber.new)) %>
+      <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
       <div class="post__meta">
         <% if is_question %>

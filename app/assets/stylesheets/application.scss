@@ -106,9 +106,12 @@ main {
 }
 
 .sidebar {
+  max-width: 25em;
+
   .module {
     background: lighten($primary, 50%);
     border: 1px solid lighten($primary, 45%);
+    margin: 1em 0;
 
     .module__title {
       margin-top: 0;

@@ -118,7 +118,11 @@
 
     .post__body {
       flex: 1;
-      margin-left: 1em;
+      margin-left: 0.5em;
+
+      @media screen and (min-width: $screen-md) {
+        margin-left: 1em;
+      }
 
       .post__meta {
         display: flex;

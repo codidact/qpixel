@@ -1,4 +1,6 @@
 $(() => {
+  // TODO: Figure out why vote-unvote-vote-unvote errors on the second unvote.
+
   $(document).on('click', '.vote-button', async evt => {
     const $tgt = $(evt.target);
     const $post = $tgt.parents('.post');

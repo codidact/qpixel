@@ -24,16 +24,3 @@ class SiteSettingsController < ApplicationController
     params.require(:site_setting).permit(:name, :value)
   end
 end
-
-# Provides a custom HTML sanitization interface to use for cleaning up the HTML in site settings.
-class SiteSettingScrubber < Rails::Html::PermitScrubber
-  def initialize
-    super
-    self.tags = %w( p b i em strong ul ol li a )
-    self.attributes = %w( href title )
-  end
-
-  def skip_node?(node)
-    node.text?
-  end
-end

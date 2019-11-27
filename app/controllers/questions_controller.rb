@@ -3,7 +3,7 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(), extensions = {})
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})
 
   def self.renderer
     @@markdown_renderer
@@ -36,8 +36,7 @@ class QuestionsController < ApplicationController
   def create
     params[:question][:tags] = params[:question][:tags].split(" ")
     @question = Question.new(question_params.merge(tags: params[:question][:tags], user: current_user, score: 0,
-                                                   body: renderer.render(params[:question][:body], scrubber: QuestionScrubber.new),
-                                                   body_markdown: params[:question][:body]))
+                                                   body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -52,9 +51,8 @@ class QuestionsController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @question)
     params[:question][:tags] = params[:question][:tags].split(" ")
-    if @question.update question_params.merge(tags: params[:question][:tags],
-                                              body: renderer.render(params[:question][:body], scrubber: QuestionScrubber.new),
-                                              body_markdown: params[:question][:body])
+    if @question.update(question_params.merge(tags: params[:question][:tags],
+                                              body: QuestionsController.renderer.render(params[:question][:body_markdown])))
       PostHistory.post_edited(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -157,18 +155,5 @@ class QuestionsController < ApplicationController
     downvote_rep = post.votes.where(vote_type: -1).count * SiteSetting['QuestionDownVoteRep']
     user.reputation += direction * (upvote_rep + downvote_rep)
     user.save!
-  end
-end
-
-# Provides a custom HTML sanitization interface to use for cleaning up the HTML in questions.
-class QuestionScrubber < Rails::Html::PermitScrubber
-  def initialize
-    super
-    self.tags = %w( a p b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li )
-    self.attributes = %w( href title src height width )
-  end
-
-  def skip_node?(node)
-    node.text?
   end
 end

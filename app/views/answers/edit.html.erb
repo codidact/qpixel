@@ -13,20 +13,23 @@
 <% end %>
 
 <%= form_for @answer, url: { controller: :answers, action: :update } do |f| %>
-  <div class="field">
-    <%= f.text_area :body, { class: "form-control", rows: 15 } %>
+  <div class="form-group">
+    <%= f.label :body_markdown, 'Body' %>
+    <%= f.text_area :body_markdown, { class: "form-control", rows: 15 } %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.submit "Update Answer", class: "btn btn-primary" %>
   </div>
 <% end %>
 
 <h3>Question</h3>
-<%= render 'questions/expanded', question: @answer.parent, with_actions: false %>
+<%= render 'posts/expanded', post: @answer.parent %>
 
 <% content_for :sidebar do %>
-  <div class="bg-primary padded">
-    <h5><strong>Hints &amp; Tips</strong></h5>
-    <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: SiteSettingScrubber.new)) %>
+  <div class="module">
+    <h4 class="module__title">Hints and Tips</h4>
+    <div class="module__content">
+      <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
+    </div>
   </div>
 <% end %>

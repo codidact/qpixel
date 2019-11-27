@@ -33,7 +33,7 @@
   <% content_for :sidebar do %>
     <div class="bg-primary padded">
       <h5><strong>Asking Guidance</strong></h5>
-      <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: SiteSettingScrubber.new)) %>
+      <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
     </div>
   <% end %>
 <% end %>
