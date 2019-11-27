@@ -1,4 +1,4 @@
-
+# This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_25_145708) do
+ActiveRecord::Schema.define(version: 2019_11_27_121809) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 2019_11_25_145708) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "post_type_id", null: false
+    t.text "body_markdown"
   end
 
   create_table "privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

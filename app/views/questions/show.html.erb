@@ -1,12 +1,13 @@
 <% content_for :title, @question.title.truncate(50) %>
 
-<%= render 'expanded', question: @question, with_actions: true %>
+<%= render 'posts/expanded', post: @question %>
 <span class="clearfix"></span><br/>
 <h4><%= pluralize(@question.answers.where(deleted: false).count, "answer") %></h4>
 <hr/>
 
 <% @answers.each do |answer| %>
-  <%= render 'answers/expanded', answer: answer %>
+  <%= render 'posts/expanded', post: answer %>
+  <hr/>
 <% end %>
 
 <% unless @question.closed %>

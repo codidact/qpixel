@@ -35,10 +35,9 @@ class QuestionsController < ApplicationController
 
   def create
     params[:question][:tags] = params[:question][:tags].split(" ")
-    @question = Question.new question_params
-    @question.tags = params[:question][:tags]
-    @question.user = current_user
-    @question.score = 0
+    @question = Question.new(question_params.merge(tags: params[:question][:tags], user: current_user, score: 0,
+                                                   body: renderer.render(params[:question][:body], scrubber: QuestionScrubber.new),
+                                                   body_markdown: params[:question][:body]))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -53,14 +52,11 @@ class QuestionsController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @question)
     params[:question][:tags] = params[:question][:tags].split(" ")
-    PostHistory.post_edited(@question, current_user)
-    if @question.update question_params
-      @question.tags = params[:question][:tags]
-      if @question.save
-        redirect_to url_for(controller: :questions, action: :show, id: @question.id)
-      else
-        render :edit
-      end
+    if @question.update question_params.merge(tags: params[:question][:tags],
+                                              body: renderer.render(params[:question][:body], scrubber: QuestionScrubber.new),
+                                              body_markdown: params[:question][:body])
+      PostHistory.post_edited(@question, current_user)
+      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       render :edit
     end

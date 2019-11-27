@@ -16,7 +16,9 @@ class AnswersController < ApplicationController
 
   def create
     @question = Question.find params[:id]
-    @answer = Answer.new answer_params.merge(parent: @question, user: current_user, score: 0)
+    @answer = Answer.new answer_params.merge(parent: @question, user: current_user, score: 0,
+                                             body: renderer.render(params[:answer][:body], scrubber: AnswerScrubber.new),
+                                             body_markdown: params[:answer][:body])
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
@@ -32,7 +34,8 @@ class AnswersController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @answer)
     PostHistory.post_edited(@answer, current_user)
-    if @answer.update answer_params
+    if @answer.update answer_params.merge(body: renderer.render(params[:answer][:body], scrubber: AnswerScrubber.new),
+                                          body_markdown: params[:answer][:body])
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
       render :edit
