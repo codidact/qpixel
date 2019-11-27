@@ -13,7 +13,7 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should create new answer" do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:question_one).id }
     assert_not_nil assigns(:answer)
     assert_not_nil assigns(:question)
     assert_response(302)
@@ -28,7 +28,7 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should update existing answer" do
     sign_in users(:editor)
-    patch :update, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
+    patch :update, params: { answer: { body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
     assert_not_nil assigns(:answer)
     assert_response(302)
   end
@@ -132,7 +132,7 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should allow author to update answer" do
     sign_in users(:standard_user)
-    patch :update, params: { answer: { body: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
+    patch :update, params: { answer: { body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }, id: posts(:answer_one).id }
     assert_not_nil assigns(:answer)
     assert_response(302)
   end
@@ -153,19 +153,19 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should block short answers" do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body: "ABCDEF" }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: "ABCDEF" }, id: posts(:question_one).id }
     assert_response(422)
   end
 
   test "should block whitespace answers" do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body: " "*31 }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: " "*31 }, id: posts(:question_one).id }
     assert_response(422)
   end
 
   test "should block long answers" do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body: "A"*(3e4+1) }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: "A"*(3e4+1) }, id: posts(:question_one).id }
     assert_response(422)
   end
 end

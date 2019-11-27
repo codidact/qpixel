@@ -134,7 +134,7 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:body, :title, :tags)
+    params.require(:question).permit(:body_markdown, :title, :tags)
   end
 
   def set_question

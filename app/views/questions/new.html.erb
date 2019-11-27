@@ -18,7 +18,8 @@
     <%= f.text_field :title, class: "form-control" %>
   </div>
   <div class="field">
-    <%= f.text_area :body, { class: "form-control", rows: 15 } %>
+    <%= f.label :body_markdown, 'Body' %>
+    <%= f.text_area :body_markdown, { class: "form-control", rows: 15 } %>
   </div>
   <div class="field">
     <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
@@ -31,9 +32,11 @@
 
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>
-    <div class="bg-primary padded">
-      <h5><strong>Asking Guidance</strong></h5>
-      <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+    <div class="module">
+      <h4 class="module__title">Hints and Tips</h4>
+      <div class="module__content">
+        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
+      </div>
     </div>
   <% end %>
 <% end %>
