@@ -1,15 +1,15 @@
 <div class="question">
-  <div class="q-info-box vote-box">
-    <p class="large-text center"><%= question.score %></p>
-    <p>score</p>
+  <div class="question__score">
+    <span class="score"><%= question.score %></span>
+    <span class="descriptor">score</span>
   </div>
-  <div class="q-info-box title-box">
-    <p><a href="/questions/<%= question.id %>"><%= question.title %></a></p>
-    <p>
+  <div class="question__info">
+    <%= link_to question.title, question_path(question), class: 'question__title' %>
+    <div class="question__tags">
       <% question.tags.each do |tag| %>
-        <a href="/questions/tagged/<%= tag %>"><span class="tag"><%= tag %></span></a>
+        <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
       <% end %>
-    </p>
+    </div>
+    <span class="question__author">by <%= link_to question.user.username, user_path(question.user) %></span>
   </div>
-  <span class="clearfix"></span>
 </div>

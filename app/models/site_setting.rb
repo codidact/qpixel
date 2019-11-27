@@ -7,6 +7,10 @@ class SiteSetting < ApplicationRecord
     SiteSetting.find_by(name: name)&.typed
   end
 
+  def self.exist?(name)
+    SiteSetting.where(name: name).count > 0
+  end
+
   def typed
     SettingConverter.new(value).send("as_#{value_type}")
   end

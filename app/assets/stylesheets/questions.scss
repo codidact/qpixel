@@ -1,50 +1,62 @@
+@import 'variables';
+
 .question {
-  width: 90%;
-  padding: 10px;
-  border-top: 1px solid #bbb;
+  border-top: 1px solid $muted-graphic;
+  padding: 0.5em 1em;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+  }
+
+  .question__score {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    .score {
+      margin-right: 0.2em;
+      font-weight: bold;
+      font-size: 120%;
+    }
+
+    @media screen and (min-width: $screen-md) {
+      flex-direction: column;
+      font-size: inherit;
+      margin-right: 1em;
+      align-items: unset;
+
+      .score {
+        margin-right: 0;
+        font-weight: normal;
+        font-size: 200%;
+        text-align: center;
+      }
+    }
+  }
+
+  .question__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .question__tags {
+      margin-top: 0.5em;
+    }
+
+    .question__author {
+      margin-top: 0.5em;
+      color: $muted-text;
+      text-align: right;
+    }
+  }
 }
 
-.q-info-box {
-  float: left;
-  padding: 0 10px;
-}
-
-.vote-box {
-  max-width: 10%;
-}
-
-.title-box {
-  max-width: 85%;
-}
-
-p.large-text {
-  font-size: 1.4em;
-}
-p.center {
-  text-align: center;
-}
-
-.vote-box {
-  float: left;
-  width: 48px;
-}
-
-.body-box {
-  float: right;
-  width: calc(100% - 63px);
-}
-
-.post-info {
-  width: 100%;
-}
-
-.post-tags {
-  width: 50%;
-  float: left;
-}
-
-.post-author {
-  width: 45%;
-  float: right;
-  text-align: right;
+.tag {
+  padding: 0.1em 0.4em;
+  background: lighten($primary, 40%);
+  border: 1px solid lighten($primary, 35%);
+  display: inline-block;
+  color: $key;
 }

@@ -41,7 +41,8 @@ class ApplicationController < ActionController::Base
 
   def set_globals
     @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
-      Question.where(updated_at: 1.day.ago..Time.now).order('score DESC').limit(SiteSetting['HotQuestionsCount'])
+      Question.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
+              .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
     if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
       @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count

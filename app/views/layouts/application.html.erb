@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
   <%= stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
@@ -12,77 +14,49 @@
   <%= yield(:head) %>
 </head>
 <body>
-  <div class="header">
+  <header>
     <div class="container">
-      <div class="site-logo">
-        <% if SiteSetting['SiteLogoPath'] %>
-          <a href="/"><img src="<%= SiteSetting['SiteLogoPath'] %>" /></a>
-        <% else %>
-          <a href="/"><%= SiteSetting['SiteName'] %></a>
+      <% if SiteSetting.exist?('SiteLogoPath') %>
+        <a href="/" class="title-link"><img src="<%= SiteSetting['SiteLogoPath'] %>" height="64" /></a>
+      <% else %>
+        <a href="/" class="title-link"><%= SiteSetting['SiteName'] %></a>
+      <% end %>
+      <nav>
+        <% if current_user&.is_admin %>
+          <%= link_to 'Admin', admin_path %>
         <% end %>
-      </div>
-      <div class="toplevel-links">
-        <% if user_signed_in? %>
-          <% if @open_flags && @open_flags > 0 %>
-            <a href="/mod/flags"><span class="badge flag-indicator"><%= @open_flags %></span></a>
-          <% end %>
-          <% if current_user.unread_notifications > 0 %>
-            <span class="dropdown notifications">
-              <span class="badge dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <%= current_user.unread_notifications %>
-                <span class="caret"></span>
-              </span>
-              <ul class="dropdown-menu">
-                <li>...</li>
-              </ul>
-            </span>
-          <% end %>
-          <a href="/users/<%= current_user.id %>"><%= current_user.username %></a>
-          <span class="smaller gray">(<%= current_user.reputation %>)</span> —
-          <%= link_to "sign out", destroy_user_session_path, method: :delete, class: "smaller" %>
-          <span class="lateral-sep"></span>
-        <% else %>
-          <%= link_to "sign in", new_user_session_path, class: "smaller" %> |
-          <%= link_to "sign up", new_user_registration_path, class: "smaller" %>
-          <span class="lateral-sep"></span>
+        <% if current_user&.is_admin || current_user&.is_moderator %>
+          <%= link_to 'Moderator', moderator_path %>
         <% end %>
-        <% if user_is_admin %>
-          <a class="toplevel" href="/admin">Admin</a>
-        <% end %>
-        <% if user_is_mod %>
-          <a class="toplevel" href="/mod">Moderator</a>
-        <% end %>
-        <a class="toplevel" href="/questions">Questions</a>
-        <a class="toplevel" href="/users?sort=reputation">Users</a>
-        <a class="toplevel" href="/questions/ask">Ask!</a>
-      </div>
+        <%= link_to 'Questions', questions_path %>
+        <%= link_to 'Users', users_path %>
+        <%= link_to 'Ask!', new_question_path %>
+      </nav>
     </div>
-    <span class="clearfix"></span>
-  </div>
-  <div class="container">
+  </header>
+  <main class="container">
     <div class="content">
-      <p class="notice text-info"><%= notice %></p>
-      <p class="error text-danger"><%= flash[:error] %></p>
-      <div class="content-bar">
-        <%= yield %>
-      </div>
-      <div class="sidebar">
-        <%= yield(:sidebar) %>
-        <div class="padded bg-primary">
-          <h4>Hot Questions</h4>
-          <ul>
-            <% @hot_questions.each do |q| %>
-              <li><a href="/questions/<%= q.id %>"><%= q.title %></a></li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
+      <%= yield %>
     </div>
-  </div>
-  <div class="footer">
-    <div class="container">
+    <div class="sidebar">
+      <%= yield(:sidebar) %>
 
+      <% if Rails.env.development? || @hot_questions.size > 0 %>
+        <div class="module">
+          <h4 class="module__title">Hot Questions</h4>
+          <div class="module__content">
+            <ul>
+              <% @hot_questions.each do |hq| %>
+                <li><%= link_to hq.title, question_path(hq) %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
     </div>
-  </div>
+  </main>
+  <footer class="container">
+
+  </footer>
 </body>
 </html>
