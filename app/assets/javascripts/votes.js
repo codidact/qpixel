@@ -1,6 +1,4 @@
 $(() => {
-  // TODO: Figure out why vote-unvote-vote-unvote errors on the second unvote.
-
   $(document).on('click', '.vote-button', async evt => {
     const $tgt = $(evt.target);
     const $post = $tgt.parents('.post');
@@ -9,8 +7,7 @@ $(() => {
     const voted = $tgt.hasClass('voted');
 
     if (voted) {
-      console.log($tgt, $tgt.data('vote-id'));
-      const voteId = $tgt.data('vote-id');
+      const voteId = $tgt.attr('data-vote-id');
       const resp = await fetch(`/votes/${voteId}`, {
         method: 'DELETE',
         credentials: 'include',

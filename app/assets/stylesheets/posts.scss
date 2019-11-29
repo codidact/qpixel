@@ -30,7 +30,7 @@
       .score {
         margin-right: 0;
         font-weight: normal;
-        font-size: 200%;
+        font-size: 150%;
         text-align: center;
       }
     }
@@ -92,8 +92,11 @@
 
       .score {
         font-weight: bold;
-        font-size: 120%;
+        font-size: 150%;
+      }
 
+      .vote-button {
+        cursor: pointer;
       }
 
       @media screen and (min-width: $screen-md) {
@@ -110,7 +113,7 @@
 
         .score {
           font-weight: normal;
-          font-size: 200%;
+          font-size: 150%;
           text-align: center;
         }
       }
