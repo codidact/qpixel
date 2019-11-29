@@ -11,23 +11,28 @@
 
 <h4><%= pluralize(@user.questions.count, 'Question') %></h4>
 <% @user.questions.limit(5).each do |q| %>
-  <%= render 'questions/question', question: q if q&.id %>
+  <%= render 'posts/list', post: q %>
 <% end %>
 
 <hr/>
 
 <h4><%= pluralize(@user.answers.count, 'Answer') %></h4>
 <% @user.answers.limit(5).each do |a| %>
-  <%= render 'answers/answer', answer: a if a&.parent&.id %>
+  <%= render 'posts/list', post: a %>
 <% end %>
 
 <hr/>
 
+<%
+  votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
+  votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+%>
+
 <h4>Votes</h4>
 <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
 <ul>
-  <li><%= @user.votes.where(vote_type: 1).count %> up</li>
-  <li><%= @user.votes.where(vote_type: -1).count %> down</li>
-  <li><%= @user.votes.joins(:post).where(posts: { post_type_id: Question.post_type_id }).count %> question</li>
-  <li><%= @user.votes.joins(:post).where(posts: { post_type_id: Answer.post_type_id }).count %> answer</li>
+  <li><%= votes_by_type[1] || 0 %> up</li>
+  <li><%= votes_by_type[-1] || 0 %> down</li>
+  <li><%= votes_by_post_type[Question.post_type_id] || 0 %> question</li>
+  <li><%= votes_by_post_type[Answer.post_type_id] || 0 %> answer</li>
 </ul>

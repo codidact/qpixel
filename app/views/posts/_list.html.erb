@@ -1,0 +1,19 @@
+<% is_question = post.post_type_id == Question.post_type_id %>
+<div class="question">
+  <div class="question__score">
+    <span class="score"><%= post.score %></span>
+    <span class="descriptor">score</span>
+  </div>
+  <div class="question__info">
+    <%= link_to is_question ? post.title : post.parent.title, question_path(is_question ? post : post.parent),
+                class: 'question__title' %>
+    <% if is_question %>
+      <div class="question__tags">
+        <% post.tags.each do |tag| %>
+          <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
+        <% end %>
+      </div>
+    <% end %>
+    <span class="question__author">by <%= link_to post.user.username, user_path(post.user) %></span>
+  </div>
+</div>
