@@ -15,7 +15,7 @@
 <%= form_for @answer, url: { controller: :answers, action: :update } do |f| %>
   <div class="form-group">
     <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control", rows: 15 } %>
+    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
   </div>
   <div class="form-group">
     <%= f.submit "Update Answer", class: "btn btn-primary" %>

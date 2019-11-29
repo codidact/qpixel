@@ -1,35 +1,3 @@
-<% content_for :title, "Answer Question \"#{@question.title.truncate(50)}\"" %>
-
-<h3>Your Answer</h3>
-<% if @answer.errors.any? %>
-  <div class="text-danger error-messages">
-    <p>The following <%= "error".pluralize(@answer.errors.count) %> prevented the answer from being posted:</p>
-    <ul>
-      <% @answer.errors.full_messages.each do |e| %>
-        <li><%= e %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<%= form_for @answer, url: { controller: :answers, action: :create } do |f| %>
-  <div class="field">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control", rows: 15 } %>
-  </div>
-  <div class="field">
-    <%= f.submit "Post Answer", class: "btn btn-primary" %>
-  </div>
-<% end %>
-
-<h3>Question</h3>
-<%= render 'posts/expanded', post: @question %>
-
-<% content_for :sidebar do %>
-  <div class="module">
-    <h4 class="module__title">Hints and Tips</h4>
-    <div class="module__content">
-      <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
-    </div>
-  </div>
-<% end %>
+<%= render 'posts/expanded', post: @question, answer: @answer %>
+<hr/>
+<%= render 'new' %>

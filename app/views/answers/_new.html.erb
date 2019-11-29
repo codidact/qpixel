@@ -1,0 +1,22 @@
+<h3>Your Answer</h3>
+<% if answer.errors.any? %>
+  <div class="text-danger error-messages">
+    <p>The following <%= "error".pluralize(answer.errors.count) %> prevented the answer from being posted:</p>
+    <ul>
+      <% answer.errors.full_messages.each do |e| %>
+        <li><%= e %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
+  <div class="form-group">
+    <%= f.label :body_markdown, 'Body' %>
+    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+    <small class="form-text text-muted">Markdown is supported.</small>
+  </div>
+  <div class="field">
+    <%= f.submit "Post Answer", class: "btn btn-primary" %>
+  </div>
+<% end %>

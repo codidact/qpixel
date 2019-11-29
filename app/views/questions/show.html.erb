@@ -10,6 +10,6 @@
   <hr/>
 <% end %>
 
-<% unless @question.closed %>
-  <a href="/questions/<%= @question.id %>/answer" class="btn btn-primary">Answer this Question</a>
+<% if user_signed_in? && !@question.closed %>
+  <%= render 'answers/new', answer: Answer.new %>
 <% end %>
