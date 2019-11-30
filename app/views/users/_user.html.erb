@@ -1,5 +1,8 @@
-<div class="floating user">
-  <p><strong><a href="/users/<%= user.id %>"><%= user.username + (user.is_admin ? SiteSetting['AdminBadgeCharacter'] : (user.is_moderator ? SiteSetting['ModBadgeCharacter'] : '')) %></a></strong> (<%= user.reputation %>)</p>
-  <p><strong><%= user.questions.count %></strong> <%= "question".pluralize(user.questions.count) %>,
-     <strong><%= user.answers.count %></strong> <%= "answer".pluralize(user.answers.count) %></p>
+<div class="user-list__user">
+  <% user_posts = user.posts.group(:post_type_id).count(:post_type_id) %>
+  <span class="username"><%= link_to user.username + (user.is_admin ? SiteSetting['AdminBadgeCharacter'] : '') +
+                  (user.is_moderator ? SiteSetting['ModBadgeCharacter'] : ''),
+                                     user_path(user) %></span>
+  <strong class="text-muted"><%= user.reputation %></strong>
+  <span><%= user_posts[Question.post_type_id] || 0 %>Q, <%= user_posts[Answer.post_type_id] || 0 %>A</span>
 </div>

@@ -94,10 +94,7 @@ header {
 
 main {
   margin-top: 2em !important;
-
-  @media screen and (min-width: $screen-md) {
-    align-items: flex-start !important;
-  }
+  align-items: unset !important;
 }
 
 .content {

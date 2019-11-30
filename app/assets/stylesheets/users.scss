@@ -1,43 +1,31 @@
-// Place all the styles related to the Users controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import 'variables';
 
-.users-row {
-  width: 100%;
-  margin-bottom: 10px;
+.user-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+
+  @media screen and (min-width: $screen-sm) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: $screen-xl) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-.floating.user {
-  float: left;
-  width: 20%;
-  padding: 10px;
-  border: 1px solid #bbb;
-  margin: 5px;
-  box-shadow: 2px 2px 2px #777;
-}
+.user-list__user {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.4em;
+  transition: all 0.2s ease;
+  padding: 0.5em;
 
-.profile-row {
-  width: 100%;
-  margin-bottom: 10px;
-}
+  &:hover {
+    background: lighten($primary, 50%);
+  }
 
-.profile-module {
-  float: left;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  box-shadow: 2px 2px 2px #777;
-  padding: 10px;
-  margin: 2px;
-}
-
-.module-33 {
-  width: 30%;
-}
-
-.module-50 {
-  width: 47%;
-}
-
-.module-66 {
-  width: 66%;
+  .username {
+    font-size: 1.2em;
+  }
 }
