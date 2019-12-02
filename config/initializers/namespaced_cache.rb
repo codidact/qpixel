@@ -61,9 +61,13 @@ end
 Rails.cache = QPixel::NamespacedEnvCache.new(Rails.cache)
 
 # Write persistent values to cache on startup
-Rails.cache.persistent 'post_type_ids', clear: true do
-  PostType.all.map { |pt| [pt.name, pt.id] }.to_h
-end
-Rails.cache.persistent 'current_commit', clear: true do
-  "#{`git rev-parse HEAD`.strip[0..7]} (#{`git log -1 --date=iso --pretty=format:%cd`.strip})"
+begin
+  Rails.cache.persistent 'post_type_ids', clear: true do
+    PostType.all.map { |pt| [pt.name, pt.id] }.to_h
+  end
+  Rails.cache.persistent 'current_commit', clear: true do
+    "#{`git rev-parse HEAD`.strip[0..7]} (#{`git log -1 --date=iso --pretty=format:%cd`.strip})"
+  end
+rescue => ex
+  puts ex
 end
