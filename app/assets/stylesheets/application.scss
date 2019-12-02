@@ -16,6 +16,12 @@
 
 @import 'variables';
 
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 header {
   background: $primary;
   color: white;
@@ -95,6 +101,7 @@ header {
 main {
   margin-top: 2em !important;
   align-items: unset !important;
+  flex: 1;
 }
 
 .content {
@@ -129,5 +136,16 @@ main {
         line-height: 170%;
       }
     }
+  }
+}
+
+footer {
+  padding: 1em;
+  background: $primary;
+  color: white;
+  font-size: 0.8em;
+
+  .container {
+    justify-content: flex-end;
   }
 }

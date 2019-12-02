@@ -55,8 +55,10 @@
       <% end %>
     </div>
   </main>
-  <footer class="container">
-
+  <footer>
+    <div class="container">
+      <span>Current version: <%= Rails.cache.read('current_commit') %></span>
+    </div>
   </footer>
 </body>
 </html>

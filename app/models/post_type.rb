@@ -4,8 +4,6 @@ class PostType < ApplicationRecord
   validates :name, uniqueness: true
 
   def self.mapping
-    Rails.cache.fetch "#{Rails.env}__post_type_ids" do
-      PostType.all.map { |pt| [pt.name, pt.id] }.to_h
-    end
+    Rails.cache.read 'post_type_ids'
   end
 end
