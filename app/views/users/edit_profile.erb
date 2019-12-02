@@ -1,0 +1,36 @@
+<div class="tabs">
+  <%= link_to 'Edit Details', edit_user_registration_path, class: 'tabs__tab' %>
+  <%= link_to 'Edit Profile', edit_user_profile_path, class: 'tabs__tab tab--active' %>
+</div>
+
+<h2>Edit Profile</h2>
+
+<%= form_for current_user, url: update_user_profile_path do |f| %>
+  <div class="form-group">
+    <%= f.label :username %>
+    <%= f.text_field :username, class: 'form-control', autocomplete: 'off' %>
+    <small class="form-text text-muted">What other people call you.</small>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :profile_markdown, 'Profile' %>
+    <%= f.text_area :profile_markdown, rows: 10, cols: 100, class: 'form-control post-field' %>
+    <small class="form-text text-muted">Whatever you want to say about yourself. Supports Markdown.</small>
+  </div>
+
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= f.label :website %>
+      <%= f.text_field :website, class: 'form-control', autocomplete: 'off' %>
+      <small class="form-text text-muted">A link to anywhere on the internet for your stuff.</small>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :twitter %>
+      <%= f.text_field :twitter, class: 'form-control', autocomplete: 'off' %>
+      <small class="form-text text-muted">Your Twitter username, if you've got one you want to share.</small>
+    </div>
+  </div>
+
+  <%= f.submit 'Save', class: 'btn btn-primary btn-block' %>
+<% end %>

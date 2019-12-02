@@ -1,4 +1,9 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="tabs">
+  <%= link_to 'Edit Details', edit_user_registration_path, class: 'tabs__tab tab--active' %>
+  <%= link_to 'Edit Profile', edit_user_profile_path, class: 'tabs__tab' %>
+</div>
+
+<h2>Edit Details</h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>

@@ -1,23 +1,63 @@
 <% content_for :title, "User #{@user.username}" %>
 
-<h3><%= @user.username %></h3>
-<h4><%= @user.reputation %> reputation</h4>
+<h3><%= @user.username %> <small>(<%= @user.reputation %>)</small></h3>
+<p>
+  <% if @user == current_user %>
+    <%= link_to edit_user_registration_path do %>
+      <i class="fas fa-edit"></i> Edit Account &middot;
+    <% end %>
+    <%= link_to edit_user_profile_path do %>
+      <i class="fas fa-edit"></i> Edit Profile
+    <% end %>
+    <% if current_user.is_moderator %>
+      &middot;
+    <% end %>
+  <% end %>
+  <% if current_user.is_moderator %>
+    <%= link_to mod_user_path(@user) do %>
+      <i class="fas fa-shield-alt"></i> Moderator Tools
+    <% end %>
+  <% end %>
+</p>
 
-<% if user_is_mod %>
-  <a href="/users/<%= @user.id %>/mod">Moderator Tools</a>
-<% end %>
+<div class="flex-row">
+  <div class="profile-details">
+    <p>
+      <% if @user.website.present? %>
+        <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website %><br/>
+      <% end %>
+
+      <% if @user.twitter.present? %>
+        <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+      <% end %>
+    </p>
+  </div>
+  <div class="profile-text">
+    <% if @user.profile.nil? || @user.profile.blank? %>
+      <em class="text-muted">A quiet enigma. <%= @user.username %> hasn't written anything about themselves yet.</em>
+    <% else %>
+      <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
+    <% end %>
+  </div>
+</div>
 
 <hr/>
 
-<h4><%= pluralize(@user.questions.count, 'Question') %></h4>
-<% @user.questions.limit(5).each do |q| %>
+<h4>Questions</h4>
+<% if @user.questions.count == 0 %>
+  <em class="text-muted"><%= @user.username %> hasn't asked anything yet.</em>
+<% end %>
+<% @user.questions.order(score: :desc).first(5).each do |q| %>
   <%= render 'posts/list', post: q %>
 <% end %>
 
 <hr/>
 
-<h4><%= pluralize(@user.answers.count, 'Answer') %></h4>
-<% @user.answers.limit(5).each do |a| %>
+<h4>Answers</h4>
+<% if @user.questions.count == 0 %>
+  <em class="text-muted"><%= @user.username %> hasn't answered anything yet.</em>
+<% end %>
+<% @user.answers.order(score: :desc).first(5).each do |a| %>
   <%= render 'posts/list', post: a %>
 <% end %>
 

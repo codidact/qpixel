@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_27_121809) do
+ActiveRecord::Schema.define(version: 2019_12_02_215751) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -149,6 +149,10 @@ ActiveRecord::Schema.define(version: 2019_11_27_121809) do
     t.boolean "is_admin"
     t.integer "reputation"
     t.string "username"
+    t.text "profile"
+    t.text "website"
+    t.string "twitter"
+    t.text "profile_markdown"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

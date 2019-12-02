@@ -1,6 +1,7 @@
 # Web controller. Provides actions that relate to users. Does not deal with accounts, registrations, sessions etc., as
 # that's all handled by Devise and its override controllers (see <tt>app/controllers/users/*</tt>).
 class UsersController < ApplicationController
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
   before_action :set_user, only: [:mod, :destroy, :soft_delete]
 
@@ -48,6 +49,19 @@ class UsersController < ApplicationController
     end
 
     render json: {status: 'success', message: 'Ask a database administrator to verify the deletion is complete.'}
+  end
+
+  def edit_profile; end
+
+  def update_profile
+    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
+    profile_params[:twitter] = profile_params[:twitter].gsub('@', '')
+    if current_user.update(profile_params.merge(profile: QuestionsController.renderer.render(profile_params[:profile_markdown])))
+      flash[:success] = "Your profile details were updated."
+    else
+      flash[:danger] = "Couldn't update your profile."
+    end
+    redirect_to edit_user_profile_path
   end
 
   private

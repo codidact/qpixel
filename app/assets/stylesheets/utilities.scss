@@ -1,0 +1,29 @@
+@import 'variables';
+
+.flex-row {
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+    & > * {
+      margin: 0 0.5em;
+    }
+
+    & > :first-child {
+      margin-left: 0 !important;
+    }
+
+    & > :last-child {
+      margin-right: 0 !important;
+    }
+  }
+
+  & > * {
+    margin: 0.5em 0;
+  }
+
+  .primary {
+    flex: 1;
+  }
+}

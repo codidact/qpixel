@@ -1,0 +1,28 @@
+@import 'variables';
+
+.form-group-horizontal {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+
+    & > :first-child {
+      margin: 0 0.5em 0 0 !important;
+    }
+
+    & > :last-child {
+      margin: 0 0 0 0.5em !important;
+    }
+  }
+
+  & > .form-group {
+    margin: 0.5em 0;
+
+    @media screen and (min-width: $screen-md) {
+      margin: 0 0.5em;
+      flex: 1;
+    }
+  }
+}

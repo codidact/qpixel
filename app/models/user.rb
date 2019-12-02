@@ -52,6 +52,10 @@ class User < ApplicationRecord
     posts.where(post_type_id: Answer.post_type_id)
   end
 
+  def website_domain
+    website.nil? ? website : URI.parse(website).hostname
+  end
+
   private
 
   def set_initial_reputation
