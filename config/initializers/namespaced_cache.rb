@@ -8,7 +8,6 @@ module QPixel
     # These methods need the cache key name updating before we pass it to the underlying cache.
     [:decrement, :delete, :exist?, :fetch, :increment, :read, :write].each do |method|
       define_method method do |name, *args, **opts, &block|
-        puts "#{method}('#{Rails.env}://#{name}')"
         @underlying.send(method, "#{Rails.env}://#{name}", *args, **opts, &block)
       end
     end
@@ -28,29 +27,29 @@ module QPixel
       end
     end
 
-    #def persistent(name, **opts, &block)
-    #  namespaced = "#{Rails.env}://#{name}"
-    #  if block_given?
-    #    @getters[namespaced] = block
-    #  end
-    #
-    #  if opts && opts[:clear] == true
-    #    @underlying.delete namespaced
-    #  end
-    #
-    #  value = read name
-    #  if value.nil?
-    #    if @getters.include? namespaced
-    #      value = @getters[namespaced].call
-    #      write name, value
-    #      value
-    #    else
-    #      raise NotImplementedError, 'No cached value was available and no block was given'
-    #    end
-    #  else
-    #    value
-    #  end
-    #end
+    def persistent(name, **opts, &block)
+      namespaced = "#{Rails.env}://#{name}"
+      if block_given?
+        @getters[namespaced] = block
+      end
+
+      if opts && opts[:clear] == true
+        @underlying.delete namespaced
+      end
+
+      value = read name
+      if value.nil?
+        if @getters.include? namespaced
+          value = @getters[namespaced].call
+          write name, value
+          value
+        else
+          raise NotImplementedError, 'No cached value was available and no block was given'
+        end
+      else
+        value
+      end
+    end
 
     # This can't easily be supported, matchers are hard to update for a new name.
     def delete_matched
@@ -62,5 +61,9 @@ end
 Rails.cache = QPixel::NamespacedEnvCache.new(Rails.cache)
 
 # Write persistent values to cache on startup
-Rails.cache.write 'post_type_ids', PostType.all.map { |pt| [pt.name, pt.id] }.to_h
-Rails.cache.write 'current_commit', "#{`git rev-parse HEAD`.strip[0..7]} (#{`git log -1 --date=iso --pretty=format:%cd`.strip})"
+Rails.cache.persistent 'post_type_ids', clear: true do
+  PostType.all.map { |pt| [pt.name, pt.id] }.to_h
+end
+Rails.cache.persistent 'current_commit', clear: true do
+  "#{`git rev-parse HEAD`.strip[0..7]} (#{`git log -1 --date=iso --pretty=format:%cd`.strip})"
+end
