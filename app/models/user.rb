@@ -11,6 +11,10 @@ class User < ApplicationRecord
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
+  after_create :set_initial_reputation
+
+  validates :username, presence: true, length: { minimum: 3 }
+
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
     if privileges.include?(privilege) || is_admin || is_moderator
@@ -46,5 +50,11 @@ class User < ApplicationRecord
 
   def answers
     posts.where(post_type_id: Answer.post_type_id)
+  end
+
+  private
+
+  def set_initial_reputation
+    update(reputation: SiteSetting['NewUserInitialRep'])
   end
 end

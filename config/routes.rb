@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   # Offload user control onto Devise - doing that once was enough for me.
-  devise_for :users, controllers: { registrations: 'users/registrations' }
+  devise_for :users
 
   # We can't have the default Rails welcome page, so let's just have a questions index as the front page.
   root                                  to: 'questions#index'

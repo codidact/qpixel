@@ -22,6 +22,15 @@
         <a href="/" class="title-link"><%= SiteSetting['SiteName'] %></a>
       <% end %>
       <nav>
+        <span class="user-details">
+          <% if user_signed_in? %>
+            <%= link_to current_user.username, user_path(current_user), class: 'clear' %> (<%= current_user.reputation %>) &middot;
+            <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %>
+          <% else %>
+            <%= link_to 'sign in', new_user_session_path, class: 'clear' %> &middot;
+            <%= link_to 'sign up', new_user_registration_path, class: 'clear' %>
+          <% end %>
+        </span>
         <% if current_user&.is_admin %>
           <%= link_to 'Admin', admin_path %>
         <% end %>
@@ -36,6 +45,13 @@
   </header>
   <main class="container">
     <div class="content">
+      <% {notice: :info, alert: :danger, danger: :danger, success: :success, info: :info, warning: :warning}.each do |mt, cc| %>
+        <% if flash[mt].present? %>
+          <div class="alert alert-<%= cc.to_s %>">
+            <%= flash[mt] %>
+          </div>
+        <% end %>
+      <% end %>
       <%= yield %>
     </div>
     <div class="sidebar">
@@ -57,7 +73,7 @@
   </main>
   <footer>
     <div class="container">
-      <span>Current version: <%= Rails.cache.persistent('current_commit') %></span>
+      <span>Current version: <%= puts Rails.cache.read('current_commit') %></span>
     </div>
   </footer>
 </body>

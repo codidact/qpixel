@@ -44,9 +44,16 @@ header {
 
   nav {
     text-align: center;
+
+    .user-details {
+      a, a:hover {
+        color: white;
+        text-decoration: underline;
+      }
+    }
   }
 
-  nav a {
+  nav a:not(.clear) {
     position: relative;
     display: inline-block;
     padding: 0.5em 0.7em;

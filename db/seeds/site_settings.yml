@@ -88,3 +88,9 @@
   value_type: integer
   description: >
     A user ID to which to transfer content when soft-deleting a user account.
+
+- name: NewUserInitialRep
+  value: 1
+  value_type: Integer
+  description: >
+    How much reputation new users initially start with.
