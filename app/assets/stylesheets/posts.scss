@@ -155,3 +155,35 @@
     }
   }
 }
+
+.post__notice {
+  background: lighten($warning, 40%);
+  border: 1px solid lighten($warning, 35%);
+  margin: 1em 0;
+  border-radius: 0.3em;
+
+  .notice__title {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0.5em;
+    border-bottom: 1px solid lighten($warning, 35%);
+    color: #555;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  .notice__content {
+    padding: 0.5em;
+
+    p {
+      margin: 0.5em;
+    }
+
+    ul {
+      padding-left: 1.5em;
+      line-height: 170%;
+    }
+  }
+}

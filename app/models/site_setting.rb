@@ -12,7 +12,7 @@ class SiteSetting < ApplicationRecord
   end
 
   def typed
-    SettingConverter.new(value).send("as_#{value_type}")
+    SettingConverter.new(value).send("as_#{value_type.downcase}")
   end
 end
 

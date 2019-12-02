@@ -91,6 +91,6 @@
 
 - name: NewUserInitialRep
   value: 1
-  value_type: Integer
+  value_type: integer
   description: >
     How much reputation new users initially start with.

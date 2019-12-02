@@ -146,6 +146,10 @@ main {
   }
 }
 
+.deleted-content {
+  background: lighten($danger, 45%);
+}
+
 footer {
   padding: 1em;
   background: $primary;

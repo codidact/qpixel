@@ -44,7 +44,7 @@ class AnswersControllerTest < ActionController::TestCase
 
   test "should mark answer undeleted" do
     sign_in users(:deleter)
-    delete :undelete, params: { id: posts(:answer_one).id }
+    delete :undelete, params: { id: posts(:deleted_answer).id }
     assert_not_nil assigns(:answer)
     assert_equal false, assigns(:answer).deleted
     assert_nil assigns(:answer).deleted_at
@@ -102,25 +102,33 @@ class AnswersControllerTest < ActionController::TestCase
   test "should require above standard privileges to delete" do
     sign_in users(:standard_user)
     delete :destroy, params: { id: posts(:answer_two).id }
-    assert_response(401)
+    assert_response(302)
+    assert_not_nil flash[:danger]
+    assert_equal false, assigns(:answer).deleted
   end
 
   test "should require above standard privileges to undelete" do
     sign_in users(:standard_user)
-    delete :undelete, params: { id: posts(:answer_two).id }
-    assert_response(401)
+    delete :undelete, params: { id: posts(:deleted_answer).id }
+    assert_response(302)
+    assert_not_nil flash[:danger]
+    assert_equal true, assigns(:answer).deleted
   end
 
   test "should require above edit privileges to delete" do
     sign_in users(:editor)
     delete :destroy, params: { id: posts(:answer_one).id }
-    assert_response(401)
+    assert_response(302)
+    assert_not_nil flash[:danger]
+    assert_equal false, assigns(:answer).deleted
   end
 
   test "should require above edit privileges to undelete" do
     sign_in users(:editor)
-    delete :undelete, params: { id: posts(:answer_one).id }
-    assert_response(401)
+    delete :undelete, params: { id: posts(:deleted_answer).id }
+    assert_response(302)
+    assert_not_nil flash[:danger]
+    assert_equal true, assigns(:answer).deleted
   end
 
   test "should allow author to get edit page" do
@@ -141,13 +149,15 @@ class AnswersControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     delete :destroy, params: { id: posts(:answer_one).id }
     assert_not_nil assigns(:answer)
+    assert_nil flash[:danger]
     assert_response(302)
   end
 
   test "should allow author to undelete answer" do
-    sign_in users(:standard_user)
-    delete :undelete, params: { id: posts(:answer_one).id }
+    sign_in users(:closer)
+    delete :undelete, params: { id: posts(:deleted_answer).id }
     assert_not_nil assigns(:answer)
+    assert_nil flash[:danger]
     assert_response(302)
   end
 

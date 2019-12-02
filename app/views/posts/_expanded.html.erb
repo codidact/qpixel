@@ -43,21 +43,48 @@
       <div class="post__actions">
         <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> /
         <% if is_question && !post.closed %>
-          <%= link_to 'close', url_for(controller: :questions, action: :close, id: post.id),
-                      method: :patch, remote: true, class: 'close-question' %> /
+          <%= link_to 'close', close_question_path(post), method: :post, class: 'close-question' %> /
         <% elsif is_question && post.closed %>
-          <%= link_to 'reopen', url_for(controller: :questions, action: :reopen, id: post.id),
-                      method: :patch, remote: true, class: 'reopen-question' %> /
+          <%= link_to 'reopen', reopen_question_path(post), method: :post, class: 'reopen-question' %> /
         <% end %>
         <% if !post.deleted %>
           <%= link_to 'delete', url_for(controller: is_question ? :questions : :answers, action: :destroy, id: post.id),
                       method: :delete, data: { confirm: 'Are you sure you want to delete this question?' }, class: "text-danger" %>
         <% else %>
           <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
-                      method: :patch, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "text-danger" %>
+                      method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "text-danger" %>
         <% end %> /
         <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
       </div>
+
+      <% if is_question && post.closed %>
+        <div class="post__notice">
+          <h4 class="notice__title">Closed Question</h4>
+          <div class="notice__content">
+            <p>
+              This question was closed on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+              by <%= link_to post.closed_by.username, user_path(post.closed_by) %>.
+              New answers can no longer be added.
+            </p>
+
+            <p>Users with the reopen privilege may vote to reopen this question if it has been closed incorrectly.</p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if post.deleted %>
+        <div class="post__notice">
+          <h4 class="notice__title">Deleted</h4>
+          <div class="notice__content">
+            <p>
+              This post was deleted on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
+              by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>.
+            </p>
+
+            <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

@@ -61,29 +61,41 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    return unless check_your_privilege('Delete', @question)
-    PostHistory.post_deleted(@question, current_user)
-    @question.deleted = true
-    @question.deleted_at = DateTime.now
-    if @question.save
-      calculate_reputation(@question.user, @question, -1)
+    unless check_your_privilege('Delete', @question, false)
+      flash[:danger] = 'You must have the Delete privilege to delete questions.'
+      redirect_to question_path(@question) and return
+    end
+
+    if @question.deleted
+      flash[:danger] = "Can't delete a deleted question."
+      redirect_to question_path(@question) and return
+    end
+
+    if @question.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
+      PostHistory.post_deleted(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
-      flash[:error] = "The question could not be deleted."
+      flash[:danger] = "Can't delete this question right now. Try again later."
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     end
   end
 
   def undelete
-    return unless check_your_privilege('Delete', @question)
-    PostHistory.post_undeleted(@question, current_user)
-    @question.deleted = false
-    @question.deleted_at = DateTime.now
-    if @question.save
-      calculate_reputation(@question.user, @question, 1)
+    unless check_your_privilege('Delete', @question, false)
+      flash[:danger] = "You must have the Delete privilege to undelete questions."
+      redirect_to question_path(@question) and return
+    end
+
+    unless @question.deleted
+      flash[:danger] = "Can't undelete an undeleted question."
+      redirect_to question_path(@question) and return
+    end
+
+    if @question.update(deleted: false, deleted_at: nil, deleted_by: nil)
+      PostHistory.post_undeleted(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
-      flash[:error] = "The question could not be undeleted."
+      flash[:danger] = "Can't undelete this question right now. Try again later."
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     end
   end
@@ -99,36 +111,40 @@ class QuestionsController < ApplicationController
 
   def close
     unless check_your_privilege('Close', nil, false)
-      render json: {status: 'failed', message: 'You must have the Close privilege to close questions.'}, status: 401 and return
+      flash[:danger] = 'You must have the Close privilege to close questions.'
+      redirect_to question_path(@question) and return
     end
 
     if @question.closed
-      render json: {status: 'failed', message: 'Cannot close a closed question.'}, status: 422 and return
+      flash[:danger] = 'Cannot close a closed question.'
+      redirect_to question_path(@question) and return
     end
 
     if @question.update(closed: true, closed_by: current_user, closed_at: Time.now)
       PostHistory.question_closed(@question, current_user)
-      render json: {status: 'success', closed_by: "<a href='/users/#{current_user.id}'>#{current_user.username}</a>"}
     else
-      render json: {status: 'failed', message: 'Question state could not be saved.'}, status: 500
+      flash[:danger] = "Can't close this question right now. Try again later."
     end
+    redirect_to question_path(@question)
   end
 
   def reopen
     unless check_your_privilege('Close', nil, false)
-      render json: {status: 'failed', message: 'You must have the Close privilege to reopen questions.'}, status: 401 and return
+      flash[:danger] = 'You must have the Close privilege to reopen questions.'
+      redirect_to question_path(@question) and return
     end
 
-    if !@question.closed
-      render json: {status: 'failed', message: 'Cannot reopen an open question.'}, status: 422 and return
+    unless @question.closed
+      flash[:danger] = 'Cannot reopen an open question.'
+      redirect_to question_path(@question) and return
     end
 
     if @question.update(closed: false, closed_by: current_user, closed_at: Time.now)
       PostHistory.question_reopened(@question, current_user)
-      render json: {status: 'success'}
     else
-      render json: {status: 'failed', message: 'Question state could not be saved.'}, status: 500
+      flash[:danger] = "Can't reopen this question right now. Try again later."
     end
+    redirect_to question_path(@question)
   end
 
   private
@@ -148,12 +164,5 @@ class QuestionsController < ApplicationController
         render template: 'errors/not_found', status: 404
       end
     end
-  end
-
-  def calculate_reputation(user, post, direction)
-    upvote_rep = post.votes.where(vote_type: 1).count * SiteSetting['QuestionUpVoteRep']
-    downvote_rep = post.votes.where(vote_type: -1).count * SiteSetting['QuestionDownVoteRep']
-    user.reputation += direction * (upvote_rep + downvote_rep)
-    user.save!
   end
 end

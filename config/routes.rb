@@ -35,9 +35,9 @@ Rails.application.routes.draw do
   get    'questions/:id/edit',          to: 'questions#edit', as: :edit_question
   patch  'questions/:id/edit',          to: 'questions#update', as: :update_question
   delete 'questions/:id/delete',        to: 'questions#destroy', as: :delete_question
-  delete 'questions/:id/undelete',      to: 'questions#undelete', as: :undelete_question
-  patch  'questions/:id/close',         to: 'questions#close', as: :close_question
-  patch  'questions/:id/reopen',        to: 'questions#reopen', as: :reopen_question
+  post   'questions/:id/undelete',      to: 'questions#undelete', as: :undelete_question
+  post  'questions/:id/close',          to: 'questions#close', as: :close_question
+  post  'questions/:id/reopen',         to: 'questions#reopen', as: :reopen_question
 
   # Most of the users stuff is Devised, but it doesn't provide an index or profile, or notifications.
   get    'users',                       to: 'users#index', as: :users
@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   get    'answers/:id/edit',            to: 'answers#edit', as: :edit_answer
   patch  'answers/:id/edit',            to: 'answers#update', as: :update_answer
   delete 'answers/:id/delete',          to: 'answers#destroy', as: :delete_answer
-  patch  'answers/:id/delete',          to: 'answers#undelete', as: :undelete_answer
+  post  'answers/:id/delete',           to: 'answers#undelete', as: :undelete_answer
 
   # Most of the flagging stuff comes under the admin routes, but this one doesn't fit.
   post   'flags/new',                   to: 'flags#new', as: :new_flag

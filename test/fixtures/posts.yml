@@ -31,6 +31,8 @@ deleted:
   score: 0
   user: standard_user
   deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: admin
 
 closed:
   post_type: question
@@ -43,6 +45,7 @@ closed:
   score: 0
   closed: true
   closed_by: closer
+  closed_at: 2019-01-01T00:00:00.000000Z
   user: standard_user
 
 answer_one:
@@ -66,3 +69,13 @@ really_old_answer:
   parent: question_one
   user: standard_user
   created_at: 2000-01-01T00:00:00.000000Z
+
+deleted_answer:
+  post_type: answer
+  body: A4D ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  score: 0
+  parent: question_one
+  user: closer
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: admin

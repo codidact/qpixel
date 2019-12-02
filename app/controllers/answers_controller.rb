@@ -41,21 +41,41 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    return unless check_your_privilege('Delete', @answer)
-    PostHistory.post_deleted(@answer, current_user)
-    unless @answer.update(deleted: true, deleted_at: DateTime.now)
-      flash[:error] = "The answer could not be deleted."
+    unless check_your_privilege('Delete', @answer, false)
+      flash[:danger] = 'You must have the Delete privilege to delete answers.'
+      redirect_to question_path(@answer.parent) and return
     end
-    redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+
+    if @answer.deleted
+      flash[:danger] = "Can't delete a deleted answer."
+      redirect_to question_path(@answer.parent) and return
+    end
+
+    if @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
+      PostHistory.post_deleted(@answer, current_user)
+    else
+      flash[:danger] = "Can't delete this answer right now. Try again later."
+    end
+    redirect_to question_path(@answer.parent)
   end
 
   def undelete
-    return unless check_your_privilege('Delete', @answer)
-    PostHistory.post_undeleted(@answer, current_user)
-    unless @answer.update(deleted: false, deleted_at: nil)
-      flash[:error] = "The answer could not be undeleted."
+    unless check_your_privilege('Delete', @answer, false)
+      flash[:danger] = "You must have the Delete privilege to undelete answers."
+      redirect_to question_path(@answer.parent) and return
     end
-    redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+
+    unless @answer.deleted
+      flash[:danger] = "Can't undelete an undeleted answer."
+      redirect_to question_path(@answer.parent) and return
+    end
+
+    if @answer.update(deleted: false, deleted_at: nil, deleted_by: nil)
+      PostHistory.post_undeleted(@answer, current_user)
+    else
+      flash[:danger] = "Can't undelete this answer right now. Try again later."
+    end
+    redirect_to question_path(@answer.parent)
   end
 
   private

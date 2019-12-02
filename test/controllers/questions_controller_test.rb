@@ -140,13 +140,15 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should require delete privileges to mark question deleted" do
     sign_in users(:editor)
     delete :destroy, params: { id: posts(:question_one).id }
-    assert_response(401)
+    assert_response(302)
+    assert_not_nil flash[:danger]
   end
 
   test "should require delete privileges to undelete question" do
     sign_in users(:editor)
     delete :undelete, params: { id: posts(:question_one).id }
-    assert_response(401)
+    assert_response(302)
+    assert_not_nil flash[:danger]
   end
 
   test "should require viewdeleted privileges to view deleted question" do
@@ -195,8 +197,7 @@ class QuestionsControllerTest < ActionController::TestCase
     patch :close, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)
     assert_equal true, assigns(:question).closed
-    assert_equal 'success', JSON.parse(response.body)['status']
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should reopen question" do
@@ -204,8 +205,7 @@ class QuestionsControllerTest < ActionController::TestCase
     patch :reopen, params: { id: posts(:closed).id }
     assert_not_nil assigns(:question)
     assert_equal false, assigns(:question).closed
-    assert_equal 'success', JSON.parse(response.body)['status']
-    assert_response(200)
+    assert_response(302)
   end
 
   test "should require authentication to close question" do
@@ -223,28 +223,30 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should require privileges to close question" do
     sign_in users(:standard_user)
     patch :close, params: { id: posts(:question_one).id }
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(401)
+    assert_equal false, assigns(:question).closed
+    assert_response(302)
   end
 
   test "should require privileges to reopen question" do
     sign_in users(:standard_user)
     patch :reopen, params: { id: posts(:closed).id }
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(401)
+    assert_equal true, assigns(:question).closed
+    assert_response(302)
   end
 
   test "should prevent closed questions being closed" do
     sign_in users(:closer)
     patch :close, params: { id: posts(:closed).id }
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(422)
+    assert_equal true, assigns(:question).closed
+    assert_not_nil flash[:danger]
+    assert_response(302)
   end
 
   test "should prevent open questions being reopened" do
     sign_in users(:closer)
     patch :reopen, params: { id: posts(:question_one).id }
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(422)
+    assert_equal false, assigns(:question).closed
+    assert_not_nil flash[:danger]
+    assert_response(302)
   end
 end
