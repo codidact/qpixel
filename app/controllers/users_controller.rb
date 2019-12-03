@@ -56,7 +56,8 @@ class UsersController < ApplicationController
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
     profile_params[:twitter] = profile_params[:twitter].gsub('@', '')
-    if current_user.update(profile_params.merge(profile: QuestionsController.renderer.render(profile_params[:profile_markdown])))
+    @user = current_user
+    if @user.update(profile_params.merge(profile: QuestionsController.renderer.render(profile_params[:profile_markdown])))
       flash[:success] = "Your profile details were updated."
     else
       flash[:danger] = "Couldn't update your profile."

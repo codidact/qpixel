@@ -99,4 +99,27 @@ class UsersControllerTest < ActionController::TestCase
     assert_nil assigns(:user)
     assert_response(404)
   end
+
+  test "should require authentication to get edit profile page" do
+    get :edit_profile
+    assert_response 302
+  end
+
+  test "should get edit profile page" do
+    sign_in users(:standard_user)
+    get :edit_profile
+    assert_response 200
+  end
+
+  test "should update profile text" do
+    sign_in users(:standard_user)
+    patch :update_profile, params: { user: { profile_markdown: 'ABCDEF GHIJKL', website: 'https://example.com/user',
+                                             twitter: '@standard_user' } }
+    assert_response 302
+    assert_not_nil flash[:success]
+    assert_not_nil assigns(:user)
+    assert_equal users(:standard_user).id, assigns(:user).id
+    assert_not_nil assigns(:user).profile
+    assert_equal 'standard_user', assigns(:user).twitter
+  end
 end

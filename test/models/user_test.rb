@@ -20,4 +20,8 @@ class UserTest < ActiveSupport::TestCase
   test "has_post_privilege should grant all to OP" do
     assert_equal true, users(:standard_user).has_post_privilege?('Delete', posts(:question_one))
   end
+
+  test "website_domain should strip out everything but domain" do
+    assert_equal 'example.com', users(:closer).website_domain
+  end
 end

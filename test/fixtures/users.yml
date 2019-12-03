@@ -1,58 +1,55 @@
 standard_user:
-  email: "standard@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: standard@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: false
   is_moderator: false
   reputation: 50
-  username: "standard_user"
-
+  username: standard_user
 
 closer:
-  email: "closer@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: closer@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: false
   is_moderator: false
   reputation: 251
-  username: "closer"
-
+  username: closer
+  website: https://example.com/closer
+  twitter: closer
 
 editor:
-  email: "editor@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: editor@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: false
   is_moderator: false
   reputation: 501
-  username: "editor"
-
+  username: editor
 
 deleter:
-  email: "delete@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: delete@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: false
   is_moderator: false
   reputation: 1001
-  username: "deleter"
-
+  username: deleter
 
 moderator:
-  email: "moderator@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: moderator@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: false
   is_moderator: true
   reputation: 1
-  username: "moderator"
-
+  username: moderator
 
 admin:
-  email: "admin@qpixel-test.net"
-  encrypted_password: "abcdefghijklmnopqrstuvwxyz"
+  email: admin@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   is_admin: true
   is_moderator: false
   reputation: 1
-  username: "admin"
+  username: admin
