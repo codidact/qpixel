@@ -1,0 +1,24 @@
+@import 'variables';
+
+.notification {
+  border-top: 1px solid $muted-graphic;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+  }
+
+  & > * {
+    margin: 0 0.2em;
+  }
+
+  &:last-of-type {
+    border-bottom: 1px solid $muted-graphic;
+  }
+
+  .notification__timestamp {
+    line-break: strict;
+  }
+}

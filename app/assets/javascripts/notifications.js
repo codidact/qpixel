@@ -7,13 +7,28 @@ $(() => {
     const data = await resp.json();
     const $inbox = $('.inbox');
     $inbox.html('');
-    data.forEach(notification => {
-      const item = $(`<li><a href="${notification.link}" data-id="${notification.id}" class="clear">${notification.content}</a></li>"`);
+
+    const unread = data.filter(n => !n.is_read);
+    const read = data.filter(n => n.is_read);
+
+    if (unread.length === 0) {
+      $inbox.append(`<li><a href="javascript:void(0);" class="clear no-unread"><em>No unread notifications.</em></a>`)
+    }
+    unread.forEach(notification => {
+      const item = $(`<li><a href="${notification.link}" data-id="${notification.id}" class="clear"><strong>${notification.content}</strong></a></li>"`);
       $inbox.append(item);
     });
+
+    $inbox.append(`<li role="separator" class="divider"></li>`);
+    read.forEach(notification => {
+      const item = $(`<li><a href="${notification.link}" data-id="${notification.id}" class="clear read">${notification.content}</a></li>"`);
+      $inbox.append(item);
+    });
+
+    $inbox.append(`<li><a href="/users/me/notifications" class="clear read"><em>See all your notifications &raquo;</em></a></li>`);
   });
 
-  $(document).on('click', '.inbox a', async evt => {
+  $(document).on('click', '.inbox a:not(.no-unread):not(.read)', async evt => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
     await fetch(`/notifications/${id}/read`, {

@@ -14,6 +14,7 @@ gem 'jbuilder'
 
 gem 'devise'
 gem 'will_paginate'
+gem 'will_paginate-bootstrap'
 gem 'rails-html-sanitizer'
 
 gem 'whenever', require: false

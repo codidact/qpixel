@@ -4,4 +4,4 @@
 <% @questions.each do |question| %>
   <%= render 'posts/list', post: question %>
 <% end %>
-<%= will_paginate @questions %>
+<%= will_paginate @questions, renderer: BootstrapPagination::Rails %>

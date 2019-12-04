@@ -5,4 +5,4 @@
   <%= render 'posts/list', post: q %>
 <% end %>
 
-<%= will_paginate @questions %>
+<%= will_paginate @questions, renderer: BootstrapPagination::Rails %>

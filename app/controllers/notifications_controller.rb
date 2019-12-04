@@ -3,7 +3,8 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!, only: [:index]
 
   def index
-    @notifications = Notification.where(user: current_user, is_read: false).paginate(page: params[:page], per_page: 100).order('created_at DESC')
+    @notifications = Notification.where(user: current_user).paginate(page: params[:page], per_page: 100)
+                                 .order(Arel.sql('is_read ASC, created_at DESC'))
     respond_to do |format|
       format.html { render :index }
       format.json { render json: @notifications }

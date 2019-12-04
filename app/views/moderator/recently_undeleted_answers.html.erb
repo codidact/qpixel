@@ -5,4 +5,4 @@
   <%= render 'answers/answer', answer: a %>
 <% end %>
 
-<%= will_paginate @answers %>
+<%= will_paginate @answers, renderer: BootstrapPagination::Rails %>

@@ -63,6 +63,12 @@ header {
       a, a:hover {
         color: $key !important;
       }
+
+      a.no-unread, a.no-unread:hover {
+        color: $muted-text !important;
+        text-decoration: none;
+        cursor: default;
+      }
     }
 
     .user-details {

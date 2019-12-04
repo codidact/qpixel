@@ -1,0 +1,11 @@
+<h1>Your Inbox</h1>
+<p>You'll find all your inbox messages here, as far back as your account goes.</p>
+
+<% @notifications.each do |notif| %>
+  <div class="notification">
+    <span class="text-muted"><%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %></span>
+    <a href="<%= notif.link %>"><%= notif.content %></a>
+  </div>
+<% end %>
+
+<%= will_paginate @notifications, renderer: BootstrapPagination::Rails %>
