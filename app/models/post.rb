@@ -4,12 +4,13 @@ class Post < ApplicationRecord
   belongs_to :parent, class_name: 'Post', required: false
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
+  has_and_belongs_to_many :tags
   has_many :votes
   has_many :comments
   has_many :post_histories
   has_many :flags
 
-  serialize :tags, Array
+  serialize :tags_cache, Array
 
   validates :body, presence: true, length: {minimum: 30, maximum: 30000}
 

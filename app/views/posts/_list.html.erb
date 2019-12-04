@@ -9,7 +9,7 @@
                 class: 'question__title' %>
     <% if is_question %>
       <div class="question__tags">
-        <% post.tags.each do |tag| %>
+        <% post.tags_cache.each do |tag| %>
           <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
         <% end %>
       </div>

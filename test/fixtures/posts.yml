@@ -3,9 +3,9 @@ question_one:
   title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
-    - ABCDEF
-    - GHIJKL
-    - MNOPQR
+    - discussion
+    - support
+    - bug
   score: 0
   user: standard_user
 
@@ -14,9 +14,9 @@ question_two:
   title: Q2 ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
-    - ABCDEF
-    - GHIJKL
-    - MNOPQR
+    - discussion
+    - support
+    - bug
   score: 0
   user: editor
 
@@ -25,9 +25,9 @@ deleted:
   title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
   body: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags:
-    - RQPONM
-    - LKJIHG
-    - FEDCBA
+    - discussion
+    - support
+    - bug
   score: 0
   user: standard_user
   deleted: true
@@ -39,9 +39,9 @@ closed:
   title: Q4C ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   tags:
-    - ABCDEF
-    - GHIJKL
-    - MNOPQR
+    - discussion
+    - support
+    - bug
   score: 0
   closed: true
   closed_by: closer

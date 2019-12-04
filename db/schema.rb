@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_02_215751) do
+ActiveRecord::Schema.define(version: 2019_12_04_172543) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2019_12_02_215751) do
   create_table "posts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "title"
     t.text "body"
-    t.string "tags"
+    t.string "tags_cache"
     t.integer "score", default: 0, null: false
     t.integer "parent_id"
     t.integer "user_id"
@@ -93,6 +93,13 @@ ActiveRecord::Schema.define(version: 2019_12_02_215751) do
     t.datetime "updated_at", null: false
     t.integer "post_type_id", null: false
     t.text "body_markdown"
+  end
+
+  create_table "posts_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "tag_id"
+    t.bigint "post_id"
+    t.index ["post_id"], name: "index_posts_tags_on_post_id"
+    t.index ["tag_id"], name: "index_posts_tags_on_tag_id"
   end
 
   create_table "privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -128,6 +135,13 @@ ActiveRecord::Schema.define(version: 2019_12_02_215751) do
     t.datetime "investigated_at"
     t.integer "suspicious_count"
     t.integer "total_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

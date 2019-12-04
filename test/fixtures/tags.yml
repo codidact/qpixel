@@ -1,0 +1,23 @@
+discussion:
+  name: discussion
+  description: discussion
+
+support:
+  name: support
+  description: support
+
+bug:
+  name: bug
+  description: bug
+
+feature-request:
+  name: feature-request
+  description: feature-request
+
+faq:
+  name: faq
+  description: faq
+
+status-completed:
+  name: status-completed
+  description: status-completed

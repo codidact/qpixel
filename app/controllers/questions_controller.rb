@@ -26,7 +26,8 @@ class QuestionsController < ApplicationController
   end
 
   def tagged
-    @questions = Question.where('tags like ?', "%#{params[:tag]}%").order('updated_at DESC').paginate(page: params[:page], per_page: 50)
+    @tag = Tag.find_by_name params[:tag]
+    @questions = @tag.posts.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
   def new
@@ -35,7 +36,7 @@ class QuestionsController < ApplicationController
 
   def create
     params[:question][:tags] = params[:question][:tags].split(" ")
-    @question = Question.new(question_params.merge(tags: params[:question][:tags], user: current_user, score: 0,
+    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags], user: current_user, score: 0,
                                                    body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
@@ -51,7 +52,7 @@ class QuestionsController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @question)
     params[:question][:tags] = params[:question][:tags].split(" ")
-    if @question.update(question_params.merge(tags: params[:question][:tags],
+    if @question.update(question_params.merge(tags_cache: params[:question][:tags],
                                               body: QuestionsController.renderer.render(params[:question][:body_markdown])))
       PostHistory.post_edited(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)

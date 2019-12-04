@@ -5,10 +5,12 @@ class Question < Post
     PostType.mapping['Question']
   end
 
-  validates :title, :body, :tags, presence: true
+  validates :title, :body, :tags_cache, presence: true
   validate :maximum_tags
   validate :maximum_tag_length
   validate :stripped_minimum
+
+  after_save :update_tag_associations
 
   def answers
     Answer.where(parent: self)
@@ -16,16 +18,31 @@ class Question < Post
 
   private
 
+  def update_tag_associations
+    tags_cache.each do |tag_name|
+      tag = Tag.find_or_create_by name: tag_name
+      unless tags.include? tag
+        tags << tag
+      end
+    end
+
+    tags.each do |tag|
+      unless tags_cache.include? tag.name
+        tags.delete tag
+      end
+    end
+  end
+
   def maximum_tags
-    if tags.length > 5
+    if tags_cache.length > 5
       errors.add(:tags, "can't have more than 5 tags")
-    elsif tags.length < 1
+    elsif tags_cache.length < 1
       errors.add(:tags, "must have at least one tag")
     end
   end
 
   def maximum_tag_length
-    tags.each do |tag|
+    tags_cache.each do |tag|
       if tag.length > 20
         errors.add(:tags, "can't be more than 20 characters long each")
       end
