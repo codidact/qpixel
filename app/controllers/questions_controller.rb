@@ -35,8 +35,8 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    params[:question][:tags] = params[:question][:tags].split(" ")
-    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags], user: current_user, score: 0,
+    params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
+    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache], user: current_user, score: 0,
                                                    body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
@@ -51,8 +51,8 @@ class QuestionsController < ApplicationController
 
   def update
     return unless check_your_privilege('Edit', @question)
-    params[:question][:tags] = params[:question][:tags].split(" ")
-    if @question.update(question_params.merge(tags_cache: params[:question][:tags],
+    params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
+    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache],
                                               body: QuestionsController.renderer.render(params[:question][:body_markdown])))
       PostHistory.post_edited(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
@@ -151,7 +151,7 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:body_markdown, :title, :tags)
+    params.require(:question).permit(:body_markdown, :title, :tags_cache)
   end
 
   def set_question

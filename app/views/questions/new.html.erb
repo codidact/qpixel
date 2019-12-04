@@ -13,21 +13,19 @@
 <% end %>
 
 <%= form_for @question, url: { controller: :questions, action: :create } do |f| %>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :title, "Title your question:" %><br/>
     <%= f.text_field :title, class: "form-control" %>
   </div>
-  <div class="field">
+  <div class="form-group">
     <%= f.label :body_markdown, 'Body' %>
     <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
   </div>
-  <div class="field">
-    <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
-    <%= f.text_field :tags, class: "form-control" %>
+  <div class="form-group">
+    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.text_field :tags_cache, class: "form-control" %>
   </div>
-  <div class="field">
-    <%= f.submit "Ask!", class: "btn btn-primary" %>
-  </div>
+  <%= f.submit "Ask!", class: "btn btn-primary" %>
 <% end %>
 
 <% if SiteSetting['AskingGuidance'] %>

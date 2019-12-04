@@ -21,7 +21,7 @@ window.QPixel = {
   },
 
   createNotification: function(type, message, relativeElement) {
-    var offset = QPixel.offset(relativeElement);
+    const offset = QPixel.offset(relativeElement);
     $("<div></div>")
       .addClass("alert alert-dismissible alert-" + type)
       .html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message)
@@ -43,7 +43,7 @@ window.QPixel = {
   },
 
   offset: function(el) {
-    var topLeft = $(el).offset();
+    const topLeft = $(el).offset();
     return {
       top: topLeft.top,
       left: topLeft.left,

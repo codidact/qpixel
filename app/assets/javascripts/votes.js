@@ -23,7 +23,7 @@ $(() => {
       else {
         console.error('Vote delete failed');
         console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${(await resp.text())} (${resp.status})`);
+        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`, $tgt);
       }
     }
     else {
@@ -50,7 +50,7 @@ $(() => {
       else {
         console.error('Vote create failed');
         console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${(await resp.text())} (${resp.status})`);
+        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`, $tgt);
       }
     }
   });

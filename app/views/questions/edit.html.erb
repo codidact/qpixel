@@ -11,12 +11,10 @@
     <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
   </div>
   <div class="form-group">
-    <%= f.label :tags, "Tags (space separated - for multiple-word tags use hyphens)" %>
-    <%= f.text_field :tags, class: "form-control" %>
+    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.text_field :tags_cache, class: "form-control" %>
   </div>
-  <div class="form-group">
-    <%= f.submit "Update", class: "btn btn-primary" %>
-  </div>
+  <%= f.submit "Update", class: "btn btn-primary" %>
 <% end %>
 
 <% if SiteSetting['AskingGuidance'] %>

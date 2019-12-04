@@ -7,7 +7,7 @@ class VotesController < ApplicationController
     post = Post.find(params[:post_id])
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
-      render plain: "You may not vote on your own posts.", status: 403 and return
+      render json: { status: 'failed', message: "You may not vote on your own posts." }, status: 403 and return
     end
 
     destroyed = post.votes.where(user: current_user).destroy_all
@@ -23,7 +23,7 @@ class VotesController < ApplicationController
     vote = Vote.find params[:id]
 
     if vote.user != current_user
-      render plain: "You are not authorized to remove this vote.", status: 403 and return
+      render json: { status: 'failed', message: "You are not authorized to remove this vote." }, status: 403 and return
     end
 
     vote.destroy!
@@ -35,7 +35,7 @@ class VotesController < ApplicationController
 
   def auth_for_voting
     unless user_signed_in?
-      render plain: "You must be logged in to vote.", status: 403
+      render json: { status: 'failed', message: "You must be logged in to vote." }, status: 403
     end
   end
 end
