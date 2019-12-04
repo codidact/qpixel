@@ -14,6 +14,7 @@ class User < ApplicationRecord
   after_create :set_initial_reputation
 
   validates :username, presence: true, length: { minimum: 3 }
+  validate :username_not_fake_admin
 
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
@@ -60,5 +61,16 @@ class User < ApplicationRecord
 
   def set_initial_reputation
     update(reputation: SiteSetting['NewUserInitialRep'])
+  end
+
+  def username_not_fake_admin
+    admin_badge = SiteSetting['AdminBadgeCharacter']
+    mod_badge = SiteSetting['ModBadgeCharacter']
+
+    [admin_badge, mod_badge].each do |badge|
+      if badge.present? && username.include?(badge)
+        errors.add(:username, "may not include the #{badge} character")
+      end
+    end
   end
 end
