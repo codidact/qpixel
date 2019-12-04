@@ -40,7 +40,7 @@ class User < ApplicationRecord
     notifications << notification
   end
 
-  def unread_notifications
+  def unread_count
     notifications.where(is_read: false).count
   end
 

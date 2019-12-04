@@ -25,6 +25,15 @@
       <nav>
         <span class="user-details">
           <% if user_signed_in? %>
+            <div class="btn-group">
+              <button type="button" class="btn btn-link dropdown-toggle inbox-toggle" data-toggle="dropdown">
+                <% unread = current_user.unread_count %>
+                <i class="fas fa-inbox"></i> <span class="badge inbox-count"><%= unread > 0 ? unread : '' %></span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu inbox">
+
+              </ul>
+            </div>
             <%= link_to current_user.username, user_path(current_user), class: 'clear' %> (<%= current_user.reputation %>) &middot;
             <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %>
           <% else %>
