@@ -1,0 +1,14 @@
+- id: -1
+  username: System
+  password: saK4CZR6b5gVZRvwMuzHDDFR518kktUYszBMZh47zqNkMJtuHnYDN5pcXwtbGUZlFIiwBFNIsbKYDVZ07kydul33sJvKVHKECZXhVZbNrjkI2YzDRTwpV1lBp1ZWAARP
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  email: system@localhost
+  reputation: 1
+  is_moderator: 1
+  is_admin: 1
+  profile_markdown: >
+    This is an anonymous user account for system operations. It owns automatically-run operations and
+    content from deleted users, among other things.
+  profile: >
+    <p>This is an anonymous user account for system operations. It owns automatically-run operations and
+    content from deleted users, among other things.</p>

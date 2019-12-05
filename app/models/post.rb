@@ -17,10 +17,30 @@ class Post < ApplicationRecord
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
 
+  after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :reset_last_activity
 
   private
+
+  def attribution_text(source=nil, name=nil, url=nil)
+    "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\nLicense URL: #{url || att_license_link}"
+  end
+
+  def check_attribution_notice
+    sc = saved_changes
+    attributes = ['att_source', 'att_license_name', 'att_license_link']
+    if attributes.any? { |x| sc.include?(x) && sc[x][0] != sc[x][1] }
+      if attributes.all? { |x| sc[x][0].nil? }
+        PostHistory.attribution_notice_added(self, User.find(-1), nil, attribution_text)
+      elsif attributes.all? { |x| sc[x][1].nil? }
+        PostHistory.attribution_notice_removed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }), nil)
+      else
+        PostHistory.attribution_notice_changed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
+                                               attribution_text(*attributes.map { |a| sc[a]&.try(:[], 1) }))
+      end
+    end
+  end
 
   def modify_author_reputation
     sc = saved_changes

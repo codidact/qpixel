@@ -4,3 +4,6 @@
 - name: question_closed
 - name: question_reopened
 - name: initial_revision
+- name: attribution_notice_added
+- name: attribution_notice_removed
+- name: attribution_notice_changed

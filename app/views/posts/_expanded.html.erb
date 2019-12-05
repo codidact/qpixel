@@ -60,6 +60,19 @@
         <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
       </div>
 
+      <% if post.att_source.present? %>
+        <div class="post__notice">
+          <div class="notice__content">
+            <p>
+              <i class="fas fa-balance-scale"></i> This post was sourced from <%= link_to post.att_source, post.att_source %>.
+              <% if post.att_license_name.present? %>
+                It is licensed under <%= link_to post.att_license_name, post.att_license_link %>.
+              <% end %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+
       <% if is_question && post.closed %>
         <div class="post__notice">
           <h4 class="notice__title">Closed Question</h4>

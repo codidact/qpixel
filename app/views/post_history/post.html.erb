@@ -17,12 +17,12 @@
     <div class="flex-row jc-sb">
       <% if event.before_state.present? %>
         <div class="raw-markdown before">
-          <%= raw(sanitize(QuestionsController.renderer.render(event.before_state), scrubber: scrubber)) %>
+          <pre class="unformatted"><%= event.before_state %></pre>
         </div>
       <% end %>
       <% if event.after_state.present? %>
         <div class="raw-markdown after">
-          <%= raw(sanitize(QuestionsController.renderer.render(event.after_state), scrubber: scrubber)) %>
+          <pre class="unformatted"><%= event.after_state %></pre>
         </div>
       <% end %>
     </div>
