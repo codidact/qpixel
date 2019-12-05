@@ -9,20 +9,14 @@
 
 <p>Click on a setting's value to edit it.</p>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Setting ID</th>
-      <th>Setting Name</th>
-      <th>Setting Value</th>
-      <th></th>
-    </tr>
-  </thead>
+<table class="table table-borderless">
   <tbody>
     <% @settings.each do |setting| %>
       <tr>
-        <td><%= setting.id %></td>
-        <td><%= setting.name %></td>
+        <td>
+          <strong><%= setting.name %></strong><br/>
+          <span class="text-muted"><%= setting.description %></span>
+        </td>
         <td class="js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"><%= setting.typed %></td>
       </tr>
     <% end %>
