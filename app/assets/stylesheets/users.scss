@@ -39,3 +39,16 @@
   padding-left: 1em;
   border-left: 1px solid $muted-graphic;
 }
+
+.user-show__username {
+  word-wrap: break-word;
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+
+  span {
+    margin-left: 0.5em;
+    word-wrap: break-word;
+    overflow: auto;
+  }
+}

@@ -19,7 +19,9 @@
         <%= pluralize(post.answer_count, 'answer') %> &middot;
       <% end %>
       active <%= time_ago_in_words(post.last_activity) %> ago &middot;
-      by <%= link_to post.user.username, user_path(post.user) %>
+      by
+      <img alt="user avatar" src="<%= avatar_url(post.user) %>" height="16" width="16" />
+      <%= link_to post.user.username, user_path(post.user) %>
     </span>
   </div>
 </div>

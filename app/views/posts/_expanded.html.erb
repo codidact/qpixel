@@ -36,7 +36,9 @@
           </div>
         <% end %>
         <span class="post__author text-muted">
-          by <%= link_to post.user.username, user_path(post.user) %> (<%= post.user.reputation %>)
+          by
+          <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" />
+          <%= link_to post.user.username, user_path(post.user) %> (<%= post.user.reputation %>)
         </span>
       </div>
 

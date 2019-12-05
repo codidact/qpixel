@@ -45,4 +45,6 @@ Rails.application.configure do
 
   # ActionMailer needs some defaults
   config.action_mailer.default_url_options = { host: 'stage.artofcode.co.uk', port: 80 }
+
+  config.active_storage.service = :s3
 end

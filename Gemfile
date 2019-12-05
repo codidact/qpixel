@@ -17,6 +17,8 @@ gem 'will_paginate'
 gem 'will_paginate-bootstrap'
 gem 'rails-html-sanitizer'
 
+gem 'aws-sdk-s3', require: false
+
 gem 'whenever', require: false
 
 gem 'coveralls', require: false

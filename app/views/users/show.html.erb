@@ -1,6 +1,9 @@
 <% content_for :title, "User #{@user.username}" %>
 
-<h3><%= @user.username %> <small>(<%= @user.reputation %>)</small></h3>
+<h3 class="user-show__username">
+  <img alt="user avatar" src="<%= avatar_url(@user, 64) %>" height="64" width="64" />
+  <span><%= @user.username %> <small>(<%= @user.reputation %>)</small></span>
+</h3>
 <p>
   <% if @user == current_user %>
     <%= link_to edit_user_registration_path do %>

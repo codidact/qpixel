@@ -39,6 +39,7 @@
 
               </ul>
             </div>
+            <img alt="user avatar" src="<%= avatar_url(current_user) %>" height="16" width="16" />
             <%= link_to current_user.username, user_path(current_user), class: 'clear' %> (<%= current_user.reputation %>) &middot;
             <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %>
           <% else %>
