@@ -14,6 +14,12 @@
         <% end %>
       </div>
     <% end %>
-    <span class="question__author">by <%= link_to post.user.username, user_path(post.user) %></span>
+    <span class="question__details">
+      <% if is_question %>
+        <%= pluralize(post.answer_count, 'answer') %> &middot;
+      <% end %>
+      active <%= time_ago_in_words(post.last_activity) %> ago &middot;
+      by <%= link_to post.user.username, user_path(post.user) %>
+    </span>
   </div>
 </div>

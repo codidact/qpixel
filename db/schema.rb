@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_04_172543) do
+ActiveRecord::Schema.define(version: 2019_12_05_122434) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -93,6 +93,8 @@ ActiveRecord::Schema.define(version: 2019_12_04_172543) do
     t.datetime "updated_at", null: false
     t.integer "post_type_id", null: false
     t.text "body_markdown"
+    t.integer "answer_count", default: 0, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "posts_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
