@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
               .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
     if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
-      @open_flags = Flag.joins('left outer join flag_statuses on flags.id = flag_statuses.flag_id').where('flag_statuses.id is null').count
+      @open_flags = Flag.unhandled.count
     end
   end
 end

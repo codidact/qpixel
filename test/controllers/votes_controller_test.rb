@@ -34,7 +34,7 @@ class VotesControllerTest < ActionController::TestCase
   test "should prevent self voting" do
     sign_in users(:editor)
     post :create, params: { post_id: posts(:question_two).id, vote_type: 1 }
-    assert_equal 'You may not vote on your own posts.', response.body
+    assert_equal 'You may not vote on your own posts.', JSON.parse(response.body)['message']
     assert_response(403)
   end
 
@@ -48,21 +48,21 @@ class VotesControllerTest < ActionController::TestCase
   test "should prevent users removing others votes" do
     sign_in users(:standard_user)
     delete :destroy, params: { id: votes(:one).id }
-    assert_equal 'You are not authorized to remove this vote.', response.body
+    assert_equal 'You are not authorized to remove this vote.', JSON.parse(response.body)['message']
     assert_response(403)
   end
 
   test "should require authentication to create a vote" do
     sign_out :user
     post :create
-    assert_equal 'You must be logged in to vote.', response.body
+    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
     assert_response(403)
   end
 
   test "should require authentication to remove a vote" do
     sign_out :user
     delete :destroy, params: { id: votes(:one).id }
-    assert_equal 'You must be logged in to vote.', response.body
+    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
     assert_response(403)
   end
 end

@@ -25,6 +25,11 @@
       <nav>
         <span class="user-details">
           <% if user_signed_in? %>
+            <% if current_user.is_admin || current_user.is_moderator %>
+              <%= link_to flag_queue_path, class: 'clear open-flags' do %>
+                <span class="badge"><%= @open_flags > 0 ? @open_flags : '' %></span>
+              <% end %>
+            <% end %>
             <div class="btn-group">
               <button type="button" class="btn btn-link dropdown-toggle inbox-toggle" data-toggle="dropdown">
                 <% unread = current_user.unread_count %>

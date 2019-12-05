@@ -45,6 +45,14 @@ header {
   nav {
     text-align: center;
 
+    .open-flags, .open-flags:hover {
+      text-decoration: none !important;
+
+      .badge {
+        background: darken($warning, 10%);
+      }
+    }
+
     .inbox-toggle {
       color: white;
       text-decoration: none;

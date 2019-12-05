@@ -23,7 +23,8 @@ class FlagsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     post :resolve, params: { id: flags(:one).id, result: "ABCDEF", message: "ABCDEF GHIJKL MNOPQR STUVWX YZ" }
     assert_not_nil assigns(:flag)
-    assert_not_nil assigns(:flag).flag_status
+    assert_not_nil assigns(:flag).status
+    assert_not_nil assigns(:flag).handled_by
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_response(200)
   end

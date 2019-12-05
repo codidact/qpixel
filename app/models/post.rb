@@ -35,9 +35,11 @@ class Post < ApplicationRecord
   end
 
   def reset_last_activity
-    update(last_activity: DateTime.now)
-    if parent.present?
-      parent.update(last_activity: DateTime.now)
+    if last_activity && last_activity <= 60.seconds.ago
+      update(last_activity: DateTime.now)
+      if parent.present?
+        parent.update(last_activity: DateTime.now)
+      end
     end
   end
 end

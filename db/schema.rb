@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_05_122434) do
+ActiveRecord::Schema.define(version: 2019_12_05_123408) do
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -23,21 +23,16 @@ ActiveRecord::Schema.define(version: 2019_12_05_122434) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
-  create_table "flag_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "result"
-    t.string "message"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "flag_id"
-    t.index ["flag_id"], name: "index_flag_statuses_on_flag_id"
-  end
-
   create_table "flags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "post_id"
+    t.string "status"
+    t.text "message"
+    t.integer "handled_by_id"
+    t.datetime "handled_at"
     t.index ["post_id"], name: "index_flags_on_post_type_and_post_id"
     t.index ["user_id"], name: "index_flags_on_user_id"
   end
