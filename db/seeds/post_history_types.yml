@@ -3,3 +3,4 @@
 - name: post_undeleted
 - name: question_closed
 - name: question_reopened
+- name: initial_revision

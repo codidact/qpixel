@@ -43,6 +43,7 @@
       </div>
 
       <div class="post__actions">
+        <%= link_to 'history', post_history_path(post) %> /
         <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> /
         <% if is_question && !post.closed %>
           <%= link_to 'close', close_question_path(post), method: :post, class: 'close-question' %> /

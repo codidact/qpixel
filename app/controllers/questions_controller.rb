@@ -39,6 +39,7 @@ class QuestionsController < ApplicationController
     @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache], user: current_user, score: 0,
                                                    body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
+      PostHistory.initial_revision(@question, current_user, nil, @question.body_markdown)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       render :new, status: 400
@@ -52,9 +53,9 @@ class QuestionsController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @question)
     params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
+    PostHistory.post_edited(@question, current_user, @question.body_markdown, params[:question][:body_markdown])
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache],
                                               body: QuestionsController.renderer.render(params[:question][:body_markdown])))
-      PostHistory.post_edited(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       render :edit

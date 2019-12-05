@@ -20,6 +20,7 @@ class AnswersController < ApplicationController
                                              body: AnswersController.renderer.render(params[:answer][:body_markdown])))
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
+      PostHistory.initial_revision(@answer, current_user, nil, @answer.body_markdown)
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
       render :new, status: 422
@@ -32,7 +33,7 @@ class AnswersController < ApplicationController
 
   def update
     return unless check_your_privilege('Edit', @answer)
-    PostHistory.post_edited(@answer, current_user)
+    PostHistory.post_edited(@answer, current_user, @answer.body_markdown, params[:answer][:body_markdown])
     if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown])))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else

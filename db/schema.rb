@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_05_135001) do
+ActiveRecord::Schema.define(version: 2019_12_05_155835) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -74,6 +74,8 @@ ActiveRecord::Schema.define(version: 2019_12_05_135001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "post_id"
+    t.text "before_state"
+    t.text "after_state"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
     t.index ["user_id"], name: "index_post_histories_on_user_id"

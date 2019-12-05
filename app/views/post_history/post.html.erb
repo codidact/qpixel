@@ -1,0 +1,30 @@
+<h1>Post History</h1>
+
+<%= render 'posts/list', post: @post %>
+
+<% @history.each do |event| %>
+  <details class="history-event">
+    <summary>
+      <strong><%= event.post_history_type.name.humanize %></strong>
+      <span class="text-muted">
+        by
+        <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+        <%= link_to event.user.username, user_path(event.user) %>
+        &middot;
+        <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+      </span>
+    </summary>
+    <div class="flex-row jc-sb">
+      <% if event.before_state.present? %>
+        <div class="raw-markdown before">
+          <%= raw(sanitize(QuestionsController.renderer.render(event.before_state), scrubber: scrubber)) %>
+        </div>
+      <% end %>
+      <% if event.after_state.present? %>
+        <div class="raw-markdown after">
+          <%= raw(sanitize(QuestionsController.renderer.render(event.after_state), scrubber: scrubber)) %>
+        </div>
+      <% end %>
+    </div>
+  </details>
+<% end %>

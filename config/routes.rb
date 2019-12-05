@@ -1,18 +1,14 @@
 Rails.application.routes.draw do
-  # Offload user control onto Devise - doing that once was enough for me.
   devise_for :users
 
-  # We can't have the default Rails welcome page, so let's just have a questions index as the front page.
   root                                  to: 'questions#index'
 
-  # Admins are important, let's make sure their routes override anything else.
   get    'admin',                       to: 'admin#index', as: :admin
   get    'admin/settings',              to: 'site_settings#index', as: :site_settings
   get    'admin/settings/:name',        to: 'site_settings#show', as: :site_setting
   post   'admin/settings/:name',        to: 'site_settings#update', as: :update_site_setting
   delete 'admin/users/delete/:id',      to: 'users#soft_delete', as: :soft_delete_user
 
-  # Mods are also pretty important, I guess.
   get    'mod',                         to: 'moderator#index', as: :moderator
   get    'mod/deleted/questions',       to: 'moderator#recently_deleted_questions', as: :recently_deleted_questions
   get    'mod/deleted/answers',         to: 'moderator#recently_deleted_answers', as: :recently_deleted_answers
@@ -25,7 +21,6 @@ Rails.application.routes.draw do
   get    'mod/votes/user/:id',          to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',       to: 'users#destroy', as: :destroy_user
 
-  # Questions have a lot of actions...
   get    'questions',                   to: 'questions#index', as: :questions
   get    'questions/feed',              to: 'questions#feed', as: :question_feed
   get    'questions/ask',               to: 'questions#new', as: :new_question
@@ -39,7 +34,8 @@ Rails.application.routes.draw do
   post   'questions/:id/close',         to: 'questions#close', as: :close_question
   post   'questions/:id/reopen',        to: 'questions#reopen', as: :reopen_question
 
-  # Most of the users stuff is Devised, but it doesn't provide an index or profile, or notifications.
+  get    'posts/:id/history',           to: 'post_history#post', as: :post_history
+
   get    'users',                       to: 'users#index', as: :users
   get    'users/:id',                   to: 'users#show', as: :user
   get    'users/:id/mod',               to: 'users#mod', as: :mod_user
@@ -47,15 +43,12 @@ Rails.application.routes.draw do
   get    'users/edit/profile',          to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',          to: 'users#update_profile', as: :update_user_profile
 
-  # Notifications-specific routes that don't really fit with the /users namespace.
   post   'notifications/:id/read',      to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',      to: 'notifications#read_all', as: :read_all_notifications
 
-  # Surprisingly few routes for voting, considering its complexity.
   post   'votes/new',                   to: 'votes#create', as: :create_vote
   delete 'votes/:id',                   to: 'votes#destroy', as: :destroy_vote
 
-  # Answers don't have quite as many as actions.
   get    'questions/:id/answer',        to: 'answers#new', as: :new_answer
   post   'questions/:id/answer',        to: 'answers#create', as: :create_answer
   get    'answers/:id/edit',            to: 'answers#edit', as: :edit_answer
@@ -63,16 +56,13 @@ Rails.application.routes.draw do
   delete 'answers/:id/delete',          to: 'answers#destroy', as: :delete_answer
   post   'answers/:id/delete',          to: 'answers#undelete', as: :undelete_answer
 
-  # Most of the flagging stuff comes under the admin routes, but this one doesn't fit.
   post   'flags/new',                   to: 'flags#new', as: :new_flag
 
-  # Comments aren't that important, really.
   post   'comments/new',                to: 'comments#create', as: :create_comment
   patch  'comments/:id/edit',           to: 'comments#update', as: :update_comment
   delete 'comments/:id/delete',         to: 'comments#destroy', as: :delete_comment
   patch  'comments/:id/delete',         to: 'comments#undelete', as: :undelete_comment
 
-  # Nobody likes errors. Relegate them way down here.
   match  '/403',                        to: 'errors#forbidden',                via: :all
   match  '/404',                        to: 'errors#not_found',                via: :all
   match  '/409',                        to: 'errors#conflict',                 via: :all

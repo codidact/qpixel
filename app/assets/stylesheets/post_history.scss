@@ -1,0 +1,26 @@
+@import 'variables';
+
+.history-event {
+  border-top: 1px solid $muted-graphic;
+  padding: 1em;
+
+  & > :not(summary) {
+    margin-top: 0.5em;
+  }
+
+  &:last-of-type {
+    border-bottom: 1px solid $muted-graphic;
+  }
+
+  .before {
+    flex: 1;
+    padding: 0.5em;
+    background: lighten($danger, 55%);
+  }
+
+  .after {
+    flex: 1;
+    padding: 0.5em;
+    background: lighten($success, 45%);
+  }
+}

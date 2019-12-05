@@ -7,7 +7,7 @@
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
     & > * {
-      margin: 0 0.5em;
+      margin: 0 0.5em !important;
     }
 
     & > :first-child {
@@ -26,4 +26,12 @@
   .primary {
     flex: 1;
   }
+}
+
+.jc-sb {
+  justify-content: space-between;
+}
+
+.raw-markdown {
+  font-family: 'Roboto Mono', monospace;
 }
