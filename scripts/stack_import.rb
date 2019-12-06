@@ -98,7 +98,7 @@ def create_user(shallow_user)
     profile_text = "This user was automatically created as the author of content sourced from Stack Exchange.\n\n" +
                    "The original profile on Stack Exchange can be found here: <#{shallow_user['link']}>."
     u = User.create(password: SecureRandom.hex(64), email: "#{user['account_id']}@synthetic-oauth.localhost",
-                    username: user['display_name'], se_acct_id: user['account_id'],
+                    username: CGI.unescape_html(user['display_name']), se_acct_id: user['account_id'],
                     profile_markdown: profile_text, profile: QuestionsController.renderer.render(profile_text))
     USER_ID_MAP[user_id] = user['account_id']
     puts "created user #{u.id}"
