@@ -4,11 +4,12 @@ class Post < ApplicationRecord
   belongs_to :parent, class_name: 'Post', required: false, counter_cache: :answer_count
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
-  has_and_belongs_to_many :tags
-  has_many :votes
-  has_many :comments
-  has_many :post_histories
-  has_many :flags
+  has_and_belongs_to_many :tags, dependent: :destroy
+  has_many :votes, dependent: :destroy
+  has_many :comments, dependent: :destroy
+  has_many :post_histories, dependent: :destroy
+  has_many :flags, dependent: :destroy
+  has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
 
   serialize :tags_cache, Array
 

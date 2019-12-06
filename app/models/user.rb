@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
-  has_one_attached :avatar
+  has_one_attached :avatar, dependent: :destroy
 
   after_create :set_initial_reputation
 

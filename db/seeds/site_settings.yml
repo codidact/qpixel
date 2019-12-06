@@ -94,3 +94,21 @@
   value_type: integer
   description: >
     How much reputation new users initially start with.
+
+- name: SEApiClientId
+  value: ""
+  value_type: string
+  description: >
+    A client ID for the Stack Exchange API, to allow users to authenticate with SE.
+
+- name: SEApiClientSecret
+  value: ""
+  value_type: string
+  description: >
+    A client secret corresponding to the client ID set in SEApiClientId.
+
+- name: SEApiKey
+  value: ""
+  value_type: string
+  description: >
+    An API key for the Stack Exchange API.

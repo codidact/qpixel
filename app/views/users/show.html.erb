@@ -27,7 +27,7 @@
   <div class="profile-details">
     <p>
       <% if @user.website.present? %>
-        <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website %><br/>
+        <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
       <% end %>
 
       <% if @user.twitter.present? %>

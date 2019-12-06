@@ -1,7 +1,7 @@
-# Web controller. Provides actions that relate to users. Does not deal with accounts, registrations, sessions etc., as
-# that's all handled by Devise and its override controllers (see <tt>app/controllers/users/*</tt>).
+require 'net/http'
+
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:edit_profile, :update_profile]
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
   before_action :set_user, only: [:mod, :destroy, :soft_delete]
 
@@ -67,6 +67,37 @@ class UsersController < ApplicationController
     else
       flash[:danger] = "Couldn't update your profile."
     end
+    redirect_to edit_user_profile_path
+  end
+
+  def stack_redirect
+    response = Net::HTTP.post_form(URI('https://stackoverflow.com/oauth/access_token/json'),
+                                   { 'client_id' => SiteSetting['SEApiClientId'], 'client_secret' => SiteSetting['SEApiClientSecret'],
+                                     'code' => params[:code], 'redirect_uri' => stack_redirect_url })
+    access_token = JSON.parse(response.body)['access_token']
+
+    uri = "https://api.stackexchange.com/2.2/me/associated?key=#{SiteSetting['SEApiKey']}&access_token=#{access_token}&filter=!-rH86dva"
+    accounts = JSON.parse(Net::HTTP.get(URI(uri)))
+    network_id = accounts['items'][0]['account_id']
+    current_user.update(se_acct_id: network_id)
+    redirect_to edit_user_profile_path
+  end
+
+  def transfer_se_content
+    auto_user = User.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
+    if auto_user.nil?
+      flash[:warning] = "There doesn't appear to be any of your content here."
+      redirect_to edit_user_profile_path and return
+    end
+
+    Thread.new do
+      auto_user.posts.each do |post|
+        post.reassign_user(current_user)
+      end
+      auto_user.reload.destroy
+      current_user.update(transferred_content: true)
+    end
+    flash[:success] = "Your content is being transferred to you."
     redirect_to edit_user_profile_path
   end
 

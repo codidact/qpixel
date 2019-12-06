@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   get    'posts/:id/history',           to: 'post_history#post', as: :post_history
 
   get    'users',                       to: 'users#index', as: :users
+  get    'users/stack-redirect',        to: 'users#stack_redirect', as: :stack_redirect
+  post   'users/claim-content',         to: 'users#transfer_se_content', as: :claim_stack_content
   get    'users/:id',                   to: 'users#show', as: :user
   get    'users/:id/mod',               to: 'users#mod', as: :mod_user
   get    'users/me/notifications',      to: 'notifications#index', as: :notifications
