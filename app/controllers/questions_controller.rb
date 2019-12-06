@@ -17,12 +17,11 @@ class QuestionsController < ApplicationController
     if @question.deleted?
       check_your_privilege('ViewDeleted', @question) or return
     end
-    @votes = @question.votes.group(:vote_type).count(:vote_type)
     @answers = if current_user&.has_privilege?('ViewDeleted')
                  @question.answers
                else
                  @question.answers.undeleted
-               end.includes(:votes).order(Arel.sql('score DESC'))
+               end.includes(:votes, :user, :comments).order(Arel.sql('score DESC'))
   end
 
   def tagged

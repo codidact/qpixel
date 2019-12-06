@@ -1,0 +1,27 @@
+@import 'variables';
+
+.post__comments {
+  h4 {
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid $muted-graphic;
+  }
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid $muted-graphic;
+  padding: 0.5em;
+
+  .comment__content {
+    margin-bottom: 0;
+  }
+
+  .comment__meta {
+    margin-left: auto;
+  }
+}
+
+.comment-form {
+  margin-top: 0.5em;
+}

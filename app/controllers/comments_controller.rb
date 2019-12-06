@@ -1,7 +1,7 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_comment, only: [:update, :destroy, :undelete]
+  before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})
 
@@ -20,39 +20,48 @@ class CommentsController < ApplicationController
         user = User.find_by_username(match[:name])
         user.create_notification("You were mentioned in a comment", "/questions/#{root_id}") if user
       end
+
+      render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
-      flash[:error] = "Comment failed to save."
+      render json: { status: 'failed', message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
     end
-    redirect_to url_for(controller: :questions, action: :show, id: root_id)
   end
 
   def update
-    unless @comment.update comment_params
-      flash[:error] = "Comment failed to update."
+    if @comment.update comment_params
+      render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+    else
+      render json: { status: 'failed', message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
     end
-    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
   end
 
   def destroy
-    @comment.deleted = true
-    unless @comment.save
-      flash[:error] = "Comment marked deleted, but not saved - status unknown."
+    if @comment.update(deleted: true)
+      render json: { status: 'success' }
+    else
+      render json: { status: 'failed' }, status: 500
     end
-    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
   end
 
   def undelete
-    @comment.deleted = false
-    unless @comment.save
-      flash[:error] = "Comment marked undeleted, but not saved - status unknown."
+    if @comment.update(deleted: false)
+      render json: { status: 'success' }
+    else
+      render json: { status: 'failed' }, status: 500
     end
-    redirect_to url_for(controller: :questions, action: :show, id: @comment.root.id)
+  end
+
+  def show
+    respond_to do |format|
+      format.html { render partial: 'comments/comment', locals: { comment: @comment } }
+      format.json { render json: @comment }
+    end
   end
 
   private
 
   def comment_params
-    params.require(:comment).permit(:content, :post_type, :post_id)
+    params.require(:comment).permit(:content, :post_id)
   end
 
   def set_comment
