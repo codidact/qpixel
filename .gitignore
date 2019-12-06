@@ -16,19 +16,6 @@
 !/log/.keep
 /tmp
 
-config/initializers/devise.rb
-
-key/
-key/*
-
-certificates/
-certificates/*
-
-challenge/
-challenge/*
-
-config/letsencrypt_plugin.yml
-
 coverage/
 coverage/*
 
@@ -39,3 +26,4 @@ test/reports
 TODO.md
 
 config/storage.yml
+config/email.yml

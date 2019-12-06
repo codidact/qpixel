@@ -34,4 +34,19 @@ class PostTest < ActiveSupport::TestCase
     post_count = question.answer_count
     assert_equal pre_count + 1, post_count
   end
+
+  test "reassigning post should move post votes and rep change" do
+    post = posts(:question_one)
+    rep_change = Vote.total_rep_change(post.votes)
+    original_author_rep = post.user.reputation
+    original_transferee_rep = users(:editor).reputation
+    post.reassign_user(users(:editor))
+    assert_equal false, post.deleted
+    assert_equal original_author_rep - rep_change, users(:standard_user).reputation
+    assert_equal original_transferee_rep + rep_change, users(:editor).reputation
+    assert_equal post.user_id, users(:editor).id
+    post.votes.each do |vote|
+      assert_equal users(:editor).id, vote.recv_user_id
+    end
+  end
 end

@@ -1,0 +1,18 @@
+default: &default
+  delivery_method: smtp
+  smtp_settings:
+    address: email-smtp.us-east-1.amazonaws.com
+    port: 587
+    user_name: ""
+    password: ""
+    authentication: login
+    enable_starttls_auto: true
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

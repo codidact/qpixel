@@ -1,3 +1,5 @@
+email_config = YAML.load_file("#{Rails.root}/config/email.yml")[Rails.env]
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -15,6 +17,8 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = email_config['delivery_method'].to_sym
+  config.action_mailer.smtp_settings = email_config['smtp_settings'].map { |k, v| [k, k == :login ? v.to_sym : v] }.to_h
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
