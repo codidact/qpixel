@@ -39,7 +39,6 @@ class QuestionsController < ApplicationController
     @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache], user: current_user, score: 0,
                                                    body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
-      PostHistory.initial_revision(@question, current_user, nil, @question.body_markdown)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       render :new, status: 400

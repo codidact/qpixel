@@ -17,12 +17,12 @@
     <div class="flex-row jc-sb">
       <% if event.before_state.present? %>
         <div class="raw-markdown before">
-          <pre class="unformatted"><%= event.before_state %></pre>
+          <%= raw(sanitize(event.before_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
         </div>
       <% end %>
       <% if event.after_state.present? %>
         <div class="raw-markdown after">
-          <pre class="unformatted"><%= event.after_state %></pre>
+          <%= raw(sanitize(event.after_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
         </div>
       <% end %>
     </div>

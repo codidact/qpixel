@@ -12,11 +12,11 @@
     <%= link_to edit_user_profile_path do %>
       <i class="fas fa-edit"></i> Edit Profile
     <% end %>
-    <% if current_user.is_moderator %>
+    <% if current_user&.is_moderator %>
       &middot;
     <% end %>
   <% end %>
-  <% if current_user.is_moderator %>
+  <% if current_user&.is_moderator %>
     <%= link_to mod_user_path(@user) do %>
       <i class="fas fa-shield-alt"></i> Moderator Tools
     <% end %>
@@ -47,7 +47,7 @@
 <hr/>
 
 <h4>Questions</h4>
-<% if @user.questions.count == 0 %>
+<% if @user.questions.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't asked anything yet.</em>
 <% end %>
 <% @user.questions.order(score: :desc).first(5).each do |q| %>
@@ -57,7 +57,7 @@
 <hr/>
 
 <h4>Answers</h4>
-<% if @user.questions.count == 0 %>
+<% if @user.answers.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't answered anything yet.</em>
 <% end %>
 <% @user.answers.order(score: :desc).first(5).each do |a| %>

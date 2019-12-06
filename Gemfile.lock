@@ -43,6 +43,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    awesome_print (1.8.0)
     aws-eventstream (1.0.3)
     aws-partitions (1.221.0)
     aws-sdk-core (3.68.1)
@@ -214,6 +215,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   aws-sdk-s3
   byebug
   coffee-rails (~> 4.2.2)

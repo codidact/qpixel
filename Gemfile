@@ -23,6 +23,8 @@ gem 'whenever', require: false
 
 gem 'coveralls', require: false
 
+gem 'awesome_print'
+
 group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'

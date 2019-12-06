@@ -20,6 +20,7 @@ class Post < ApplicationRecord
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :reset_last_activity
+  after_create :create_initial_revision
 
   private
 
@@ -31,9 +32,9 @@ class Post < ApplicationRecord
     sc = saved_changes
     attributes = ['att_source', 'att_license_name', 'att_license_link']
     if attributes.any? { |x| sc.include?(x) && sc[x][0] != sc[x][1] }
-      if attributes.all? { |x| sc[x][0].nil? }
+      if attributes.all? { |x| sc[x]&.try(:[], 0).nil? }
         PostHistory.attribution_notice_added(self, User.find(-1), nil, attribution_text)
-      elsif attributes.all? { |x| sc[x][1].nil? }
+      elsif attributes.all? { |x| sc[x]&.try(:[], 1).nil? }
         PostHistory.attribution_notice_removed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }), nil)
       else
         PostHistory.attribution_notice_changed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
@@ -61,5 +62,9 @@ class Post < ApplicationRecord
         parent.update(last_activity: DateTime.now)
       end
     end
+  end
+
+  def create_initial_revision
+    PostHistory.initial_revision(self, user, nil, body_markdown)
   end
 end
