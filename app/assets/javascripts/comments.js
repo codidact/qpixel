@@ -2,7 +2,7 @@ $(() => {
   $('.comment-form').on('ajax:success', async (evt, data) => {
     const $tgt = $(evt.target);
     if (data.status === 'success') {
-      $tgt.parents('.post__comments').find('.comment').last().after(data.comment);
+      $tgt.parents('.post__comments').find('.comment-form').before(data.comment);
       $tgt.find('.js-comment-content').val('');
     }
     else {

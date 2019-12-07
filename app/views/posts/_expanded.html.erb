@@ -107,7 +107,7 @@
         </div>
       <% end %>
       <div class="post__comments">
-        <h4><%= pluralize(post.comments.size, 'comment') %></h4>
+        <h4><%= pluralize(post.comments.undeleted.size, 'comment') %></h4>
         <% (current_user&.is_moderator || current_user&.is_admin ? post.comments : post.comments.undeleted).each do |comment| %>
           <%= render 'comments/comment', comment: comment %>
         <% end %>
