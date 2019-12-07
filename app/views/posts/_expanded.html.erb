@@ -2,7 +2,12 @@
 
 <div class="post" data-post-id="<%= post.id %>">
   <% if is_question %>
-    <h2 class="post__title"><%= post.title %></h2>
+    <h2 class="post__title">
+      <% if post.is_meta %>
+        <strong>META</strong> &mdash;
+      <% end %>
+      <%= post.title %>
+    </h2>
   <% end %>
 
   <div class="post__container <%= 'deleted-content' if post.deleted? %>">

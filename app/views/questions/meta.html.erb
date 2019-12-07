@@ -1,0 +1,16 @@
+<% content_for :title, "Meta Questions" %>
+
+<div class="flex-row jc-sb">
+  <h3>
+    Meta Questions
+  </h3>
+  <%= link_to new_meta_question_path, class: 'header-button wb' do %>
+    Ask Meta Question &raquo;
+  <% end %>
+</div>
+
+<% @questions.each do |question| %>
+  <%= render 'posts/list', post: question %>
+<% end %>
+
+<%= will_paginate @questions, renderer: BootstrapPagination::Rails %>

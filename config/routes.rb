@@ -22,8 +22,10 @@ Rails.application.routes.draw do
   delete 'mod/users/destroy/:id',       to: 'users#destroy', as: :destroy_user
 
   get    'questions',                   to: 'questions#index', as: :questions
+  get    'meta',                        to: 'questions#meta', as: :meta
   get    'questions/feed',              to: 'questions#feed', as: :question_feed
   get    'questions/ask',               to: 'questions#new', as: :new_question
+  get    'meta/new',                    to: 'questions#new_meta', as: :new_meta_question
   post   'questions/ask',               to: 'questions#create', as: :create_question
   get    'questions/tagged/:tag',       to: 'questions#tagged', as: :questions_tagged
   get    'questions/:id',               to: 'questions#show', as: :question

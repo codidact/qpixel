@@ -1,6 +1,9 @@
 class Question < Post
   default_scope { where(post_type_id: Question.post_type_id) }
 
+  scope :meta, -> { where(is_meta: true) }
+  scope :main, -> { where(is_meta: false) }
+
   def self.post_type_id
     PostType.mapping['Question']
   end

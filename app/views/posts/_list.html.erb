@@ -5,8 +5,12 @@
     <span class="descriptor">score</span>
   </div>
   <div class="question__info">
-    <%= link_to is_question ? post.title : post.parent.title, question_path(is_question ? post : post.parent),
-                class: 'question__title' %>
+    <%= link_to question_path(is_question ? post : post.parent), class: 'question__title' do %>
+      <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+        <strong>META</strong> &mdash;
+      <% end %>
+      <%= is_question ? post.title : post.parent.title %>
+    <% end %>
     <% if is_question %>
       <div class="question__tags">
         <% post.tags_cache.each do |tag| %>

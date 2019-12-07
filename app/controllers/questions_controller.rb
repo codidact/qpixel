@@ -1,7 +1,7 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :close, :reopen]
+  before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete, :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})
 
@@ -10,7 +10,11 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @questions = Question.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+    @questions = Question.main.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+  end
+
+  def meta
+    @questions = Question.meta.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
   end
 
   def show
@@ -30,6 +34,10 @@ class QuestionsController < ApplicationController
   end
 
   def new
+    @question = Question.new
+  end
+
+  def new_meta
     @question = Question.new
   end
 
@@ -150,7 +158,7 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:body_markdown, :title, :tags_cache)
+    params.require(:question).permit(:body_markdown, :title, :tags_cache, :is_meta)
   end
 
   def set_question
