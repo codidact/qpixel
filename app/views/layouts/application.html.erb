@@ -48,12 +48,6 @@
             <%= link_to 'sign up', new_user_registration_path, class: 'clear' %>
           <% end %>
         </span>
-        <% if current_user&.is_admin %>
-          <%= link_to 'Admin', admin_path %>
-        <% end %>
-        <% if current_user&.is_admin || current_user&.is_moderator %>
-          <%= link_to 'Moderator', moderator_path %>
-        <% end %>
         <%= link_to 'Questions', questions_path %>
         <%= link_to 'Users', users_path %>
         <%= link_to 'Search', search_path %>
@@ -75,6 +69,22 @@
     </div>
     <div class="sidebar">
       <%= yield(:sidebar) %>
+
+      <% if user_is_mod || user_is_admin %>
+        <div class="module">
+          <h4 class="module__title">Moderator Tools</h4>
+          <div class="module__content">
+            <ul>
+              <% if user_is_mod %>
+                <li><%= link_to 'Moderator Tools', moderator_path %></li>
+              <% end %>
+              <% if user_is_admin %>
+                <li><%= link_to 'Admin Tools', admin_path %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
 
       <% if Rails.env.development? || @hot_questions.size > 0 %>
         <div class="module">
