@@ -15,4 +15,12 @@ module ApplicationHelper
   def check_your_privilege(privilege)
     current_user&.has_privilege?(privilege)
   end
+
+  def query_url(**params)
+    uri = URI.parse(request.original_url)
+    query = Rack::Utils.parse_nested_query uri.query
+    query = query.merge(params)
+    uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
+    uri.to_s
+  end
 end

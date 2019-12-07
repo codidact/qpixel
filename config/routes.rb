@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   post   'questions/:id/reopen',        to: 'questions#reopen', as: :reopen_question
 
   get    'posts/:id/history',           to: 'post_history#post', as: :post_history
+  get    'posts/search',                to: 'search#search', as: :search
 
   get    'users',                       to: 'users#index', as: :users
   get    'users/stack-redirect',        to: 'users#stack_redirect', as: :stack_redirect

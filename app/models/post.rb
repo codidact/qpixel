@@ -23,6 +23,10 @@ class Post < ApplicationRecord
   after_save :reset_last_activity
   after_create :create_initial_revision
 
+  def self.search(term)
+    match_search term, posts: :body_markdown
+  end
+
   def reassign_user(new_user)
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
     update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))

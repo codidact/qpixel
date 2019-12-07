@@ -1,0 +1,36 @@
+<% content_for :title, 'Search' %>
+
+<%= form_tag search_path, method: :get do %>
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :search, 'Search term' %>
+      <%= text_field_tag :search, params[:search], class: 'form-control' %>
+    </div>
+    <div class="actions">
+      <%= submit_tag 'Search', class: 'btn btn-primary', name: nil %>
+    </div>
+  </div>
+<% end %>
+
+<% if @posts.nil? %>
+  <p class="text-muted"><em>Search for something to start finding posts.</em></p>
+<% else %>
+  <div class="tabs">
+    <%= link_to 'Relevance', query_url(sort: 'relevance'),
+                class: "tabs__tab #{params[:sort] == 'relevance' || params[:sort].nil? ? 'tab--active' : ''}" %>
+    <%= link_to 'Score', query_url(sort: 'score'), class: "tabs__tab #{params[:sort] == 'score' ? 'tab--active' : ''}" %>
+    <%= link_to 'Age', query_url(sort: 'age'), class: "tabs__tab #{params[:sort] == 'age' ? 'tab--active' : ''}" %>
+  </div>
+
+  <% if @posts.size == 0 %>
+    <p class="text-muted"><em>No results for <strong><%= params[:search] %></strong>.</em></p>
+  <% end %>
+
+  <% @posts.each do |post| %>
+    <%= render 'posts/list', post: post %>
+  <% end %>
+<% end %>
+
+<% unless @posts.nil? %>
+  <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+<% end %>
