@@ -69,10 +69,16 @@ class Post < ApplicationRecord
   end
 
   def reset_last_activity
-    if last_activity && last_activity <= 60.seconds.ago
-      update(last_activity: DateTime.now)
-      if parent.present?
-        parent.update(last_activity: DateTime.now)
+    ap "reset_last_activity"
+    ap saved_changes
+    exempt_attributes = ['updated_at', 'score', 'att_source', 'att_license_link', 'att_license_name']
+    ap saved_changes.keys.all? { |k| exempt_attributes.include? k }
+    unless saved_changes.keys.all? { |k| exempt_attributes.include? k }
+      if last_activity && last_activity <= 60.seconds.ago
+        update(last_activity: DateTime.now)
+        if parent.present?
+          parent.update(last_activity: DateTime.now)
+        end
       end
     end
   end

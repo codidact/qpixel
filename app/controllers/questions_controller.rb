@@ -10,11 +10,11 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @questions = Question.main.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+    @questions = Question.list_includes.main.undeleted.order(last_activity: :desc).paginate(page: params[:page], per_page: 25)
   end
 
   def meta
-    @questions = Question.meta.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 25)
+    @questions = Question.list_includes.meta.undeleted.order(last_activity: :desc).paginate(page: params[:page], per_page: 25)
   end
 
   def show
