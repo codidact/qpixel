@@ -7,3 +7,4 @@
 - name: attribution_notice_added
 - name: attribution_notice_removed
 - name: attribution_notice_changed
+- name: imported_from_external_source
