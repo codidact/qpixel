@@ -9,6 +9,7 @@ gem 'puma', '~> 3.12.2'
 gem 'jquery-rails', '~> 4.3.5'
 
 gem 'redcarpet'
+gem 'reverse_markdown'
 
 gem 'jbuilder'
 

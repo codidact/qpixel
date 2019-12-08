@@ -10,3 +10,5 @@ leave_tables = ['ar_internal_metadata', 'schema_migrations']
 end
 
 Rails.cache.clear
+
+`bundle exec rails db:seed`
