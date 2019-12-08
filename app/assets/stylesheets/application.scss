@@ -141,10 +141,14 @@ nav a:not(.clear), a.header-button {
 
   @media screen and (min-width: $screen-md) {
     max-width: 1200px;
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  @media screen and (min-width: $screen-xl) {
+    width: 80%;
   }
 }
 
@@ -158,6 +162,11 @@ main {
   flex: 1;
   margin: 0 1em 2em 1em;
   max-width: 60em;
+
+  // $screen-md here to coincide with the switch from fd: column to fd: row on .containers
+  @media screen and (min-width: $screen-md) {
+    min-width: 43em;
+  }
 }
 
 .sidebar {
