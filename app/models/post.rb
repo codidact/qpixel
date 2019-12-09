@@ -29,6 +29,15 @@ class Post < ApplicationRecord
     match_search term, posts: :body_markdown
   end
 
+  # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
+  # override them later with more efficient methods.
+  ['Question', 'Answer', 'PolicyDoc', 'HelpDoc'].each do |pt|
+    klass = pt.classify
+    define_method "#{pt.underscore}?" do
+      post_type_id == klass.post_type_id
+    end
+  end
+
   PostType.all.each do |pt|
     define_method "#{pt.name.underscore}?" do
       post_type_id == pt.id
