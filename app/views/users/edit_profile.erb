@@ -51,12 +51,30 @@
     you'll be able to request that any content you created on Stack Exchange that has been copied across here is
     transferred to you.
   </p>
-  <%= link_to 'Authenticate', stack_oauth_url, class: 'btn btn-primary' %>
+  <%= link_to stack_oauth_url, class: 'btn btn-primary' do %>
+    <i class="fab fa-stack-exchange"></i> Authenticate
+  <% end %>
 <% elsif !current_user.transferred_content %>
   <h3>Claim your Stack Exchange content</h3>
   <p>
     Your account has a <a href="https://stackexchange.com/users/<%= current_user.se_acct_id %>">linked Stack Exchange account</a>.
     You can use the button below to have your content from Stack Exchange that has been copied here transferred to you.
   </p>
-  <%= link_to 'Claim Content', claim_stack_content_path, method: :post, class: 'btn btn-primary' %>
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-circle"></i>
+    <strong>To claim your Stack Exchange content, we need you to agree to re-license your posts.</strong><br/>
+    When you posted on Stack Exchange, you granted Stack Exchange a CC BY-SA license to distribute your content; that's
+    what lets us display your content here too, as long as we attribute it back to you on Stack Exchange. When you claim your
+    content, we'll remove that attribution link to Stack Exchange and link it to you here instead, but we need you to grant us
+    a license under <%= license_link %> to do so.
+  </div>
+  <%= form_tag claim_stack_content_path do %>
+    <div class="checkbox">
+      <%= label_tag :agree_to_relicense do %>
+        <%= check_box_tag :agree_to_relicense, 'true' %>
+        I agree to relicense my posts to <%= SiteSetting['SiteName'] %> under <%= license_link %>.
+      <% end %>
+    </div>
+    <%= submit_tag 'Claim Content', name: nil, class: 'btn btn-primary' %>
+  <% end %>
 <% end %>

@@ -102,6 +102,7 @@
   </main>
   <footer>
     <div class="container">
+      <span><%= link_to 'Terms of Service', policy_path(slug: 'tos') %></span> &middot;
       <span>Current version: <%= Rails.cache.persistent('current_commit') %></span>
     </div>
   </footer>

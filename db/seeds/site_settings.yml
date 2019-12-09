@@ -112,3 +112,15 @@
   value_type: string
   description: >
     An API key for the Stack Exchange API.
+
+- name: ContentLicenseName
+  value: CC BY-SA 4.0
+  value_type: string
+  description: >
+    The name of the license under which content here is posted.
+
+- name: ContentLicenseLink
+  value: https://creativecommons.org/licenses/by-sa/4.0/
+  value_type: string
+  description: >
+    A link to the full legal code of the license specified in ContentLicenseName.

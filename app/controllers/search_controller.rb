@@ -5,7 +5,7 @@ class SearchController < ApplicationController
                order = order_params.include?(params[:sort]&.to_sym) ?
                          order_params[params[:sort].to_sym] :
                          order_params[:relevance]
-               Post.search(params[:search]).paginate(page: params[:page], per_page: 25).includes(:user, user: :avatar_attachment)
+               Post.qa_only.search(params[:search]).paginate(page: params[:page], per_page: 25).includes(:user, user: :avatar_attachment)
                    .order(Arel.sql(order))
              else
                nil

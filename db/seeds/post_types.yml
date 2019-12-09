@@ -1,2 +1,4 @@
 - name: Question
 - name: Answer
+- name: PolicyDoc
+- name: HelpDoc

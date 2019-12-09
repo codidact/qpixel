@@ -17,6 +17,7 @@ class Post < ApplicationRecord
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
+  scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id]) }
 
   after_save :check_attribution_notice
   after_save :modify_author_reputation
@@ -27,12 +28,22 @@ class Post < ApplicationRecord
     match_search term, posts: :body_markdown
   end
 
+  PostType.mapping.each do |post_type, type_id|
+    define_method "#{post_type.underscore}?" do
+      post_type_id == type_id
+    end
+  end
+
   def reassign_user(new_user)
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
     update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))
     update(user: new_user)
     votes.update_all(recv_user_id: new_user.id)
     update(deleted: false, deleted_at: nil, deleted_by: nil)
+  end
+
+  def remove_attribution_notice!
+    update(att_source: nil, att_license_link: nil, att_license_name: nil)
   end
 
   private
@@ -69,10 +80,7 @@ class Post < ApplicationRecord
   end
 
   def reset_last_activity
-    ap "reset_last_activity"
-    ap saved_changes
     exempt_attributes = ['updated_at', 'score', 'att_source', 'att_license_link', 'att_license_name']
-    ap saved_changes.keys.all? { |k| exempt_attributes.include? k }
     unless saved_changes.keys.all? { |k| exempt_attributes.include? k }
       if last_activity && last_activity <= 60.seconds.ago
         update(last_activity: DateTime.now)

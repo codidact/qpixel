@@ -15,25 +15,33 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:username, :profile, :website, :twitter])
   end
 
+  def not_found
+    render 'errors/not_found', layout: 'errors', status: 404
+  end
+
   def verify_moderator
     if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-      render template: 'errors/not_found', status: 404 and return
+      render 'errors/not_found', layout: 'errors', status: 404
+      false
     end
+    true
   end
 
   def verify_admin
     if !user_signed_in? || !current_user.is_admin
-      render template: 'errors/not_found', status: 404 and return
+      render 'errors/not_found', layout: 'errors', status: 404
+      false
     end
+    true
   end
 
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Privilege.find_by(name: name)
       render 'errors/forbidden', layout: 'errors', privilege_name: name, status: 401 if render_error
-      return false
+      false
     end
-    return true
+    true
   end
 
   private

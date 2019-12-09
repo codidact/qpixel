@@ -26,6 +26,11 @@
     <%= f.password_field :password_confirmation, class: 'form-control', autocomplete: "new-password" %>
   </div>
 
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-circle"></i> By signing up, you're agreeing to the
+    <%= link_to 'terms of service', policy_path(slug: 'tos') %>.
+  </div>
+
   <%= f.submit "Sign up", class: 'btn btn-primary btn-block' %>
 <% end %><br/>
 

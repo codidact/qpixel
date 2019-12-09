@@ -1,0 +1,25 @@
+<% content_for :title, "Editing '#{@post.title.truncate(50)}'" %>
+
+<% if @post.errors.any? %>
+  <div class="alert alert-danger">
+    These errors prevented this post being saved:
+    <ul>
+      <% @post.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<h3>Edit <%= @post.policy_doc? ? 'Policy' : (@post.help_doc? ? 'Help Article' : 'Post') %></h3>
+<%= form_for @post, url: update_post_path(@post) do |f| %>
+  <div class="form-group">
+    <%= f.label :title, "Title your post:" %><br/>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :body_markdown, 'Body' %>
+    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+  </div>
+  <%= f.submit "Update", class: "btn btn-primary" %>
+<% end %>

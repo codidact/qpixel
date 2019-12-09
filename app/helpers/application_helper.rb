@@ -23,4 +23,8 @@ module ApplicationHelper
     uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
     uri.to_s
   end
+
+  def license_link
+    link_to SiteSetting['ContentLicenseName'], SiteSetting['ContentLicenseLink']
+  end
 end

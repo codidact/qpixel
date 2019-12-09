@@ -84,6 +84,11 @@ class UsersController < ApplicationController
   end
 
   def transfer_se_content
+    unless params[:agree_to_relicense].present? && params[:agree_to_relicense] == 'true'
+      flash[:danger] = "To claim your content, we need you to agree to relicense your posts to us."
+      redirect_to edit_user_profile_path and return
+    end
+
     auto_user = User.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
     if auto_user.nil?
       flash[:warning] = "There doesn't appear to be any of your content here."
@@ -93,6 +98,7 @@ class UsersController < ApplicationController
     Thread.new do
       auto_user.posts.each do |post|
         post.reassign_user(current_user)
+        post.remove_attribution_notice!
       end
       auto_user.reload.destroy
       current_user.update(transferred_content: true)

@@ -209,7 +209,16 @@ footer {
   color: white;
   font-size: 0.8em;
 
+  a, a:hover {
+    color: white;
+    text-decoration: underline;
+  }
+
   .container {
     justify-content: flex-end;
+
+    & > * {
+      margin: 0 0.5em;
+    }
   }
 }

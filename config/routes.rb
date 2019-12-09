@@ -38,6 +38,13 @@ Rails.application.routes.draw do
 
   get    'posts/:id/history',           to: 'post_history#post', as: :post_history
   get    'posts/search',                to: 'search#search', as: :search
+  get    'posts/new',                   to: 'posts#new', as: :new_post
+  post   'posts/new',                   to: 'posts#create', as: :create_post
+  get    'posts/:id/edit',              to: 'posts#edit', as: :edit_post
+  patch  'posts/:id/edit',              to: 'posts#update', as: :update_post
+
+  get    'policy/:slug',                to: 'posts#document', as: :policy
+  get    'help/:slug',                  to: 'posts#document', as: :help
 
   get    'users',                       to: 'users#index', as: :users
   get    'users/stack-redirect',        to: 'users#stack_redirect', as: :stack_redirect
