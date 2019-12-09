@@ -80,3 +80,17 @@ deleted_answer:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
+
+policy_doc:
+  post_type: policy_doc
+  body: PD ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  title: Terms of Service
+  doc_slug: tos
+  user: admin
+
+help_doc:
+  post_type: help_doc
+  body: HD ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  title: Asking Questions
+  doc_slug: asking-questions
+  user: admin

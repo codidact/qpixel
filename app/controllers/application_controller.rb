@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   def verify_moderator
     if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
       render 'errors/not_found', layout: 'errors', status: 404
-      false
+      return false
     end
     true
   end
@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   def verify_admin
     if !user_signed_in? || !current_user.is_admin
       render 'errors/not_found', layout: 'errors', status: 404
-      false
+      return false
     end
     true
   end
@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
     unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Privilege.find_by(name: name)
       render 'errors/forbidden', layout: 'errors', privilege_name: name, status: 401 if render_error
-      false
+      return false
     end
     true
   end

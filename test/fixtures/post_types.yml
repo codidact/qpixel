@@ -3,3 +3,9 @@ question:
 
 answer:
   name: Answer
+
+policy_doc:
+  name: PolicyDoc
+
+help_doc:
+  name: HelpDoc
