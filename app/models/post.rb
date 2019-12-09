@@ -14,6 +14,7 @@ class Post < ApplicationRecord
   serialize :tags_cache, Array
 
   validates :body, presence: true, length: {minimum: 30, maximum: 30000}
+  validates :doc_slug, uniqueness: true, if: -> { doc_slug.present? }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
