@@ -32,9 +32,8 @@ class Post < ApplicationRecord
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
   # override them later with more efficient methods.
   ['Question', 'Answer', 'PolicyDoc', 'HelpDoc'].each do |pt|
-    klass = pt.constantize
     define_method "#{pt.underscore}?" do
-      post_type_id == klass.post_type_id
+      post_type_id == pt.constantize.post_type_id
     end
   end
 

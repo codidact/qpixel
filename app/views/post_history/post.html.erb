@@ -10,8 +10,12 @@
       <strong><%= event.post_history_type.name.humanize %></strong>
       <span class="text-muted">
         by
-        <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-        <%= link_to event.user.username, user_path(event.user) %>
+        <% if event.user.nil? %>
+          <span class="text-muted">(deleted user)</span>
+        <% else %>
+          <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+          <%= link_to event.user&.username, user_path(event.user) %>
+        <% end %>
         &middot;
         <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
       </span>
