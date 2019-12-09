@@ -29,9 +29,9 @@ class Post < ApplicationRecord
     match_search term, posts: :body_markdown
   end
 
-  PostType.mapping.each do |post_type, type_id|
-    define_method "#{post_type.underscore}?" do
-      post_type_id == type_id
+  PostType.all.each do |pt|
+    define_method "#{pt.name.underscore}?" do
+      post_type_id == pt.id
     end
   end
 
