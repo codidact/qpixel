@@ -92,7 +92,7 @@
           <div class="module__content">
             <ul>
               <% @hot_questions.each do |hq| %>
-                <li><%= link_to hq.title, question_path(hq) %></li>
+                <li><%= link_to hq.title, question_path(hq) %><% if hq.is_meta %> (meta)<% end %></li>
               <% end %>
             </ul>
           </div>
