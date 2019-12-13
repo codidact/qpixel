@@ -6,6 +6,7 @@ The usual sort of thing:
 
  * Clone the repo and `cd` into the directory
  * Fill in `config/database.yml` with the correct values for your environment
+ * `cp config/email.sample.yml config/email.yml` and fill in correct values
  * Run `rails db:setup` and `rails db:migrate`
  * Run `rails s`
 
