@@ -13,12 +13,14 @@ class CommentsController < ApplicationController
     @comment = Comment.new comment_params.merge(user: current_user)
     root_id = @comment.root.id
     if @comment.save
-      @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", "/questions/#{root_id}")
+      unless @comment.post.user == current_user
+        @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", "/questions/#{root_id}")
+      end
 
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
-        user = User.find_by_username(match[:name])
-        user.create_notification("You were mentioned in a comment", "/questions/#{root_id}") if user
+        user = User.where("REPLACE(username, ' ', '') = ?", match[:name]).first
+        user&.create_notification("You were mentioned in a comment", "/questions/#{root_id}") if user
       end
 
       render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
