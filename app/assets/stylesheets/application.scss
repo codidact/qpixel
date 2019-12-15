@@ -226,3 +226,13 @@ footer {
 img {
   max-width: 100%;
 }
+
+@-moz-document url-prefix() {
+  details > summary:before {
+    content: '▶';
+  }
+
+  details[open] > summary:before {
+    content: '▼';
+  }
+}
