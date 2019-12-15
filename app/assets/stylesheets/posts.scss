@@ -127,6 +127,10 @@
       flex: 1;
       margin-left: 0.5em;
 
+      img {
+        max-width: 100%;
+      }
+
       @media screen and (min-width: $screen-md) {
         margin-left: 1em;
       }
