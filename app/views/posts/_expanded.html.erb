@@ -41,6 +41,7 @@
           </div>
         <% end %>
         <span class="post__author text-muted">
+          <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</span> &middot;
           by
           <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" />
           <%= link_to post.user.username, user_path(post.user) %> (<%= post.user.reputation %>)

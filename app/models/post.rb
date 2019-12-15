@@ -4,6 +4,7 @@ class Post < ApplicationRecord
   belongs_to :parent, class_name: 'Post', required: false, counter_cache: :answer_count
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
+  belongs_to :last_activity_by, class_name: 'User', required: false
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -22,7 +23,7 @@ class Post < ApplicationRecord
 
   after_save :check_attribution_notice
   after_save :modify_author_reputation
-  after_save :reset_last_activity
+  after_save :copy_last_activity_to_parent
   after_create :create_initial_revision
 
   def self.search(term)
@@ -76,6 +77,13 @@ class Post < ApplicationRecord
     end
   end
 
+  def copy_last_activity_to_parent
+    sc = saved_changes
+    if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id'))
+      parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
+    end
+  end
+
   def modify_author_reputation
     sc = saved_changes
     if sc.include?('deleted') && sc['deleted'][0] != sc['deleted'][1] && created_at >= 60.days.ago
@@ -84,18 +92,6 @@ class Post < ApplicationRecord
         user.update(reputation: user.reputation - Vote.total_rep_change(votes))
       else
         user.update(reputation: user.reputation + Vote.total_rep_change(votes))
-      end
-    end
-  end
-
-  def reset_last_activity
-    exempt_attributes = ['updated_at', 'score', 'att_source', 'att_license_link', 'att_license_name']
-    unless saved_changes.keys.all? { |k| exempt_attributes.include? k }
-      if last_activity && last_activity <= 60.seconds.ago
-        update(last_activity: DateTime.now)
-        if parent.present?
-          parent.update(last_activity: DateTime.now)
-        end
       end
     end
   end

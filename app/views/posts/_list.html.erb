@@ -22,10 +22,10 @@
       <% if is_question %>
         <%= pluralize(post.answer_count, 'answer') %> &middot;
       <% end %>
-      active <%= time_ago_in_words(post.last_activity) %> ago &middot;
-      by
-      <img alt="user avatar" src="<%= avatar_url(post.user) %>" height="16" width="16" />
-      <%= link_to post.user.username, user_path(post.user) %>
+      <% active_user = post.last_activity_by || post.user %>
+      last activity <%= time_ago_in_words(post.last_activity) %> ago by
+      <img alt="user avatar" src="<%= avatar_url(active_user) %>" height="16" width="16" />
+      <%= link_to active_user.username, user_path(active_user) %>
     </span>
   </div>
 </div>

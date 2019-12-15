@@ -28,7 +28,8 @@ class PostsController < ApplicationController
 
   def update
     PostHistory.post_edited(@post, current_user, @post.body_markdown, params[:post][:body_markdown])
-    if @post.update(post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown])))
+    if @post.update(post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
+                                      last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to policy_path(slug: @post.doc_slug)
     else
       render :edit

@@ -17,7 +17,8 @@ class AnswersController < ApplicationController
   def create
     @question = Question.find params[:id]
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-                                             body: AnswersController.renderer.render(params[:answer][:body_markdown])))
+                                             body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                                             last_activity: DateTime.now, last_activity_by: current_user))
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
     if @answer.save
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
@@ -33,7 +34,8 @@ class AnswersController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @answer)
     PostHistory.post_edited(@answer, current_user, @answer.body_markdown, params[:answer][:body_markdown])
-    if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown])))
+    if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                                          last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
       render :edit
@@ -51,7 +53,8 @@ class AnswersController < ApplicationController
       redirect_to question_path(@answer.parent) and return
     end
 
-    if @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
+    if @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
+                      last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_deleted(@answer, current_user)
     else
       flash[:danger] = "Can't delete this answer right now. Try again later."
@@ -70,7 +73,8 @@ class AnswersController < ApplicationController
       redirect_to question_path(@answer.parent) and return
     end
 
-    if @answer.update(deleted: false, deleted_at: nil, deleted_by: nil)
+    if @answer.update(deleted: false, deleted_at: nil, deleted_by: nil,
+                      last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@answer, current_user)
     else
       flash[:danger] = "Can't undelete this answer right now. Try again later."

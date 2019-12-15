@@ -44,7 +44,8 @@ class QuestionsController < ApplicationController
   def create
     params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
     @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache], user: current_user, score: 0,
-                                                   body: QuestionsController.renderer.render(params[:question][:body_markdown])))
+                                                   body: QuestionsController.renderer.render(params[:question][:body_markdown]),
+                                                   last_activity: DateTime.now, last_activity_by: current_user))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -53,7 +54,7 @@ class QuestionsController < ApplicationController
   end
 
   def edit
-    return unless check_your_privilege('Edit', @question)
+    check_your_privilege('Edit', @question)
   end
 
   def update
@@ -61,7 +62,8 @@ class QuestionsController < ApplicationController
     params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
     PostHistory.post_edited(@question, current_user, @question.body_markdown, params[:question][:body_markdown])
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache],
-                                              body: QuestionsController.renderer.render(params[:question][:body_markdown])))
+                                              body: QuestionsController.renderer.render(params[:question][:body_markdown]),
+                                              last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       render :edit
@@ -79,7 +81,8 @@ class QuestionsController < ApplicationController
       redirect_to question_path(@question) and return
     end
 
-    if @question.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
+    if @question.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
+                        last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_deleted(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -99,7 +102,8 @@ class QuestionsController < ApplicationController
       redirect_to question_path(@question) and return
     end
 
-    if @question.update(deleted: false, deleted_at: nil, deleted_by: nil)
+    if @question.update(deleted: false, deleted_at: nil, deleted_by: nil,
+                        last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@question, current_user)
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -128,7 +132,8 @@ class QuestionsController < ApplicationController
       redirect_to question_path(@question) and return
     end
 
-    if @question.update(closed: true, closed_by: current_user, closed_at: Time.now)
+    if @question.update(closed: true, closed_by: current_user, closed_at: Time.now,
+                        last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.question_closed(@question, current_user)
     else
       flash[:danger] = "Can't close this question right now. Try again later."
@@ -147,7 +152,8 @@ class QuestionsController < ApplicationController
       redirect_to question_path(@question) and return
     end
 
-    if @question.update(closed: false, closed_by: current_user, closed_at: Time.now)
+    if @question.update(closed: false, closed_by: current_user, closed_at: Time.now,
+                        last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.question_reopened(@question, current_user)
     else
       flash[:danger] = "Can't reopen this question right now. Try again later."
