@@ -6,7 +6,12 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:mod, :destroy, :soft_delete]
 
   def index
-    @users = User.all.includes(:posts).paginate(page: params[:page], per_page: 50).order(params[:sort])
+    sort_param = {reputation: :reputation, age: :created_at}[params[:sort]&.to_sym] || :reputation
+    @users = if params[:search].present?
+               User.where('username LIKE ?', "#{params[:search]}%")
+             else
+               User.all.order(sort_param => :desc)
+             end.includes(:posts).paginate(page: params[:page], per_page: 48)
   end
 
   def show

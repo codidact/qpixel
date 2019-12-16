@@ -19,7 +19,7 @@ module ApplicationHelper
   def query_url(**params)
     uri = URI.parse(request.original_url)
     query = Rack::Utils.parse_nested_query uri.query
-    query = query.merge(params)
+    query = query.merge(params.map { |k, v| [k.to_s, v.to_s] }.to_h)
     uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
     uri.to_s
   end

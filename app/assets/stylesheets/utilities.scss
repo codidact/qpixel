@@ -1,5 +1,18 @@
 @import 'variables';
 
+.flex-row-always {
+  display: flex;
+  flex-direction: row;
+
+  & > * {
+    margin: 0 0.5em;
+  }
+
+  .primary {
+    flex: 1;
+  }
+}
+
 .flex-row {
   display: flex;
   flex-direction: column;
