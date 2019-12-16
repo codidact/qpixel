@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   post   'users/claim-content',         to: 'users#transfer_se_content', as: :claim_stack_content
   get    'users/:id',                   to: 'users#show', as: :user
   get    'users/:id/mod',               to: 'users#mod', as: :mod_user
+  get    'users/:id/posts/:type',       to: 'users#posts', as: :user_posts
   get    'users/me/notifications',      to: 'notifications#index', as: :notifications
   get    'users/edit/profile',          to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',          to: 'users#update_profile', as: :update_user_profile

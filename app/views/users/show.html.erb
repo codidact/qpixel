@@ -53,6 +53,9 @@
 <% @user.questions.order(score: :desc).first(5).each do |q| %>
   <%= render 'posts/list', post: q %>
 <% end %>
+<%= link_to user_posts_path(@user, type: 'questions') do %>
+  See all questions &raquo;
+<% end %>
 
 <hr/>
 
@@ -62,6 +65,9 @@
 <% end %>
 <% @user.answers.order(score: :desc).first(5).each do |a| %>
   <%= render 'posts/list', post: a %>
+<% end %>
+<%= link_to user_posts_path(@user, type: 'answers') do %>
+  See all answers &raquo;
 <% end %>
 
 <hr/>

@@ -3,7 +3,7 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
-  before_action :set_user, only: [:mod, :destroy, :soft_delete]
+  before_action :set_user, only: [:mod, :destroy, :soft_delete, :posts]
 
   def index
     sort_param = {reputation: :reputation, age: :created_at}[params[:sort]&.to_sym] || :reputation
@@ -16,6 +16,36 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find params[:id]
+  end
+
+  def posts
+    post_types = {questions: Question, answers: Answer}
+    unless post_types.include? params[:type].to_sym
+      respond_to do |format|
+        format.html do
+          render plain: 'No type or invalid type specified (must be one of questions, answers)', status: 400
+        end
+        format.json do
+          render json: { status: 'invalid', message: 'No type or invalid type specified (must be one of questions, answers)' },
+                 status: 400
+        end
+      end
+      return
+    end
+
+    sort_params = { score: :score, age: :created_at }
+    sort_param = sort_params[params[:sort]] || :score
+
+    model = post_types[params[:type].to_sym]
+    @posts = model.undeleted.where(user: @user).order(sort_param => :desc)
+    respond_to do |format|
+      format.html do
+        render :posts
+      end
+      format.json do
+        render json: { status: 'success', posts: @posts }
+      end
+    end
   end
 
   def mod
