@@ -3,7 +3,12 @@
   <link rel="alternate" type="application/rss+xml" title="Questions RSS Feed" href="/questions/feed.rss">
 <% end %>
 
-<h3>Questions</h3>
+<div class="flex-row jc-sb">
+  <h3>Questions</h3>
+  <%= link_to new_question_path, class: 'header-button wb' do %>
+    Ask Question &raquo;
+  <% end %>
+</div>
 <% @questions.each do |question| %>
   <%= render 'posts/list', post: question %>
 <% end %>

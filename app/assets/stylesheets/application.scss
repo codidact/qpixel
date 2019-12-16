@@ -20,6 +20,17 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  &.development:before {
+    display: block;
+    width: 100%;
+    background: $danger;
+    color: white;
+    content: 'Development Mode';
+    text-align: center;
+    font-weight: bold;
+    padding: 0.3em 0;
+  }
 }
 
 header {

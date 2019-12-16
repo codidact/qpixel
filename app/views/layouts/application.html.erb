@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
+  <title><%= Rails.env.development? ? '[DEV] ' : '' %><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
   <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
   <%= stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %>
@@ -15,7 +15,7 @@
   <%= csrf_meta_tags %>
   <%= yield(:head) %>
 </head>
-<body>
+<body class="<%= Rails.env.development? ? 'development' : '' %>">
   <header>
     <div class="container">
       <% if SiteSetting.exist?('SiteLogoPath') %>
