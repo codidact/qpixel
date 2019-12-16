@@ -11,3 +11,5 @@
 <% @posts.each do |post| %>
   <%= render 'posts/list', post: post %>
 <% end %>
+
+<%= will_paginate @users, renderer: BootstrapPagination::Rails %>
