@@ -191,3 +191,11 @@
     }
   }
 }
+
+.upload-form {
+  margin: 1em 0;
+
+  button[type="submit"] {
+    display: none;
+  }
+}

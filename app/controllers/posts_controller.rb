@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document]
-  before_action :set_post, except: [:new, :create, :document]
-  before_action :check_permissions, except: [:new, :create, :document]
+  before_action :set_post, except: [:new, :create, :document, :upload]
+  before_action :check_permissions, except: [:new, :create, :document, :upload]
   before_action :verify_moderator, only: [:new, :create]
 
   def new
@@ -38,6 +38,12 @@ class PostsController < ApplicationController
 
   def document
     @post = Post.find_by(doc_slug: params[:slug])
+  end
+
+  def upload
+    @blob = ActiveStorage::Blob.create_after_upload!(io: params[:file], filename: params[:file].original_filename,
+                                                     content_type: params[:file].content_type)
+    render json: { link: url_for(@blob) }
   end
 
   private

@@ -10,10 +10,12 @@
   </div>
 <% end %>
 
+<%= render 'posts/image_upload' %>
+
 <%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
   <div class="form-group">
     <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+    <%= f.text_area :body_markdown, { class: "form-control post-field js-post-field", rows: 15 } %>
     <small class="form-text text-muted">Markdown is supported.</small>
   </div>
   <div class="field">

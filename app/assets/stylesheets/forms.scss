@@ -31,3 +31,9 @@
     align-items: flex-end;
   }
 }
+
+.form-inline {
+  input[type="file"] {
+    display: inline-block;
+  }
+}

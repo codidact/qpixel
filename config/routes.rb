@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   get    'posts/search',                to: 'search#search', as: :search
   get    'posts/new',                   to: 'posts#new', as: :new_post
   post   'posts/new',                   to: 'posts#create', as: :create_post
+  post   'posts/upload',                to: 'posts#upload', as: :upload
   get    'posts/:id/edit',              to: 'posts#edit', as: :edit_post
   patch  'posts/:id/edit',              to: 'posts#update', as: :update_post
 
