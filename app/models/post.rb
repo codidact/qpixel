@@ -67,12 +67,12 @@ class Post < ApplicationRecord
     attributes = ['att_source', 'att_license_name', 'att_license_link']
     if attributes.any? { |x| sc.include?(x) && sc[x][0] != sc[x][1] }
       if attributes.all? { |x| sc[x]&.try(:[], 0).nil? }
-        PostHistory.attribution_notice_added(self, User.find(-1), nil, attribution_text)
+        PostHistory.attribution_notice_added(self, User.find(-1), after: attribution_text)
       elsif attributes.all? { |x| sc[x]&.try(:[], 1).nil? }
-        PostHistory.attribution_notice_removed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }), nil)
+        PostHistory.attribution_notice_removed(self, User.find(-1), before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }))
       else
-        PostHistory.attribution_notice_changed(self, User.find(-1), attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
-                                               attribution_text(*attributes.map { |a| sc[a]&.try(:[], 1) }))
+        PostHistory.attribution_notice_changed(self, User.find(-1), before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
+                                               after: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 1) }))
       end
     end
   end
@@ -97,6 +97,6 @@ class Post < ApplicationRecord
   end
 
   def create_initial_revision
-    PostHistory.initial_revision(self, user, nil, body_markdown)
+    PostHistory.initial_revision(self, user, after: body_markdown)
   end
 end

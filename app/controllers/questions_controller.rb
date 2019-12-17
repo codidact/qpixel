@@ -60,7 +60,8 @@ class QuestionsController < ApplicationController
   def update
     return unless check_your_privilege('Edit', @question)
     params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
-    PostHistory.post_edited(@question, current_user, @question.body_markdown, params[:question][:body_markdown])
+    PostHistory.post_edited(@question, current_user, before: @question.body_markdown, after: params[:question][:body_markdown],
+                            comment: params[:edit_comment])
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache],
                                               body: QuestionsController.renderer.render(params[:question][:body_markdown]),
                                               last_activity: DateTime.now, last_activity_by: current_user))

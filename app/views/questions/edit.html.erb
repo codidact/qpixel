@@ -14,6 +14,12 @@
     <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
     <%= f.text_field :tags_cache, class: "form-control" %>
   </div>
+  <hr/>
+  <div class="form-group">
+    <%= label_tag :edit_comment, 'Edit comment' %>
+    <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
+    <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
+  </div>
   <%= f.submit "Update", class: "btn btn-primary" %>
 <% end %>
 

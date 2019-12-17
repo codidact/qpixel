@@ -17,6 +17,12 @@
     <%= f.label :body_markdown, 'Body' %>
     <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
   </div>
+  <hr/>
+  <div class="form-group">
+    <%= label_tag :edit_comment, 'Edit comment' %>
+    <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
+    <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
+  </div>
   <div class="form-group">
     <%= f.submit "Update Answer", class: "btn btn-primary" %>
   </div>

@@ -18,6 +18,10 @@
         <% end %>
         &middot;
         <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+        <% if event.comment.present? %>
+          <br/>
+          <span class="text-muted"><em><%= event.comment %></em></span>
+        <% end %>
       </span>
     </summary>
     <div class="flex-row jc-sb">

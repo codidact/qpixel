@@ -25,7 +25,7 @@ class PostHistoryTest < ActiveSupport::TestCase
 
   test "calling an event with state should include state parameters" do
     post = posts(:question_one)
-    event = PostHistory.initial_revision(post, users(:standard_user), nil, post.body_markdown)
+    event = PostHistory.initial_revision(post, users(:standard_user), after: post.body_markdown)
     assert_not_nil post.body_markdown
     assert_equal post.body_markdown, event.after_state
     assert_nil event.before_state
