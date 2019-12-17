@@ -12,6 +12,8 @@
   </div>
 <% end %>
 
+<%= render 'posts/image_upload' %>
+
 <%= form_for @question, url: { controller: :questions, action: :create } do |f| %>
   <%= f.hidden_field :is_meta, value: true %>
 
