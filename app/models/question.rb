@@ -50,8 +50,9 @@ class Question < Post
 
   def maximum_tag_length
     tags_cache.each do |tag|
-      if tag.length > 20
-        errors.add(:tags, "can't be more than 20 characters long each")
+      max_len = SiteSetting['MaxTagLength']
+      if tag.length > max_len
+        errors.add(:tags, "can't be more than #{max_len} characters long each")
       end
     end
   end

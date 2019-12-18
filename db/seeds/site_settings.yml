@@ -124,3 +124,10 @@
   value_type: string
   description: >
     A link to the full legal code of the license specified in ContentLicenseName.
+
+- name: MaxTagLength
+  value: 35
+  value_type: integer
+  description: >
+    The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
+    may introduce validation issues with content imported from SE.
