@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [:document]
-  before_action :set_post, except: [:new, :create, :document, :upload]
-  before_action :check_permissions, except: [:new, :create, :document, :upload]
+  before_action :authenticate_user!, except: [:document, :share_q, :share_a]
+  before_action :set_post, only: [:edit, :update]
+  before_action :check_permissions, only: [:edit, :update]
   before_action :verify_moderator, only: [:new, :create]
 
   def new
@@ -44,6 +44,14 @@ class PostsController < ApplicationController
     @blob = ActiveStorage::Blob.create_after_upload!(io: params[:file], filename: params[:file].original_filename,
                                                      content_type: params[:file].content_type)
     render json: { link: url_for(@blob) }
+  end
+
+  def share_q
+    redirect_to question_path(id: params[:id])
+  end
+
+  def share_a
+    redirect_to question_path(id: params[:qid], anchor: "answer-#{params[:id]}")
   end
 
   private
