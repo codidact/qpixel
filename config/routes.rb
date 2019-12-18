@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root                                  to: 'questions#index'
 
   get    'admin',                       to: 'admin#index', as: :admin
+  get    'admin/errors',                to: 'admin#error_reports', as: :admin_error_reports
   get    'admin/settings',              to: 'site_settings#index', as: :site_settings
   get    'admin/settings/:name',        to: 'site_settings#show', as: :site_setting
   post   'admin/settings/:name',        to: 'site_settings#update', as: :update_site_setting

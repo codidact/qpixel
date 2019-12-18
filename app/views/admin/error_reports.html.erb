@@ -1,0 +1,11 @@
+<h1>Error Reports</h1>
+<p><%= pluralize(@error_count, 'error') %> reported, <%= pluralize(@report_count, 'full report') %> available</p>
+
+<% @reports.each do |uuid, rl| %>
+  <details>
+    <summary>
+      <code class="unformatted"><%= rl[0].sub(Regexp.new("^.*#{uuid}\\] "), '') %></code>
+    </summary>
+    <pre class="unformatted"><%= rl.map { |l| l.sub(Regexp.new("^.*#{uuid}\\] "), '') }.join("\n") %></pre>
+  </details>
+<% end %>
