@@ -11,7 +11,7 @@ class UsersController < ApplicationController
                User.where('username LIKE ?', "#{params[:search]}%")
              else
                User.all.order(sort_param => :desc)
-             end.includes(:posts).paginate(page: params[:page], per_page: 48)
+             end.list_includes.paginate(page: params[:page], per_page: 48)
   end
 
   def show

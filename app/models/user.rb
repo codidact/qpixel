@@ -17,6 +17,10 @@ class User < ApplicationRecord
   validates :username, presence: true, length: { minimum: 3 }
   validate :username_not_fake_admin
 
+  def self.list_includes
+    includes(:posts, :avatar_attachment)
+  end
+
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
     if privileges.include?(privilege) || is_admin || is_moderator
