@@ -10,11 +10,17 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    @questions = Question.list_includes.main.undeleted.order(last_activity: :desc).paginate(page: params[:page], per_page: 25)
+    sort_params = { activity: :last_activity, age: :created_at, score: :score }
+    sort_param = sort_params[params[:sort]&.to_sym] || :last_activity
+    @questions = Question.list_includes.main.undeleted.order(sort_param => :desc)
+                     .paginate(page: params[:page], per_page: 25)
   end
 
   def meta
-    @questions = Question.list_includes.meta.undeleted.order(last_activity: :desc).paginate(page: params[:page], per_page: 25)
+    sort_params = { activity: :last_activity, age: :created_at, score: :score }
+    sort_param = sort_params[params[:sort]&.to_sym] || :last_activity
+    @questions = Question.list_includes.meta.undeleted.order(sort_param => :desc)
+                     .paginate(page: params[:page], per_page: 25)
   end
 
   def show
