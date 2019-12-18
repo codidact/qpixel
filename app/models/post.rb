@@ -80,7 +80,9 @@ class Post < ApplicationRecord
   def copy_last_activity_to_parent
     sc = saved_changes
     if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id'))
-      parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
+      unless parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
+        Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
+      end
     end
   end
 

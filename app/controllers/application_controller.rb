@@ -47,6 +47,12 @@ class ApplicationController < ActionController::Base
   private
 
   def set_globals
+    if current_user.nil?
+      Rails.logger.info 'No user signed in'
+    else
+      Rails.logger.info "User #{current_user.id} (#{current_user.username}) signed in"
+    end
+
     @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
       Question.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
               .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
