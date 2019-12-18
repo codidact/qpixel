@@ -178,7 +178,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should prevent tags being too long" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                        tags_cache: "123456789012345678901" } }
+                                        tags_cache: 'a' * (SiteSetting['MaxTagLength'] + 1) } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
