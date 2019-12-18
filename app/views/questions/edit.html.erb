@@ -1,27 +1,7 @@
 <% content_for :title, "Editing '#{@question.title.truncate(50)}'" %>
 
 <h3>Edit Question</h3>
-<%= form_for @question, url: { controller: :questions, action: :update } do |f| %>
-  <div class="form-group">
-    <%= f.label :title, "Title your question:" %><br/>
-    <%= f.text_field :title, class: "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
-  </div>
-  <div class="form-group">
-    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
-    <%= f.text_field :tags_cache, class: "form-control" %>
-  </div>
-  <hr/>
-  <div class="form-group">
-    <%= label_tag :edit_comment, 'Edit comment' %>
-    <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
-    <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
-  </div>
-  <%= f.submit "Update", class: "btn btn-primary" %>
-<% end %>
+<%= render 'form', is_edit: true %>
 
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>

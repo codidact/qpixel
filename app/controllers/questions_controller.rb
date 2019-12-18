@@ -48,10 +48,9 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
-    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache], user: current_user, score: 0,
-                                                   body: QuestionsController.renderer.render(params[:question][:body_markdown]),
-                                                   last_activity: DateTime.now, last_activity_by: current_user))
+    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache].reject(&:empty?), user: current_user,
+                                                   score: 0, last_activity: DateTime.now, last_activity_by: current_user,
+                                                   body: QuestionsController.renderer.render(params[:question][:body_markdown])))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -65,10 +64,9 @@ class QuestionsController < ApplicationController
 
   def update
     return unless check_your_privilege('Edit', @question)
-    params[:question][:tags_cache] = params[:question][:tags_cache].split(" ")
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown, after: params[:question][:body_markdown],
                             comment: params[:edit_comment])
-    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache],
+    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache].reject(&:empty?),
                                               body: QuestionsController.renderer.render(params[:question][:body_markdown]),
                                               last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)

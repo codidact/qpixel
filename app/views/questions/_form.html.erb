@@ -1,0 +1,32 @@
+<% is_meta ||= false %>
+<% is_edit ||= false %>
+
+<%= form_for @question, url: is_edit ? edit_question_path(@question) : create_question_path do |f| %>
+  <% if is_meta %>
+    <%= f.hidden_field :is_meta, value: true %>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :title, "Title your question:" %><br/>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :body_markdown, 'Body' %>
+    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.select :tags_cache, [], { include_blank: true }, multiple: true, class: "form-control js-tag-select" %>
+  </div>
+
+  <% if is_edit %>
+    <hr/>
+    <div class="form-group">
+      <%= label_tag :edit_comment, 'Edit comment' %>
+      <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
+      <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
+    </div>
+  <% end %>
+
+  <%= f.submit is_edit ? "Update" : "Ask!", class: "btn btn-primary" %>
+<% end %>

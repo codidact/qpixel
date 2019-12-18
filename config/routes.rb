@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   get    'meta',                        to: 'questions#meta', as: :meta
   get    'questions/feed',              to: 'questions#feed', as: :question_feed
   get    'questions/ask',               to: 'questions#new', as: :new_question
-  get    'meta/new',                    to: 'questions#new_meta', as: :new_meta_question
+  get    'meta/ask',                    to: 'questions#new_meta', as: :new_meta_question
   post   'questions/ask',               to: 'questions#create', as: :create_question
   get    'questions/tagged/:tag',       to: 'questions#tagged', as: :questions_tagged
   get    'questions/:id',               to: 'questions#show', as: :question
@@ -47,6 +47,8 @@ Rails.application.routes.draw do
 
   get    'policy/:slug',                to: 'posts#document', as: :policy
   get    'help/:slug',                  to: 'posts#document', as: :help
+
+  get    'tags',                        to: 'tags#index', as: :tags
 
   get    'users',                       to: 'users#index', as: :users
   get    'users/stack-redirect',        to: 'users#stack_redirect', as: :stack_redirect

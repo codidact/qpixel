@@ -14,23 +14,7 @@
 
 <%= render 'posts/image_upload' %>
 
-<%= form_for @question, url: { controller: :questions, action: :create } do |f| %>
-  <%= f.hidden_field :is_meta, value: true %>
-
-  <div class="form-group">
-    <%= f.label :title, "Title your question:" %><br/>
-    <%= f.text_field :title, class: "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
-  </div>
-  <div class="form-group">
-    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
-    <%= f.text_field :tags_cache, class: "form-control" %>
-  </div>
-  <%= f.submit "Ask!", class: "btn btn-primary" %>
-<% end %>
+<%= render 'form', is_meta: true %>
 
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>

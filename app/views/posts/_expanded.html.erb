@@ -36,6 +36,7 @@
         <% if is_question %>
           <div class="post__tags">
             <% post.tags_cache.each do |tag| %>
+              <% next if tag.nil? || tag.empty? %>
               <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
             <% end %>
           </div>

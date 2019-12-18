@@ -49,7 +49,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should create new question" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                        tags_cache: "discussion support" } }
+                                        tags_cache: ['discussion', 'support'] } }
     assert_not_nil assigns(:question)
     assert_equal 0, assigns(:question).score
     assert_equal ["discussion", "support"], assigns(:question).tags_cache
@@ -68,7 +68,7 @@ class QuestionsControllerTest < ActionController::TestCase
     sign_in users(:editor)
     patch :update, params: { id: posts(:question_one).id, question: { title: "ABCDEF GHIJKL MNOPQR",
                                                                       body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                                                      tags_cache: "discussion support" } }
+                                                                      tags_cache: ['discussion', 'support'] } }
     assert_not_nil assigns(:question)
     assert_equal ["discussion", "support"], assigns(:question).tags_cache
     assert_equal ["discussion", "support"], assigns(:question).tags.map(&:name)
@@ -162,7 +162,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should prevent questions having more than 5 tags" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                        tags_cache: "discussion support bug feature-request faq status-completed" } }
+                                        tags_cache: ['discussion', 'support', 'bug', 'feature-request', 'faq', 'status-completed'] } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
@@ -170,7 +170,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should prevent questions having no tags" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                        tags_cache: "" } }
+                                        tags_cache: [] } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
@@ -178,21 +178,21 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should prevent tags being too long" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
-                                        tags_cache: 'a' * (SiteSetting['MaxTagLength'] + 1) } }
+                                        tags_cache: ['a' * (SiteSetting['MaxTagLength'] + 1)] } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
 
   test "should prevent body being whitespace" do
     sign_in users(:standard_user)
-    post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: " "*31, tags_cache: "discussion" } }
+    post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: " "*31, tags_cache: ["discussion"] } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
 
   test "should prevent title being whitespace" do
     sign_in users(:standard_user)
-    post :create, params: { question: { title: " "*16, body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ", tags_cache: "discussion" } }
+    post :create, params: { question: { title: " "*16, body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ", tags_cache: ["discussion"] } }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end

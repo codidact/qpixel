@@ -15,6 +15,7 @@ class Question < Post
   validates :title, :body, :tags_cache, presence: true
   validate :maximum_tags
   validate :maximum_tag_length
+  validate :no_spaces_in_tags
   validate :stripped_minimum
 
   after_save :update_tag_associations
@@ -53,6 +54,14 @@ class Question < Post
       max_len = SiteSetting['MaxTagLength']
       if tag.length > max_len
         errors.add(:tags, "can't be more than #{max_len} characters long each")
+      end
+    end
+  end
+
+  def no_spaces_in_tags
+    tags_cache.each do |tag|
+      if tag.include? ' '
+        errors.add(:tags, "may not include spaces - use hyphens for multiple-word tags")
       end
     end
   end

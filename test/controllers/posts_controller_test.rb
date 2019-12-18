@@ -103,4 +103,16 @@ class PostsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:post).id
   end
+
+  test "question permalink should correctly redirect" do
+    get :share_q, params: { id: posts(:question_one).id }
+    assert_response 302
+    assert_redirected_to question_path(posts(:question_one))
+  end
+
+  test "answer permalink should correctly redirect" do
+    get :share_a, params: { qid: posts(:question_one).id, id: posts(:answer_one).id }
+    assert_response 302
+    assert_redirected_to question_path(id: posts(:question_one).id, anchor: "answer-#{posts(:answer_one).id}")
+  end
 end
