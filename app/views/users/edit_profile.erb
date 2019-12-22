@@ -11,7 +11,9 @@
     <div class="form-group">
       <%= f.label :avatar %>
       <%= f.file_field :avatar %>
-      <small class="form-text text-muted">An optional profile picture.</small>
+      <small class="form-text text-muted">
+        An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
+      </small>
     </div>
   </div>
 

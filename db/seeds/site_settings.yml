@@ -131,3 +131,11 @@
   description: >
     The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
     may introduce validation issues with content imported from SE.
+
+- name: MaxUploadSize
+  value: 2MB
+  value_type: string
+  description: >
+    The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
+    set by your web server configuration. This setting should be set to the same value so that the correct limit
+    can be displayed to users.

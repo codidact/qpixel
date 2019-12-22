@@ -3,5 +3,6 @@
   <div class="form-group">
     <%= label_tag :file, 'Insert an image' %>
     <%= file_field_tag :file %>
+    <span class="form-text text-muted">Max file size <%= SiteSetting['MaxUploadSize'] %>.</span>
   </div>
 <% end %>
