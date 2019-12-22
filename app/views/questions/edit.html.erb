@@ -1,6 +1,8 @@
 <% content_for :title, "Editing '#{@question.title.truncate(50)}'" %>
 
 <h3>Edit Question</h3>
+<%= render 'posts/image_upload' %>
+
 <%= render 'form', is_edit: true %>
 
 <% if SiteSetting['AskingGuidance'] %>
