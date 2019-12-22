@@ -28,7 +28,7 @@
     <div class="module">
       <h4 class="module__title">Hints and Tips</h4>
       <div class="module__content">
-        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
+        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
       </div>
     </div>
   <% end %>
