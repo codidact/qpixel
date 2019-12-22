@@ -1,6 +1,13 @@
 <% content_for :title, "Ask a Question" %>
 
 <h3>Ask a Question</h3>
+
+<div class="alert alert-warning">
+  <i class="fas fa-info-circle"></i> You're asking a new question on the <strong>main site</strong>, which is
+  for questions on the topic of the site. If you want to post feedback or start a discussion about the site itself,
+  you'll need to <%= link_to 'ask a Meta question instead', new_meta_question_path %>.
+</div>
+
 <% if @question.errors.any? %>
   <div class="text-danger error-messages">
     <p>The following <%= "error".pluralize(@question.errors.count) %> prevented the question from being posted:</p>
