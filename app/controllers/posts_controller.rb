@@ -10,8 +10,14 @@ class PostsController < ApplicationController
 
   def create
     setting_regex = /\${(?<setting_name>[^}]+)}/
-    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex,
-                                                                       "#{$~.nil? ? '' : SiteSetting[$~[:setting_name]]}")
+    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |match|
+      setting_name = $~&.send(:[], :setting_name)
+      if setting_name.nil?
+        ''
+      else
+        SiteSetting[setting_name] || '(No such setting)'
+      end
+    end
     @post = Post.new(new_post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
                                            user: User.find(-1)))
 
@@ -31,8 +37,14 @@ class PostsController < ApplicationController
 
   def update
     setting_regex = /\${(?<setting_name>[^}]+)}/
-    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex,
-                                                                       "#{$~.nil? ? '' : SiteSetting[$~[:setting_name]]}")
+    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |match|
+      setting_name = $~&.send(:[], :setting_name)
+      if setting_name.nil?
+        ''
+      else
+        SiteSetting[setting_name] || '(No such setting)'
+      end
+    end
     PostHistory.post_edited(@post, current_user, before: @post.body_markdown, after: params[:post][:body_markdown])
     if @post.update(post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
                                       last_activity: DateTime.now, last_activity_by: current_user))
