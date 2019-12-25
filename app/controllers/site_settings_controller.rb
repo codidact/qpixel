@@ -4,7 +4,10 @@ class SiteSettingsController < ApplicationController
   before_action :verify_admin
 
   def index
-    @settings = SiteSetting.all.group_by(&:category).sort_by { |c, _ss| c }
+    # The weird argument to sort_by here sorts without throwing errors on nil values -
+    # see https://stackoverflow.com/a/35539062/3160466. 0:[1,c] sorts nil last, to switch
+    # round use 1:[0,c]
+    @settings = SiteSetting.all.group_by(&:category).sort_by { |c, _ss| c ? 0 : [1, c] }
   end
 
   def show
