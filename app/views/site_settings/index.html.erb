@@ -11,18 +11,18 @@
 
 <% @settings.each do |category, settings| %>
   <details>
-    <summary><%= category.humanize %></summary>
+    <summary><%= category&.humanize || 'Uncategorized' %></summary>
     <table class="table table-borderless">
       <tbody>
-      <% settings.each do |setting| %>
-        <tr>
-          <td>
-            <strong><%= setting.name %></strong><br/>
-            <span class="text-muted"><%= setting.description %></span>
-          </td>
-          <td class="js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"><%= setting.typed %></td>
-        </tr>
-      <% end %>
+        <% settings.each do |setting| %>
+          <tr>
+            <td>
+              <strong><%= setting.name %></strong><br/>
+              <span class="text-muted"><%= setting.description %></span>
+            </td>
+            <td class="js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"><%= setting.typed %></td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
   </details>
