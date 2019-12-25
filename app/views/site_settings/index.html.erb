@@ -11,7 +11,7 @@
 
 <% @settings.each do |category, settings| %>
   <details>
-    <summary><%= category&.humanize || 'Uncategorized' %></summary>
+    <summary><%= category&.underscore&.humanize || 'Uncategorized' %></summary>
     <table class="table table-borderless">
       <tbody>
         <% settings.each do |setting| %>
