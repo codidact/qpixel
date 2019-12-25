@@ -26,6 +26,7 @@ class AddSettingCategories < ActiveRecord::Migration[5.2]
     }
 
     categories.each do |name, category|
+      puts "#{name.to_s.camelize}: #{category.to_s.camelize}"
       SiteSetting.find_by(name: name.to_s.camelize).update(category: category.to_s.camelize)
     end
   end
