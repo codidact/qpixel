@@ -1,42 +1,49 @@
 - name: SiteName
   value: QPixel
   value_type: string
+  category: SiteDetails
   description: >
     The main name for this site. Will appear in the page title, among other places.
 
 - name: SiteLogoPath
   value: /assets/logo.png
   value_type: string
+  category: SiteDetails
   description: >
     The path, relative to the root of the domain, to the site's logo file. Can also be an absolute URL.
 
 - name: QuestionUpVoteRep
   value: 5
   value_type: integer
+  category: ReputationAndVoting
   description: >
     The reputation change to the post's author when a question is upvoted.
 
 - name: QuestionDownVoteRep
   value: -2
   value_type: integer
+  category: ReputationAndVoting
   description: >
     The reputation change to the post's author when a question is downvoted.
 
 - name: AnswerUpVoteRep
   value: 10
   value_type: integer
+  category: ReputationAndVoting
   description: >
     The reputation change to the post's author when an answer is upvoted.
 
 - name: AnswerDownVoteRep
   value: -2
   value_type: integer
+  category: ReputationAndVoting
   description: >
     The reputation change to the post's author when an answer is downvoted.
 
 - name: AllowSelfVotes
   value: false
   value_type: boolean
+  category: ReputationAndVoting
   description: >
     Whether or not voting for your own posts is allowed.
 
@@ -45,6 +52,7 @@
     <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
     or entirely based on opinions</li><li>are well written</li></ul></p>
   value_type: string
+  category: HelpAndGuidance
   description: >
     Guidance to help users ask a good question. Will be displayed in the sidebar on the ask a question
     page. Supports Markdown, including a subset of HTML.
@@ -55,6 +63,7 @@
     that don't address the problem clutter up the thread</li><li><strong>explain why you're
     right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul></p>
   value_type: string
+  category: HelpAndGuidance
   description: >
     Guidance to help users write a good answer. Will be displayed in the sidebar on the answer page.
     Supports Markdown, including a subset of HTML.
@@ -62,72 +71,84 @@
 - name: AdministratorContactEmail
   value: contact@example.com
   value_type: string
+  category: SiteDetails
   description: >
     A contact address for the owners or administrators of the site. Will be displayed on error pages.
 
 - name: HotQuestionsCount
   value: 5
   value_type: integer
+  category: Display
   description: >
     How many "hot" questions to display in the sidebar.
 
 - name: AdminBadgeCharacter
   value: ""
   value_type: string
+  category: Display
   description: >
     A character to display after an admin's username to distinguish their role.
 
 - name: ModBadgeCharacter
   value: ""
   value_type: string
+  category: Display
   description: >
     A character to display after a moderator's username to distinguish their role.
 
 - name: SoftDeleteTransferUser
-  value: 0
+  value: -1
   value_type: integer
+  category: AdvancedSettings
   description: >
     A user ID to which to transfer content when soft-deleting a user account.
 
 - name: NewUserInitialRep
   value: 1
   value_type: integer
+  category: ReputationAndVoting
   description: >
     How much reputation new users initially start with.
 
 - name: SEApiClientId
   value: ""
   value_type: string
+  category: Integrations
   description: >
     A client ID for the Stack Exchange API, to allow users to authenticate with SE.
 
 - name: SEApiClientSecret
   value: ""
   value_type: string
+  category: Integrations
   description: >
     A client secret corresponding to the client ID set in SEApiClientId.
 
 - name: SEApiKey
   value: ""
   value_type: string
+  category: Integrations
   description: >
     An API key for the Stack Exchange API.
 
 - name: ContentLicenseName
   value: CC BY-SA 4.0
   value_type: string
+  category: SiteDetails
   description: >
     The name of the license under which content here is posted.
 
 - name: ContentLicenseLink
   value: https://creativecommons.org/licenses/by-sa/4.0/
   value_type: string
+  category: SiteDetails
   description: >
     A link to the full legal code of the license specified in ContentLicenseName.
 
 - name: MaxTagLength
   value: 35
   value_type: integer
+  category: SiteDetails
   description: >
     The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
     may introduce validation issues with content imported from SE.
@@ -135,6 +156,7 @@
 - name: MaxUploadSize
   value: 2MB
   value_type: string
+  category: AdvancedSettings
   description: >
     The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
     set by your web server configuration. This setting should be set to the same value so that the correct limit

@@ -4,7 +4,7 @@ class SiteSettingsController < ApplicationController
   before_action :verify_admin
 
   def index
-    @settings = SiteSetting.all.paginate(page: params[:page], per_page: 20).order(name: :asc)
+    @settings = SiteSetting.all.group_by(&:category).sort_by { |c, _ss| c }
   end
 
   def show
