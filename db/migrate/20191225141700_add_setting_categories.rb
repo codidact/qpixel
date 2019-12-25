@@ -1,5 +1,9 @@
 class AddSettingCategories < ActiveRecord::Migration[5.2]
   def change
+    # This migration only needs to run if there are already existing settings without a category.
+    # That's not the case in test, because they get seeded as necessary, so we don't need to run this.
+    return if Rails.env.test?
+
     categories = {
       site_name: :site_details,
       site_logo_path: :site_details,
