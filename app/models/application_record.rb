@@ -19,6 +19,17 @@ class ApplicationRecord < ActiveRecord::Base
     ApplicationRecord.match_search(term, **cols)
   end
 
+  def user_sort(term_opts, **params)
+    default = term_opts[:default] || :created_at
+    requested = term_opts[:term]
+    direction = term_opts[:direction] || :desc
+    if requested.nil? || !params.include?(requested&.to_sym)
+      sort(default => direction)
+    else
+      sort(params[requested&.to_sym] => direction)
+    end
+  end
+
   private
 
   def self.sanitize_for_search(term, **cols)
