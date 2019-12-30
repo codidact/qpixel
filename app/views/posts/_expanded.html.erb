@@ -1,6 +1,6 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 
-<div class="post" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
+<div class="post <%= post.is_meta ? 'post--meta' : '' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
   <% if is_question %>
     <h2 class="post__title">
       <% if post.is_meta %>
