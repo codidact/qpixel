@@ -14,13 +14,13 @@ class CommentsController < ApplicationController
     root_id = @comment.root.id
     if @comment.save
       unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", "/questions/#{root_id}")
+        @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", post_link(@comment))
       end
 
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
-        user = User.where("REPLACE(username, ' ', '') = ?", match[:name]).first
-        user&.create_notification("You were mentioned in a comment", "/questions/#{root_id}") if user
+        user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
+        user.create_notification("You were mentioned in a comment", post_link(@comment)) if user
       end
 
       render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
@@ -74,6 +74,10 @@ class CommentsController < ApplicationController
     unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
       render template: 'errors/forbidden', status: 401
     end
+  end
+
+  def post_link(comment)
+    comment.post.question? ? share_question_url(comment.post_id) : share_answer_url(qid: comment.root.id, id: comment.post_id)
   end
 end
 

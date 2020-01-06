@@ -19,7 +19,7 @@ class AnswersController < ApplicationController
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
                                              body: AnswersController.renderer.render(params[:answer][:body_markdown]),
                                              last_activity: DateTime.now, last_activity_by: current_user))
-    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", "/questions/#{@question.id}")
+    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", share_question_url(@question))
     if @answer.save
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
