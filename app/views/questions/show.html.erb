@@ -3,12 +3,20 @@
 <%= render 'posts/expanded', post: @question %>
 <span class="clearfix"></span><br/>
 <h4><%= pluralize(@question.answers.where(deleted: false).count, "answer") %></h4>
-<hr/>
+
+<%= tabs do %>
+  <% tab 'Score', query_url(sort: 'score'), is_active: active_search?('score') %>
+  <% tab 'Age', query_url(sort: 'age'), is_active: active_search?('age') %>
+<% end %>
 
 <% @answers.each do |answer| %>
   <%= render 'posts/expanded', post: answer %>
   <hr/>
 <% end %>
+
+<div class="text-center">
+  <%= will_paginate @answers, renderer: BootstrapPagination::Rails %>
+</div>
 
 <% if user_signed_in? && !@question.closed %>
   <%= render 'answers/new', answer: Answer.new %>

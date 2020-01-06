@@ -27,4 +27,8 @@ module ApplicationHelper
   def license_link
     link_to SiteSetting['ContentLicenseName'], SiteSetting['ContentLicenseLink']
   end
+
+  def active_search?(param)
+    $active_search_param == param&.to_sym
+  end
 end

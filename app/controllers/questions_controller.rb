@@ -28,10 +28,13 @@ class QuestionsController < ApplicationController
       check_your_privilege('ViewDeleted', @question) or return
     end
     @answers = if current_user&.has_privilege?('ViewDeleted')
-                 @question.answers
+                 Answer.where(parent_id: @question.id)
                else
-                 @question.answers.undeleted
-               end.includes(:votes, :user, :comments).order(Arel.sql('score DESC'))
+                 Answer.where(parent_id: @question.id).undeleted
+               end.user_sort({ term: params[:sort], default: :score },
+                             { score: :score, age: :created_at })
+                  .paginate(page: params[:page], per_page: 20)
+                  .includes(:votes, :user, :comments)
   end
 
   def tagged
