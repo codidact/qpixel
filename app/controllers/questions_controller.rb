@@ -39,7 +39,7 @@ class QuestionsController < ApplicationController
 
   def tagged
     @tag = Tag.find_by_name params[:tag]
-    @questions = @tag.posts.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
+    @questions = @tag.posts.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
   def new
