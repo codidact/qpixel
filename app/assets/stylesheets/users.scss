@@ -10,7 +10,7 @@
   }
 }
 
-.user-list__user {
+.user-list--user {
   border-radius: 0.4em;
   transition: all 0.2s ease;
   padding: 0.5em;
@@ -29,7 +29,7 @@
     min-width: 32px;
   }
 
-  .user__meta {
+  .user--meta {
     display: flex;
     flex-direction: column;
   }
@@ -45,7 +45,7 @@
   border-left: 1px solid $muted-graphic;
 }
 
-.user-show__username {
+.user-show--username {
   word-wrap: break-word;
   display: flex;
   max-width: 100%;

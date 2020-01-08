@@ -1,8 +1,8 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 
-<div class="post <%= post.is_meta ? 'post--meta' : '' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
+<div class="post <%= post.is_meta ? 'post__meta' : '' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
   <% if is_question %>
-    <h2 class="post__title">
+    <h2 class="post--title">
       <% if post.is_meta %>
         <strong>META</strong> &mdash;
       <% end %>
@@ -10,8 +10,8 @@
     </h2>
   <% end %>
 
-  <div class="post__container <%= 'deleted-content' if post.deleted? %>">
-    <div class="post__votes">
+  <div class="post--container <%= 'deleted-content' if post.deleted? %>">
+    <div class="post--votes">
       <% existing_vote = my_vote(post) %>
       <% if existing_vote&.vote_type == 1 %>
         <img class="vote-button voted" data-vote-type="1" data-vote-id="<%= existing_vote.id %>"
@@ -29,19 +29,19 @@
       <% end %>
     </div>
 
-    <div class="post__body">
+    <div class="post--body">
       <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
-      <div class="post__meta">
+      <div class="post--meta">
         <% if is_question %>
-          <div class="post__tags">
+          <div class="post--tags">
             <% post.tags_cache.each do |tag| %>
               <% next if tag.nil? || tag.empty? %>
               <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
             <% end %>
           </div>
         <% end %>
-        <span class="post__author text-muted">
+        <span class="post--author text-muted">
           <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</span> &middot;
           by
           <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" />
@@ -49,7 +49,7 @@
         </span>
       </div>
 
-      <div class="post__actions">
+      <div class="post--actions">
         <%= link_to 'history', post_history_path(post) %> /
         <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> /
         <%= link_to 'permalink', is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) %> /
@@ -69,8 +69,8 @@
       </div>
 
       <% if post.att_source.present? %>
-        <div class="post__notice">
-          <div class="notice__content">
+        <div class="post--notice">
+          <div class="notice--content">
             <p>
               <i class="fas fa-balance-scale"></i> This post was sourced from <%= link_to post.att_source, post.att_source %>.
               <% if post.att_license_name.present? %>
@@ -82,9 +82,9 @@
       <% end %>
 
       <% if is_question && post.closed %>
-        <div class="post__notice">
-          <h4 class="notice__title">Closed Question</h4>
-          <div class="notice__content">
+        <div class="post--notice">
+          <h4 class="notice--title">Closed Question</h4>
+          <div class="notice--content">
             <p>
               This question was closed on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
               by <%= link_to post.closed_by.username, user_path(post.closed_by) %>.
@@ -97,9 +97,9 @@
       <% end %>
 
       <% if post.deleted %>
-        <div class="post__notice">
-          <h4 class="notice__title">Deleted</h4>
-          <div class="notice__content">
+        <div class="post--notice">
+          <h4 class="notice--title">Deleted</h4>
+          <div class="notice--content">
             <p>
               This post was deleted on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
               by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>.
@@ -109,7 +109,7 @@
           </div>
         </div>
       <% end %>
-      <div class="post__comments">
+      <div class="post--comments">
         <h4><%= pluralize(post.comments.undeleted.size, 'comment') %></h4>
         <% (current_user&.is_moderator || current_user&.is_admin ? post.comments : post.comments.undeleted).each do |comment| %>
           <%= render 'comments/comment', comment: comment %>

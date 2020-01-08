@@ -1,6 +1,6 @@
 @import 'variables';
 
-.post__comments {
+.post--comments {
   h4 {
     padding-bottom: 0.5em;
     border-bottom: 1px solid $muted-graphic;
@@ -13,11 +13,11 @@
   border-bottom: 1px solid $muted-graphic;
   padding: 0.5em;
 
-  .comment__content {
+  .comment--content {
     margin-bottom: 0;
   }
 
-  .comment__meta {
+  .comment--meta {
     margin-left: auto;
   }
 }

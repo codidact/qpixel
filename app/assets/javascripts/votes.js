@@ -2,7 +2,7 @@ $(() => {
   $(document).on('click', '.vote-button', async evt => {
     const $tgt = $(evt.target);
     const $post = $tgt.parents('.post');
-    const $score = $post.find('.post__votes').find('.score');
+    const $score = $post.find('.post--votes').find('.score');
     const voteType = $tgt.data('vote-type');
     const voted = $tgt.hasClass('voted');
 

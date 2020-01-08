@@ -1,6 +1,6 @@
 <% content_for :title, "User #{@user.username}" %>
 
-<h3 class="user-show__username">
+<h3 class="user-show--username">
   <img alt="user avatar" src="<%= avatar_url(@user, 64) %>" height="64" width="64" />
   <span><%= @user.username %> <small>(<%= @user.reputation %>)</small></span>
 </h3>

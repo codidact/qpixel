@@ -14,7 +14,7 @@
     flex-direction: row;
   }
 
-  .question__score {
+  .question--score {
     display: flex;
     flex-direction: row;
     align-items: baseline;
@@ -40,16 +40,16 @@
     }
   }
 
-  .question__info {
+  .question--info {
     flex: 1;
     display: flex;
     flex-direction: column;
 
-    .question__tags {
+    .question--tags {
       margin-top: 0.5em;
     }
 
-    .question__details {
+    .question--details {
       margin-top: 0.5em;
       color: $muted-text;
       text-align: right;
@@ -66,13 +66,13 @@
 }
 
 .post {
-  .post__title {
+  .post--title {
     font-size: 2em;
     padding-bottom: 0.5em;
     border-bottom: 1px solid $muted-graphic;
   }
 
-  .post__container {
+  .post--container {
     display: flex;
     flex-direction: column;
 
@@ -80,7 +80,7 @@
       flex-direction: row;
     }
 
-    .post__votes {
+    .post--votes {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -123,7 +123,7 @@
       }
     }
 
-    .post__body {
+    .post--body {
       flex: 1;
       margin-left: 0.5em;
 
@@ -135,7 +135,7 @@
         margin-left: 1em;
       }
 
-      .post__meta {
+      .post--meta {
         display: flex;
         flex-direction: column;
         margin-top: 2em;
@@ -144,29 +144,29 @@
           flex-direction: row;
         }
 
-        .post__tags {
+        .post--tags {
           margin-right: auto;
         }
 
-        .post__author {
+        .post--author {
           margin-left: auto;
         }
       }
 
-      .post__actions {
+      .post--actions {
         margin-top: 1em;
       }
     }
   }
 }
 
-.post__notice {
+.post--notice {
   background: lighten($warning, 40%);
   border: 1px solid lighten($warning, 35%);
   margin: 1em 0;
   border-radius: 0.3em;
 
-  .notice__title {
+  .notice--title {
     margin-top: 0;
     margin-bottom: 0;
     padding: 0.5em;
@@ -178,7 +178,7 @@
     letter-spacing: 0.5px;
   }
 
-  .notice__content {
+  .notice--content {
     padding: 0.5em;
 
     p {

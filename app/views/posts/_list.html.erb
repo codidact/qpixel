@@ -1,24 +1,24 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
-<div class="question">
-  <div class="question__score">
+<div class="question <%= is_question && post.is_meta ? 'post__meta' : '' %>">
+  <div class="question--score">
     <span class="score"><%= post.score %></span>
     <span class="descriptor">score</span>
   </div>
-  <div class="question__info">
-    <%= link_to question_path(is_question ? post : post.parent), class: 'question__title' do %>
+  <div class="question--info">
+    <%= link_to question_path(is_question ? post : post.parent), class: 'question--title' do %>
       <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
         <strong>META</strong> &mdash;
       <% end %>
       <%= is_question ? post.title : post.parent.title %>
     <% end %>
     <% if is_question %>
-      <div class="question__tags">
+      <div class="question--tags">
         <% post.tags_cache.each do |tag| %>
           <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
         <% end %>
       </div>
     <% end %>
-    <span class="question__details">
+    <span class="question--details">
       <% if is_question %>
         <%= pluralize(post.answer_count, 'answer') %> &middot;
       <% end %>

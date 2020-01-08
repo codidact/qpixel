@@ -27,3 +27,5 @@ TODO.md
 
 config/storage.yml
 config/email.yml
+
+deploy

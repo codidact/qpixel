@@ -188,7 +188,7 @@ main {
     border: 1px solid lighten($primary, 45%);
     margin: 1em 0;
 
-    .module__title {
+    .module--title {
       margin-top: 0;
       padding: 0.5em;
       border-bottom: 1px solid lighten($primary, 45%);
@@ -199,7 +199,7 @@ main {
       letter-spacing: 0.5px;
     }
 
-    .module__content {
+    .module--content {
       padding: 0.5em;
 
       ul {

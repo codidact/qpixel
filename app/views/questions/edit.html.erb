@@ -8,8 +8,8 @@
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>
     <div class="module">
-      <h4 class="module__title">Hints and Tips</h4>
-      <div class="module__content">
+      <h4 class="module--title">Hints and Tips</h4>
+      <div class="module--content">
         <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
       </div>
     </div>
