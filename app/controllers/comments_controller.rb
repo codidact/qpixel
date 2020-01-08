@@ -25,7 +25,7 @@ class CommentsController < ApplicationController
 
       render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
-      render json: { status: 'failed', message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
+      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: 500
     end
   end
 

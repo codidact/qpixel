@@ -8,6 +8,9 @@ $(() => {
     else {
       QPixel.createNotification('danger', data.message, evt.target);
     }
+  }).on('ajax:error', async (evt, xhr) => {
+    const data = xhr.responseJSON;
+    QPixel.createNotification('danger', data.message, evt.target);
   });
 
   $(document).on('click', '.js-comment-edit', async evt => {

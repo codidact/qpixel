@@ -50,7 +50,7 @@
 <% if @user.questions.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't asked anything yet.</em>
 <% end %>
-<% @user.questions.order(score: :desc).first(5).each do |q| %>
+<% @user.questions.undeleted.order(score: :desc).first(5).each do |q| %>
   <%= render 'posts/list', post: q %>
 <% end %>
 <%= link_to user_posts_path(@user, type: 'questions') do %>
@@ -63,7 +63,7 @@
 <% if @user.answers.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't answered anything yet.</em>
 <% end %>
-<% @user.answers.order(score: :desc).first(5).each do |a| %>
+<% @user.answers.undeleted.order(score: :desc).first(5).each do |a| %>
   <%= render 'posts/list', post: a %>
 <% end %>
 <%= link_to user_posts_path(@user, type: 'answers') do %>
