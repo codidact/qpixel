@@ -30,7 +30,7 @@
     </div>
 
     <div class="post--body">
-      <%= raw(sanitize(post.body, scrubber: scrubber)) %>
+      <div class="post--text"><%= raw(sanitize(post.body, scrubber: scrubber)) %></div>
 
       <div class="post--meta">
         <% if is_question %>

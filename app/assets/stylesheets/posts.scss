@@ -66,9 +66,16 @@
 }
 
 .post {
+  &.post__meta {
+    .post--title {
+      background: $meta;
+    }
+  }
+
   .post--title {
     font-size: 2em;
-    padding-bottom: 0.5em;
+    padding: 0.5em 0.1em;
+    margin-top: 0.5em;
     border-bottom: 1px solid $muted-graphic;
   }
 
@@ -198,4 +205,8 @@
   button[type="submit"] {
     display: none;
   }
+}
+
+.question.post__meta {
+  background: $meta;
 }

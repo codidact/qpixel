@@ -29,5 +29,21 @@
     </div>
   <% end %>
 
-  <%= f.submit is_edit ? "Update" : "Ask!", class: "btn btn-primary" %>
+  <div class="form-group">
+    <% button_text = is_meta ? "Ask on Meta" : "Ask on Main Site" %>
+    <%= f.submit is_edit ? "Update" : button_text, class: "btn btn-primary" %><br/>
+  </div>
+  <% if is_meta %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i>
+      Not meant to be asking on Meta? You're in the wrong place - copy your question text and use
+      <%= link_to 'this page', new_question_path %> to ask it instead.
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i>
+      Want to ask on Meta instead? You're in the wrong place - copy your question text and use
+      <strong><%= link_to 'this page', new_meta_question_path %></strong> to ask it instead.
+    </div>
+  <% end %>
 <% end %>
