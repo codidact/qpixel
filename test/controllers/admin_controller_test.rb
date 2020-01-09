@@ -50,4 +50,26 @@ class AdminControllerTest < ActionController::TestCase
       assert_response(404)
     end
   end
+
+  test "should get single privilege" do
+    sign_in users(:admin)
+    get :show_privilege, params: { name: privileges(:close).name, format: :json }
+    assert_response 200
+    assert_not_nil assigns(:privilege)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+  end
+
+  test "should update privilege threshold" do
+    sign_in users(:admin)
+    post :update_privilege, params: { name: privileges(:close).name, threshold: 2000 }
+    assert_response 202
+    assert_not_nil assigns(:privilege)
+    assert_equal 2000, assigns(:privilege).threshold
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'OK', JSON.parse(response.body)['status']
+  end
 end

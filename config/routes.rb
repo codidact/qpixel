@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post   'admin/settings/:name',        to: 'site_settings#update', as: :update_site_setting
   delete 'admin/users/delete/:id',      to: 'users#soft_delete', as: :soft_delete_user
   get    'admin/privileges',            to: 'admin#privileges', as: :admin_privileges
+  get    'admin/privileges/:name',      to: 'admin#show_privilege', as: :admin_privilege
   post   'admin/privileges/:name',      to: 'admin#update_privilege', as: :admin_update_privilege
 
   get    'mod',                         to: 'moderator#index', as: :moderator

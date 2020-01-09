@@ -47,7 +47,7 @@ module UserSortable
       $active_search_param = default
       order(default => direction)
     else
-      $active_search_param = requested.to_sym
+      $active_search_param = field_mappings[requested.to_sym]
       order(field_mappings[requested.to_sym] => direction)
     end
   end

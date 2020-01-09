@@ -1,0 +1,15 @@
+close:
+  name: Close
+  threshold: 250
+
+edit:
+  name: Edit
+  threshold: 500
+
+delete:
+  name: Delete
+  threshold: 1000
+
+view_deleted:
+  name: ViewDeleted
+  threshold: 1000

@@ -15,13 +15,20 @@ class AdminController < ApplicationController
   
   def privileges
     @privileges = Privilege.all.user_sort({term: params[:sort], default: :threshold},
-                                          {age: :created_at, rep: :threshold, name: :name})
+                                          {rep: :threshold, name: :name})
                            .paginate(page: params[:page], per_page: 20)
+  end
+
+  def show_privilege
+    @privilege = Privilege.find_by name: params[:name]
+    respond_to do |format|
+      format.json { render json: @privilege }
+    end
   end
 
   def update_privilege
     @privilege = Privilege.find_by name: params[:name]
     @privilege.update(threshold: params[:threshold])
-    render json: { status: 'OK' }, status: 202
+    render json: { status: 'OK', privilege: @privilege }, status: 202
   end
 end
