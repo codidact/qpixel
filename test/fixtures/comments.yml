@@ -12,3 +12,9 @@ on_answer:
   user: standard_user
   post: answer_one
   content: ABCDEF GHIJKL MNOPQR
+
+deleted:
+  user: standard_user
+  post: question_one
+  content: ABCDEF GHIJKL MNOPQR
+  deleted: true

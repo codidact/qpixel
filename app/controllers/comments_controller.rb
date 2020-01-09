@@ -1,6 +1,6 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})

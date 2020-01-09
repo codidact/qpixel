@@ -155,4 +155,33 @@ class CommentsControllerTest < ActionController::TestCase
     end
     assert_response 200
   end
+
+  test "should get post comments as HTML" do
+    get :post, params: { post_id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:comments)
+  end
+
+  test "should get post comments as JSON" do
+    get :post, params: { post_id: posts(:question_one).id, format: :json }
+    assert_response 200
+    assert_not_nil assigns(:comments)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert JSON.parse(response.body).all? { |comment| comment['deleted'] == false },
+           'Unauthenticated comment request contains deleted comment'
+  end
+
+  test "should get comments including deleted as admin" do
+    sign_in users(:moderator)
+    get :post, params: { post_id: posts(:question_one).id, format: :json }
+    assert_response 200
+    assert_not_nil assigns(:comments)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert JSON.parse(response.body).any? { |comment| comment['deleted'] == true },
+           'Authenticated comment request contains no deleted comments'
+  end
 end
