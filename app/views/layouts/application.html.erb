@@ -72,15 +72,15 @@
     <div class="sidebar">
       <%= yield(:sidebar) %>
 
-      <% if user_is_mod || user_is_admin %>
+      <% if moderator? || admin? %>
         <div class="module">
           <h4 class="module--title">Moderator Tools</h4>
           <div class="module--content">
             <ul>
-              <% if user_is_mod %>
+              <% if moderator? %>
                 <li><%= link_to 'Moderator Tools', moderator_path %></li>
               <% end %>
-              <% if user_is_admin %>
+              <% if admin? %>
                 <li><%= link_to 'Admin Tools', admin_path %></li>
               <% end %>
             </ul>

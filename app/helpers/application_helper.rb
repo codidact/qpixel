@@ -1,10 +1,10 @@
 # Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
-  def user_is_mod
+  def moderator?
     user_signed_in? && (current_user.is_moderator || current_user.is_admin)
   end
 
-  def user_is_admin
+  def admin?
     user_signed_in? && current_user.is_admin
   end
 

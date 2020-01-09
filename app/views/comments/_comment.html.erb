@@ -1,17 +1,17 @@
 <div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
   <p class="comment--content">
     <%= raw(sanitize(CommentsController.renderer.render(comment.content), scrubber: CommentScrubber.new)) %>
+    <span class="comment--meta">
+      &mdash; <%= link_to comment.user.username, user_path(comment.user) %>
+        <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
+        <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
+        &middot; <a href="#" class="js-comment-edit">edit</a>
+        &middot; <% if comment.deleted %>
+            <a href="#" class="js-comment-undelete text-danger">undelete</a>
+          <% else %>
+            <a href="#" class="js-comment-delete text-danger">delete</a>
+          <% end %>
+      <% end %>
+    </span>
   </p>
-  <div class="comment--meta">
-    &mdash; <%= link_to comment.user.username, user_path(comment.user) %>
-    <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
-    <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
-      &middot; <a href="#" class="js-comment-edit">edit</a>
-      &middot; <% if comment.deleted %>
-          <a href="#" class="js-comment-undelete text-danger">undelete</a>
-        <% else %>
-          <a href="#" class="js-comment-delete text-danger">delete</a>
-        <% end %>
-    <% end %>
-  </div>
 </div>

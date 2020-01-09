@@ -7,7 +7,7 @@
 <% end %>
 
 <% unless @post.nil? %>
-  <% if (user_is_mod && @post.post_type_id == HelpDoc.post_type_id) || (user_is_admin && @post.post_type_id == PolicyDoc.post_type_id) %>
+  <% if (moderator? && @post.post_type_id == HelpDoc.post_type_id) || (admin? && @post.post_type_id == PolicyDoc.post_type_id) %>
     <%= link_to 'edit this document', edit_post_path(@post) %>
   <% end %>
 <% end %>

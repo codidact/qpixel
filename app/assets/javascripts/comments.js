@@ -1,8 +1,28 @@
 $(() => {
+  $('.js-comment-form').hide();
+
+  $('.js-add-comment').on('click', async evt => {
+    evt.preventDefault();
+
+    $(evt.target).parent().find('.js-comment-form').show();
+  });
+
+  $('.js-more-comments').on('click', async evt => {
+    evt.preventDefault();
+    const $tgt = $(evt.target);
+    const postId = $tgt.attr('data-post-id');
+
+    const resp = await fetch(`/comments/post/${postId}`, {
+      headers: { 'Accept': 'text/html' }
+    });
+    const data = await resp.text();
+    $tgt.parents('.post--comments').find('.post--comments-container').html(data);
+  });
+
   $('.comment-form').on('ajax:success', async (evt, data) => {
     const $tgt = $(evt.target);
     if (data.status === 'success') {
-      $tgt.parents('.post--comments').find('.comment-form').before(data.comment);
+      $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
       $tgt.find('.js-comment-content').val('');
     }
     else {

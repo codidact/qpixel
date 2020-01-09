@@ -78,6 +78,7 @@ Rails.application.routes.draw do
   post   'flags/new',                   to: 'flags#new', as: :new_flag
 
   post   'comments/new',                to: 'comments#create', as: :create_comment
+  get    'comments/post/:post_id',      to: 'comments#post', as: :post_comments
   get    'comments/:id',                to: 'comments#show', as: :comment
   post   'comments/:id/edit',           to: 'comments#update', as: :update_comment
   delete 'comments/:id/delete',         to: 'comments#destroy', as: :delete_comment

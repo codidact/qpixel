@@ -60,6 +60,18 @@ class CommentsController < ApplicationController
     end
   end
 
+  def post
+    @comments = if current_user&.is_moderator || current_user&.is_admin
+                  Comment.all
+                else
+                  Comment.undeleted
+                end.where(post_id: params[:post_id])
+    respond_to do |format|
+      format.html { render layout: false }
+      format.json { render json: @comments }
+    end
+  end
+
   private
 
   def comment_params

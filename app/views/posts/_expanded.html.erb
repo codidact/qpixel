@@ -111,25 +111,38 @@
       <% end %>
       <div class="post--comments">
         <h4><%= pluralize(post.comments.undeleted.size, 'comment') %></h4>
-        <% (current_user&.is_moderator || current_user&.is_admin ? post.comments : post.comments.undeleted).each do |comment| %>
-          <%= render 'comments/comment', comment: comment %>
-        <% end %>
-
-        <% if user_signed_in? %>
-          <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form' } do |f| %>
-            <%= f.hidden_field :post_id, value: post.id %>
-
-            <div class="form-group-horizontal">
-              <div class="form-group">
-                <%= f.label :content, 'Your comment' %>
-                <%= f.text_area :content, rows: 3, class: 'form-control js-comment-content', autocomplete: 'off' %>
-              </div>
-              <div class="actions">
-                <%= f.submit 'Post', class: 'btn btn-primary' %>
-              </div>
-            </div>
+        <div class="post--comments-container">
+          <% comments = moderator? ? post.comments : post.comments.undeleted %>
+          <% comments.first(5).each do |comment| %>
+            <%= render 'comments/comment', comment: comment %>
           <% end %>
-        <% end %>
+        </div>
+
+        <div class="post--comments-links">
+          <% if comments.count > 5 %>
+            <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">Show more comments</a>
+            <% if user_signed_in? %>
+              &middot;
+            <% end %>
+          <% end %>
+          <% if user_signed_in? %>
+            <a href="#" class="js-add-comment">Add a comment</a>
+
+            <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form' } do |f| %>
+              <%= f.hidden_field :post_id, value: post.id %>
+
+              <div class="form-group-horizontal">
+                <div class="form-group">
+                  <%= f.label :content, 'Your comment' %>
+                  <%= f.text_area :content, rows: 3, class: 'form-control js-comment-content', autocomplete: 'off' %>
+                </div>
+                <div class="actions">
+                  <%= f.submit 'Post', class: 'btn btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

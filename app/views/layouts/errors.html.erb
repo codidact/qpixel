@@ -31,10 +31,10 @@
           <%= link_to "sign up", new_user_registration_path, class: "smaller" %>
           <span class="lateral-sep"></span>
         <% end %>
-        <% if user_is_admin %>
+        <% if admin? %>
           <a class="toplevel" href="/admin">Admin</a>
         <% end %>
-        <% if user_is_mod %>
+        <% if moderator? %>
           <a class="toplevel" href="/mod">Moderator</a>
         <% end %>
         <a class="toplevel" href="/questions">Questions</a>
