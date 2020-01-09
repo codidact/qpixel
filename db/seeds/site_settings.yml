@@ -51,7 +51,7 @@
   value: >
     <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
     or entirely based on opinions</li><li>are well written</li></ul></p>
-  value_type: string
+  value_type: text
   category: HelpAndGuidance
   description: >
     Guidance to help users ask a good question. Will be displayed in the sidebar on the ask a question
@@ -62,7 +62,7 @@
     <p>When answering, remember to...</p><ul><li><strong>answer the question</strong> - posts
     that don't address the problem clutter up the thread</li><li><strong>explain why you're
     right</strong> - not everyone knows what you do, so explain why this is the answer</li></ul></p>
-  value_type: string
+  value_type: text
   category: HelpAndGuidance
   description: >
     Guidance to help users write a good answer. Will be displayed in the sidebar on the answer page.
@@ -161,3 +161,10 @@
     The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
     set by your web server configuration. This setting should be set to the same value so that the correct limit
     can be displayed to users.
+
+- name: FirstVisitGuidance
+  value: ~
+  value_type: text
+  category: HelpAndGuidance
+  description: >
+    A dismissible message that is shown to logged-out users when they visit the site, to introduce them to the basics of the site.

@@ -67,6 +67,20 @@
           </div>
         <% end %>
       <% end %>
+
+
+      <% if @first_visit_notice %>
+        <% notice = SiteSetting['FirstVisitGuidance'] %>
+        <% if notice.present? %>
+          <div class="alert alert-warning js-first-visit-notice">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <%= raw(sanitize(notice, scrubber: scrubber)) %>
+          </div>
+        <% end %>
+      <% end %>
+
       <%= yield %>
     </div>
     <div class="sidebar">

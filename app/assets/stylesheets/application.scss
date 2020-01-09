@@ -238,6 +238,19 @@ img {
   max-width: 100%;
 }
 
+details {
+  summary {
+    font-weight: bold;
+  }
+
+  border-top: 1px solid $muted-graphic;
+  padding: 0.5em;
+
+  &:last-of-type {
+    border-bottom: 1px solid $muted-graphic;
+  }
+}
+
 @-moz-document url-prefix() {
   details > summary:before {
     content: '▶';

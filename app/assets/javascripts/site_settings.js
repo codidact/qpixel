@@ -4,7 +4,8 @@ $(() => {
     'integer': $('<input type="number" class="form-control js-setting-edit" />'),
     'float': $('<input type="number" step="0.0001" class="form-control js-setting-edit" />'),
     'boolean': $(`<select class="form-control js-setting-edit"><option value></option><option value="true">true</option><option value="false">false</option></select>`),
-    'json': $(`<textarea rows="5" cols="100" class="form-control js-setting-edit"></textarea>`)
+    'json': $(`<textarea rows="5" cols="100" class="form-control js-setting-edit"></textarea>`),
+    'text': $(`<textarea rows="5" cols="100" class="form-control js-setting-edit"></textarea>`)
   };
 
   $('.js-setting-value').on('click', async evt => {
@@ -23,7 +24,7 @@ $(() => {
     const data = await resp.json();
     const value = data.typed;
 
-    const form = settingEditFields[valueType].clone().val(value.toString()).attr('data-name', name);
+    const form = settingEditFields[valueType].clone().val(!!value ? value.toString() : '').attr('data-name', name);
     $tgt.addClass('editing').html(form).append(`<button class="btn btn-primary js-setting-submit">Update</button>`);
   });
 

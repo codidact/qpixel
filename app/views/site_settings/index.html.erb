@@ -20,7 +20,9 @@
               <strong><%= setting.name %></strong><br/>
               <span class="text-muted"><%= setting.description %></span>
             </td>
-            <td class="js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"><%= setting.typed %></td>
+            <td class="site-setting--value js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>">
+              <%= setting.typed %>
+            </td>
           </tr>
         <% end %>
       </tbody>

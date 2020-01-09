@@ -25,6 +25,10 @@ class SettingConverter
     @value&.to_s
   end
 
+  def as_text
+    @value&.to_s
+  end
+
   def as_integer
     @value&.to_i
   end

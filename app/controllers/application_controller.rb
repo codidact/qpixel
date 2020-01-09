@@ -60,5 +60,11 @@ class ApplicationController < ActionController::Base
     if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
       @open_flags = Flag.unhandled.count
     end
+
+    if !user_signed_in? && cookies[:dismiss_fvn] != 'true'
+      @first_visit_notice = true
+    else
+      @first_visit_notice = false
+    end
   end
 end
