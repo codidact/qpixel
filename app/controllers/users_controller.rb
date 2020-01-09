@@ -33,11 +33,10 @@ class UsersController < ApplicationController
       return
     end
 
-    sort_params = { score: :score, age: :created_at }
-    sort_param = sort_params[params[:sort]] || :score
-
     model = post_types[params[:type].to_sym]
-    @posts = model.undeleted.where(user: @user).order(sort_param => :desc).paginate(page: params[:page], per_page: 25)
+    @posts = model.undeleted.where(user: @user).user_sort({term: params[:sort], default: :score},
+                                                          {age: :created_at, score: :score})
+                  .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
         render :posts

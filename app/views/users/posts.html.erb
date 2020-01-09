@@ -2,11 +2,10 @@
 
 <h1><%= params[:type].humanize %> by <%= @user.username %></h1>
 
-<div class="tabs">
-  <%= link_to 'Score', query_url(sort: 'score'),
-              class: "tabs--tab #{params[:sort] == 'score' || params[:sort].nil? ? 'tab__active' : ''}" %>
-  <%= link_to 'Age', query_url(sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
-</div>
+<%= tabs do %>
+  <% tab 'Score', query_url(sort: 'score'), is_active: active_search?('score') %>
+  <% tab 'Age', query_url(sort: 'age'), is_active: active_search?('created_at') %>
+<% end %>
 
 <% @posts.each do |post| %>
   <%= render 'posts/list', post: post %>
