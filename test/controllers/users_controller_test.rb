@@ -176,4 +176,20 @@ class UsersControllerTest < ActionController::TestCase
     end
     assert_equal 'invalid', JSON.parse(response.body)['status']
   end
+
+  test "should sort full posts lists correctly" do
+    get :posts, params: { id: users(:standard_user).id, type: 'questions', format: :json, sort: 'age' }
+    assert_response 200
+    assert_not_nil assigns(:user)
+    assert_not_nil assigns(:posts)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assigns(:posts).each_with_index do |post, idx|
+      next if idx == 0
+      previous = assigns(:posts)[idx - 1]
+      assert post.created_at <= previous.created_at,
+             "@posts was expected in created_at DESC order, but got #{post.created_at.iso8601} before #{previous.created_at.iso8601}"
+    end
+  end
 end

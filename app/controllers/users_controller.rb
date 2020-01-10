@@ -42,7 +42,7 @@ class UsersController < ApplicationController
         render :posts
       end
       format.json do
-        render json: { status: 'success', posts: @posts }
+        render json: @posts
       end
     end
   end
