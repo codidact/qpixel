@@ -29,3 +29,6 @@ config/storage.yml
 config/email.yml
 
 deploy
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key

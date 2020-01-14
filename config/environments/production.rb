@@ -79,8 +79,6 @@ Rails.application.configure do
 
   config.active_storage.service = :s3
 
-  email_config = YAML.load_file("#{Rails.root}/config/email.yml")[Rails.env]
-  config.action_mailer.delivery_method = email_config['delivery_method'].to_sym
-  config.action_mailer.smtp_settings = email_config['smtp_settings'].map { |k, v| [k, k == :login ? v.to_sym : v] }.to_h
+  config.action_mailer.delivery_method = :ses
   config.action_mailer.default_url_options = { host: 'writing.codidact.com', port: 80 }
 end

@@ -19,6 +19,7 @@ gem 'will_paginate-bootstrap'
 gem 'rails-html-sanitizer'
 
 gem 'aws-sdk-s3', require: false
+gem 'aws-ses', '~> 0.6.0'
 
 gem 'whenever', require: false
 
