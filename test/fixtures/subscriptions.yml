@@ -1,0 +1,33 @@
+all:
+  type: all
+  user: standard_user
+  enabled: true
+  frequency: 1
+  last_sent_at: 2020-01-01T00:00:00
+  name: Everything
+
+tag:
+  type: tag
+  qualifier: discussion
+  user: standard_user
+  enabled: true
+  frequency: 1
+  last_sent_at: 2020-01-01T00:00:00
+  name: Discussion questions
+
+user:
+  type: user
+  qualifier: <%= ActiveRecord::FixtureSet.identify :standard_user %>
+  user: standard_user
+  enabled: true
+  frequency: 1
+  last_sent_at: 2020-01-01T00:00:00
+  name: standard_user's questions
+
+interesting:
+  type: interesting
+  user: standard_user
+  enabled: true
+  frequency: 1
+  last_sent_at: 2020-01-01T00:00:00
+  name: Interesting things

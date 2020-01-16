@@ -1,0 +1,15 @@
+<h1>New Questions Subscription</h1>
+<div class="alert alert-danger">
+  <p>
+    There was a problem saving your subscription:
+
+  <ul>
+    <% @subscription.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+  </p>
+
+  <p>If you came here from a link and had filled in the requested details, this may be a bug. Please let us know on
+    <%= link_to 'Meta', new_meta_question_path %>.</p>
+</div>

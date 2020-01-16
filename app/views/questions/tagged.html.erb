@@ -1,7 +1,14 @@
 <% content_for :title, "Tag: #{params[:tag]}" %>
 
 <h3>Questions tagged <%= params[:tag] %></h3>
+
 <% @questions.each do |question| %>
   <%= render 'posts/list', post: question %>
 <% end %>
+
 <%= will_paginate @questions, renderer: BootstrapPagination::Rails %>
+
+<div>
+  <%= link_to 'Subscribe to questions in this tag',
+              new_subscription_path(type: 'tag', qualifier: params[:tag], return_to: request.path) %>
+</div>

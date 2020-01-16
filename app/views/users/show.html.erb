@@ -7,18 +7,21 @@
 <p>
   <% if @user == current_user %>
     <%= link_to edit_user_registration_path do %>
-      <i class="fas fa-edit"></i> Edit Account &middot;
-    <% end %>
+      <i class="fas fa-edit"></i> Edit Account
+    <% end %> &middot;
     <%= link_to edit_user_profile_path do %>
       <i class="fas fa-edit"></i> Edit Profile
     <% end %>
-    <% if current_user&.is_moderator %>
-      &middot;
-    <% end %>
+    &middot;
   <% end %>
   <% if current_user&.is_moderator %>
     <%= link_to mod_user_path(@user) do %>
       <i class="fas fa-shield-alt"></i> Moderator Tools
+    <% end %> &middot;
+  <% end %>
+  <% if user_signed_in? %>
+    <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path) do %>
+      <i class="fas fa-envelope"></i> Subscribe to this user's questions
     <% end %>
   <% end %>
 </p>

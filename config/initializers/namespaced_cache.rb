@@ -59,12 +59,3 @@ module QPixel
 end
 
 Rails.cache = QPixel::NamespacedEnvCache.new(Rails.cache)
-
-# Write persistent values to cache on startup
-begin
-  Rails.cache.persistent 'current_commit', clear: true do
-    "#{`git rev-parse HEAD`.strip[0..7]} (#{`git log -1 --date=iso --pretty=format:%cd`.strip})"
-  end
-rescue => ex
-  puts ex
-end

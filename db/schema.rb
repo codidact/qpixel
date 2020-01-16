@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_09_205444) do
+ActiveRecord::Schema.define(version: 2020_01_16_132808) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -158,6 +158,19 @@ ActiveRecord::Schema.define(version: 2020_01_09_205444) do
     t.index ["name"], name: "index_site_settings_on_name"
   end
 
+  create_table "subscriptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "type", null: false
+    t.string "qualifier"
+    t.bigint "user_id"
+    t.boolean "enabled", default: true, null: false
+    t.integer "frequency", null: false
+    t.datetime "last_sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
   create_table "suspicious_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "from_user_id"
     t.integer "to_user_id"
@@ -217,4 +230,5 @@ ActiveRecord::Schema.define(version: 2020_01_09_205444) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "subscriptions", "users"
 end

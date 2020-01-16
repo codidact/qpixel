@@ -1,0 +1,46 @@
+<h1>New Questions Subscription</h1>
+<p>
+  You're subscribing via email to <strong><%= @phrasing %></strong>. Fine-tune your subscription below, then click Subscribe
+  to confirm it
+</p>
+
+<% if @subscription.errors.any? %>
+  <div class="alert alert-danger">
+    <p>
+      There was a problem saving your subscription:
+
+      <ul>
+        <% @subscription.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </p>
+
+    <p>If you came here from a link and have filled in the details below, this may be a bug. Please let us know on
+      <%= link_to 'Meta', new_meta_question_path %>.</p>
+  </div>
+<% end %>
+
+<%= form_for @subscription, url: create_subscription_path do |f| %>
+  <%= hidden_field_tag 'return_to', params[:return_to] %>
+
+  <%= f.hidden_field :type, value: params[:type] %>
+  <%= f.hidden_field :qualifier, value: params[:qualifier] %>
+
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+    <small class="form-text text-muted">Give your subscription a name that you'll recognise.</small>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :frequency %>
+    <%= f.select :frequency, options_for_select([['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]),
+                 { include_blank: true }, class: 'form-control' %>
+    <small class="form-text text-muted">How often do you want to be sent these emails?</small>
+  </div>
+
+  <div class="actions">
+    <%= f.submit 'Subscribe', class: 'btn btn-primary' %>
+  </div>
+<% end %>

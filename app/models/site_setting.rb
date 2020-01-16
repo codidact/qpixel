@@ -4,11 +4,13 @@ class SiteSetting < ApplicationRecord
   validates :name, uniqueness: true
 
   def self.[](name)
-    SiteSetting.find_by(name: name)&.typed
+    Rails.cache.fetch "SiteSettings/#{name}" do
+      SiteSetting.find_by(name: name)&.typed
+    end
   end
 
   def self.exist?(name)
-    SiteSetting.where(name: name).count > 0
+    Rails.cache.exist?("SiteSettings/#{name}") || SiteSetting.where(name: name).count > 0
   end
 
   def typed

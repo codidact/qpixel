@@ -88,6 +88,9 @@ Rails.application.routes.draw do
   get    'q/:id',                       to: 'posts#share_q', as: :share_question
   get    'a/:qid/:id',                  to: 'posts#share_a', as: :share_answer
 
+  get    'subscriptions/new/:type',     to: 'subscriptions#new', as: :new_subscription
+  post   'subscriptions/new',           to: 'subscriptions#create', as: :create_subscription
+
   match  '/403',                        to: 'errors#forbidden',                via: :all
   match  '/404',                        to: 'errors#not_found',                via: :all
   match  '/409',                        to: 'errors#conflict',                 via: :all

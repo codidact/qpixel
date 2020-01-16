@@ -168,3 +168,10 @@
   category: HelpAndGuidance
   description: >
     A dismissible message that is shown to logged-out users when they visit the site, to introduce them to the basics of the site.
+
+- name: InterestingSubscriptionScoreThreshold
+  value: 1
+  value_type: integer
+  category: EmailSubscriptions
+  description: >
+    The minimum score a question must have to qualify for selection for the Interesting email subscription.

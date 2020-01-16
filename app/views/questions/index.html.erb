@@ -11,3 +11,10 @@
 </div>
 
 <%= render 'list' %>
+
+<div>
+  <% if user_signed_in? %>
+    <%= link_to 'Subscribe to new questions', new_subscription_path(type: 'all', return_to: request.path) %> &middot;
+    <%= link_to 'Subscribe to interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>
+  <% end %>
+</div>
