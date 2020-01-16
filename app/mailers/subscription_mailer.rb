@@ -1,7 +1,7 @@
 class SubscriptionMailer < ApplicationMailer
   def subscription
     @subscription = params[:subscription]
-    @questions = @subscription.questions || []
+    @questions = @subscription.questions.includes(:user) || []
     if @questions.size == 0
       return
     end

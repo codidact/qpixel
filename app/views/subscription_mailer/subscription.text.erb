@@ -1,0 +1,15 @@
+ New questions in your filter <%= @subscription.name.present? ? @subscription.name : '' %>
+==============================<%= @subscription.name.present? ? ('='*@subscription.name.length) + '=' : '' %>
+
+<% @questions.each do |question| %>
+score <%= " +-"[question.score <=> 0] + question.score.to_s %>: <%= question.title %>
+<%= question_url(question) %>
+
+<%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %><%= question.body.length > 150 ? '...' : '' %>
+— "<%= question.user.username %>" (<%= user_url(question.user) %>), <%= time_ago_in_words(question.created_at) %> ago
+
+----------------------------------
+
+<% end %>
+
+Change your email settings or unsubscribe here: <%= subscriptions_url %>
