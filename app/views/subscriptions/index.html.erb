@@ -1,0 +1,12 @@
+<h1>Your Subscriptions</h1>
+<p>These are all the email subscriptions you're currently signed up for. You can turn them off or remove them entirely from here.</p>
+
+<% @subscriptions.each do |sub| %>
+  <details data-sub-id="<%= sub.id %>">
+    <summary><%= sub.name %></summary>
+    <p>Subscription to <%= phrase_for sub.type, sub.qualifier %>, emailed every <%= pluralize(sub.frequency, 'day') %>.</p>
+    <%= check_box_tag :enabled, 1, sub.enabled, class: 'js-enable-subscription' %>
+    <%= label_tag :enabled, 'Enabled?' %> &middot;
+    <a href="#" class="js-remove-subscription text-danger">Remove</a>
+  </details>
+<% end %>

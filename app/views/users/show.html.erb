@@ -11,8 +11,10 @@
     <% end %> &middot;
     <%= link_to edit_user_profile_path do %>
       <i class="fas fa-edit"></i> Edit Profile
-    <% end %>
-    &middot;
+    <% end %> &middot;
+    <%= link_to subscriptions_path do %>
+      <i class="fas fa-envelope-open"></i> Edit Email Subscriptions
+    <% end %> &middot;
   <% end %>
   <% if current_user&.is_moderator %>
     <%= link_to mod_user_path(@user) do %>

@@ -90,6 +90,9 @@ Rails.application.routes.draw do
 
   get    'subscriptions/new/:type',     to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',           to: 'subscriptions#create', as: :create_subscription
+  get    'subscriptions',               to: 'subscriptions#index', as: :subscriptions
+  post   'subscriptions/:id/enable',    to: 'subscriptions#enable', as: :enable_subscription
+  delete 'subscriptions/:id',           to: 'subscriptions#destroy', as: :destroy_subscription
 
   match  '/403',                        to: 'errors#forbidden',                via: :all
   match  '/404',                        to: 'errors#not_found',                via: :all
