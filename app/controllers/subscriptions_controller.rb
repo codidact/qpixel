@@ -13,7 +13,7 @@ class SubscriptionsController < ApplicationController
       flash[:success] = 'Your subscription was saved successfully.'
       redirect_to params[:return_to].present? ? params[:return_to] : root_path
     else
-      render :error
+      render :error, status: 500
     end
   end
 
@@ -25,7 +25,7 @@ class SubscriptionsController < ApplicationController
     @subscription = Subscription.find params[:id]
     if current_user.is_admin || current_user.id == @subscription.user_id
       if @subscription.update(enabled: params[:enabled] || false)
-        render json: { status: 'success' }
+        render json: { status: 'success', subscription: @subscription }
       else
         render json: { status: 'failed' }, status: 500
       end
