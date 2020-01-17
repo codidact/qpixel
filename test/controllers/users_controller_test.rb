@@ -138,7 +138,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_nothing_raised do
       JSON.parse(response.body)
     end
-    assert_equal 'success', JSON.parse(response.body)['status']
   end
 
   test "should get full answers list for a user" do

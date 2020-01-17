@@ -4,9 +4,10 @@ class SiteSetting < ApplicationRecord
   validates :name, uniqueness: true
 
   def self.[](name)
-    Rails.cache.fetch "SiteSettings/#{name}" do
+    cached = Rails.cache.fetch "SiteSettings/#{name}" do
       SiteSetting.find_by(name: name)&.typed
     end
+    return cached || SiteSetting.find_by(name: name)&.typed # doubled to avoid cache fetch returning nil from cache
   end
 
   def self.exist?(name)
