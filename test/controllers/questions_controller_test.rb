@@ -10,6 +10,13 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
+  test "should get lottery" do
+    get :lottery
+    assert_response 200
+    assert_not_nil assigns(:questions)
+    assert_equal 0, assigns(:questions).select(&:deleted).size, 'Lottery page contains deleted questions'
+  end
+
   test "should get show question page" do
     get :show, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)

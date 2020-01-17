@@ -1,8 +1,10 @@
 <div class="tabs">
-  <%= link_to 'Activity', query_url(sort: 'activity'),
-              class: "tabs--tab #{params[:sort].nil? || params[:sort] == 'activity' ? 'tab__active' : ''}" %>
-  <%= link_to 'Age', query_url(sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
-  <%= link_to 'Score', query_url(sort: 'score'), class: "tabs--tab #{params[:sort] == 'score' ? 'tab__active' : ''}" %>
+  <%= link_to 'Activity', query_url(root_url, sort: 'activity'),
+              class: "tabs--tab #{(params[:sort].nil?) && !current_page?(questions_lottery_path) || params[:sort] == 'activity' ?
+                                      'tab__active' : ''}" %>
+  <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
+  <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "tabs--tab #{params[:sort] == 'score' ? 'tab__active' : ''}" %>
+  <%= link_to 'Lottery', questions_lottery_path, class: "tabs--tab #{current_page?(questions_lottery_path) ? 'tab__active' : ''}" %>
 </div>
 
 <% @questions.each do |question| %>

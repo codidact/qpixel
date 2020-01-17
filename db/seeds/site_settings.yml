@@ -175,3 +175,11 @@
   category: EmailSubscriptions
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
+
+- name: LotteryAgeDeprecationSpeed
+  value: 0.002
+  value_type: float
+  category: AdvancedSettings
+  description: >
+    The relative speed at which questions age out of selection for the "lottery" tab. 0.002 is normal; higher values will
+    age questions out faster.

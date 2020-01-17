@@ -42,6 +42,16 @@ class QuestionsController < ApplicationController
     @questions = @tag.posts.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
+  def lottery
+    ids = Rails.cache.fetch 'lottery_questions', expires_in: 24.hours do
+      # noinspection RailsParamDefResolve
+      Question.main.undeleted.order([Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, created_at)) DESC'),
+                                     SiteSetting['LotteryAgeDeprecationSpeed']])
+              .limit(25).select(:id).pluck(:id).to_a
+    end
+    @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
+  end
+
   def new
     @question = Question.new
   end
