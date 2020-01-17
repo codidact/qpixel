@@ -24,6 +24,7 @@ module ApplicationHelper
       base_uri = URI.parse(base_url)
       base_query = Rack::Utils.parse_nested_query base_uri.query
       query = query.merge(base_query)
+      uri.path = base_uri.path
     end
 
     query = query.merge(params.map { |k, v| [k.to_s, v.to_s] }.to_h)
