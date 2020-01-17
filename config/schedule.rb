@@ -1,3 +1,3 @@
-every 1.day do
-  runner 'SuspiciousVote.check_for_vote_fraud'
+every 1.day, at: '02:00' do
+  runner 'scripts/send_subscription_emails.rb'
 end
