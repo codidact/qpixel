@@ -13,6 +13,15 @@
 <% end %>
 
 <% if @posts.nil? %>
+  <div class="alert alert-info">
+    <p><strong><i class="fas fa-info-circle"></i> Advanced Search</strong></p>
+    <p>
+      To further refine your search, you can use additional qualifiers such as <code>score:>1</code>.
+      For example, the search <code>score:>=2 created:<1y grammar</code> would return only posts mentioning "grammar" that
+      have a score >= 2 and were created less than a year ago.
+    </p>
+  </div>
+
   <p class="text-muted"><em>Search for something to start finding posts.</em></p>
 <% else %>
   <div class="tabs">

@@ -1,12 +1,19 @@
 class SearchController < ApplicationController
   def search
     @posts = if params[:search].present?
-               order_params = { relevance: 'search_score DESC', score: 'score DESC', age: 'created_at DESC' }
-               order = order_params.include?(params[:sort]&.to_sym) ?
-                         order_params[params[:sort].to_sym] :
-                         order_params[:relevance]
-               Post.qa_only.search(params[:search]).paginate(page: params[:page], per_page: 25).includes(:user, user: :avatar_attachment)
-                   .order(Arel.sql(order))
+               search_data = helpers.parse_search(params[:search])
+               posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
+                   .qa_only.where(helpers.qualifiers_to_sql(search_data[:qualifiers]))
+                   .includes(:user, user: :avatar_attachment)
+                   .paginate(page: params[:page], per_page: 25)
+
+               if search_data[:search].present?
+                 posts.search(search_data[:search]).user_sort({term: params[:search], default: :search_score},
+                                                              {relevance: :search_score, score: :score, age: :created_at})
+               else
+                 posts.user_sort({term: params[:search], default: :score},
+                                 {score: :score, age: :created_at})
+               end
              else
                nil
              end

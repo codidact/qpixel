@@ -30,4 +30,12 @@ class SearchControllerTest < ActionController::TestCase
       assert_not_nil assigns(:posts)
     end
   end
+
+  test "search with qualifiers should work" do
+    assert_nothing_raised do
+      get :search, params: { search: 'score:>=1 created:<1y abcdef' }
+      assert_response 200
+      assert_not_nil assigns(:posts)
+    end
+  end
 end
