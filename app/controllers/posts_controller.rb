@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [:document, :share_q, :share_a]
+  before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
   before_action :set_post, only: [:edit, :update]
   before_action :check_permissions, only: [:edit, :update]
   before_action :verify_moderator, only: [:new, :create]
@@ -72,14 +72,19 @@ class PostsController < ApplicationController
     redirect_to question_path(id: params[:qid], anchor: "answer-#{params[:id]}")
   end
 
+  def help_center
+    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:title)
+                 .group_by(&:post_type_id).map { |tid, posts| [tid, posts.group_by(&:category)] }.to_h
+  end
+
   private
 
   def new_post_params
-    params.require(:post).permit(:post_type_id, :title, :doc_slug, :body_markdown)
+    params.require(:post).permit(:post_type_id, :title, :doc_slug, :category, :body_markdown)
   end
 
   def post_params
-    params.require(:post).permit(:title, :body_markdown)
+    params.require(:post).permit(:title, :category, :body_markdown)
   end
 
   def set_post

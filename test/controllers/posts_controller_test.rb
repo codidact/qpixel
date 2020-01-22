@@ -104,6 +104,12 @@ class PostsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:post).id
   end
 
+  test "should successfully get help center" do
+    get :help_center
+    assert_response 200
+    assert_not_nil assigns(:posts)
+  end
+
   test "question permalink should correctly redirect" do
     get :share_q, params: { id: posts(:question_one).id }
     assert_response 302

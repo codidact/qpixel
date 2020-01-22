@@ -44,11 +44,12 @@
             </div>
             <img alt="user avatar" src="<%= avatar_url(current_user) %>" height="16" width="16" />
             <%= link_to current_user.username, user_path(current_user), class: 'clear' %> (<%= current_user.reputation %>) &middot;
-            <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %>
+            <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %> &middot;
           <% else %>
             <%= link_to 'sign in', new_user_session_path, class: 'clear' %> &middot;
-            <%= link_to 'sign up', new_user_registration_path, class: 'clear' %>
+            <%= link_to 'sign up', new_user_registration_path, class: 'clear' %> &middot;
           <% end %>
+          <%= link_to 'help', help_center_path, class: 'clear' %>
         </span>
         <%= link_to 'Questions', questions_path %>
         <%= link_to 'Users', users_path %>

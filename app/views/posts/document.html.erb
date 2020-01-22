@@ -1,3 +1,7 @@
+<%= link_to help_center_path do %>
+  &laquo; Back to help center
+<% end %>
+
 <h1><%= @post.nil? ? 'This document has not been created yet' : @post.title %></h1>
 <hr/>
 <% if @post.nil? %>

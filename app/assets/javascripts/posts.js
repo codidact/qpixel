@@ -37,4 +37,8 @@ $(() => {
     const postText = $postField.val();
     $postField.val(postText.replace(placeholder, `![Image alt text](${data.link})`));
   });
+
+  $('.js-category-select').select2({
+    tags: true
+  });
 });

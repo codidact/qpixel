@@ -1,0 +1,9 @@
+<% content_for :title, 'Help Center' %>
+
+<h1>Help Center</h1>
+
+<h2>Help</h2>
+<%= render 'help_center_posts', posts: @posts[HelpDoc.post_type_id] %>
+
+<h2>Policy</h2>
+<%= render 'help_center_posts', posts: @posts[PolicyDoc.post_type_id] %>

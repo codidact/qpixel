@@ -101,6 +101,8 @@ Rails.application.routes.draw do
     get    'posts',                     to: 'reports#posts', as: :posts_report
   end
 
+  get    'help',                        to: 'posts#help_center', as: :help_center
+
   match  '/403',                        to: 'errors#forbidden',                via: :all
   match  '/404',                        to: 'errors#not_found',                via: :all
   match  '/409',                        to: 'errors#conflict',                 via: :all
