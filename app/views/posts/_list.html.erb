@@ -1,5 +1,6 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
-<div class="question <%= (is_question && post.is_meta) || (!is_question && post.parent.is_meta) ? 'post__meta' : '' %>">
+<% is_meta = (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+<div class="question <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="question--score">
     <span class="score"><%= post.score %></span>
     <span class="descriptor">score</span>
