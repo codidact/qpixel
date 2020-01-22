@@ -1,4 +1,4 @@
-<div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
+<div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
   <p class="comment--content">
     <%= raw(sanitize(CommentsController.renderer.render(comment.content), scrubber: CommentScrubber.new)) %>
     <span class="comment--meta">
