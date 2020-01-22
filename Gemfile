@@ -11,6 +11,9 @@ gem 'jquery-rails', '~> 4.3.5'
 gem 'redcarpet'
 gem 'reverse_markdown'
 
+gem 'groupdate', '~> 4.3'
+gem 'chartkick', '~> 3.3'
+
 gem 'jbuilder'
 
 gem 'devise'

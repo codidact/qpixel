@@ -69,6 +69,7 @@ GEM
     bindex (0.8.1)
     builder (3.2.3)
     byebug (11.0.1)
+    chartkick (3.3.1)
     chronic (0.10.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -98,6 +99,8 @@ GEM
     ffi (1.11.2-x64-mingw32)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    groupdate (4.3.0)
+      activesupport (>= 5)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.9.1)
@@ -235,9 +238,11 @@ DEPENDENCIES
   aws-sdk-s3
   aws-ses (~> 0.6.0)
   byebug
+  chartkick (~> 3.3)
   coffee-rails (~> 4.2.2)
   coveralls
   devise
+  groupdate (~> 4.3)
   jbuilder
   jquery-rails (~> 4.3.5)
   minitest (~> 5.10.3)

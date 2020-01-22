@@ -1,0 +1,11 @@
+<%= render 'tabs' %>
+
+<div class="flex-row">
+  <%= stat_panel 'all', Subscription.where(type: 'all').count %>
+  <%= stat_panel 'interesting', Subscription.where(type: 'interesting').count %>
+  <%= stat_panel 'tag', Subscription.where(type: 'tag').count %>
+  <%= stat_panel 'user', Subscription.where(type: 'user').count %>
+</div>
+
+<h3>New subscriptions</h3>
+<%= line_chart Subscription.where('created_at >= ?', 1.year.ago).group_by_week(:created_at).count %>

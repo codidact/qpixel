@@ -1,0 +1,5 @@
+<%= tabs do %>
+  <% tab 'Users', users_report_path, is_active: current_page?(users_report_path) %>
+  <% tab 'Posts', posts_report_path, is_active: current_page?(posts_report_path) %>
+  <% tab 'Subscriptions', subscriptions_report_path, is_active: current_page?(subscriptions_report_path) %>
+<% end %>

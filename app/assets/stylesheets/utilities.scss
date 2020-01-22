@@ -68,3 +68,19 @@ pre.unformatted {
   background: unset;
   border: unset;
 }
+
+.stat-panel {
+  flex: 1;
+}
+
+.stat-panel-heading {
+  margin-top: 0;
+  font-variant: small-caps;
+  color: $muted-text;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 2.0em;
+}

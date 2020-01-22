@@ -95,6 +95,12 @@ Rails.application.routes.draw do
   post   'subscriptions/:id/enable',    to: 'subscriptions#enable', as: :enable_subscription
   delete 'subscriptions/:id',           to: 'subscriptions#destroy', as: :destroy_subscription
 
+  scope 'reports' do
+    root                                to: 'reports#users', as: :users_report
+    get    'subscriptions',             to: 'reports#subscriptions', as: :subscriptions_report
+    get    'posts',                     to: 'reports#posts', as: :posts_report
+  end
+
   match  '/403',                        to: 'errors#forbidden',                via: :all
   match  '/404',                        to: 'errors#not_found',                via: :all
   match  '/409',                        to: 'errors#conflict',                 via: :all

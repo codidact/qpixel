@@ -39,4 +39,13 @@ module ApplicationHelper
   def active_search?(param)
     $active_search_param == param&.to_sym
   end
+
+  def stat_panel(heading, value)
+    tag.div class: 'panel panel-default stat-panel' do
+      tag.div class: 'panel-body' do
+        tag.h4(heading, class: 'stat-panel-heading') +
+        tag.span(value, class: 'stat-value')
+      end
+    end
+  end
 end
