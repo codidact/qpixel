@@ -60,7 +60,7 @@
         <% end %>
         <% if !post.deleted %>
           <%= link_to 'delete', url_for(controller: is_question ? :questions : :answers, action: :destroy, id: post.id),
-                      method: :delete, data: { confirm: 'Are you sure you want to delete this question?' }, class: "text-danger" %>
+                      method: :delete, data: { confirm: 'Are you sure you want to delete this post?' }, class: "text-danger" %>
         <% else %>
           <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
                       method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "text-danger" %>
