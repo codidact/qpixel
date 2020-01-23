@@ -12,8 +12,8 @@ module SearchHelper
 
   def qualifiers_to_sql(qualifiers)
     valid_value = {
-        date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
-        numeric: /^[<>=]{0,2}\d+$/
+      date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
+      numeric: /^[<>=]{0,2}\d+$/
     }
 
     clauses = qualifiers.map do |qualifier|
@@ -30,6 +30,10 @@ module SearchHelper
         next unless value =~ valid_value[:date]
         operator, val, timeframe = date_value_sql value
         ["created_at #{operator.present? ? operator : '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})", val.to_i]
+      when 'user'
+        next unless value =~ valid_value[:numeric]
+        operator, val = numeric_value_sql value
+        ["user_id #{operator.present? ? operator : '='} ?", val.to_i]
       else
         nil
       end
