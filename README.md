@@ -9,6 +9,12 @@ The usual sort of thing:
  * Run `bundle install`
  * Run `rails db:setup` and `rails db:migrate`
  * Run `rails s`
+ 
+To grant admin/moderator rights to a user, you need to manually update the user account. Run `rails c` for a console, then the following:
+
+```ruby
+User.find(USER_ID_HERE).update(is_admin: true, is_moderator: true)  # pick admin and/or moderator as required
+```
 
 ## License
 [MIT licensed](https://github.com/ArtOfCode-/qpixel/blob/master/LICENSE)
