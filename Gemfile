@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '= 5.2.3'
 gem 'mysql2', '~> 0.5.3'
+gem 'tzinfo-data', '~> 1.2019.3'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2.2'
