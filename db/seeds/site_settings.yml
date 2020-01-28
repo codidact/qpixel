@@ -183,3 +183,13 @@
   description: >
     The relative speed at which questions age out of selection for the "lottery" tab. 0.002 is normal; higher values will
     age questions out faster.
+
+- name: JITAdvancedSearchHelp
+  value: >
+    To further refine your search, you can use additional qualifiers such as `core:>1`.
+    For example, the search `score:>=2 created:<1y grammar` would return only posts mentioning "grammar" that
+    have a score >= 2 and were created less than a year ago.
+  value_type: text
+  category: HelpAndGuidance
+  description: >
+    Just-in-time guidance that's shown on the search page to let users know about advanced search. Markdown is available here.

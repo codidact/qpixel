@@ -18,6 +18,7 @@ class SiteSettingsController < ApplicationController
   def update
     @setting = SiteSetting.find_by name: params[:name]
     @setting.update(setting_params)
+    Rails.cache.delete "SiteSettings/#{@setting.name}"
     render json: {status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed)}
   end
 
