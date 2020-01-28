@@ -13,6 +13,7 @@
 <%= render 'posts/image_upload' %>
 
 <%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
+  <%= f.hidden_field :category, value: parent.category %>
   <div class="form-group">
     <%= f.label :body_markdown, 'Body' %>
     <%= f.text_area :body_markdown, { class: "form-control post-field js-post-field", rows: 15 } %>

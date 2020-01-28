@@ -3,7 +3,7 @@
 
 <%= form_for @question, url: is_edit ? edit_question_path(@question) : create_question_path do |f| %>
   <% if is_meta %>
-    <%= f.hidden_field :is_meta, value: true %>
+    <%= f.hidden_field :category, value: 'Meta' %>
   <% end %>
 
   <div class="form-group">

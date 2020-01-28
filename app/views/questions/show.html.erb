@@ -19,5 +19,5 @@
 </div>
 
 <% if user_signed_in? && !@question.closed %>
-  <%= render 'answers/new', answer: Answer.new %>
+  <%= render 'answers/new', answer: Answer.new, parent: @question %>
 <% end %>

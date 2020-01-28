@@ -17,6 +17,13 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_equal 0, assigns(:questions).select(&:deleted).size, 'Lottery page contains deleted questions'
   end
 
+  test "should get meta" do
+    get :meta
+    assert_response 200
+    assert_not_nil assigns(:questions)
+    assert_equal 0, assigns(:questions).select(&:deleted).size, 'Meta page contains deleted questions'
+  end
+
   test "should get show question page" do
     get :show, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)
@@ -53,7 +60,7 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should create new question" do
+  test "should successfully ask question" do
     sign_in users(:standard_user)
     post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
                                         tags_cache: ['discussion', 'support'] } }
@@ -61,6 +68,19 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_equal 0, assigns(:question).score
     assert_equal ["discussion", "support"], assigns(:question).tags_cache
     assert_equal ["discussion", "support"], assigns(:question).tags.map(&:name)
+    assert_equal 'Main', assigns(:question).category
+    assert_response(302)
+  end
+
+  test "should successfully ask meta question" do
+    sign_in users(:standard_user)
+    post :create, params: { question: { title: "ABCDEF GHIJKL MNOPQR", body_markdown: "ABCDEF GHIJKL MNOPQR STUVWX YZ",
+                                        tags_cache: ['discussion', 'support'], category: 'Meta' } }
+    assert_not_nil assigns(:question)
+    assert_equal 0, assigns(:question).score
+    assert_equal ["discussion", "support"], assigns(:question).tags_cache
+    assert_equal ["discussion", "support"], assigns(:question).tags.map(&:name)
+    assert_equal 'Meta', assigns(:question).category
     assert_response(302)
   end
 

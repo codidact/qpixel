@@ -44,6 +44,10 @@ class Post < ApplicationRecord
     end
   end
 
+  def is_meta
+    category == 'Meta'
+  end
+
   def reassign_user(new_user)
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
     update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))

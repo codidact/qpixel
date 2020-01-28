@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_22_151548) do
+ActiveRecord::Schema.define(version: 2020_01_28_123353) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -117,10 +117,9 @@ ActiveRecord::Schema.define(version: 2020_01_22_151548) do
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
-    t.boolean "is_meta", default: false
     t.string "doc_slug"
     t.bigint "last_activity_by_id"
-    t.string "category"
+    t.string "category", default: "Main"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category"], name: "index_posts_on_category"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"

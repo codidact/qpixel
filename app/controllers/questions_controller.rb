@@ -182,7 +182,7 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:body_markdown, :title, :tags_cache, :is_meta)
+    params.require(:question).permit(:body_markdown, :title, :tags_cache, :category)
   end
 
   def set_question
