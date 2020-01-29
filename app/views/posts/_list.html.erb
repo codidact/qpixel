@@ -6,7 +6,7 @@
     <span class="descriptor">score</span>
   </div>
   <div class="question--info">
-    <%= link_to is_question ? share_question_path(post) : share_answer_path(post), class: 'question--title' do %>
+    <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id), class: 'question--title' do %>
       <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
         <strong>META</strong> &mdash;
       <% end %>
