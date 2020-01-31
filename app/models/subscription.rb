@@ -11,7 +11,7 @@ class Subscription < ApplicationRecord
   def questions
     case self.type
     when 'all'
-      Question.all
+      Question.where('created_at >= ?', last_sent_at)
     when 'tag'
       Tag.find_by(name: self.qualifier)&.posts
     when 'user'
