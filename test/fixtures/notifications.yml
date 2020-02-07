@@ -2,8 +2,10 @@ one:
   content: ABCDEF GHIJKL MNOPQR STUVWX YZ
   link: /
   user: standard_user
+  community: sample
 
 two:
   content: ABCDEF GHIJKL MNOPQR STUVWX
   link: /
   user: standard_user
+  community: sample

@@ -2,19 +2,23 @@ one:
   user: standard_user
   post: question_one
   content: ABCDEF GHIJKL MNOPQR
+  community: sample
 
 two:
   user: standard_user
   post: question_two
   content: ABCDEF GHIJKL MNOPQR
+  community: sample
 
 on_answer:
   user: standard_user
   post: answer_one
   content: ABCDEF GHIJKL MNOPQR
+  community: sample
 
 deleted:
   user: standard_user
   post: question_one
   content: ABCDEF GHIJKL MNOPQR
   deleted: true
+  community: sample

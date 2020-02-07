@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class PostTest < ActiveSupport::TestCase
+  include CommunityRelatedHelper
+
+  test 'is commmunity related' do
+    assert_community_related(Post)
+  end
+
   test "deleting a post should remove reputation change" do
     post = posts(:answer_one)
     previous_rep = post.user.reputation

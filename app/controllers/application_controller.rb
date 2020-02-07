@@ -47,10 +47,19 @@ class ApplicationController < ActionController::Base
   private
 
   def set_globals
+    RequestContext.clear!
+
+    host_name = request.raw_host_with_port   # include port to support multiple localhost instances
+    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
+      Community.find_by(host: host_name)
+    end
+
     if current_user.nil?
       Rails.logger.info 'No user signed in'
     else
       Rails.logger.info "User #{current_user.id} (#{current_user.username}) signed in"
+      RequestContext.user = current_user
+      current_user.ensure_community_user!
     end
 
     @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do

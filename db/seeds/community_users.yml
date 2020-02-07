@@ -1,0 +1,4 @@
+- user_id: <%= User.first.id %>
+  community_id: <%= Community.first.id %>
+  reputation: 1
+
