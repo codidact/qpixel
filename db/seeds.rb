@@ -2,9 +2,11 @@
 
 Rails.application.eager_load!
 
-Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
-  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
-  type = basename.gsub('.yml', '').singularize.classify.constantize
+RequestContext.community = Community.new(id: 1)
+
+%w(communities post_history_types post_types site_settings users community_users posts privileges).each do |table_name|
+  f = Rails.root.join("db/seeds/#{table_name}.yml").to_s
+  type = table_name.classify.constantize
   begin
     processed = ERB.new(File.read(f)).result(binding)
     data = YAML.load(processed)

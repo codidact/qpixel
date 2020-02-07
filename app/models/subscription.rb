@@ -1,6 +1,8 @@
 class Subscription < ApplicationRecord
   self.inheritance_column = 'sti_type'
 
+  include CommunityRelated
+
   belongs_to :user
 
   validates :type, presence: true, inclusion: ['all', 'tag', 'user', 'interesting']

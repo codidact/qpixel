@@ -1,6 +1,6 @@
 # Represents a flag. Flags are attached to both a user and a post, and have a single status.
 class Flag < ApplicationRecord
-  belongs_to :post
+  include PostRelated
   belongs_to :user
   belongs_to :handled_by, class_name: 'User', required: false
 

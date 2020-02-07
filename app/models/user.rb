@@ -11,12 +11,14 @@ class User < ApplicationRecord
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
+  has_many :community_users, dependent: :destroy
+  has_one :community_user, -> { for_context }, autosave: true
   has_one_attached :avatar, dependent: :destroy
-
-  after_create :set_initial_reputation
 
   validates :username, presence: true, length: { minimum: 3 }
   validate :username_not_fake_admin
+
+  delegate :reputation, :reputation=, :is_moderator, :is_admin, to: :community_user
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -63,12 +65,6 @@ class User < ApplicationRecord
     website.nil? ? website : URI.parse(website).hostname
   end
 
-  private
-
-  def set_initial_reputation
-    update(reputation: SiteSetting['NewUserInitialRep'])
-  end
-
   def username_not_fake_admin
     admin_badge = SiteSetting['AdminBadgeCharacter']
     mod_badge = SiteSetting['ModBadgeCharacter']
@@ -78,5 +74,9 @@ class User < ApplicationRecord
         errors.add(:username, "may not include the #{badge} character")
       end
     end
+  end
+
+  def ensure_community_user!
+    community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
   end
 end

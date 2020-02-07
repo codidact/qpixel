@@ -1,15 +1,19 @@
 close:
   name: Close
   threshold: 250
+  community: sample
 
 edit:
   name: Edit
   threshold: 500
+  community: sample
 
 delete:
   name: Delete
   threshold: 1000
+  community: sample
 
 view_deleted:
   name: ViewDeleted
   threshold: 1000
+  community: sample

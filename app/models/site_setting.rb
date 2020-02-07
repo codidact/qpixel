@@ -1,6 +1,13 @@
 # Represents a site setting. Site settings control the operation and display of most aspects of the site, such as
 # reputation awards, additional content, and site constants such as name and logo.
 class SiteSetting < ApplicationRecord
+  belongs_to :community
+  default_scope { for_community_id(RequestContext.community_id).or(global).priority_order }
+
+  scope :for_community_id, ->(community_id){ where(community_id: community_id) }
+  scope :global, ->{ for_community_id(nil) }
+  scope :priority_order, -> { order(Arel::Nodes::Case.new.when(arel_table[:community_id].eq(nil), 1).else(0)) }
+
   validates :name, uniqueness: true
 
   def self.[](name)
