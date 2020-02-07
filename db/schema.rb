@@ -242,6 +242,8 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_global_moderator"
+    t.boolean "is_global_admin"
     t.string "username"
     t.text "profile"
     t.text "website"

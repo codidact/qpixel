@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validates :username, presence: true, length: { minimum: 3 }
   validate :username_not_fake_admin
 
-  delegate :reputation, :reputation=, :is_moderator, :is_admin, to: :community_user
+  delegate :reputation, :reputation=, to: :community_user
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -63,6 +63,14 @@ class User < ApplicationRecord
 
   def website_domain
     website.nil? ? website : URI.parse(website).hostname
+  end
+
+  def is_moderator
+    is_global_moderator || community_user&.is_moderator
+  end
+
+  def is_admin
+    is_global_admin || community_user&.is_admin
   end
 
   def username_not_fake_admin

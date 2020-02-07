@@ -39,3 +39,17 @@ sample_admin:
   is_admin: true
   is_moderator: false
   reputation: 1
+
+sample_global_moderator:
+  user: global_moderator
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_global_admin:
+  user: global_admin
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

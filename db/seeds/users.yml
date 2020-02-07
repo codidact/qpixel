@@ -9,3 +9,5 @@
   profile: >
     <p>This is an anonymous user account for system operations. It owns automatically-run operations and
     content from deleted users, among other things.</p>
+  is_global_moderator: true
+  is_global_admin: true

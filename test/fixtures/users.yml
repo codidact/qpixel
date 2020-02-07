@@ -3,6 +3,8 @@ standard_user:
   encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   username: standard_user
+  is_global_admin: false
+  is_global_moderator: false
 
 closer:
   email: closer@qpixel-test.net
@@ -11,27 +13,53 @@ closer:
   username: closer
   website: https://example.com/closer
   twitter: closer
+  is_global_admin: false
+  is_global_moderator: false
 
 editor:
   email: editor@qpixel-test.net
   encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   username: editor
+  is_global_admin: false
+  is_global_moderator: false
 
 deleter:
   email: delete@qpixel-test.net
   encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   username: deleter
+  is_global_admin: false
+  is_global_moderator: false
 
 moderator:
   email: moderator@qpixel-test.net
   encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   username: moderator
+  is_global_admin: false
+  is_global_moderator: false
 
 admin:
   email: admin@qpixel-test.net
   encrypted_password: abcdefghijklmnopqrstuvwxyz
   sign_in_count: 1337
   username: admin
+  is_global_admin: false
+  is_global_moderator: false
+
+global_moderator:
+  email: global-moderator@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  sign_in_count: 1337
+  username: global-moderator
+  is_global_admin: false
+  is_global_moderator: true
+
+global_admin:
+  email: global-admin@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  sign_in_count: 1337
+  username: global-admin
+  is_global_admin: true
+  is_global_moderator: false

@@ -6,7 +6,7 @@ class SiteSetting < ApplicationRecord
 
   scope :for_community_id, ->(community_id){ where(community_id: community_id) }
   scope :global, ->{ for_community_id(nil) }
-  scope :priority_order, -> { order(Arel::Nodes::Case.new.when(arel_table[:community_id].eq(nil), 1).else(0)) }
+  scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
   validates :name, uniqueness: true
 
