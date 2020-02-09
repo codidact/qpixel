@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
     RequestContext.clear!
 
     host_name = request.raw_host_with_port   # include port to support multiple localhost instances
-    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community") do
+    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
       Community.find_by(host: host_name)
     end
 
