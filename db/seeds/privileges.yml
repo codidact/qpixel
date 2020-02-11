@@ -1,8 +1,12 @@
 - name: Close
   threshold: 250
+  community_id: <%= Community.first.id %>
 - name: Edit
   threshold: 500
+  community_id: <%= Community.first.id %>
 - name: Delete
   threshold: 1000
+  community_id: <%= Community.first.id %>
 - name: ViewDeleted
   threshold: 1000
+  community_id: <%= Community.first.id %>

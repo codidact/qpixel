@@ -1,0 +1,55 @@
+sample_standard_user:
+  user: standard_user
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 50
+
+sample_closer:
+  user: closer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 251
+
+sample_editor:
+  user: editor
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 501
+
+sample_deleter:
+  user: deleter
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1001
+
+sample_moderator:
+  user: moderator
+  community: sample
+  is_admin: false
+  is_moderator: true
+  reputation: 1
+
+sample_admin:
+  user: admin
+  community: sample
+  is_admin: true
+  is_moderator: false
+  reputation: 1
+
+sample_global_moderator:
+  user: global_moderator
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_global_admin:
+  user: global_admin
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

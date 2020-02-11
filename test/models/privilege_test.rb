@@ -1,7 +1,10 @@
 require 'test_helper'
 
 class PrivilegeTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  include CommunityRelatedHelper
+
+  test 'is commmunity related' do
+    assert_community_related(Privilege)
+  end
+
 end

@@ -9,6 +9,7 @@ question_one:
     - bug
   score: 0
   user: standard_user
+  community: sample
 
 question_two:
   post_type: question
@@ -20,6 +21,7 @@ question_two:
     - bug
   score: 0
   user: editor
+  community: sample
 
 deleted:
   post_type: question
@@ -34,6 +36,7 @@ deleted:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
+  community: sample
 
 closed:
   post_type: question
@@ -48,6 +51,7 @@ closed:
   closed_by: closer
   closed_at: 2019-01-01T00:00:00.000000Z
   user: standard_user
+  community: sample
 
 answer_one:
   post_type: answer
@@ -55,6 +59,7 @@ answer_one:
   score: 0
   parent: question_one
   user: standard_user
+  community: sample
 
 answer_two:
   post_type: answer
@@ -62,6 +67,7 @@ answer_two:
   score: 0
   parent: question_one
   user: editor
+  community: sample
 
 really_old_answer:
   post_type: answer
@@ -70,6 +76,7 @@ really_old_answer:
   parent: question_one
   user: standard_user
   created_at: 2000-01-01T00:00:00.000000Z
+  community: sample
 
 deleted_answer:
   post_type: answer
@@ -80,6 +87,7 @@ deleted_answer:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
+  community: sample
 
 policy_doc:
   post_type: policy_doc
@@ -87,6 +95,7 @@ policy_doc:
   title: Terms of Service
   doc_slug: tos
   user: admin
+  community: sample
 
 help_doc:
   post_type: help_doc
@@ -94,3 +103,4 @@ help_doc:
   title: Asking Questions
   doc_slug: asking-questions
   user: admin
+  community: sample

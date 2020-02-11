@@ -3,19 +3,18 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
-  before_action :set_user, only: [:mod, :destroy, :soft_delete, :posts]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts]
 
   def index
     sort_param = {reputation: :reputation, age: :created_at}[params[:sort]&.to_sym] || :reputation
     @users = if params[:search].present?
-               User.where('username LIKE ?', "#{params[:search]}%")
+               user_scope.where('username LIKE ?', "#{params[:search]}%")
              else
-               User.all.order(sort_param => :desc)
+               user_scope.order(sort_param => :desc)
              end.list_includes.paginate(page: params[:page], per_page: 48)
   end
 
   def show
-    @user = User.find params[:id]
   end
 
   def posts
@@ -130,7 +129,7 @@ class UsersController < ApplicationController
       redirect_to edit_user_profile_path and return
     end
 
-    auto_user = User.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
+    auto_user = user_scope.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
     if auto_user.nil?
       flash[:warning] = "There doesn't appear to be any of your content here."
       redirect_to edit_user_profile_path and return
@@ -151,6 +150,11 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find params[:id]
+    @user = user_scope.find_by(id: params[:id])
+    not_found if @user.nil?
+  end
+
+  def user_scope
+    User.joins(:community_user)
   end
 end

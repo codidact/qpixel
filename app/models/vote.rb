@@ -1,7 +1,7 @@
 # Represents a vote. A vote is attached to both a 'post' (i.e. a question or an answer - this is a polymorphic
 # association), and to a user.
 class Vote < ApplicationRecord
-  belongs_to :post, required: true
+  include PostRelated
   belongs_to :user, required: true
   belongs_to :recv_user, class_name: 'User', required: true
 

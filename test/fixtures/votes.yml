@@ -3,51 +3,60 @@ one:
   post: question_one
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 two:
   user: deleter
   post: question_one
   vote_type: -1
   recv_user: standard_user
+  community: sample
 
 three:
   user: editor
   post: answer_one
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 four:
   user: closer
   post: answer_one
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 five:
   user: deleter
   post: answer_one
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 six:
   user: moderator
   post: answer_one
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 seven:
   user: admin
   post: answer_one
   vote_type: -1
   recv_user: standard_user
+  community: sample
 
 old_answer_1:
   user: closer
   post: really_old_answer
   vote_type: 1
   recv_user: standard_user
+  community: sample
 
 old_answer_2:
   user: editor
   post: really_old_answer
   vote_type: 1
   recv_user: standard_user
+  community: sample

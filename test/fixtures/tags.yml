@@ -1,23 +1,29 @@
 discussion:
   name: discussion
   description: discussion
+  community: sample
 
 support:
   name: support
   description: support
+  community: sample
 
 bug:
   name: bug
   description: bug
+  community: sample
 
 feature-request:
   name: feature-request
   description: feature-request
+  community: sample
 
 faq:
   name: faq
   description: faq
+  community: sample
 
 status-completed:
   name: status-completed
   description: status-completed
+  community: sample

@@ -5,6 +5,7 @@ all:
   frequency: 1
   last_sent_at: 2020-01-01T00:00:00
   name: Everything
+  community: sample
 
 tag:
   type: tag
@@ -14,6 +15,7 @@ tag:
   frequency: 1
   last_sent_at: 2020-01-01T00:00:00
   name: Discussion questions
+  community: sample
 
 user:
   type: user
@@ -23,6 +25,7 @@ user:
   frequency: 1
   last_sent_at: 2020-01-01T00:00:00
   name: standard_user's questions
+  community: sample
 
 interesting:
   type: interesting
@@ -31,3 +34,4 @@ interesting:
   frequency: 1
   last_sent_at: 2020-01-01T00:00:00
   name: Interesting things
+  community: sample

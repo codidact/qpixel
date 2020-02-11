@@ -1,9 +1,10 @@
 # Represents a comment. Comments are attached to both a post and a user.
 class Comment < ApplicationRecord
+  include PostRelated
+
   scope :deleted, -> { where(deleted: true) }
   scope :undeleted, -> { where(deleted: false) }
 
-  belongs_to :post
   belongs_to :user
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
 

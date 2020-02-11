@@ -1,7 +1,7 @@
 class PostHistory < ApplicationRecord
+  include PostRelated
   belongs_to :post_history_type
   belongs_to :user
-  belongs_to :post
 
   def self.method_missing(name, *args, **opts, &block)
     unless args.length >= 2

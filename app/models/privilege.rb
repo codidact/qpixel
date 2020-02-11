@@ -3,6 +3,8 @@
 # there's a backup rep check, but the privilege is not added to the user's privilege collection until they've been
 # checked for it at least once.
 class Privilege < ApplicationRecord
+  include CommunityRelated
+
   has_and_belongs_to_many :users
 
   validates :name, uniqueness: true

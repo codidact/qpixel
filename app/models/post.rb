@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+  include CommunityRelated
+
   belongs_to :user
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', required: false, counter_cache: :answer_count

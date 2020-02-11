@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class VoteTest < ActiveSupport::TestCase
+  include CommunityRelatedHelper
+
+  test 'is post related' do
+    assert_post_related(Vote)
+  end
+
   test "creating a vote should correctly change post score" do
     [1, -1].each do |vote_type|
       previous_score = posts(:question_two).score

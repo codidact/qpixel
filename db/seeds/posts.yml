@@ -5,3 +5,4 @@
   body: >
     <p>This document has been created for you as a placeholder. You should edit it to add your own Terms of Service.</p>
   doc_slug: tos
+  community_id: <%= Community.first.id %>
