@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class PostHistoryTest < ActiveSupport::TestCase
+  include CommunityRelatedHelper
+
+  test 'is post related' do
+    assert_post_related(PostHistory)
+  end
+
   test "calling an event with insufficient arguments should throw NoMethodError" do
     assert_raises NoMethodError do
       PostHistory.question_closed

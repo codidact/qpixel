@@ -66,11 +66,11 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator
+    !!(is_global_moderator || community_user&.is_moderator)
   end
 
   def is_admin
-    is_global_admin || community_user&.is_admin
+    !!(is_global_admin || community_user&.is_admin)
   end
 
   def username_not_fake_admin

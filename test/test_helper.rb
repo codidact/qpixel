@@ -8,6 +8,8 @@ require 'rails/test_help'
 require 'minitest/ci'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
+Dir.glob(Rails.root.join('test/support/**/*.rb')).each {|f| require f }
+
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all

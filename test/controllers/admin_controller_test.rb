@@ -51,6 +51,26 @@ class AdminControllerTest < ActionController::TestCase
     end
   end
 
+  test "should deny admins access to non-admin community" do
+    RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
+    request.env['HTTP_HOST'] = 'other.qpixel.com'
+    sign_in users(:admin)
+    PARAM_LESS_ACTIONS.each do |path|
+      get path
+      assert_response(404)
+    end
+  end
+
+  test "should grant global admims access to non admin community" do
+    RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
+    request.env['HTTP_HOST'] = 'other.qpixel.com'
+    sign_in users(:global_admin)
+    PARAM_LESS_ACTIONS.each do |path|
+      get path
+      assert_response(200)
+    end
+  end
+
   test "should get single privilege" do
     sign_in users(:admin)
     get :show_privilege, params: { name: privileges(:close).name, format: :json }

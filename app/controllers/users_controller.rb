@@ -3,7 +3,7 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
-  before_action :set_user, only: [:mod, :destroy, :soft_delete, :posts]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts]
 
   def index
     sort_param = {reputation: :reputation, age: :created_at}[params[:sort]&.to_sym] || :reputation
@@ -15,7 +15,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = user_scope.find params[:id]
   end
 
   def posts
@@ -151,7 +150,8 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = user_scope.find params[:id]
+    @user = user_scope.find_by(id: params[:id])
+    not_found if @user.nil?
   end
 
   def user_scope

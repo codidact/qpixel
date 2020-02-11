@@ -9,11 +9,25 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
+  test 'should not include users not in current community' do
+    @other_user = create_other_user
+    get :index
+    assert_not_includes assigns(:users), @other_user
+    assert_response(200)
+  end
+
   test "should get show user page" do
     sign_in users(:standard_user)
     get :show, params: { id: users(:standard_user).id }
     assert_not_nil assigns(:user)
     assert_response(200)
+  end
+
+  test "should not show user page for non-community users" do
+    @other_user = create_other_user
+    sign_in users(:standard_user)
+    get :show, params: { id: @other_user.id }
+    assert_response(404)
   end
 
   test "should get mod tools page" do
@@ -189,5 +203,12 @@ class UsersControllerTest < ActionController::TestCase
       assert post.created_at <= previous.created_at,
              "@posts was expected in created_at DESC order, but got #{post.created_at.iso8601} before #{previous.created_at.iso8601}"
     end
+  end
+
+  def create_other_user
+    other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
+    other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
+    other_user.community_users.create!(community: other_community)
+    other_user
   end
 end

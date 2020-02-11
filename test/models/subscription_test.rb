@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class SubscriptionTest < ActiveSupport::TestCase
+  include CommunityRelatedHelper
+
+  test 'is community related' do
+    assert_community_related(Subscription)
+  end
+
   test "subscription to all should return some questions" do
     questions = subscriptions(:all).questions
     assert_not_nil questions

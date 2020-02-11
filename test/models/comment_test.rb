@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class CommentTest < ActiveSupport::TestCase
+  include CommunityRelatedHelper
+
+  test 'is post related' do
+    assert_post_related(Comment)
+  end
+
   test "parent_question should return question for a comment on an answer" do
     assert_equal posts(:question_one).id, comments(:on_answer).parent_question.id
   end
