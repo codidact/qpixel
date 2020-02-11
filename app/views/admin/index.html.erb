@@ -5,6 +5,9 @@
   you use these, remember that the data in them is usually admin- or moderator-only, and should likely not be shared
   with anyone outside of those teams unless you've ensured it's safe to share.</p>
 <ul>
+  <% if current_user.is_global_admin %>
+    <li><%= link_to 'Global Site Settings', global_settings_path %></li>
+  <% end %>
   <li><%= link_to 'Site Settings', site_settings_path %></li>
   <li><%= link_to 'Privilege Thresholds', admin_privileges_path %></li>
   <li><%= link_to 'Error Reports', admin_error_reports_path %></li>

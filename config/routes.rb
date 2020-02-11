@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get    'admin',                       to: 'admin#index', as: :admin
   get    'admin/errors',                to: 'admin#error_reports', as: :admin_error_reports
   get    'admin/settings',              to: 'site_settings#index', as: :site_settings
+  get    'admin/settings/global',       to: 'site_settings#global', as: :global_settings
   get    'admin/settings/:name',        to: 'site_settings#show', as: :site_setting
   post   'admin/settings/:name',        to: 'site_settings#update', as: :update_site_setting
   delete 'admin/users/delete/:id',      to: 'users#soft_delete', as: :soft_delete_user

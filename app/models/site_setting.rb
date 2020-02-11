@@ -8,10 +8,8 @@ class SiteSetting < ApplicationRecord
   scope :global, ->{ for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
-  validates :name, uniqueness: true
-
   def self.[](name)
-    cached = Rails.cache.fetch "SiteSettings/#{name}" do
+    cached = Rails.cache.fetch "SiteSettings/#{RequestContext.community_id}/#{name}" do
       SiteSetting.find_by(name: name)&.typed
     end
     cached.nil? ? SiteSetting.find_by(name: name)&.typed : cached # doubled to avoid cache fetch returning nil from cache

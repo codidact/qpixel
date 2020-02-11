@@ -2,6 +2,7 @@
 # turn control the operation and display of some aspects of the site).
 class SiteSettingsController < ApplicationController
   before_action :verify_admin
+  before_action :verify_global_admin, only: [:global]
 
   def index
     # The weird argument to sort_by here sorts without throwing errors on nil values -
@@ -10,15 +11,40 @@ class SiteSettingsController < ApplicationController
     @settings = SiteSetting.all.group_by(&:category).sort_by { |c, _ss| [c ? 0 : 1, c] }
   end
 
+  def global
+    @settings = SiteSetting.unscoped.where(community_id: nil).group_by(&:category).sort_by { |c, _ss| [c ? 0 : 1, c] }
+    render :index
+  end
+
   def show
-    @setting = SiteSetting.find_by name: params[:name]
+    @setting = if params[:community_id].present?
+                 SiteSetting.find_by(name: params[:name])
+               else
+                 SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
+               end
     render json: @setting&.as_json&.merge(typed: @setting.typed)
   end
 
   def update
-    @setting = SiteSetting.find_by name: params[:name]
+    if !params[:community_id].present? && !current_user.is_global_admin
+      render 'errors/not_found', layout: 'errors', status: 404
+      return
+    end
+
+    @setting = if params[:community_id].present?
+                 matches = SiteSetting.unscoped.where(community_id: RequestContext.community_id, name: params[:name])
+                 if matches.count == 0
+                   global = SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
+                   SiteSetting.create(name: global.name, community_id: RequestContext.community_id, value: '',
+                                      value_type: global.value_type, category: global.category, description: global.description)
+                 else
+                   matches.first
+                 end
+               else
+                 SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
+               end
     @setting.update(setting_params)
-    Rails.cache.delete "SiteSettings/#{@setting.name}"
+    Rails.cache.delete "SiteSettings/#{RequestContext.community_id}/#{@setting.name}"
     render json: {status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed)}
   end
 
