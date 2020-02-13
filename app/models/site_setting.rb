@@ -4,6 +4,8 @@ class SiteSetting < ApplicationRecord
   belongs_to :community
   default_scope { for_community_id(RequestContext.community_id).or(global).priority_order }
 
+  validates :name, uniqueness: { scope: [:community_id] }
+
   scope :for_community_id, ->(community_id){ where(community_id: community_id) }
   scope :global, ->{ for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
