@@ -90,7 +90,7 @@ class UsersController < ApplicationController
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
     profile_params[:twitter] = profile_params[:twitter].gsub('@', '')
 
-    if profile_params[:website].present? && URI.parse(profile_params[:website]).is_a?(URI::Generic)
+    if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
       # parsed correctly in the view later on.
       profile_params[:website] = 'https://' + profile_params[:website]
