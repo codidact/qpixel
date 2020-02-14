@@ -2,9 +2,11 @@ require 'test_helper'
 
 class RequestContextTest < ActiveSupport::TestCase
   test 'initialized context store accessor' do
-    RequestContext.community = :foo
-    RequestContext.user = :bar
-    assert_equal RequestContext.fetch, {community: :foo, user: :bar}
+    community = Community.new(id: 123)
+    user = User.new(id: 123)
+    RequestContext.community = community
+    RequestContext.user = user
+    assert_equal RequestContext.fetch, {community: community, user: user}
   end
 
   test 'cleared context store' do
