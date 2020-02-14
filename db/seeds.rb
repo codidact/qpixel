@@ -2,18 +2,23 @@
 
 Rails.application.eager_load!
 
-RequestContext.community = Community.new(id: 1)
-
-%w(communities post_history_types post_types site_settings users community_users posts privileges).each do |table_name|
-  f = Rails.root.join("db/seeds/#{table_name}.yml").to_s
-  type = table_name.classify.constantize
+Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
+  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
+  type = basename.gsub('.yml', '').singularize.classify.constantize
   begin
     processed = ERB.new(File.read(f)).result(binding)
     data = YAML.load(processed)
     created = 0
     skipped = 0
-    data.each do |rd|
-      obj = type.create rd
+    data.each do |seed|
+      seeds = if type.column_names.include? 'community_id'
+                # if model includes a community_id, create the seed for every community
+                Community.all.map { |c| seed.merge(community_id: c.id) }
+              else
+                # otherwise, no need to worry, just create it
+                seed
+              end
+      obj = type.create seeds
       if obj.errors.any?
         skipped += 1
       else
