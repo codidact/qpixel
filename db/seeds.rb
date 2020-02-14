@@ -16,14 +16,11 @@ Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
                 Community.all.map { |c| seed.merge(community_id: c.id) }
               else
                 # otherwise, no need to worry, just create it
-                seed
+                [seed]
               end
-      obj = type.create seeds
-      if obj.errors.any?
-        skipped += 1
-      else
-        created += 1
-      end
+      objs = type.create seeds
+      skipped += objs.select { |o| o.errors.any? }.size
+      created += objs.select { |o| !o.errors.any? }.size
     end
     puts "#{type}: Created #{created}, skipped #{skipped}" unless Rails.env.test?
   rescue StandardError => e

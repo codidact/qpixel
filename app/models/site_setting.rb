@@ -11,9 +11,9 @@ class SiteSetting < ApplicationRecord
 
   def self.[](name)
     cached = Rails.cache.fetch "SiteSettings/#{RequestContext.community_id}/#{name}" do
-      applied_setting(name)&.typed
+      SiteSetting.applied_setting(name)&.typed
     end
-    cached.nil? ? applied_setting(name)&.typed : cached # doubled to avoid cache fetch returning nil from cache
+    cached.nil? ? SiteSetting.applied_setting(name)&.typed : cached # doubled to avoid cache fetch returning nil from cache
   end
 
   def self.exist?(name)
@@ -26,8 +26,8 @@ class SiteSetting < ApplicationRecord
 
   private
 
-  def applied_setting(name)
-    for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
+  def self.applied_setting(name)
+    SiteSetting.for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
   end
 end
 
