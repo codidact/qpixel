@@ -3,7 +3,7 @@ class BaseImport
     @options = options
   end
 
-  def import!
+  def import_post(post_id)
     raise NotImplementedError
   end
 
