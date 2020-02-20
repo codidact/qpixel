@@ -54,7 +54,7 @@ opt_parser = OptionParser.new do |opts|
     @options.query = query
   end
 
-  opts.on('-f', '--dump-file=FILE', 'Specify the path to the decompressed data dump file.') do |path|
+  opts.on('-d', '--dump=FILE', 'Specify the path to the decompressed data dump directory') do |path|
     @options.path = path
   end
 
@@ -96,3 +96,5 @@ $logger.info $mode.specifier.present? ? "Mode specifier #{$mode.specifier.inspec
 
 api_importer = APIImport.new(@options)
 dump_importer = DumpImport.new(@options)
+
+puts "hi"
