@@ -1,10 +1,25 @@
 class BaseImport
-  def new(options)
+  def initialize(options, dump_importer, api_importer)
     @options = options
+    @dump = dump_importer
+    @api = api_importer
+  end
+
+  def import(ids)
+    $logger.info "Importing #{ids.size} posts"
+    ids.each do |id|
+      import_post id
+    end
+    $logger.info "#{ids.size} posts imported"
   end
 
   def import_post(post_id)
-    raise NotImplementedError
+    dump_matches = @dump.posts.select { |p| p.id.to_s == post_id }
+    if dump_matches.size > 0
+      $logger.debug "SEID #{post_id}: in dump"
+    else
+      $logger.debug "SEID #{post_id}: get from API"
+    end
   end
 
   def site_base_url

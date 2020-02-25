@@ -1,6 +1,4 @@
-require_relative 'base_import'
-
-class APIImport < BaseImport
+class APIImport
   def initialize(options)
     @options = options
   end

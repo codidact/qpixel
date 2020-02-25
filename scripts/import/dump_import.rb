@@ -1,14 +1,12 @@
 require 'ostruct'
 require 'thwait'
 
-require_relative 'base_import'
-
-class DumpImport < BaseImport
+class DumpImport
   def initialize(options)
     @options = options
     @xml_data = {}
 
-    $logger.debug 'Loading XML dump data'
+    $logger.info 'Loading XML dump data'
 
     directory_path = File.expand_path @options.path
     files = Dir.glob("*.xml", base: directory_path)
@@ -32,14 +30,14 @@ class DumpImport < BaseImport
     end
     ThreadsWait.all_waits(*threads)
 
-    $logger.debug 'Load done'
+    $logger.info 'Load done'
   end
 
   def method_missing(method, *args, &block)
     if @xml_data.include? method.to_sym
       @xml_data[method.to_sym]
     else
-      raise
+      raise NotImplementedError
     end
   end
 end

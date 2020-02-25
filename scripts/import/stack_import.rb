@@ -1,12 +1,15 @@
 require 'ostruct'
 require 'optparse'
 require 'open-uri'
+require 'csv'
 
 require_relative 'api_import'
 require_relative 'dump_import'
+require_relative 'base_import'
 
 $system_user = User.find(-1)
 $logger = ::Logger.new(STDOUT)
+$logger.level = :info
 
 def msg2str(msg)
   case msg
@@ -27,7 +30,10 @@ $logger.formatter = proc do |severity, time, progname, msg|
 end
 
 ERROR_CODES = {
-  no_site: 1
+  no_site: 1,
+  undefined_mode: 2,
+  invalid_specifier: 3,
+  invalid_query_format: 4
 }
 
 @options = OpenStruct.new
@@ -50,12 +56,20 @@ opt_parser = OptionParser.new do |opts|
     @options.tag = tag
   end
 
-  opts.on('-q', '--query=QUERY_LINK', 'Import posts whose IDs are returned by the SEDE query provided') do |query|
+  opts.on('-q', '--query=REVISION_ID', 'Import posts whose IDs are returned by the SEDE query provided') do |query|
     @options.query = query
   end
 
   opts.on('-d', '--dump=FILE', 'Specify the path to the decompressed data dump directory') do |path|
     @options.path = path
+  end
+
+  opts.on('-i', '--quiet', 'Produce less output') do
+    $logger.level = :warn
+  end
+
+  opts.on('-v', '--verbose', 'Produce more output') do
+    $logger.level = :debug
   end
 
   opts.on_tail('-h', '--help', 'Show this message') do
@@ -96,5 +110,33 @@ $logger.info $mode.specifier.present? ? "Mode specifier #{$mode.specifier.inspec
 
 api_importer = APIImport.new(@options)
 dump_importer = DumpImport.new(@options)
+base_importer = BaseImport.new(@options, dump_importer, api_importer)
 
-puts "hi"
+case $mode.mode
+when :query
+  unless $mode.specifier =~ /^\d+$/
+    $logger.fatal "Mode specifier #{$mode.specifier.inspect} invalid for selected mode. Expected /^\\d+$/."
+    exit ERROR_CODES[:invalid_specifier]
+  end
+
+  query_csv_uri = "https://data.stackexchange.com/#{@options.site}/csv/#{$mode.specifier}"
+  resp = Net::HTTP.get_response(URI(query_csv_uri))
+  rows = CSV.parse(resp.body)[1..-1]
+  $logger.info "#{rows.size} rows returned"
+
+  unless rows.all? { |r| r.size == 1 && r[0] =~ /^\d+$/ }
+    $logger.fatal "Query revision #{$mode.specifier} returned invalid data format. Expected only Id field in each row."
+    exit ERROR_CODES[:invalid_query_format]
+  end
+
+  base_importer.import rows.flatten
+when :user
+
+when :tag
+
+when :all
+
+else
+  $logger.fatal "Selected mode '#{$mode.mode.to_s}' is not defined"
+  exit ERROR_CODES[:undefined_mode]
+end
