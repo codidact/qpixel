@@ -7,7 +7,6 @@ require_relative 'api_import'
 require_relative 'dump_import'
 require_relative 'base_import'
 
-$system_user = User.find(-1)
 $logger = ::Logger.new(STDOUT)
 $logger.level = :info
 
@@ -72,6 +71,10 @@ opt_parser = OptionParser.new do |opts|
     $logger.level = :debug
   end
 
+  opts.on('-c', '--community=ID', Integer, 'Specify the community ID to add imported content to') do |community|
+    @options.community = community
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
@@ -87,6 +90,8 @@ end
 unless @options.key.present?
   $logger.warn 'No key specified. Can run without one, but only for a limited run. Large imports will require a key for added quota.'
 end
+
+RequestContext.community = Community.find(@options.community)
 
 $mode = OpenStruct.new
 if @options.query.present?

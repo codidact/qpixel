@@ -6,6 +6,8 @@ class DumpImport
     @options = options
     @xml_data = {}
 
+    @system_user = User.find(-1)
+
     $logger.info 'Loading XML dump data'
 
     directory_path = File.expand_path @options.path
@@ -39,5 +41,45 @@ class DumpImport
     else
       raise NotImplementedError
     end
+  end
+
+  def site_base_url
+    site_param = @options.site
+    non_se = {stackoverflow: 'com', superuser: 'com', serverfault: 'com', askubuntu: 'com', mathoverflow: 'net', stackapps: 'com'}
+    included = non_se.keys.map(&:to_s).select { |k| site_param.include? k }
+    if included.size > 0
+      "https://#{included[0]}.#{non_se[included[0]]}"
+    else
+      "https://#{site_param}.stackexchange.com"
+    end
+  end
+
+  def post_data(post)
+    # { answers: post_data[]?, body: string, body_markdown: string, closed_date: integer?, creation_date: integer,
+    #   down_vote_count: integer, last_activity_date: integer, owner: shallow_user, title: string?, tags: string[]?,
+    #   up_vote_count: integer, link: string }
+    post_data = { body: post.body, body_markdown: QuestionsController.renderer.render(post.body),
+                  creation_date: post.creation_date, last_activity_date: post.last_activity_date,
+                  owner: {'user_id' => post.owner_user_id}, link: "#{site_base_url}/q/#{post.id}" }
+    if post.post_type_id == '1'
+      post_data = post_data.merge(title: post.title, tags: post.tags&.split(/[<>]/)&.reject(&:empty?))
+      closed_at = post_closed_at(post)
+      unless closed_at.nil?
+        post_data[:closed_at] = closed_at
+      end
+    end
+
+    post_data[:up_vote_count] = votes.select { |v| v.post_id == post.id && v.vote_type_id == '2' }.size
+    post_data[:down_vote_count] = votes.select { |v| v.post_id == post.id && v.vote_type_id == '3' }.size
+
+    post_data
+  end
+
+  def post_closed_at(post)
+    # 10: Closed
+    # 11: Reopened
+    events = post_history.select { |ph| ['10', '11'].include?(ph.post_history_type_id) && ph.post_id == post.id }
+    sorted = events.sort_by(&:creation_date)
+    sorted.last&.post_history_type_id == '10' ? sorted.last.creation_date : nil
   end
 end

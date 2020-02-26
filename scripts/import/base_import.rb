@@ -3,6 +3,11 @@ class BaseImport
     @options = options
     @dump = dump_importer
     @api = api_importer
+
+    @system_user = User.find(-1)
+
+    @user_id_map = {}
+    @post_id_map = {}
   end
 
   def import(ids)
@@ -14,22 +19,31 @@ class BaseImport
   end
 
   def import_post(post_id)
+    return if @post_id_map.include? post_id
+
     dump_matches = @dump.posts.select { |p| p.id.to_s == post_id }
     if dump_matches.size > 0
       $logger.debug "SEID #{post_id}: in dump"
+      post = dump_matches[0]
+      post_data = @dump.post_data(post)
+
+      if post.post_type_id == '1'
+        native_post = create_question(post_data)
+        @post_id_map[post_id] = native_post.id
+      elsif post.post_type_id == '2'
+        se_parent_id = post.parent_id
+        unless @post_id_map.include? se_parent_id
+          import_post se_parent_id
+        end
+        native_post = create_answer(@post_id_map[se_parent_id], post_data)
+        @post_id_map[post_id] = native_post.id
+      else
+        $logger.debug "Not importing SEID #{post_id}: PostTypeId #{post.post_type_id}"
+        return
+      end
+      $logger.debug "SEID #{post_id}: imported as #{native_post.id}"
     else
       $logger.debug "SEID #{post_id}: get from API"
-    end
-  end
-
-  def site_base_url
-    site_param = @options.site
-    non_se = {stackoverflow: 'com', superuser: 'com', serverfault: 'com', askubuntu: 'com', mathoverflow: 'net', stackapps: 'com'}
-    included = non_se.keys.map(&:to_s).select { |k| site_param.include? k }
-    if included.size > 0
-      "https://#{included[0]}.#{non_se[included[0]]}"
-    else
-      "https://#{site_param}.stackexchange.com"
     end
   end
 
@@ -46,8 +60,8 @@ class BaseImport
       else
         { att_license_name: 'CC BY-SA 4.0', att_license_link: 'https://creativecommons.org/licenses/by-sa/4.0/' }
       end
-    rescue
-      puts "oh noes"
+    rescue => ex
+      $logger.error "Failed to get license for #{created_at.inspect}: #{ex.message}"
     end
   end
 
@@ -58,19 +72,26 @@ class BaseImport
     user_id = shallow_user['user_id']
 
     unless user_id
-      return $system_user
+      return @system_user
     end
 
-    if $user_id_map.include?(user_id)
-      account_id = $user_id_map[user_id]
+    if @user_id_map.include?(user_id)
+      account_id = @user_id_map[user_id]
     elsif shallow_user.include?('account_id')
       account_id = shallow_user['account_id']
       user = shallow_user
     else
-      items = get_data "https://api.stackexchange.com/2.2/users/#{user_id}", {filter: '!bWUXTP2WcYJKcm'}
-      user = items.first
-      account_id = items.first['account_id']
+      dump_matches = @dump.users.select { |u| u.id.to_s == user_id.to_s }
+      if dump_matches.size > 0
+        user = dump_matches[0].to_h.deep_stringify_keys
+        account_id = user['account_id']
+      else
+        items = @api.get_data "https://api.stackexchange.com/2.2/users/#{user_id}", {filter: '!bWUXTP2WcYJKcm'}
+        user = items.first
+        account_id = items.first['account_id']
+      end
     end
+
     existing = User.where(se_acct_id: account_id)
     if existing.size > 0
       existing.first
@@ -80,8 +101,8 @@ class BaseImport
       u = User.create(password: SecureRandom.hex(64), email: "#{user['account_id']}@synthetic-oauth.localhost",
                       username: CGI.unescape_html(user['display_name']), se_acct_id: user['account_id'],
                       profile_markdown: profile_text, profile: QuestionsController.renderer.render(profile_text))
-      $user_id_map[user_id] = user['account_id']
-      puts "created user #{u.id}"
+      @user_id_map[user_id] = user['account_id']
+      $logger.debug "Created user #{u.id} from SE acct #{account_id}"
       u
     end
   end
@@ -93,12 +114,13 @@ class BaseImport
   def create_post(post_type_id, post_data, parent_id=nil)
     # Filter used to get post_data should include (answers), body, body_markdown, (closed_date), creation_date,
     # down_vote_count, last_activity_date, owner, (title), (tags), up_vote_count, link
+    post_data = post_data.deep_stringify_keys
     params = {post_type_id: post_type_id, body: post_data['body'], body_markdown: post_data['body_markdown'],
               created_at: post_data['creation_date'], last_activity: post_data['last_activity_date'],
               att_source: post_data['link']}.merge(get_license(post_data['creation_date']))
 
     if post_data['closed_date'].present?
-      params = params.merge(closed: true, closed_by: $system_user, closed_at: post_data['closed_date'])
+      params = params.merge(closed: true, closed_by: @system_user, closed_at: post_data['closed_date'])
     end
 
     if post_data['title'].present?
@@ -114,11 +136,14 @@ class BaseImport
     end
 
     user = create_user post_data['owner']
+    user.ensure_community_user!
     params['user_id'] = user.id
 
-    post = Post.create params
-    Vote.create([{post_id: post.id, user: $system_user, recv_user: user, vote_type: -1}] * post_data['down_vote_count'] +
-                    [{post_id: post.id, user: $system_user, recv_user: user, vote_type: 1}] * post_data['up_vote_count'])
+    post = Post.create params.merge(community_id: @options.community)
+
+    vote = { post_id: post.id, user: @system_user, recv_user: user, community_id: @options.community }
+    Vote.create([vote.merge(vote_type: -1)] * post_data['down_vote_count'] +
+                [vote.merge(vote_type: 1)] * post_data['up_vote_count'])
     post
   end
 
