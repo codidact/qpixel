@@ -32,7 +32,8 @@ ERROR_CODES = {
   no_site: 1,
   undefined_mode: 2,
   invalid_specifier: 3,
-  invalid_query_format: 4
+  invalid_query_format: 4,
+  no_query: 5
 }
 
 @options = OpenStruct.new
@@ -45,14 +46,6 @@ opt_parser = OptionParser.new do |opts|
 
   opts.on('-k', '--key=KEY', 'Stack Exchange API key') do |key|
     @options.key = key
-  end
-
-  opts.on('-u', '--user=USER', Integer, 'Import only content from a specified user ID') do |user|
-    @options.user = user
-  end
-
-  opts.on('-t', '--tag=TAG', 'Import only questions (with their answers) from a specified tag') do |tag|
-    @options.tag = tag
   end
 
   opts.on('-q', '--query=REVISION_ID', 'Import posts whose IDs are returned by the SEDE query provided') do |query|
@@ -87,6 +80,11 @@ unless @options.site.present?
   exit ERROR_CODES[:no_site]
 end
 
+unless @options.query.present?
+  $logger.fatal 'Query revision ID must be specified'
+  exit ERROR_CODES[:no_query]
+end
+
 unless @options.key.present?
   $logger.warn 'No key specified. Can run without one, but only for a limited run. Large imports will require a key for added quota.'
 end
@@ -97,12 +95,6 @@ $mode = OpenStruct.new
 if @options.query.present?
   $mode.mode = :query
   $mode.specifier = @options.query
-elsif @options.user.present?
-  $mode.mode = :user
-  $mode.specifier = @options.user
-elsif @options.tag.present?
-  $mode.mode = :tag
-  $mode.specifier = @options.tag
 else
   $mode.mode = :all
   $mode.specifier = nil
@@ -135,12 +127,6 @@ when :query
   end
 
   base_importer.import rows.flatten
-when :user
-
-when :tag
-
-when :all
-
 else
   $logger.fatal "Selected mode '#{$mode.mode.to_s}' is not defined"
   exit ERROR_CODES[:undefined_mode]

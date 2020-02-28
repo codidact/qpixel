@@ -108,7 +108,7 @@ class BaseImport
   end
 
   # post_data format:
-  # { answers: post_data[]?, body: string, body_markdown: string, closed_date: integer?, creation_date: integer,
+  # { answers: (string | post_data)[]?, body: string, body_markdown: string, closed_date: integer?, creation_date: integer,
   #   down_vote_count: integer, last_activity_date: integer, owner: shallow_user, title: string?, tags: string[]?,
   #   up_vote_count: integer, link: string }
   def create_post(post_type_id, post_data, parent_id=nil)
@@ -144,6 +144,18 @@ class BaseImport
     vote = { post_id: post.id, user: @system_user, recv_user: user, community_id: @options.community }
     Vote.create([vote.merge(vote_type: -1)] * post_data['down_vote_count'] +
                 [vote.merge(vote_type: 1)] * post_data['up_vote_count'])
+
+    if post_data['answers'].present? && post_data['answers'].is_a?(Array)
+      ids = if post_data['answers'][0].is_a? Hash
+              post_data['answers'].map { |pd| pd['id'] }
+            else
+              post_data['answers']
+            end
+      ids.each do |id|
+        import_post(id)
+      end
+    end
+
     post
   end
 

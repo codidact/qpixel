@@ -82,4 +82,12 @@ class DumpImport
     sorted = events.sort_by(&:creation_date)
     sorted.last&.post_history_type_id == '10' ? sorted.last.creation_date : nil
   end
+
+  def tag_posts(tag)
+    posts.select { |p| p.tags.include? "<#{tag}>" }
+  end
+
+  def user_posts(user_id)
+    posts.select { |p| p.user_id.to_s == user_id.to_s }
+  end
 end
