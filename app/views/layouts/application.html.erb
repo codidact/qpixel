@@ -7,11 +7,10 @@
   <link rel="icon" href="/assets/favicon.ico" />
   <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
-  <%= stylesheet_link_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %>
+  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.4.0/dist/codidact.css" %>
   <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
-  <%= javascript_include_tag "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" %>
   <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js" %>
   <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" %>
   <%= javascript_include_tag 'application' %>
@@ -19,113 +18,128 @@
   <%= yield(:head) %>
 </head>
 <body class="<%= Rails.env.development? ? 'development' : '' %>">
-  <header>
-    <div class="container">
-      <% if SiteSetting.exist?('SiteLogoPath') %>
-        <a href="/" class="title-link"><img src="<%= SiteSetting['SiteLogoPath'] %>" height="64" /></a>
-      <% else %>
-        <a href="/" class="title-link"><%= SiteSetting['SiteName'] %></a>
-      <% end %>
-      <nav>
-        <span class="user-details">
-          <% if user_signed_in? %>
-            <% if current_user.is_admin || current_user.is_moderator %>
-              <%= link_to flag_queue_path, class: 'clear open-flags' do %>
-                <span class="badge"><%= @open_flags > 0 ? @open_flags : '' %></span>
-              <% end %>
-            <% end %>
-            <div class="btn-group">
-              <button type="button" class="btn btn-link dropdown-toggle inbox-toggle" data-toggle="dropdown">
-                <% unread = current_user.unread_count %>
-                <i class="fas fa-inbox"></i> <span class="badge inbox-count"><%= unread > 0 ? unread : '' %></span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu inbox">
+  <header class="header">
+    <div class="container header--container">
+      <div class="header--brand">
+        <% if SiteSetting.exist?('SiteLogoPath') %>
+          <a href="/" class="header--site-name"><img src="<%= SiteSetting['SiteLogoPath'] %>" style="height: 1em" /></a>
+        <% else %>
+          <a href="/" class="header--site-name"><%= SiteSetting['SiteName'] %></a>
+        <% end %>
+      </div>
+      <nav class="header--menu">
+        <%= link_to 'Questions', questions_path, class: 'header--item' %>
+        <%= link_to 'Users', users_path, class: 'header--item' %>
+        <%= link_to 'Search', search_path, class: 'header--item' %>
 
-              </ul>
-            </div>
-            <img alt="user avatar" src="<%= avatar_url(current_user) %>" height="16" width="16" />
-            <%= link_to current_user.username, user_path(current_user), class: 'clear' %> (<%= current_user.reputation %>) &middot;
-            <%= link_to 'sign out', destroy_user_session_path, method: :delete, class: 'clear' %> &middot;
-          <% else %>
-            <%= link_to 'sign in', new_user_session_path, class: 'clear' %> &middot;
-            <%= link_to 'sign up', new_user_registration_path, class: 'clear' %> &middot;
+        <div class='header--separator'></div>
+
+        <%= link_to 'Meta', meta_path, class: 'header--item' %>
+        <%= link_to 'Help', help_center_path, class: 'header--item' %>
+
+        <% if user_signed_in? %>
+          <% if current_user.is_admin || current_user.is_moderator %>
+            <%= link_to flag_queue_path, class: 'header--item' do %>
+              <% if @open_flags > 0 %>
+                <span class="header--alert"><%= @open_flags %></span>
+              <% end %>
+              Flags
+            <% end %>
           <% end %>
-          <%= link_to 'help', help_center_path, class: 'clear' %>
-        </span>
-        <%= link_to 'Questions', questions_path %>
-        <%= link_to 'Users', users_path %>
-        <%= link_to 'Search', search_path %>
-        <%= link_to 'Meta', meta_path %>
-        <%= link_to 'Ask!', new_question_path %>
+          <button type="button" class="header--item inbox-toggle" data-toggle="dropdown">
+              <% unread = current_user.unread_count %>
+              <% if unread > 0 %>
+                <span class="header--alert"><%= unread %></span>
+              <% end %>
+              <i class='fas fa-inbox' title='Notifications'></i>
+            </button>
+          <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
+            <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
+            <span class="has-font-size-larger has-color-tertiary-600"><%= current_user.reputation %></span>
+          <% end %>
+          <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header--item' %>
+        <% else %>
+          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
+          <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
+        <% end %>
       </nav>
     </div>
   </header>
-  <main class="container">
-    <div class="content">
-      <% {notice: :info, alert: :danger, danger: :danger, success: :success, info: :info, warning: :warning}.each do |mt, cc| %>
-        <% if flash[mt].present? %>
-          <div class="alert alert-<%= cc.to_s %>">
-            <%= flash[mt] %>
-          </div>
-        <% end %>
-      <% end %>
-
-
-      <% if @first_visit_notice %>
-        <% notice = SiteSetting['FirstVisitGuidance'] %>
-        <% if notice.present? %>
-          <div class="alert alert-warning js-first-visit-notice">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <%= raw(sanitize(notice, scrubber: scrubber)) %>
-          </div>
-        <% end %>
-      <% end %>
-
-      <%= yield %>
+  <% if Rails.env.development? %>
+  <div class="notice is-danger is-banner has-padding-1">
+    <div class="container">
+      <p>This site is in development mode!</p>
     </div>
-    <div class="sidebar">
-      <%= yield(:sidebar) %>
+  </div>
+  <% end %>
+  <div class="header-slide inbox">
+  </div>
+  <main class="container">
 
-      <% if moderator? || admin? %>
-        <div class="module">
-          <h4 class="module--title">Moderator Tools</h4>
-          <div class="module--content">
-            <ul>
-              <% if moderator? %>
-                <li><%= link_to 'Moderator Tools', moderator_path %></li>
-              <% end %>
-              <% if admin? %>
-                <li><%= link_to 'Admin Tools', admin_path %></li>
-              <% end %>
-            </ul>
+    <div class="grid">
+
+      <div class="grid--cell is-8-lg is-12">
+        <% {notice: :info, alert: :danger, danger: :danger, success: :success, info: :info, warning: :warning}.each do |mt, cc| %>
+          <% if flash[mt].present? %>
+            <div class="notice is-<%= cc.to_s %>">
+              <%= flash[mt] %>
+            </div>
+          <% end %>
+        <% end %>
+
+
+        <% if @first_visit_notice %>
+          <% notice = SiteSetting['FirstVisitGuidance'] %>
+          <% if notice.present? %>
+            <div class="notice js-first-visit-notice">
+              <button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <%= raw(sanitize(notice, scrubber: scrubber)) %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%= yield %>
+      </div>
+      <div class="grid--cell is-4-lg is-12">
+        <%= yield(:sidebar) %>
+
+        <% if moderator? || admin? %>
+          <div class="widget has-margin-4">
+            <h4 class="widget--header has-margin-0">Moderator Tools</h4>
+            <div class="widget--body">
+              <ul>
+                <% if moderator? %>
+                  <li><%= link_to 'Moderator Tools', moderator_path %></li>
+                <% end %>
+                <% if admin? %>
+                  <li><%= link_to 'Admin Tools', admin_path %></li>
+                <% end %>
+              </ul>
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
 
-      <% if Rails.env.development? || @hot_questions.size > 0 %>
-        <div class="module">
-          <h4 class="module--title">Hot Questions</h4>
-          <div class="module--content">
-            <ul>
-              <% @hot_questions.each do |hq| %>
-                <li>
-                  <%= link_to question_path(hq) do %>
-                    <% if hq.is_meta %>
-                      <strong>META</strong> &mdash;
-                    <% end %>
-                    <%= hq.title %>
+        <% if Rails.env.development? || @hot_questions.size > 0 %>
+          <div class="widget has-margin-4">
+            <h4 class="widget--header has-margin-0">Hot Questions</h4>
+            <% @hot_questions.each do |hq| %>
+              <div class="widget--body">
+                <%= link_to question_path(hq) do %>
+                  <% if hq.is_meta %>
+                    <span class="badge is-tag is-master-tag">meta</span>
                   <% end %>
-                </li>
-              <% end %>
-            </ul>
+                  <%= hq.title %>
+                <% end %>
+              </div>
+            <% end %>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </main>
-  <footer>
+  <footer class="footer">
     <div class="container">
       <span><%= link_to 'Terms of Service', policy_path(slug: 'tos') %></span> &middot;
       <span>Current version: <%= Rails.cache.persistent('current_commit') %></span>
