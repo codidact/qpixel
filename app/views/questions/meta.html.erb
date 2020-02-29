@@ -1,4 +1,16 @@
 <% content_for :title, "Meta Questions" %>
+<% content_for :sidebar do %>
+
+<div class="has-margin-4 widget has-border-style-none has-shadow-0">
+  <div class="widget--body has-text-align-right">
+
+    <%= link_to new_meta_question_path, class: 'button is-muted is-filled is-very-large' do %>
+        Ask Meta Question
+    <% end %>
+
+  </div>
+</div>
+<% end %>
 
 <h1>Meta Questions</h1>
 
