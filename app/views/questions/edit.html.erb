@@ -1,16 +1,16 @@
 <% content_for :title, "Editing '#{@question.title.truncate(50)}'" %>
 
-<h3>Edit Question</h3>
+<h1>Edit Question</h1>
 <%= render 'posts/image_upload' %>
 
 <%= render 'form', is_edit: true %>
 
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>
-    <div class="module">
-      <h4 class="module--title">Hints and Tips</h4>
-      <div class="module--content">
-        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
+    <div class="widget has-margin-4">
+      <h4 class="widget--header has-margin-0">Hints and Tips</h4>
+      <div class="widget--body">
+        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
       </div>
     </div>
   <% end %>

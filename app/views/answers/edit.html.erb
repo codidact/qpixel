@@ -1,8 +1,8 @@
 <% content_for :title, "Edit Answer" %>
 
-<h3>Answer</h3>
+<h1>Edit Answer</h1>
 <% if @answer.errors.any? %>
-  <div class="text-danger error-messages">
+  <div class="notice is-danger">
     <p>The following <%= "error".pluralize(@answer.errors.count) %> prevented the answer from being updated:</p>
     <ul>
       <% @answer.errors.full_messages.each do |e| %>
@@ -14,27 +14,32 @@
 
 <%= form_for @answer, url: { controller: :answers, action: :update } do |f| %>
   <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+    <%= f.label :body_markdown, 'Body', class: "form-element" %>
+    <%= render "posts/mdhint" %>
+    <%= f.text_area :body_markdown, { class: "form-element post-field", rows: 15 } %>
   </div>
   <hr/>
   <div class="form-group">
-    <%= label_tag :edit_comment, 'Edit comment' %>
-    <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
-    <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
+    <%= label_tag :edit_comment, 'Edit comment', class: "form-element" %>
+    <div class="has-font-size-caption has-color-tertiary-500">
+      Describe—if neccessary—what you are changing and why you are making this edit.
+    </div>
+    <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-element' %>
   </div>
   <div class="form-group">
-    <%= f.submit "Update Answer", class: "btn btn-primary" %>
+    <%= f.submit "Save changes", class: "button is-filled" %>
   </div>
 <% end %>
 
-<h3>Question</h3>
+<h2>Question</h2>
+<div class="has-padding-6 has-border-style-solid has-border-width-1 has-border-color-tertiary-050" style="max-height: 500px; overflow: auto;">
 <%= render 'posts/expanded', post: @answer.parent %>
+</div>
 
 <% content_for :sidebar do %>
-  <div class="module">
-    <h4 class="module--title">Hints and Tips</h4>
-    <div class="module--content">
+  <div class="widget has-margin-4">
+    <h4 class="widget--header has-margin-0">Hints and Tips</h4>
+    <div class="widget--body">
       <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AnsweringGuidance']), scrubber: scrubber)) %>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <% content_for :title, "Editing '#{@post.title.truncate(50)}'" %>
 
 <% if @post.errors.any? %>
-  <div class="alert alert-danger">
+  <div class="notice is-danger">
     These errors prevented this post being saved:
     <ul>
       <% @post.errors.full_messages.each do |msg| %>
