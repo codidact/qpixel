@@ -16,23 +16,6 @@
 
 @import 'variables';
 
-main {
-  margin-top: 2em !important;
-  align-items: unset !important;
-  flex: 1;
-}
-
-.content {
-  flex: 1;
-  margin: 0 1em 2em 1em;
-  max-width: 60em;
-
-  // $screen-md here to coincide with the switch from fd: column to fd: row on .containers
-  @media screen and (min-width: $screen-md) {
-    min-width: 43em;
-  }
-}
-
 .deleted-content {
   background: lighten($danger, 45%);
 }
