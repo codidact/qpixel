@@ -7,8 +7,8 @@
     <span class="item-list--number-label">score</span>
   </div>
   <div class="item-list--text-value is-primary">
-    <div>
-      <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id), class: 'has-font-size-larger' do %>
+    <div class="has-font-size-larger">
+      <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) do %>
       <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>

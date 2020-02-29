@@ -66,7 +66,7 @@
     </div>
   </header>
   <% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-1">
+  <div class="notice is-danger is-banner has-padding-2">
     <div class="container">
       <p>This site is in development mode!</p>
     </div>
@@ -105,22 +105,6 @@
       <div class="grid--cell is-4-lg is-12">
         <%= yield(:sidebar) %>
 
-        <% if moderator? || admin? %>
-          <div class="widget has-margin-4">
-            <h4 class="widget--header has-margin-0">Moderator Tools</h4>
-            <div class="widget--body">
-              <ul>
-                <% if moderator? %>
-                  <li><%= link_to 'Moderator Tools', moderator_path %></li>
-                <% end %>
-                <% if admin? %>
-                  <li><%= link_to 'Admin Tools', admin_path %></li>
-                <% end %>
-              </ul>
-            </div>
-          </div>
-        <% end %>
-
         <% if Rails.env.development? || @hot_questions.size > 0 %>
           <div class="widget has-margin-4">
             <h4 class="widget--header has-margin-0">Hot Questions</h4>
@@ -134,6 +118,22 @@
                 <% end %>
               </div>
             <% end %>
+          </div>
+        <% end %>
+
+        <% if moderator? || admin? %>
+          <div class="widget has-margin-4">
+            <h4 class="widget--header has-margin-0">Moderator Tools</h4>
+            <div class="widget--body">
+              <ul>
+                <% if moderator? %>
+                  <li><%= link_to 'Moderator Tools', moderator_path %></li>
+                <% end %>
+                <% if admin? %>
+                  <li><%= link_to 'Admin Tools', admin_path %></li>
+                <% end %>
+              </ul>
+            </div>
           </div>
         <% end %>
 

@@ -1,17 +1,5 @@
 <% content_for :title, "Questions Lottery" %>
 
-<div class="flex-row jc-sb">
-  <h3>Questions</h3>
-  <%= link_to new_question_path, class: 'header-button wb' do %>
-    Ask Question &raquo;
-  <% end %>
-</div>
+<h1>Questions</h1>
 
 <%= render 'list' %>
-
-<div>
-  <% if user_signed_in? %>
-    <%= link_to 'Subscribe to new questions', new_subscription_path(type: 'all', return_to: request.path) %> &middot;
-    <%= link_to 'Subscribe to interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>
-  <% end %>
-</div>
