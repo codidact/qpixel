@@ -1,39 +1,42 @@
 <% content_for :title, 'Search' %>
 
+<h1>Search</h1>
+
 <%= form_tag search_path, method: :get do %>
   <div class="form-group-horizontal">
     <div class="form-group">
-      <%= label_tag :search, 'Search term' %>
-      <%= text_field_tag :search, params[:search], class: 'form-control' %>
+      <%= label_tag :search, 'Search term', class: "form-element" %>
+      <%= text_field_tag :search, params[:search], class: 'form-element' %>
     </div>
-    <div class="actions">
-      <%= submit_tag 'Search', class: 'btn btn-primary', name: nil %>
+    <div class="actions has-padding-bottom-1">
+      <%= submit_tag 'Search', class: 'button is-medium is-outlined', name: nil %>
     </div>
   </div>
 <% end %>
 
 <% if @posts.nil? %>
-  <div class="alert alert-info">
-    <p><strong><i class="fas fa-info-circle"></i> Advanced Search</strong></p>
+    <h3>Advanced Search Options</h3>
     <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
-  </div>
 
-  <p class="text-muted"><em>Search for something to start finding posts.</em></p>
+    <p class="has-color-tertiary-500"><em>Search for something to start finding posts.</em></p>
 <% else %>
-  <div class="tabs">
+  <div class="button-list is-gutterless has-float-right">
     <%= link_to 'Relevance', query_url(sort: 'relevance'),
-                class: "tabs--tab #{params[:sort] == 'relevance' || params[:sort].nil? ? 'tab__active' : ''}" %>
-    <%= link_to 'Score', query_url(sort: 'score'), class: "tabs--tab #{params[:sort] == 'score' ? 'tab__active' : ''}" %>
-    <%= link_to 'Age', query_url(sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
+                class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}" %>
+    <%= link_to 'Score', query_url(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}" %>
+    <%= link_to 'Age', query_url(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}" %>
   </div>
+  <div class="has-clear-clear">&nbsp;</div>
 
   <% if @posts.size == 0 %>
-    <p class="text-muted"><em>No results for <strong><%= params[:search] %></strong>.</em></p>
+    <p class="has-color-tertiary"><em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em></p>
   <% end %>
 
-  <% @posts.each do |post| %>
-    <%= render 'posts/list', post: post %>
-  <% end %>
+  <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
+    <% @posts.each do |post| %>
+      <%= render 'posts/list', post: post %>
+    <% end %>
+  </div>
 <% end %>
 
 <% unless @posts.nil? %>
