@@ -1,32 +1,33 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 <% is_meta = (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
-<div class="question <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
-  <div class="question--score">
-    <span class="score"><%= post.score %></span>
-    <span class="descriptor">score</span>
+<% active_user = post.last_activity_by || post.user %>
+<div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
+  <div class="item-list--number-value">
+    <span class="item-list--number"><%= post.score %></span>
+    <span class="item-list--number-label">score</span>
   </div>
-  <div class="question--info">
-    <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id), class: 'question--title' do %>
-      <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
-        <strong>META</strong> &mdash;
-      <% end %>
+  <div class="item-list--text-value is-primary">
+    <div>
+      <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id), class: 'has-font-size-larger' do %>
       <%= is_question ? post.title : post.parent.title %>
-    <% end %>
-    <% if is_question %>
-      <div class="question--tags">
-        <% post.tags_cache.each do |tag| %>
-          <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
-        <% end %>
-      </div>
-    <% end %>
-    <span class="question--details">
-      <% if is_question %>
-        <%= pluralize(post.answer_count, 'answer') %> &middot;
       <% end %>
-      <% active_user = post.last_activity_by || post.user %>
-      last activity <%= time_ago_in_words(post.last_activity) %> ago by
-      <img alt="user avatar" src="<%= avatar_url(active_user) %>" height="16" width="16" />
-      <%= link_to active_user.username, user_path(active_user) %>
-    </span>
+    </div>
+    <div class="has-padding-top-2">
+      <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+        <span class="badge is-tag is-master-tag">meta</span>
+      <% end %>
+      <% if is_question %>
+        <% post.tags_cache.each do |tag| %>
+          <%= link_to tag, questions_tagged_path(tag), class: 'badge is-tag' %>
+        <% end %>
+      <% end %>
+    </div>
+    <p class="has-color-tertiary-600">last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %></p>
   </div>
+  <% if is_question %>
+    <div class="item-list--number-value">
+      <span class="item-list--number"><%= post.answer_count %></span>
+      <span class="item-list--number-label"><%= post.answer_count != 1 ? 'answers' : 'answer' %></span>
+    </div>
+  <% end %>
 </div>
