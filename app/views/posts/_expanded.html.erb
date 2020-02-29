@@ -1,147 +1,168 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 
-<div class="post <%= post.is_meta ? 'post__meta' : '' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
+<div class="post <%= post.is_meta ? 'is-meta' : '' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
   <% if is_question %>
-    <h2 class="post--title">
-      <% if post.is_meta %>
-        <strong>META</strong> &mdash;
-      <% end %>
+    <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.is_meta ? 'tertiary' : 'primary' %>-400 has-padding-2">
       <%= post.title %>
     </h2>
   <% end %>
 
-  <div class="post--container <%= 'deleted-content' if post.deleted? %>">
-    <div class="post--votes">
-      <% existing_vote = my_vote(post) %>
-      <% if existing_vote&.vote_type == 1 %>
-        <img class="vote-button voted" data-vote-type="1" data-vote-id="<%= existing_vote.id %>"
-             id="post-<%= post.id %>-up" src="/assets/up-fill.png" height="48" />
-      <% else %>
-        <img class="vote-button" data-vote-type="1" id="post-<%= post.id %>-up" src="/assets/up-clear.png" height="48" />
-      <% end %>
-      <% votes = post.votes.group(:vote_type).count(:vote_type) %>
-      <span class="score" title="+<%= votes[1] || 0 %>/-<%= votes[-1] || 0 %>"><%= post.score %></span>
-      <% if existing_vote&.vote_type == -1 %>
-        <img class="vote-button voted" data-vote-type="-1" data-vote-id="<%= existing_vote.id %>"
-             id="post-<%= post.id %>-down" src="/assets/down-fill.png" height="48" />
-      <% else %>
-        <img class="vote-button" data-vote-type="-1" id="post-<%= post.id %>-down" src="/assets/down-clear.png" height="48" />
-      <% end %>
+  <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
+    <div class="grid--cell">
+      <div class="post--votes has-text-align-center">
+        <% existing_vote = my_vote(post) %>
+        <button class="vote-button button is-icon-only-button is-extremely-large <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
+                data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
+            <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+              <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+            </svg>
+        </button>
+        <% votes = post.votes.group(:vote_type).count(:vote_type) %>
+        <div class="score has-font-size-subtitle has-color-tertiary-600 has-font-weight-medium" title="+<%= votes[1] || 0 %>/-<%= votes[-1] || 0 %>">
+          <%= post.score %>
+        </div>
+        <button class="vote-button button is-icon-only-button is-extremely-large <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
+                data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
+            <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+              <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+            </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="post--body">
-      <div class="post--text"><%= raw(sanitize(post.body, scrubber: scrubber)) %></div>
+    <div class="grid--cell is-flexible has-padding-2">
 
-      <div class="post--meta">
-        <% if is_question %>
-          <div class="post--tags">
-            <% post.tags_cache.each do |tag| %>
-              <% next if tag.nil? || tag.empty? %>
-              <%= link_to tag, questions_tagged_path(tag), class: 'tag' %>
-            <% end %>
-          </div>
-        <% end %>
-        <span class="post--author text-muted">
-          <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</span> &middot;
-          by
-          <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" />
-          <%= link_to post.user.username, user_path(post.user) %> (<%= post.user.reputation %>)
-        </span>
-      </div>
-
-      <div class="post--actions">
-        <%= link_to 'history', post_history_path(post) %> /
-        <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> /
-        <%= link_to 'permalink', is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) %> /
-        <% if is_question && !post.closed %>
-          <%= link_to 'close', close_question_path(post), method: :post, class: 'close-question' %> /
-        <% elsif is_question && post.closed %>
-          <%= link_to 'reopen', reopen_question_path(post), method: :post, class: 'reopen-question' %> /
-        <% end %>
-        <% if !post.deleted %>
-          <%= link_to 'delete', url_for(controller: is_question ? :questions : :answers, action: :destroy, id: post.id),
-                      method: :delete, data: { confirm: 'Are you sure you want to delete this post?' }, class: "text-danger" %>
-        <% else %>
-          <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
-                      method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "text-danger" %>
-        <% end %> /
-        <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
-      </div>
-
-      <% if post.att_source.present? %>
-        <div class="post--notice">
-          <div class="notice--content">
-            <p>
-              <i class="fas fa-balance-scale"></i> This post was sourced from <%= link_to post.att_source, post.att_source %>.
-              <% if post.att_license_name.present? %>
-                It is licensed under <%= link_to post.att_license_name, post.att_license_link %>.
-              <% end %>
-            </p>
-          </div>
-        </div>
-      <% end %>
-
-      <% if is_question && post.closed %>
-        <div class="post--notice">
-          <h4 class="notice--title">Closed Question</h4>
-          <div class="notice--content">
-            <p>
-              This question was closed on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
-              by <%= link_to post.closed_by.username, user_path(post.closed_by) %>.
-              New answers can no longer be added.
-            </p>
-
-            <p>Users with the reopen privilege may vote to reopen this question if it has been closed incorrectly.</p>
-          </div>
-        </div>
-      <% end %>
-
-      <% if post.deleted %>
-        <div class="post--notice">
-          <h4 class="notice--title">Deleted</h4>
-          <div class="notice--content">
-            <p>
-              This post was deleted on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
-              by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>.
-            </p>
-
-            <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
-          </div>
-        </div>
-      <% end %>
-      <div class="post--comments">
-        <h4><%= pluralize(post.comments.undeleted.size, 'comment') %></h4>
-        <div class="post--comments-container">
-          <% comments = moderator? ? post.comments : post.comments.undeleted %>
-          <% comments.first(5).each do |comment| %>
-            <%= render 'comments/comment', comment: comment %>
-          <% end %>
-        </div>
-
-        <div class="post--comments-links">
-          <% if comments.count > 5 %>
-            <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">Show more comments</a>
-            <% if user_signed_in? %>
-              &middot;
-            <% end %>
-          <% end %>
-          <% if user_signed_in? %>
-            <a href="#" class="js-add-comment">Add a comment</a>
-
-            <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form' } do |f| %>
-              <%= f.hidden_field :post_id, value: post.id %>
-
-              <div class="form-group-horizontal">
-                <div class="form-group">
-                  <%= f.label :content, 'Your comment' %>
-                  <%= f.text_area :content, rows: 3, class: 'form-control js-comment-content', autocomplete: 'off' %>
-                </div>
-                <div class="actions">
-                  <%= f.submit 'Post', class: 'btn btn-primary' %>
-                </div>
+      <div class="post--body">
+        <%= raw(sanitize(post.body, scrubber: scrubber)) %>
+  
+        <div class="post--meta">
+          <div class="post--author has-float-right has-color-tertiary">
+            <div title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</div>
+            <div>
+              <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" class="has-float-left" />
+              <div class="has-padding-1 has-float-left">
+                <%= link_to post.user.username, user_path(post.user) %> <span class="badge is-user-trust-level"><%= post.user.reputation %></span>
               </div>
-            <% end %>
+              <div class="has-clear-clear"></div>
+            </div>
+          </div>
+          <% if is_question %>
+            <div class="post--tags has-padding-2">
+              <% if post.is_meta %>
+                <span class="badge is-tag is-master-tag">meta</span>
+              <% end %>
+              <% post.tags_cache.each do |tag| %>
+                <% next if tag.nil? || tag.empty? %>
+                <%= link_to tag, questions_tagged_path(tag), class: 'badge is-tag' %>
+              <% end %>
+            </div>
           <% end %>
+        </div>
+        <div class="has-clear-clear"></div>
+
+
+        <div class="post--actions">
+          <%= link_to 'history', post_history_path(post) %> &middot;
+          <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
+          <%= link_to 'permalink', is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) %> &middot;
+          <% if is_question && !post.closed %>
+            <%= link_to 'close', close_question_path(post), method: :post, class: 'close-question' %> &middot;
+          <% elsif is_question && post.closed %>
+            <%= link_to 'reopen', reopen_question_path(post), method: :post, class: 'reopen-question' %> &middot;
+          <% end %>
+          <% if !post.deleted %>
+            <%= link_to 'delete', url_for(controller: is_question ? :questions : :answers, action: :destroy, id: post.id),
+                        method: :delete, data: { confirm: 'Are you sure you want to delete this post?' }, class: "is-red" %>
+          <% else %>
+            <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
+                        method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
+          <% end %> &middot;
+          <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
+        </div>
+
+        <div class="post--status">
+  
+          <% if post.att_source.present? %>
+            <div class="notice has-margin-2">
+              <p>
+                This post was sourced from <%= link_to post.att_source, post.att_source %>.
+                <% if post.att_license_name.present? %>
+                  It is licensed under <%= link_to post.att_license_name, post.att_license_link %>.
+                <% end %>
+              </p>
+            </div>
+          <% end %>
+
+          <% if is_question && post.closed %>
+            <div class="notice is-warning has-margin-2">
+              <h3 class="has-font-weight-normal">
+                <strong>closed</strong> by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
+                on  <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+              </h3>
+              <p>
+                This question was closed, because it isn't suitable for this site.
+                New answers can no longer be added.
+              </p>
+  
+              <p>Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.</p>
+            </div>
+          <% end %>
+  
+          <% if post.deleted %>
+            <div class="notice is-warning has-margin-2">
+              <h3 class="has-font-weight-normal">
+                <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
+                on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
+              </h3>
+              <p>
+                This post was deleted, because it violates the rules of this site. It can only be seen by users with the delete privilege.
+              </p>
+
+              <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
+           </div>
+           <% end %>
+       </div>
+         <div class="post--comments has-padding-4">
+          <h4 class="has-margin-0">
+            <%= pluralize(post.comments.undeleted.size, 'comment') %>
+            <span class="has-color-tertiary-500"><%= (moderator? && post.comments.deleted.size != 0) ? '(deleted: ' + post.comments.deleted.size.to_s + ')' : '' %></span>
+          </h4>
+          <div class="post--comments-container">
+            <% comments = moderator? ? post.comments : post.comments.undeleted %>
+            <% comments.first(5).each do |comment| %>
+              <%= render 'comments/comment', comment: comment %>
+            <% end %>
+          </div>
+  
+          <div class="post--comments-links has-margin-top-1">
+            <% if comments.count > 5 %>
+              <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">Show more comments</a>
+              <% if user_signed_in? %>
+                &middot;
+              <% end %>
+            <% end %>
+            <% if user_signed_in? %>
+              <% if post.deleted %>
+                <span class="has-color-tertiary-500">Comments disabled on deleted posts</span>
+              <% else %>
+                <a href="#" class="js-add-comment">Add a comment</a>
+  
+                <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form' } do |f| %>
+                  <%= f.hidden_field :post_id, value: post.id %>
+
+                  <div class="form-group-horizontal">
+                    <div class="form-group">
+                      <%= f.label :content, 'Your comment' %>
+                      <%= f.text_area :content, class: 'form-element is-small js-comment-content', autocomplete: 'off' %>
+                    </div>
+                    <div class="actions">
+                      <%= f.submit 'Post', class: 'button is-outlined' %>
+                    </div>
+                  </div>
+                <% end %>
+             <% end %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

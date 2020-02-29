@@ -1,16 +1,5 @@
 @import 'variables';
 
-.post--comments {
-  h4 {
-    padding-bottom: 0.5em;
-    border-bottom: 1px solid $muted-graphic;
-  }
-
-  .post--comments-links {
-    padding: 0.5em;
-  }
-}
-
 .comment {
   display: flex;
   flex-direction: column;
