@@ -46,13 +46,13 @@
               Flags
             <% end %>
           <% end %>
-          <button type="button" class="header--item inbox-toggle" data-toggle="dropdown">
+          <a href="#" class="header--item inbox-toggle" data-toggle="dropdown">
               <% unread = current_user.unread_count %>
               <% if unread > 0 %>
                 <span class="header--alert"><%= unread %></span>
               <% end %>
               <i class='fas fa-inbox' title='Notifications'></i>
-            </button>
+          </a>
           <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
             <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
             <span class="has-font-size-larger has-color-tertiary-600"><%= current_user.reputation %></span>

@@ -3,7 +3,7 @@
 
 <% @notifications.each do |notif| %>
   <div class="notification">
-    <span class="text-muted"><%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %></span>
+    <div class="has-color-tertiary-500 has-font-size-caption"><%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %></div>
     <a href="<%= notif.link %>"><%= notif.content %></a>
   </div>
 <% end %>
