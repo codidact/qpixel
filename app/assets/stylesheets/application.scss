@@ -36,13 +36,3 @@ details {
     border-bottom: 1px solid $muted-graphic;
   }
 }
-
-@-moz-document url-prefix() {
-  details > summary:before {
-    content: '▶';
-  }
-
-  details[open] > summary:before {
-    content: '▼';
-  }
-}

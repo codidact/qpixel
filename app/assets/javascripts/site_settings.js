@@ -1,11 +1,11 @@
 $(() => {
   const settingEditFields = {
-    'string': $(`<input type="text" class="form-control js-setting-edit" />`),
-    'integer': $('<input type="number" class="form-control js-setting-edit" />'),
-    'float': $('<input type="number" step="0.0001" class="form-control js-setting-edit" />'),
-    'boolean': $(`<select class="form-control js-setting-edit"><option value></option><option value="true">true</option><option value="false">false</option></select>`),
-    'json': $(`<textarea rows="5" cols="100" class="form-control js-setting-edit"></textarea>`),
-    'text': $(`<textarea rows="5" cols="100" class="form-control js-setting-edit"></textarea>`)
+    'string': $(`<input type="text" class="form-element js-setting-edit" />`),
+    'integer': $('<input type="number" class="form-element js-setting-edit" />'),
+    'float': $('<input type="number" step="0.0001" class="form-element js-setting-edit" />'),
+    'boolean': $(`<select class="form-element js-setting-edit"><option value></option><option value="true">true</option><option value="false">false</option></select>`),
+    'json': $(`<textarea rows="5" cols="100" class="form-element js-setting-edit"></textarea>`),
+    'text': $(`<textarea rows="5" cols="100" class="form-element js-setting-edit"></textarea>`)
   };
 
   $('.js-setting-value').on('click', async evt => {
@@ -27,7 +27,7 @@ $(() => {
 
     const form = settingEditFields[valueType].clone().val(!!value ? value.toString() : '')
                                              .attr('data-name', name).attr('data-community-id', communityId);
-    $tgt.addClass('editing').html(form).append(`<button class="btn btn-primary js-setting-submit">Update</button>`);
+    $tgt.addClass('editing').html(form).append(`<button class="button is-primary is-filled js-setting-submit">Update</button>`);
   });
 
   $(document).on('click', '.js-setting-submit', async evt => {
