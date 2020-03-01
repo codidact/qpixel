@@ -1,19 +1,23 @@
 <% content_for :title, "Users" %>
 
-<h3>Users</h3>
+<h1>Users</h1>
 
 <%= form_tag users_path, method: :get, class: 'form-inline' do %>
-  <div class="form-group">
-    <%= label_tag :search %>
-    <%= text_field_tag :search, params[:search], class: 'form-control' %>
-    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i><span class="sr-only">Search</span></button>
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :search, "Search", class: "form-element" %>
+      <%= text_field_tag :search, params[:search], class: 'form-element' %>
+    </div>
+    <div class="actions has-padding-bottom-1">
+      <button type="submit" class="button is-filled is-medium"><i class="fas fa-search"></i><span class="sr-only">Search</span></button>
+    </div>
   </div>
-<% end %><br/>
+<% end %>
 
-<div class="tabs">
+<div class="button-list is-gutterless has-margin-bottom-4">
   <%= link_to 'Reputation', query_url(sort: 'reputation'),
-      class: "tabs--tab #{params[:sort] == 'reputation' || (params[:sort].nil? && params[:search].nil?) ? 'tab__active' : ''}" %>
-  <%= link_to 'Age', query_url(sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
+      class: "button is-muted is-outlined #{params[:sort] == 'reputation' || (params[:sort].nil? && params[:search].nil?) ? 'is-active' : ''}" %>
+  <%= link_to 'Age', query_url(sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
 </div>
 
 <div class="user-list">

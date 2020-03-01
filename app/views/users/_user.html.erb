@@ -3,10 +3,15 @@
     <div><img src="<%= avatar_url(user) %>" alt="user avatar" height="32" width="32" /></div>
     <div class="user--meta">
       <% user_posts = user.posts.group(:post_type_id).count(:post_type_id) %>
-      <span class="username"><%= link_to user.username + (user.is_admin ? SiteSetting['AdminBadgeCharacter'] : '') +
-                                             (user.is_moderator ? SiteSetting['ModBadgeCharacter'] : ''),
-                                         user_path(user) %></span>
-      <strong class="text-muted"><%= user.reputation %></strong>
+      <span class="username"><%= link_to  user_path(user), class: "is-not-underlined" do %>
+                               <%= user.username %>
+                               <% if user.is_admin &&  SiteSetting['AdminBadgeCharacter'] %>
+                                 <span class="badge is-user-role"><%= SiteSetting['AdminBadgeCharacter'] %></span>
+                               <% elsif user.is_mod && SiteSetting['ModBadgeCharacter'] %>
+                                 <span class="badge is-user-role"><%= SiteSetting['ModBadgeCharacter'] %></span>
+                               <% end %>
+                             <% end %></span>
+      <span class="has-color-tertiary-600 has-font-weight-bold"><%= user.reputation %></span>
       <span><%= user_posts[Question.post_type_id] || 0 %>Q, <%= user_posts[Answer.post_type_id] || 0 %>A</span>
     </div>
   </div>
