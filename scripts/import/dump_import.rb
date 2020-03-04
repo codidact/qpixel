@@ -1,59 +1,93 @@
-require_relative 'base_import'
+require 'ostruct'
+require 'thwait'
 
-class DumpImport < BaseImport
+class DumpImport
   def initialize(options)
     @options = options
-  end
+    @xml_data = {}
 
-  def load_file(file)
-    base_path = @options.path
-    base_tag = file.downcase.gsub('_', '')
-    doc = Nokogiri::XML(File.read("#{base_path}/#{file}.xml"))
-    rows = doc.at_css(base_tag)
-    rows.element_children.map { |ec| ec.attributes.map { |an, attr| [an, attr&.value || an] }.to_h }
-  end
+    @system_user = User.find(-1)
 
-  def construct_user(row_data)
-    user_data = if row_data
-                  { display_name: row_data['DisplayName'], user_id: row_data['Id'], account_id: row_data['AccountId'],
-                    link: "#{site_base_url}/u/#{row_data['Id']}" }
-                else
-                  { user_id: nil }
-                end
-    user_data.map { |k, v| [k.to_s, v] }.to_h
-  end
+    $logger.info 'Loading XML dump data'
 
-  def construct_post(row_data)
-    base = { body: row_data['Body'], body_markdown: ReverseMarkdown.convert(row_data['Body']), closed_date: row_data['ClosedDate'],
-             creation_date: row_data['CreationDate'], last_activity_date: row_data['LastActivityDate'], title: row_data['Title'],
-             tags: row_data['Tags']&.scan(/<([^>]+)>/)&.flatten,
-             link: "#{site_base_url}/#{row_data['PostTypeId'] == '1' ? 'q' : 'a'}/#{row_data['Id']}" }
-    base = base.merge(owner: construct_user(@users.select { |u| u['Id'] == row_data['OwnerUserId'] }[0]))
-    base = base.merge(up_vote_count: @votes.select { |v| v['PostId'] == row_data['Id'] && v['VoteTypeId'] == '2' }.size)
-    base = base.merge(down_vote_count: @votes.select { |v| v['PostId'] == row_data['Id'] && v['VoteTypeId'] == '3' }.size)
-    base = base.merge(answers: @posts.select { |p| p['ParentId'] == row_data['Id'] }.map { |p| construct_post p })
-    base.map { |k, v| [k.to_s, v] }.to_h
-  end
+    directory_path = File.expand_path @options.path
+    files = Dir.glob("*.xml", base: directory_path)
+    threads = files.map { |f| "#{directory_path}/#{f}" }.map.with_index do |file, idx|
+      Thread.new do
+        basename = File.basename(file).gsub('.xml', '')
 
-  def import!
-    print "Loading data: posts\r"
-    @posts = load_file 'Posts'
-    print "Loading data: users\r"
-    @users = load_file 'Users'
-    print "Loading data: votes\r"
-    @votes = load_file 'Votes'
-    puts  'Loading data: done  '
+        $logger.debug "Loading: #{basename} (#{idx + 1}/#{files.size})"
 
-    @posts.select { |p| p['PostTypeId'] == '1' }.each do |p|
-      constructed = construct_post(p)
-      q = create_question(constructed)
-      puts "created question #{p['Id']} => #{q.id}"
-      if constructed.include?('answers') && constructed['answers'].size > 0
-        constructed['answers'].each do |answer|
-          a = create_answer q.id, answer
-          puts "created answer #{q.id} <=> #{a.id}"
+        data_type = basename.underscore.to_sym
+        document = Nokogiri::XML(File.read(file))
+        rows = document.css("#{basename.downcase} row").map do |r|
+          struct = OpenStruct.new
+          r.attributes.each { |n, a| struct[n.underscore.to_sym] = a.content }
+          struct
         end
+        @xml_data[data_type] = rows
+
+        $logger.debug "         #{basename}: #{rows.size}"
       end
     end
+    ThreadsWait.all_waits(*threads)
+
+    $logger.info 'Load done'
+  end
+
+  def method_missing(method, *args, &block)
+    if @xml_data.include? method.to_sym
+      @xml_data[method.to_sym]
+    else
+      raise NotImplementedError
+    end
+  end
+
+  def site_base_url
+    site_param = @options.site
+    non_se = {stackoverflow: 'com', superuser: 'com', serverfault: 'com', askubuntu: 'com', mathoverflow: 'net', stackapps: 'com'}
+    included = non_se.keys.map(&:to_s).select { |k| site_param.include? k }
+    if included.size > 0
+      "https://#{included[0]}.#{non_se[included[0]]}"
+    else
+      "https://#{site_param}.stackexchange.com"
+    end
+  end
+
+  def post_data(post)
+    # { answers: post_data[]?, body: string, body_markdown: string, closed_date: integer?, creation_date: integer,
+    #   down_vote_count: integer, last_activity_date: integer, owner: shallow_user, title: string?, tags: string[]?,
+    #   up_vote_count: integer, link: string }
+    post_data = { body: post.body, body_markdown: QuestionsController.renderer.render(post.body),
+                  creation_date: post.creation_date, last_activity_date: post.last_activity_date,
+                  owner: {'user_id' => post.owner_user_id}, link: "#{site_base_url}/q/#{post.id}" }
+    if post.post_type_id == '1'
+      post_data = post_data.merge(title: post.title, tags: post.tags&.split(/[<>]/)&.reject(&:empty?))
+      closed_at = post_closed_at(post)
+      unless closed_at.nil?
+        post_data[:closed_at] = closed_at
+      end
+    end
+
+    post_data[:up_vote_count] = votes.select { |v| v.post_id == post.id && v.vote_type_id == '2' }.size
+    post_data[:down_vote_count] = votes.select { |v| v.post_id == post.id && v.vote_type_id == '3' }.size
+
+    post_data
+  end
+
+  def post_closed_at(post)
+    # 10: Closed
+    # 11: Reopened
+    events = post_history.select { |ph| ['10', '11'].include?(ph.post_history_type_id) && ph.post_id == post.id }
+    sorted = events.sort_by(&:creation_date)
+    sorted.last&.post_history_type_id == '10' ? sorted.last.creation_date : nil
+  end
+
+  def tag_posts(tag)
+    posts.select { |p| p.tags.include? "<#{tag}>" }
+  end
+
+  def user_posts(user_id)
+    posts.select { |p| p.user_id.to_s == user_id.to_s }
   end
 end

@@ -14,7 +14,7 @@ class PostHistory < ApplicationRecord
     history_type = PostHistoryType.find_by(name: history_type_name)
     raise NoMethodError.new if history_type.nil?
 
-    params = { post_history_type: history_type, user: user, post: object }
+    params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     unless before.nil?
       params = params.merge(before_state: before)
     end

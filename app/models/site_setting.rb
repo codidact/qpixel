@@ -2,7 +2,6 @@
 # reputation awards, additional content, and site constants such as name and logo.
 class SiteSetting < ApplicationRecord
   belongs_to :community
-  default_scope { for_community_id(RequestContext.community_id).or(global).priority_order }
 
   validates :name, uniqueness: { scope: [:community_id] }
 
@@ -12,9 +11,9 @@ class SiteSetting < ApplicationRecord
 
   def self.[](name)
     cached = Rails.cache.fetch "SiteSettings/#{RequestContext.community_id}/#{name}" do
-      SiteSetting.find_by(name: name)&.typed
+      SiteSetting.applied_setting(name)&.typed
     end
-    cached.nil? ? SiteSetting.find_by(name: name)&.typed : cached # doubled to avoid cache fetch returning nil from cache
+    cached.nil? ? SiteSetting.applied_setting(name)&.typed : cached # doubled to avoid cache fetch returning nil from cache
   end
 
   def self.exist?(name)
@@ -23,6 +22,12 @@ class SiteSetting < ApplicationRecord
 
   def typed
     SettingConverter.new(value).send("as_#{value_type.downcase}")
+  end
+
+  private
+
+  def self.applied_setting(name)
+    SiteSetting.for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
   end
 end
 
