@@ -6,11 +6,37 @@ class APIImport
 
     $logger.info 'Loading basic post set from API'
     get_data('https://api.stackexchange.com/2.2/questions',
-             { filter: '!)PBnhGn1BSYvK7)acUqsdh*WzUqRTlx3**rDPG7YMZdpbUENVagLDusGJB6S5vhlXV85.X' }, max=2000) do |items|
+             { filter: '!FRQH*0YrVJD7y(VBG8yPCsNi(JRY4ZiPU.AYWK8Idy3LIKyzzdzPy*QP4DC0uUBoQnX1qlpT' }, max=2000) do |items|
       items.each do |question|
         @cache.posts << question.merge('id' => question['question_id'])
         question['answers']&.each do |answer|
           @cache.posts << answer.merge('id' => answer['answer_id'])
+        end
+      end
+    end
+  end
+
+  def post(post_id, post_type_id)
+    cached = @cache.posts.select { |p| p['id'].to_s == post_id.to_s }
+    if cached.size > 0
+      cached[0]
+    else
+      params = if post_type_id.to_s == '1'
+                 ["https://api.stackexchange.com/2.2/questions/#{post_id}",
+                  { filter: '!.DAGnbqUZ3-BwQZ*J9lkg4gEh9sQx6bgtyMGR0yRGqlg)bJ1neZx)BgFRuIsR7d6EMCyYU2-1gm' }]
+               elsif post_type_id.to_s == '2'
+                 ["https://api.stackexchange.com/2.2/answers/#{post_id}",
+                  { filter: '!WXitaVFVVM.BvlaMYC)iSu2Gs*z7.fXEH99.sly' }]
+               end
+      get_data(params[0], params[1]) do |items|
+        items.each do |post|
+          @cache.posts << post.merge('id' => post[post_type_id.to_s == '1' ? 'question_id' : 'answer_id'])
+          if post.include?('answers')
+            post['answers']&.each do |answer|
+              @cache.posts << answer.merge('id' => answer['answer_id'])
+            end
+          end
+          return post
         end
       end
     end

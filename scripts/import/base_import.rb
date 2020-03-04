@@ -10,16 +10,17 @@ class BaseImport
     @post_id_map = {}
   end
 
-  def import(ids)
-    $logger.info "Importing #{ids.size} posts"
-    ids.each do |id|
-      import_post id
+  def import(id_map)
+    $logger.info "Importing #{id_map.size} posts"
+    id_map.each do |info|
+      import_post info[0], info[1]
     end
-    $logger.info "#{ids.size} posts imported"
+    $logger.info "#{id_map.size} posts imported"
   end
 
-  def import_post(post_id)
-    return if @post_id_map.include? post_id
+  def import_post(post_id, post_type_id)
+    return if @post_id_map.include? post_id.to_i
+    return unless [1, 2].include? post_type_id.to_i
 
     dump_matches = @dump.posts.select { |p| p.id.to_s == post_id }
     if dump_matches.size > 0
@@ -29,21 +30,37 @@ class BaseImport
 
       if post.post_type_id == '1'
         native_post = create_question(post_data)
-        @post_id_map[post_id] = native_post.id
+        @post_id_map[post_id.to_i] = native_post.id
       elsif post.post_type_id == '2'
         se_parent_id = post.parent_id
         unless @post_id_map.include? se_parent_id
-          import_post se_parent_id
+          import_post se_parent_id, '1'
         end
         native_post = create_answer(@post_id_map[se_parent_id], post_data)
-        @post_id_map[post_id] = native_post.id
+        @post_id_map[post_id.to_i] = native_post.id
       else
         $logger.debug "Not importing SEID #{post_id}: PostTypeId #{post.post_type_id}"
         return
       end
-      $logger.debug "SEID #{post_id}: imported as #{native_post.id}"
+      $logger.debug "SEID #{post_id}: imported (dump) as #{native_post.id}"
     else
       $logger.debug "SEID #{post_id}: get from API"
+      post_data = @api.post(post_id, post_type_id)
+      if post_type_id.to_s == '1'
+        native_post = create_question(post_data)
+        @post_id_map[post_id.to_i] = native_post.id
+      elsif post_type_id.to_s == '2'
+        se_parent_id = post_data['question_id']
+        unless @post_id_map.include? se_parent_id
+          import_post se_parent_id, '1'
+        end
+        native_post = create_answer(@post_id_map[se_parent_id], post_data)
+        @post_id_map[post_id.to_i] = native_post.id
+      else
+        $logger.debug "Not importing SEID #{post_id}: PostTypeId #{post_type_id}"
+        return
+      end
+      $logger.debug "SEID #{post_id}: imported (API) as #{native_post.id}"
     end
   end
 
@@ -144,17 +161,6 @@ class BaseImport
     vote = { post_id: post.id, user: @system_user, recv_user: user, community_id: @options.community }
     Vote.create([vote.merge(vote_type: -1)] * post_data['down_vote_count'] +
                 [vote.merge(vote_type: 1)] * post_data['up_vote_count'])
-
-    if post_data['answers'].present? && post_data['answers'].is_a?(Array)
-      ids = if post_data['answers'][0].is_a? Hash
-              post_data['answers'].map { |pd| pd['id'] }
-            else
-              post_data['answers']
-            end
-      ids.each do |id|
-        import_post(id)
-      end
-    end
 
     post
   end

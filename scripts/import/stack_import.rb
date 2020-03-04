@@ -121,12 +121,12 @@ when :query
   rows = CSV.parse(resp.body)[1..-1]
   $logger.info "#{rows.size} rows returned"
 
-  unless rows.all? { |r| r.size == 1 && r[0] =~ /^\d+$/ }
-    $logger.fatal "Query revision #{$mode.specifier} returned invalid data format. Expected only Id field in each row."
+  unless rows.all? { |r| r.size == 2 && r[0] =~ /^\d+$/ && r[1] =~ /^\d+$/ }
+    $logger.fatal "Query revision #{$mode.specifier} returned invalid data format. Expected Id, PostTypeId in each row."
     exit ERROR_CODES[:invalid_query_format]
   end
 
-  base_importer.import rows.flatten
+  base_importer.import rows
 else
   $logger.fatal "Selected mode '#{$mode.mode.to_s}' is not defined"
   exit ERROR_CODES[:undefined_mode]
