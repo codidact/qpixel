@@ -4,7 +4,7 @@
   <% if is_question %>
     <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.is_meta ? 'tertiary' : 'primary' %>-400 has-padding-2">
       <%= post.title %>
-    </h2>
+    </h1>
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
@@ -22,7 +22,7 @@
           <%= post.score %>
         </div>
         <button class="vote-button button is-icon-only-button is-extremely-large <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
-                data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
+                data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
             <svg width="2em" height="1.33em" viewbox="0 0 100 50">
               <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
             </svg>

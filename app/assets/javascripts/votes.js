@@ -1,10 +1,12 @@
 $(() => {
   $(document).on('click', '.vote-button', async evt => {
-    const $tgt = $(evt.target);
+    const $tgt = $(evt.target).is('button') ? $(evt.target) : $(evt.target).parents('button');
     const $post = $tgt.parents('.post');
     const $score = $post.find('.post--votes').find('.score');
     const voteType = $tgt.data('vote-type');
-    const voted = $tgt.hasClass('voted');
+    const voted = $tgt.hasClass('is-active');
+
+    console.log($tgt, $post, $score, voteType, voted);
 
     if (voted) {
       const voteId = $tgt.attr('data-vote-id');
@@ -16,8 +18,7 @@ $(() => {
       const data = await resp.json();
       if (data.status === 'OK') {
         $score.text(data.post_score);
-        $tgt.attr('src', voteType === 1 ? '/assets/up-clear.png' : '/assets/down-clear.png')
-            .removeClass('voted')
+        $tgt.removeClass('is-active')
             .removeAttr('data-vote-id');
       }
       else {
@@ -36,14 +37,12 @@ $(() => {
       const data = await resp.json();
       if (data.status === 'modified' || data.status === 'OK') {
         $score.text(data.post_score);
-        $tgt.attr('src', voteType === 1 ? '/assets/up-fill.png' : '/assets/down-fill.png')
-            .addClass('voted')
+        $tgt.addClass('is-active')
             .attr('data-vote-id', data.vote_id);
 
         if (data.status === 'modified') {
           const $oppositeVote = $post.find(`.vote-button[data-vote-type="${-1 * voteType}"]`);
-          $oppositeVote.attr('src', voteType === 1 ? '/assets/down-clear.png' : '/assets/up-clear.png')
-                       .removeClass('voted')
+          $oppositeVote.removeClass('is-active')
                        .removeAttr('data-vote-id');
         }
       }
