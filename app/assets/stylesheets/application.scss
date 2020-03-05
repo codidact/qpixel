@@ -36,3 +36,7 @@ details {
     border-bottom: 1px solid $muted-graphic;
   }
 }
+
+a.header--site-name {
+  display: flex !important;
+}
