@@ -1,8 +1,8 @@
 <% content_for :title, "Suspicious Votes for #{@user.username}" %>
 
-<h3>Suspicious Voting Patterns</h3>
+<h1>Suspicious Voting Patterns</h1>
 
-<table class="table table-striped">
+<table class="table">
   <thead>
     <tr>
       <th>Voting User</th>
@@ -20,7 +20,7 @@
         <td><a href="/mod/votes/user/<%= sv.to_user.id %>"><%= sv.to_user.username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
-        <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv btn btn-success', method: :patch, remote: true %></td>
+        <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv button is-outlined', method: :patch, remote: true %></td>
       </tr>
     <% end %>
     <% @to.each do |sv| %>
@@ -30,7 +30,7 @@
         <td><a href="/mod/votes/user/<%= @user.id %>"><%= @user.username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
-        <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv btn btn-success', method: :patch, remote: true %></td>
+        <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv button is-outlined', method: :patch, remote: true %></td>
       </tr>
     <% end %>
   </tbody>
