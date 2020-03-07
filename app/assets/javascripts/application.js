@@ -25,15 +25,16 @@ window.QPixel = {
   createNotification: function(type, message, relativeElement) {
     const offset = QPixel.offset(relativeElement);
     $("<div></div>")
-      .addClass("alert alert-dismissible alert-" + type)
-      .html('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message)
+      .addClass("notice has-shadow-3 is-" + type)
+      .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
       .css({
-        'position': 'absolute',
-        'top': offset.bottom,
-        'left': offset.right,
+        'position': 'fixed',
+        'top': "50px",
+        'left': "50%",
+        'transform': "translateX(-50%)",
         'z-index': 100,
-        'max-width': '400px',
-        'box-shadow': '0 0 10px 2px #aaa',
+        'width': '100%',
+        'max-width': "800px",
         'cursor': 'pointer'
       })
       .on('click', function(ev) {
@@ -80,7 +81,7 @@ $(document).on('ready', function() {
         QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
       }
       else {
-        QPixel.createNotification('info', '<strong>Thanks!</strong> A moderator will review your flag.', this.target);
+        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.', this.target);
       }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -95,7 +96,7 @@ $(document).on('ready', function() {
     var id = self.data("flag-id");
     var data = {
       'result': self.data("result"),
-      'message': window.prompt("Add some optional feedback on this flag:")
+      'message': self.parent().parent().find(".flag-resolve-comment").val()
     };
 
     $.ajax({
@@ -109,7 +110,7 @@ $(document).on('ready', function() {
         QPixel.createNotification('danger', "<strong>Failed:</strong> " + response['message'], this.el);
       }
       else {
-        $(this.el).parent().parent().fadeOut(200, function() {
+        $(this.el).parent().parent().parent().fadeOut(200, function() {
           $(this).remove();
         });
       }

@@ -5,13 +5,21 @@
   moderator attention; use that to help you determine what needs to be done.</p>
 
 <% @flags.each do |flag| %>
-  <div class="flag">
-    <%= render 'posts/list', post: flag.post %>
-    <p><strong>Reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
-    <p>
-      <a href="#" class="flag-resolve btn btn-success" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
-      <a href="#" class="flag-resolve btn btn-danger" data-result='declined' data-flag-id="<%= flag.id %>">Declined</a>
-    </p>
+  <div class="widget">
+    <div class="item-list">
+      <%= render 'posts/list', post: flag.post %>
+    </div>
+    <div class="widget--body">
+      <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+    </div>
+    <div class="widget--footer">
+      <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
+      <div class="has-float-right has-padding-1">
+        <a href="#" class="flag-resolve button is-filled" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+        <a href="#" class="flag-resolve button is-filled" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
+      </div>
+      <div class="has-clear-clear"></div>
+    </div>
   </div>
 <% end %>
 

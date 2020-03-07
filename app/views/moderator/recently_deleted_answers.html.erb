@@ -1,8 +1,10 @@
 <% content_for :title, "Recently Deleted Answers" %>
 
-<h3>Recently Deleted Answers</h3>
-<% @answers.each do |a| %>
-  <%= render 'answers/answer', answer: a %>
-<% end %>
+<h1>Recently Deleted Answers</h1>
+<div class="item-list">
+  <% @answers.each do |a| %>
+    <%= render 'answers/answer', answer: a %>
+  <% end %>
+</div>
 
 <%= will_paginate @answers, renderer: BootstrapPagination::Rails %>
