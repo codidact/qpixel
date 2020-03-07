@@ -1,5 +1,5 @@
 $(() => {
-  const editField = $('<input type="number" class="form-control js-privilege-edit" />');
+  const editField = $('<input type="number" class="form-element js-privilege-edit" />');
 
   $('.js-privilege-threshold').on('click', async evt => {
     const $tgt = $(evt.target);
@@ -17,7 +17,7 @@ $(() => {
     const value = data.threshold;
 
     const form = editField.clone().val(value.toString()).attr('data-name', name);
-    $tgt.addClass('editing').html(form).append(`<button class="btn btn-primary js-privilege-submit">Update</button>`);
+    $tgt.addClass('editing').html(form).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
   });
 
   $(document).on('click', '.js-privilege-submit', async evt => {
