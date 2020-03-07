@@ -1,92 +1,138 @@
 <% content_for :title, "User #{@user.username}" %>
 
-<h3 class="user-show--username">
-  <img alt="user avatar" src="<%= avatar_url(@user, 64) %>" height="64" width="64" />
-  <span><%= @user.username %> <small>(<%= @user.reputation %>)</small></span>
-</h3>
-<p>
+<div class="tabs">
   <% if @user == current_user %>
-    <%= link_to edit_user_registration_path do %>
-      <i class="fas fa-edit"></i> Edit Account
-    <% end %> &middot;
-    <%= link_to edit_user_profile_path do %>
-      <i class="fas fa-edit"></i> Edit Profile
-    <% end %> &middot;
-    <%= link_to subscriptions_path do %>
-      <i class="fas fa-envelope-open"></i> Edit Email Subscriptions
-    <% end %> &middot;
-  <% end %>
-  <% if current_user&.is_moderator %>
-    <%= link_to mod_user_path(@user) do %>
-      <i class="fas fa-shield-alt"></i> Moderator Tools
-    <% end %> &middot;
-  <% end %>
-  <% if user_signed_in? %>
-    <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path) do %>
-      <i class="fas fa-envelope"></i> Subscribe to this user's questions
+    <%= link_to "", class: "tabs--item is-active" do %>
+      <i class="fas fa-user"></i> Profile
+    <% end %>
+    <%= link_to edit_user_registration_path, class: "tabs--item" do %>
+      Account
+    <% end %>
+    <%= link_to edit_user_profile_path, class: "tabs--item" do %>
+      Edit
+    <% end %>
+    <%= link_to subscriptions_path, class: "tabs--item" do %>
+      Subscriptions
     <% end %>
   <% end %>
-</p>
+</div>
 
-<div class="flex-row">
-  <div class="profile-details">
-    <p>
-      <% if @user.website.present? %>
-        <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
-      <% end %>
-
-      <% if @user.twitter.present? %>
-        <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
-      <% end %>
-    </p>
+<div class="user-profile">
+  <div class="user-profile--image">
+    <img alt="user avatar" src="<%= avatar_url(@user, 64) %>" height="64" width="64" />
+    <div class="user-profile--reputation">
+      <strong class="has-font-size-subheading has-color-tertiary-800"><%= @user.reputation %></strong>
+      reputation
+    </div>
   </div>
-  <div class="profile-text">
-    <% if @user.profile.nil? || @user.profile.blank? %>
-      <em class="text-muted">A quiet enigma. <%= @user.username %> hasn't written anything about themselves yet.</em>
-    <% else %>
-      <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
+  <div class="user-profile--name">
+    <h1><%= @user.username %></h1>
+    <div class="profile-text">
+      <% if @user.profile.nil? || @user.profile.blank? %>
+        <em class="has-color-tertiary-400">A quiet enigma. <%= @user.username %> hasn't written anything about themselves yet.</em>
+      <% else %>
+        <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
+      <% end %>
+    </div>
+  </div>
+  <div class="user-profile--sidebar">
+    <div class="profile-details">
+      <p>
+        <% if @user.website.present? %>
+          <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
+        <% end %>
+  
+        <% if @user.twitter.present? %>
+          <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+        <% end %>
+      </p>
+    </div>
+    <% if user_signed_in? %>
+      <div>
+        <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
+          <i class="fas fa-envelope"></i> Subscribe to user
+        <% end %>
+      </div>
+    <% end %>
+    <% if current_user&.is_moderator %>
+      <div>
+        <%= link_to mod_user_path(@user), class: "button is-danger is-outlined is-small" do %>
+          <i class="fas fa-shield-alt"></i> Moderator Tools
+        <% end %>
+      </div>
     <% end %>
   </div>
 </div>
 
-<hr/>
 
-<h4>Questions</h4>
+<h2 class="user-profile-heading">Questions</h2>
 <% if @user.questions.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't asked anything yet.</em>
-<% end %>
-<% @user.questions.undeleted.order(score: :desc).first(5).each do |q| %>
-  <%= render 'posts/list', post: q %>
-<% end %>
-<%= link_to user_posts_path(@user, type: 'questions') do %>
-  See all questions &raquo;
+<% else %>
+  <div class="item-list">
+    <% @user.questions.undeleted.order(score: :desc).first(5).each do |q| %>
+      <%= render 'posts/list', post: q %>
+    <% end %>
+  </div>
+  <%= link_to user_posts_path(@user, type: 'questions'), class: "button is-muted" do %>
+    See all questions &raquo;
+  <% end %>
 <% end %>
 
-<hr/>
-
-<h4>Answers</h4>
+<h2 class="user-profile-heading">Answers</h2>
 <% if @user.answers.size == 0 %>
   <em class="text-muted"><%= @user.username %> hasn't answered anything yet.</em>
+<% else %>
+  <div class="item-list">
+    <% @user.answers.undeleted.order(score: :desc).first(5).each do |a| %>
+      <%= render 'posts/list', post: a %>
+    <% end %>
+  </div>
+  <%= link_to user_posts_path(@user, type: 'answers'), class: "button is-muted" do %>
+    See all answers &raquo;
+  <% end %>
 <% end %>
-<% @user.answers.undeleted.order(score: :desc).first(5).each do |a| %>
-  <%= render 'posts/list', post: a %>
-<% end %>
-<%= link_to user_posts_path(@user, type: 'answers') do %>
-  See all answers &raquo;
-<% end %>
-
-<hr/>
 
 <%
   votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
   votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
 %>
 
-<h4>Votes</h4>
+<h2 class="user-profile-heading">Votes</h2>
 <p><%= @user.username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
-<ul>
-  <li><%= votes_by_type[1] || 0 %> up</li>
-  <li><%= votes_by_type[-1] || 0 %> down</li>
-  <li><%= votes_by_post_type[Question.post_type_id] || 0 %> question</li>
-  <li><%= votes_by_post_type[Answer.post_type_id] || 0 %> answer</li>
-</ul>
+<table class="table">
+  <tr>
+    <th colspan=2>Type of vote</th>
+    <th>Count</th>
+  </tr>
+  <tr>
+    <td class="has-color-tertiary-600">
+      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+        <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+      </svg>
+    </td>
+    <td>
+      <strong>Upvotes</strong>
+    </td>
+    <td><%= votes_by_type[1] || 0 %></td>
+  </tr>
+  <tr>
+    <td class="has-color-tertiary-600">
+      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+        <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+      </svg>
+    </td>
+    <td>
+      <strong>Downvotes</strong>
+    </td>
+    <td><%= votes_by_type[-1] || 0 %></td>
+  </tr>
+  <tr>
+    <td colspan=2>on <strong>Question</strong></td>
+    <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
+  </tr>
+  <tr>
+    <td colspan=2>on <strong>Answer</strong></td>
+    <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
+  </tr>
+</table>

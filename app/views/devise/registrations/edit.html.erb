@@ -1,45 +1,59 @@
 <div class="tabs">
-  <%= link_to 'Edit Details', edit_user_registration_path, class: 'tabs--tab tab__active' %>
-  <%= link_to 'Edit Profile', edit_user_profile_path, class: 'tabs--tab' %>
+  <%= link_to user_path(current_user), class: "tabs--item" do %>
+    <i class="fas fa-user"></i> Profile
+  <% end %>
+  <%= link_to edit_user_registration_path, class: "tabs--item is-active" do %>
+    Account
+  <% end %>
+  <%= link_to edit_user_profile_path, class: "tabs--item" do %>
+    Edit
+  <% end %>
+  <%= link_to subscriptions_path, class: "tabs--item" do %>
+    Subscriptions
+  <% end %>
 </div>
 
-<h2>Edit Details</h2>
+<h1>Edit Account Settings</h1>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="form-group">
-    <%= f.label :email %>
-    <%= f.email_field :email, class: 'form-control', autofocus: true, autocomplete: "email" %>
+    <%= f.label :email, class: "form-element" %>
+    <%= f.email_field :email, class: 'form-element', autofocus: true, autocomplete: "email" %>
   </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <div class="notice">Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
 
   <div class="form-group">
-    <%= f.label :username %>
-    <%= f.text_field :username, class: 'form-control', autocomplete: 'off' %>
+    <%= f.label :username, class: "form-element" %>
+    <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
   <div class="form-group">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, class: 'form-control', autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <small class="form-text text-muted"><%= @minimum_password_length %> characters minimum</small>
-    <% end %>
+    <%= f.label :password, class: "form-element" %>
+    <div class="has-color-tertiary-500 has-font-size-caption">
+      Leave blank if you don't want to change it.
+      <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %> characters minimum)</em>
+      <% end %>
+    </div>
+    <%= f.password_field :password, class: 'form-element', autocomplete: "new-password" %>
+    
   </div>
 
   <div class="form-group">
-    <%= f.label :password_confirmation %>
-    <%= f.password_field :password_confirmation, class: 'form-control', autocomplete: "new-password" %>
+    <%= f.label :password_confirmation, class: "form-element" %>
+    <%= f.password_field :password_confirmation, class: 'form-element', autocomplete: "new-password" %>
   </div>
 
   <div class="form-group">
-    <%= f.label :current_password %>
-    <%= f.password_field :current_password, class: 'form-control', autocomplete: "current-password" %>
-    <small class="form-text text-muted">We need your current password to confirm your changes.</small>
+    <%= f.label :current_password, class: "form-element" %>
+    <div class="has-color-tertiary-500 has-font-size-caption">We need your current password to confirm your changes.</div>
+    <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password" %>
   </div>
 
-  <%= f.submit "Update", class: 'btn btn-primary btn-block' %>
+  <%= f.submit "Update", class: 'button is-filled is-very-large' %>
 <% end %><br/>

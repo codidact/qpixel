@@ -1,20 +1,18 @@
 <% content_for :title, "Moderator Tools: #{@user.username}" %>
 
-<h3>Moderator Tools: <%= @user.username %></h3>
+<h1>Moderator Tools: <%= link_to @user.username, user_path(@user) %></h1>
 <ul>
   <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
 </ul>
 
-<div class="danger-zone panel panel-danger">
-  <div class="panel-heading"><strong>Danger Zone</strong></div>
-  <div class="panel-body">
-    <p class="text-danger"><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
-      after initiating an action.</p>
-    <div class="delete-actions">
-      <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id), method: :delete, remote: true, class: "destroy-user btn btn-danger" %>
-      <% if admin? %>
-        <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id, transfer: SiteSetting['SoftDeleteTransferUser']), method: :delete, remote: true, class: "soft-delete btn btn-danger" %>
-      <% end %>
-    </div>
+<div class="notice is-danger">
+  <h2>Danger Zone</h2>
+  <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
+    after initiating an action.</p>
+  <div class="delete-actions">
+    <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id), method: :delete, remote: true, class: "destroy-user button is-danger is-filled" %>
+    <% if admin? %>
+      <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id, transfer: SiteSetting['SoftDeleteTransferUser']), method: :delete, remote: true, class: "soft-delete  button is-danger is-filled" %>
+    <% end %>
   </div>
 </div>

@@ -35,25 +35,49 @@
   }
 }
 
-.profile-details {
-  line-height: 2;
-  padding-right: 1em;
+.user-profile {
+  display: flex;
+
+  .user-profile--image {
+    padding: 0.5em;
+    align-self: flex-start;
+    text-align: center;
+    margin: 0.125em;
+    background-color: #f3f3f3;
+
+    .user-profile--reputation {
+      strong { display: block; }
+      font-variant: small-caps;
+      color: #666666;
+    }
+  }
+  .user-profile--name {
+    flex-grow: 1;
+    padding: 1em;
+    border-right: 1px solid #ddd;
+    h1 {
+      word-wrap: break-word;
+      overflow: auto;
+      margin: 0;
+    }
+  }
+  .user-profile--sidebar {
+    padding: 1em;
+    max-width: 200px;
+    width: 200px;
+    min-width: 200px;
+  }
 }
 
 .profile-text {
-  padding-left: 1em;
-  border-left: 1px solid $muted-graphic;
+  padding: 0.125em;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow: auto;
 }
 
-.user-show--username {
-  word-wrap: break-word;
-  display: flex;
-  max-width: 100%;
-  align-items: center;
-
-  span {
-    margin-left: 0.5em;
-    word-wrap: break-word;
-    overflow: auto;
-  }
+.user-profile-heading {
+  padding: 0.5em;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0;
 }

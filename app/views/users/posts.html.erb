@@ -1,14 +1,16 @@
 <% content_for :title, "#{params[:type].humanize} by #{@user.username}" %>
 
-<h1><%= params[:type].humanize %> by <%= @user.username %></h1>
+<h1><%= params[:type].humanize %> by <%= link_to @user.username, user_path(@user) %></h1>
 
-<%= tabs do %>
-  <% tab 'Score', query_url(sort: 'score'), is_active: active_search?('score') %>
-  <% tab 'Age', query_url(sort: 'age'), is_active: active_search?('created_at') %>
-<% end %>
+<div class="button-list is-gutterless">
+  <%= link_to 'Score', query_url(sort: 'score'), class: "button is-muted is-outlined " + (active_search?('score') ? "is-active" : "") %>
+  <%= link_to 'Age', query_url(sort: 'age'), class: "button is-muted is-outlined " + (active_search?('age') ? "is-active" : "") %>
+</div>
 
-<% @posts.each do |post| %>
-  <%= render 'posts/list', post: post %>
-<% end %>
+<div class="item-list">
+  <% @posts.each do |post| %>
+    <%= render 'posts/list', post: post %>
+  <% end %>
+</div>
 
 <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>

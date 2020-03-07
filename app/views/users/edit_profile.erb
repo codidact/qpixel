@@ -1,82 +1,95 @@
 <div class="tabs">
-  <%= link_to 'Edit Details', edit_user_registration_path, class: 'tabs--tab' %>
-  <%= link_to 'Edit Profile', edit_user_profile_path, class: 'tabs--tab tab__active' %>
+  <%= link_to user_path(current_user), class: "tabs--item" do %>
+    <i class="fas fa-user"></i> Profile
+  <% end %>
+  <%= link_to edit_user_registration_path, class: "tabs--item" do %>
+    Account
+  <% end %>
+  <%= link_to edit_user_profile_path, class: "tabs--item is-active" do %>
+    Edit
+  <% end %>
+  <%= link_to subscriptions_path, class: "tabs--item" do %>
+    Subscriptions
+  <% end %>
 </div>
 
-<h2>Edit Profile</h2>
+<h1>Edit Profile</h1>
 
 <%= form_for current_user, url: update_user_profile_path do |f| %>
-  <div class="form-group-horizontal">
-    <img alt="user avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
-    <div class="form-group">
-      <%= f.label :avatar %>
-      <%= f.file_field :avatar %>
-      <small class="form-text text-muted">
-        An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
-      </small>
+  <div class="form-group has-padding-2">
+  <img alt="user avatar" class="has-float-right has-margin-2" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
+    <%= f.label :avatar, class: "form-element" %>
+    <div class="has-font-size-caption has-color-tertiary-500">
+      An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
     </div>
+    <%= f.file_field :avatar, class: "form-element" %>
+  </div>
+  <div class="has-clear-clear"></div>
+
+  <div class="form-group has-padding-2">
+    <%= f.label :username, class: "form-element" %>
+    <div class="has-font-size-caption has-color-tertiary-500">What other people call you.</div>
+    <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
-  <div class="form-group">
-    <%= f.label :username %>
-    <%= f.text_field :username, class: 'form-control', autocomplete: 'off' %>
-    <small class="form-text text-muted">What other people call you.</small>
-  </div>
-
-  <div class="form-group">
+  <div class="form-group has-padding-2">
     <%= f.label :profile_markdown, 'Profile' %>
-    <%= f.text_area :profile_markdown, rows: 10, cols: 100, class: 'form-control post-field' %>
-    <small class="form-text text-muted">Whatever you want to say about yourself. Supports Markdown.</small>
+    <%= render "posts/mdhint" %>
+    <%= f.text_area :profile_markdown, class: 'form-element post-field is-large' %>
   </div>
 
   <div class="form-group-horizontal">
     <div class="form-group">
-      <%= f.label :website %>
-      <%= f.text_field :website, class: 'form-control', autocomplete: 'off' %>
-      <small class="form-text text-muted">A link to anywhere on the internet for your stuff.</small>
+      <%= f.label :website, class: "form-element" %>
+      <div class="has-font-size-caption has-color-tertiary-500">A link to anywhere on the internet for your stuff.</div>
+      <%= f.text_field :website, class: 'form-element', autocomplete: 'off' %>
     </div>
 
     <div class="form-group">
-      <%= f.label :twitter %>
-      <%= f.text_field :twitter, class: 'form-control', autocomplete: 'off' %>
-      <small class="form-text text-muted">Your Twitter username, if you've got one you want to share.</small>
+      <%= f.label :twitter, class: "form-element" %>
+      <div class="has-font-size-caption has-color-tertiary-500">Your Twitter username, if you've got one you want to share.</div>
+      <%= f.text_field :twitter, class: 'form-element', autocomplete: 'off' %>
     </div>
   </div>
 
-  <%= f.submit 'Save', class: 'btn btn-primary btn-block' %>
+  <%= f.submit 'Save', class: 'button is-very-large is-filled' %>
 <% end %>
 
 <% if current_user.se_acct_id.nil? %>
-  <h3>Link with Stack Exchange</h3>
-  <p>
-    If you have an account on Stack Exchange, you can link it to your account here. Once your accounts are linked,
-    you'll be able to request that any content you created on Stack Exchange that has been copied across here is
-    transferred to you.
-  </p>
-  <%= link_to stack_oauth_url, class: 'btn btn-primary' do %>
-    <i class="fab fa-stack-exchange"></i> Authenticate
-  <% end %>
-<% elsif !current_user.transferred_content %>
-  <h3>Claim your Stack Exchange content</h3>
-  <p>
-    Your account has a <a href="https://stackexchange.com/users/<%= current_user.se_acct_id %>">linked Stack Exchange account</a>.
-    You can use the button below to have your content from Stack Exchange that has been copied here transferred to you.
-  </p>
-  <div class="alert alert-warning">
-    <i class="fas fa-exclamation-circle"></i>
-    <strong>To claim your Stack Exchange content, we need you to agree to re-license your posts.</strong><br/>
-    When you posted on Stack Exchange, you granted Stack Exchange a CC BY-SA license to distribute your content; that's
-    what lets us display your content here too, as long as we attribute it back to you on Stack Exchange. When you claim your
-    content, we'll remove that attribution link to Stack Exchange and link it to you here instead, but we need you to grant us
-    a license under <%= license_link %> to do so.
+  <div class="has-padding-4">
+    <h2>Link with Stack Exchange</h2>
+    <p>
+      If you have an account on Stack Exchange, you can link it to your account here. Once your accounts are linked,
+      you'll be able to request that any content you created on Stack Exchange that has been copied across here is
+      transferred to you.
+    </p>
+    <%= link_to stack_oauth_url, class: 'button is-outlined' do %>
+      <i class="fab fa-stack-exchange"></i> Authenticate
+    <% end %>
   </div>
-  <%= form_tag claim_stack_content_path do %>
-    <div class="checkbox">
-      <%= label_tag :agree_to_relicense do %>
-        <%= check_box_tag :agree_to_relicense, 'true' %>
-        I agree to relicense my posts to <%= SiteSetting['SiteName'] %> under <%= license_link %>.
-      <% end %>
-    </div>
-    <%= submit_tag 'Claim Content', name: nil, class: 'btn btn-primary' %>
-  <% end %>
+<% elsif !current_user.transferred_content %>
+  <div class="has-padding-4">
+    <h3>Claim your Stack Exchange content</h3>
+    <p>
+      Your account has a <a href="https://stackexchange.com/users/<%= current_user.se_acct_id %>">linked Stack Exchange account</a>.
+      You can use the button below to have your content from Stack Exchange that has been copied here transferred to you.
+    </p>
+    <%= form_tag claim_stack_content_path do %>
+      <div class="notice is-warning has-margin-top-4 has-margin-bottom-4">
+        <i class="fas fa-exclamation-circle"></i>
+        <strong>To claim your Stack Exchange content, we need you to agree to re-license your posts.</strong><br/>
+        When you posted on Stack Exchange, you granted Stack Exchange a CC BY-SA license to distribute your content; that's
+        what lets us display your content here too, as long as we attribute it back to you on Stack Exchange. When you claim your
+        content, we'll remove that attribution link to Stack Exchange and link it to you here instead, but we need you to grant us
+        a license under <%= license_link %> to do so.
+        <div class="checkbox has-margin-top-4">
+          <%= label_tag :agree_to_relicense, class: "form-element" do %>
+            <%= check_box_tag :agree_to_relicense, 'true', class: "form-element-checkbox" %>
+            I agree to relicense my posts to <%= SiteSetting['SiteName'] %> under <%= license_link %>.
+          <% end %>
+        </div>
+      </div>
+      <%= submit_tag 'Claim Content', name: nil, class: 'button is-outlined' %>
+    <% end %>
+  </div>
 <% end %>
