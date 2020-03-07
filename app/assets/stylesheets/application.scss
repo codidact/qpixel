@@ -40,3 +40,7 @@ details {
 a.header--site-name {
   display: flex !important;
 }
+.header .header--item.is-complex:not(.is-mobile-menu) {
+  align-items: center !important;
+  display: flex !important;
+}

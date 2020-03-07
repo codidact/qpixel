@@ -46,7 +46,7 @@
               Flags
             <% end %>
           <% end %>
-          <a href="#" class="header--item inbox-toggle" data-toggle="dropdown">
+          <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-toggle="dropdown">
               <% unread = current_user.unread_count %>
               <% if unread > 0 %>
                 <span class="header--alert"><%= unread %></span>
@@ -62,6 +62,13 @@
           <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
           <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
         <% end %>
+        <a class="header--item is-mobile-menu is-complex" href="#" data-trigger-header-slide=".mobile-menu">
+          <span class="header--menu-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </a>
       </nav>
     </div>
   </header>
@@ -73,6 +80,33 @@
   </div>
   <% end %>
   <div class="header-slide inbox">
+  </div>
+  <div class="header-slide mobile-menu">
+    <%= link_to 'Questions', questions_path, class: 'header-slide--item' %>
+    <%= link_to 'Users', users_path, class: 'header-slide--item' %>
+    <%= link_to 'Search', search_path, class: 'header-slide--item' %>
+
+    <div class='header-slide--separator'></div>
+
+    <%= link_to 'Meta', meta_path, class: 'header-slide--item' %>
+    <%= link_to 'Help', help_center_path, class: 'header-slide--item' %>
+
+    <div class='header-slide--separator'></div>
+
+    <% if user_signed_in? %>
+      <% if current_user.is_admin || current_user.is_moderator %>
+        <%= link_to flag_queue_path, class: 'header-slide--item' do %>
+          <% if @open_flags > 0 %>
+            <span class="header-slide--alert"><%= @open_flags %></span>
+          <% end %>
+          Flags
+        <% end %>
+      <% end %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header-slide--item' %>
+    <% else %>
+      <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
+      <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
+    <% end %>
   </div>
   <main class="container">
 

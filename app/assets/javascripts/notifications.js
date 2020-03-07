@@ -60,4 +60,25 @@ $(() => {
     $inboxCount.text(currentCount - 1);
   });
 
+  const headerSlideTriggers = $("[data-trigger-header-slide]");
+
+  headerSlideTriggers.on("click", function (e) {
+    $this = $(this);
+    const headerSlide = $($this.attr("data-trigger-header-slide"));
+
+    headerSlide.toggleClass("is-active");
+    $this.toggleClass("is-active");
+
+    // Position header slide appropriately relative to
+    // trigger.
+    const rect = $this[0].getBoundingClientRect();
+    hs.css({
+      "top": (rect.top + rect.height) + "px",
+      "right": (document.body.clientWidth - rect.right) + "px"
+    });
+
+    // Prevent navigation
+    e.preventDefault();
+  });
+
 });
