@@ -1,8 +1,10 @@
 <h1>Post History</h1>
 
-<% if [Question.post_type_id, Answer.post_type_id].include? @post.post_type_id %>
-  <%= render 'posts/list', post: @post %>
-<% end %>
+<div class="item-list">
+  <% if [Question.post_type_id, Answer.post_type_id].include? @post.post_type_id %>
+    <%= render 'posts/list', post: @post %>
+  <% end %>
+</div>
 
 <% @history.each do |event| %>
   <details class="history-event">
