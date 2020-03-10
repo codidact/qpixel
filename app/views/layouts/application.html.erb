@@ -59,8 +59,8 @@
           <% end %>
           <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header--item' %>
         <% else %>
-          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
-          <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
+          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
+          <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
         <% end %>
         <a class="header--item is-mobile-menu is-complex" href="#" data-trigger-header-slide=".mobile-menu">
           <span class="header--menu-bars">

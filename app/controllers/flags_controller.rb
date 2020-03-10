@@ -13,7 +13,7 @@ class FlagsController < ApplicationController
   end
 
   def queue
-    @flags = Flag.unhandled.includes(:post).paginate(page: params[:page], per_page: 50)
+    @flags = Flag.unhandled.includes(:post).paginate(page: params[:page], per_page: 20)
   end
 
   def resolve

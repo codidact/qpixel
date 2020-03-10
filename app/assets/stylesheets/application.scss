@@ -71,3 +71,48 @@ a.header--site-name {
   color: #666 !important;
   font-weight: 600;
 }
+
+.pagination {
+  display: flex;
+  margin: 0;
+  padding: 1em;
+  li {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    margin: 0.25em;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 2px 3px 2px -1px #ddd;
+    min-width: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    color: #333;
+    font-weight: 400;
+    
+    a {
+      color: inherit;
+      font-weight: 500;
+      margin: -0.25em -0.5em;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      &:hover {
+        background-color: #fafafa;
+      }
+    }
+
+    &.active {
+      background-color: #666;
+      box-shadow: none;
+      border-color: #222;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    &.disabled {
+      box-shadow: none;
+      pointer-events: none;
+    }
+  }
+}
