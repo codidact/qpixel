@@ -15,3 +15,14 @@
 .question.post__meta {
   background: $meta;
 }
+
+.post--container {
+  max-width: 100%;
+  
+  .grid--cell.is-flexible {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    width: 0;
+  }
+}

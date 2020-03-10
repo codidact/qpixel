@@ -44,3 +44,14 @@ a.header--site-name {
   align-items: center !important;
   display: flex !important;
 }
+
+@media all and (max-width: 73.5em) {
+  .grid {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.notice a {
+  word-break: break-all;
+}
