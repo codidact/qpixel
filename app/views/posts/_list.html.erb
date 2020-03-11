@@ -15,7 +15,14 @@
       <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>
-    <p class="has-color-tertiary-600 has-float-right">last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %></p>
+    <p class="has-color-tertiary-600 has-float-right">
+      <% if is_question %>
+        <span class="answer-count">
+          <%= post.answer_count %> <%= post.answer_count != 1 ? 'answers' : 'answer' %>
+        </span>&nbsp;&middot;&nbsp;
+      <% end %>
+      last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>
+    </p>
     <div class="has-padding-top-2">
       <% if is_question %>
         <% post.tags_cache.each do |tag| %>
@@ -24,10 +31,4 @@
       <% end %>
     </div>
   </div>
-  <% if is_question %>
-    <div class="item-list--number-value">
-      <span class="item-list--number"><%= post.answer_count %></span>
-      <span class="item-list--number-label"><%= post.answer_count != 1 ? 'answers' : 'answer' %></span>
-    </div>
-  <% end %>
 </div>
