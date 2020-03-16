@@ -7,7 +7,7 @@
                                <%= user.username %>
                                <% if user.is_admin &&  SiteSetting['AdminBadgeCharacter'] %>
                                  <span class="badge is-user-role"><%= SiteSetting['AdminBadgeCharacter'] %></span>
-                               <% elsif user.is_mod && SiteSetting['ModBadgeCharacter'] %>
+                               <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
                                  <span class="badge is-user-role"><%= SiteSetting['ModBadgeCharacter'] %></span>
                                <% end %>
                              <% end %></span>
