@@ -22,7 +22,7 @@
     <div class="container header--container">
       <div class="header--brand">
         <% if SiteSetting.exist?('SiteLogoPath') %>
-          <a href="/" class="header--site-name"><img src="<%= SiteSetting['SiteLogoPath'] %>" style="height: 1em" /></a>
+          <a href="/" class="header--site-name"><img src="<%= SiteSetting['SiteLogoPath'] %>" /></a>
         <% else %>
           <a href="/" class="header--site-name"><%= SiteSetting['SiteName'] %></a>
         <% end %>
