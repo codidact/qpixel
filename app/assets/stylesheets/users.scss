@@ -81,3 +81,40 @@
   border-bottom: 1px solid #ddd;
   margin-bottom: 0;
 }
+
+@media all and (max-width: 64em) {
+  .user-profile {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+
+    .user-profile--image {
+      align-self: stretch;
+      display: flex;
+      justify-content: space-between;
+      
+      .user-profile--reputation {
+        padding: 0.5em;
+      }
+    }
+
+    .user-profile--name {
+      flex-grow: 0;
+      border-right: 0;
+      padding: 0.5em;
+      padding-right: 0;
+    }
+
+    .user-profile--sidebar {
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      max-width: 100%;
+      width: 100%;
+      min-width: 100%;
+    }
+  }
+
+  .profile-text {
+    max-height: none;
+  }
+}

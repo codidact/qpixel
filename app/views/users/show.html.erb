@@ -47,20 +47,22 @@
         <% end %>
       </p>
     </div>
-    <% if user_signed_in? %>
-      <div>
-        <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
-          <i class="fas fa-envelope"></i> Subscribe to user
-        <% end %>
-      </div>
-    <% end %>
-    <% if current_user&.is_moderator %>
-      <div>
-        <%= link_to mod_user_path(@user), class: "button is-danger is-outlined is-small" do %>
-          <i class="fas fa-shield-alt"></i> Moderator Tools
-        <% end %>
-      </div>
-    <% end %>
+    <div>
+      <% if user_signed_in? %>
+        <div>
+          <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
+            <i class="fas fa-envelope"></i> Subscribe to user
+          <% end %>
+        </div>
+      <% end %>
+      <% if current_user&.is_moderator %>
+        <div>
+          <%= link_to mod_user_path(@user), class: "button is-danger is-outlined is-small" do %>
+            <i class="fas fa-shield-alt"></i> Moderator Tools
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
 
