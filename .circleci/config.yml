@@ -37,6 +37,7 @@ jobs:
           environment:
             RAILS_ENV: test
           command: |
+            cp config/database.sample.yml config/database.yml
             bundle exec rails db:create
             bundle exec rails db:schema:load
             bundle exec rails db:migrate
