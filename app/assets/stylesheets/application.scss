@@ -76,6 +76,8 @@ a.header--site-name {
   display: flex;
   margin: 0;
   padding: 1em;
+  flex-wrap: wrap;
+  
   li {
     display: inline-block;
     padding: 0.25em 0.5em;
