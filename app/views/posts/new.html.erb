@@ -1,7 +1,7 @@
 <% content_for :title, "New Policy Document" %>
 
 <% if @post.errors.any? %>
-  <div class="alert alert-danger">
+  <div class="notice is-danger">
     These errors prevented this post being saved:
     <ul>
       <% @post.errors.full_messages.each do |msg| %>
@@ -11,37 +11,37 @@
   </div>
 <% end %>
 
-<h3>New Policy Document</h3>
+<h1>New Policy Document</h1>
 <p>
   If you're a moderator, you may use this page to create help documents that you can link to from /help/&lt;document&gt;.
   If you're an administrator, you can also create policy documents, including legal documents.
 </p>
 <%= form_for @post, url: create_post_path do |f| %>
   <div class="form-group">
-    <%= f.label :post_type_id, 'Post type' %>
+    <%= f.label :post_type_id, 'Post type', class: "form-element" %>
     <%= f.select :post_type_id, options_for_select(current_user.is_admin ?
                                                      [['Policy', PolicyDoc.post_type_id], ['Help', HelpDoc.post_type_id]] :
                                                      [['Help', HelpDoc.post_type_id]]),
-                 { include_blank: true }, class: 'form-control' %>
+                 { include_blank: true }, class: 'form-element' %>
   </div>
   <div class="form-group">
-    <%= f.label :doc_slug, 'URL slug' %>
-    <%= f.text_field :doc_slug, class: 'form-control' %>
+    <%= f.label :doc_slug, 'URL slug', class: "form-element" %>
+    <%= f.text_field :doc_slug, class: 'form-element' %>
   </div>
   <div class="form-group">
-    <%= f.label :title, "Title your post:" %>
-    <%= f.text_field :title, class: "form-control" %>
+    <%= f.label :title, "Title your post:", class: "form-element" %>
+    <%= f.text_field :title, class: "form-element" %>
   </div>
   <div class="form-group">
-    <%= f.label :category, 'Help center category' %>
+    <%= f.label :category, 'Help center category', class: "form-element" %>
     <%= f.select :category,
                  options_for_select(Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).distinct.pluck(:category)
                                         .map { |cat| [cat, cat] }),
                  { include_blank: true }, class: 'form-control js-category-select' %>
   </div>
   <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+    <%= f.label :body_markdown, 'Body', class: "form-element" %>
+    <%= f.text_area :body_markdown, { class: "form-element post-field", rows: 15 } %>
   </div>
-  <%= f.submit "Create", class: "btn btn-primary" %>
+  <%= f.submit "Create", class: "button is-filled is-very-large" %>
 <% end %>

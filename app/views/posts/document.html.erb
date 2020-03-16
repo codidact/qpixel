@@ -1,17 +1,15 @@
-<%= link_to help_center_path do %>
+<%= link_to help_center_path, class: "button is-muted" do %>
   &laquo; Back to help center
+<% end %>
+<% unless @post.nil? %>
+  <% if (moderator? && @post.post_type_id == HelpDoc.post_type_id) || (admin? && @post.post_type_id == PolicyDoc.post_type_id) %>
+    <%= link_to 'edit', edit_post_path(@post), class: "button is-outlined is-muted" %>
+  <% end %>
 <% end %>
 
 <h1><%= @post.nil? ? 'This document has not been created yet' : @post.title %></h1>
-<hr/>
 <% if @post.nil? %>
   <p>There's meant to be a helpful document here, but the administrator of this site hasn't created it yet.</p>
 <% else %>
   <%= raw(sanitize(@post.body, scrubber: scrubber)) %>
-<% end %>
-
-<% unless @post.nil? %>
-  <% if (moderator? && @post.post_type_id == HelpDoc.post_type_id) || (admin? && @post.post_type_id == PolicyDoc.post_type_id) %>
-    <%= link_to 'edit this document', edit_post_path(@post) %>
-  <% end %>
 <% end %>

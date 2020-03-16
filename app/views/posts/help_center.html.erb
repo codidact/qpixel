@@ -2,8 +2,14 @@
 
 <h1>Help Center</h1>
 
-<h2>Help</h2>
-<%= render 'help_center_posts', posts: @posts[HelpDoc.post_type_id] %>
+<div class="grid">
+  <div class="grid--cell is-6 is-12-sm">
+    <h2>Help</h2>
+    <%= render 'help_center_posts', posts: @posts[HelpDoc.post_type_id] %>
+  </div>
 
-<h2>Policy</h2>
-<%= render 'help_center_posts', posts: @posts[PolicyDoc.post_type_id] %>
+  <div class="grid--cell is-6 is-12-sm">
+    <h2>Policy</h2>
+    <%= render 'help_center_posts', posts: @posts[PolicyDoc.post_type_id] %>
+  </div>
+</div>

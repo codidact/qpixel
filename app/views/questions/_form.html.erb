@@ -7,43 +7,50 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.label :title, "Title your question:" %><br/>
-    <%= f.text_field :title, class: "form-control" %>
+    <%= f.label :title, "Title your question:", class: "form-element" %>
+    <%= f.text_field :title, class: "form-control", class: "form-element" %>
   </div>
   <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field", rows: 15 } %>
+    <%= f.label :body_markdown, 'Body', class: "form-element" %>
+    <%= render "posts/mdhint" %>
+    <%= f.text_area :body_markdown, { class: "form-element is-large post-field", rows: 15 } %>
   </div>
   <div class="form-group">
-    <%= f.label :tags_cache, "Tags (space separated - for multiple-word tags use hyphens)" %>
+    <%= f.label :tags_cache, "Tags", class: "form-element" %>
+    <div class="has-font-size-caption has-color-tertiary-500">
+      Tags help to categorize questions. Separate them by space. Use hyphens for multiple-word tags.
+    </div>
     <%= f.select :tags_cache, @question.tags_cache.map { |t| [t, t] }, { include_blank: true }, multiple: true,
-                 class: "form-control js-tag-select", selected: @question.tags_cache %>
+                 class: "form-element js-tag-select", selected: @question.tags_cache %>
   </div>
 
   <% if is_edit %>
-    <hr/>
     <div class="form-group">
-      <%= label_tag :edit_comment, 'Edit comment' %>
-      <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-control' %>
-      <small class="form-text text-muted">Explain why you made this edit, if necessary.</small>
+      <%= label_tag :edit_comment, 'Edit comment', class: "form-element" %>
+      <div class="has-font-size-caption has-color-tertiary-500">
+        Describe&mdash;if neccessary&mdash;what you are changing and why you are making this edit.
+      </div>
+      <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-element' %>
     </div>
   <% end %>
 
   <div class="form-group">
-    <% button_text = is_meta ? "Ask on Meta" : "Ask on Main Site" %>
-    <%= f.submit is_edit ? "Update" : button_text, class: "btn btn-primary" %><br/>
+    <% button_text = is_meta ? "Ask Meta Question" : "Ask Question" %>
+    <%= f.submit is_edit ? "Save Changes" : button_text, class: "button is-filled" %><br/>
   </div>
-  <% if is_meta %>
-    <div class="alert alert-info">
-      <i class="fas fa-info-circle"></i>
-      Not meant to be asking on Meta? You're in the wrong place - copy your question text and use
-      <%= link_to 'this page', new_question_path %> to ask it instead.
-    </div>
-  <% else %>
-    <div class="alert alert-info">
-      <i class="fas fa-info-circle"></i>
-      Want to ask on Meta instead? You're in the wrong place - copy your question text and use
-      <strong><%= link_to 'this page', new_meta_question_path %></strong> to ask it instead.
-    </div>
+  <% if !is_edit %>
+    <% if is_meta %>
+      <div class="notice">
+        <i class="fas fa-info-circle"></i>
+        Not meant to be asking on Meta? You're in the wrong place - copy your question text and use
+        <%= link_to 'this page', new_question_path %> to ask it instead.
+      </div>
+    <% else %>
+      <div class="notice">
+        <i class="fas fa-info-circle"></i>
+        Want to ask on Meta instead? You're in the wrong place - copy your question text and use
+        <strong><%= link_to 'this page', new_meta_question_path %></strong> to ask it instead.
+      </div>
+    <% end %>
   <% end %>
 <% end %>

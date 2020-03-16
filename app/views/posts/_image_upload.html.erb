@@ -1,8 +1,8 @@
 <%= form_tag upload_path, multipart: true, class: 'form-inline upload-form js-upload-form' do %>
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
   <div class="form-group">
-    <%= label_tag :file, 'Insert an image' %>
-    <%= file_field_tag :file %>
-    <span class="form-text text-muted">Max file size <%= SiteSetting['MaxUploadSize'] %>.</span>
+    <%= label_tag :file, 'Insert an image', class: "form-element" %>
+    <div class="has-color-tertiary-500 has-font-size-caption">Max file size <%= SiteSetting['MaxUploadSize'] %>.</div>
+    <%= file_field_tag :file, class: "form-element" %>
   </div>
 <% end %>

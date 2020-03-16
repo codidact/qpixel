@@ -16,221 +16,13 @@
 
 @import 'variables';
 
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-
-  &.development:before {
-    display: block;
-    width: 100%;
-    background: $danger;
-    color: white;
-    content: 'Development Mode';
-    text-align: center;
-    font-weight: bold;
-    padding: 0.3em 0;
-  }
-}
-
-header {
-  background: $primary;
-  color: white;
-  padding: 1em;
-
-  @media screen and (min-width: $screen-md) {
-    .container {
-      align-items: center;
-    }
-
-    .title-link {
-      margin-right: auto;
-    }
-
-    nav {
-      margin-left: auto;
-      text-align: left;
-    }
-  }
-
-  nav {
-    text-align: center;
-
-    .open-flags, .open-flags:hover {
-      text-decoration: none !important;
-
-      .badge {
-        background: darken($warning, 10%);
-      }
-    }
-
-    .inbox-toggle {
-      color: white;
-      text-decoration: none;
-
-      &:hover, &:focus {
-        color: white;
-        text-decoration: none;
-      }
-    }
-
-    .inbox-count {
-      background: $danger;
-    }
-
-    .inbox {
-      a, a:hover {
-        color: $key !important;
-      }
-
-      a.no-unread, a.no-unread:hover {
-        color: $muted-text !important;
-        text-decoration: none;
-        cursor: default;
-      }
-    }
-
-    .user-details {
-      a, a:hover {
-        color: white;
-        text-decoration: underline;
-      }
-    }
-  }
-}
-
-nav a:not(.clear), a.header-button {
-  position: relative;
-  display: inline-block;
-  padding: 0.5em 0.7em;
-  margin: 0.2em;
-  background: darken($primary, 20%);
-  color: white;
-  transition: all 0.2s ease;
-
-  @media screen and (min-width: $screen-md) {
-    text-align: left;
-  }
-
-  &:hover {
-    color: white;
-    text-decoration: none;
-    background: darken($primary, 25%);
-  }
-
-  &:before {
-    transition: all 0.2s ease;
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-top: 0 solid $primary;
-    border-left: 0 solid darken($primary, 10%);
-  }
-
-  &.wb:before {
-    border-top: 0 solid white;
-  }
-
-  &:hover:before {
-    transition: all 0.2s ease;
-    border-top: 1.1em solid $primary;
-    border-left: 1.1em solid darken($primary, 10%);
-    z-index: 1;
-  }
-
-  &.wb:before {
-    border-top: 1.1em solid white;
-  }
-}
-
-.container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  @media screen and (min-width: $screen-md) {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  @media screen and (min-width: $screen-xl) {
-    width: 80%;
-  }
-}
-
-main {
-  margin-top: 2em !important;
-  align-items: unset !important;
-  flex: 1;
-}
-
-.content {
-  flex: 1;
-  margin: 0 1em 2em 1em;
-  max-width: 60em;
-
-  // $screen-md here to coincide with the switch from fd: column to fd: row on .containers
-  @media screen and (min-width: $screen-md) {
-    min-width: 43em;
-  }
-}
-
-.sidebar {
-  max-width: 25em;
-
-  .module {
-    background: lighten($primary, 50%);
-    border: 1px solid lighten($primary, 45%);
-    margin: 1em 0;
-
-    .module--title {
-      margin-top: 0;
-      padding: 0.5em;
-      border-bottom: 1px solid lighten($primary, 45%);
-      color: #555;
-      font-variant: small-caps;
-      text-transform: lowercase;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-
-    .module--content {
-      padding: 0.5em;
-
-      ul {
-        padding-left: 1.5em;
-        line-height: 170%;
-      }
-    }
-  }
-}
-
 .deleted-content {
   background: lighten($danger, 45%);
 }
 
-footer {
-  padding: 1em;
-  background: $primary;
-  color: white;
-  font-size: 0.8em;
-
-  a, a:hover {
-    color: white;
-    text-decoration: underline;
-  }
-
-  .container {
-    justify-content: flex-end;
-
-    & > * {
-      margin: 0 0.5em;
-    }
+@media all and (min-width: 32rem) {
+  .header--brand img {
+    max-height: 1em;
   }
 }
 
@@ -251,12 +43,84 @@ details {
   }
 }
 
-@-moz-document url-prefix() {
-  details > summary:before {
-    content: '▶';
-  }
+a.header--site-name {
+  display: flex !important;
+}
+.header .header--item.is-complex:not(.is-mobile-menu) {
+  align-items: center !important;
+  display: flex !important;
+}
 
-  details[open] > summary:before {
-    content: '▼';
+@media all and (max-width: 73.5em) {
+  .grid {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.notice a {
+  word-break: break-all;
+}
+
+.item-list--item {
+  .item-list--text-value {
+    margin: 0 !important;
+  }
+  .item-list--number-value {
+    width: 80px !important;
+    margin: 0 !important;
+  }
+}
+
+.badge.is-muted {
+  background-color: #f2f2f2 !important;
+  color: #666 !important;
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  margin: 0;
+  padding: 1em;
+  flex-wrap: wrap;
+
+  li {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    margin: 0.25em;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 2px 3px 2px -1px #ddd;
+    min-width: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    color: #333;
+    font-weight: 400;
+    
+    a {
+      color: inherit;
+      font-weight: 500;
+      margin: -0.25em -0.5em;
+      border-radius: 5px;
+      padding: 0.25em 0.5em;
+      display: block;
+      &:hover {
+        background-color: #fafafa;
+      }
+    }
+
+    &.active {
+      background-color: #666;
+      box-shadow: none;
+      border-color: #222;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    &.disabled {
+      box-shadow: none;
+      pointer-events: none;
+    }
   }
 }

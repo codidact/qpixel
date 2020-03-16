@@ -1,17 +1,17 @@
 <% content_for :title, "Questions Lottery" %>
+<% content_for :sidebar do %>
 
-<div class="flex-row jc-sb">
-  <h3>Questions</h3>
-  <%= link_to new_question_path, class: 'header-button wb' do %>
-    Ask Question &raquo;
-  <% end %>
+<div class="has-margin-4 widget has-border-style-none has-shadow-0">
+  <div class="widget--body has-text-align-right">
+
+    <%= link_to new_question_path, class: 'button is-filled is-very-large is-outlined' do %>
+        Ask Question
+    <% end %>
+
+  </div>
 </div>
+<% end %>
+
+<h1>Questions</h1>
 
 <%= render 'list' %>
-
-<div>
-  <% if user_signed_in? %>
-    <%= link_to 'Subscribe to new questions', new_subscription_path(type: 'all', return_to: request.path) %> &middot;
-    <%= link_to 'Subscribe to interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>
-  <% end %>
-</div>

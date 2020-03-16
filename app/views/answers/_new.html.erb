@@ -1,6 +1,6 @@
-<h3>Your Answer</h3>
+<h2>Your Answer</h2>
 <% if answer.errors.any? %>
-  <div class="text-danger error-messages">
+  <div class="notice is-danger">
     <p>The following <%= "error".pluralize(answer.errors.count) %> prevented the answer from being posted:</p>
     <ul>
       <% answer.errors.full_messages.each do |e| %>
@@ -15,11 +15,11 @@
 <%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
   <%= f.hidden_field :category, value: parent.category %>
   <div class="form-group">
-    <%= f.label :body_markdown, 'Body' %>
-    <%= f.text_area :body_markdown, { class: "form-control post-field js-post-field", rows: 15 } %>
-    <small class="form-text text-muted">Markdown is supported.</small>
+    <%= f.label :body_markdown, 'Body', class: "form-element" %>
+    <%= render "posts/mdhint" %>
+    <%= f.text_area :body_markdown, { class: "form-element is-large post-field js-post-field", rows: 15 } %>
   </div>
   <div class="field">
-    <%= f.submit "Post Answer", class: "btn btn-primary" %>
+    <%= f.submit "Post Answer", class: "button is-filled" %>
   </div>
 <% end %>

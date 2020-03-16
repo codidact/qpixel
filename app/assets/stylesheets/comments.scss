@@ -1,21 +1,13 @@
 @import 'variables';
 
-.post--comments {
-  h4 {
-    padding-bottom: 0.5em;
-    border-bottom: 1px solid $muted-graphic;
-  }
-
-  .post--comments-links {
-    padding: 0.5em;
-  }
-}
-
 .comment {
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid $muted-graphic;
   padding: 0.5em;
+  align-items: stretch;
+  max-width: 100%;
+  overflow: auto;
 
   .comment--content {
     margin-bottom: 0;

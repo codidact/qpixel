@@ -1,15 +1,15 @@
 <% content_for :title, "Ask a Question" %>
 
-<h3>Ask a Question</h3>
+<h1>Ask a Question</h1>
 
-<div class="alert alert-warning">
+<div class="notice">
   <i class="fas fa-info-circle"></i> You're asking a new question on the <strong>main site</strong>, which is
   for questions on the topic of the site. If you want to post feedback or start a discussion about the site itself,
   you'll need to <%= link_to 'ask a Meta question instead', new_meta_question_path %>.
 </div>
 
 <% if @question.errors.any? %>
-  <div class="text-danger error-messages">
+  <div class="notice is-danger">
     <p>The following <%= "error".pluralize(@question.errors.count) %> prevented the question from being posted:</p>
     <ul>
       <% @question.errors.full_messages.each do |e| %>
@@ -25,9 +25,9 @@
 
 <% if SiteSetting['AskingGuidance'] %>
   <% content_for :sidebar do %>
-    <div class="module">
-      <h4 class="module--title">Hints and Tips</h4>
-      <div class="module--content">
+    <div class="widget has-margin-4">
+      <h4 class="widget--header has-margin-0">Hints and Tips</h4>
+      <div class="widget--body">
         <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
       </div>
     </div>

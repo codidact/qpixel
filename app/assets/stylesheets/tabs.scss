@@ -1,28 +1,5 @@
 @import 'variables';
 
 .tabs {
-  display: flex;
-  border-bottom: 1px solid $muted-graphic;
   margin-bottom: 1em;
-
-  .tabs--tab {
-    display: inline-block;
-    padding: 0.5em 0.75em;
-    margin: 0 0.2em;
-    color: desaturate(lighten($key, 15%), 30%);
-    font-weight: bold;
-    font-variant: small-caps;
-    text-transform: lowercase;
-    text-decoration: none;
-    border: 1px solid white;
-    border-top: 2px solid white;
-
-    &:hover, &.tab__active {
-      border-top: 2px solid $secondary;
-      border-left: 1px solid $muted-graphic;
-      border-right: 1px solid $muted-graphic;
-      border-bottom: 1px solid white;
-      margin-bottom: -1px;
-    }
-  }
 }

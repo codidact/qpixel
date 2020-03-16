@@ -1,12 +1,16 @@
 <h1>Privileges</h1>
 <p>Here you can define the reputation required to gain each available privilege. Click on a value to edit it.</p>
 
-<%= tabs do %>
-  <% tab 'Reputation', query_url(sort: 'rep'), is_active: active_search?('threshold') %>
-  <% tab 'Name', query_url(sort: 'name'), is_active: active_search?('name') %>
-<% end %>
+<div class="button-list is-gutterless">
+  <%= link_to 'Reputation', query_url(sort: 'rep'), class: "button is-outlined is-muted " + (active_search?('threshold') ? "is-active" : "") %>
+  <%= link_to 'Name', query_url(sort: 'name'), class: "button is-outlined is-muted " + (active_search?('name') ? "is-active" : "") %>
+</div>
 
-<table class="table table-borderless">
+<table class="table has-margin-top-4">
+  <thead>
+    <th>Privilege</th>
+    <th>Threshold</th>
+  </thead>
   <tbody>
     <% @privileges.each do |priv| %>
       <tr>

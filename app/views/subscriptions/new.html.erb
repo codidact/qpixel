@@ -5,7 +5,7 @@
 </p>
 
 <% if @subscription.errors.any? %>
-  <div class="alert alert-danger">
+  <div class="notice is-danger">
     <p>
       There was a problem saving your subscription:
 
@@ -28,19 +28,19 @@
   <%= f.hidden_field :qualifier, value: params[:qualifier] %>
 
   <div class="form-group">
-    <%= f.label :name %>
-    <%= f.text_field :name, class: 'form-control' %>
-    <small class="form-text text-muted">Give your subscription a name that you'll recognise.</small>
+    <%= f.label :name, class: "form-element" %>
+    <div class="has-color-tertiary-600 has-font-size-caption">Give your subscription a name that you'll recognise.</div>
+    <%= f.text_field :name, class: 'form-element' %>
   </div>
 
   <div class="form-group">
-    <%= f.label :frequency %>
+    <%= f.label :frequency, class: "form-element" %>
+    <div class="has-color-tertiary-600 has-font-size-caption">How often do you want to be sent these emails?</div>
     <%= f.select :frequency, options_for_select([['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]),
-                 { include_blank: true }, class: 'form-control' %>
-    <small class="form-text text-muted">How often do you want to be sent these emails?</small>
+                 { include_blank: true }, class: 'form-element' %>
   </div>
 
   <div class="actions">
-    <%= f.submit 'Subscribe', class: 'btn btn-primary' %>
+    <%= f.submit 'Subscribe', class: 'button is-filled' %>
   </div>
 <% end %>

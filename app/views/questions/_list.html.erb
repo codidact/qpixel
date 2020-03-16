@@ -1,14 +1,17 @@
-<div class="tabs">
+<div class="button-list is-gutterless has-float-right has-margin-2">
   <%= link_to 'Activity', query_url(root_url, sort: 'activity'),
-              class: "tabs--tab #{(params[:sort].nil?) && !current_page?(questions_lottery_path) || params[:sort] == 'activity' ?
-                                      'tab__active' : ''}" %>
-  <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "tabs--tab #{params[:sort] == 'age' ? 'tab__active' : ''}" %>
-  <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "tabs--tab #{params[:sort] == 'score' ? 'tab__active' : ''}" %>
-  <%= link_to 'Lottery', questions_lottery_path, class: "tabs--tab #{current_page?(questions_lottery_path) ? 'tab__active' : ''}" %>
+              class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) || params[:sort] == 'activity' ?
+                                      'is-active' : ''}" %>
+  <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+  <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
+  <%= link_to 'Lottery', questions_lottery_path, class: "button is-muted is-outlined #{current_page?(questions_lottery_path) ? 'is-active' : ''}" %>
 </div>
+<div class="has-clear-clear">&nbsp;</div>
 
-<% @questions.each do |question| %>
-  <%= render 'posts/list', post: question %>
-<% end %>
+<div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
+  <% @questions.each do |question| %>
+    <%= render 'posts/list', post: question %>
+  <% end %>
+</div>
 
 <%= will_paginate @questions, renderer: BootstrapPagination::Rails %>

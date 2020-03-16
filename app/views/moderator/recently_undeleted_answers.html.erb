@@ -1,8 +1,10 @@
 <% content_for :title, "Recently Undeleted Answers" %>
 
-<h3>Recently Undeleted Answers</h3>
-<% @answers.each do |a| %>
-  <%= render 'answers/answer', answer: a %>
-<% end %>
+<h1>Recently Undeleted Answers</h1>
+<div class="item-list">
+  <% @answers.each do |a| %>
+    <%= render 'answers/answer', answer: a %>
+  <% end %>
+</div>
 
 <%= will_paginate @answers, renderer: BootstrapPagination::Rails %>

@@ -1,6 +1,6 @@
 <% content_for :title, "Site Settings" %>
 
-<h3><%= current_page?(global_settings_path) ? 'Global' : '' %> Site Settings</h3>
+<h1><%= current_page?(global_settings_path) ? 'Global' : '' %> Site Settings</h1>
 <p>
   The settings on this page control various aspects of the display or operation of the site. Change these
   rarely and with care. Bear in mind that setting changes will generally not be retroactive - so if you change
@@ -12,13 +12,13 @@
 <% @settings.each do |category, settings| %>
   <details>
     <summary><%= category&.underscore&.humanize || 'Uncategorized' %></summary>
-    <table class="table table-borderless">
+    <table class="table">
       <tbody>
         <% settings.each do |setting| %>
           <tr>
             <td>
-              <strong><%= setting.name %></strong><br/>
-              <span class="text-muted"><%= setting.description %></span>
+              <h4><%= setting.name %></h4>
+              <div class="has-color-tertiary-500 has-font-size-caption"><%= setting.description %></div>
             </td>
             <td class="site-setting--value js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
                 data-community-id="<%= current_page?(global_settings_path) ? nil : RequestContext.community_id %>">

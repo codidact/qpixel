@@ -7,9 +7,9 @@
         <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
         &middot; <a href="#" class="js-comment-edit">edit</a>
         &middot; <% if comment.deleted %>
-            <a href="#" class="js-comment-undelete text-danger">undelete</a>
+            <a href="#" class="js-comment-undelete is-red">undelete</a>
           <% else %>
-            <a href="#" class="js-comment-delete text-danger">delete</a>
+            <a href="#" class="js-comment-delete is-red">delete</a>
           <% end %>
       <% end %>
     </span>
