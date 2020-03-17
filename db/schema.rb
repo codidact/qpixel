@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_02_052500) do
+ActiveRecord::Schema.define(version: 2020_03_17_173232) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -31,6 +31,13 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.boolean "active"
+    t.boolean "requires_other_post"
   end
 
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -55,7 +62,7 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
   end
 
   create_table "community_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "community_id", null: false
+    t.bigint "community_id", default: 1
     t.bigint "user_id", null: false
     t.boolean "is_moderator"
     t.boolean "is_admin"
@@ -141,7 +148,7 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -149,9 +156,13 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
     t.bigint "last_activity_by_id"
     t.string "category", default: "Main"
     t.bigint "community_id", null: false
+    t.bigint "close_reasons_id"
+    t.bigint "duplicate_post_id"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category"], name: "index_posts_on_category"
+    t.index ["close_reasons_id"], name: "index_posts_on_close_reasons_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
+    t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
   end
 
@@ -276,7 +287,9 @@ ActiveRecord::Schema.define(version: 2020_02_02_052500) do
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
   add_foreign_key "post_histories", "communities"
+  add_foreign_key "posts", "close_reasons", column: "close_reasons_id"
   add_foreign_key "posts", "communities"
+  add_foreign_key "posts", "posts", column: "duplicate_post_id"
   add_foreign_key "privileges", "communities"
   add_foreign_key "site_settings", "communities"
   add_foreign_key "subscriptions", "communities"
