@@ -54,7 +54,7 @@ $(() => {
           <textarea rows="3" class="form-element is-small" name="comment[content]">${content}</textarea>
         </div>
         <div class="actions">
-          <input type="submit" class="btn btn-primary" value="Post" />
+          <input type="submit" class="button is-outlined" value="Post" />
         </div>
       </div>
     </form>`;
