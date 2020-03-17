@@ -51,7 +51,7 @@ $(() => {
       <div class="form-group-horizontal">
         <div class="form-group">
           <label for="comment-content">Your comment</label>
-          <textarea rows="3" class="form-control" name="comment[content]">${content}</textarea>
+          <textarea rows="3" class="form-element is-small" name="comment[content]">${content}</textarea>
         </div>
         <div class="actions">
           <input type="submit" class="btn btn-primary" value="Post" />
