@@ -43,3 +43,11 @@ h1 .badge.is-tag.is-master-tag {
 .post-list--meta {
   font-size: 14px;
 }
+
+.post--action-dialog {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}

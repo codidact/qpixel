@@ -77,7 +77,23 @@
             <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
                         method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
           <% end %> &middot;
-          <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
+          <a href="#" class="flag-dialog-link">flag</a>
+        </div>
+
+        <div class="post--action-dialog js-flag-box">
+          <div class="widget">
+            <div class="widget--body">
+              <label class="form-element" for="flag-post-<%= post.id %>">
+                Why does this post require moderator attention?
+              </label>
+              <input class="form-element js-flag-comment" id="flag-post-<%= post.id %>">
+            </div>
+            <div class="widget--footer">
+              <button class="flag-link button is-filled is-muted" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">
+                Flag for moderator attention
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="post--status">

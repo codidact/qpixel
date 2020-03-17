@@ -57,12 +57,17 @@ window.QPixel = {
 };
 
 $(document).on('ready', function() {
-  $("a.flag-link").bind("click", function(ev) {
+  $("a.flag-dialog-link").bind("click", function(ev) {
+    ev.preventDefault();
+    self = $(this);
+    self.parent().parent().find(".js-flag-box").toggleClass("is-active");
+  });
+  $("button.flag-link").bind("click", function(ev) {
     ev.preventDefault();
     var self = $(this);
     var data = {
       'post_id': self.data("post-id"),
-      'reason': window.prompt("Why does this post require moderator attention?")
+      'reason': self.parent().parent().find(".js-flag-comment").val()
     };
 
     if(data['reason'].length < 10) {
@@ -82,11 +87,14 @@ $(document).on('ready', function() {
       }
       else {
         QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.', this.target);
+        self.parent().parent().find(".js-flag-comment").val("");
       }
+      self.parent().parent().parent().removeClass("is-active");
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
       QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
       console.log(jqXHR.responseText);
+      self.parent().parent().parent().removeClass("is-active");
     });
   });
 
