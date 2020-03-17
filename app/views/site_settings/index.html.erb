@@ -17,7 +17,15 @@
         <% settings.each do |setting| %>
           <tr>
             <td>
-              <h4><%= setting.name %></h4>
+              <h4>
+                <%= setting.name %>
+                <% if setting.community_id.nil? %>
+                  <span class="badge is-tag is-master-tag">global</span>
+                <% else %>
+                  <span class="badge is-tag">site</span>
+                <% end %>
+                <span class="badge is-tag"><%= setting.value_type %></span>
+              </h4>
               <div class="has-color-tertiary-500 has-font-size-caption"><%= setting.description %></div>
             </td>
             <td class="site-setting--value js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
