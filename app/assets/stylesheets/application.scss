@@ -16,6 +16,18 @@
 
 @import 'variables';
 
+body {
+  font-family: $font-stack-plain !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-stack-display !important;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
 .deleted-content {
   background: lighten($danger, 45%);
 }
@@ -123,4 +135,12 @@ a.header--site-name {
       pointer-events: none;
     }
   }
+}
+
+.notice__dev-mode {
+  font-size: 14px;
+}
+
+header {
+  font-family: $font-stack-display;
 }

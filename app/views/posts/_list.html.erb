@@ -7,7 +7,7 @@
     <span class="item-list--number-label">score</span>
   </div>
   <div class="item-list--text-value is-primary">
-    <div class="has-font-size-larger">
+    <div class="post-list--title">
       <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) do %>
       <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
         <span class="badge is-tag is-master-tag is-muted">meta</span>
@@ -15,7 +15,7 @@
       <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>
-    <p class="has-color-tertiary-600 has-float-right">
+    <p class="has-color-tertiary-600 has-float-right post-list--meta">
       <% if is_question %>
         <span class="answer-count">
           <%= post.answer_count %> <%= post.answer_count != 1 ? 'answers' : 'answer' %>

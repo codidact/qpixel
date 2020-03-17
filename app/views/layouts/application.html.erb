@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><%= Rails.env.development? ? '[DEV] ' : '' %><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
   <link rel="icon" href="/assets/favicon.ico" />
-  <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" %>
+  <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
   <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.4.1/dist/codidact.css" %>
   <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
@@ -73,11 +73,11 @@
     </div>
   </header>
   <% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-2">
-    <div class="container">
-      <p>This site is in development mode!</p>
+    <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+      <div class="container">
+        <p>This site is in development mode!</p>
+      </div>
     </div>
-  </div>
   <% end %>
   <div class="header-slide inbox">
   </div>
