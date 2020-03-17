@@ -15,7 +15,7 @@
       <div class="post--votes has-text-align-center">
         <% existing_vote = my_vote(post) %>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
-                data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
+                data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
             <svg width="2em" height="1.33em" viewbox="0 0 100 50">
               <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
             </svg>
@@ -25,7 +25,7 @@
           <%= post.score %>
         </div>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
-                data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up">
+                data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
             <svg width="2em" height="1.33em" viewbox="0 0 100 50">
               <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
             </svg>
