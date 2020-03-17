@@ -51,3 +51,11 @@ h1 .badge.is-tag.is-master-tag {
     display: block;
   }
 }
+
+.js-close-box .widget--body {
+  padding: 0.25em 0.5em;
+
+  .grid--cell:first-child {
+    padding-top: 0.6em;
+  }
+}

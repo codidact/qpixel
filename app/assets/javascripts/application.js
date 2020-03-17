@@ -98,6 +98,47 @@ $(document).on('ready', function() {
     });
   });
 
+  $("a.close-dialog-link").bind("click", function(ev) {
+    ev.preventDefault();
+    self = $(this);
+    self.parent().parent().find(".js-close-box").toggleClass("is-active");
+  });
+  $("button.close-question").bind("click", function(ev) {
+    ev.preventDefault();
+    var self = $(this);
+    active_radio = self.parent().parent().find("input[type='radio'][name='close-reason']:checked");
+    var data = {
+      'reason_id': active_radio.val(),
+      'other_post': active_radio.parent().parent().find(".js-close-other-post").val()
+    };
+    if(data["other_post"]) {
+      if(data["other_post"].match(/\/[0-9]+$/)) {
+        data["other_post"] = data["other_post"].replace(/.*\/([0-9]+)$/, "$1");
+      }
+    }
+
+    $.ajax({
+      'type': 'POST',
+      'url': '/questions/' + self.data("post-id") + '/close',
+      'data': data,
+      'target': self
+    })
+    .done(function(response) {
+      if(response['status'] !== 'success') {
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
+      }
+      else {
+        location.reload();
+      }
+      self.parent().parent().parent().removeClass("is-active");
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
+      console.log(jqXHR.responseText);
+      self.parent().parent().parent().removeClass("is-active");
+    });
+  });
+
   $("a.flag-resolve").bind("click", function(ev) {
     ev.preventDefault();
     var self = $(this);
