@@ -36,7 +36,7 @@ class QuestionsController < ApplicationController
                   .paginate(page: params[:page], per_page: 20)
                   .includes(:votes, :user, :comments)
 
-    @close_reasons = CloseReason.active
+    @close_reasons = CloseReason.active @community.id
   end
 
   def tagged
