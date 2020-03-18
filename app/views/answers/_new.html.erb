@@ -11,6 +11,7 @@
 <% end %>
 
 <%= render 'posts/image_upload' %>
+<%= render 'questions/markdown_script' %>
 
 <%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
   <%= f.hidden_field :category, value: parent.category %>
@@ -19,6 +20,7 @@
     <%= render "posts/mdhint" %>
     <%= f.text_area :body_markdown, { class: "form-element is-large post-field js-post-field", rows: 15 } %>
   </div>
+  <div class="post-preview"></div>
   <div class="field">
     <%= f.submit "Post Answer", class: "button is-filled" %>
   </div>
