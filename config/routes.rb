@@ -26,6 +26,10 @@ Rails.application.routes.draw do
   get    'mod/votes/user/:id',          to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',       to: 'users#destroy', as: :destroy_user
 
+  get    'close_reasons',               to: 'close_reasons#index', as: :close_reasons
+  get    'close_reasons/edit/:id',      to: 'close_reasons#edit', as: :close_reason
+  patch  'close_reasons/edit/:id',      to: 'close_reasons#update', as: :update_close_reason
+
   get    'questions',                   to: 'questions#index', as: :questions
   get    'questions/lottery',           to: 'questions#lottery', as: :questions_lottery
   get    'meta',                        to: 'questions#meta', as: :meta

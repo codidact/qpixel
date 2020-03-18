@@ -1,0 +1,47 @@
+<% content_for :title, "Close Reasons" %>
+
+<h1>Close Reasons</h1>
+
+<p class="is-lead">
+  This page lists all active and inactive close reasons and allows you to edit them.
+  Moderators can edit close reasons for this community, administrators for all.
+</p>
+<p>The column rop? has a "yes" value if you need to add a link to another post in order to use the close reason.</p>
+
+<% if admin? %>
+  <div class="button-list is-gutterless has-margin-bottom-4">
+    <%= link_to "current community", "?global=0", class: "button is-muted is-outlined #{(params[:global]=='0' || params[:global].nil?) ? 'is-active' : ''}" %>
+    <%= link_to "global", "?global=1", class: "button is-muted is-outlined #{(params[:global]=='1') ? 'is-active' : ''}" %>
+  </div>
+<% end %>
+
+<table class="table is-with-hover">
+  <tr>
+    <th>name</th>
+    <th>description</th>
+    <th>rop?</th>
+    <th>active?</th>
+    <th>actions</th>
+  </tr>
+  <% @close_reasons.each do |reason| %>
+    <tr>
+      <td class="has-font-weight-bold"><%= reason.name %></td>
+      <td><%= reason.description %></td>
+      <td><%= reason.requires_other_post ? "yes" : "no" %></td>
+      <td><%= reason.active ? "yes" : "no" %></td>
+      <td>
+        <%= link_to "edit", "/close_reasons/edit/" + reason.id.to_s, class: "button is-outlined" %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<div class="notice has-margin-top-4">
+  <p>
+    You can add further close reasons.
+    Please try to keep the number low, as many reasons quickly become overwhelming.
+    Do not add reasons, where you're not sure, that your community needs or wants them.
+  </p>
+  <p>It's not possible to remove reasons, once created. They can only be deactivated.</p>
+  <%= link_to "add reason", "/close_reasons/new", class: "button is-outlined" %>
+</div>
