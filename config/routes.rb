@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   get    'close_reasons',               to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',      to: 'close_reasons#edit', as: :close_reason
   patch  'close_reasons/edit/:id',      to: 'close_reasons#update', as: :update_close_reason
+  get    'close_reasons/new',           to: 'close_reasons#new', as: :new_close_reason
+  post   'close_reasons/new',           to: 'close_reasons#create', as: :create_close_reason
 
   get    'questions',                   to: 'questions#index', as: :questions
   get    'questions/lottery',           to: 'questions#lottery', as: :questions_lottery

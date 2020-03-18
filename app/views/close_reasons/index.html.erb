@@ -6,7 +6,7 @@
   This page lists all active and inactive close reasons and allows you to edit them.
   Moderators can edit close reasons for this community, administrators for all.
 </p>
-<p>The column rop? has a "yes" value if you need to add a link to another post in order to use the close reason.</p>
+<p>The column <em>rop?</em> has a "yes" value if you need to add a link to another post in order to use the close reason.</p>
 
 <% if admin? %>
   <div class="button-list is-gutterless has-margin-bottom-4">
@@ -43,5 +43,5 @@
     Do not add reasons, where you're not sure, that your community needs or wants them.
   </p>
   <p>It's not possible to remove reasons, once created. They can only be deactivated.</p>
-  <%= link_to "add reason", "/close_reasons/new", class: "button is-outlined" %>
+  <%= link_to "add reason", (params[:global] != "1") ? "/close_reasons/new" : "/close_reasons/new?global=1", class: "button is-outlined" %>
 </div>
