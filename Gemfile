@@ -31,6 +31,11 @@ gem 'coveralls', require: false
 
 gem 'awesome_print'
 
+gem 'rack-mini-profiler', '~> 2.0'
+gem 'memory_profiler'
+gem 'flamegraph'
+gem 'stackprof'
+
 group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'

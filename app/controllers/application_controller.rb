@@ -83,5 +83,9 @@ class ApplicationController < ActionController::Base
     else
       @first_visit_notice = false
     end
+
+    if current_user&.is_admin
+      Rack::MiniProfiler.authorize_request
+    end
   end
 end
