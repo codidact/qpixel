@@ -33,6 +33,12 @@
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
+      <hr/>
+      <span class="has-font-size-caption">
+        <%= link_to flag_history_path(@user.id), class: 'is-muted' do %>
+          <%= pluralize(@user.flags.count, 'flag') %> cast
+        <% end %>
+      </span>
     </div>
   </div>
   <div class="user-profile--sidebar">

@@ -59,6 +59,7 @@ Rails.application.routes.draw do
   get    'users/stack-redirect',        to: 'users#stack_redirect', as: :stack_redirect
   post   'users/claim-content',         to: 'users#transfer_se_content', as: :claim_stack_content
   get    'users/:id',                   to: 'users#show', as: :user
+  get    'users/:id/flags',             to: 'flags#history', as: :flag_history
   get    'users/:id/mod',               to: 'users#mod', as: :mod_user
   get    'users/:id/posts/:type',       to: 'users#posts', as: :user_posts
   get    'users/me/notifications',      to: 'notifications#index', as: :notifications

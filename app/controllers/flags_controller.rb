@@ -12,6 +12,16 @@ class FlagsController < ApplicationController
     end
   end
 
+  def history
+    @user = User.find(params[:id])
+    unless @user == current_user || (current_user.is_admin || current_user.is_mod)
+      not_found
+      return
+    end
+    @flags = @user.flags.includes(:post).order(id: :desc).paginate(page: params[:page], per_page: 50)
+    @statuses = @flags.group(:status).count(:status)
+  end
+
   def queue
     @flags = Flag.unhandled.includes(:post).paginate(page: params[:page], per_page: 20)
   end
