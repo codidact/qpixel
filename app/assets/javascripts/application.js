@@ -130,12 +130,10 @@ $(document).on('ready', function() {
       else {
         location.reload();
       }
-      self.parent().parent().parent().removeClass("is-active");
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
       QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
       console.log(jqXHR.responseText);
-      self.parent().parent().parent().removeClass("is-active");
     });
   });
 

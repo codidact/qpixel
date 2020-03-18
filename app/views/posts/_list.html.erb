@@ -13,6 +13,7 @@
         <span class="badge is-tag is-master-tag is-muted">meta</span>
       <% end %>
       <%= is_question ? post.title : post.parent.title %>
+      <%= is_question && post.closed ? "[closed]" : "" %>
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
