@@ -2,5 +2,5 @@
 
 class CloseReason < ApplicationRecord
   belongs_to :community
-  scope :active, ->(community_id) { where(active: true, community_id: nil) + where(active: true, community_id: community_id) }
+  scope :active, ->(community_id) { where(active: true, community_id: nil).or(where(active: true, community_id: community_id)) }
 end

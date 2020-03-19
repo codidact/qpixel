@@ -143,14 +143,14 @@ class QuestionsController < ApplicationController
 
   def close
     unless check_your_privilege('Close', nil, false)
-      render json: { status: 'failed', message: 'You must have the Close privilege to close questions.' } and return
+      render json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 403 and return
     end
 
     if @question.closed
       render json: { status: 'failed', message: 'Cannot close a closed question.' } and return
     end
 
-    if not CloseReason.exists? params[:reason_id]
+    unless CloseReason.exists? params[:reason_id]
       render json: { status: 'failed', message: 'Close reason not found.' } and return
     end
     reason = CloseReason.find params[:reason_id]

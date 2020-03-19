@@ -4,7 +4,7 @@ class Question < Post
   scope :meta, -> { where(category: 'Meta') }
   scope :main, -> { where(category: 'Main') }
 
-  belongs_to :close_reason, class_name: 'CloseReason', foreign_key: 'close_reasons_id', optional: true
+  belongs_to :close_reason, foreign_key: 'close_reasons_id', optional: true
   belongs_to :duplicate_post, class_name: 'Question', optional: true
 
   def self.post_type_id
