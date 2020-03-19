@@ -59,18 +59,18 @@ window.QPixel = {
 $(document).on('ready', function() {
   $("a.flag-dialog-link").bind("click", function(ev) {
     ev.preventDefault();
-    self = $(this);
-    self.parent().parent().find(".js-flag-box").toggleClass("is-active");
+    const self = $(this);
+    self.parents(".post--body").find(".js-flag-box").toggleClass("is-active");
   });
   $("button.flag-link").bind("click", function(ev) {
     ev.preventDefault();
-    var self = $(this);
-    var data = {
+    const self = $(this);
+    const data = {
       'post_id': self.data("post-id"),
-      'reason': self.parent().parent().find(".js-flag-comment").val()
+      'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if(data['reason'].length < 10) {
+    if (data['reason'].length < 10) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.", self);
       return;
     }
@@ -81,38 +81,41 @@ $(document).on('ready', function() {
       'data': data,
       'target': self
     })
-    .done(function(response) {
-      if(response['status'] !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
+    .done((response) => {
+      if(response.status !== 'success') {
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, this);
       }
       else {
-        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.', this.target);
-        self.parent().parent().find(".js-flag-comment").val("");
+        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.', this);
+        self.parents(".js-flag-box").find(".js-flag-comment").val("");
       }
-      self.parent().parent().parent().removeClass("is-active");
+      self.parents(".js-flag-box").removeClass("is-active");
     })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
+    .fail((jqXHR, textStatus, errorThrown) => {
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this);
       console.log(jqXHR.responseText);
-      self.parent().parent().parent().removeClass("is-active");
+      self.parents(".js-flag-box").removeClass("is-active");
     });
   });
 
-  $("a.close-dialog-link").bind("click", function(ev) {
+  $("a.close-dialog-link").on("click", function(ev) {
     ev.preventDefault();
-    self = $(this);
-    self.parent().parent().find(".js-close-box").toggleClass("is-active");
+    const self = $(this);
+    console.log(self);
+    console.log(self.parents(".post--body").find(".js-close-box").toggleClass("is-active"));
   });
-  $("button.close-question").bind("click", function(ev) {
+  $("button.close-question").on("click", function(ev) {
     ev.preventDefault();
-    var self = $(this);
-    active_radio = self.parent().parent().find("input[type='radio'][name='close-reason']:checked");
-    var data = {
+    const self = $(this);
+    active_radio = self.parents(".js-close-box").find("input[type='radio'][name='close-reason']:checked");
+    const data = {
       'reason_id': active_radio.val(),
-      'other_post': active_radio.parent().parent().find(".js-close-other-post").val()
+      'other_post': active_radio.parents(".widget--body").find(".js-close-other-post").val()
+      // option will be silently discarded if no input element
     };
-    if(data["other_post"]) {
-      if(data["other_post"].match(/\/[0-9]+$/)) {
+
+    if (data["other_post"]) {
+      if (data["other_post"].match(/\/[0-9]+$/)) {
         data["other_post"] = data["other_post"].replace(/.*\/([0-9]+)$/, "$1");
       }
     }
@@ -123,16 +126,16 @@ $(document).on('ready', function() {
       'data': data,
       'target': self
     })
-    .done(function(response) {
-      if(response['status'] !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response['message'], this.target);
+    .done((response) => {
+      if(response.status !== 'success') {
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, ev.target);
       }
       else {
         location.reload();
       }
     })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this.target);
+    .fail((jqXHR, textStatus, errorThrown) => {
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, ev.target);
       console.log(jqXHR.responseText);
     });
   });
