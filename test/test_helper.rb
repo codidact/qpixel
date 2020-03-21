@@ -21,8 +21,9 @@ class ActiveSupport::TestCase
   protected
 
   def load_seeds
+    comm = Community.first || Community.create(name: 'Test', host: 'test.host')
+    RequestContext.community = comm
     Rails.application.load_seed
-    RequestContext.community = Community.first
   end
 
   def clear_cache
