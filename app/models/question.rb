@@ -13,6 +13,7 @@ class Question < Post
   end
 
   validates :title, :body, :tags_cache, presence: true
+  validate :tags_in_tag_set
   validate :maximum_tags
   validate :maximum_tag_length
   validate :no_spaces_in_tags
@@ -28,7 +29,7 @@ class Question < Post
 
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag = Tag.find_or_create_by name: tag_name
+      tag = Tag.find_or_create_by name: tag_name, tag_set: TagSet.find_by(name: category)
       unless tags.include? tag
         tags << tag
       end
@@ -72,6 +73,13 @@ class Question < Post
     end
     if title.squeeze("  ").length < 15
       errors.add(:title, "must be more than 15 non-whitespace characters long")
+    end
+  end
+
+  def tags_in_tag_set
+    tag_set = TagSet.find_by(name: category)
+    unless tags.all? { |t| t.tag_set_id == tag_set.id }
+      errors.add(:base, "Not all of this question's tags are in the correct tag set.")
     end
   end
 end

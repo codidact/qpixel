@@ -24,7 +24,7 @@
       Tags help to categorize questions. Separate them by space. Use hyphens for multiple-word tags.
     </div>
     <%= f.select :tags_cache, @question.tags_cache.map { |t| [t, t] }, { include_blank: true }, multiple: true,
-                 class: "form-element js-tag-select", selected: @question.tags_cache %>
+                 class: "form-element js-tag-select", selected: @question.tags_cache, data: { tag_set: is_meta ? 'Meta' : 'Main' } %>
   </div>
 
   <% if is_edit %>
