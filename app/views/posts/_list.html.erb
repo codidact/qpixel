@@ -9,10 +9,10 @@
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
       <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) do %>
-      <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
-        <span class="badge is-tag is-master-tag is-muted">meta</span>
-      <% end %>
-      <%= is_question ? post.title : post.parent.title %>
+        <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+          <span class="badge is-tag is-master-tag is-muted">meta</span>
+        <% end %>
+        <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
@@ -25,8 +25,9 @@
     </p>
     <div class="has-padding-top-2">
       <% if is_question %>
+        <% tag_set = post.tag_set %>
         <% post.tags_cache.each do |tag| %>
-          <%= link_to tag, questions_tagged_path(tag), class: 'badge is-tag' %>
+          <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
         <% end %>
       <% end %>
     </div>

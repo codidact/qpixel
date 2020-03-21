@@ -46,6 +46,10 @@ class Post < ApplicationRecord
     end
   end
 
+  def tag_set
+    TagSet.find_by(name: parent.nil? ? category : parent.category)
+  end
+
   def is_meta
     category == 'Meta'
   end

@@ -51,9 +51,10 @@
           </div>
           <% if is_question %>
             <div class="post--tags has-padding-2">
+              <% tag_set = post.tag_set %>
               <% post.tags_cache.each do |tag| %>
                 <% next if tag.nil? || tag.empty? %>
-                <%= link_to tag, questions_tagged_path(tag), class: 'badge is-tag' %>
+                <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
               <% end %>
             </div>
           <% end %>
