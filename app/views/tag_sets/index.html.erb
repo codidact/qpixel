@@ -1,0 +1,29 @@
+<% content_for :title, 'Tag Sets' %>
+
+<h1>Tag Sets</h1>
+<p>
+  Tag sets define which tags a post in each category is allowed to have. For instance, a post in the Main category cannot have tags
+  from the Meta category - this does not preclude creating a tag in the Main tag set with the same name, but the Main and Meta tags
+  will be distinct from one another.
+</p>
+
+<p>Click on a tag set's name to edit it.</p>
+
+<div class="item-list">
+  <% @tag_sets.each do |ts| %>
+    <div class="item-list--item">
+      <div class="item-list--number-value">
+        <div class="item-list--number">
+          <%= @counts[ts.id] || 0 %>
+        </div>
+        <div class="item-list--number-label">
+          <%= 'tag'.pluralize(@counts[ts.id] || 0) %>
+        </div>
+      </div>
+      <div class="item-list--text-value is-primary">
+        <div class="has-font-size-larger js-tag-set-name" data-set-id="<%= ts.id %>"><%= ts.name %></div>
+        <div class="has-padding-top-2 has-font-size-caption">Community: <%= ts.community.name %></div>
+      </div>
+    </div>
+  <% end %>
+</div>

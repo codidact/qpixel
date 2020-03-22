@@ -14,6 +14,13 @@ Rails.application.routes.draw do
   get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
   post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
 
+  scope  'admin/tag-sets' do
+    root                                   to: 'tag_sets#index', as: :tag_sets
+    get    'global',                       to: 'tag_sets#global', as: :global_tag_sets
+    get    ':id',                          to: 'tag_sets#show', as: :tag_set
+    post   ':id/edit',                     to: 'tag_sets#update', as: :update_tag_set
+  end
+
   get    'mod',                            to: 'moderator#index', as: :moderator
   get    'mod/deleted/questions',          to: 'moderator#recently_deleted_questions', as: :recently_deleted_questions
   get    'mod/deleted/answers',            to: 'moderator#recently_deleted_answers', as: :recently_deleted_answers

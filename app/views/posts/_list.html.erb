@@ -15,14 +15,6 @@
         <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>
-    <p class="has-color-tertiary-600 has-float-right post-list--meta">
-      <% if is_question %>
-        <span class="answer-count">
-          <%= post.answer_count %> <%= post.answer_count != 1 ? 'answers' : 'answer' %>
-        </span>&nbsp;&middot;&nbsp;
-      <% end %>
-      last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>
-    </p>
     <div class="has-padding-top-2">
       <% if is_question %>
         <% tag_set = post.tag_set %>
@@ -31,5 +23,29 @@
         <% end %>
       <% end %>
     </div>
+  </div>
+  <% if is_question %>
+    <div class="item-list--number-value">
+      <div class="item-list--number">
+        <%= post.answer_count %>
+      </div>
+      <div class="item-list--number-label">
+        <%= 'answer'.pluralize(post.answer_count) %>
+      </div>
+    </div>
+  <% end %>
+  <div class="item-list--number-value">
+    <div class="item-list--number">
+      <%= time_ago_in_words post.last_activity, locale: :short %>
+    </div>
+    <div class="item-list--number-label">
+      activity
+    </div>
+  </div>
+  <div class="item-list--image-value">
+    <% user = post.last_activity_by || post.user %>
+    <%= link_to user_path(user) do %>
+      <%= image_tag avatar_url(user, 32), alt: "avatar for #{user.username}", title: "last activity by #{user.username}" %>
+    <% end %>
   </div>
 </div>
