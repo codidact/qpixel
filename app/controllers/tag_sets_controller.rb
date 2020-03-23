@@ -16,7 +16,6 @@ class TagSetsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html
       format.json do
         render json: @tag_set
       end
