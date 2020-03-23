@@ -2,7 +2,7 @@ class CloseReasonsController < ApplicationController
   before_action :verify_moderator
 
   def index
-    if @current_user.is_admin && params[:global] == "1"
+    if @current_user.is_global_admin && params[:global] == "1"
       @close_reasons = CloseReason.where(community_id: nil)
     else
       @close_reasons = CloseReason.where(community_id: @community.id)
@@ -12,7 +12,7 @@ class CloseReasonsController < ApplicationController
   def edit
     @close_reason = CloseReason.find(params[:id])
 
-    if !@current_user.is_admin && @close_reason.community.nil?
+    if !@current_user.is_global_admin && @close_reason.community.nil?
       not_found
       return
     end
@@ -21,7 +21,7 @@ class CloseReasonsController < ApplicationController
   def update
     @close_reason = CloseReason.find(params[:id])
 
-    if !@current_user.is_admin && @close_reason.community.nil?
+    if !@current_user.is_global_admin && @close_reason.community.nil?
       not_found
       return
     end
@@ -36,7 +36,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    if !@current_user.is_admin && params[:global] == "1"
+    if !@current_user.is_global_admin && params[:global] == "1"
       not_found
       return
     end
@@ -45,7 +45,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def create
-    if !@current_user.is_admin && params[:global] == "1"
+    if !@current_user.is_global_admin && params[:global] == "1"
       not_found
       return
     end
