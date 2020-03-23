@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '= 5.2.3'
+gem 'rails', '~> 5.2'
 gem 'mysql2', '~> 0.5.3'
 gem 'tzinfo-data', '~> 1.2019.3'
 gem 'sass-rails', '~> 5.0'
@@ -30,6 +30,11 @@ gem 'whenever', require: false
 gem 'coveralls', require: false
 
 gem 'awesome_print'
+
+gem 'rack-mini-profiler', '~> 2.0'
+gem 'memory_profiler'
+gem 'flamegraph'
+gem 'stackprof'
 
 group :test do
   gem 'minitest', '~> 5.10.3'

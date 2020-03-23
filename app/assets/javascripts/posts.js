@@ -41,4 +41,17 @@ $(() => {
   $('.js-category-select').select2({
     tags: true
   });
+
+  $('.post-field').on('keydown', evt => {
+    if (!window.converter) {
+      window.converter = new showdown.Converter();
+      window.converter.setFlavor('github');
+    }
+    window.setTimeout(() => {
+      const converter = window.converter;
+      const text = $(evt.target).val();
+      const html = converter.makeHtml(text);
+      $(evt.target).parents('.form-group').siblings('.post-preview').html(html);
+    }, 0);
+  });
 });

@@ -52,9 +52,10 @@
           </div>
           <% if is_question %>
             <div class="post--tags has-padding-2">
+              <% tag_set = post.tag_set %>
               <% post.tags_cache.each do |tag| %>
                 <% next if tag.nil? || tag.empty? %>
-                <%= link_to tag, questions_tagged_path(tag), class: 'badge is-tag' %>
+                <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
               <% end %>
             </div>
           <% end %>
@@ -168,9 +169,15 @@
                 <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
                 on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
               </h3>
+              <% if post.deleted_by.id == post.user.id %>
+              <p>
+                The author of this post decided to delete it. It can only be seen by users with the delete privilege.
+              </p>
+              <% else %>
               <p>
                 This post was deleted because it violates the rules of this site. It can only be seen by users with the delete privilege.
               </p>
+              <% end %>
 
               <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
            </div>

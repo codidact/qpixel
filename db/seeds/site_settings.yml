@@ -193,3 +193,10 @@
   category: HelpAndGuidance
   description: >
     Just-in-time guidance that's shown on the search page to let users know about advanced search. Markdown is available here.
+
+- name: IconPath
+  value: ~
+  value_type: string
+  category: SiteDetails
+  description: >
+    Path to a file to use as the site's favicon. Must be an .ICO file.

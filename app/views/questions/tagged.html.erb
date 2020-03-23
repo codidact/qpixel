@@ -2,9 +2,11 @@
 
 <h3>Questions tagged <%= params[:tag] %></h3>
 
-<% @questions.each do |question| %>
-  <%= render 'posts/list', post: question %>
-<% end %>
+<div class="item-list">
+  <% @questions.each do |question| %>
+    <%= render 'posts/list', post: question %>
+  <% end %>
+</div><br/>
 
 <%= will_paginate @questions, renderer: BootstrapPagination::Rails %>
 

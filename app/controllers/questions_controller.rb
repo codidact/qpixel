@@ -40,7 +40,11 @@ class QuestionsController < ApplicationController
   end
 
   def tagged
-    @tag = Tag.find_by_name params[:tag]
+    @tag = Tag.find_by name: params[:tag], tag_set_id: params[:tag_set]
+    if @tag.nil?
+      not_found
+      return
+    end
     @questions = @tag.posts.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
   end
 

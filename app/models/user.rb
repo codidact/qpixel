@@ -12,10 +12,12 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
+  has_many :flags, dependent: :nullify
   has_one :community_user, -> { for_context }, autosave: true
   has_one_attached :avatar, dependent: :destroy
 
-  validates :username, presence: true, length: { minimum: 3 }
+  validates :username, presence: true, length: { minimum: 3, maximum: 50 }
+  validate :no_links_in_username
   validate :username_not_fake_admin
 
   delegate :reputation, :reputation=, to: :community_user
@@ -86,5 +88,11 @@ class User < ApplicationRecord
 
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
+  end
+
+  def no_links_in_username
+    if username =~ %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}
+      errors.add(:username, 'cannot contain links')
+    end
   end
 end

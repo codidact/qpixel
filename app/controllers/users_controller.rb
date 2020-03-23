@@ -11,7 +11,8 @@ class UsersController < ApplicationController
                user_scope.where('username LIKE ?', "#{params[:search]}%")
              else
                user_scope.order(sort_param => :desc)
-             end.list_includes.paginate(page: params[:page], per_page: 48)
+             end.paginate(page: params[:page], per_page: 48)
+    @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id, :post_type_id).count(:post_type_id)
   end
 
   def show
@@ -155,6 +156,6 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    User.joins(:community_user)
+    User.joins(:community_user).includes(:avatar_attachment)
   end
 end

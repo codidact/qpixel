@@ -2,7 +2,9 @@
   <div class="flex-row-always">
     <div><img src="<%= avatar_url(user) %>" alt="user avatar" height="32" width="32" /></div>
     <div class="user--meta">
-      <% user_posts = user.posts.group(:post_type_id).count(:post_type_id) %>
+      <% user_posts = defined?(@post_counts) ? { Question.post_type_id => @post_counts[[user.id, Question.post_type_id]],
+                                                 Answer.post_type_id => @post_counts[[user.id, Answer.post_type_id]] } :
+                                               user.posts.group(:post_type_id).count(:post_type_id) %>
       <span class="username"><%= link_to  user_path(user), class: "is-not-underlined" do %>
                                <%= user.username %>
                                <% if user.is_admin &&  SiteSetting['AdminBadgeCharacter'] %>

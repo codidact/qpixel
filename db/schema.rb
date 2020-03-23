@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_18_161617) do
+ActiveRecord::Schema.define(version: 2020_03_23_131708) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -71,6 +71,9 @@ ActiveRecord::Schema.define(version: 2020_03_18_161617) do
     t.integer "reputation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "suspended"
+    t.datetime "suspension_ends_at"
+    t.text "suspension_comment"
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
@@ -88,6 +91,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_161617) do
     t.bigint "community_id", null: false
     t.index ["community_id"], name: "index_flags_on_community_id"
     t.index ["post_id"], name: "index_flags_on_post_type_and_post_id"
+    t.index ["status"], name: "index_flags_on_status"
     t.index ["user_id"], name: "index_flags_on_user_id"
   end
 
@@ -150,7 +154,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_161617) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -164,8 +168,12 @@ ActiveRecord::Schema.define(version: 2020_03_18_161617) do
     t.index ["category"], name: "index_posts_on_category"
     t.index ["close_reasons_id"], name: "index_posts_on_close_reasons_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
+    t.index ["deleted"], name: "index_posts_on_deleted"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
+    t.index ["parent_id"], name: "index_posts_on_parent_id"
+    t.index ["post_type_id"], name: "index_posts_on_post_type_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "posts_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -233,13 +241,23 @@ ActiveRecord::Schema.define(version: 2020_03_18_161617) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tag_sets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.bigint "community_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_tag_sets_on_community_id"
+  end
+
   create_table "tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "community_id", null: false
+    t.bigint "tag_set_id", null: false
     t.index ["community_id"], name: "index_tags_on_community_id"
+    t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

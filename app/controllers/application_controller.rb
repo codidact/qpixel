@@ -62,10 +62,12 @@ class ApplicationController < ActionController::Base
       Community.find_by(host: host_name)
     end
 
+    Rails.logger.info "  Host #{host_name}, community #{RequestContext.community_id} (#{RequestContext.community.name})"
+
     if current_user.nil?
-      Rails.logger.info 'No user signed in'
+      Rails.logger.info '  No user signed in'
     else
-      Rails.logger.info "User #{current_user.id} (#{current_user.username}) signed in"
+      Rails.logger.info "  User #{current_user.id} (#{current_user.username}) signed in"
       RequestContext.user = current_user
       current_user.ensure_community_user!
     end
@@ -82,6 +84,10 @@ class ApplicationController < ActionController::Base
       @first_visit_notice = true
     else
       @first_visit_notice = false
+    end
+
+    if current_user&.is_admin
+      Rack::MiniProfiler.authorize_request
     end
   end
 end
