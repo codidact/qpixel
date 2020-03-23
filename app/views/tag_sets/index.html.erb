@@ -9,6 +9,14 @@
 
 <p>Click on a tag set's name to edit it.</p>
 
+<div class="notice is-danger">
+  <p><i class="fas fa-exclamation-triangle"></i> <strong>STOP!</strong></p>
+  <p>
+    Do not change the names of tag sets unless you're certain of what you're doing. The software relies on some names to identify the correct
+    tag set to use; changing them may cause significant portions of the site to crash.
+  </p>
+</div>
+
 <div class="item-list">
   <% @tag_sets.each do |ts| %>
     <div class="item-list--item">

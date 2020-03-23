@@ -1,5 +1,6 @@
-<%= tabs do %>
-  <% tab 'Users', users_report_path, is_active: current_page?(users_report_path) %>
-  <% tab 'Posts', posts_report_path, is_active: current_page?(posts_report_path) %>
-  <% tab 'Subscriptions', subscriptions_report_path, is_active: current_page?(subscriptions_report_path) %>
-<% end %>
+<div class="button-list is-gutterless has-margin-bottom-4">
+  <%= link_to 'Users', users_report_path, class: "button is-muted is-outlined #{current_page?(users_report_path) ? 'is-active' : ''}" %>
+  <%= link_to 'Posts', posts_report_path, class: "button is-muted is-outlined #{current_page?(posts_report_path) ? 'is-active' : ''}" %>
+  <%= link_to 'Subscriptions', subscriptions_report_path,
+              class: "button is-muted is-outlined #{current_page?(subscriptions_report_path) ? 'is-active' : ''}" %>
+</div>
