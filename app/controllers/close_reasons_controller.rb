@@ -3,14 +3,14 @@ class CloseReasonsController < ApplicationController
 
   def index
     if @current_user.is_global_admin && params[:global] == "1"
-      @close_reasons = CloseReason.where(community_id: nil)
+      @close_reasons = CloseReason.unscoped.where(community_id: nil)
     else
-      @close_reasons = CloseReason.where(community_id: @community.id)
+      @close_reasons = CloseReason.unscoped.where(community_id: @community.id)
     end
   end
 
   def edit
-    @close_reason = CloseReason.find(params[:id])
+    @close_reason = CloseReason.unscoped.find(params[:id])
 
     if !@current_user.is_global_admin && @close_reason.community.nil?
       not_found
@@ -19,7 +19,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def update
-    @close_reason = CloseReason.find(params[:id])
+    @close_reason = CloseReason.unscoped.find(params[:id])
 
     if !@current_user.is_global_admin && @close_reason.community.nil?
       not_found
