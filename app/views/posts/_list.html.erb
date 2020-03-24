@@ -24,6 +24,11 @@
       <% end %>
     </div>
   </div>
+  <div class="item-list--number-value">
+    <% user = post.last_activity_by || post.user %>
+    <div class="has-text-align-center has-padding-right-1"><%= link_to user.username, user_path(user) %></div>
+    <div class="item-list--number-label">active</div>
+  </div>
   <% if is_question %>
     <div class="item-list--number-value">
       <div class="item-list--number">
@@ -41,11 +46,5 @@
     <div class="item-list--number-label">
       activity
     </div>
-  </div>
-  <div class="item-list--image-value">
-    <% user = post.last_activity_by || post.user %>
-    <%= link_to user_path(user) do %>
-      <%= image_tag avatar_url(user, 32), alt: "avatar for #{user.username}", title: "last activity by #{user.username}" %>
-    <% end %>
   </div>
 </div>
