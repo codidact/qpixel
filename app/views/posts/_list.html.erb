@@ -15,6 +15,14 @@
         <%= is_question ? post.title : post.parent.title %>
       <% end %>
     </div>
+    <p class="has-color-tertiary-600 has-float-right post-list--meta">	
+      <% if is_question %>	
+        <span class="answer-count">	
+          <%= post.answer_count %> <%= post.answer_count != 1 ? 'answers' : 'answer' %>	
+        </span>&nbsp;&middot;&nbsp;	
+      <% end %>	
+      last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>	
+    </p>
     <div class="has-padding-top-2">
       <% if is_question %>
         <% tag_set = post.tag_set %>
@@ -22,29 +30,6 @@
           <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
         <% end %>
       <% end %>
-    </div>
-  </div>
-  <div class="item-list--number-value">
-    <% user = post.last_activity_by || post.user %>
-    <div class="has-text-align-center has-padding-right-1"><%= link_to user.username, user_path(user) %></div>
-    <div class="item-list--number-label">active</div>
-  </div>
-  <% if is_question %>
-    <div class="item-list--number-value">
-      <div class="item-list--number">
-        <%= post.answer_count %>
-      </div>
-      <div class="item-list--number-label">
-        <%= 'answer'.pluralize(post.answer_count) %>
-      </div>
-    </div>
-  <% end %>
-  <div class="item-list--number-value">
-    <div class="item-list--number">
-      <%= time_ago_in_words post.last_activity, locale: :short %>
-    </div>
-    <div class="item-list--number-label">
-      activity
     </div>
   </div>
 </div>
