@@ -21,7 +21,7 @@
 
   <div class="form-group has-padding-2">
     <%= f.label :description, "Description", class: "form-element" %>
-    <div class="has-color-tertiary-500 has-font-size-caption">
+    <div class="form-caption">
       You can use <code>$SiteName</code> for the current community.
     </div>
     <%= f.text_area :description, class: "form-element is-small" %>
@@ -29,7 +29,7 @@
 
   <div class="form-group has-padding-2">
     <%= f.label :requires_other_post, "Require other post?", class: "form-element" %>
-    <div class="has-color-tertiary-500 has-font-size-caption">
+    <div class="form-caption">
       Check this box if the close reason shall require closers to select an other post. For example for "duplicate" reasons.
     </div>
     <%= f.check_box :requires_other_post, class: "form-checkbox-element" %>
@@ -37,7 +37,7 @@
 
   <div class="form-group has-padding-2">
     <%= f.label :active, "Active?", class: "form-element" %>
-    <div class="has-color-tertiary-500 has-font-size-caption">
+    <div class="form-caption">
       Activate this reason to allow closers to use it. This doesn't affect prior uses.
     </div>
     <%= f.check_box :active, class: "form-checkbox-element" %>

@@ -34,7 +34,7 @@
 
   <div class="form-group">
     <%= f.label :password, class: "form-element" %>
-    <div class="has-color-tertiary-500 has-font-size-caption">
+    <div class="form-caption">
       Leave blank if you don't want to change it.
       <% if @minimum_password_length %>
         <em>(<%= @minimum_password_length %> characters minimum)</em>
@@ -51,7 +51,7 @@
 
   <div class="form-group">
     <%= f.label :current_password, class: "form-element" %>
-    <div class="has-color-tertiary-500 has-font-size-caption">We need your current password to confirm your changes.</div>
+    <div class="form-caption">We need your current password to confirm your changes.</div>
     <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password" %>
   </div>
 

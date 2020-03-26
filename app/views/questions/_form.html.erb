@@ -20,7 +20,7 @@
   <div class="post-preview"></div>
   <div class="form-group">
     <%= f.label :tags_cache, "Tags", class: "form-element" %>
-    <div class="has-font-size-caption has-color-tertiary-500">
+    <div class="form-caption">
       Tags help to categorize questions. Separate them by space. Use hyphens for multiple-word tags.
     </div>
     <%= f.select :tags_cache, @question.tags_cache.map { |t| [t, t] }, { include_blank: true }, multiple: true,
@@ -30,7 +30,7 @@
   <% if is_edit %>
     <div class="form-group">
       <%= label_tag :edit_comment, 'Edit comment', class: "form-element" %>
-      <div class="has-font-size-caption has-color-tertiary-500">
+      <div class="form-caption">
         Describe&mdash;if neccessary&mdash;what you are changing and why you are making this edit.
       </div>
       <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-element' %>

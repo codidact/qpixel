@@ -26,7 +26,7 @@
                 <% end %>
                 <span class="badge is-tag"><%= setting.value_type %></span>
               </h4>
-              <div class="has-color-tertiary-500 has-font-size-caption"><%= setting.description %></div>
+              <div class="form-caption"><%= setting.description %></div>
             </td>
             <td class="site-setting--value js-setting-value" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
                 data-community-id="<%= current_page?(global_settings_path) ? nil : RequestContext.community_id %>">
