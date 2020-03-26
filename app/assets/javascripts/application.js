@@ -138,6 +138,12 @@ $(document).on('ready', function() {
     });
   });
 
+  $("a.show-all-flags-dialog-link").bind("click", (ev) => {
+    ev.preventDefault();
+    const self = $(ev.target);
+    self.parents(".post--body").find(".js-flags").toggleClass("is-active");
+  });
+
   $("a.flag-resolve").bind("click", function(ev) {
     ev.preventDefault();
     var self = $(this);

@@ -80,6 +80,10 @@
                         method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
           <% end %> &middot;
           <a href="#" class="flag-dialog-link">flag</a>
+          <% flags_count = post.flags.where(handled_by_id: nil).count %>
+          <% if moderator? && flags_count > 0 %>
+          &middot; <a href="#" class="show-all-flags-dialog-link has-font-weight-bold">show <%= pluralize(flags_count, "flag") %></a>
+          <% end %>
         </div>
 
         <div class="post--action-dialog js-flag-box">
@@ -127,6 +131,27 @@
                   Close this post
                 </button>
               </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if moderator? %>
+          <div class="post--action-dialog js-flags">
+            <div class="widget">
+              <div class="widget--header">Flags on this post</div>
+              <% post.flags.where(handled_by_id: nil).each do |flag| %>
+                <div class="widget--body">
+                  <div>
+                  <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+                  <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
+                  <div class="has-float-right has-padding-1">
+                    <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+                    <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
+                  </div>
+                  <div class="has-clear-clear"></div>
+                  </div>
+               </div>
+              <% end %>
             </div>
           </div>
         <% end %>
