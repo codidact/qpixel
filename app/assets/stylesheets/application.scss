@@ -84,7 +84,7 @@ a.header--site-name {
   }
 }
 
-.badge.is-muted {
+.badge.is-muted:not(.is-tag) {
   background-color: #f2f2f2 !important;
   color: #666 !important;
   font-weight: 600;

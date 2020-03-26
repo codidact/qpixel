@@ -15,18 +15,16 @@
       <%= render 'posts/list', post: flag.post %>
     </div>
     <div class="widget--body">
-      <p><strong>Your comment:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
-    </div>
-    <div class="widget--body">
-      <% status_colors = { helpful: 'green', declined: 'red', pending: 'primary' } %>
-      <span class="badge is-tag is-filled is-<%= status_colors[(flag.status || 'pending').to_sym] %>">
-        <%= flag.status || 'pending' %>
-      </span>
-      <em>
+      <p>
+        <% status_colors = { helpful: 'is-green', declined: 'is-red', pending: 'is-muted' } %>
+        <span class="badge is-tag <%= status_colors[(flag.status || 'pending').to_sym] %> is-filled">
+          <%= flag.status || 'pending' %>
+        </span>
+        <%= flag.reason %>
         <% if flag.message.present? %>
-          &mdash; <%= flag.message %>
+          &mdash; response: <em><%= flag.message %></em>
         <% end %>
-      </em>
+      </p>
     </div>
   </div>
 <% end %>
