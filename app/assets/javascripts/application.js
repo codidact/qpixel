@@ -23,7 +23,6 @@ window.QPixel = {
   },
 
   createNotification: function(type, message, relativeElement) {
-    const offset = QPixel.offset(relativeElement);
     $("<div></div>")
       .addClass("notice has-shadow-3 is-" + type)
       .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
@@ -57,14 +56,14 @@ window.QPixel = {
 };
 
 $(document).on('ready', function() {
-  $("a.flag-dialog-link").bind("click", function(ev) {
+  $("a.flag-dialog-link").bind("click", (ev) => {
     ev.preventDefault();
-    const self = $(this);
+    const self = $(ev.target);
     self.parents(".post--body").find(".js-flag-box").toggleClass("is-active");
   });
-  $("button.flag-link").bind("click", function(ev) {
+  $("button.flag-link").bind("click", (ev) => {
     ev.preventDefault();
-    const self = $(this);
+    const self = $(ev.target);
     const data = {
       'post_id': self.data("post-id"),
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
@@ -98,15 +97,14 @@ $(document).on('ready', function() {
     });
   });
 
-  $("a.close-dialog-link").on("click", function(ev) {
+  $("a.close-dialog-link").on("click", (ev) => {
     ev.preventDefault();
-    const self = $(this);
-    console.log(self);
+    const self = $(ev.target);
     console.log(self.parents(".post--body").find(".js-close-box").toggleClass("is-active"));
   });
-  $("button.close-question").on("click", function(ev) {
+  $("button.close-question").on("click", (ev) => {
     ev.preventDefault();
-    const self = $(this);
+    const self = $(ev.target);
     active_radio = self.parents(".js-close-box").find("input[type='radio'][name='close-reason']:checked");
     const data = {
       'reason_id': active_radio.val(),
