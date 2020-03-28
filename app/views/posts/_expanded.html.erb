@@ -106,7 +106,7 @@
           <div class="post--action-dialog js-close-box">
             <div class="widget">
               <div class="widget--header">Why should this post be closed?</div>
-              <% @close_reasons.each do |reason| %>
+              <% (@close_reasons || CloseReason.all).each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
