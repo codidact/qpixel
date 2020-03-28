@@ -14,6 +14,12 @@ Rails.application.routes.draw do
   get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
   post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
 
+  get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
+  get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason
+  patch  'close_reasons/edit/:id',         to: 'close_reasons#update', as: :update_close_reason
+  get    'close_reasons/new',              to: 'close_reasons#new', as: :new_close_reason
+  post   'close_reasons/new',              to: 'close_reasons#create', as: :create_close_reason
+
   scope  'admin/tag-sets' do
     root                                   to: 'tag_sets#index', as: :tag_sets
     get    'global',                       to: 'tag_sets#global', as: :global_tag_sets

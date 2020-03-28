@@ -7,6 +7,7 @@
         <span class="badge is-tag is-master-tag">meta</span>
       <% end %>
       <%= post.title %>
+      <%= post.closed ? "[closed]" : "" %>
     </h1>
   <% end %>
 
@@ -67,7 +68,7 @@
           <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
           <%= link_to 'permalink', is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) %> &middot;
           <% if is_question && !post.closed %>
-            <%= link_to 'close', close_question_path(post), method: :post, class: 'close-question' %> &middot;
+            <a href="#" class="close-dialog-link">close</a> &middot;
           <% elsif is_question && post.closed %>
             <%= link_to 'reopen', reopen_question_path(post), method: :post, class: 'reopen-question' %> &middot;
           <% end %>
@@ -78,8 +79,82 @@
             <%= link_to 'undelete', url_for(controller: is_question ? :questions : :answers, action: :undelete, id: post.id),
                         method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
           <% end %> &middot;
-          <a href="#" class="flag-link" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">flag</a>
+          <a href="#" class="flag-dialog-link">flag</a>
+          <% flags_count = post.flags.where(handled_by_id: nil).count %>
+          <% if moderator? && flags_count > 0 %>
+          &middot; <a href="#" class="show-all-flags-dialog-link has-font-weight-bold">show <%= pluralize(flags_count, "flag") %></a>
+          <% end %>
         </div>
+
+        <div class="post--action-dialog js-flag-box">
+          <div class="widget">
+            <div class="widget--body">
+              <label class="form-element" for="flag-post-<%= post.id %>">
+                Why does this post require moderator attention?
+              </label>
+              <input class="form-element js-flag-comment" id="flag-post-<%= post.id %>">
+            </div>
+            <div class="widget--footer">
+              <button class="flag-link button is-filled is-muted" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">
+                Flag for moderator attention
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <% if is_question %>
+          <div class="post--action-dialog js-close-box">
+            <div class="widget">
+              <div class="widget--header">Why should this post be closed?</div>
+              <% @close_reasons.each do |reason| %>
+                <div class="widget--body">
+                  <div class="grid">
+                    <div class="grid--cell">
+                      <input class="form-radio-element" type="radio" name="close-reason" value="<%= reason.id %>" id="close-reason-<%= reason.id %>">
+                    </div>
+                    <div class="grid--cell is-flexible">
+                      <label class="form-element" for="close-reason-<%= reason.id %>">
+                        <%= reason.name %>
+                        <div class="form-caption">
+                          <%= reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+                        </div>
+                      </label>
+                      <% if reason.requires_other_post %>
+                        <input class="form-element has-margin-top-8 js-close-other-post" id="close-reason-other-post-<%= reason.id %>" placeholder="Please enter the URL or ID of the other post." />
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <div class="widget--footer">
+                <button class="close-question button is-filled is-muted" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">
+                  Close this post
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if moderator? %>
+          <div class="post--action-dialog js-flags">
+            <div class="widget">
+              <div class="widget--header">Flags on this post</div>
+              <% post.flags.where(handled_by_id: nil).each do |flag| %>
+                <div class="widget--body">
+                  <div>
+                  <p><%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+                  <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
+                  <div class="has-float-right has-padding-1">
+                    <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+                    <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
+                  </div>
+                  <div class="has-clear-clear"></div>
+                  </div>
+               </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
 
         <div class="post--status">
   
@@ -97,15 +172,19 @@
           <% if is_question && post.closed %>
             <div class="notice is-warning has-margin-2">
               <h3 class="has-font-weight-normal">
-                <strong>closed</strong> by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
+                <strong>closed</strong> as <%= post.close_reason.name %> by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
                 on  <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
               </h3>
               <p>
-                This question was closed because it isn't suitable for this site.
-                New answers can no longer be added.
+                <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+                <% if post.close_reason.requires_other_post %>
+                  See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
+                <% end %>
               </p>
-  
-              <p>Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.</p>
+              <p>
+                This question was closed; new answers can no longer be added.
+                Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.
+              </p>
             </div>
           <% end %>
   

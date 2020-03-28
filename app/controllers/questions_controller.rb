@@ -35,6 +35,8 @@ class QuestionsController < ApplicationController
                              { score: :score, age: :created_at })
                   .paginate(page: params[:page], per_page: 20)
                   .includes(:votes, :user, :comments)
+
+    @close_reasons = CloseReason.all
   end
 
   def tagged
@@ -145,22 +147,38 @@ class QuestionsController < ApplicationController
 
   def close
     unless check_your_privilege('Close', nil, false)
-      flash[:danger] = 'You must have the Close privilege to close questions.'
-      redirect_to question_path(@question) and return
+      render json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 403 and return
     end
 
     if @question.closed
-      flash[:danger] = 'Cannot close a closed question.'
-      redirect_to question_path(@question) and return
+      render json: { status: 'failed', message: 'Cannot close a closed question.' } and return
+    end
+
+    unless CloseReason.exists? params[:reason_id]
+      render json: { status: 'failed', message: 'Close reason not found.' } and return
+    end
+    reason = CloseReason.find params[:reason_id]
+
+    if reason.requires_other_post
+      if not Question.exists? params[:other_post]
+        render json: { status: 'failed', message: 'Invalid input for other post.' } and return
+      end
+
+      duplicate_of = Question.find(params[:other_post])
+    else
+      duplicate_of = nil
     end
 
     if @question.update(closed: true, closed_by: current_user, closed_at: Time.now,
-                        last_activity: DateTime.now, last_activity_by: current_user)
+                        last_activity: DateTime.now, last_activity_by: current_user,
+                        close_reason: reason, duplicate_post: duplicate_of)
+
       PostHistory.question_closed(@question, current_user)
+
+      render json: { status: 'success' }
     else
-      flash[:danger] = "Can't close this question right now. Try again later."
+      render json: { status: 'failed', message: "Can't close this question right now. Try again later." } and return
     end
-    redirect_to question_path(@question)
   end
 
   def reopen
@@ -175,7 +193,8 @@ class QuestionsController < ApplicationController
     end
 
     if @question.update(closed: false, closed_by: current_user, closed_at: Time.now,
-                        last_activity: DateTime.now, last_activity_by: current_user)
+                        last_activity: DateTime.now, last_activity_by: current_user,
+                        close_reason: nil, duplicate_post: nil)
       PostHistory.question_reopened(@question, current_user)
     else
       flash[:danger] = "Can't reopen this question right now. Try again later."

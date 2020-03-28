@@ -1,0 +1,20 @@
+- name: duplicate
+  description: This question has been answered before.
+  active: true
+  requires_other_post: true
+- name: off topic
+  description: This question is not within the scope of $SiteName.
+  active: true
+  requires_other_post: false
+- name: unclear
+  description: This question cannot be answered in its current form, because critical information are missing.
+  active: true
+  requires_other_post: false
+- name: too generic
+  description: This post contains multiple questions or has many possible indistinguishable correct answers or requires extraordinary long answers.
+  active: true
+  requires_other_post: false
+- name: not constructive
+  description: This question cannot be answered in a way that is helpful to anyone. It's not possible to learn something from possible answers, except for the solution for the specific problem of the asker.
+  active: true
+  requires_other_post: false

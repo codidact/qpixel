@@ -84,7 +84,7 @@ a.header--site-name {
   }
 }
 
-.badge.is-muted {
+.badge.is-muted:not(.is-tag) {
   background-color: #f2f2f2 !important;
   color: #666 !important;
   font-weight: 600;
@@ -143,4 +143,8 @@ a.header--site-name {
 
 header {
   font-family: $font-stack-display;
+}
+
+.notice a.has-font-size-larger {
+  font-size: 19px;
 }

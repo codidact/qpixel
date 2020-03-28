@@ -1,0 +1,2 @@
+module CloseReasonsHelper
+end

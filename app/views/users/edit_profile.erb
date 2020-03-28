@@ -19,7 +19,7 @@
   <div class="form-group has-padding-2">
   <img alt="user avatar" class="has-float-right has-margin-2" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
     <%= f.label :avatar, class: "form-element" %>
-    <div class="has-font-size-caption has-color-tertiary-500">
+    <div class="form-caption">
       An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
     </div>
     <%= f.file_field :avatar, class: "form-element" %>
@@ -28,7 +28,7 @@
 
   <div class="form-group has-padding-2">
     <%= f.label :username, class: "form-element" %>
-    <div class="has-font-size-caption has-color-tertiary-500">What other people call you.</div>
+    <div class="form-caption">What other people call you.</div>
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
@@ -41,13 +41,13 @@
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= f.label :website, class: "form-element" %>
-      <div class="has-font-size-caption has-color-tertiary-500">A link to anywhere on the internet for your stuff.</div>
+      <div class="form-caption">A link to anywhere on the internet for your stuff.</div>
       <%= f.text_field :website, class: 'form-element', autocomplete: 'off' %>
     </div>
 
     <div class="form-group">
       <%= f.label :twitter, class: "form-element" %>
-      <div class="has-font-size-caption has-color-tertiary-500">Your Twitter username, if you've got one you want to share.</div>
+      <div class="form-caption">Your Twitter username, if you've got one you want to share.</div>
       <%= f.text_field :twitter, class: 'form-element', autocomplete: 'off' %>
     </div>
   </div>
