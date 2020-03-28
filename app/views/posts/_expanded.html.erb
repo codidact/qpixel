@@ -179,12 +179,14 @@
                 by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
                 on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
               </h3>
-              <p>
-                <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
-                <% if post.close_reason.requires_other_post %>
-                  See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
-                <% end %>
-              </p>
+              <% unless post.close_reason.nil? %>
+                <p>
+                  <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+                  <% if post.close_reason.requires_other_post %>
+                    See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
+                  <% end %>
+                </p>
+              <% end %>
               <p>
                 This question was closed; new answers can no longer be added.
                 Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.

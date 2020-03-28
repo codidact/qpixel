@@ -226,10 +226,14 @@ class QuestionsControllerTest < ActionController::TestCase
 
   test "should close question" do
     sign_in users(:closer)
-    patch :close, params: { id: posts(:question_one).id }
+    patch :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
     assert_not_nil assigns(:question)
     assert_equal true, assigns(:question).closed
-    assert_response(302)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert_response(200)
   end
 
   test "should reopen question" do
@@ -256,7 +260,7 @@ class QuestionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     patch :close, params: { id: posts(:question_one).id }
     assert_equal false, assigns(:question).closed
-    assert_response(302)
+    assert_response(403)
   end
 
   test "should require privileges to reopen question" do
@@ -270,8 +274,7 @@ class QuestionsControllerTest < ActionController::TestCase
     sign_in users(:closer)
     patch :close, params: { id: posts(:closed).id }
     assert_equal true, assigns(:question).closed
-    assert_not_nil flash[:danger]
-    assert_response(302)
+    assert_response(400)
   end
 
   test "should prevent open questions being reopened" do

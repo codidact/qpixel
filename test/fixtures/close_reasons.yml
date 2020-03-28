@@ -1,0 +1,13 @@
+duplicate:
+  name: duplicate
+  description: duplicate
+  active: true
+  requires_other_post: true
+  community: sample
+
+not_good:
+  name: not good
+  description: not good
+  active: true
+  requires_other_post: false
+  community: sample

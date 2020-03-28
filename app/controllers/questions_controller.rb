@@ -151,17 +151,17 @@ class QuestionsController < ApplicationController
     end
 
     if @question.closed
-      render json: { status: 'failed', message: 'Cannot close a closed question.' } and return
+      render json: { status: 'failed', message: 'Cannot close a closed question.' }, status: 400 and return
     end
 
-    unless CloseReason.exists? params[:reason_id]
-      render json: { status: 'failed', message: 'Close reason not found.' } and return
+    reason = CloseReason.find_by id: params[:reason_id]
+    if reason.nil?
+      render json: { status: 'failed', message: 'Close reason not found.' }, status: 404 and return
     end
-    reason = CloseReason.find params[:reason_id]
 
     if reason.requires_other_post
-      if not Question.exists? params[:other_post]
-        render json: { status: 'failed', message: 'Invalid input for other post.' } and return
+      unless Question.exists? params[:other_post]
+        render json: { status: 'failed', message: 'Invalid input for other post.' }, status: 400 and return
       end
 
       duplicate_of = Question.find(params[:other_post])
@@ -177,7 +177,7 @@ class QuestionsController < ApplicationController
 
       render json: { status: 'success' }
     else
-      render json: { status: 'failed', message: "Can't close this question right now. Try again later." } and return
+      render json: { status: 'failed', message: "Can't close this question right now. Try again later.", errors: @question.errors.full_messages }
     end
   end
 

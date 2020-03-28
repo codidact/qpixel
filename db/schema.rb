@@ -64,16 +64,13 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
   end
 
   create_table "community_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "community_id", default: 1
+    t.bigint "community_id", null: false
     t.bigint "user_id", null: false
     t.boolean "is_moderator"
     t.boolean "is_admin"
     t.integer "reputation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "suspended"
-    t.datetime "suspension_ends_at"
-    t.text "suspension_comment"
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
@@ -154,7 +151,7 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
