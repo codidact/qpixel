@@ -172,8 +172,12 @@
           <% if is_question && post.closed %>
             <div class="notice is-warning has-margin-2">
               <h3 class="has-font-weight-normal">
-                <strong>closed</strong> as <%= post.close_reason.name %> by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
-                on  <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+                <strong>closed</strong>
+                <% unless post.close_reason.nil? %>
+                  as <%= post.close_reason.name %>
+                <% end %>
+                by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
+                on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
               </h3>
               <p>
                 <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
