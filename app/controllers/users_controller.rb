@@ -156,6 +156,6 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    User.joins(:community_user).includes(:avatar_attachment)
+    User.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 end
