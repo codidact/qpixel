@@ -12,8 +12,9 @@ If you need time to work on an issue, that's absolutely fine, but please **keep 
 don't hear from you for a few weeks, we may assume you've given up working on that issue and give it to someone else.
 
 ## What's the workflow?
- * First, **you need an issue to work under**. Either assign yourself to an existing issue (or request it be assigned to you),
-   or create a new issue and assign yourself to that.
+ * First, **you need an issue to work under**. Look at the current [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list)
+   to find something to work on; follow the instructions there to see what's available, and create an issue once you know what you're
+   going to work on.
  * Second, you can make your changes. If you have write access to the repository, create a topic branch (please use the format
    `art/40/add-bells-and-whistles`, i.e. `username/issue-number/brief-description`) and make your changes there; if not, fork
    the repository and work in your fork.
