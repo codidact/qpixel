@@ -21,6 +21,12 @@ class PostsController < ApplicationController
     @post = Post.new(new_post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
                                            user: User.find(-1)))
 
+    if @post.policy_doc? && !current_user&.is_admin
+      @post.errors.add(:base, 'You must be an administrator to create a policy document.')
+      render :new
+      return
+    end
+
     if @post.save
       redirect_to policy_path(slug: @post.doc_slug)
     else

@@ -18,7 +18,6 @@ class Post < ApplicationRecord
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
-  validate :policy_doc_by_admin
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -114,11 +113,5 @@ class Post < ApplicationRecord
 
   def create_initial_revision
     PostHistory.initial_revision(self, user, after: body_markdown)
-  end
-
-  def policy_doc_by_admin
-    if policy_doc? && !user.is_admin
-      errors.add(:base, 'You must be an administrator to create a policy document.')
-    end
   end
 end
