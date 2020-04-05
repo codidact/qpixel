@@ -2,13 +2,17 @@ class SubscriptionMailer < ApplicationMailer
   def subscription
     @subscription = params[:subscription]
     @questions = @subscription.questions&.includes(:user) || []
-    if @questions.size == 0
+    if @questions.empty?
       return
     end
 
-    mail to: @subscription.user.email,
-         subject: @subscription.name.present? ? "Latest questions from your '#{@subscription.name}' subscription on Writing" :
-                      'Latest questions from your subscription on Writing'
+    subject = if @subscription.name.present?
+                "Latest questions from your '#{@subscription.name}' subscription on Writing"
+              else
+                'Latest questions from your subscription on Writing'
+              end
+
+    mail to: @subscription.user.email, subject: subject
 
     @subscription.update(last_sent_at: DateTime.now)
   end

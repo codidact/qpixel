@@ -3,16 +3,20 @@ class PostHistory < ApplicationRecord
   belongs_to :post_history_type
   belongs_to :user
 
-  def self.method_missing(name, *args, **opts, &block)
+  def self.method_missing(name, *args, **opts)
     unless args.length >= 2
-      raise NoMethodError.new
+      raise NoMethodError
     end
+
     object, user = args
     before, after, comment = { before: nil, after: nil, comment: nil }.merge(opts).values_at(:before, :after, :comment)
 
     history_type_name = name.to_s
     history_type = PostHistoryType.find_by(name: history_type_name)
-    raise NoMethodError.new if history_type.nil?
+    if history_type.nil?
+      super
+      return
+    end
 
     params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     unless before.nil?
@@ -26,5 +30,9 @@ class PostHistory < ApplicationRecord
     end
 
     PostHistory.create params
+  end
+
+  def self.respond_to_missing?(method_name, include_private = false)
+    PostHistoryType.exists?(name: method_name.to_s) || super
   end
 end

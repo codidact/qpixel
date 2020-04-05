@@ -3,14 +3,14 @@ require 'test_helper'
 class NotificationsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test "should get index as JSON" do
+  test 'should get index as JSON' do
     sign_in users(:standard_user)
     get :index, params: { format: :json }
     assert_not_nil assigns(:notifications)
     assert_response(200)
   end
 
-  test "should mark notification as read" do
+  test 'should mark notification as read' do
     sign_in users(:standard_user)
     post :read, params: { id: notifications(:one).id, format: :json }
     assert_not_nil assigns(:notification)
@@ -19,7 +19,7 @@ class NotificationsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should mark all notifications as read" do
+  test 'should mark all notifications as read' do
     sign_in users(:standard_user)
     post :read_all, params: { format: :json }
     assert_not_nil assigns(:notifications)
@@ -30,15 +30,15 @@ class NotificationsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should prevent users marking others notifications read" do
+  test 'should prevent users marking others notifications read' do
     sign_in users(:editor)
     post :read, params: { id: notifications(:one).id, format: :json }
     assert_response(401)
   end
 
-  test "should require authentication to get index" do
+  test 'should require authentication to get index' do
     sign_out :user
     get :index, params: { format: :json }
-    assert_response(401)  # Devise seems to respond 401 for JSON requests.
+    assert_response(401) # Devise seems to respond 401 for JSON requests.
   end
 end

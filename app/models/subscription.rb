@@ -11,18 +11,16 @@ class Subscription < ApplicationRecord
   validate :qualifier_presence
 
   def questions
-    case self.type
+    case type
     when 'all'
       Question.where('created_at >= ?', last_sent_at)
     when 'tag'
-      Tag.find_by(name: self.qualifier)&.posts
+      Tag.find_by(name: qualifier)&.posts
     when 'user'
-      User.find_by(id: self.qualifier)&.questions
+      User.find_by(id: qualifier)&.questions
     when 'interesting'
       Question.where('score >= ?', SiteSetting['InterestingSubscriptionScoreThreshold'])
               .order(Arel.sql('RAND()'))
-    else
-      nil
     end&.order(created_at: :desc)&.limit(100)
   end
 

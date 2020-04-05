@@ -2,13 +2,13 @@ require 'coveralls'
 Coveralls.wear!('rails')
 
 ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 
 require 'minitest/ci'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
-Dir.glob(Rails.root.join('test/support/**/*.rb')).each {|f| require f }
+Dir.glob(Rails.root.join('test/support/**/*.rb')).sort.each { |f| require f }
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.

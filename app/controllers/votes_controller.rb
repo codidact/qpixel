@@ -7,14 +7,14 @@ class VotesController < ApplicationController
     post = Post.find(params[:post_id])
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
-      render json: { status: 'failed', message: "You may not vote on your own posts." }, status: 403 and return
+      render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
     end
 
     destroyed = post.votes.where(user: current_user).destroy_all
     vote = post.votes.create!(user: current_user, vote_type: params[:vote_type].to_i, recv_user: post.user)
 
-    modified = destroyed.size > 0
-    state = {status: (modified ? "modified" : "OK"), vote_id: vote.id, post_score: post.score}
+    modified = !destroyed.empty?
+    state = { status: (modified ? 'modified' : 'OK'), vote_id: vote.id, post_score: post.score }
 
     render json: state
   end
@@ -23,19 +23,19 @@ class VotesController < ApplicationController
     vote = Vote.find params[:id]
 
     if vote.user != current_user
-      render json: { status: 'failed', message: "You are not authorized to remove this vote." }, status: 403 and return
+      render(json: { status: 'failed', message: 'You are not authorized to remove this vote.' }, status: 403) && return
     end
 
     vote.destroy!
 
-    render json: {status: "OK", post_score: vote.post.score}
+    render json: { status: 'OK', post_score: vote.post.score }
   end
 
   private
 
   def auth_for_voting
     unless user_signed_in?
-      render json: { status: 'failed', message: "You must be logged in to vote." }, status: 403
+      render json: { status: 'failed', message: 'You must be logged in to vote.' }, status: 403
     end
   end
 end

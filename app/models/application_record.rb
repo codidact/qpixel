@@ -19,8 +19,6 @@ class ApplicationRecord < ActiveRecord::Base
     ApplicationRecord.match_search(term, **cols)
   end
 
-  private
-
   def self.sanitize_for_search(term, **cols)
     cols = cols.map do |k, v|
       if v.is_a?(Array)
@@ -54,11 +52,11 @@ module UserSortable
 end
 
 klasses = [::ActiveRecord::Relation]
-if defined? ::ActiveRecord::Associations::CollectionProxy
-  klasses << ::ActiveRecord::Associations::CollectionProxy
-else
-  klasses << ::ActiveRecord::Associations::AssociationCollection
-end
+klasses << if defined? ::ActiveRecord::Associations::CollectionProxy
+             ::ActiveRecord::Associations::CollectionProxy
+           else
+             ::ActiveRecord::Associations::AssociationCollection
+           end
 
 ActiveRecord::Base.extend UserSortable
 klasses.each { |klass| klass.send(:include, UserSortable) }

@@ -16,8 +16,9 @@ class Post < ApplicationRecord
 
   serialize :tags_cache, Array
 
-  validates :body, presence: true, length: {minimum: 30, maximum: 30000}
+  validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
+  validate :policy_doc_by_admin
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -50,7 +51,7 @@ class Post < ApplicationRecord
     TagSet.find_by(name: parent.nil? ? category : parent.category)
   end
 
-  def is_meta
+  def meta?
     category == 'Meta'
   end
 
@@ -68,8 +69,9 @@ class Post < ApplicationRecord
 
   private
 
-  def attribution_text(source=nil, name=nil, url=nil)
-    "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\nLicense URL: #{url || att_license_link}"
+  def attribution_text(source = nil, name = nil, url = nil)
+    "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\n" \
+      "License URL: #{url || att_license_link}"
   end
 
   def check_attribution_notice
@@ -79,9 +81,11 @@ class Post < ApplicationRecord
       if attributes.all? { |x| sc[x]&.try(:[], 0).nil? }
         PostHistory.attribution_notice_added(self, User.find(-1), after: attribution_text)
       elsif attributes.all? { |x| sc[x]&.try(:[], 1).nil? }
-        PostHistory.attribution_notice_removed(self, User.find(-1), before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }))
+        PostHistory.attribution_notice_removed(self, User.find(-1),
+                                               before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }))
       else
-        PostHistory.attribution_notice_changed(self, User.find(-1), before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
+        PostHistory.attribution_notice_changed(self, User.find(-1),
+                                               before: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 0) }),
                                                after: attribution_text(*attributes.map { |a| sc[a]&.try(:[], 1) }))
       end
     end
@@ -99,7 +103,7 @@ class Post < ApplicationRecord
   def modify_author_reputation
     sc = saved_changes
     if sc.include?('deleted') && sc['deleted'][0] != sc['deleted'][1] && created_at >= 60.days.ago
-      deleted = !!saved_changes['deleted']&.last
+      deleted = !!saved_changes['deleted']&.last # rubocop:disable Style/DoubleNegation
       if deleted
         user.update(reputation: user.reputation - Vote.total_rep_change(votes))
       else
@@ -110,5 +114,11 @@ class Post < ApplicationRecord
 
   def create_initial_revision
     PostHistory.initial_revision(self, user, after: body_markdown)
+  end
+
+  def policy_doc_by_admin
+    if policy_doc? && !user.is_admin
+      errors.add(:base, 'You must be an administrator to create a policy document.')
+    end
   end
 end

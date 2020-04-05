@@ -3,7 +3,7 @@ require 'test_helper'
 class TagsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test "index with json format should return JSON list of tags" do
+  test 'index with json format should return JSON list of tags' do
     get :index, params: { format: 'json' }
     assert_response 200
     assert_nothing_raised do
@@ -12,7 +12,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:tags)
   end
 
-  test "index with search params should return tags starting with search" do
+  test 'index with search params should return tags starting with search' do
     get :index, params: { format: 'json', q: 'dis' }
     assert_response 200
     assert_nothing_raised do

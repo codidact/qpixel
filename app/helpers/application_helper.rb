@@ -44,7 +44,7 @@ module ApplicationHelper
     tag.div class: 'panel panel-default stat-panel' do
       tag.div class: 'panel-body' do
         tag.h4(heading, class: 'stat-panel-heading') +
-        tag.span(value, class: 'stat-value')
+          tag.span(value, class: 'stat-value')
       end
     end
   end

@@ -3,7 +3,7 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new)
 
   def new
     @answer = Answer.new
@@ -19,7 +19,8 @@ class AnswersController < ApplicationController
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
                                              body: AnswersController.renderer.render(params[:answer][:body_markdown]),
                                              last_activity: DateTime.now, last_activity_by: current_user))
-    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'", share_question_url(@question))
+    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
+                                       share_question_url(@question))
     if @answer.save
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
@@ -33,8 +34,9 @@ class AnswersController < ApplicationController
 
   def update
     return unless check_your_privilege('Edit', @answer)
-    PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown, after: params[:answer][:body_markdown],
-                            comment: params[:edit_comment])
+
+    PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
+                            after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
                                           last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
@@ -46,12 +48,12 @@ class AnswersController < ApplicationController
   def destroy
     unless check_your_privilege('Delete', @answer, false)
       flash[:danger] = 'You must have the Delete privilege to delete answers.'
-      redirect_to question_path(@answer.parent) and return
+      redirect_to(question_path(@answer.parent)) && return
     end
 
     if @answer.deleted
       flash[:danger] = "Can't delete a deleted answer."
-      redirect_to question_path(@answer.parent) and return
+      redirect_to(question_path(@answer.parent)) && return
     end
 
     if @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
@@ -65,13 +67,13 @@ class AnswersController < ApplicationController
 
   def undelete
     unless check_your_privilege('Delete', @answer, false)
-      flash[:danger] = "You must have the Delete privilege to undelete answers."
-      redirect_to question_path(@answer.parent) and return
+      flash[:danger] = 'You must have the Delete privilege to undelete answers.'
+      redirect_to(question_path(@answer.parent)) && return
     end
 
     unless @answer.deleted
       flash[:danger] = "Can't undelete an undeleted answer."
-      redirect_to question_path(@answer.parent) and return
+      redirect_to(question_path(@answer.parent)) && return
     end
 
     if @answer.update(deleted: false, deleted_at: nil, deleted_by: nil,

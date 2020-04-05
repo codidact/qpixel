@@ -7,14 +7,14 @@ module TabsHelper
     tag.div raw(tabs), class: 'tabs'
   end
 
-  def tab(text = nil, link_url, **opts, &block)
+  def tab(text, link_url, **opts, &block)
     active = opts[:is_active] || false
     opts.delete :is_active
-    if opts[:class]
-      opts[:class] = opts[:class] + ' tabs--tab' + (active ? ' tab__active' : '')
-    else
-      opts[:class] = 'tabs--tab' + (active ? ' tab__active' : '')
-    end
+    opts[:class] = if opts[:class]
+                     opts[:class] + ' tabs--tab' + (active ? ' tab__active' : '')
+                   else
+                     'tabs--tab' + (active ? ' tab__active' : '')
+                   end
 
     @building_tabs << if block_given?
                         link_to link_url, **opts, &block

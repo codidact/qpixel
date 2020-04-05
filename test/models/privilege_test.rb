@@ -6,5 +6,4 @@ class PrivilegeTest < ActiveSupport::TestCase
   test 'is commmunity related' do
     assert_community_related(Privilege)
   end
-
 end

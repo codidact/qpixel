@@ -10,8 +10,8 @@ class PostsController < ApplicationController
 
   def create
     setting_regex = /\${(?<setting_name>[^}]+)}/
-    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |match|
-      setting_name = $~&.send(:[], :setting_name)
+    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |_match|
+      setting_name = $LAST_MATCH_INFO&.send(:[], :setting_name)
       if setting_name.nil?
         ''
       else
@@ -20,11 +20,6 @@ class PostsController < ApplicationController
     end
     @post = Post.new(new_post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
                                            user: User.find(-1)))
-
-    if @post.policy_doc? && !current_user.is_admin
-      @post.errors.add(:base, 'You must be an administrator to create a policy document. Moderators may only create help documents.')
-      render :new and return
-    end
 
     if @post.save
       redirect_to policy_path(slug: @post.doc_slug)
@@ -37,8 +32,8 @@ class PostsController < ApplicationController
 
   def update
     setting_regex = /\${(?<setting_name>[^}]+)}/
-    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |match|
-      setting_name = $~&.send(:[], :setting_name)
+    params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |_match|
+      setting_name = $LAST_MATCH_INFO&.send(:[], :setting_name)
       if setting_name.nil?
         ''
       else
@@ -74,7 +69,7 @@ class PostsController < ApplicationController
 
   def help_center
     @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:title)
-                 .group_by(&:post_type_id).map { |tid, posts| [tid, posts.group_by(&:category)] }.to_h
+                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:category) }
   end
 
   private

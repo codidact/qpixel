@@ -28,7 +28,8 @@ class FlagsController < ApplicationController
 
   def resolve
     @flag = Flag.find params[:id]
-    if @flag.update(status: params[:result], message: params[:message], handled_by: current_user, handled_at: DateTime.now)
+    if @flag.update(status: params[:result], message: params[:message], handled_by: current_user,
+                    handled_at: DateTime.now)
       render json: { status: 'success' }
     else
       render json: { status: 'failed', message: 'Failed to save new status.' }, status: 500

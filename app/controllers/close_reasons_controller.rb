@@ -2,11 +2,11 @@ class CloseReasonsController < ApplicationController
   before_action :verify_moderator
 
   def index
-    if @current_user.is_global_admin && params[:global] == "1"
-      @close_reasons = CloseReason.unscoped.where(community_id: nil)
-    else
-      @close_reasons = CloseReason.unscoped.where(community_id: @community.id)
-    end
+    @close_reasons = if @current_user.is_global_admin && params[:global] == '1'
+                       CloseReason.unscoped.where(community_id: nil)
+                     else
+                       CloseReason.unscoped.where(community_id: @community.id)
+                     end
   end
 
   def edit
@@ -14,7 +14,7 @@ class CloseReasonsController < ApplicationController
 
     if !@current_user.is_global_admin && @close_reason.community.nil?
       not_found
-      return
+      nil
     end
   end
 
@@ -36,7 +36,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    if !@current_user.is_global_admin && params[:global] == "1"
+    if !@current_user.is_global_admin && params[:global] == '1'
       not_found
       return
     end
@@ -45,7 +45,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def create
-    if !@current_user.is_global_admin && params[:global] == "1"
+    if !@current_user.is_global_admin && params[:global] == '1'
       not_found
       return
     end
@@ -54,7 +54,7 @@ class CloseReasonsController < ApplicationController
                                     description: params[:close_reason][:description],
                                     requires_other_post: params[:close_reason][:requires_other_post],
                                     active: params[:close_reason][:active],
-                                    community: (params[:global] == "1") ? nil : @community)
+                                    community: params[:global] == '1' ? nil : @community)
     if @close_reason.save
       if @close_reason.community.nil?
         redirect_to close_reasons_path(global: 1)

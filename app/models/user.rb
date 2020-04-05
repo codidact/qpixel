@@ -26,6 +26,10 @@ class User < ApplicationRecord
     includes(:posts, :avatar_attachment)
   end
 
+  # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
+  # because of the importance of these methods.
+  # rubocop:disable Naming/PredicateName
+
   def has_privilege?(name)
     privilege = Privilege.where(name: name).first
     if privileges.include?(privilege) || is_admin || is_moderator
@@ -42,7 +46,7 @@ class User < ApplicationRecord
     if post.user == self
       true
     else
-      self.has_privilege?(name)
+      has_privilege?(name)
     end
   end
 
@@ -68,11 +72,11 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    !!(is_global_moderator || community_user&.is_moderator)
+    is_global_moderator || community_user&.is_moderator || false
   end
 
   def is_admin
-    !!(is_global_admin || community_user&.is_admin)
+    is_global_admin || community_user&.is_admin || false
   end
 
   def username_not_fake_admin
@@ -91,8 +95,10 @@ class User < ApplicationRecord
   end
 
   def no_links_in_username
-    if username =~ %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}
+    if %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}.match?(username)
       errors.add(:username, 'cannot contain links')
     end
   end
+
+  # rubocop:enable Naming/PredicateName
 end

@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts]
 
   def index
-    sort_param = {reputation: :reputation, age: :created_at}[params[:sort]&.to_sym] || :reputation
+    sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
     @users = if params[:search].present?
                user_scope.where('username LIKE ?', "#{params[:search]}%")
              else
@@ -15,18 +15,18 @@ class UsersController < ApplicationController
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id, :post_type_id).count(:post_type_id)
   end
 
-  def show
-  end
+  def show; end
 
   def posts
-    post_types = {questions: Question, answers: Answer}
+    post_types = { questions: Question, answers: Answer }
     unless post_types.include? params[:type].to_sym
       respond_to do |format|
         format.html do
           render plain: 'No type or invalid type specified (must be one of questions, answers)', status: 400
         end
         format.json do
-          render json: { status: 'invalid', message: 'No type or invalid type specified (must be one of questions, answers)' },
+          render json: { status: 'invalid',
+                         message: 'No type or invalid type specified (must be one of questions, answers)' },
                  status: 400
         end
       end
@@ -34,8 +34,8 @@ class UsersController < ApplicationController
     end
 
     model = post_types[params[:type].to_sym]
-    @posts = model.undeleted.where(user: @user).user_sort({term: params[:sort], default: :score},
-                                                          {age: :created_at, score: :score})
+    @posts = model.undeleted.where(user: @user).user_sort({ term: params[:sort], default: :score },
+                                                          age: :created_at, score: :score)
                   .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
@@ -47,49 +47,59 @@ class UsersController < ApplicationController
     end
   end
 
-  def mod
-  end
+  def mod; end
 
   def destroy
     if @user.votes.count > 100
-      render json: {status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.'}, status: 422 and return
+      render(json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' }, status: 422)
+      return
     end
 
     if @user.is_admin || @user.is_moderator
-      render json: {status: 'failed', message: 'Admins and moderators cannot be destroyed.'}, status: 422 and return
+      render(json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' }, status: 422)
+      return
     end
 
     if @user.destroy!
-      render json: {status: 'success'}
+      render json: { status: 'success' }
     else
-      render json: {status: 'failed', message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.'}, status: 500
+      render json: { status: 'failed',
+                     message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' },
+             status: 500
     end
   end
 
   def soft_delete
     if @user.is_admin || @user.is_moderator
-      render json: {status: 'failed', message: 'Admins and moderators cannot be deleted.'}, status: 422 and return
+      render(json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' }, status: 422)
+      return
     end
 
-    needs_transfer = ApplicationRecord.connection.tables.map { |t| [t, ApplicationRecord.connection.columns(t).map(&:name)] }
-                                      .to_h.select { |_, cs| cs.include?('user_id') }
-                                      .map { |k, _| k.singularize.classify.constantize rescue nil }.compact
+    connection = ApplicationRecord.connection
+    needs_transfer = connection.tables.map { |t| [t, connection.columns(t).map(&:name)] }
+                               .to_h.select { |_, cs| cs.include?('user_id') }
+                               .map do |k, _|
+      k.singularize.classify.constantize
+                     rescue
+                       nil
+    end .compact
     needs_transfer.each do |model|
       model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
     end
 
     unless @user.destroy
-      render json: {status: 'failed', message: "Failed to destroy UID #{@user.id}"}, status: 500 and return
+      render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: 500)
+      return
     end
 
-    render json: {status: 'success', message: 'Ask a database administrator to verify the deletion is complete.'}
+    render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
   end
 
   def edit_profile; end
 
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
-    profile_params[:twitter] = profile_params[:twitter].gsub('@', '')
+    profile_params[:twitter] = profile_params[:twitter].delete('@')
 
     if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
@@ -103,8 +113,9 @@ class UsersController < ApplicationController
       @user.avatar.attach(params[:user][:avatar])
     end
 
-    if @user.update(profile_params.merge(profile: QuestionsController.renderer.render(profile_params[:profile_markdown])))
-      flash[:success] = "Your profile details were updated."
+    profile_rendered = QuestionsController.renderer.render(profile_params[:profile_markdown])
+    if @user.update(profile_params.merge(profile: profile_rendered))
+      flash[:success] = 'Your profile details were updated.'
     else
       flash[:danger] = "Couldn't update your profile."
     end
@@ -113,11 +124,13 @@ class UsersController < ApplicationController
 
   def stack_redirect
     response = Net::HTTP.post_form(URI('https://stackoverflow.com/oauth/access_token/json'),
-                                   { 'client_id' => SiteSetting['SEApiClientId'], 'client_secret' => SiteSetting['SEApiClientSecret'],
-                                     'code' => params[:code], 'redirect_uri' => stack_redirect_url })
+                                   'client_id' => SiteSetting['SEApiClientId'],
+                                   'client_secret' => SiteSetting['SEApiClientSecret'],
+                                   'code' => params[:code], 'redirect_uri' => stack_redirect_url)
     access_token = JSON.parse(response.body)['access_token']
 
-    uri = "https://api.stackexchange.com/2.2/me/associated?key=#{SiteSetting['SEApiKey']}&access_token=#{access_token}&filter=!-rH86dva"
+    uri = "https://api.stackexchange.com/2.2/me/associated?key=#{SiteSetting['SEApiKey']}" \
+          "&access_token=#{access_token}&filter=!-rH86dva"
     accounts = JSON.parse(Net::HTTP.get(URI(uri)))
     network_id = accounts['items'][0]['account_id']
     current_user.update(se_acct_id: network_id)
@@ -126,14 +139,14 @@ class UsersController < ApplicationController
 
   def transfer_se_content
     unless params[:agree_to_relicense].present? && params[:agree_to_relicense] == 'true'
-      flash[:danger] = "To claim your content, we need you to agree to relicense your posts to us."
-      redirect_to edit_user_profile_path and return
+      flash[:danger] = 'To claim your content, we need you to agree to relicense your posts to us.'
+      redirect_to(edit_user_profile_path) && return
     end
 
     auto_user = user_scope.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
     if auto_user.nil?
       flash[:warning] = "There doesn't appear to be any of your content here."
-      redirect_to edit_user_profile_path and return
+      redirect_to(edit_user_profile_path) && return
     end
 
     Thread.new do
@@ -144,7 +157,7 @@ class UsersController < ApplicationController
       auto_user.reload.destroy
       current_user.update(transferred_content: true)
     end
-    flash[:success] = "Your content is being transferred to you."
+    flash[:success] = 'Your content is being transferred to you.'
     redirect_to edit_user_profile_path
   end
 

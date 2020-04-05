@@ -6,7 +6,7 @@ class RequestContextTest < ActiveSupport::TestCase
     user = User.new(id: 123)
     RequestContext.community = community
     RequestContext.user = user
-    assert_equal RequestContext.fetch, {community: community, user: user}
+    assert_equal RequestContext.fetch, community: community, user: user
   end
 
   test 'cleared context store' do
@@ -14,21 +14,21 @@ class RequestContextTest < ActiveSupport::TestCase
     assert_equal RequestContext.fetch, {}
   end
 
-  test "community accessors" do
+  test 'community accessors' do
     @community = Community.new(id: 17)
     RequestContext.community = @community
     assert_equal RequestContext.community, @community
     assert_equal RequestContext.community_id, @community.id
   end
 
-  test "user accessors" do
+  test 'user accessors' do
     @user = User.new(id: 17)
     RequestContext.user = @user
     assert_equal RequestContext.user, @user
     assert_equal RequestContext.user_id, @user.id
   end
 
-  test "thread safety" do
+  test 'thread safety' do
     @community1 = Community.new(id: 17)
     @community2 = Community.new(id: 18)
     @community3 = Community.new(id: 19)

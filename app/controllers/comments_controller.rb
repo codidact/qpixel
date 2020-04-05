@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new, extensions = {})
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new)
 
   def self.renderer
     @@markdown_renderer
@@ -11,19 +11,19 @@ class CommentsController < ApplicationController
 
   def create
     @comment = Comment.new comment_params.merge(user: current_user)
-    root_id = @comment.root.id
     if @comment.save
       unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment on #{(@comment.root.title)}", comment_link(@comment))
+        @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
       end
 
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
         user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
-        user.create_notification("You were mentioned in a comment", comment_link(@comment)) if user
+        user&.create_notification('You were mentioned in a comment', comment_link(@comment))
       end
 
-      render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+      render json: { status: 'success',
+                     comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
       render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: 500
     end
@@ -31,9 +31,11 @@ class CommentsController < ApplicationController
 
   def update
     if @comment.update comment_params
-      render json: { status: 'success', comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+      render json: { status: 'success',
+                     comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
-      render json: { status: 'failed', message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
+      render json: { status: 'failed',
+                     message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
     end
   end
 
@@ -89,8 +91,11 @@ class CommentsController < ApplicationController
   end
 
   def comment_link(comment)
-    comment.post.question? ? question_path(comment.post, anchor: "comment-#{comment.id}") :
-        question_path(comment.post.parent, anchor: "comment-#{comment.id}")
+    if comment.post.question?
+      question_path(comment.post, anchor: "comment-#{comment.id}")
+    else
+      question_path(comment.post.parent, anchor: "comment-#{comment.id}")
+    end
   end
 end
 
@@ -98,8 +103,8 @@ end
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
-    self.tags = %w( a b i em strong strike del code )
-    self.attributes = %w( href title )
+    self.tags = %w[a b i em strong strike del code]
+    self.attributes = %w[href title]
   end
 
   def skip_node?(node)

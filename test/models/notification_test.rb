@@ -6,5 +6,4 @@ class NotificationTest < ActiveSupport::TestCase
   test 'is commmunity related' do
     assert_community_related(Notification)
   end
-
 end

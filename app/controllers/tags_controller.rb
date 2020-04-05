@@ -2,8 +2,6 @@ class TagsController < ApplicationController
   def index
     @tag_set = if params[:tag_set].present?
                  TagSet.find_by(name: params[:tag_set])
-               else
-                 nil
                end
     @tags = if params[:q].present?
               (@tag_set&.tags || Tag).where('name LIKE ?', "#{params[:q]}%")

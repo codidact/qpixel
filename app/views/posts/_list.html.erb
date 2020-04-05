@@ -1,5 +1,5 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
-<% is_meta = (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+<% is_meta = (is_question && post.meta?) || (!is_question && post.parent.meta?) %>
 <% active_user = post.last_activity_by || post.user %>
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
@@ -9,7 +9,7 @@
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
       <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) do %>
-        <% if (is_question && post.is_meta) || (!is_question && post.parent.is_meta) %>
+        <% if (is_question && post.meta?) || (!is_question && post.parent.meta?) %>
           <span class="badge is-tag is-master-tag is-muted">meta</span>
         <% end %>
         <%= is_question ? post.title : post.parent.title %>

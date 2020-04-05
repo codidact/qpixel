@@ -7,7 +7,7 @@ class PostHistoryTest < ActiveSupport::TestCase
     assert_post_related(PostHistory)
   end
 
-  test "calling an event with insufficient arguments should throw NoMethodError" do
+  test 'calling an event with insufficient arguments should throw NoMethodError' do
     assert_raises NoMethodError do
       PostHistory.question_closed
     end
@@ -16,20 +16,20 @@ class PostHistoryTest < ActiveSupport::TestCase
     end
   end
 
-  test "calling a nonexistent event should throw NoMethodError" do
+  test 'calling a nonexistent event should throw NoMethodError' do
     assert_raises NoMethodError do
       PostHistory.nonexistent_history(posts(:question_one), users(:standard_user))
     end
   end
-  
-  test "calling an event without state should leave state nil" do
+
+  test 'calling an event without state should leave state nil' do
     post = posts(:question_one)
     event = PostHistory.question_closed(post, users(:closer))
     assert_nil event.before_state
     assert_nil event.after_state
   end
 
-  test "calling an event with state should include state parameters" do
+  test 'calling an event with state should include state parameters' do
     post = posts(:question_one)
     event = PostHistory.initial_revision(post, users(:standard_user), after: post.body_markdown)
     assert_not_nil post.body_markdown

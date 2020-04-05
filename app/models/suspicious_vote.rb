@@ -1,8 +1,8 @@
 class SuspiciousVote < ApplicationRecord
-  belongs_to :from_user, foreign_key: "from_user_id", class_name: "User"
-  belongs_to :to_user, foreign_key: "to_user_id", class_name: "User"
+  belongs_to :from_user, foreign_key: 'from_user_id', class_name: 'User'
+  belongs_to :to_user, foreign_key: 'to_user_id', class_name: 'User'
 
-  validates :from_user, uniqueness: {scope: [:to_user]}
+  validates :from_user, uniqueness: { scope: [:to_user] }
 
   def self.pending
     SuspiciousVote.where(was_investigated: false)
@@ -13,7 +13,7 @@ class SuspiciousVote < ApplicationRecord
       votes = u.votes.group(:recv_user_id).count(:recv_user_id)
       total = u.votes.count
       votes.each do |recv_id, cnt|
-        cert = total.to_f / cnt.to_f ** 2
+        cert = total.to_f / cnt.to_f**2
         if cert < 0.5 && recv_id != -1
           SuspiciousVote.create(from_user_id: u.id, to_user_id: recv_id, suspicious_count: cnt, total_count: total)
         end

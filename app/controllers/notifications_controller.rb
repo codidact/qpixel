@@ -25,19 +25,19 @@ class NotificationsController < ApplicationController
     @notification.is_read = true
     if @notification.save
       respond_to do |format|
-        format.html {
-          flash[:notice] = "Marked as read."
+        format.html do
+          flash[:notice] = 'Marked as read.'
           render :index
-        }
-        format.json { render json: {status: 'success'} }
+        end
+        format.json { render json: { status: 'success' } }
       end
     else
       respond_to do |format|
-        format.html {
-          flash[:error] = "Failed to mark read."
+        format.html do
+          flash[:error] = 'Failed to mark read.'
           render :index
-        }
-        format.json { render json: {status: 'failed'} }
+        end
+        format.json { render json: { status: 'failed' } }
       end
     end
   end
@@ -46,19 +46,19 @@ class NotificationsController < ApplicationController
     @notifications = Notification.where(user: current_user, is_read: false)
     if @notifications.update_all(is_read: true)
       respond_to do |format|
-        format.html {
-          flash[:notice] = "Marked all as read."
+        format.html do
+          flash[:notice] = 'Marked all as read.'
           render :index
-        }
-        format.json { render json: {status: 'success'} }
+        end
+        format.json { render json: { status: 'success' } }
       end
     else
       respond_to do |format|
-        format.html {
-          flash[:error] = "Failed to mark all read."
+        format.html do
+          flash[:error] = 'Failed to mark all read.'
           render :index
-        }
-        format.json { render json: {status: 'failed'} }
+        end
+        format.json { render json: { status: 'failed' } }
       end
     end
   end

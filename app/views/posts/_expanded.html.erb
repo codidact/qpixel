@@ -1,9 +1,9 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 
-<div class="post <%= post.is_meta ? 'is-meta' : '' %> <%= is_question ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
+<div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_question ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
   <% if is_question %>
-    <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.is_meta ? 'tertiary' : 'primary' %>-400 has-padding-2">
-      <% if post.is_meta %>
+    <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
+      <% if post.meta? %>
         <span class="badge is-tag is-master-tag">meta</span>
       <% end %>
       <%= post.title %>

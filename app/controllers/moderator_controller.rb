@@ -3,11 +3,11 @@
 class ModeratorController < ApplicationController
   before_action :verify_moderator
 
-  def index
-  end
+  def index; end
 
   def recently_deleted_questions
-    @questions = Question.unscoped.where(deleted: true).order('deleted_at DESC').paginate(page: params[:page], per_page: 50)
+    @questions = Question.unscoped.where(deleted: true).order('deleted_at DESC')
+                         .paginate(page: params[:page], per_page: 50)
   end
 
   def recently_deleted_answers
@@ -15,7 +15,8 @@ class ModeratorController < ApplicationController
   end
 
   def recently_undeleted_questions
-    @questions = Question.unscoped.where(deleted: false).where.not(deleted_at: nil).paginate(page: params[:page], per_page: 50)
+    @questions = Question.unscoped.where(deleted: false).where.not(deleted_at: nil)
+                         .paginate(page: params[:page], per_page: 50)
   end
 
   def recently_undeleted_answers

@@ -14,11 +14,12 @@ class Vote < ApplicationRecord
 
   def self.total_rep_change(col)
     col = col.includes(:post)
-    settings = SiteSetting.where(name: ['QuestionUpVoteRep', 'QuestionDownVoteRep', 'AnswerUpVoteRep', 'AnswerDownVoteRep'])
-                   .map { |ss| [ss.name, ss.value] }.to_h
+    settings = SiteSetting.where(name: ['QuestionUpVoteRep', 'QuestionDownVoteRep',
+                                        'AnswerUpVoteRep', 'AnswerDownVoteRep'])
+                          .map { |ss| [ss.name, ss.value] }.to_h
     rep_changes = PostType.mapping.map do |k, v|
-      vote_types = {1 => 'Up', -1 => 'Down'}
-      [v, vote_types.map { |vt, readable| [vt, settings["#{k}#{readable}VoteRep"].to_i] }.to_h]
+      vote_types = { 1 => 'Up', -1 => 'Down' }
+      [v, vote_types.transform_values { |readable| settings["#{k}#{readable}VoteRep"].to_i }]
     end.to_h
 
     col.reduce(0) { |sum, vote| sum + rep_changes[vote.post.post_type_id][vote.vote_type] }
@@ -27,11 +28,11 @@ class Vote < ApplicationRecord
   private
 
   def apply_rep_change
-    rep_change +1
+    rep_change(+1)
   end
 
   def reverse_rep_change
-    rep_change -1
+    rep_change(-1)
   end
 
   def rep_change(direction)
@@ -39,7 +40,7 @@ class Vote < ApplicationRecord
       PostType.mapping
     end
     setting_names = {
-        [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
+      [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
         [post_type_ids['Question'], -1] => 'QuestionDownVoteRep',
         [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
         [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep'

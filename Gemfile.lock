@@ -43,6 +43,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    ast (2.4.0)
     awesome_print (1.8.0)
     aws-eventstream (1.0.3)
     aws-partitions (1.290.0)
@@ -104,6 +105,7 @@ GEM
       activesupport (>= 5)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
+    jaro_winkler (1.5.4)
     jbuilder (2.10.0)
       activesupport (>= 5.0.0)
     jmespath (1.4.0)
@@ -138,6 +140,9 @@ GEM
     nokogiri (1.10.9-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
+    parallel (1.19.1)
+    parser (2.7.1.0)
+      ast (~> 2.4.0)
     puma (3.12.4)
     rack (2.2.2)
     rack-mini-profiler (2.0.1)
@@ -172,6 +177,7 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
+    rainbow (3.0.0)
     rake (13.0.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.1)
@@ -182,6 +188,16 @@ GEM
       railties (>= 5.0)
     reverse_markdown (2.0.0)
       nokogiri
+    rexml (3.2.4)
+    rubocop (0.81.0)
+      jaro_winkler (~> 1.5.1)
+      parallel (~> 1.10)
+      parser (>= 2.7.0.1)
+      rainbow (>= 2.2.2, < 4.0)
+      rexml
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 1.4.0, < 2.0)
+    ruby-progressbar (1.10.1)
     sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -221,6 +237,7 @@ GEM
       tzinfo (>= 1.0.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
+    unicode-display_width (1.7.0)
     warden (1.2.8)
       rack (>= 2.0.6)
     web-console (3.7.0)
@@ -266,6 +283,7 @@ DEPENDENCIES
   rails-html-sanitizer
   redcarpet
   reverse_markdown
+  rubocop (~> 0.81)
   sass-rails (~> 5.0)
   spring
   stackprof

@@ -3,13 +3,13 @@ require 'test_helper'
 class ModeratorControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test "should get index" do
+  test 'should get index' do
     sign_in users(:moderator)
     get :index
     assert_response(200)
   end
 
-  test "should get recently deleted questions" do
+  test 'should get recently deleted questions' do
     sign_in users(:moderator)
     get :recently_deleted_questions
     assert_not_nil assigns(:questions)
@@ -19,7 +19,7 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should get recently deleted answers" do
+  test 'should get recently deleted answers' do
     sign_in users(:moderator)
     get :recently_deleted_answers
     assert_not_nil assigns(:answers)
@@ -29,7 +29,7 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should get recently undeleted questions" do
+  test 'should get recently undeleted questions' do
     sign_in users(:moderator)
     get :recently_undeleted_questions
     assert_not_nil assigns(:questions)
@@ -39,7 +39,7 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should get recently undeleted answers" do
+  test 'should get recently undeleted answers' do
     sign_in users(:moderator)
     get :recently_undeleted_answers
     assert_not_nil assigns(:answers)
@@ -49,7 +49,7 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test "should require authentication to access pages" do
+  test 'should require authentication to access pages' do
     sign_out :user
     ModeratorController.action_methods.each do |path|
       get path
@@ -57,7 +57,7 @@ class ModeratorControllerTest < ActionController::TestCase
     end
   end
 
-  test "should require moderator status to access pages" do
+  test 'should require moderator status to access pages' do
     sign_in users(:standard_user)
     ModeratorController.action_methods.each do |path|
       get path

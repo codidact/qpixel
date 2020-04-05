@@ -8,7 +8,7 @@ class RequestContext
       Thread.current[:context] = {}
     end
 
-    %i(user community).each do |field|
+    %i[user community].each do |field|
       define_method "#{field}=" do |value|
         fetch[field] = value
       end

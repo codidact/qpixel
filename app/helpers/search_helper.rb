@@ -24,18 +24,20 @@ module SearchHelper
       case parameter
       when 'score'
         next unless value =~ valid_value[:numeric]
+
         operator, val = numeric_value_sql value
         ["score #{operator.present? ? operator : '='} ?", val.to_i]
       when 'created'
         next unless value =~ valid_value[:date]
+
         operator, val, timeframe = date_value_sql value
-        ["created_at #{operator.present? ? operator : '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})", val.to_i]
+        ["created_at #{operator.present? ? operator : '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})",
+         val.to_i]
       when 'user'
         next unless value =~ valid_value[:numeric]
+
         operator, val = numeric_value_sql value
         ["user_id #{operator.present? ? operator : '='} ?", val.to_i]
-      else
-        nil
       end
     end.compact
 
@@ -49,7 +51,7 @@ module SearchHelper
   def numeric_value_sql(value)
     operator = ''
     while ['<', '>', '='].include? value[0]
-      operator = operator + value[0]
+      operator += value[0]
       value = value[1..-1]
     end
 
@@ -62,7 +64,7 @@ module SearchHelper
     operator = ''
 
     while ['<', '>', '='].include? value[0]
-      operator = operator + value[0]
+      operator += value[0]
       value = value[1..-1]
     end
 
@@ -71,12 +73,12 @@ module SearchHelper
 
     val = ''
     while value[0] =~ /[[:digit:]]/
-      val = val + value[0]
+      val += value[0]
       value = value[1..-1]
     end
 
-    timeframe = { s: 'SECOND', m: 'MINUTE', h: 'HOUR', d: 'DAY', w: 'WEEK', mo: 'MONTH', y: 'YEAR' }[value.to_sym] || 'MONTH'
+    timeframe = { s: 'SECOND', m: 'MINUTE', h: 'HOUR', d: 'DAY', w: 'WEEK', mo: 'MONTH', y: 'YEAR' }[value.to_sym]
 
-    [operator, val, timeframe]
+    [operator, val, timeframe || 'MONTH']
   end
 end

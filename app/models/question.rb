@@ -48,8 +48,8 @@ class Question < Post
   def maximum_tags
     if tags_cache.length > 5
       errors.add(:tags, "can't have more than 5 tags")
-    elsif tags_cache.length < 1
-      errors.add(:tags, "must have at least one tag")
+    elsif tags_cache.empty?
+      errors.add(:tags, 'must have at least one tag')
     end
   end
 
@@ -65,17 +65,17 @@ class Question < Post
   def no_spaces_in_tags
     tags_cache.each do |tag|
       if tag.include? ' '
-        errors.add(:tags, "may not include spaces - use hyphens for multiple-word tags")
+        errors.add(:tags, 'may not include spaces - use hyphens for multiple-word tags')
       end
     end
   end
 
   def stripped_minimum
-    if body.squeeze("  ").length < 30
-      errors.add(:body, "must be more than 30 non-whitespace characters long")
+    if body.squeeze('  ').length < 30
+      errors.add(:body, 'must be more than 30 non-whitespace characters long')
     end
-    if title.squeeze("  ").length < 15
-      errors.add(:title, "must be more than 15 non-whitespace characters long")
+    if title.squeeze('  ').length < 15
+      errors.add(:title, 'must be more than 15 non-whitespace characters long')
     end
   end
 

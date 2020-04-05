@@ -2,8 +2,7 @@
 class AdminController < ApplicationController
   before_action :verify_admin
 
-  def index
-  end
+  def index; end
 
   def error_reports
     errored = `grep "Completed 500" log/#{Rails.env}.log`.split("\n")
@@ -12,10 +11,10 @@ class AdminController < ApplicationController
     @report_count = request_ids.size
     @reports = request_ids.map { |uuid| [uuid, `grep "#{uuid}" log/#{Rails.env}.log`.split("\n")] }.to_h
   end
-  
+
   def privileges
-    @privileges = Privilege.all.user_sort({term: params[:sort], default: :threshold},
-                                          {rep: :threshold, name: :name})
+    @privileges = Privilege.all.user_sort({ term: params[:sort], default: :threshold },
+                                          rep: :threshold, name: :name)
                            .paginate(page: params[:page], per_page: 20)
   end
 

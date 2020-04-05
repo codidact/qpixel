@@ -54,10 +54,11 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # rubocop:disable Metrics/AbcSize
   def set_globals
     RequestContext.clear!
 
-    host_name = request.raw_host_with_port   # include port to support multiple localhost instances
+    host_name = request.raw_host_with_port # include port to support multiple localhost instances
     RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
       Community.find_by(host: host_name)
     end
@@ -72,7 +73,7 @@ class ApplicationController < ActionController::Base
       current_user.ensure_community_user!
     end
 
-    @hot_questions = Rails.cache.fetch("hot_questions", expires_in: 30.minutes) do
+    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 30.minutes) do
       Question.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
               .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
@@ -80,14 +81,15 @@ class ApplicationController < ActionController::Base
       @open_flags = Flag.unhandled.count
     end
 
-    if !user_signed_in? && cookies[:dismiss_fvn] != 'true'
-      @first_visit_notice = true
-    else
-      @first_visit_notice = false
-    end
+    @first_visit_notice = if !user_signed_in? && cookies[:dismiss_fvn] != 'true'
+                            true
+                          else
+                            false
+                          end
 
     if current_user&.is_admin
       Rack::MiniProfiler.authorize_request
     end
   end
+  # rubocop:enable Metrics/AbcSize
 end
