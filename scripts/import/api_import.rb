@@ -29,14 +29,14 @@ class APIImport
                   { filter: '!WXitaVFVVM.BvlaMYC)iSu2Gs*z7.fXEH99.sly' }]
                end
       get_data(params[0], params[1]) do |items|
-        items.each do |post|
+        items.map do |post|
           @cache.posts << post.merge('id' => post[post_type_id.to_s == '1' ? 'question_id' : 'answer_id'])
           if post.include?('answers')
             post['answers']&.each do |answer|
               @cache.posts << answer.merge('id' => answer['answer_id'])
             end
           end
-          return post
+          post
         end
       end
     end
@@ -53,9 +53,9 @@ class APIImport
 
     while has_more
       if !@backoff.nil? && @backoff.future?
-        seconds_remaining = @backoff - DateTime.now
-        $logger.debug "Backoff has #{seconds_remaining} left"
-        sleep seconds_remaining
+        seconds_remaining = (@backoff - DateTime.now) * 86400
+        $logger.debug "Backoff has #{seconds_remaining.ceil} left"
+        sleep seconds_remaining.ceil + 1
       end
 
       full_uri = URI(uri + '?' + params.map { |k, v| "#{k.to_s}=#{v.to_s}" }.join('&'))
@@ -70,18 +70,20 @@ class APIImport
       received_at = DateTime.now
 
       if block_given?
-        returns << yield(data['items'])
+        returns = returns + yield(data['items'])
       else
-        items.concat data['items']
+        items = items + data['items']
       end
 
       if data['backoff'].present?
         sleep_until = received_at + data['backoff'].seconds
         @backoff = sleep_until
+        $logger.debug "Got backoff #{data['backoff']}, received_at=#{received_at.iso8601}, sleep_until=#{sleep_until.iso8601}"
       end
       has_more = data['has_more']
       params['page'] += 1
 
+      $logger.debug "Max items #{max}, current items #{[items.size, returns.size].max}" if max.present?
       if max.present? && [items.size, returns.size].max >= max
         break
       end
