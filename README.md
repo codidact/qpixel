@@ -8,7 +8,7 @@ but Windows is unlikely to.
 If you don't already have Ruby installed, use [RVM](https://rvm.io/) or [rbenv](https://github.com/rbenv/rbenv#installation) to install
 it before following these instructions.
 
-### Install prerequisites:
+### Install prerequisites
 
     sudo apt update
     sudo apt install gcc
