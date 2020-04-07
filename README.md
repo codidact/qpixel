@@ -14,8 +14,7 @@ it before following these instructions.
     sudo apt install gcc
     sudo apt install make
     sudo apt install libmysqlclient-dev
-    sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev mailutils
-    sudo apt install mutt
+    sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
     sudo apt install mysql-server
     
 ### Install JS runtime
