@@ -1,5 +1,6 @@
 class PostType < ApplicationRecord
   has_many :posts
+  has_and_belongs_to_many :categories
 
   validates :name, uniqueness: true
 

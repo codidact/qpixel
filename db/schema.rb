@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_23_131708) do
+ActiveRecord::Schema.define(version: 2020_04_11_195809) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -31,6 +31,15 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "short_wiki"
+    t.bigint "community_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_categories_on_community_id"
   end
 
   create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -157,12 +166,12 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.string "att_license_link"
     t.string "doc_slug"
     t.bigint "last_activity_by_id"
-    t.string "category", default: "Main"
     t.bigint "community_id", null: false
     t.bigint "close_reasons_id"
     t.bigint "duplicate_post_id"
+    t.bigint "category_id"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
-    t.index ["category"], name: "index_posts_on_category"
+    t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["close_reasons_id"], name: "index_posts_on_close_reasons_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["deleted"], name: "index_posts_on_deleted"
