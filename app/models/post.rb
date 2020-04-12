@@ -48,7 +48,7 @@ class Post < ApplicationRecord
   end
 
   def tag_set
-    TagSet.find_by(name: parent.nil? ? category : parent.category)
+    TagSet.find_by(name: parent.nil? ? category.name : parent.category.name)
   end
 
   def meta?

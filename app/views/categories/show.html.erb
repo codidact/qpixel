@@ -1,0 +1,18 @@
+<h1><%= @category.name %></h1>
+<% if @category.short_wiki %>
+  <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
+<% end %>
+
+<% post_count = @posts.count %>
+<p class="has-color-tertiary-500" title="<%= post_count %>">
+  <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
+  <%= 'post'.pluralize(post_count) %>
+</p>
+
+<hr/>
+
+<div class="item-list">
+  <% @posts.each do |post| %>
+    <%= render 'posts/type_agnostic', post: post %>
+  <% end %>
+</div>

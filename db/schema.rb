@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_195809) do
+ActiveRecord::Schema.define(version: 2020_04_12_122236) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -39,7 +39,13 @@ ActiveRecord::Schema.define(version: 2020_04_11_195809) do
     t.bigint "community_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "display_post_types"
     t.index ["community_id"], name: "index_categories_on_community_id"
+  end
+
+  create_table "categories_post_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "category_id", null: false
+    t.bigint "post_type_id", null: false
   end
 
   create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -167,12 +173,12 @@ ActiveRecord::Schema.define(version: 2020_04_11_195809) do
     t.string "doc_slug"
     t.bigint "last_activity_by_id"
     t.bigint "community_id", null: false
-    t.bigint "close_reasons_id"
+    t.bigint "close_reason_id"
     t.bigint "duplicate_post_id"
     t.bigint "category_id"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
-    t.index ["close_reasons_id"], name: "index_posts_on_close_reasons_id"
+    t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["deleted"], name: "index_posts_on_deleted"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
@@ -313,7 +319,7 @@ ActiveRecord::Schema.define(version: 2020_04_11_195809) do
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
   add_foreign_key "post_histories", "communities"
-  add_foreign_key "posts", "close_reasons", column: "close_reasons_id"
+  add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "posts", column: "duplicate_post_id"
   add_foreign_key "privileges", "communities"

@@ -63,7 +63,11 @@ class ApplicationController < ActionController::Base
       Community.find_by(host: host_name)
     end
 
-    Rails.logger.info "  Host #{host_name}, community #{RequestContext.community_id} (#{RequestContext.community.name})"
+    Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} (#{RequestContext.community&.name})"
+    unless RequestContext.community.present?
+      render status: 422, plain: "No community record matching Host='#{host_name}'"
+      return
+    end
 
     if current_user.nil?
       Rails.logger.info '  No user signed in'

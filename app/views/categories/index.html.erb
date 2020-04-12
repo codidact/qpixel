@@ -1,0 +1,22 @@
+<h1>Categories</h1>
+
+<% @categories.each do |cat| %>
+  <div class="widget">
+    <div class="widget--body">
+      <h3><%= cat.name %></h3>
+      <% if cat.short_wiki.present? %>
+        <%= raw(sanitize(QuestionsController.renderer.render(cat.short_wiki), scrubber: scrubber)) %>
+      <% end %>
+      <% post_count = cat.posts.count %>
+      <span class="has-color-tertiary-500" title="<%= post_count %>">
+        <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
+        <%= 'post'.pluralize(post_count) %>
+      </span>
+    </div>
+    <div class="widget--footer">
+      <%= link_to category_path(cat), class: 'button is-filled' do %>
+        See posts &raquo;
+      <% end %>
+    </div>
+  </div>
+<% end %>

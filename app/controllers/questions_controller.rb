@@ -38,7 +38,7 @@ class QuestionsController < ApplicationController
                .paginate(page: params[:page], per_page: 20)
                .includes(:votes, :user, :comments)
 
-    @close_reasons = CloseReason.all
+    @close_reasons = CloseReason.active
   end
 
   def tagged
@@ -53,7 +53,7 @@ class QuestionsController < ApplicationController
   def lottery
     ids = Rails.cache.fetch 'lottery_questions', expires_in: 24.hours do
       # noinspection RailsParamDefResolve
-      Question.main.undeleted.order([Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, created_at)) DESC'),
+      Question.main.undeleted.order([Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
                                      SiteSetting['LotteryAgeDeprecationSpeed']])
               .limit(25).select(:id).pluck(:id).to_a
     end
@@ -70,9 +70,17 @@ class QuestionsController < ApplicationController
 
   def create
     body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
+    @category = Category.find_by(name: params[:category])
+    unless @category.present?
+      errors.add(:base, 'A category is required. If you don\'t have the option to choose one, this may be a bug.')
+      render :new, status: 400
+      return
+    end
+
     @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
                                                    user: current_user, score: 0, last_activity: DateTime.now,
-                                                   last_activity_by: current_user, body: body_rendered))
+                                                   last_activity_by: current_user, body: body_rendered,
+                                                   category: @category))
     if @question.save
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
@@ -210,7 +218,7 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:body_markdown, :title, :tags_cache, :category)
+    params.require(:question).permit(:body_markdown, :title, :tags_cache)
   end
 
   def set_question

@@ -1,0 +1,9 @@
+<%
+  post_types_views = {
+    'Question' => 'posts/list',
+    'Answer' => 'posts/list',
+    'PolicyDoc' => 'posts/document',
+    'HelpDoc' => 'posts/document'
+  }
+%>
+<%= render post_types_views[post.post_type.name], post: post %>

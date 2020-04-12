@@ -63,24 +63,24 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should successfully ask question' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support'] } }
+                                        tags_cache: ['discussion', 'support'] }, category: 'Main' }
     assert_not_nil assigns(:question)
     assert_equal 0, assigns(:question).score
     assert_equal ['discussion', 'support'], assigns(:question).tags_cache
     assert_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
-    assert_equal 'Main', assigns(:question).category
+    assert_equal 'Main', assigns(:question).category.name
     assert_response(302)
   end
 
   test 'should successfully ask meta question' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support'], category: 'Meta' } }
+                                        tags_cache: ['discussion', 'support'] }, category: 'Meta' }
     assert_not_nil assigns(:question)
     assert_equal 0, assigns(:question).score
     assert_equal ['discussion', 'support'], assigns(:question).tags_cache
     assert_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
-    assert_equal 'Meta', assigns(:question).category
+    assert_equal 'Meta', assigns(:question).category.name
     assert_response(302)
   end
 
@@ -189,7 +189,8 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should prevent questions having more than 5 tags' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support', 'bug', 'feature-request', 'faq', 'status-completed'] } }
+                                        tags_cache: ['discussion', 'support', 'bug', 'feature-request', 'faq', 'status-completed'] },
+                            category: 'Main' }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
@@ -197,7 +198,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should prevent questions having no tags' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: [] } }
+                                        tags_cache: [] }, category: 'Main'  }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
@@ -205,21 +206,23 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should prevent tags being too long' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['a' * (SiteSetting['MaxTagLength'] + 1)] } }
+                                        tags_cache: ['a' * (SiteSetting['MaxTagLength'] + 1)] }, category: 'Main'  }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
 
   test 'should prevent body being whitespace' do
     sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: ' ' * 31, tags_cache: ['discussion'] } }
+    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: ' ' * 31, tags_cache: ['discussion'] },
+                            category: 'Main' }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end
 
   test 'should prevent title being whitespace' do
     sign_in users(:standard_user)
-    post :create, params: { question: { title: ' ' * 16, body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', tags_cache: ['discussion'] } }
+    post :create, params: { question: { title: ' ' * 16, body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', tags_cache: ['discussion'] },
+                            category: 'Main' }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end

@@ -1,4 +1,8 @@
 - name: Main
   short_wiki: General Q&A on the topic of the site.
+  display_post_types:
+    - Question
 - name: Meta
   short_wiki: Discussions and feedback about the site itself in Q&A format.
+  display_post_types:
+    - Question
