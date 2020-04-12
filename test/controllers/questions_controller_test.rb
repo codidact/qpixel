@@ -198,7 +198,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should prevent questions having no tags' do
     sign_in users(:standard_user)
     post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: [] }, category: 'Main'  }
+                                        tags_cache: [] }, category: 'Main' }
     assert_not_nil assigns(:question).errors
     assert_response(400)
   end

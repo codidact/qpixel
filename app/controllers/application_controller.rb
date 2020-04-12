@@ -55,6 +55,7 @@ class ApplicationController < ActionController::Base
   private
 
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def set_globals
     RequestContext.clear!
 
@@ -63,7 +64,8 @@ class ApplicationController < ActionController::Base
       Community.find_by(host: host_name)
     end
 
-    Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} (#{RequestContext.community&.name})"
+    Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
+                      "(#{RequestContext.community&.name})"
     unless RequestContext.community.present?
       render status: 422, plain: "No community record matching Host='#{host_name}'"
       return
@@ -96,4 +98,5 @@ class ApplicationController < ActionController::Base
     end
   end
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 end
