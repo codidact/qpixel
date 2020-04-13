@@ -14,6 +14,5 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:posts)
-    assert_not_empty assigns(:posts)
   end
 end
