@@ -120,7 +120,6 @@ policy_doc:
   doc_slug: tos
   user: admin
   community: sample
-  category: main
 
 help_doc:
   post_type: help_doc
@@ -129,4 +128,3 @@ help_doc:
   doc_slug: asking-questions
   user: admin
   community: sample
-  category: main

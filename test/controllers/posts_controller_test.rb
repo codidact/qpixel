@@ -58,7 +58,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     post :create, params: { post: { post_type_id: PolicyDoc.post_type_id, body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
                                     title: 'ABCDEF GHIJKL MNOPQR', doc_slug: 'policy-doc' } }
-    assert_response 200
+    assert_response 403
     assert_nil assigns(:post).id
     assert_equal true, assigns(:post).errors.any?
   end

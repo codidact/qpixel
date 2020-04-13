@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_12_122236) do
+ActiveRecord::Schema.define(version: 2020_04_13_174714) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -40,7 +40,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_122236) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "display_post_types"
+    t.boolean "is_homepage"
+    t.bigint "tag_set_id"
     t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
 
   create_table "categories_post_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -313,6 +316,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_122236) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "tag_sets"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"

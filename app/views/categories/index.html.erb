@@ -17,6 +17,15 @@
       <%= link_to category_path(cat), class: 'button is-filled' do %>
         See posts &raquo;
       <% end %>
+      <% if current_user&.is_admin %>
+        <%= link_to 'Edit', edit_category_path(cat), class: 'button' %>
+      <% end %>
     </div>
   </div>
+<% end %>
+
+<% if current_user&.is_admin %>
+  <%= link_to new_category_path, class: 'button is-filled' do %>
+    Add new category &raquo;
+  <% end %>
 <% end %>

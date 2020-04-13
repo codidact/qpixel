@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  root                                     to: 'questions#index'
+  root                                     to: 'categories#homepage'
 
   get    'admin',                          to: 'admin#index', as: :admin
   get    'admin/errors',                   to: 'admin#error_reports', as: :admin_error_reports
@@ -120,7 +120,12 @@ Rails.application.routes.draw do
 
   scope 'categories' do
     root                                   to: 'categories#index', as: :categories
+    get    'new',                          to: 'categories#new', as: :new_category
+    post   'new',                          to: 'categories#create', as: :create_category
     get    ':id',                          to: 'categories#show', as: :category
+    get    ':id/edit',                     to: 'categories#edit', as: :edit_category
+    post   ':id/edit',                     to: 'categories#update', as: :update_category
+    delete ':id',                          to: 'categories#destroy', as: :destroy_category
   end
 
   match  '/403',                           to: 'errors#forbidden',                via: :all

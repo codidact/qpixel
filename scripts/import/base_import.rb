@@ -156,7 +156,8 @@ class BaseImport
     user.ensure_community_user!
     params['user_id'] = user.id
 
-    post = Post.create params.merge(community_id: @options.community)
+    category = Category.unscoped.where(community_id: @options.community, name: 'Main').first
+    post = Post.create params.merge(community_id: @options.community, category: category)
 
     vote = { post_id: post.id, user: @system_user, recv_user: user, community_id: @options.community }
     Vote.create([vote.merge(vote_type: -1)] * post_data['down_vote_count'] +

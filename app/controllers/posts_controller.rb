@@ -23,14 +23,14 @@ class PostsController < ApplicationController
 
     if @post.policy_doc? && !current_user&.is_admin
       @post.errors.add(:base, 'You must be an administrator to create a policy document.')
-      render :new
+      render :new, status: 403
       return
     end
 
     if @post.save
       redirect_to policy_path(slug: @post.doc_slug)
     else
-      render :new
+      render :new, status: 500
     end
   end
 
@@ -51,7 +51,7 @@ class PostsController < ApplicationController
                                       last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to policy_path(slug: @post.doc_slug)
     else
-      render :edit
+      render :edit, status: 500
     end
   end
 

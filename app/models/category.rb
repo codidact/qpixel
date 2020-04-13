@@ -3,6 +3,7 @@ class Category < ApplicationRecord
 
   has_and_belongs_to_many :post_types
   has_many :posts
+  belongs_to :tag_set
 
   serialize :display_post_types, Array
 

@@ -1,0 +1,44 @@
+<%= form_for @category, url: submit_path, method: :post do |f| %>
+  <div class="form-group">
+    <%= f.label :name, class: 'form-element' %>
+    <span class="form-caption">This will be public, so make it something simple and recognisable.</span>
+    <%= f.text_field :name, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :short_wiki, class: 'form-element' %>
+    <span class="form-caption">A short description of what this category is for. Markdown supported.</span>
+    <%= f.text_area :short_wiki, class: 'form-element is-small' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :display_post_types, 'Listed post types', class: 'form-element' %>
+    <span class="form-caption">
+      These post types will be displayed on the category's homepage. For a Q&A category, you might only want to show questions.
+    </span>
+    <%= f.select :display_post_types, options_for_select(PostType.mapping.to_a, selected: @category.display_post_types),
+                 { include_blank: true }, multiple: true, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :post_type_ids, 'Allowed post types', class: 'form-element' %>
+    <span class="form-caption">Only these post types will be allowed in this category.</span>
+    <%= f.select :post_type_ids, options_for_select(PostType.mapping.to_a, selected: @category.post_type_ids),
+                 { include_blank: true }, multiple: true, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :tag_set_id, 'Tag set', class: 'form-element' %>
+    <span class="form-caption">Which tag set may posts in this category draw from?</span>
+    <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
+                 { include_blank: true }, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.check_box :is_homepage, class: 'form-checkbox-element' %>
+    <%= f.label :is_homepage, 'Set as homepage?' %>
+    <span class="form-caption">Tick this box to set this category as the site homepage.</span>
+  </div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+<% end %>

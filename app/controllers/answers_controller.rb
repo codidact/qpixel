@@ -18,7 +18,8 @@ class AnswersController < ApplicationController
     @question = Question.find params[:id]
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
                                              body: AnswersController.renderer.render(params[:answer][:body_markdown]),
-                                             last_activity: DateTime.now, last_activity_by: current_user))
+                                             last_activity: DateTime.now, last_activity_by: current_user,
+                                             category: @question.category))
     @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
                                        share_question_url(@question))
     if @answer.save

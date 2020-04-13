@@ -11,10 +11,6 @@ class Question < Post
     PostType.mapping['Question']
   end
 
-  def self.list_includes
-    includes(:user, user: :avatar_attachment)
-  end
-
   validates :title, :body, :tags_cache, presence: true
   validate :tags_in_tag_set
   validate :maximum_tags

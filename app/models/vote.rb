@@ -41,9 +41,9 @@ class Vote < ApplicationRecord
     end
     setting_names = {
       [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
-        [post_type_ids['Question'], -1] => 'QuestionDownVoteRep',
-        [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
-        [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep'
+      [post_type_ids['Question'], -1] => 'QuestionDownVoteRep',
+      [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
+      [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep'
     }
     rep_change = SiteSetting[setting_names[[post.post_type_id, vote_type]]] || 0
     recv_user.update!(reputation: recv_user.reputation + direction * rep_change)

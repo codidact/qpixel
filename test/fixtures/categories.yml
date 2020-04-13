@@ -5,11 +5,19 @@ main:
   name: Main
   short_wiki: Main Q&A
   display_post_types:
-    - Question
+    - <%= Question.post_type_id %>
+  post_types:
+    - question
+    - answer
+  tag_set: main
 
 meta:
   community: sample
   name: Meta
   short_wiki: Meta Q&A
   display_post_types:
-    - Question
+    - <%= Question.post_type_id %>
+  post_types:
+    - question
+    - answer
+  tag_set: meta

@@ -18,13 +18,6 @@
     <%= f.text_field :title, class: "form-element" %>
   </div>
   <div class="form-group">
-    <%= f.label :category, 'Help center category', class: "form-element" %>
-    <%= f.select :category,
-                 options_for_select(Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).distinct.map(&:category)
-                                        .map { |cat| [cat.id, cat.name] }),
-                 { include_blank: true }, class: 'form-control js-category-select' %>
-  </div>
-  <div class="form-group">
     <%= f.label :body_markdown, 'Body', class: "form-element" %>
     <%= f.text_area :body_markdown, { class: "form-element is-large post-field", rows: 15 } %>
   </div>

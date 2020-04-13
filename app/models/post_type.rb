@@ -9,4 +9,8 @@ class PostType < ApplicationRecord
       PostType.all.map { |pt| [pt.name, pt.id] }.to_h
     end
   end
+
+  def self.[](key)
+    PostType.find_by(name: key)
+  end
 end

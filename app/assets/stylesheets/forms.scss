@@ -1,5 +1,14 @@
 @import 'variables';
 
+select.form-element {
+  display: block;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 1em;
+}
+
 .form-group-horizontal {
   display: flex;
   flex-direction: column;

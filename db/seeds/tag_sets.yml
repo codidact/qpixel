@@ -1,5 +1,2 @@
 - name: Main
-  community: <%= Community.first %>
-
 - name: Meta
-  community: <%= Community.first %>
