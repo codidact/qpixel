@@ -120,6 +120,7 @@ class Post < ApplicationRecord
 
   def category_allows_post_type
     return if category.nil?
+
     unless category&.post_types&.include? post_type
       errors.add(:base, "The #{post_type.name} post type is not allowed in the #{category&.name} category.")
     end
