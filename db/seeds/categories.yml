@@ -6,7 +6,7 @@
     - <%= PostType['Question'].id %>
     - <%= PostType['Answer'].id %>
   is_homepage: true
-  tag_set_id: <%= TagSet.main.id %>
+  tag_set_id: <%= TagSet.unscoped.where(name: 'Main').first %>
 
 - name: Meta
   short_wiki: Discussions and feedback about the site itself in Q&A format.
@@ -15,4 +15,4 @@
   post_type_ids:
     - <%= PostType['Question'].id %>
     - <%= PostType['Answer'].id %>
-  tag_set_id: <%= TagSet.meta.id %>
+  tag_set_id: <%= TagSet.unscoped.where(name: 'Meta').first %>
