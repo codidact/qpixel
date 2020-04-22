@@ -35,6 +35,21 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :min_trust_level, 'Minimum trust level', class: 'form-element' %>
+    <span class="form-caption">
+      Users must have at least this trust level to post in this category. Leave blank to allow
+      anyone to post.
+    </span>
+    <%= f.number_field :min_trust_level, class: 'form-element', min: 0, max: 10, step: 1 %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :button_text, 'Post button text', class: 'form-element' %>
+    <span class="form-caption">Customise the text on the "Create Post" button. Leave blank for default.</span>
+    <%= f.text_field :button_text, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
     <%= f.check_box :is_homepage, class: 'form-checkbox-element' %>
     <%= f.label :is_homepage, 'Set as homepage?' %>
     <span class="form-caption">Tick this box to set this category as the site homepage.</span>

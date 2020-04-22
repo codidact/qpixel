@@ -18,14 +18,14 @@
         See posts &raquo;
       <% end %>
       <% if current_user&.is_admin %>
-        <%= link_to 'Edit', edit_category_path(cat), class: 'button' %>
+        <%= link_to 'Edit', edit_category_path(cat), class: 'button is-outlined' %>
       <% end %>
     </div>
   </div>
 <% end %>
 
 <% if current_user&.is_admin %>
-  <%= link_to new_category_path, class: 'button is-filled' do %>
+  <%= link_to new_category_path, class: 'button is-outlined' do %>
     Add new category &raquo;
   <% end %>
 <% end %>
