@@ -57,11 +57,11 @@ Rails.application.routes.draw do
 
   get    'posts/:id/history',              to: 'post_history#post', as: :post_history
   get    'posts/search',                   to: 'search#search', as: :search
-  get    'posts/new',                      to: 'posts#new', as: :new_post
-  post   'posts/new',                      to: 'posts#create', as: :create_post
+  get    'posts/new-help',                 to: 'posts#new_help', as: :new_post
+  post   'posts/new-help',                 to: 'posts#create_help', as: :create_post
   post   'posts/upload',                   to: 'posts#upload', as: :upload
-  get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
-  patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post
+  get    'posts/:id/edit-help',            to: 'posts#edit_help', as: :edit_post
+  patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_post
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help

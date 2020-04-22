@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_13_174714) do
+ActiveRecord::Schema.define(version: 2020_04_20_151720) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2020_04_13_174714) do
     t.text "display_post_types"
     t.boolean "is_homepage"
     t.bigint "tag_set_id"
+    t.integer "min_trust_level"
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
@@ -297,6 +298,7 @@ ActiveRecord::Schema.define(version: 2020_04_13_174714) do
     t.text "profile_markdown"
     t.integer "se_acct_id"
     t.boolean "transferred_content", default: false
+    t.integer "trust_level"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"

@@ -79,6 +79,23 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
+  def trust_level
+    attributes['trust_level'] || recalc_trust_level
+  end
+
+  def recalc_trust_level
+    # Temporary hack until we have some things to actually calculate based on.
+    trust = if is_admin || is_global_admin
+              6
+            elsif is_moderator || is_global_moderator
+              5
+            else
+              1
+            end
+    update(trust_level: trust)
+    trust
+  end
+
   def username_not_fake_admin
     admin_badge = SiteSetting['AdminBadgeCharacter']
     mod_badge = SiteSetting['ModBadgeCharacter']

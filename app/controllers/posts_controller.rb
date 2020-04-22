@@ -1,14 +1,14 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
-  before_action :set_post, only: [:edit, :update]
-  before_action :check_permissions, only: [:edit, :update]
-  before_action :verify_moderator, only: [:new, :create]
+  before_action :set_post, only: [:edit_help, :update_help]
+  before_action :check_permissions, only: [:edit_help, :update_help]
+  before_action :verify_moderator, only: [:new_help, :create_help]
 
-  def new
+  def new_help
     @post = Post.new
   end
 
-  def create
+  def create_help
     setting_regex = /\${(?<setting_name>[^}]+)}/
     params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |_match|
       setting_name = $LAST_MATCH_INFO&.send(:[], :setting_name)
@@ -23,20 +23,20 @@ class PostsController < ApplicationController
 
     if @post.policy_doc? && !current_user&.is_admin
       @post.errors.add(:base, 'You must be an administrator to create a policy document.')
-      render :new, status: 403
+      render :new_help, status: 403
       return
     end
 
     if @post.save
       redirect_to policy_path(slug: @post.doc_slug)
     else
-      render :new, status: 500
+      render :new_help, status: 500
     end
   end
 
-  def edit; end
+  def edit_help; end
 
-  def update
+  def update_help
     setting_regex = /\${(?<setting_name>[^}]+)}/
     params[:post][:body_markdown] = params[:post][:body_markdown].gsub(setting_regex) do |_match|
       setting_name = $LAST_MATCH_INFO&.send(:[], :setting_name)
@@ -51,7 +51,7 @@ class PostsController < ApplicationController
                                       last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to policy_path(slug: @post.doc_slug)
     else
-      render :edit, status: 500
+      render :edit_help, status: 500
     end
   end
 
