@@ -16,7 +16,7 @@
   If you're a moderator, you may use this page to create help documents that you can link to from /help/&lt;document&gt;.
   If you're an administrator, you can also create policy documents, including legal documents.
 </p>
-<%= form_for @post, url: create_post_path do |f| %>
+<%= form_for @post, url: create_help_post_path do |f| %>
   <div class="form-group">
     <%= f.label :post_type_id, 'Post type', class: "form-element" %>
     <%= f.select :post_type_id, options_for_select(current_user.is_admin ?

@@ -12,7 +12,7 @@
 <% end %>
 
 <h1>Edit <%= @post.policy_doc? ? 'Policy' : (@post.help_doc? ? 'Help Article' : 'Post') %></h1>
-<%= form_for @post, url: update_post_path(@post) do |f| %>
+<%= form_for @post, url: update_help_post_path(@post) do |f| %>
   <div class="form-group">
     <%= f.label :title, "Title your post:", class: "form-element" %>
     <%= f.text_field :title, class: "form-element" %>

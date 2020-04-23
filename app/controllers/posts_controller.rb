@@ -4,6 +4,15 @@ class PostsController < ApplicationController
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help]
 
+  def new
+    @category = Category.find(params[:category_id])
+    @post = Post.new(category: @category)
+  end
+
+  def create
+
+  end
+
   def new_help
     @post = Post.new
   end
