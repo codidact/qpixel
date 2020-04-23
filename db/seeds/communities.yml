@@ -1,5 +1,5 @@
 - id: 1
-  name: Test
+- name: Test
   host: localhost
   created_at: NOW()
   updated_at: NOW()
