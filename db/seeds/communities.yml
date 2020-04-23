@@ -1,5 +1,2 @@
-- id: 1
-  name: Test
-  host: localhost
-  created_at: NOW()
-  updated_at: NOW()
+- name: Test
+  host: localhost:3000
