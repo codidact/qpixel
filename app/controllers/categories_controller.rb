@@ -7,15 +7,15 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    @posts = @category.posts.where(post_type_id: @category.display_post_types)
-                      .order(last_activity: :asc)
+    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
+                      .order(last_activity: :desc)
                       .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
   end
 
   def homepage
     @category = Category.where(is_homepage: true).first
-    @posts = @category.posts.where(post_type_id: @category.display_post_types)
-                      .order(last_activity: :asc)
+    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
+                      .order(last_activity: :desc)
                       .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
     render :show
   end
