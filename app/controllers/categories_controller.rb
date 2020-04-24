@@ -7,13 +7,9 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    @posts = if check_your_privilege('ViewDeleted', nil, false)
-               @category.posts
-             else
-               @category.posts.undeleted
-             end.where(post_type_id: @category.display_post_types)
-                .order(last_activity: :desc)
-                .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
+    @posts = @category.posts.where(post_type_id: @category.display_post_types)
+                      .order(last_activity: :asc)
+                      .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
   end
 
   def homepage
