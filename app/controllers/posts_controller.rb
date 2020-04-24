@@ -104,12 +104,12 @@ class PostsController < ApplicationController
   private
 
   def new_post_params
-    ap "new_post_params"
+    ap 'new_post_params'
     params.require(:post).permit(:post_type_id, :title, :doc_slug, :category, :body_markdown)
   end
 
   def help_post_params
-    ap "help_post_params"
+    ap 'help_post_params'
     params.require(:post).permit(:title, :category, :body_markdown)
   end
 
