@@ -35,7 +35,7 @@
         <div class='header--separator'></div>
 
         <% meta_category_id = Rails.cache.fetch "#{RequestContext.community_id}/meta_cat_id" do
-          Category.where(name: 'Meta').first.id
+          Category.where(name: 'Meta').first&.id || -1
         end %>
         <%= link_to 'Meta', category_path(meta_category_id), class: 'header--item' %>
         <%= link_to 'Help', help_center_path, class: 'header--item' %>
