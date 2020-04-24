@@ -123,15 +123,15 @@ Rails.application.routes.draw do
   get    'help',                           to: 'posts#help_center', as: :help_center
 
   scope 'categories' do
-    root                                   to: 'categories#index', as: :categories
-    get    'new',                          to: 'categories#new', as: :new_category
-    post   'new',                          to: 'categories#create', as: :create_category
-    get    ':category_id/posts/new',       to: 'posts#new', as: :new_post
-    post   ':category_id/posts/new',       to: 'posts#create', as: :create_post
-    get    ':id',                          to: 'categories#show', as: :category
-    get    ':id/edit',                     to: 'categories#edit', as: :edit_category
-    post   ':id/edit',                     to: 'categories#update', as: :update_category
-    delete ':id',                          to: 'categories#destroy', as: :destroy_category
+    root                                           to: 'categories#index', as: :categories
+    get    'new',                                  to: 'categories#new', as: :new_category
+    post   'new',                                  to: 'categories#create', as: :create_category
+    get    ':category_id/posts/new/:post_type_id', to: 'posts#new', as: :new_post
+    post   ':category_id/posts/new/:post_type_id', to: 'posts#create', as: :create_post
+    get    ':id',                                  to: 'categories#show', as: :category
+    get    ':id/edit',                             to: 'categories#edit', as: :edit_category
+    post   ':id/edit',                             to: 'categories#update', as: :update_category
+    delete ':id',                                  to: 'categories#destroy', as: :destroy_category
   end
 
   match  '/403',                           to: 'errors#forbidden',                via: :all

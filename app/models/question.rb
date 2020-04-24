@@ -28,7 +28,7 @@ class Question < Post
 
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag = Tag.find_or_create_by name: tag_name, tag_set: TagSet.find_by(name: category.name)
+      tag = Tag.find_or_create_by name: tag_name, tag_set: category.tag_set
       unless tags.include? tag
         tags << tag
       end
@@ -76,7 +76,7 @@ class Question < Post
   end
 
   def tags_in_tag_set
-    tag_set = TagSet.find_by(name: category.name)
+    tag_set = category.tag_set
     unless tags.all? { |t| t.tag_set_id == tag_set.id }
       errors.add(:base, "Not all of this question's tags are in the correct tag set.")
     end

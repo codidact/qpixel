@@ -6,11 +6,25 @@ class PostsController < ApplicationController
 
   def new
     @category = Category.find(params[:category_id])
-    @post = Post.new(category: @category)
+    @post = Post.new(category: @category, post_type_id: params[:post_type_id])
   end
 
   def create
+    @category = Category.find(params[:category_id])
+    @post = Post.new(post_params.merge(category: @category, user: current_user, post_type_id: params[:post_type_id],
+                                       body: QuestionsController.renderer.render(params[:post][:body_markdown])))
 
+    if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
+      @post.errors.add(:base, "You don't have a high enough trust level to post in the #{@category.name} category.")
+      render :new
+      return
+    end
+
+    if @post.save
+      redirect_to question_path(@post)
+    else
+      render :new
+    end
   end
 
   def new_help
@@ -56,8 +70,8 @@ class PostsController < ApplicationController
       end
     end
     PostHistory.post_edited(@post, current_user, before: @post.body_markdown, after: params[:post][:body_markdown])
-    if @post.update(post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
-                                      last_activity: DateTime.now, last_activity_by: current_user))
+    if @post.update(help_post_params.merge(body: QuestionsController.renderer.render(params[:post][:body_markdown]),
+                                           last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to policy_path(slug: @post.doc_slug)
     else
       render :edit_help, status: 500
@@ -90,11 +104,19 @@ class PostsController < ApplicationController
   private
 
   def new_post_params
+    ap "new_post_params"
     params.require(:post).permit(:post_type_id, :title, :doc_slug, :category, :body_markdown)
   end
 
-  def post_params
+  def help_post_params
+    ap "help_post_params"
     params.require(:post).permit(:title, :category, :body_markdown)
+  end
+
+  def post_params
+    p = params.require(:post).permit(:title, :body_markdown, :post_type_id, tags_cache: [])
+    p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
+    p
   end
 
   def set_post

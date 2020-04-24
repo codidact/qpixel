@@ -1,7 +1,7 @@
 <% is_meta ||= false %>
 <% is_edit ||= false %>
 
-<%= render 'markdown_script' %>
+<%= render 'posts/markdown_script' %>
 
 <%= form_for @question, url: is_edit ? edit_question_path(@question) : create_question_path do |f| %>
   <% if is_meta %>
@@ -12,19 +12,23 @@
     <%= f.label :title, "Title your question:", class: "form-element" %>
     <%= f.text_field :title, class: "form-element" %>
   </div>
+
   <div class="form-group">
     <%= f.label :body_markdown, 'Body', class: "form-element" %>
     <%= render "posts/mdhint" %>
     <%= f.text_area :body_markdown, { class: "form-element is-large post-field", rows: 15 } %>
   </div>
+
   <div class="post-preview"></div>
+
   <div class="form-group">
     <%= f.label :tags_cache, "Tags", class: "form-element" %>
     <div class="form-caption">
       Tags help to categorize questions. Separate them by space. Use hyphens for multiple-word tags.
     </div>
-    <%= f.select :tags_cache, @question.tags_cache.map { |t| [t, t] }, { include_blank: true }, multiple: true,
-                 class: "form-element js-tag-select", selected: @question.tags_cache, data: { tag_set: is_meta ? 'Meta' : 'Main' } %>
+    <%= f.select :tags_cache, options_for_select(@question.tags_cache.map { |t| [t, t] }, selected: @question.tags_cache),
+                 { include_blank: true }, multiple: true, class: "form-element js-tag-select",
+                 data: { tag_set: @question.category.tag_set.id } %>
   </div>
 
   <% if is_edit %>

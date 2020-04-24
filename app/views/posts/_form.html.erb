@@ -9,13 +9,25 @@
   </div>
 </div>
 
+<% if @post.errors.any? %>
+  <div class="notice is-danger is-filled">
+    <p>The following errors prevented your post being saved:</p>
+    <ul>
+      <% @post.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <%= form_for @post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
   <%= f.hidden_field :category_id %>
+  <%= f.hidden_field :post_type_id %>
 
   <div class="form-group">
-    <%= f.label :body, 'Post body:', class: 'form-element js-editor' %>
+    <%= f.label :body_markdown, 'Post body:', class: 'form-element js-editor' %>
     <%= render 'posts/mdhint' %>
-    <%= f.text_area :body, class: 'form-element is-large post-field' %>
+    <%= f.text_area :body_markdown, class: 'form-element is-large post-field' %>
   </div>
 
   <div class="post-preview"></div>
@@ -27,8 +39,8 @@
 
   <div class="form-group">
     <%= f.label :tags_cache, 'Tags (at least one):', class: 'form-element' %>
-    <%= f.select :tags_cache, @post.tags_cache.map { |t| [t, t] }, { include_blank: true }, multiple: true,
-                 class: "form-element js-tag-select", selected: @post.tags_cache,
+    <%= f.select :tags_cache, options_for_select(@post.tags_cache.map { |t| [t, t] }, selected: @post.tags_cache),
+                 { include_blank: true }, multiple: true, class: "form-element js-tag-select",
                  data: { tag_set: @category.tag_set_id } %>
   </div>
 
