@@ -7,7 +7,7 @@
       <% if cat.short_wiki.present? %>
         <%= raw(sanitize(QuestionsController.renderer.render(cat.short_wiki), scrubber: scrubber)) %>
       <% end %>
-      <% post_count = cat.posts.count %>
+      <% post_count = cat.posts.undeleted.count %>
       <span class="has-color-tertiary-500" title="<%= post_count %>">
         <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
         <%= 'post'.pluralize(post_count) %>
