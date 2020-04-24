@@ -3,10 +3,6 @@ require 'optparse'
 require 'open-uri'
 require 'csv'
 
-require_relative 'api_import'
-require_relative 'dump_import'
-require_relative 'base_import'
-
 $logger = ::Logger.new(STDOUT)
 $logger.level = :info
 
@@ -68,6 +64,10 @@ opt_parser = OptionParser.new do |opts|
     @options.community = community
   end
 
+  opts.on('-t', '--category=ID', Integer, 'Specify the category ID which imported posts should be added') do |category|
+    @options.category = category
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
@@ -91,43 +91,4 @@ end
 
 RequestContext.community = Community.find(@options.community)
 
-$mode = OpenStruct.new
-if @options.query.present?
-  $mode.mode = :query
-  $mode.specifier = @options.query
-else
-  $mode.mode = :all
-  $mode.specifier = nil
-end
 
-$logger.info "Selected mode #{$mode.mode.to_s}"
-$logger.info $mode.specifier.present? ? "Mode specifier #{$mode.specifier.inspect}" : 'No mode specifier'
-
-# ====================================================================================== #
-
-api_importer = APIImport.new(@options)
-dump_importer = DumpImport.new(@options)
-base_importer = BaseImport.new(@options, dump_importer, api_importer)
-
-case $mode.mode
-when :query
-  unless $mode.specifier =~ /^\d+$/
-    $logger.fatal "Mode specifier #{$mode.specifier.inspect} invalid for selected mode. Expected /^\\d+$/."
-    exit ERROR_CODES[:invalid_specifier]
-  end
-
-  query_csv_uri = "https://data.stackexchange.com/#{@options.site}/csv/#{$mode.specifier}"
-  resp = Net::HTTP.get_response(URI(query_csv_uri))
-  rows = CSV.parse(resp.body)[1..-1]
-  $logger.info "#{rows.size} rows returned"
-
-  unless rows.all? { |r| r.size == 2 && r[0] =~ /^\d+$/ && r[1] =~ /^\d+$/ }
-    $logger.fatal "Query revision #{$mode.specifier} returned invalid data format. Expected Id, PostTypeId in each row."
-    exit ERROR_CODES[:invalid_query_format]
-  end
-
-  base_importer.import rows
-else
-  $logger.fatal "Selected mode '#{$mode.mode.to_s}' is not defined"
-  exit ERROR_CODES[:undefined_mode]
-end
