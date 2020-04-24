@@ -15,6 +15,7 @@ class CategoriesController < ApplicationController
   def homepage
     @category = Category.where(is_homepage: true).first
     @posts = @category.posts.where(post_type_id: @category.display_post_types)
+                      .order(last_activity: :asc)
                       .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
     render :show
   end
