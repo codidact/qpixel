@@ -10,20 +10,6 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test 'should get lottery' do
-    get :lottery
-    assert_response 200
-    assert_not_nil assigns(:questions)
-    assert_equal 0, assigns(:questions).select(&:deleted).size, 'Lottery page contains deleted questions'
-  end
-
-  test 'should get meta' do
-    get :meta
-    assert_response 200
-    assert_not_nil assigns(:questions)
-    assert_equal 0, assigns(:questions).select(&:deleted).size, 'Meta page contains deleted questions'
-  end
-
   test 'should get show question page' do
     get :show, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)
@@ -51,37 +37,6 @@ class QuestionsControllerTest < ActionController::TestCase
     get :tagged, params: { tag: 'discussion', tag_set: tag_sets(:main).id }
     assert_not_nil assigns(:questions)
     assert_response(200)
-  end
-
-  test 'should get new question page' do
-    sign_in users(:standard_user)
-    get :new
-    assert_not_nil assigns(:question)
-    assert_response(200)
-  end
-
-  test 'should successfully ask question' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support'] }, category: 'Main' }
-    assert_not_nil assigns(:question)
-    assert_equal 0, assigns(:question).score
-    assert_equal ['discussion', 'support'], assigns(:question).tags_cache
-    assert_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
-    assert_equal 'Main', assigns(:question).category.name
-    assert_response(302)
-  end
-
-  test 'should successfully ask meta question' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support'] }, category: 'Meta' }
-    assert_not_nil assigns(:question)
-    assert_equal 0, assigns(:question).score
-    assert_equal ['discussion', 'support'], assigns(:question).tags_cache
-    assert_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
-    assert_equal 'Meta', assigns(:question).category.name
-    assert_response(302)
   end
 
   test 'should get edit question page' do
@@ -115,18 +70,6 @@ class QuestionsControllerTest < ActionController::TestCase
     delete :undelete, params: { id: posts(:question_one).id }
     assert_not_nil assigns(:question)
     assert_equal false, assigns(:question).deleted
-    assert_response(302)
-  end
-
-  test 'should require authentication to get new question page' do
-    sign_out :user
-    get :new
-    assert_response(302)
-  end
-
-  test 'should require authentication to create new question' do
-    sign_out :user
-    post :create
     assert_response(302)
   end
 
@@ -184,47 +127,6 @@ class QuestionsControllerTest < ActionController::TestCase
     sign_in users(:editor)
     get :show, params: { id: posts(:deleted).id }
     assert_response(401)
-  end
-
-  test 'should prevent questions having more than 5 tags' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['discussion', 'support', 'bug', 'feature-request', 'faq', 'status-completed'] },
-                            category: 'Main' }
-    assert_not_nil assigns(:question).errors
-    assert_response(400)
-  end
-
-  test 'should prevent questions having no tags' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: [] }, category: 'Main' }
-    assert_not_nil assigns(:question).errors
-    assert_response(400)
-  end
-
-  test 'should prevent tags being too long' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
-                                        tags_cache: ['a' * (SiteSetting['MaxTagLength'] + 1)] }, category: 'Main'  }
-    assert_not_nil assigns(:question).errors
-    assert_response(400)
-  end
-
-  test 'should prevent body being whitespace' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: 'ABCDEF GHIJKL MNOPQR', body_markdown: ' ' * 31, tags_cache: ['discussion'] },
-                            category: 'Main' }
-    assert_not_nil assigns(:question).errors
-    assert_response(400)
-  end
-
-  test 'should prevent title being whitespace' do
-    sign_in users(:standard_user)
-    post :create, params: { question: { title: ' ' * 16, body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', tags_cache: ['discussion'] },
-                            category: 'Main' }
-    assert_not_nil assigns(:question).errors
-    assert_response(400)
   end
 
   test 'should close question' do

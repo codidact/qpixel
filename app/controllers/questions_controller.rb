@@ -60,34 +60,6 @@ class QuestionsController < ApplicationController
     @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
   end
 
-  def new
-    @question = Question.new
-  end
-
-  def new_meta
-    @question = Question.new
-  end
-
-  def create
-    body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
-    @category = Category.find_by(name: params[:category])
-    unless @category.present?
-      errors.add(:base, 'A category is required. If you don\'t have the option to choose one, this may be a bug.')
-      render :new, status: 400
-      return
-    end
-
-    @question = Question.new(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
-                                                   user: current_user, score: 0, last_activity: DateTime.now,
-                                                   last_activity_by: current_user, body: body_rendered,
-                                                   category: @category))
-    if @question.save
-      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
-    else
-      render :new, status: 400
-    end
-  end
-
   def edit
     check_your_privilege('Edit', @question)
   end
