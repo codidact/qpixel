@@ -68,10 +68,10 @@ class CategoriesController < ApplicationController
   end
 
   def set_list_posts
-    sort_params = { activity: {last_activity: :desc}, age: {created_at: :desc}, score: {score: :desc},
+    sort_params = { activity: { last_activity: :desc }, age: { created_at: :desc }, score: { score: :desc },
                     lottery: [Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
                               SiteSetting['LotteryAgeDeprecationSpeed']] }
-    sort_param = sort_params[params[:sort]&.to_sym] || {last_activity: :desc}
+    sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
                       .order(sort_param)
