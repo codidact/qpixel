@@ -3,6 +3,17 @@
 
 <%= render 'posts/markdown_script' %>
 
+<% if @question.errors.any? %>
+  <div class="notice is-danger is-filled">
+    The following errors prevented this post from being saved:
+    <ul>
+      <% @question.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <%= form_for @question, url: is_edit ? edit_question_path(@question) : create_question_path do |f| %>
   <% if is_meta %>
     <%= f.hidden_field :category, value: 'Meta' %>
