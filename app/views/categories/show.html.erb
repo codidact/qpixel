@@ -14,12 +14,24 @@
 <% end %>
 
 <% post_count = @posts.count %>
-<p class="has-color-tertiary-500" title="<%= post_count %>">
+<div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
   <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
   <%= 'post'.pluralize(post_count) %>
-</p>
 
-<hr/>
+  <div class="button-list is-gutterless has-margin-2">
+    <%= link_to 'Activity', query_url(sort: 'activity'),
+                class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
+                    params[:sort] == 'activity' ? 'is-active' : ''}" %>
+    <%= link_to 'Age', query_url(sort: 'age'),
+                class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+    <%= link_to 'Score', query_url(sort: 'score'),
+                class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
+    <% if @category.name == 'Q&A' %>
+      <%= link_to 'Lottery', query_url(sort: 'lottery'),
+                  class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}" %>
+    <% end %>
+  </div>
+</div>
 
 <div class="item-list">
   <% @posts.each do |post| %>

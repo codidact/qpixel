@@ -7,16 +7,12 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .order(last_activity: :desc)
-                      .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
+    set_list_posts
   end
 
   def homepage
     @category = Category.where(is_homepage: true).first
-    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .order(last_activity: :desc)
-                      .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
+    set_list_posts
     render :show
   end
 
@@ -69,5 +65,15 @@ class CategoriesController < ApplicationController
   def category_params
     params.require(:category).permit(:name, :short_wiki, :display_post_types, :post_type_ids, :tag_set_id, :is_homepage,
                                      :min_trust_level, :button_text)
+  end
+
+  def set_list_posts
+    sort_params = { activity: {last_activity: :desc}, age: {created_at: :desc}, score: {score: :desc},
+                    lottery: [Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
+                              SiteSetting['LotteryAgeDeprecationSpeed']] }
+    sort_param = sort_params[params[:sort]&.to_sym] || {last_activity: :desc}
+    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
+                      .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
+                      .order(sort_param)
   end
 end
