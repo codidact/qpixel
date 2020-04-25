@@ -15,7 +15,7 @@
 
 <% post_count = @posts.count %>
 <div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
-  <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
+  <%= short_number_to_human post_count, precision: 1, significant: false %>
   <%= 'post'.pluralize(post_count) %>
 
   <div class="button-list is-gutterless has-margin-2">

@@ -10,13 +10,3 @@ en-ABBREV:
       about_x_months: '%{count}mo'
       x_months: '%{count}mo'
       x_years: '%{count}y'
-  number:
-    human:
-      unit: ''
-      ten: ''
-      hundred: ''
-      thousand: 'k'
-      million: 'm'
-      billion: 'b'
-      trillion: 't'
-      quadrillion: 'qd'
