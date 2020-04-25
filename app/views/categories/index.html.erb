@@ -9,7 +9,7 @@
       <% end %>
       <% post_count = cat.posts.undeleted.count %>
       <span class="has-color-tertiary-500" title="<%= post_count %>">
-        <%= number_to_human post_count, precision: 1, significant: false, locale: 'en-ABBREV', units: 'number.human', format: '%n%u' %>
+        <%= short_number_to_human post_count, precision: 1, significant: false %>
         <%= 'post'.pluralize(post_count) %>
       </span>
     </div>
