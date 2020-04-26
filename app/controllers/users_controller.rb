@@ -2,8 +2,8 @@ require 'net/http'
 
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -121,6 +121,38 @@ class UsersController < ApplicationController
     end
     redirect_to edit_user_profile_path
   end
+
+
+  def role_toggle
+    if params[:role] == "mod"
+      @user.community_user.update(is_moderator: !@user.is_moderator)
+      render json: { "status": "success" }
+      return
+    end
+
+    if current_user.is_global_admin
+      if params[:role] == "admin"
+        @user.community_user.update(is_admin: !@user.is_admin)
+        render json: { "status": "success" }
+        return
+      end
+
+      if params[:role] == "mod-global"
+        @user.update(is_global_moderator: !@user.is_global_moderator)
+        render json: { "status": "success" }
+        return
+      end
+
+      if params[:role] == "admin-global"
+        @user.update(is_global_admin: true)
+        render json: { "status": "success" }
+        return
+      end
+    end
+
+    render json: { "status": "error", "message": "Role not found: " + params[:role] }
+  end
+
 
   def stack_redirect
     response = Net::HTTP.post_form(URI('https://stackoverflow.com/oauth/access_token/json'),

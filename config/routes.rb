@@ -78,6 +78,7 @@ Rails.application.routes.draw do
   get    'users/me/notifications',         to: 'notifications#index', as: :notifications
   get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
+  post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
