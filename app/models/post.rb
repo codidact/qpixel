@@ -58,6 +58,8 @@ class Post < ApplicationRecord
   end
 
   def reassign_user(new_user)
+    new_user.ensure_community_user!
+
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
     update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))
     update(user: new_user)
