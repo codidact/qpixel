@@ -80,8 +80,9 @@ class ApplicationController < ActionController::Base
     end
 
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 30.minutes) do
-      Question.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
-              .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
+      Post.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
+          .where(parent_id: nil).includes(:category)
+          .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
     if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
       @open_flags = Flag.unhandled.count

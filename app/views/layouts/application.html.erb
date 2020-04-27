@@ -152,13 +152,11 @@
 
         <% if Rails.env.development? || @hot_questions.size > 0 %>
           <div class="widget has-margin-4">
-            <h4 class="widget--header has-margin-0">Hot Questions</h4>
+            <h4 class="widget--header has-margin-0">Hot Posts</h4>
             <% @hot_questions.each do |hq| %>
               <div class="widget--body">
                 <%= link_to question_path(hq) do %>
-                  <% if hq.meta? %>
-                    <span class="badge is-tag is-master-tag">meta</span>
-                  <% end %>
+                  <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
                   <%= hq.title %>
                 <% end %>
               </div>
