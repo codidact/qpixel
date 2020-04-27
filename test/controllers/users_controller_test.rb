@@ -80,8 +80,8 @@ class UsersControllerTest < ActionController::TestCase
                                         .to_h.select { |_, cs| cs.include?('user_id') }
                                         .map do |k, _|
         k.singularize.classify.constantize
-      rescue
-        nil
+                       rescue
+                         nil
       end .compact
       pre_counts = needs_transfer.map { |model| [model, model.count] }.to_h
 
