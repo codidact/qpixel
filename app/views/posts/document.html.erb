@@ -3,7 +3,7 @@
 <% end %>
 <% unless @post.nil? %>
   <% if (moderator? && @post.post_type_id == HelpDoc.post_type_id) || (admin? && @post.post_type_id == PolicyDoc.post_type_id) %>
-    <%= link_to 'edit', edit_post_path(@post), class: "button is-outlined is-muted" %>
+    <%= link_to 'edit', edit_help_post_path(@post), class: "button is-outlined is-muted" %>
   <% end %>
 <% end %>
 

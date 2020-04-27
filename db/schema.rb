@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_23_131708) do
+ActiveRecord::Schema.define(version: 2020_04_22_152359) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -31,6 +31,26 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "short_wiki"
+    t.bigint "community_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "display_post_types"
+    t.boolean "is_homepage"
+    t.bigint "tag_set_id"
+    t.integer "min_trust_level"
+    t.string "button_text"
+    t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
+  end
+
+  create_table "categories_post_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "category_id", null: false
+    t.bigint "post_type_id", null: false
   end
 
   create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -157,13 +177,13 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.string "att_license_link"
     t.string "doc_slug"
     t.bigint "last_activity_by_id"
-    t.string "category", default: "Main"
     t.bigint "community_id", null: false
-    t.bigint "close_reasons_id"
+    t.bigint "close_reason_id"
     t.bigint "duplicate_post_id"
+    t.bigint "category_id"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
-    t.index ["category"], name: "index_posts_on_category"
-    t.index ["close_reasons_id"], name: "index_posts_on_close_reasons_id"
+    t.index ["category_id"], name: "index_posts_on_category_id"
+    t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["deleted"], name: "index_posts_on_deleted"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
@@ -257,6 +277,60 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
+  create_table "tposts", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "id", default: 0, null: false
+    t.string "title"
+    t.text "body"
+    t.string "tags_cache"
+    t.integer "score", default: 0, null: false
+    t.integer "parent_id"
+    t.integer "user_id"
+    t.boolean "closed", default: false, null: false
+    t.integer "closed_by_id"
+    t.datetime "closed_at"
+    t.boolean "deleted", default: false, null: false
+    t.integer "deleted_by_id"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "post_type_id", null: false
+    t.text "body_markdown"
+    t.integer "answer_count", default: 0, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.text "att_source"
+    t.string "att_license_name"
+    t.string "att_license_link"
+    t.string "doc_slug"
+    t.bigint "last_activity_by_id"
+    t.bigint "community_id", null: false
+    t.string "category"
+  end
+
+  create_table "tusers", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "id", default: 0, null: false
+    t.string "email"
+    t.string "encrypted_password"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_global_moderator"
+    t.boolean "is_global_admin"
+    t.string "username"
+    t.text "profile"
+    t.text "website"
+    t.string "twitter"
+    t.text "profile_markdown"
+    t.integer "se_acct_id"
+    t.boolean "transferred_content", default: false
+  end
+
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password"
@@ -279,6 +353,7 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
     t.text "profile_markdown"
     t.integer "se_acct_id"
     t.boolean "transferred_content", default: false
+    t.integer "trust_level"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"
@@ -298,13 +373,14 @@ ActiveRecord::Schema.define(version: 2020_03_23_131708) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "tag_sets"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
   add_foreign_key "post_histories", "communities"
-  add_foreign_key "posts", "close_reasons", column: "close_reasons_id"
+  add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "posts", column: "duplicate_post_id"
   add_foreign_key "privileges", "communities"

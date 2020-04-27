@@ -1,0 +1,40 @@
+<% content_for :title, "New Policy Document" %>
+
+<% if @post.errors.any? %>
+  <div class="notice is-danger">
+    These errors prevented this post being saved:
+    <ul>
+      <% @post.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<h1>New Policy Document</h1>
+<p>
+  If you're a moderator, you may use this page to create help documents that you can link to from /help/&lt;document&gt;.
+  If you're an administrator, you can also create policy documents, including legal documents.
+</p>
+<%= form_for @post, url: create_help_post_path do |f| %>
+  <div class="form-group">
+    <%= f.label :post_type_id, 'Post type', class: "form-element" %>
+    <%= f.select :post_type_id, options_for_select(current_user.is_admin ?
+                                                     [['Policy', PolicyDoc.post_type_id], ['Help', HelpDoc.post_type_id]] :
+                                                     [['Help', HelpDoc.post_type_id]]),
+                 { include_blank: true }, class: 'form-element' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :doc_slug, 'URL slug', class: "form-element" %>
+    <%= f.text_field :doc_slug, class: 'form-element' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :title, "Title your post:", class: "form-element" %>
+    <%= f.text_field :title, class: "form-element" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :body_markdown, 'Body', class: "form-element" %>
+    <%= f.text_area :body_markdown, { class: "form-element post-field", rows: 15 } %>
+  </div>
+  <%= f.submit "Create", class: "button is-filled is-very-large" %>
+<% end %>

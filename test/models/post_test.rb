@@ -36,7 +36,8 @@ class PostTest < ActiveSupport::TestCase
     question = posts(:question_one)
     pre_count = question.answer_count
     Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
-                score: 0, user: users(:standard_user), parent: question, post_type_id: Answer.post_type_id)
+                score: 0, user: users(:standard_user), parent: question, post_type_id: Answer.post_type_id,
+                category: question.category)
     post_count = question.answer_count
     assert_equal pre_count + 1, post_count
   end
@@ -54,5 +55,27 @@ class PostTest < ActiveSupport::TestCase
     post.votes.each do |vote|
       assert_equal users(:editor).id, vote.recv_user_id
     end
+  end
+
+  test 'should allow specified post types in a category' do
+    category = categories(:main)
+    post_type = post_types(:question)
+    post = Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
+                       score: 0, user: users(:standard_user), post_type: post_type, category: category)
+    assert_equal false, post.errors.any?, 'Category-allowed post type had errors on save'
+    assert_not_nil post.id
+    assert_equal category.id, post.category_id
+    assert_equal post_type.id, post.post_type_id
+  end
+
+  test 'should not allow unspecified post types in a category' do
+    category = categories(:main)
+    post_type = post_types(:help_doc)
+    post = Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
+                       score: 0, user: users(:standard_user), post_type: post_type, category: category)
+    assert_equal true, post.errors.any?, 'Category-disallowed post type had no errors on save'
+    assert_equal "The #{post_type.name} post type is not allowed in the #{category.name} category.",
+                 post.errors.full_messages[0]
+    assert_nil post.id
   end
 end

@@ -7,6 +7,7 @@ class Post < ApplicationRecord
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
+  belongs_to :category, required: false
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -18,10 +19,12 @@ class Post < ApplicationRecord
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
+  validate :category_allows_post_type
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id]) }
+  scope :list_includes, -> { includes(:user, user: :avatar_attachment) }
 
   after_save :check_attribution_notice
   after_save :modify_author_reputation
@@ -47,7 +50,7 @@ class Post < ApplicationRecord
   end
 
   def tag_set
-    TagSet.find_by(name: parent.nil? ? category : parent.category)
+    parent.nil? ? category.tag_set : parent.category.tag_set
   end
 
   def meta?
@@ -55,6 +58,8 @@ class Post < ApplicationRecord
   end
 
   def reassign_user(new_user)
+    new_user.ensure_community_user!
+
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
     update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))
     update(user: new_user)
@@ -113,5 +118,13 @@ class Post < ApplicationRecord
 
   def create_initial_revision
     PostHistory.initial_revision(self, user, after: body_markdown)
+  end
+
+  def category_allows_post_type
+    return if category.nil?
+
+    unless category&.post_types&.include? post_type
+      errors.add(:base, "The #{post_type.name} post type is not allowed in the #{category&.name} category.")
+    end
   end
 end

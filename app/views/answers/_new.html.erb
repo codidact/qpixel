@@ -11,7 +11,7 @@
 <% end %>
 
 <%= render 'posts/image_upload' %>
-<%= render 'questions/markdown_script' %>
+<%= render 'posts/markdown_script' %>
 
 <%= form_for answer, url: { controller: :answers, action: :create } do |f| %>
   <%= f.hidden_field :category, value: parent.category %>

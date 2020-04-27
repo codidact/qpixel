@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  root                                     to: 'questions#index'
+  root                                     to: 'categories#homepage'
 
   get    'admin',                          to: 'admin#index', as: :admin
   get    'admin/errors',                   to: 'admin#error_reports', as: :admin_error_reports
@@ -57,11 +57,15 @@ Rails.application.routes.draw do
 
   get    'posts/:id/history',              to: 'post_history#post', as: :post_history
   get    'posts/search',                   to: 'search#search', as: :search
-  get    'posts/new',                      to: 'posts#new', as: :new_post
-  post   'posts/new',                      to: 'posts#create', as: :create_post
   post   'posts/upload',                   to: 'posts#upload', as: :upload
+
   get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
   patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post
+
+  get    'posts/new-help',                 to: 'posts#new_help', as: :new_help_post
+  post   'posts/new-help',                 to: 'posts#create_help', as: :create_help_post
+  get    'posts/:id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
+  patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help
@@ -118,6 +122,18 @@ Rails.application.routes.draw do
   end
 
   get    'help',                           to: 'posts#help_center', as: :help_center
+
+  scope 'categories' do
+    root                                           to: 'categories#index', as: :categories
+    get    'new',                                  to: 'categories#new', as: :new_category
+    post   'new',                                  to: 'categories#create', as: :create_category
+    get    ':category_id/posts/new/:post_type_id', to: 'posts#new', as: :new_post
+    post   ':category_id/posts/new/:post_type_id', to: 'posts#create', as: :create_post
+    get    ':id',                                  to: 'categories#show', as: :category
+    get    ':id/edit',                             to: 'categories#edit', as: :edit_category
+    post   ':id/edit',                             to: 'categories#update', as: :update_category
+    delete ':id',                                  to: 'categories#destroy', as: :destroy_category
+  end
 
   match  '/403',                           to: 'errors#forbidden',                via: :all
   match  '/404',                           to: 'errors#not_found',                via: :all

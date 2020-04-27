@@ -14,6 +14,7 @@ question_one:
   score: 0
   user: standard_user
   community: sample
+  category: main
 
 question_two:
   post_type: question
@@ -30,6 +31,7 @@ question_two:
   score: 0
   user: editor
   community: sample
+  category: main
 
 deleted:
   post_type: question
@@ -49,6 +51,7 @@ deleted:
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
   community: sample
+  category: main
 
 closed:
   post_type: question
@@ -68,6 +71,7 @@ closed:
   closed_at: 2019-01-01T00:00:00.000000Z
   user: standard_user
   community: sample
+  category: main
 
 answer_one:
   post_type: answer
@@ -76,6 +80,7 @@ answer_one:
   parent: question_one
   user: standard_user
   community: sample
+  category: main
 
 answer_two:
   post_type: answer
@@ -84,6 +89,7 @@ answer_two:
   parent: question_one
   user: editor
   community: sample
+  category: main
 
 really_old_answer:
   post_type: answer
@@ -93,6 +99,7 @@ really_old_answer:
   user: standard_user
   created_at: 2000-01-01T00:00:00.000000Z
   community: sample
+  category: main
 
 deleted_answer:
   post_type: answer
@@ -104,6 +111,7 @@ deleted_answer:
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
   community: sample
+  category: main
 
 policy_doc:
   post_type: policy_doc

@@ -1,14 +1,15 @@
 class TagSet < ApplicationRecord
   include CommunityRelated
   has_many :tags
+  has_many :categories
 
   validates :name, uniqueness: { scope: [:community_id] }, presence: true
 
-  def meta
-    where(name: 'Meta')
+  def self.meta
+    where(name: 'Meta').first
   end
 
-  def main
-    where(name: 'Main')
+  def self.main
+    where(name: 'Main').first
   end
 end

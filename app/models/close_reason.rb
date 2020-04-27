@@ -1,5 +1,7 @@
-# Represents a close reason. Close reasons can be assigned to posts
-
 class CloseReason < ApplicationRecord
   include MaybeCommunityRelated
+
+  scope :active, -> { where(active: true) }
+
+  validates :name, uniqueness: { scope: [:community_id] }
 end

@@ -1,18 +1,14 @@
 class Question < Post
   default_scope { where(post_type_id: Question.post_type_id) }
 
-  scope :meta, -> { where(category: 'Meta') }
-  scope :main, -> { where(category: 'Main') }
+  scope :meta, -> { joins(:category).where(categories: { name: 'Meta' }) }
+  scope :main, -> { joins(:category).where(categories: { name: 'Main' }) }
 
-  belongs_to :close_reason, foreign_key: 'close_reasons_id', optional: true
+  belongs_to :close_reason, optional: true
   belongs_to :duplicate_post, class_name: 'Question', optional: true
 
   def self.post_type_id
     PostType.mapping['Question']
-  end
-
-  def self.list_includes
-    includes(:user, user: :avatar_attachment)
   end
 
   validates :title, :body, :tags_cache, presence: true
@@ -32,7 +28,7 @@ class Question < Post
 
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag = Tag.find_or_create_by name: tag_name, tag_set: TagSet.find_by(name: category)
+      tag = Tag.find_or_create_by name: tag_name, tag_set: category.tag_set
       unless tags.include? tag
         tags << tag
       end
@@ -80,7 +76,7 @@ class Question < Post
   end
 
   def tags_in_tag_set
-    tag_set = TagSet.find_by(name: category)
+    tag_set = category.tag_set
     unless tags.all? { |t| t.tag_set_id == tag_set.id }
       errors.add(:base, "Not all of this question's tags are in the correct tag set.")
     end

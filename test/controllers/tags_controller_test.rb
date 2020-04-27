@@ -13,7 +13,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test 'index with search params should return tags starting with search' do
-    get :index, params: { format: 'json', q: 'dis' }
+    get :index, params: { format: 'json', term: 'dis' }
     assert_response 200
     assert_nothing_raised do
       JSON.parse(response.body)

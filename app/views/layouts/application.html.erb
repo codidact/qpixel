@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= Rails.env.development? ? '[DEV] ' : '' %><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
+  <title>
+    <%= Rails.env.development? ? '[DEV] ' : '' %>
+    <%= SiteSetting['SiteName'] %>
+    <% if content_for?(:title) %>
+      - <%= yield(:title) %>
+    <% end %>
+  </title>
   <link rel="icon" href="<%= SiteSetting['IconPath'] || '/assets/favicon.ico' %>" />
   <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
-  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.5.0/dist/codidact.css" %>
+  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.7.0/dist/codidact.css" %>
   <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
@@ -18,7 +24,7 @@
   <%= yield(:head) %>
 </head>
 <body class="<%= Rails.env.development? ? 'development' : '' %>">
-  <header class="header">
+  <header class="header has-margin-0">
     <div class="container header--container">
       <div class="header--brand">
         <% if SiteSetting.exist?('SiteLogoPath') %>
@@ -28,13 +34,12 @@
         <% end %>
       </div>
       <nav class="header--menu">
-        <%= link_to 'Questions', questions_path, class: 'header--item' %>
+        <%= link_to 'Categories', categories_path, class: 'header--item' %>
         <%= link_to 'Users', users_path, class: 'header--item' %>
         <%= link_to 'Search', search_path, class: 'header--item' %>
 
         <div class='header--separator'></div>
 
-        <%= link_to 'Meta', meta_path, class: 'header--item' %>
         <%= link_to 'Help', help_center_path, class: 'header--item' %>
 
         <% if user_signed_in? %>
@@ -72,23 +77,16 @@
       </nav>
     </div>
   </header>
-  <% if Rails.env.development? %>
-    <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
-      <div class="container">
-        <p>This site is in development mode!</p>
-      </div>
-    </div>
-  <% end %>
+
   <div class="header-slide inbox">
   </div>
   <div class="header-slide mobile-menu">
-    <%= link_to 'Questions', questions_path, class: 'header-slide--item' %>
+    <%= link_to 'Categories', categories_path, class: 'header--item' %>
     <%= link_to 'Users', users_path, class: 'header-slide--item' %>
     <%= link_to 'Search', search_path, class: 'header-slide--item' %>
 
     <div class='header-slide--separator'></div>
 
-    <%= link_to 'Meta', meta_path, class: 'header-slide--item' %>
     <%= link_to 'Help', help_center_path, class: 'header-slide--item' %>
 
     <div class='header-slide--separator'></div>
@@ -108,6 +106,42 @@
       <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
     <% end %>
   </div>
+
+  <header class="category-header is-blue">
+    <div class="category-header--tabs">
+      <div class="container category-header--tabs-container">
+        <% @header_categories.each do |cat| %>
+          <%= link_to cat.name, category_path(cat),
+                      class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" %>
+        <% end %>
+      </div>
+    </div>
+    <% if expandable? %>
+      <% cat = current_category %>
+      <div class="container category-header--container">
+        <div class="category-header--name"><%= cat.name %></div>
+        <div class="category-header--nav">
+          <%= link_to 'Posts', category_path(cat),
+                      class: "category-header--nav-item #{active?(cat) ? 'is-active' : ''}" %>
+          <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
+          <div class="category-header--nav-separator"></div>
+          <%= link_to create_post_path(category_id: cat.id, post_type_id: Question.post_type_id),
+                      class: 'category-header--nav-item is-button' do %>
+            <%= cat.button_text.present? ? cat.button_text : 'Create Post' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </header>
+
+  <% if Rails.env.development? %>
+    <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+      <div class="container">
+        <p>This site is in development mode!</p>
+      </div>
+    </div>
+  <% end %>
+
   <main class="container">
 
     <div class="grid">
@@ -143,12 +177,12 @@
 
         <% if Rails.env.development? || @hot_questions.size > 0 %>
           <div class="widget has-margin-4">
-            <h4 class="widget--header has-margin-0">Hot Questions</h4>
+            <h4 class="widget--header has-margin-0">Hot Posts</h4>
             <% @hot_questions.each do |hq| %>
               <div class="widget--body">
                 <%= link_to question_path(hq) do %>
-                  <% if hq.meta? %>
-                    <span class="badge is-tag is-master-tag">meta</span>
+                  <% unless hq.category.nil? %>
+                    <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
                   <% end %>
                   <%= hq.title %>
                 <% end %>

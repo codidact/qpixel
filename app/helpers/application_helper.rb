@@ -48,4 +48,10 @@ module ApplicationHelper
       end
     end
   end
+
+  def short_number_to_human(*args, **opts)
+    opts = { units: { thousand: 'k', million: 'm', billion: 'b', trillion: 't', quadrillion: 'qd' },
+             format: '%n%u' }.merge(opts)
+    ActiveSupport::NumberHelper.number_to_human(*args, **opts)
+  end
 end

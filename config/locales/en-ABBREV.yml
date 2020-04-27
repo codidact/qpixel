@@ -1,4 +1,4 @@
-short:
+en-ABBREV:
   datetime:
     distance_in_words:
       x_seconds: '%{count}s'
