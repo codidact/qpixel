@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= Rails.env.development? ? '[DEV] ' : '' %><%= SiteSetting['SiteName'] %> - <%= yield(:title) %></title>
+  <title>
+    <%= Rails.env.development? ? '[DEV] ' : '' %>
+    <%= SiteSetting['SiteName'] %>
+    <% if content_for?(:title) %>
+      - <%= yield(:title) %>
+    <% end %>
+  </title>
   <link rel="icon" href="<%= SiteSetting['IconPath'] || '/assets/favicon.ico' %>" />
   <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
-  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.5.0/dist/codidact.css" %>
+  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.7.0/dist/codidact.css" %>
   <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>

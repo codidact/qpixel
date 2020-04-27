@@ -1,3 +1,5 @@
+<% content_for :title, @category.name %>
+
 <% content_for :sidebar do %>
   <div class="has-margin-4">
     <%= link_to create_post_path(category_id: @category.id, post_type_id: Question.post_type_id),
