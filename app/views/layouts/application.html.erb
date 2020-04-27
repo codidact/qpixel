@@ -156,7 +156,9 @@
             <% @hot_questions.each do |hq| %>
               <div class="widget--body">
                 <%= link_to question_path(hq) do %>
-                  <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
+                  <% unless hq.category.nil? %>
+                    <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
+                  <% end %>
                   <%= hq.title %>
                 <% end %>
               </div>
