@@ -116,7 +116,7 @@
         <% end %>
       </div>
     </div>
-    <% if defined?(@category) %>
+    <% if defined?(@category) && !current_page?(new_category_path) %>
       <div class="container category-header--container">
         <div class="category-header--name"><%= @category.name %></div>
         <div class="category-header--nav">
