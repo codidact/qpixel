@@ -125,7 +125,7 @@
           <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
           <div class="category-header--nav-separator"></div>
           <%= link_to create_post_path(category_id: @category.id, post_type_id: Question.post_type_id),
-                      class: 'button is-filled is-large' do %>
+                      class: 'category-header--nav-item is-button' do %>
             <%= @category.button_text || 'Create Post' %>
           <% end %>
         </div>
