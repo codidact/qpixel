@@ -24,7 +24,7 @@
   <%= yield(:head) %>
 </head>
 <body class="<%= Rails.env.development? ? 'development' : '' %>">
-  <header class="header">
+  <header class="header has-margin-0">
     <div class="container header--container">
       <div class="header--brand">
         <% if SiteSetting.exist?('SiteLogoPath') %>
@@ -81,23 +81,20 @@
       </nav>
     </div>
   </header>
-  <% if Rails.env.development? %>
-    <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
-      <div class="container">
-        <p>This site is in development mode!</p>
-      </div>
-    </div>
-  <% end %>
+
   <div class="header-slide inbox">
   </div>
   <div class="header-slide mobile-menu">
-    <%= link_to 'Questions', questions_path, class: 'header-slide--item' %>
+    <%= link_to 'Categories', categories_path, class: 'header--item' %>
     <%= link_to 'Users', users_path, class: 'header-slide--item' %>
     <%= link_to 'Search', search_path, class: 'header-slide--item' %>
 
     <div class='header-slide--separator'></div>
 
-    <%= link_to 'Meta', meta_path, class: 'header-slide--item' %>
+    <% meta_category_id = Rails.cache.fetch "#{RequestContext.community_id}/meta_cat_id" do
+      Category.where(name: 'Meta').first&.id || -1
+    end %>
+    <%= link_to 'Meta', category_path(meta_category_id), class: 'header--item' %>
     <%= link_to 'Help', help_center_path, class: 'header-slide--item' %>
 
     <div class='header-slide--separator'></div>
@@ -117,6 +114,41 @@
       <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
     <% end %>
   </div>
+
+  <header class="category-header is-blue">
+    <div class="category-header--tabs">
+      <div class="container category-header--tabs-container">
+        <% @header_categories.each do |cat| %>
+          <%= link_to cat.name, category_path(cat),
+                      class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" %>
+        <% end %>
+      </div>
+    </div>
+    <% if defined?(@category) %>
+      <div class="container category-header--container">
+        <div class="category-header--name"><%= @category.name %></div>
+        <div class="category-header--nav">
+          <%= link_to 'Posts', category_path(@category),
+                      class: "category-header--nav-item #{active?(@category) ? 'is-active' : ''}" %>
+          <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
+          <div class="category-header--nav-separator"></div>
+          <%= link_to create_post_path(category_id: @category.id, post_type_id: Question.post_type_id),
+                      class: 'button is-filled is-large' do %>
+            <%= @category.button_text || 'Create Post' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </header>
+
+  <% if Rails.env.development? %>
+    <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+      <div class="container">
+        <p>This site is in development mode!</p>
+      </div>
+    </div>
+  <% end %>
+
   <main class="container">
 
     <div class="grid">

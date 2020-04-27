@@ -71,7 +71,7 @@ a.header--site-name {
 }
 
 .notice a {
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .item-list--item {
@@ -143,6 +143,12 @@ a.header--site-name {
 
 header {
   font-family: $font-stack-display;
+
+  &.header {
+    z-index: 5;
+    position: relative;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
 }
 
 .notice a.has-font-size-larger {

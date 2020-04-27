@@ -27,6 +27,7 @@ class CategoriesController < ApplicationController
         Category.where.not(id: @category.id).update_all(is_homepage: false)
       end
       flash[:success] = 'Your category was created.'
+      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
@@ -42,6 +43,7 @@ class CategoriesController < ApplicationController
         Category.where.not(id: @category.id).update_all(is_homepage: false)
       end
       flash[:success] = 'Your category was updated.'
+      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'

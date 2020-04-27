@@ -54,9 +54,25 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def set_globals
+    setup_request_context || return
+    setup_user
+
+    pull_hot_questions
+    pull_categories
+
+    if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+      @open_flags = Flag.unhandled.count
+    end
+
+    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true' ? true : false
+
+    if current_user&.is_admin
+      Rack::MiniProfiler.authorize_request
+    end
+  end
+
+  def setup_request_context
     RequestContext.clear!
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
@@ -68,9 +84,13 @@ class ApplicationController < ActionController::Base
                       "(#{RequestContext.community&.name})"
     unless RequestContext.community.present?
       render status: 422, plain: "No community record matching Host='#{host_name}'"
-      return
+      return false
     end
 
+    true
+  end
+
+  def setup_user
     if current_user.nil?
       Rails.logger.info '  No user signed in'
     else
@@ -78,26 +98,19 @@ class ApplicationController < ActionController::Base
       RequestContext.user = current_user
       current_user.ensure_community_user!
     end
+  end
 
+  def pull_hot_questions
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 30.minutes) do
       Post.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
           .where(parent_id: nil).includes(:category)
           .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
-    if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
-      @open_flags = Flag.unhandled.count
-    end
+  end
 
-    @first_visit_notice = if !user_signed_in? && cookies[:dismiss_fvn] != 'true'
-                            true
-                          else
-                            false
-                          end
-
-    if current_user&.is_admin
-      Rack::MiniProfiler.authorize_request
+  def pull_categories
+    @header_categories = Rails.cache.fetch("#{RequestContext.community_id}/header_categories") do
+      Category.all
     end
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 end

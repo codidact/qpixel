@@ -1,15 +1,5 @@
 <% content_for :title, @category.name %>
 
-<% content_for :sidebar do %>
-  <div class="has-margin-4">
-    <%= link_to create_post_path(category_id: @category.id, post_type_id: Question.post_type_id),
-                class: 'button is-filled is-large' do %>
-      <%= @category.button_text || 'Create Post' %>
-    <% end %>
-  </div>
-<% end %>
-
-
 <h1><%= @category.name %></h1>
 <% if @category.short_wiki %>
   <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
