@@ -182,7 +182,7 @@ $(document).on('ready', function() {
 
 
   $('.js-role-grant-btn').on("click", (e) => {
-    $this = $(e.target);
+    const $this = $(e.target);
 
     $.ajax({
       'type': 'POST',
@@ -191,7 +191,7 @@ $(document).on('ready', function() {
       'target': $this
     })
     .done((response) => {
-      if(response.status !== 'success') {
+      if (response.status !== 'success') {
         QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
       }
       else {

@@ -126,31 +126,31 @@ class UsersController < ApplicationController
   def role_toggle
     if params[:role] == "mod"
       @user.community_user.update(is_moderator: !@user.is_moderator)
-      render json: { "status": "success" }
+      render json: { status: "success" }
       return
     end
 
     if current_user.is_global_admin
       if params[:role] == "admin"
         @user.community_user.update(is_admin: !@user.is_admin)
-        render json: { "status": "success" }
+        render json: { status: "success" }
         return
       end
 
       if params[:role] == "mod-global"
         @user.update(is_global_moderator: !@user.is_global_moderator)
-        render json: { "status": "success" }
+        render json: { status: "success" }
         return
       end
 
       if params[:role] == "admin-global"
         @user.update(is_global_admin: true)
-        render json: { "status": "success" }
+        render json: { status: "success" }
         return
       end
     end
 
-    render json: { "status": "error", "message": "Role not found: " + params[:role] }
+    render json: { status: "error", message: "Role not found: #{params[:role]}" }
   end
 
 
