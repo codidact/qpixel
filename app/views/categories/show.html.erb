@@ -1,8 +1,9 @@
 <% content_for :title, @category.name %>
 
-<h1><%= @category.name %></h1>
 <% if @category.short_wiki %>
-  <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
+  <div class="has-font-size-larger has-color-tertiary-800">
+    <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
+  </div>
 <% end %>
 
 <% post_count = @posts.count %>
