@@ -116,20 +116,18 @@
         <% end %>
       </div>
     </div>
-    <% if (defined?(@category) && !current_page?(new_category_path)) || (defined?(@post) && !@post.category.nil?) %>
-      <% unless defined?(@category) %>
-        <% @category = @post.category %>
-      <% end %>
+    <% if expandable? %>
+      <% cat = current_category %>
       <div class="container category-header--container">
-        <div class="category-header--name"><%= @category.name %></div>
+        <div class="category-header--name"><%= cat.name %></div>
         <div class="category-header--nav">
-          <%= link_to 'Posts', category_path(@category),
-                      class: "category-header--nav-item #{active?(@category) ? 'is-active' : ''}" %>
+          <%= link_to 'Posts', category_path(cat),
+                      class: "category-header--nav-item #{active?(cat) ? 'is-active' : ''}" %>
           <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
           <div class="category-header--nav-separator"></div>
-          <%= link_to create_post_path(category_id: @category.id, post_type_id: Question.post_type_id),
+          <%= link_to create_post_path(category_id: cat.id, post_type_id: Question.post_type_id),
                       class: 'category-header--nav-item is-button' do %>
-            <%= @category.button_text.present? ? @category.button_text : 'Create Post' %>
+            <%= cat.button_text.present? ? cat.button_text : 'Create Post' %>
           <% end %>
         </div>
       </div>
