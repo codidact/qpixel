@@ -223,6 +223,9 @@
         <% end %>
 
         <div class="widget has-margin-4">
+          <div class="widget--header">
+            <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
+          </div>
           <div class="widget--body">
             <p>
               This site is part of the <a href="https://codidact.com">Codidact network</a>.
@@ -233,10 +236,31 @@
       </div>
     </div>
   </main>
-  <footer class="footer">
-    <div class="container">
-      <span><%= link_to 'Terms of Service', policy_path(slug: 'tos') %></span> &middot;
-      <span>Current version: <%= Rails.cache.persistent('current_commit') %></span>
+  <footer class="footer is-inverted">
+    <div class="footer--container container">
+      <div class="grid">
+        <div class="grid--cell is-6 is-12-md is-12-sm">
+          <h3>The Codidact Project</h3>
+          <ul>
+            <li><%= link_to 'Terms of Service', 'https://writing.codidact.com/policy/tos' %></li>
+            <li><%= link_to 'Code of Conduct', 'https://writing.codidact.com/help/code-of-conduct' %></li>
+            <li><%= link_to 'About us', 'https://codidact.org/' %></li>
+            <li><%= link_to 'Other sites', 'https://codidact.com/' %></li>
+          </ul>
+        </div>
+        <div class="grid--cell is-6 is-12-md is-12-sm">
+          <h3>Other Codidact Sites</h3>
+          <ul>
+            <% Rails.cache.persistent('codidact_sites').each do |site| %>
+              <li><%= link_to site['name'], site['canonical_url'] %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+      <% commit = Rails.cache.persistent('current_commit') %>
+      <p>
+        Version <%= link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" %> (<%= commit[1] %>)
+      </p>
     </div>
   </footer>
 </body>
