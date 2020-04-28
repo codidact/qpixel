@@ -200,3 +200,10 @@
   category: SiteDetails
   description: >
     Path to a file to use as the site's favicon. Must be an .ICO file.
+
+- name: AllowContentTransfer
+  value: true
+  value_type: boolean
+  category: Integrations
+  description: >
+    Enable transferring pre-imported content from Stack Exchange to the associated user's account here.

@@ -55,7 +55,15 @@
   <%= f.submit 'Save', class: 'button is-very-large is-filled' %>
 <% end %>
 
-<% if current_user.se_acct_id.nil? %>
+<% unless SiteSetting['AllowContentTransfer'] %>
+  <h2>Link with Stack Exchange</h2>
+  <div class="notice is-warning">
+    You can't link a Stack Exchange account to your account on this site because there is no associated
+    Stack Exchange site from which to transfer your content.
+  </div>
+<% end %>
+
+<% if SiteSetting['AllowContentTransfer'] && current_user.se_acct_id.nil? %>
   <div class="has-padding-4">
     <h2>Link with Stack Exchange</h2>
     <p>
@@ -67,7 +75,7 @@
       <i class="fab fa-stack-exchange"></i> Authenticate
     <% end %>
   </div>
-<% elsif !current_user.transferred_content %>
+<% elsif SiteSetting['AllowContentTransfer'] && !current_user.transferred_content %>
   <div class="has-padding-4">
     <h3>Claim your Stack Exchange content</h3>
     <p>
