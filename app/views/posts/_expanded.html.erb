@@ -239,13 +239,14 @@
               <% else %>
                 <a href="#" class="js-add-comment">Add a comment</a>
   
-                <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form' } do |f| %>
-                  <%= f.hidden_field :post_id, value: post.id %>
+                <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
+                  <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
                   <div class="form-group-horizontal">
                     <div class="form-group">
                       <%= f.label :content, 'Your comment' %>
-                      <%= f.text_area :content, class: 'form-element is-small js-comment-content', autocomplete: 'off' %>
+                      <%= f.text_area :content, class: 'form-element is-small js-comment-content', id: nil, autocomplete: 'off' %>
+                      <span class="has-float-right has-font-size-caption js-character-count" data-target=".js-comment-content" data-max="500">0 / 500</span>
                     </div>
                     <div class="actions">
                       <%= f.submit 'Post', class: 'button is-outlined' %>
