@@ -66,7 +66,7 @@ class CategoriesController < ApplicationController
 
   def category_params
     params.require(:category).permit(:name, :short_wiki, :display_post_types, :post_type_ids, :tag_set_id, :is_homepage,
-                                     :min_trust_level, :button_text)
+                                     :min_trust_level, :button_text, :color_code)
   end
 
   def set_list_posts

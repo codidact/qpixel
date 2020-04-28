@@ -55,5 +55,12 @@
     <span class="form-caption">Tick this box to set this category as the site homepage.</span>
   </div>
 
+  <div class="form-group">
+    <%= f.label :color_code, 'Color (in the header)', class: 'form-element' %>
+    <span class="form-caption">Select a color, which shall be used for the header of the views within this category. Leave empty for site-wide default.</span>
+    <%= f.select :color_code, options_for_select(['turqoise', 'green', 'blue', 'purple', 'gray', 'yellow', 'orange', 'pink', 'red'], selected: @category.color_code),
+                 { include_blank: true }, class: 'form-element' %>
+  </div>
+
   <%= f.submit 'Save', class: 'button is-filled' %>
 <% end %>
