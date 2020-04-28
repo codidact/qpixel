@@ -10,6 +10,7 @@ class Post < ApplicationRecord
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
   belongs_to :category, required: false
+  belongs_to :license, required: false
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
