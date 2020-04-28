@@ -110,7 +110,12 @@
     <% end %>
   </div>
 
+<% if expandable? %>
+  <% cat = current_category %>
+  <header class="category-header is-<%= cat.color_code.present? ? cat.color_code : "blue" %>">
+<% else %>
   <header class="category-header is-blue">
+<% end %>
     <div class="category-header--tabs">
       <div class="container category-header--tabs-container">
         <% @header_categories.each do |cat| %>
@@ -120,7 +125,6 @@
       </div>
     </div>
     <% if expandable? %>
-      <% cat = current_category %>
       <div class="container category-header--container">
         <div class="category-header--name"><%= cat.name %></div>
         <div class="category-header--nav">
