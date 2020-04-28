@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'redcarpet/render_strip'
+
 Rails.application.eager_load!
 
 Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
