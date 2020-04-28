@@ -1,5 +1,10 @@
 <h1>Sign up</h1>
 
+<div class="notice is-info">
+  <i class="fas fa-info-circle"></i> If you have an account on another <a href="https://codidact.com/">Codidact site</a>,
+  don't create a new account here - <%= link_to 'sign in', new_user_session_path %> with your existing details instead.
+</div>
+
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
@@ -30,7 +35,7 @@
 
   <div class="notice has-margin-top-4">
     <i class="fas fa-exclamation-circle"></i> By signing up, you're agreeing to the
-    <%= link_to 'terms of service', policy_path(slug: 'tos') %>.
+    <%= link_to 'terms of service', 'https://writing.codidact.com/policy/tos' %>.
   </div>
 
 <% end %><br/>
