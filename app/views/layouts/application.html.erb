@@ -112,9 +112,9 @@
 
 <% if expandable? %>
   <% cat = current_category %>
-  <header class="category-header is-<%= cat.color_code.present? ? cat.color_code : "blue" %>">
+  <header class="category-header is-<%= cat.color_code.present? ? cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %> %>">
 <% else %>
-  <header class="category-header is-blue">
+  <header class="category-header is-<%= SiteSetting['SiteCategoryHeaderDefaultColor'] %>%">
 <% end %>
     <div class="category-header--tabs">
       <div class="container category-header--tabs-container">
