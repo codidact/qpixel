@@ -1,4 +1,10 @@
 <% content_for :title, @question.title.truncate(50) %>
+<% content_for :description do %>
+  <% Rails.cache.fetch "posts/#{@question.id}/description" do %>
+    <%= @question.body_plain[0..74].strip %>...
+    <%= @answers.first.body_plain[0..74].strip %>
+  <% end %>
+<% end %>
 
 <%= render 'posts/expanded', post: @question %>
 

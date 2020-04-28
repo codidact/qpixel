@@ -1,4 +1,6 @@
 class Post < ApplicationRecord
+  require 'redcarpet/render_strip'
+
   include CommunityRelated
 
   belongs_to :user
@@ -29,6 +31,7 @@ class Post < ApplicationRecord
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
+  after_save :break_description_cache
   after_create :create_initial_revision
 
   def self.search(term)
@@ -69,6 +72,10 @@ class Post < ApplicationRecord
 
   def remove_attribution_notice!
     update(att_source: nil, att_license_link: nil, att_license_name: nil)
+  end
+
+  def body_plain
+    PostsController.renderer.render(body_markdown)
   end
 
   private
@@ -125,6 +132,13 @@ class Post < ApplicationRecord
 
     unless category&.post_types&.include? post_type
       errors.add(:base, "The #{post_type.name} post type is not allowed in the #{category&.name} category.")
+    end
+  end
+
+  def break_description_cache
+    Rails.cache.delete "posts/#{id}/description"
+    if parent_id.present?
+      Rails.cache.delete "posts/#{parent_id}/description"
     end
   end
 end

@@ -4,7 +4,9 @@ class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
                                             :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new)
+
+  #noinspection RubyArgCount
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true)
 
   def self.renderer
     @@markdown_renderer
