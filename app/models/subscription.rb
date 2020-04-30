@@ -22,6 +22,7 @@ class Subscription < ApplicationRecord
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
               .where(user_id: qualifier)
     when 'interesting'
+      RequestContext.community = community # otherwise SiteSetting#[] doesn't work
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
               .where('score >= ?', SiteSetting['InterestingSubscriptionScoreThreshold'])
               .order(Arel.sql('RAND()'))
