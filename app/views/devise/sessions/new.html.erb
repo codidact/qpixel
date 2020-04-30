@@ -1,4 +1,4 @@
-<h1>Log in</h1>
+<h1>Sign in</h1>
 
 <div class="notice is-info has-margin-bottom-4">
   <i class="fas fa-info-circle"></i> Your username and password are the same on all
@@ -23,7 +23,8 @@
     </div>
   <% end %>
 
-  <%= f.submit "Log in", class: 'button is-filled is-very-large' %>
+  <div class="js-errors has-color-red-600 has-font-size-caption has-padding-2"></div>
+  <%= f.submit "Sign in", class: 'button is-filled is-very-large' %>
 <% end %><br/>
 
 <%= render "devise/shared/links" %>

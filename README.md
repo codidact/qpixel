@@ -28,7 +28,7 @@ Clone the repository and `cd` into the directory:
 
 ### Configure database connection
 If you weren't asked to set the root MySQL user password during `mysql-server` installation, the installation is likely to be using
-Unix authentication instead. You'll need to log into the MySQL server with `sudo mysql -u root` and create a new database user for QPixel:
+Unix authentication instead. You'll need to sign into the MySQL server with `sudo mysql -u root` and create a new database user for QPixel:
 
 ```sql
 CREATE USER qpixel@localhost IDENTIFIED BY 'choose_a_password_here';
