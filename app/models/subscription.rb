@@ -13,16 +13,19 @@ class Subscription < ApplicationRecord
   def questions
     case type
     when 'all'
-      Question.unscoped.where(community: community).where('created_at >= ?', last_sent_at)
+      Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .where('created_at >= ?', last_sent_at)
     when 'tag'
-      Tag.unscoped.where(community: community).find_by(name: qualifier)&.posts&.unscoped&.where(community: community)
+      Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .joins(:tags).where(tags: { name: qualifier })
     when 'user'
-      User.find_by(id: qualifier)&.questions&.unscoped&.where(community: community)
+      Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .where(user_id: qualifier)
     when 'interesting'
-      Question.unscoped.where(community: community)
+      Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
               .where('score >= ?', SiteSetting['InterestingSubscriptionScoreThreshold'])
               .order(Arel.sql('RAND()'))
-    end&.order(created_at: :desc)&.limit(100)
+    end&.order(created_at: :desc)&.limit(25)
   end
 
   private
