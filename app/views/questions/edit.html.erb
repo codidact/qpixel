@@ -10,7 +10,8 @@
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Hints and Tips</h4>
       <div class="widget--body">
-        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+      <% guidance = @question.category.asking_guidance_override || SiteSetting['AskingGuidance'] %>
+        <%= raw(sanitize(QuestionsController.renderer.render(guidance), scrubber: scrubber)) %>
       </div>
     </div>
   <% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_22_152359) do
+ActiveRecord::Schema.define(version: 2020_04_30_123008) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -44,6 +44,9 @@ ActiveRecord::Schema.define(version: 2020_04_22_152359) do
     t.bigint "tag_set_id"
     t.integer "min_trust_level"
     t.string "button_text"
+    t.string "color_code"
+    t.text "asking_guidance_override"
+    t.text "answering_guidance_override"
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
@@ -171,7 +174,7 @@ ActiveRecord::Schema.define(version: 2020_04_22_152359) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -275,60 +278,6 @@ ActiveRecord::Schema.define(version: 2020_04_22_152359) do
     t.bigint "tag_set_id", null: false
     t.index ["community_id"], name: "index_tags_on_community_id"
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
-  end
-
-  create_table "tposts", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "id", default: 0, null: false
-    t.string "title"
-    t.text "body"
-    t.string "tags_cache"
-    t.integer "score", default: 0, null: false
-    t.integer "parent_id"
-    t.integer "user_id"
-    t.boolean "closed", default: false, null: false
-    t.integer "closed_by_id"
-    t.datetime "closed_at"
-    t.boolean "deleted", default: false, null: false
-    t.integer "deleted_by_id"
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "post_type_id", null: false
-    t.text "body_markdown"
-    t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.text "att_source"
-    t.string "att_license_name"
-    t.string "att_license_link"
-    t.string "doc_slug"
-    t.bigint "last_activity_by_id"
-    t.bigint "community_id", null: false
-    t.string "category"
-  end
-
-  create_table "tusers", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "id", default: 0, null: false
-    t.string "email"
-    t.string "encrypted_password"
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "is_global_moderator"
-    t.boolean "is_global_admin"
-    t.string "username"
-    t.text "profile"
-    t.text "website"
-    t.string "twitter"
-    t.text "profile_markdown"
-    t.integer "se_acct_id"
-    t.boolean "transferred_content", default: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

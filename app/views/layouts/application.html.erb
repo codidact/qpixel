@@ -16,8 +16,9 @@
   <link rel="icon" href="<%= SiteSetting['IconPath'] || '/assets/favicon.ico' %>" />
   <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" %>
   <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
-  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.7.0/dist/codidact.css" %>
+  <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.7.1/dist/codidact.css" %>
   <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
+  <%= stylesheet_link_tag "/assets/community/" + @community.name + ".css" %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
   <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js" %>
@@ -27,10 +28,10 @@
   <%= yield(:head) %>
 </head>
 <body class="<%= Rails.env.development? ? 'development' : '' %>">
-  <header class="header has-margin-0">
+  <header class="header has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
     <div class="container header--container">
       <div class="header--brand">
-        <% if SiteSetting.exist?('SiteLogoPath') %>
+        <% if SiteSetting['SiteLogoPath'].present? %>
           <a href="/" class="header--site-name" aria-label="Home"><img alt src="<%= SiteSetting['SiteLogoPath'] %>" /></a>
         <% else %>
           <a href="/" class="header--site-name" aria-label="Home"><%= SiteSetting['SiteName'] %></a>
@@ -63,7 +64,7 @@
           </a>
           <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
             <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
-            <span class="has-font-size-larger has-color-tertiary-600"><%= current_user.reputation %></span>
+            <span class="has-font-size-larger <%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
           <% end %>
           <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header--item' %>
         <% else %>
@@ -110,7 +111,12 @@
     <% end %>
   </div>
 
-  <header class="category-header is-blue">
+<% if expandable? %>
+  <% cat = current_category %>
+  <header class="category-header is-<%= cat.color_code.present? ? cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %> %>">
+<% else %>
+  <header class="category-header is-<%= SiteSetting['SiteCategoryHeaderDefaultColor'] %>">
+<% end %>
     <div class="category-header--tabs">
       <div class="container category-header--tabs-container">
         <% @header_categories.each do |cat| %>
@@ -120,7 +126,6 @@
       </div>
     </div>
     <% if expandable? %>
-      <% cat = current_category %>
       <div class="container category-header--container">
         <div class="category-header--name"><%= cat.name %></div>
         <div class="category-header--nav">

@@ -1,15 +1,21 @@
 <% content_for :title, @category.name %>
 
 <% if @category.short_wiki %>
-  <div class="has-font-size-larger has-color-tertiary-800">
+  <div class="is-lead">
     <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
   </div>
 <% end %>
 
 <% post_count = @posts.count %>
 <div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
-  <%= short_number_to_human post_count, precision: 1, significant: false %>
-  <%= 'post'.pluralize(post_count) %>
+  <div>
+    <%= short_number_to_human post_count, precision: 1, significant: false %>
+    <%= 'post'.pluralize(post_count) %>
+
+    <% if current_user&.is_admin %>&middot;
+      <%= link_to 'Edit Category', edit_category_path(@category) %>
+    <% end %>
+  </div>
 
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Activity', query_url(sort: 'activity'),

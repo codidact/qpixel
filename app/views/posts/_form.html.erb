@@ -5,7 +5,8 @@
 <div class="notice is-info">
   <p><strong>Posting Tips</strong></p>
   <div class="has-font-size-caption">
-    <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+  <% guidance = @category.asking_guidance_override || SiteSetting['AskingGuidance'] %>
+    <%= raw(sanitize(QuestionsController.renderer.render(guidance), scrubber: scrubber)) %>
   </div>
 </div>
 

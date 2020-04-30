@@ -12,6 +12,20 @@
   description: >
     The path, relative to the root of the domain, to the site's logo file. Can also be an absolute URL.
 
+- name: SiteCategoryHeaderDefaultColor
+  value: blue
+  value_type: string
+  category: SiteDetails
+  description: >
+    Select a color to be used for categories that don't define a header color, and for category-neutral views. Valid are: turquoise, green, blue, purple, gray, yellow, orange, pink, red.
+
+- name: SiteHeaderIsDark
+  value: false
+  value_type: boolean
+  category: SiteDetails
+  description: >
+    Whether or not the site header has a dark color. The theme can be edited in `/public/assets/community/[Community Name].css`
+
 - name: QuestionUpVoteRep
   value: 5
   value_type: integer
