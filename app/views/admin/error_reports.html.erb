@@ -1,6 +1,12 @@
 <h1>Error Reports</h1>
 <p class="is-lead"><%= pluralize(@reports.count, 'error') %> logged</p>
 
+<%= form_tag admin_error_reports_path, method: :get, class: 'has-margin-bottom-4' do %>
+  <%= label_tag :uuid, 'Search for an error UUID' %>
+  <%= text_field_tag :uuid, params[:uuid], class: 'form-element', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' %>
+  <%= submit_tag 'Search', class: 'button is-filled' %>
+<% end %>
+
 <% @reports.each do |report| %>
   <%= render 'error_report', report: report %>
 <% end %>

@@ -18,7 +18,10 @@
 
     <strong>User:</strong>
     <%= report.user.username || '(anon)' %>
-    (<%= report.user_id || 'nil' %>)
+    (<%= report.user_id || 'nil' %>)<br/>
+
+    <strong>UUID:</strong>
+    <span class="raw-markdown"><%= report.uuid %></span>
   </p>
 
   <pre class="error-trace raw-markdown"><%= report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
