@@ -15,7 +15,9 @@ class UsersController < ApplicationController
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id, :post_type_id).count(:post_type_id)
   end
 
-  def show; end
+  def show
+    render layout: 'without_sidebar'
+  end
 
   def posts
     post_types = { questions: Question, answers: Answer }
