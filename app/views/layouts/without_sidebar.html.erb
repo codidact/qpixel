@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <%= render 'layouts/head' %>
+</head>
+<body class="<%= Rails.env.development? ? 'development' : '' %>">
+<%= render 'layouts/header' %>
+
+<main class="container">
+  <div class="grid">
+    <div class="grid--cell is-12">
+      <div class="has-padding-4">
+        <% {notice: :info, alert: :danger, danger: :danger, success: :success, info: :info, warning: :warning}.each do |mt, cc| %>
+          <% if flash[mt].present? %>
+            <div class="notice is-<%= cc.to_s %>">
+              <%= flash[mt] %>
+            </div>
+          <% end %>
+        <% end %>
+
+
+        <% if @first_visit_notice %>
+          <% notice = SiteSetting['FirstVisitGuidance'] %>
+          <% if notice.present? %>
+            <div class="notice js-first-visit-notice">
+              <button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <%= raw(sanitize(notice, scrubber: scrubber)) %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%= render 'layouts/footer' %>
+</body>
+</html>

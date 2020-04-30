@@ -1,0 +1,27 @@
+<footer class="footer is-inverted">
+  <div class="footer--container container">
+    <div class="grid">
+      <div class="grid--cell is-6 is-12-md is-12-sm">
+        <h3>The Codidact Project</h3>
+        <ul>
+          <li><%= link_to 'Terms of Service', 'https://writing.codidact.com/policy/tos' %></li>
+          <li><%= link_to 'Code of Conduct', 'https://writing.codidact.com/help/code-of-conduct' %></li>
+          <li><%= link_to 'About us', 'https://codidact.org/' %></li>
+          <li><%= link_to 'Other sites', 'https://codidact.com/' %></li>
+        </ul>
+      </div>
+      <div class="grid--cell is-6 is-12-md is-12-sm">
+        <h3>Other Codidact Sites</h3>
+        <ul>
+          <% Rails.cache.persistent('codidact_sites').each do |site| %>
+            <li><%= link_to site['name'], site['canonical_url'] %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <% commit = Rails.cache.persistent('current_commit') %>
+    <p>
+      Version <%= link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" %> (<%= commit[1] %>)
+    </p>
+  </div>
+</footer>

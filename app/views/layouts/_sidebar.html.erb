@@ -1,0 +1,62 @@
+<div class="grid--cell is-4-lg is-12">
+  <%= yield(:sidebar) %>
+
+  <% if Rails.env.development? || @hot_questions.size > 0 %>
+    <div class="widget has-margin-4">
+      <h4 class="widget--header has-margin-0">Hot Posts</h4>
+      <% @hot_questions.each do |hq| %>
+        <div class="widget--body">
+          <%= link_to question_path(hq) do %>
+            <% unless hq.category.nil? %>
+              <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
+            <% end %>
+            <%= hq.title %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if moderator? || admin? %>
+    <div class="widget has-margin-4">
+      <h4 class="widget--header has-margin-0">Moderator Tools</h4>
+      <div class="widget--body">
+        <ul>
+          <% if moderator? %>
+            <li><%= link_to 'Moderator Tools', moderator_path %></li>
+          <% end %>
+          <% if admin? %>
+            <li><%= link_to 'Admin Tools', admin_path %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <% if user_signed_in? %>
+    <div class="widget has-margin-4">
+      <div class="widget--header">
+        <%= link_to 'edit', '/subscriptions', class: 'widget--header-link' %>
+        Subscribe to Questions
+      </div>
+      <div class="widget--body">
+        <p>You can subscribe to
+          <%= link_to 'new questions', new_subscription_path(type: 'all', return_to: request.path) %>
+          or to
+          <%= link_to 'interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>.</p>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="widget has-margin-4">
+    <div class="widget--header">
+      <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
+    </div>
+    <div class="widget--body">
+      <p>
+        This site is part of the <a href="https://codidact.com">Codidact network</a>.
+        We have other sites too &mdash; take a look!
+      </p>
+    </div>
+  </div>
+</div>

@@ -26,17 +26,19 @@
         <% end %>
       </span>
     </summary>
-    <div class="flex-row jc-sb">
-      <% if event.before_state.present? %>
-        <div class="raw-markdown before">
-          <%= raw(sanitize(event.before_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
-        </div>
-      <% end %>
-      <% if event.after_state.present? %>
-        <div class="raw-markdown after">
-          <%= raw(sanitize(event.after_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
-        </div>
-      <% end %>
+    <div class="diff">
+      <div class="diff-section">
+        <% if event.before_state.present? %>
+          <div class="diff-old is-changed raw-markdown">
+            <%= raw(sanitize(event.before_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
+          </div>
+        <% end %>
+        <% if event.after_state.present? %>
+          <div class="diff-new is-changed raw-markdown">
+            <%= raw(sanitize(event.after_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </details>
 <% end %>

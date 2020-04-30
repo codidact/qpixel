@@ -3,5 +3,6 @@ class PostHistoryController < ApplicationController
     @post = Post.find(params[:id])
     @history = PostHistory.where(post_id: params[:id]).includes(:post_history_type, :user)
                           .order(created_at: :desc).paginate(per_page: 20, page: params[:page])
+    render layout: 'without_sidebar'
   end
 end
