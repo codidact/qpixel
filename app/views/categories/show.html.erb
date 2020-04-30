@@ -1,7 +1,7 @@
 <% content_for :title, @category.name %>
 
 <% if @category.short_wiki %>
-  <div class="has-font-size-larger has-color-tertiary-800">
+  <div class="is-lead">
     <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
   </div>
 <% end %>
