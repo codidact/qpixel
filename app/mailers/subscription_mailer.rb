@@ -3,8 +3,6 @@ class SubscriptionMailer < ApplicationMailer
     @subscription = params[:subscription]
     @questions = @subscription.questions&.includes(:user) || []
 
-    Rails.application.config.action_mailer.default_url_options = { host: @subscription.community.host }
-
     if @questions.empty?
       return
     end
