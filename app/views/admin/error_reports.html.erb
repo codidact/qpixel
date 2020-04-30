@@ -1,11 +1,8 @@
 <h1>Error Reports</h1>
-<p><%= pluralize(@error_count, 'error') %> reported, <%= pluralize(@report_count, 'full report') %> available</p>
+<p class="is-lead"><%= pluralize(@reports.count, 'error') %> logged</p>
 
-<% @reports.each do |uuid, rl| %>
-  <details>
-    <summary>
-      <code class="unformatted"><%= rl[0].sub(Regexp.new("^.*#{uuid}\\] "), '') %></code>
-    </summary>
-    <pre class="unformatted"><%= rl.map { |l| l.sub(Regexp.new("^.*#{uuid}\\] "), '') }.join("\n") %></pre>
-  </details>
+<% @reports.each do |report| %>
+  <%= render 'error_report', report: report %>
 <% end %>
+
+<%= will_paginate @reports, renderer: BootstrapPagination::Rails %>

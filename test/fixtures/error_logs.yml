@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  community: one
+  user: one
+  klass: MyString
+  message: MyText
+  backtrace: MyText
+  request_uri: MyText
+
+two:
+  community: two
+  user: two
+  klass: MyString
+  message: MyText
+  backtrace: MyText
+  request_uri: MyText

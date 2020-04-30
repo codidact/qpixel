@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_123008) do
+ActiveRecord::Schema.define(version: 2020_04_30_220944) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -96,6 +96,21 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
+  end
+
+  create_table "error_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.bigint "user_id"
+    t.string "klass"
+    t.text "message"
+    t.text "backtrace"
+    t.text "request_uri", null: false
+    t.string "host", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid"
+    t.index ["community_id"], name: "index_error_logs_on_community_id"
+    t.index ["user_id"], name: "index_error_logs_on_user_id"
   end
 
   create_table "flags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -339,6 +354,8 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
+  add_foreign_key "error_logs", "communities"
+  add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
   add_foreign_key "post_histories", "communities"

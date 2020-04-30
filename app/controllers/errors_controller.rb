@@ -3,7 +3,7 @@
 class ErrorsController < ApplicationController
   def error
     @exception = request.env['action_dispatch.exception']
-    @status = ActionDispatch::ExceptionWrapper.new(request.env, @exception).status_code
+    @status = ActionDispatch::ExceptionWrapper.new(request.env, @exception)&.status_code
     views = {
       403 => 'errors/forbidden',
       404 => 'errors/not_found',
@@ -11,7 +11,15 @@ class ErrorsController < ApplicationController
       422 => 'errors/unprocessable_entity',
       500 => 'errors/internal_server_error'
     }
-    puts "  Error type #{@exception.class}, status code #{@status}"
+    puts "  Error type #{@exception&.class}, status code #{@status}"
+
+    if @status == 500
+      @log = ErrorLog.create(community: RequestContext.community, user: current_user, klass: @exception&.class,
+                             message: @exception&.message, backtrace: @exception&.backtrace&.join("\n"),
+                             request_uri: request.original_url, host: request.raw_host_with_port,
+                             uuid: SecureRandom.uuid)
+    end
+
     render views[@status] || 'errors/error', formats: :html, status: @status, layout: 'without_sidebar'
   end
 end
