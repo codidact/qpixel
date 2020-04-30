@@ -15,9 +15,9 @@ class Subscription < ApplicationRecord
     when 'all'
       Question.unscoped.where(community: community).where('created_at >= ?', last_sent_at)
     when 'tag'
-      Tag.unscoped.where(community: community).find_by(name: qualifier)&.posts.unscoped.where(community: community)
+      Tag.unscoped.where(community: community).find_by(name: qualifier)&.posts&.unscoped&.where(community: community)
     when 'user'
-      User.find_by(id: qualifier)&.questions.unscoped.where(community: community)
+      User.find_by(id: qualifier)&.questions&.unscoped&.where(community: community)
     when 'interesting'
       Question.unscoped.where(community: community)
               .where('score >= ?', SiteSetting['InterestingSubscriptionScoreThreshold'])
