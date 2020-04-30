@@ -3,8 +3,7 @@ Contributing to QPixel follows broadly the same process as any other Codidact pr
 
 ## What needs doing?
  - **Bugs** are reported here on GitHub. Have a look at the open issues tagged `type: bug` to find something that needs fixing.
- - Any other development work will be listed in the [MVP TODO GitHub project board](https://github.com/codidact/qpixel/projects/2), 
-   and will have an issue attached to it.
+ - Any other development work will be listed in the [TODO list in the wiki](https://github.com/codidact/qpixel/wiki/TODO-list).
    
 Once you've picked what you're going to work on, please **leave a comment** on the issue to indicate you're planning to work on
 it; this helps us reduce wasted effort. If there's not already an issue for the feature you want to work on, please create one.

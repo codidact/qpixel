@@ -12,8 +12,7 @@ class SubscriptionMailer < ApplicationMailer
                 'Latest questions from your subscription on Writing'
               end
 
-    mail to: @subscription.user.email, subject: subject
-
     @subscription.update(last_sent_at: DateTime.now)
+    mail from: 'subscriptions@codidact.com', to: @subscription.user.email, subject: subject
   end
 end

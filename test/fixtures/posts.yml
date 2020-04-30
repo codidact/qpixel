@@ -20,6 +20,7 @@ question_two:
   post_type: question
   title: Q2 ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags_cache:
     - discussion
     - support
@@ -37,6 +38,7 @@ deleted:
   post_type: question
   title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
   body: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags_cache:
     - discussion
     - support
@@ -57,6 +59,7 @@ closed:
   post_type: question
   title: Q4C ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags_cache:
     - discussion
     - support
@@ -76,6 +79,7 @@ closed:
 answer_one:
   post_type: answer
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0
   parent: question_one
   user: standard_user
@@ -85,6 +89,7 @@ answer_one:
 answer_two:
   post_type: answer
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0
   parent: question_one
   user: editor
@@ -94,6 +99,7 @@ answer_two:
 really_old_answer:
   post_type: answer
   body: A3RO ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 2
   parent: question_one
   user: standard_user
@@ -104,6 +110,7 @@ really_old_answer:
 deleted_answer:
   post_type: answer
   body: A4D ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0
   parent: question_one
   user: closer
@@ -116,6 +123,7 @@ deleted_answer:
 policy_doc:
   post_type: policy_doc
   body: PD ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   title: Terms of Service
   doc_slug: tos
   user: admin
@@ -124,6 +132,7 @@ policy_doc:
 help_doc:
   post_type: help_doc
   body: HD ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   title: Asking Questions
   doc_slug: asking-questions
   user: admin
