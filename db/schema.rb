@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_28_181938) do
+ActiveRecord::Schema.define(version: 2020_04_30_123008) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 2020_04_28_181938) do
     t.integer "min_trust_level"
     t.string "button_text"
     t.string "color_code"
+    t.text "asking_guidance_override"
+    t.text "answering_guidance_override"
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
