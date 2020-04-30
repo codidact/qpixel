@@ -115,6 +115,17 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
     t.index ["user_id"], name: "index_flags_on_user_id"
   end
 
+  create_table "licenses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.boolean "default"
+    t.bigint "community_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_licenses_on_community_id"
+    t.index ["name"], name: "index_licenses_on_name"
+  end
+
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "content"
     t.string "link"
@@ -174,7 +185,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -184,6 +195,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
     t.bigint "close_reason_id"
     t.bigint "duplicate_post_id"
     t.bigint "category_id"
+    t.bigint "license_id"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
@@ -191,6 +203,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
     t.index ["deleted"], name: "index_posts_on_deleted"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
+    t.index ["license_id"], name: "index_posts_on_license_id"
     t.index ["parent_id"], name: "index_posts_on_parent_id"
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
@@ -331,6 +344,7 @@ ActiveRecord::Schema.define(version: 2020_04_30_123008) do
   add_foreign_key "post_histories", "communities"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
+  add_foreign_key "posts", "licenses"
   add_foreign_key "posts", "posts", column: "duplicate_post_id"
   add_foreign_key "privileges", "communities"
   add_foreign_key "site_settings", "communities"
