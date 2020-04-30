@@ -20,7 +20,7 @@ question_two:
   post_type: question
   title: Q2 ABCDEF GHIJKL MNOPQR STUVWX YZ
   body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-    body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   tags_cache:
     - discussion
     - support
