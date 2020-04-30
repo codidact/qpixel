@@ -17,7 +17,7 @@
   value_type: string
   category: SiteDetails
   description: >
-    Select a color to be used for categories that don't define a header color, and for category-neutral views. Valid are: turquoise, green, blue, purple, gray, yellow, orange, pink, red.
+    Select a color to be used for categories that don't define a header color, and for category-neutral views. Valid are: turquoise, green, blue, darkblue, purple, gray, bluegray, yellow, orange, pink, red.
 
 - name: SiteHeaderIsDark
   value: false
