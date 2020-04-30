@@ -1,0 +1,21 @@
+.error-code {
+  font-size: 8rem;
+  padding: 0;
+  margin: -0.3em 0;
+}
+
+.error-name {
+  font-variant: small-caps;
+  letter-spacing: 10px;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+}
+
+.error-trace {
+  background: #EEE;
+  height: unset;
+  max-height: unset;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

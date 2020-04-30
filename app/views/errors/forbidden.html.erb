@@ -1,9 +1,14 @@
-<% content_for :error_name, "Forbidden" %>
+<% content_for :title, 'Forbidden' %>
 
-<% content_for :error_message do %>
-  <p>You have been denied access to this resource because you lack the necessary privileges to access it. Once you gain
-  enough reputation, you will be granted access.</p>
-  <% if @privilege %>
-    <p>The required reputation for the '<%= @privilege.name %>' privilege is <%= @privilege.threshold %>.</p>
-  <% end %>
-<% end %>
+<h1 class="error-code has-color-red-500">403</h1>
+<h2 class="error-name has-color-red-400">forbidden</h2>
+
+<p class="is-lead">You don't have the necessary permissions to do that.</p>
+
+<p>You might have tried to access or change something you don't have access to.</p>
+
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>

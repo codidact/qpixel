@@ -135,9 +135,9 @@ Rails.application.routes.draw do
     delete ':id',                                  to: 'categories#destroy', as: :destroy_category
   end
 
-  match  '/403',                           to: 'errors#forbidden',                via: :all
-  match  '/404',                           to: 'errors#not_found',                via: :all
-  match  '/409',                           to: 'errors#conflict',                 via: :all
-  match  '/422',                           to: 'errors#unprocessable_entity',     via: :all
-  match  '/500',                           to: 'errors#internal_server_error',    via: :all
+  get   '403',                           to: 'errors#forbidden'
+  get   '404',                           to: 'errors#not_found'
+  get   '409',                           to: 'errors#conflict'
+  get   '422',                           to: 'errors#unprocessable_entity'
+  get   '500',                           to: 'errors#internal_server_error'
 end

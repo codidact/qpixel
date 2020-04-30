@@ -1,6 +1,17 @@
-<% content_for :title, "Unprocessable Entity" %>
+<% content_for :title, 'Unprocessable Entity' %>
 
-<% content_for :error_message do %>
-  <p>Your browser sent some information that the server cannot process. This often means that the token used to prevent
-    a type of website attack called CSRF was invalid. If you're logged in, you should log out and back in again.</p>
-<% end %>
+<h1 class="error-code has-color-red-500">422</h1>
+<h2 class="error-name has-color-red-400">unprocessable</h2>
+
+<p class="is-lead">Your request couldn't be processed.</p>
+
+<p>
+  Our server's sulking today. Log out and back in, and if this keeps happening, let us know
+  <a href="https://meta.codidact.com/" target="_blank" rel="noopener noreferrer">on Meta</a>.
+</p>
+
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>

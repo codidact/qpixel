@@ -1,6 +1,14 @@
-<% content_for :error_name, "Not Found" %>
+<% content_for :title, 'Not Found' %>
 
-<% content_for :error_message do %>
-  <p>The page you were looking for does not exist. Check the spelling of the address - if you typed the address in, you
-  may have typed it incorrectly. Alternatively, the page may have been moved or deleted.</p>
-<% end %>
+<h1 class="error-code has-color-red-500">404</h1>
+<h2 class="error-name has-color-red-400">not found</h2>
+
+<p class="is-lead">The page you're looking for couldn't be found.</p>
+
+<p>You might have followed an old link, or a post might have been deleted.</p>
+
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>
