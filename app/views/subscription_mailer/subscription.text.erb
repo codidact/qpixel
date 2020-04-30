@@ -3,13 +3,14 @@
 
 <% @questions.each do |question| %>
 score <%= " +-"[question.score <=> 0] + question.score.to_s %>: <%= question.title %>
-<%= question_url(question) %>
+<%= question_url(question, host: @subscription.community.host) %>
 
 <%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %><%= question.body.length > 150 ? '...' : '' %>
-— "<%= question.user.username %>" (<%= user_url(question.user) %>), <%= time_ago_in_words(question.created_at) %> ago
+— "<%= question.user.username %>" (<%= user_url(question.user, host: @subscription.community.host) %>),
+   <%= time_ago_in_words(question.created_at) %> ago
 
 ----------------------------------
 
 <% end %>
 
-Change your email settings or unsubscribe here: <%= subscriptions_url %>
+Change your email settings or unsubscribe here: <%= subscriptions_url(host: @subscription.community.host) %>

@@ -8,14 +8,14 @@
 <% @questions.each do |question| %>
   <h3 class="question-title">
     score <%= " +-"[question.score <=> 0] + question.score.to_s %>:
-    <%= link_to question.title, question_url(question) %>
+    <%= link_to question.title, question_url(question, host: @subscription.community.host) %>
   </h3>
   <p>
     <%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %>
     <%= question.body.length > 150 ? '...' : '' %>
   </p>
   <p>
-    &mdash; <%= link_to question.user.username, user_url(question.user) %>
+    &mdash; <%= link_to question.user.username, user_url(question.user, host: @subscription.community.host) %>
     <%= time_ago_in_words(question.created_at) %> ago
   </p>
 <% end %>
@@ -24,4 +24,5 @@
 <hr/>
 <br/>
 
-<small><%= link_to 'Change your email settings or unsubscribe here', subscriptions_url %></small>
+<small><%= link_to 'Change your email settings or unsubscribe here',
+                   subscriptions_url(host: @subscription.community.host) %></small>
