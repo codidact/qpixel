@@ -91,6 +91,7 @@
   <div class="category-header--tabs">
     <div class="container category-header--tabs-container">
       <% @header_categories.each do |cat| %>
+        <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
         <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
           <%= cat.name %>
           <% if user_signed_in? && cat.new_posts_for?(current_user) %>

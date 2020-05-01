@@ -35,10 +35,19 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :min_trust_level, 'Minimum trust level', class: 'form-element' %>
+    <%= f.label :min_trust_level, 'Minimum posting trust level', class: 'form-element' %>
     <span class="form-caption">
       Users must have at least this trust level to post in this category. Leave blank to allow
       anyone to post.
+    </span>
+    <%= f.number_field :min_trust_level, class: 'form-element', min: 0, max: 10, step: 1 %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :min_view_trust_level, 'Minimum visible trust level', class: 'form-element' %>
+    <span class="form-caption">
+      Users under this trust level cannot see that this category exists. Leave blank to leave the category public.
+      This can be different (higher or lower) than the minimum posting trust level.
     </span>
     <%= f.number_field :min_trust_level, class: 'form-element', min: 0, max: 10, step: 1 %>
   </div>

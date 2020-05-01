@@ -33,3 +33,16 @@ high_trust:
     - answer
   tag_set: main
   min_trust_level: 6
+
+admin_only:
+  community: sample
+  name: High Trust
+  short_wiki: High Trust
+  display_post_types:
+    - <%= Question.post_type_id %>
+  post_types:
+    - question
+    - answer
+  tag_set: main
+  min_trust_level: 6
+  min_view_trust_level: 6

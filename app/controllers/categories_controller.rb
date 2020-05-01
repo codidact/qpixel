@@ -1,6 +1,8 @@
 class CategoriesController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show, :homepage]
   before_action :verify_admin, except: [:index, :show, :homepage]
   before_action :set_category, except: [:index, :homepage, :new, :create]
+  before_action :verify_view_access, except: [:index, :homepage, :new, :create]
 
   def index
     @categories = Category.all.order(:name)
@@ -68,7 +70,13 @@ class CategoriesController < ApplicationController
 
   def category_params
     params.require(:category).permit(:name, :short_wiki, :tag_set_id, :is_homepage, :min_trust_level, :button_text,
-                                     :color_code, display_post_types: [], post_type_ids: [])
+                                     :color_code, :min_view_trust_level, display_post_types: [], post_type_ids: [])
+  end
+
+  def verify_view_access
+    unless (current_user&.trust_level || 0) >= (@category.min_view_trust_level || -1)
+      not_found
+    end
   end
 
   def set_list_posts
