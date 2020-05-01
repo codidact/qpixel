@@ -1,11 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  url: MyString
-  default: false
+cc_by_sa:
+  name: CC BY-SA
+  url: https://creativecommons.org/licenses/by-sa/4.0
+  default: true
+  community: sample
 
-two:
-  name: MyString
-  url: MyString
+cc_by_nc_sa:
+  name: CC BY-NC-SA
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0
   default: false
+  community: sample
