@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
     @users = if params[:search].present?
-               user_scope.where('username LIKE ?', "#{params[:search]}%")
+               user_scope.search(params[:search])
              else
                user_scope.order(sort_param => :desc)
              end.paginate(page: params[:page], per_page: 48)

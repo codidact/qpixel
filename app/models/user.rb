@@ -26,6 +26,10 @@ class User < ApplicationRecord
     includes(:posts, :avatar_attachment)
   end
 
+  def self.search(term)
+    where('username LIKE ?', "#{sanitize_sql_like(term)}%")
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
