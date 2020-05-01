@@ -156,6 +156,16 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to question_path(assigns(:post))
   end
 
+  test 'should ensure community_user is created while posting' do
+    sign_in users(:standard_user)
+    post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
+                            post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:post).user
+    assert_not_nil assigns(:post).user.community_user
+  end
+
   test 'should prevent user with insufficient trust level posting when category requires higher' do
     sign_in users(:standard_user)
     post :create, params: { category_id: categories(:high_trust).id, post_type_id: post_types(:question).id,
