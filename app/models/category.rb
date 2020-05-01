@@ -11,10 +11,6 @@ class Category < ApplicationRecord
 
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
-    ap "Category: #{id} (#{name})"
-    ap "Rails cache: #{Rails.cache.read(key)}"
-    ap "Redis: #{RequestContext.redis.get(key)}"
-    ap "Last activity: #{(posts.maximum(:last_activity) || Date.parse).iso8601}"
     Rails.cache.fetch key, expires_in: 5.minutes do
       Rack::MiniProfiler.step "Redis: category last visit (#{key})" do
         last_visit = RequestContext.redis.get(key)
