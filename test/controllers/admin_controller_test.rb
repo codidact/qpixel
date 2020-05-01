@@ -99,4 +99,11 @@ class AdminControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil assigns(:reports)
   end
+
+  test 'should search error reports' do
+    sign_in users(:admin)
+    get :error_reports, params: { uuid: error_logs(:without_context).uuid }
+    assert_response 200
+    assert_not_nil assigns(:reports)
+  end
 end

@@ -1,0 +1,43 @@
+with_full_context:
+  community: sample
+  user: standard_user
+  klass: ArgumentError
+  message: Server is having a sulk
+  backtrace: >
+    ABCDEF
+    GHIJKL
+    MNOPQR
+  request_uri: /
+  host: localhost:3000
+
+without_community:
+  user: standard_user
+  klass: ArgumentError
+  message: Server is having a sulk
+  backtrace: >
+    ABCDEF
+    GHIJKL
+    MNOPQR
+  request_uri: /
+  host: localhost:3000
+
+without_user:
+  community: sample
+  klass: ArgumentError
+  message: Server is having a sulk
+  backtrace: >
+    ABCDEF
+    GHIJKL
+    MNOPQR
+  request_uri: /
+  host: localhost:3000
+
+without_context:
+  klass: ArgumentError
+  message: Server is having a sulk
+  backtrace: >
+    ABCDEF
+    GHIJKL
+    MNOPQR
+  request_uri: /
+  host: localhost:3000
