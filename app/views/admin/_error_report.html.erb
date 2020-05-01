@@ -17,7 +17,7 @@
     (<%= report.community_id || 'nil' %>)<br/>
 
     <strong>User:</strong>
-    <%= report.user.username || '(anon)' %>
+    <%= report.user&.username || '(anon)' %>
     (<%= report.user_id || 'nil' %>)<br/>
 
     <strong>UUID:</strong>
