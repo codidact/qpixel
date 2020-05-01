@@ -42,7 +42,7 @@ class Subscription < ApplicationRecord
       errors.add(:qualifier, 'must provide a valid tag name for tag subscriptions')
     elsif type == 'user' && (!qualifier.present? || User.find_by(id: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid user ID for user subscriptions')
-    elsif type == 'category' && (!qualifier.present? || Category.find_by(name: qualifier).nil?)
+    elsif type == 'category' && (!qualifier.present? || Category.find_by(id: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid category ID for category subscriptions')
     end
   end
