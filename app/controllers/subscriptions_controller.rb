@@ -59,6 +59,8 @@ class SubscriptionsController < ApplicationController
       "new questions by the user '#{User.find_by(id: qualifier || params[:qualifier])&.username}'"
     when 'interesting'
       'new questions classed as interesting'
+    when 'category'
+      "new questions in the category '#{Category.find_by(id: qualifier || params[:qualifier])&.name}'"
     else
       'nothing, apparently. How did you get here, again?'
     end

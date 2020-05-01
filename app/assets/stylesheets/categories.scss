@@ -6,7 +6,14 @@
 
 .category-meta {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid $muted-graphic;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
