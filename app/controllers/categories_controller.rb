@@ -7,12 +7,13 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    set_last_visit(@category)
+    update_last_visit(@category)
     set_list_posts
   end
 
   def homepage
     @category = Category.where(is_homepage: true).first
+    update_last_visit(@category)
     set_list_posts
     render :show
   end
@@ -80,8 +81,9 @@ class CategoriesController < ApplicationController
                       .order(sort_param)
   end
 
-  def set_last_visit(category)
+  def update_last_visit(category)
     return unless current_user.present?
+
     key = "#{RequestContext.community_id}/#{current_user.id}/#{category.id}/last_visit"
     RequestContext.redis.set key, DateTime.now.to_s
     Rails.cache.delete key

@@ -9,7 +9,7 @@ class Category < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id] }
 
-  def has_new_posts_for(user)
+  def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
     ap "Category: #{id} (#{name})"
     ap "Rails cache: #{Rails.cache.read(key)}"
