@@ -9,6 +9,7 @@ jobs:
           MYSQL_USER: 'root'
           MYSQL_ROOT_PASSWORD: 'root'
           MYSQL_DATABASE: 'qpixel_test'
+      - image: circleci/redis:6.0.0
 
     working_directory: ~/qpixel
 
