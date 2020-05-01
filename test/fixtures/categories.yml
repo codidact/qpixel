@@ -21,3 +21,15 @@ meta:
     - question
     - answer
   tag_set: meta
+
+high_trust:
+  community: sample
+  name: High Trust
+  short_wiki: High Trust
+  display_post_types:
+    - <%= Question.post_type_id %>
+  post_types:
+    - question
+    - answer
+  tag_set: main
+  min_trust_level: 6

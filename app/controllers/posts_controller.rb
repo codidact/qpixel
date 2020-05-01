@@ -24,14 +24,14 @@ class PostsController < ApplicationController
 
     if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
       @post.errors.add(:base, "You don't have a high enough trust level to post in the #{@category.name} category.")
-      render :new
+      render :new, status: 403
       return
     end
 
     if @post.save
       redirect_to question_path(@post)
     else
-      render :new
+      render :new, status: 400
     end
   end
 

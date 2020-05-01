@@ -121,4 +121,49 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 302
     assert_redirected_to question_path(id: posts(:question_one).id, anchor: "answer-#{posts(:answer_one).id}")
   end
+
+  test 'should require sign in to write post' do
+    get :new, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should require sign in to create post' do
+    post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
+                            post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should allow signed in user to write post' do
+    sign_in users(:standard_user)
+    get :new, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_equal categories(:main).id, assigns(:post).category_id
+    assert_equal post_types(:question).id, assigns(:post).post_type_id
+  end
+
+  test 'should allow signed in user to create post' do
+    sign_in users(:standard_user)
+    post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
+                            post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+    assert_response 302
+    assert_not_nil assigns(:post)
+    assert_empty assigns(:post).errors.full_messages
+    assert_redirected_to question_path(assigns(:post))
+  end
+
+  test 'should prevent user with insufficient trust level posting when category requires higher' do
+    sign_in users(:standard_user)
+    post :create, params: { category_id: categories(:high_trust).id, post_type_id: post_types(:question).id,
+                            post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+    assert_response 403
+    assert_not_nil assigns(:post)
+    assert_equal true, assigns(:post).errors.any?
+    assert_equal true, assigns(:post).errors.full_messages[0].start_with?("You don't have a high enough trust level")
+  end
 end
