@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
   has_many :flags, dependent: :nullify
+  has_many :error_logs, dependent: :nullify
   has_one :community_user, -> { for_context }, autosave: true
   has_one_attached :avatar, dependent: :destroy
 
