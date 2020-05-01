@@ -34,4 +34,6 @@
   </p>
 
   <pre class="error-trace raw-markdown"><%= @exception.backtrace.select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
+
+  <%= console %>
 <% end %>
