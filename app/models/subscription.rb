@@ -34,6 +34,7 @@ class Subscription < ApplicationRecord
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def qualifier_presence
     return unless ['tag', 'user', 'category'].include? type
 
@@ -45,4 +46,5 @@ class Subscription < ApplicationRecord
       errors.add(:qualifier, 'must provide a valid category ID for category subscriptions')
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
