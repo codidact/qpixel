@@ -1,0 +1,28 @@
+<details>
+  <summary>
+    <strong><%= report.klass %></strong>
+    at <%= report.request_uri %>
+    <span class="has-float-right has-color-tertiary-600">
+      <%= report.created_at.iso8601 %>
+    </span>
+  </summary>
+
+  <p class="raw-markdown has-font-weight-bold has-color-red-700">
+    <%= report.klass %>: <%= report.message %>
+  </p>
+
+  <p>
+    <strong>Community:</strong>
+    <%= report.community&.name || '(nil)' %>
+    (<%= report.community_id || 'nil' %>)<br/>
+
+    <strong>User:</strong>
+    <%= report.user.username || '(anon)' %>
+    (<%= report.user_id || 'nil' %>)<br/>
+
+    <strong>UUID:</strong>
+    <span class="raw-markdown"><%= report.uuid %></span>
+  </p>
+
+  <pre class="error-trace raw-markdown"><%= report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
+</details>

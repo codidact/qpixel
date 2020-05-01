@@ -16,12 +16,12 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render 'errors/not_found', layout: 'errors', status: 404
+    render 'errors/not_found', layout: 'without_sidebar', status: 404
   end
 
   def verify_moderator
     if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-      render 'errors/not_found', layout: 'errors', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: 404
       return false
     end
     true
@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 
   def verify_admin
     if !user_signed_in? || !current_user.is_admin
-      render 'errors/not_found', layout: 'errors', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: 404
       return false
     end
     true
@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
 
   def verify_global_admin
     if !user_signed_in? || !current_user.is_global_admin
-      render 'errors/not_found', layout: 'errors', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: 404
       return false
     end
     true
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Privilege.find_by(name: name)
-      render 'errors/forbidden', layout: 'errors', privilege_name: name, status: 401 if render_error
+      render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 401 if render_error
       return false
     end
     true

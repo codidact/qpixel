@@ -1,11 +1,14 @@
 <h1>Error Reports</h1>
-<p><%= pluralize(@error_count, 'error') %> reported, <%= pluralize(@report_count, 'full report') %> available</p>
+<p class="is-lead"><%= pluralize(@reports.count, 'error') %> logged</p>
 
-<% @reports.each do |uuid, rl| %>
-  <details>
-    <summary>
-      <code class="unformatted"><%= rl[0].sub(Regexp.new("^.*#{uuid}\\] "), '') %></code>
-    </summary>
-    <pre class="unformatted"><%= rl.map { |l| l.sub(Regexp.new("^.*#{uuid}\\] "), '') }.join("\n") %></pre>
-  </details>
+<%= form_tag admin_error_reports_path, method: :get, class: 'has-margin-bottom-4' do %>
+  <%= label_tag :uuid, 'Search for an error UUID' %>
+  <%= text_field_tag :uuid, params[:uuid], class: 'form-element', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' %>
+  <%= submit_tag 'Search', class: 'button is-filled' %>
 <% end %>
+
+<% @reports.each do |report| %>
+  <%= render 'error_report', report: report %>
+<% end %>
+
+<%= will_paginate @reports, renderer: BootstrapPagination::Rails %>

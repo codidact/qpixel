@@ -1,5 +1,14 @@
-<% content_for :title, "Conflict" %>
+<% content_for :title, 'Conflict' %>
 
-<% content_for :error_message do %>
-  <p>The information supplied by your browser created a conflicting operation on the server, and can't be processed.</p>
-<% end %>
+<h1 class="error-code has-color-red-500">409</h1>
+<h2 class="error-name has-color-red-400">conflict</h2>
+
+<p class="is-lead">Your request conflicted with another request.</p>
+
+<p>Any changes you were trying to make are unlikely to have been saved - go back and try again.</p>
+
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>

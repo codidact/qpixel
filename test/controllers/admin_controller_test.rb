@@ -92,4 +92,11 @@ class AdminControllerTest < ActionController::TestCase
     end
     assert_equal 'OK', JSON.parse(response.body)['status']
   end
+
+  test 'should access error reports' do
+    sign_in users(:admin)
+    get :error_reports
+    assert_response 200
+    assert_not_nil assigns(:reports)
+  end
 end
