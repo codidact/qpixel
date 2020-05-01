@@ -8,6 +8,12 @@ class RequestContext
       Thread.current[:context] = {}
     end
 
+    # rubocop:disable Style/GlobalVars
+    def redis
+      $redis ||= Redis.new(YAML.load_file(Rails.root.join('config', 'database.yml'))["redis_#{Rails.env}"])
+    end
+    # rubocop:enable Style/GlobalVars
+
     %i[user community].each do |field|
       define_method "#{field}=" do |value|
         fetch[field] = value

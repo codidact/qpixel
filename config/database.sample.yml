@@ -18,3 +18,19 @@ test:
 production:
   <<: *default
   database: qpixel
+
+redis_default: &redis_default
+  host: 127.0.0.1
+  port: 6379
+  # Also supported: db, url, path, password. See https://github.com/redis/redis-rb for docs.
+
+redis_development:
+  <<: *redis_default
+
+redis_test:
+  <<: *redis_default
+
+redis_production:
+  # If you want to use a shared Redis server in prod (for load-balanced servers or whatever else),
+  # change this to those settings.
+  <<: *redis_default
