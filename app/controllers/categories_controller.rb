@@ -7,6 +7,7 @@ class CategoriesController < ApplicationController
   end
 
   def show
+    set_last_visit(@category)
     set_list_posts
   end
 
@@ -77,5 +78,12 @@ class CategoriesController < ApplicationController
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
                       .order(sort_param)
+  end
+
+  def set_last_visit(category)
+    return unless current_user.present?
+    key = "#{RequestContext.community_id}/#{current_user.id}/#{category.id}/last_visit"
+    RequestContext.redis.set key, DateTime.now.to_s
+    Rails.cache.delete key
   end
 end

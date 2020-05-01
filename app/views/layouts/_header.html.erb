@@ -82,8 +82,8 @@
 </div>
 
 <% if expandable? %>
-  <% cat = current_category %>
-  <% header_class = cat.color_code.present? ? cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+  <% current_cat = current_category %>
+  <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
 <% else %>
   <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
 <% end %>
@@ -91,22 +91,26 @@
   <div class="category-header--tabs">
     <div class="container category-header--tabs-container">
       <% @header_categories.each do |cat| %>
-        <%= link_to cat.name, category_path(cat),
-                    class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" %>
+        <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
+          <%= cat.name %>
+          <% if user_signed_in? && cat.has_new_posts_for(current_user) %>
+            <span class="has-color-red-700">⏺</span>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   </div>
   <% if expandable? %>
     <div class="container category-header--container">
-      <div class="category-header--name"><%= cat.name %></div>
+      <div class="category-header--name"><%= current_cat.name %></div>
       <div class="category-header--nav">
-        <%= link_to 'Posts', category_path(cat),
-                    class: "category-header--nav-item #{active?(cat) ? 'is-active' : ''}" %>
+        <%= link_to 'Posts', category_path(current_cat),
+                    class: "category-header--nav-item #{active?(current_cat) ? 'is-active' : ''}" %>
         <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
         <div class="category-header--nav-separator"></div>
-        <%= link_to create_post_path(category_id: cat.id, post_type_id: Question.post_type_id),
+        <%= link_to create_post_path(category_id: current_cat.id, post_type_id: Question.post_type_id),
                     class: 'category-header--nav-item is-button' do %>
-          <%= cat.button_text.present? ? cat.button_text : 'Create Post' %>
+          <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
         <% end %>
       </div>
     </div>

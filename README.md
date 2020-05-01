@@ -19,6 +19,9 @@ it before following these instructions.
     
 ### Install JS runtime
 If you already have Node.JS installed, you can skip this step. If not, [download and install it](https://nodejs.org/en/download/).
+
+### Install Redis
+If you haven't already got it, [download and install Redis](https://redis.io/download).
     
 ### Download QPixel
 Clone the repository and `cd` into the directory:
@@ -39,6 +42,9 @@ GRANT ALL ON qpixel.* TO qpixel@localhost;
 
 Copy `config/database.sample.yml` to `config/database.yml` and fill in the correct host, username, and password for your environment.
 If you've followed these instructions (i.e. you have installed MySQL locally), the correct host is `localhost` or `127.0.0.1`.
+
+You'll also need to fill in details for the Redis connection. If you've followed these instructions, the sample file should already
+contain the correct values for you, but if you've customised your setup you'll need to correct them.
 
 ### Set up QPixel
 Install gems:
