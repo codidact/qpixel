@@ -1,7 +1,9 @@
 <details>
-  <summary>
-    <strong><%= report.klass %></strong>
-    at <%= report.request_uri %>
+  <summary class="error-report-summary">
+    <span class="details">
+      <strong><%= report.klass %></strong><br/>
+      <span class="has-font-size-caption has-color-tertiary-600">at <%= report.request_uri %></span>
+    </span>
     <span class="has-float-right has-color-tertiary-600">
       <%= report.created_at.iso8601 %>
     </span>

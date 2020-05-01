@@ -19,3 +19,12 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.error-report-summary {
+  display: flex;
+  align-items: center;
+
+  .details {
+    flex: 1;
+  }
+}

@@ -44,7 +44,25 @@ img {
 
 details {
   border-top: 1px solid $muted-graphic;
-  padding: 0.5em;
+  padding: 0.5em 0.5em 0.5em 2em;
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary {
+    margin: 0 0 0 -2em;
+  }
+
+  & > summary:before {
+    display: inline-block;
+    padding: 0 0.5em;
+    content: '▶';
+  }
+
+  &[open] > summary:before {
+    content: '▼';
+  }
 
   &:last-of-type {
     border-bottom: 1px solid $muted-graphic;
