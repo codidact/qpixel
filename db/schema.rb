@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_02_001225) do
+ActiveRecord::Schema.define(version: 2020_05_02_152723) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(version: 2020_05_02_001225) do
     t.bigint "community_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "enabled", default: true
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
   end

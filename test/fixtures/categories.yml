@@ -10,6 +10,7 @@ main:
     - question
     - answer
   tag_set: main
+  license: cc_by_sa
 
 meta:
   community: sample
@@ -21,6 +22,7 @@ meta:
     - question
     - answer
   tag_set: meta
+  license: cc_by_sa
 
 high_trust:
   community: sample
@@ -33,6 +35,7 @@ high_trust:
     - answer
   tag_set: main
   min_trust_level: 6
+  license: cc_by_sa
 
 admin_only:
   community: sample
@@ -46,3 +49,4 @@ admin_only:
   tag_set: main
   min_trust_level: 6
   min_view_trust_level: 6
+  license: cc_by_sa

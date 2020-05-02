@@ -77,8 +77,8 @@
       Posts in this category will default to this license. Users can still select a different license
       if they choose to.
     </span>
-    <%= f.select :license_id, options_for_select(License.default_order.map { |l| [l.name, l.id] }, selected: @category.license_id),
-                 {}, class: 'form-element' %>
+    <%= f.select :license_id, options_for_select(License.enabled.default_order.map { |l| [l.name, l.id] },
+                                                 selected: @category.license_id), {}, class: 'form-element' %>
   </div>
 
   <%= f.submit 'Save', class: 'button is-filled' %>

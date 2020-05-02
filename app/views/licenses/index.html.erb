@@ -1,0 +1,21 @@
+<h1>Licenses</h1>
+<p>
+  Here you can control which licenses are available for users to choose from when writing posts.
+  Once a license has been added, you can't delete it, but if you want to stop it being used on any more posts,
+  you can disable it.
+</p>
+
+<% @licenses.each do |license| %>
+  <%= render 'license', license: license %>
+<% end %>
+
+<div class="notice is-warning">
+  <p><i class="fas fa-exclamation-triangle"></i> <strong>Adding licenses</strong></p>
+  <p>
+    When you're adding a license, it's <em>strongly</em> recommended that you don't use licenses that contain clauses
+    that prohibit the making of derivative works, such as CC BY-ND or CC BY-NC-ND. These licenses effectively prohibit
+    other users editing content licensed under them, but since there is no support in this software for disabling editing,
+    using such licenses puts you and your users at risk of copyright violations.
+  </p>
+  <p><%= link_to 'Add a license', new_license_path, class: 'button is-outlined' %></p>
+</div>

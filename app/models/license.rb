@@ -1,6 +1,9 @@
 class License < ApplicationRecord
   include CommunityRelated
 
+  scope :enabled, -> { where(enabled: true) }
+  scope :disabled, -> { where(enabled: false) }
+
   validates :name, uniqueness: { scope: [:community_id] }
 
   def self.default_order(category = nil)

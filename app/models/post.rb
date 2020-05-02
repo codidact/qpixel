@@ -23,6 +23,7 @@ class Post < ApplicationRecord
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
   validate :category_allows_post_type
+  validate :license_active
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -140,6 +141,12 @@ class Post < ApplicationRecord
     Rails.cache.delete "posts/#{id}/description"
     if parent_id.present?
       Rails.cache.delete "posts/#{parent_id}/description"
+    end
+  end
+
+  def license_active
+    unless license&.enabled?
+      errors.add(:license, 'is not available for use')
     end
   end
 end
