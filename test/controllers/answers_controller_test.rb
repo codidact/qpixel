@@ -13,7 +13,8 @@ class AnswersControllerTest < ActionController::TestCase
 
   test 'should create new answer' do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body_markdown: 'ABCDEF ABCDEF ABCDEF ABCDEF GH' }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: 'ABCDEF ABCDEF ABCDEF ABCDEF GH', license_id: licenses(:cc_by_sa).id },
+                            id: posts(:question_one).id }
     assert_not_nil assigns(:answer)
     assert_not_nil assigns(:question)
     assert_response(302)
@@ -169,13 +170,15 @@ class AnswersControllerTest < ActionController::TestCase
 
   test 'should block whitespace answers' do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body_markdown: ' ' * 31 }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: ' ' * 31, license_id: licenses(:cc_by_sa).id },
+                            id: posts(:question_one).id }
     assert_response(422)
   end
 
   test 'should block long answers' do
     sign_in users(:standard_user)
-    post :create, params: { answer: { body_markdown: 'A' * (3e4 + 1) }, id: posts(:question_one).id }
+    post :create, params: { answer: { body_markdown: 'A' * (3e4 + 1), license_id: licenses(:cc_by_sa).id },
+                            id: posts(:question_one).id }
     assert_response(422)
   end
 end

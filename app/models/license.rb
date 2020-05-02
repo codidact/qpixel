@@ -8,7 +8,7 @@ class License < ApplicationRecord
 
   def self.default_order(category = nil)
     if category.present?
-      License.all.order(sanitize_sql_array(['id = ? DESC', category.license_id]))
+      License.all.order(Arel.sql(sanitize_sql_array(['id = ? DESC', category.license_id])))
              .order(default: :desc)
     else
       License.all.order(default: :desc)

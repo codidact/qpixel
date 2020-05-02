@@ -56,7 +56,7 @@ class LicensesControllerTest < ActionController::TestCase
     sign_in users(:admin)
     get :new
     assert_response 200
-    assert_not_nil assigns(:licenses)
+    assert_not_nil assigns(:license)
   end
 
   test 'should allow admins to access edit' do

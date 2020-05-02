@@ -145,7 +145,7 @@ class Post < ApplicationRecord
   end
 
   def license_active
-    unless license&.enabled?
+    unless license.nil? || license.enabled?
       errors.add(:license, 'is not available for use')
     end
   end
