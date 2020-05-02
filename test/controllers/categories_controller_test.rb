@@ -38,7 +38,8 @@ class CategoriesControllerTest < ActionController::TestCase
   test 'should require authentication to create category' do
     post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue' } }
+                                        tag_set: tag_sets(:main).id, color_code: 'blue',
+                                        license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_redirected_to new_user_session_path
   end
@@ -47,7 +48,8 @@ class CategoriesControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue' } }
+                                        tag_set: tag_sets(:main).id, color_code: 'blue',
+                                        license_id: licenses(:cc_by_sa).id } }
     assert_response 404
   end
 
@@ -55,7 +57,8 @@ class CategoriesControllerTest < ActionController::TestCase
     sign_in users(:admin)
     post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue' } }
+                                        tag_set: tag_sets(:main).id, color_code: 'blue',
+                                        license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:category).id

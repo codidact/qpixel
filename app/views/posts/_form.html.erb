@@ -47,6 +47,29 @@
                  data: { tag_set: @category.tag_set_id } %>
   </div>
 
+  <div class="form-group">
+    <%= f.label :license_id, 'License', class: 'form-element' %>
+    <span class="form-caption">
+      <% site_default = License.site_default %>
+      <% category_default = @category.license %>
+      <% if site_default.present? %>
+        site default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= site_default.id %>">
+          <%= site_default.name %>
+        </a>
+      <% end %>
+      <% if site_default.present? && category_default.present? %>
+        &middot;
+      <% end %>
+      <% if category_default.present? %>
+        category default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= category_default.id %>">
+          <%= category_default.name %>
+        </a>
+      <% end %>
+    </span>
+    <%= f.select :license_id, options_for_select(License.default_order(@category).map { |l| [l.name, l.id] },
+                                                 selected: @post.license_id), {}, class: 'form-element' %>
+  </div>
+
   <div class="actions">
     <%= f.submit "Save Post in #{@category.name}", class: 'button is-filled is-large' %>
   </div>

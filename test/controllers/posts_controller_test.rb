@@ -131,7 +131,8 @@ class PostsControllerTest < ActionController::TestCase
   test 'should require sign in to create post' do
     post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
                             post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
-                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'],
+                                    license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_redirected_to new_user_session_path
   end
@@ -149,7 +150,8 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
                             post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
-                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'],
+                                    license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_not_nil assigns(:post)
     assert_empty assigns(:post).errors.full_messages
@@ -160,7 +162,8 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { category_id: categories(:main).id, post_type_id: post_types(:question).id,
                             post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
-                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'],
+                                    license_id: licenses(:cc_by_sa).id } }
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:post).user
     assert_not_nil assigns(:post).user.community_user
@@ -170,7 +173,8 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { category_id: categories(:high_trust).id, post_type_id: post_types(:question).id,
                             post: { body_markdown: 'ABCD EFGH IJKL MNOP QRST UVWX YZ', title: 'ABCD EFGH IJKL M',
-                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'] } }
+                                    tags_cache: ['discussion', 'support', 'bug', 'feature-request'],
+                                    license_id: licenses(:cc_by_sa).id } }
     assert_response 403
     assert_not_nil assigns(:post)
     assert_equal true, assigns(:post).errors.any?
