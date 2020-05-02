@@ -38,7 +38,7 @@ class QuestionsController < ApplicationController
                end.user_sort({ term: params[:sort], default: :score },
                              score: :score, age: :created_at)
                .paginate(page: params[:page], per_page: 20)
-               .includes(:votes, :user, :comments)
+               .includes(:votes, :user, :comments, :license)
 
     @close_reasons = CloseReason.active
   end
