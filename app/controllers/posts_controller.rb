@@ -120,7 +120,7 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    p = params.require(:post).permit(:title, :body_markdown, :post_type_id, tags_cache: [])
+    p = params.require(:post).permit(:title, :body_markdown, :post_type_id, :license_id, tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
