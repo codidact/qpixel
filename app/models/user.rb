@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_one_attached :avatar, dependent: :destroy
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
+  validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
 

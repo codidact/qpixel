@@ -210,6 +210,40 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should require authentication to get mobile login' do
+    get :qr_login_code
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should allow signed in users to get mobile login' do
+    sign_in users(:standard_user)
+    get :qr_login_code
+    assert_response 200
+    assert_not_nil assigns(:token)
+    assert_not_nil assigns(:qr_code)
+    assert_equal 1, User.where(login_token: assigns(:token)).count
+    assert @controller.current_user.login_token_expires_at <= 5.minutes.from_now,
+           'Login token expiry too long'
+  end
+
+  test 'should sign in user in response to valid mobile login request' do
+    get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz01' }
+    assert_response 302
+    assert_equal 'You are now signed in.', flash[:success]
+    assert_equal users(:closer).id, @controller.current_user.id
+    assert_nil @controller.current_user.login_token
+    assert_nil @controller.current_user.login_token_expires_at
+  end
+
+  test 'should refuse to sign in user using expired token' do
+    get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz02' }
+    assert_response 404
+    assert_not_nil flash[:danger]
+    assert_equal true, flash[:danger].start_with?("That login link isn't valid.")
+    assert_nil @controller.current_user&.id
+  end
+
   def create_other_user
     other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')

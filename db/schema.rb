@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_01_215447) do
+ActiveRecord::Schema.define(version: 2020_05_03_110754) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -48,7 +48,9 @@ ActiveRecord::Schema.define(version: 2020_05_01_215447) do
     t.text "asking_guidance_override"
     t.text "answering_guidance_override"
     t.integer "min_view_trust_level"
+    t.bigint "license_id"
     t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
 
@@ -138,6 +140,7 @@ ActiveRecord::Schema.define(version: 2020_05_01_215447) do
     t.bigint "community_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "enabled", default: true
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
   end
@@ -332,6 +335,8 @@ ActiveRecord::Schema.define(version: 2020_05_01_215447) do
     t.integer "se_acct_id"
     t.boolean "transferred_content", default: false
     t.integer "trust_level"
+    t.string "login_token"
+    t.datetime "login_token_expires_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"
@@ -351,6 +356,7 @@ ActiveRecord::Schema.define(version: 2020_05_01_215447) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
