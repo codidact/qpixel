@@ -9,11 +9,9 @@ class RequestContext
     end
 
     def redis
-      begin
-        $redis ||= Redis.new(YAML.load_file(Rails.root.join('config', 'database.yml'))["redis_#{Rails.env}"])
-      rescue NoMethodError
-        raise LoadError, "You don't appear to have any Redis config in config/database.yml"
-      end
+      $redis ||= Redis.new(YAML.load_file(Rails.root.join('config', 'database.yml'))["redis_#{Rails.env}"])
+    rescue NoMethodError
+      raise LoadError, "You don't appear to have any Redis config in config/database.yml"
     end
 
     %i[user community].each do |field|
