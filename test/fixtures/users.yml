@@ -15,6 +15,8 @@ closer:
   twitter: closer
   is_global_admin: false
   is_global_moderator: false
+  login_token: abcdefghijklmnopqrstuvwxyz01
+  login_token_expires_at: 2099-01-01T00:00:00.000000Z
 
 editor:
   email: editor@qpixel-test.net
@@ -23,6 +25,8 @@ editor:
   username: editor
   is_global_admin: false
   is_global_moderator: false
+  login_token: abcdefghijklmnopqrstuvwxyz02
+  login_token_expires_at: 2000-01-01T00:00:00.000000Z
 
 deleter:
   email: delete@qpixel-test.net

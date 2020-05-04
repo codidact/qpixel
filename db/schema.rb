@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_02_152723) do
+ActiveRecord::Schema.define(version: 2020_05_03_110754) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -335,6 +335,8 @@ ActiveRecord::Schema.define(version: 2020_05_02_152723) do
     t.integer "se_acct_id"
     t.boolean "transferred_content", default: false
     t.integer "trust_level"
+    t.string "login_token"
+    t.datetime "login_token_expires_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"

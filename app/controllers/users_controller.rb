@@ -1,7 +1,8 @@
 require 'net/http'
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content]
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
+                                            :qr_login_code]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
 
@@ -191,6 +192,26 @@ class UsersController < ApplicationController
     end
     flash[:success] = 'Your content is being transferred to you.'
     redirect_to edit_user_profile_path
+  end
+
+  def qr_login_code
+    @token = SecureRandom.urlsafe_base64(64)
+    @qr_code = RQRCode::QRCode.new(qr_login_url(@token))
+    current_user.update(login_token: @token, login_token_expires_at: 5.minutes.from_now)
+  end
+
+  def do_qr_login
+    user = User.find_by(login_token: params[:token])
+    if user&.login_token_expires_at&.present? && user.login_token_expires_at >= DateTime.now
+      flash[:success] = 'You are now signed in.'
+      user.update(login_token: nil, login_token_expires_at: nil)
+      sign_in user
+      redirect_to root_path
+    else
+      flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that," \
+                       'get a new code and try again.'
+      not_found
+    end
   end
 
   private

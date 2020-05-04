@@ -23,6 +23,7 @@ gem 'groupdate', '~> 4.3'
 
 # View stuff.
 gem 'jbuilder', '~> 2.10'
+gem 'rqrcode', '~> 1.1'
 gem 'will_paginate', '~> 3.3'
 gem 'will_paginate-bootstrap', '~> 1.0'
 

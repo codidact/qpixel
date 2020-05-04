@@ -35,6 +35,51 @@
     </div>
 
     <div class="grid--cell is-flexible has-padding-2">
+      <% if is_question && post.closed %>
+        <div class="notice is-warning has-margin-2">
+          <h3 class="has-font-weight-normal">
+            <strong>closed</strong>
+            <% unless post.close_reason.nil? %>
+              as <%= post.close_reason.name %>
+            <% end %>
+            by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
+            on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+          </h3>
+          <% unless post.close_reason.nil? %>
+            <p>
+              <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+              <% if post.close_reason.requires_other_post %>
+                See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
+              <% end %>
+            </p>
+          <% end %>
+          <p>
+            This question was closed; new answers can no longer be added.
+            Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.
+          </p>
+        </div>
+      <% end %>
+
+      <% if post.deleted %>
+        <div class="notice is-warning has-margin-2">
+          <h3 class="has-font-weight-normal">
+            <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
+            on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
+          </h3>
+          <% if post.deleted_by.id == post.user.id %>
+            <p>
+              The author of this post decided to delete it. It can only be seen by users with the delete privilege.
+            </p>
+          <% else %>
+            <p>
+              This post was deleted because it violates the rules of this site. It can only be seen by users with the
+              delete privilege.
+            </p>
+          <% end %>
+
+          <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
+        </div>
+      <% end %>
 
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
@@ -174,51 +219,6 @@
               </p>
             </div>
           <% end %>
-
-          <% if is_question && post.closed %>
-            <div class="notice is-warning has-margin-2">
-              <h3 class="has-font-weight-normal">
-                <strong>closed</strong>
-                <% unless post.close_reason.nil? %>
-                  as <%= post.close_reason.name %>
-                <% end %>
-                by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
-                on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
-              </h3>
-              <% unless post.close_reason.nil? %>
-                <p>
-                  <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
-                  <% if post.close_reason.requires_other_post %>
-                    See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
-                  <% end %>
-                </p>
-              <% end %>
-              <p>
-                This question was closed; new answers can no longer be added.
-                Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.
-              </p>
-            </div>
-          <% end %>
-  
-          <% if post.deleted %>
-            <div class="notice is-warning has-margin-2">
-              <h3 class="has-font-weight-normal">
-                <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
-                on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
-              </h3>
-              <% if post.deleted_by.id == post.user.id %>
-              <p>
-                The author of this post decided to delete it. It can only be seen by users with the delete privilege.
-              </p>
-              <% else %>
-              <p>
-                This post was deleted because it violates the rules of this site. It can only be seen by users with the delete privilege.
-              </p>
-              <% end %>
-
-              <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
-           </div>
-           <% end %>
        </div>
          <div class="post--comments has-padding-4">
           <h4 class="has-margin-0">

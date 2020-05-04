@@ -84,6 +84,8 @@ Rails.application.routes.draw do
   get    'users',                          to: 'users#index', as: :users
   get    'users/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
   post   'users/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
+  get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
+  get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
   get    'users/:id',                      to: 'users#show', as: :user
   get    'users/:id/flags',                to: 'flags#history', as: :flag_history
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user

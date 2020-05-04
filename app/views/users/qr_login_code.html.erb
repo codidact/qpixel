@@ -1,0 +1,8 @@
+<h1>Mobile Sign In</h1>
+<p>Passwords too much effort? Scan this QR code with your device to sign in there.</p>
+
+<div class="has-text-align-center">
+  <svg height="244" width="244">
+    <%= raw(@qr_code.as_svg(standalone: false, module_size: 4)) %>
+  </svg>
+</div>
