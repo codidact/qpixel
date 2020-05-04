@@ -1,0 +1,12 @@
+<h1>Confirm your code</h1>
+<p>Last step: to confirm that it's really you trying to remove security from your account, enter the code shown in your
+  authenticator app.</p>
+
+<%= form_tag two_factor_confirm_disable_path do %>
+  <div class="form-group">
+    <%= label_tag 'code', 'Code', class: 'form-element' %>
+    <%= text_field_tag 'code', '', class: 'form-element' %>
+  </div>
+
+  <%= submit_tag 'Confirm', class: 'button is-filled' %>
+<% end %>

@@ -1,0 +1,9 @@
+<h1>Add Codidact to your authenticator</h1>
+<p>
+  Your account has been set up with the necessary credentials to use 2FA. You now need to add your account to
+  your mobile authenticator. Scan the QR code below with your authenticator app and you should be set to go.
+</p>
+
+<div class="has-text-align-center"><img alt src="<%= @qr_uri %>" width="300" /></div>
+
+<%= link_to 'Done, next step', two_factor_enable_code_path, class: 'button is-filled' %>

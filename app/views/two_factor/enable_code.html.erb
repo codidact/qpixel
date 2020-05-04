@@ -1,0 +1,11 @@
+<h1>Confirm your code</h1>
+<p>Last step: to confirm that you're all correctly set up, enter the code shown in your mobile authenticator below.</p>
+
+<%= form_tag two_factor_confirm_enable_path do %>
+  <div class="field">
+    <%= label_tag 'code', 'Code', class: 'form-element' %>
+    <%= text_field_tag 'code', '', class: 'form-element' %>
+  </div>
+
+  <%= submit_tag 'Confirm', class: 'button is-filled' %>
+<% end %>

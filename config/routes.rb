@@ -81,6 +81,15 @@ Rails.application.routes.draw do
 
   get    'tags',                           to: 'tags#index', as: :tags
 
+  scope 'users/two-factor' do
+    root                                   to: 'two_factor#tf_status', as: :two_factor_status
+    post 'enable',                         to: 'two_factor#enable_2fa', as: :two_factor_enable
+    get  'enable/code',                    to: 'two_factor#enable_code', as: :two_factor_enable_code
+    post 'enable/code',                    to: 'two_factor#confirm_enable_code', as: :two_factor_confirm_enable
+    get  'disable/code',                   to: 'two_factor#disable_code', as: :two_factor_disable_code
+    post 'disable/code',                   to: 'two_factor#confirm_disable_code', as: :two_factor_confirm_disable
+  end
+
   get    'users',                          to: 'users#index', as: :users
   get    'users/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
   post   'users/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
