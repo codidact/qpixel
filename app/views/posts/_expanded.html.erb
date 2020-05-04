@@ -234,7 +234,9 @@
   
           <div class="post--comments-links has-margin-top-1">
             <% if comments.count > 5 %>
-              <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">Show more comments</a>
+              <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">
+                <strong>Show <%= comments.count - 5 %> more comments</strong>
+              </a>
               <% if user_signed_in? %>
                 &middot;
               <% end %>
