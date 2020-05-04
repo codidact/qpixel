@@ -84,7 +84,7 @@
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
   
-        <div class="post--meta">
+        <div class="post--meta has-margin-bottom-4">
           <div class="post--author has-float-right has-color-tertiary">
             <div title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</div>
             <div>
@@ -102,6 +102,12 @@
                 <% next if tag.nil? || tag.empty? %>
                 <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
               <% end %>
+            </div>
+          <% end %>
+          <% if post.license.present? %>
+            <div class="post--licensing has-margin-left-2">
+              <i class="fas fa-balance-scale" title="License"></i>
+              <%= link_to post.license.name, post.license.url %>
             </div>
           <% end %>
         </div>

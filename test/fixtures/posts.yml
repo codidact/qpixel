@@ -15,6 +15,7 @@ question_one:
   user: standard_user
   community: sample
   category: main
+  license: cc_by_sa
 
 question_two:
   post_type: question
@@ -33,6 +34,7 @@ question_two:
   user: editor
   community: sample
   category: main
+  license: cc_by_sa
 
 deleted:
   post_type: question
@@ -54,6 +56,7 @@ deleted:
   deleted_by: admin
   community: sample
   category: main
+  license: cc_by_sa
 
 closed:
   post_type: question
@@ -75,6 +78,7 @@ closed:
   user: standard_user
   community: sample
   category: main
+  license: cc_by_sa
 
 answer_one:
   post_type: answer
@@ -85,6 +89,7 @@ answer_one:
   user: standard_user
   community: sample
   category: main
+  license: cc_by_sa
 
 answer_two:
   post_type: answer
@@ -95,6 +100,7 @@ answer_two:
   user: editor
   community: sample
   category: main
+  license: cc_by_sa
 
 really_old_answer:
   post_type: answer
@@ -106,6 +112,7 @@ really_old_answer:
   created_at: 2000-01-01T00:00:00.000000Z
   community: sample
   category: main
+  license: cc_by_sa
 
 deleted_answer:
   post_type: answer
@@ -119,6 +126,7 @@ deleted_answer:
   deleted_by: admin
   community: sample
   category: main
+  license: cc_by_sa
 
 policy_doc:
   post_type: policy_doc
@@ -128,6 +136,7 @@ policy_doc:
   doc_slug: tos
   user: admin
   community: sample
+  license: cc_by_sa
 
 help_doc:
   post_type: help_doc
@@ -137,3 +146,4 @@ help_doc:
   doc_slug: asking-questions
   user: admin
   community: sample
+  license: cc_by_sa

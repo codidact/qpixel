@@ -10,6 +10,7 @@ class Post < ApplicationRecord
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
   belongs_to :category, required: false
+  belongs_to :license, required: false
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -22,6 +23,7 @@ class Post < ApplicationRecord
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
   validate :category_allows_post_type
+  validate :license_available
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -139,6 +141,15 @@ class Post < ApplicationRecord
     Rails.cache.delete "posts/#{id}/description"
     if parent_id.present?
       Rails.cache.delete "posts/#{parent_id}/description"
+    end
+  end
+
+  def license_available
+    # Don't validate license on edits
+    return unless id.nil?
+
+    unless license.nil? || license.enabled?
+      errors.add(:license, 'is not available for use')
     end
   end
 end

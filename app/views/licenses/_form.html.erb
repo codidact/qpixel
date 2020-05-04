@@ -1,0 +1,28 @@
+<%= form_for @license, url: submit_path do |f| %>
+  <div class="form-group">
+    <%= f.label :name, 'Name', class: 'form-element' %>
+    <span class="form-caption">
+      This is what users will see when selecting licenses. Use the full, official name of the license.
+    </span>
+    <%= f.text_field :name, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :url, 'URL', class: 'form-element' %>
+    <span class="form-caption">
+      It's generally a good idea to link to the full legal code of the license, but if there's a human-readable
+      summary available that <em>also</em> links to the legal code, you can use that instead.
+    </span>
+    <%= f.text_field :url, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.check_box :default, class: 'form-checkbox-element' %>
+    <%= f.label :default, 'Default license?' %>
+    <span class="form-caption">
+      Set this license as the site-default license. A site can only have one default license.
+    </span>
+  </div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+<% end %>

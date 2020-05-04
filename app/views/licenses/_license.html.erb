@@ -1,0 +1,21 @@
+<div class="widget">
+  <div class="widget--body">
+    <h3>
+      <%= license.name %>
+      <% if license.default? %>
+        <span class="badge is-tag is-filled">default</span>
+      <% end %>
+      <% unless license.enabled? %>
+        <span class="badge is-tag is-yellow">
+          <i class="fas fa-exclamation-triangle"></i> Disabled
+        </span>
+      <% end %>
+    </h3>
+    <p><%= link_to license.url %></p>
+    <p>
+      <%= link_to 'Edit', edit_license_path(license), class: 'button is-outlined' %>
+      <%= link_to license.enabled? ? 'Disable' : 'Enable', toggle_license_path(license), class: 'button is-outlined',
+                  method: :post %>
+    </p>
+  </div>
+</div>

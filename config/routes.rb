@@ -27,6 +27,15 @@ Rails.application.routes.draw do
     post   ':id/edit',                     to: 'tag_sets#update', as: :update_tag_set
   end
 
+  scope 'admin/licenses' do
+    root                                   to: 'licenses#index', as: :licenses
+    get    'new',                          to: 'licenses#new', as: :new_license
+    post   'new',                          to: 'licenses#create', as: :create_license
+    get    ':id/edit',                     to: 'licenses#edit', as: :edit_license
+    patch  ':id/edit',                     to: 'licenses#update', as: :update_license
+    post   ':id/toggle',                   to: 'licenses#toggle', as: :toggle_license
+  end
+
   get    'mod',                            to: 'moderator#index', as: :moderator
   get    'mod/deleted/questions',          to: 'moderator#recently_deleted_questions', as: :recently_deleted_questions
   get    'mod/deleted/answers',            to: 'moderator#recently_deleted_answers', as: :recently_deleted_answers

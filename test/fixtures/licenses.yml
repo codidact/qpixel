@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+cc_by_sa:
+  name: CC BY-SA
+  url: https://creativecommons.org/licenses/by-sa/4.0
+  default: true
+  community: sample
+  enabled: true
+
+cc_by_nc_sa:
+  name: CC BY-NC-SA
+  url: https://creativecommons.org/licenses/by-nc-sa/4.0
+  default: false
+  community: sample
+  enabled: true
+
+not_in_use:
+  name: not in use
+  url: not in use
+  default: false
+  community: sample
+  enabled: true
+
+disabled:
+  name: disabled
+  url: disabled
+  default: false
+  community: sample
+  enabled: false
