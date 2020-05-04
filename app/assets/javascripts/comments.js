@@ -10,13 +10,15 @@ $(() => {
   $('.js-more-comments').on('click', async evt => {
     evt.preventDefault();
     const $tgt = $(evt.target);
-    const postId = $tgt.attr('data-post-id');
+    const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
+    const postId = $anchor.attr('data-post-id');
 
     const resp = await fetch(`/comments/post/${postId}`, {
       headers: { 'Accept': 'text/html' }
     });
     const data = await resp.text();
     $tgt.parents('.post--comments').find('.post--comments-container').html(data);
+    $anchor.remove();
   });
 
   $('.comment-form').on('ajax:success', async (evt, data) => {
