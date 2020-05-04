@@ -208,7 +208,7 @@ class UsersController < ApplicationController
       sign_in user
       redirect_to root_path
     else
-      flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that," \
+      flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
       not_found
     end
