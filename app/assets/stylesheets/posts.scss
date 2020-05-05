@@ -65,3 +65,13 @@ h1 .badge.is-tag.is-master-tag {
   border-bottom: 1px solid $muted-graphic;
   margin-bottom: 1em;
 }
+
+.post-field.widget--body {
+  margin: -1px -1px 3px -1px;
+  border-radius: 0;
+  width: calc(100% + 2px);
+
+  + .widget--footer {
+    margin-bottom: 0;
+  }
+}

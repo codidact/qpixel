@@ -26,12 +26,7 @@
     <%= f.text_field :title, class: "form-element" %>
   </div>
 
-  <div class="form-group">
-    <%= f.label :body_markdown, 'Body', class: "form-element" %>
-    <%= render "posts/mdhint" %>
-    <%= render 'shared/markdown_tools' %>
-    <%= f.text_area :body_markdown, { class: "form-element is-large post-field js-post-field", rows: 15 } %>
-  </div>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
 
   <div class="post-preview"></div>
 

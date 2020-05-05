@@ -34,12 +34,7 @@
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
-  <div class="form-group has-padding-2">
-    <%= f.label :profile_markdown, 'Profile' %>
-    <%= render "posts/mdhint" %>
-    <%= render 'shared/markdown_tools' %>
-    <%= f.text_area :profile_markdown, class: 'form-element post-field is-large js-post-field' %>
-  </div>
+  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile' %>
 
   <div class="post-preview"></div>
 
