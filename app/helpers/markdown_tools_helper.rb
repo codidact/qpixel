@@ -7,7 +7,7 @@ module MarkdownToolsHelper
                    title: label
     attribs.transform_keys! { |k| k.to_s.tr('_', '-') }.symbolize_keys!
     if name.nil? && block_given?
-      tag.a **attribs do
+      tag.a(**attribs) do
         yield
       end
     else
