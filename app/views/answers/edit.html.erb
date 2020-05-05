@@ -13,12 +13,14 @@
 <% end %>
 
 <%= render 'posts/markdown_script' %>
+<%= render 'posts/image_upload' %>
 
 <%= form_for @answer, url: { controller: :answers, action: :update } do |f| %>
   <div class="form-group">
     <%= f.label :body_markdown, 'Body', class: "form-element" %>
     <%= render "posts/mdhint" %>
-    <%= f.text_area :body_markdown, { class: "form-element post-field", rows: 15 } %>
+    <%= render 'shared/markdown_tools' %>
+    <%= f.text_area :body_markdown, { class: 'form-element post-field js-post-field', rows: 15 } %>
   </div>
   <div class="post-preview"></div>
   <div class="form-group">

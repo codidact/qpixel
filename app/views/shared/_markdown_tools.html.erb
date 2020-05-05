@@ -1,20 +1,61 @@
-<div class="modal is-with-backdrop" id="markdown-image-upload">
+<div class="modal is-with-backdrop" id="markdown-link-insert">
   <div class="modal--container">
     <div class="modal--header">
       <button class="button is-close-button modal--header-button">&times;</button>
-      Image upload
+      Link
     </div>
     <div class="modal--body">
-      <%= render 'posts/image_upload' %>
+      <div class="form-group">
+        <label for="markdown-link-name" class="form-element">Link text</label>
+        <input type="text" id="markdown-link-name" class="form-element" />
+      </div>
+      <div class="form-group">
+        <label for="markdown-link-url" class="form-element">Link URL</label>
+        <input type="text" id="markdown-link-url" class="form-element" />
+      </div>
+
+      <button type="button" class="js-markdown-insert-link button is-filled">Insert</button>
     </div>
   </div>
 </div>
 
-<div class="button-list is-gutterless">
-  <%= md_button class: 'is-icon-only' do %>
-    <i class="fas fa-bold"></i>
-  <% end %>
-  <%= md_button class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-image-upload' do %>
-    <i class="fas fa-images"></i>
-  <% end %>
+<div class="markdown-tools">
+  <div class="button-list is-gutterless">
+    <%= md_button action: 'bold', label: 'Bold', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-bold"></i>
+    <% end %>
+    <%= md_button action: 'italic', label: 'Italic', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-italic"></i>
+    <% end %>
+    <%= md_button action: 'code', label: 'Monospace font', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-code"></i>
+    <% end %>
+  </div>
+
+  <div class="button-list is-gutterless">
+    <%= md_button label: 'Link', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-link-insert' do %>
+      <i class="fas fa-fw fa-link"></i>
+    <% end %>
+    <%= md_button action: 'quote', label: 'Block quote', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-quote-left"></i>
+    <% end %>
+    <%= md_button label: 'Insert image', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-image-upload' do %>
+      <i class="fas fa-fw fa-images"></i>
+    <% end %>
+  </div>
+
+  <div class="button-list is-gutterless">
+    <%= md_button action: 'bullet', label: 'Bullet list', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-list-ul"></i>
+    <% end %>
+    <%= md_button action: 'numbered', label: 'Numbered list', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-list-ol"></i>
+    <% end %>
+    <%= md_button action: 'heading', label: 'Heading', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-heading"></i>
+    <% end %>
+    <%= md_button action: 'hr', label: 'Horizontal line', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-level-down-alt"></i>
+    <% end %>
+  </div>
 </div>

@@ -15,6 +15,8 @@
 
 <h1>Edit Profile</h1>
 
+<%= render 'posts/image_upload' %>
+
 <%= form_for current_user, url: update_user_profile_path do |f| %>
   <div class="form-group has-padding-2">
   <img alt="user avatar" class="has-float-right has-margin-2" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
@@ -35,8 +37,11 @@
   <div class="form-group has-padding-2">
     <%= f.label :profile_markdown, 'Profile' %>
     <%= render "posts/mdhint" %>
-    <%= f.text_area :profile_markdown, class: 'form-element post-field is-large' %>
+    <%= render 'shared/markdown_tools' %>
+    <%= f.text_area :profile_markdown, class: 'form-element post-field is-large js-post-field' %>
   </div>
+
+  <div class="post-preview"></div>
 
   <div class="form-group-horizontal">
     <div class="form-group">

@@ -36,13 +36,14 @@ $(() => {
     const $postField = $('.js-post-field');
     const postText = $postField.val();
     $postField.val(postText.replace(placeholder, `![Image alt text](${data.link})`));
+    $tgt.parents('.modal').removeClass('is-active');
   });
 
   $('.js-category-select').select2({
     tags: true
   });
 
-  $('.post-field').on('keydown', evt => {
+  $('.post-field').on('keyup markdown', evt => {
     if (!window.converter) {
       window.converter = new showdown.Converter();
       window.converter.setFlavor('github');
