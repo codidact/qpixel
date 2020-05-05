@@ -1,7 +1,7 @@
 class CustomSessionsController < Devise::SessionsController
   protect_from_forgery except: [:create]
 
-  @@first_factor = [] # rubocop:disable Style/ClassVars
+  @@first_factor = []
 
   def new
     super
