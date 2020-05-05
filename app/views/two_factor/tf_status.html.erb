@@ -5,11 +5,15 @@
 </p>
 
 <p>
-  Two-factor authentication is currently <strong><%= current_user.enabled_2fa ? 'on' : 'off' %></strong> for your account.
+  Two-factor authentication is currently
+  <span class="badge is-tag <%= current_user.enabled_2fa? ? 'is-green' : 'is-red' %>">
+    <strong><%= current_user.enabled_2fa ? 'on' : 'off' %></strong>
+  </span>
+  for your account.
 </p>
 
 <% if current_user.enabled_2fa %>
-  <p><%= link_to 'Turn off', two_factor_disable_code_path %></p>
+  <p><%= link_to 'Turn off', two_factor_disable_code_path, class: 'button is-outlined' %></p>
 <% else %>
-  <p><%= link_to 'Turn on', two_factor_enable_path, method: :post %></p>
+  <p><%= link_to 'Turn on', two_factor_enable_path, method: :post, class: 'button is-outlined' %></p>
 <% end %>
