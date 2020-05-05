@@ -23,6 +23,8 @@
 
 <%= render 'posts/image_upload' %>
 
+<%= render 'shared/markdown_tools' %>
+
 <%= form_for @post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
   <%= f.hidden_field :category_id %>
   <%= f.hidden_field :post_type_id %>
