@@ -36,13 +36,13 @@
   <% if user_signed_in? %>
     <div class="widget has-margin-4">
       <div class="widget--header">
-        <%= link_to 'edit', '/subscriptions', class: 'widget--header-link' %>
+        <%= link_to 'edit', subscriptions_path, class: 'widget--header-link' %>
         Subscribe to Questions
       </div>
       <div class="widget--body">
         <p>You can subscribe to
-          <%= link_to 'new questions', new_subscription_path(type: 'all', return_to: request.path) %>
-          or to
+          <%= link_to 'all new questions', new_subscription_path(type: 'all', return_to: request.path) %>
+          (from all categories) or to
           <%= link_to 'interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>.</p>
       </div>
     </div>
