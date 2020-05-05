@@ -157,6 +157,7 @@ Rails.application.routes.draw do
     get    ':id/edit',                             to: 'categories#edit', as: :edit_category
     post   ':id/edit',                             to: 'categories#update', as: :update_category
     delete ':id',                                  to: 'categories#destroy', as: :destroy_category
+    get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
   end
 
   get   '403',                           to: 'errors#forbidden'

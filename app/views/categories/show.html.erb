@@ -43,4 +43,12 @@
   <% end %>
 </div>
 
-<%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+<div class="has-padding-top-4">
+  <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+</div>
+
+<div class="has-padding-top-4">
+  <%= link_to category_feed_path(@category, format: 'rss') do %>
+    <i class="fas fa-rss"></i> Category RSS feed
+  <% end %>
+</div>

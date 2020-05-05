@@ -1,6 +1,6 @@
 class CategoriesController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :homepage]
-  before_action :verify_admin, except: [:index, :show, :homepage]
+  before_action :authenticate_user!, except: [:index, :show, :homepage, :rss_feed]
+  before_action :verify_admin, except: [:index, :show, :homepage, :rss_feed]
   before_action :set_category, except: [:index, :homepage, :new, :create]
   before_action :verify_view_access, except: [:index, :homepage, :new, :create]
 
@@ -60,6 +60,10 @@ class CategoriesController < ApplicationController
       flash[:danger] = "Couldn't delete that category."
     end
     redirect_back fallback_location: categories_path
+  end
+
+  def rss_feed
+    set_list_posts
   end
 
   private
