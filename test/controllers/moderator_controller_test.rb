@@ -51,7 +51,8 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'should require authentication to access pages' do
     sign_out :user
-    ModeratorController.action_methods.each do |path|
+    [:index, :recently_deleted_answers, :recently_deleted_questions, :recently_undeleted_answers,
+     :recently_undeleted_questions].each do |path|
       get path
       assert_response(404)
     end
@@ -59,7 +60,8 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'should require moderator status to access pages' do
     sign_in users(:standard_user)
-    ModeratorController.action_methods.each do |path|
+    [:index, :recently_deleted_answers, :recently_deleted_questions, :recently_undeleted_answers,
+     :recently_undeleted_questions].each do |path|
       get path
       assert_response(404)
     end
