@@ -2,7 +2,11 @@
 module UsersHelper
   def avatar_url(user, size = 16)
     user ||= current_user
-    user&.avatar&.attached? ? url_for(user.avatar) : "https://unicornify.pictures/avatar/#{user.id}?s=#{size}"
+    if user&.avatar&.attached?
+      uploaded_url(user.avatar.blob.key)
+    else
+      "https://unicornify.pictures/avatar/#{user.id}?s=#{size}"
+    end
   end
 
   def stack_oauth_url

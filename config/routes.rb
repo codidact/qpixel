@@ -160,6 +160,8 @@ Rails.application.routes.draw do
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
   end
 
+  get   'uploads/:key',                  to: 'application#upload', as: :uploaded
+
   get   '403',                           to: 'errors#forbidden'
   get   '404',                           to: 'errors#not_found'
   get   '409',                           to: 'errors#conflict'
