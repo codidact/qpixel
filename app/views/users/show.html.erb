@@ -68,7 +68,7 @@
           <% end %>
         </div>
       <% end %>
-      <% if current_user.id == @user.id %>
+      <% if current_user&.id == @user.id %>
         <div>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
             <i class="fas fa-mobile-alt"></i> Mobile Sign In

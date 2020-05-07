@@ -23,6 +23,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
+  test 'should get show user unauthenticated' do
+    get :show, params: { id: users(:standard_user).id }
+    assert_not_nil assigns(:user)
+    assert_response 200
+  end
+
   test 'should not show user page for non-community users' do
     @other_user = create_other_user
     sign_in users(:standard_user)

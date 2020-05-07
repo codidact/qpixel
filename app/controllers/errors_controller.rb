@@ -17,7 +17,7 @@ class ErrorsController < ApplicationController
       @log = ErrorLog.create(community: RequestContext.community, user: current_user, klass: @exception&.class,
                              message: @exception&.message, backtrace: @exception&.backtrace&.join("\n"),
                              request_uri: request.original_url, host: request.raw_host_with_port,
-                             uuid: SecureRandom.uuid)
+                             uuid: SecureRandom.uuid, user_agent: request.user_agent)
     end
 
     render views[@status] || 'errors/error', formats: :html, status: @status, layout: 'without_sidebar'
