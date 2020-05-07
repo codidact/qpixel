@@ -66,10 +66,10 @@ class Post < ApplicationRecord
     new_user.ensure_community_user!
 
     # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
-    update(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))
-    update(user: new_user)
+    update!(deleted: true, deleted_at: DateTime.now, deleted_by: User.find(-1))
+    update!(user: new_user)
     votes.update_all(recv_user_id: new_user.id)
-    update(deleted: false, deleted_at: nil, deleted_by: nil)
+    update!(deleted: false, deleted_at: nil, deleted_by: nil)
   end
 
   def remove_attribution_notice!

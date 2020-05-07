@@ -176,13 +176,17 @@ class UsersController < ApplicationController
       redirect_to(edit_user_profile_path) && return
     end
 
-    auto_user = user_scope.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
+    auto_user = User.where(se_acct_id: current_user.se_acct_id).where.not(id: current_user.id).first
     if auto_user.nil?
       flash[:warning] = "There doesn't appear to be any of your content here."
       redirect_to(edit_user_profile_path) && return
     end
 
+    community = RequestContext.community
+
     Thread.new do
+      RequestContext.community = community
+
       auto_user.posts.each do |post|
         post.reassign_user(current_user)
         post.remove_attribution_notice!
