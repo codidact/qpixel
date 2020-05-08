@@ -103,7 +103,7 @@
     <% disabled = @category.tag_set.nil? %>
     <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
                                                        selected: @category.required_tag_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
+                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-required-tags',
                  data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 
@@ -112,6 +112,7 @@
     <span class="form-caption js-tags-group-caption">
       <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
         Tags that will be highlighted as the most important tag on a question.
+        <a href="javascript:void(0)" class="js-add-required-topic">Add all required tags</a>
       </span>
       <span data-state="absent" style="<%= @category.tag_set.nil? ? '' : 'display: none' %>">
         Select a tag set first.
@@ -120,7 +121,7 @@
 
     <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
                                                        selected: @category.topic_tag_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
+                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-topic-tags',
                  data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 
