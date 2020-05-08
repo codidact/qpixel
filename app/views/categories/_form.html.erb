@@ -100,10 +100,11 @@
         Select a tag set first.
       </span>
     </span>
+    <% disabled = @category.tag_set.nil? %>
     <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
                                                        selected: @category.required_tags.pluck(:name)),
                  { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
-                 data: { tag_set: @category.tag_set&.id, create: 'false' } %>
+                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 
   <div class="form-group js-category-tags-group">
@@ -116,10 +117,11 @@
         Select a tag set first.
       </span>
     </span>
+
     <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
                                                        selected: @category.topic_tags.pluck(:name)),
                  { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
-                 data: { tag_set: @category.tag_set&.id, create: 'false' } %>
+                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 
   <%= f.submit 'Save', class: 'button is-filled' %>

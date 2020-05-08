@@ -10,7 +10,7 @@ $(() => {
         $caption.find('[data-state="absent"]').hide();
         $caption.find('[data-state="present"]').show();
 
-        $el.find('.js-tag-select').attr('data-tag-set', tagSetId);
+        $el.find('.js-tag-select').attr('data-tag-set', tagSetId).attr('disabled', false);
       });
     }
     else {
@@ -20,7 +20,7 @@ $(() => {
         $caption.find('[data-state="absent"]').show();
         $caption.find('[data-state="present"]').hide();
 
-        $el.find('.js-tag-select').attr('data-tag-set', null);
+        $el.find('.js-tag-select').attr('data-tag-set', null).attr('disabled', true);
       });
     }
   });
