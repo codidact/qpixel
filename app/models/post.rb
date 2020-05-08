@@ -66,7 +66,7 @@ class Post < ApplicationRecord
   end
 
   def meta?
-    category == 'Meta'
+    category.name == 'Meta'
   end
 
   def reassign_user(new_user)
@@ -85,6 +85,14 @@ class Post < ApplicationRecord
 
   def body_plain
     PostsController.renderer.render(body_markdown)
+  end
+
+  def question?
+    post_type_id == Question.post_type_id
+  end
+
+  def answer?
+    post_type_id == Answer.post_type_id
   end
 
   private
@@ -214,9 +222,5 @@ class Post < ApplicationRecord
     unless tags.all? { |t| t.tag_set_id == tag_set.id }
       errors.add(:base, "Not all of this question's tags are in the correct tag set.")
     end
-  end
-
-  def question?
-    post_type_id == Question.post_type_id
   end
 end
