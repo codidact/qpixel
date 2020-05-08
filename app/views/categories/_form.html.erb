@@ -102,7 +102,7 @@
     </span>
     <% disabled = @category.tag_set.nil? %>
     <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
-                                                       selected: @category.required_tags.pluck(:name)),
+                                                       selected: @category.required_tag_ids),
                  { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
                  data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
@@ -119,7 +119,7 @@
     </span>
 
     <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
-                                                       selected: @category.topic_tags.pluck(:name)),
+                                                       selected: @category.topic_tag_ids),
                  { include_blank: true }, multiple: true, class: 'form-element js-tag-select',
                  data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
