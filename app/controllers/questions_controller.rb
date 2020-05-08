@@ -49,7 +49,7 @@ class QuestionsController < ApplicationController
       not_found
       return
     end
-    @questions = @tag.posts.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
+    @questions = @tag.posts.list_includes.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
   end
 
   def lottery

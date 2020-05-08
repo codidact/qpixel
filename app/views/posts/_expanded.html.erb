@@ -98,9 +98,12 @@
           <% if is_question %>
             <div class="post--tags has-padding-2">
               <% tag_set = post.tag_set %>
-              <% post.tags_cache.each do |tag| %>
-                <% next if tag.nil? || tag.empty? %>
-                <%= link_to tag, questions_tagged_path(tag_set: tag_set.id, tag: tag), class: 'badge is-tag' %>
+              <% post.tags.each do |tag| %>
+                <% next if tag.nil? %>
+                <% required = post.category&.required_tag_ids&.include? tag.id %>
+                <% topic = post.category&.topic_tag_ids&.include? tag.id %>
+                <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
+                            class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
               <% end %>
             </div>
           <% end %>
