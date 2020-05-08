@@ -42,6 +42,7 @@ class Post < ApplicationRecord
   after_save :break_description_cache
   after_save :update_tag_associations, if: :question?
   after_create :create_initial_revision
+  after_create :add_license_if_nil
 
   def self.search(term)
     match_search term, posts: :body_markdown
@@ -221,6 +222,12 @@ class Post < ApplicationRecord
     tag_set = category.tag_set
     unless tags.all? { |t| t.tag_set_id == tag_set.id }
       errors.add(:base, "Not all of this question's tags are in the correct tag set.")
+    end
+  end
+
+  def add_license_if_nil
+    if license.nil?
+      update(license: License.site_default)
     end
   end
 end
