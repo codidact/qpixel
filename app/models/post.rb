@@ -22,6 +22,12 @@ class Post < ApplicationRecord
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
+  validates :title, :body, :tags_cache, presence: true, if: :question?
+  validate :tags_in_tag_set, if: :question?
+  validate :maximum_tags, if: :question?
+  validate :maximum_tag_length, if: :question?
+  validate :no_spaces_in_tags, if: :question?
+  validate :stripped_minimum, if: :question?
   validate :category_allows_post_type
   validate :license_available
 
@@ -34,6 +40,7 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
+  after_save :update_tag_associations, if: :question?
   after_create :create_initial_revision
 
   def self.search(term)
@@ -81,6 +88,21 @@ class Post < ApplicationRecord
   end
 
   private
+
+  def update_tag_associations
+    tags_cache.each do |tag_name|
+      tag = Tag.find_or_create_by name: tag_name, tag_set: category.tag_set
+      unless tags.include? tag
+        tags << tag
+      end
+    end
+
+    tags.each do |tag|
+      unless tags_cache.include? tag.name
+        tags.delete tag
+      end
+    end
+  end
 
   def attribution_text(source = nil, name = nil, url = nil)
     "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\n" \
@@ -151,5 +173,50 @@ class Post < ApplicationRecord
     unless license.nil? || license.enabled?
       errors.add(:license, 'is not available for use')
     end
+  end
+
+  def maximum_tags
+    if tags_cache.length > 5
+      errors.add(:tags, "can't have more than 5 tags")
+    elsif tags_cache.empty?
+      errors.add(:tags, 'must have at least one tag')
+    end
+  end
+
+  def maximum_tag_length
+    tags_cache.each do |tag|
+      max_len = SiteSetting['MaxTagLength']
+      if tag.length > max_len
+        errors.add(:tags, "can't be more than #{max_len} characters long each")
+      end
+    end
+  end
+
+  def no_spaces_in_tags
+    tags_cache.each do |tag|
+      if tag.include? ' '
+        errors.add(:tags, 'may not include spaces - use hyphens for multiple-word tags')
+      end
+    end
+  end
+
+  def stripped_minimum
+    if body.squeeze('  ').length < 30
+      errors.add(:body, 'must be more than 30 non-whitespace characters long')
+    end
+    if title.squeeze('  ').length < 15
+      errors.add(:title, 'must be more than 15 non-whitespace characters long')
+    end
+  end
+
+  def tags_in_tag_set
+    tag_set = category.tag_set
+    unless tags.all? { |t| t.tag_set_id == tag_set.id }
+      errors.add(:base, "Not all of this question's tags are in the correct tag set.")
+    end
+  end
+
+  def question?
+    post_type_id == Question.post_type_id
   end
 end
