@@ -66,7 +66,7 @@ class Post < ApplicationRecord
   end
 
   def meta?
-    category.name == 'Meta'
+    false
   end
 
   def reassign_user(new_user)
