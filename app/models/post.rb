@@ -30,7 +30,7 @@ class Post < ApplicationRecord
   validate :stripped_minimum, if: :question?
   validate :category_allows_post_type
   validate :license_available
-  validate :has_required_tags
+  validate :required_tags?
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -232,7 +232,7 @@ class Post < ApplicationRecord
     end
   end
 
-  def has_required_tags
+  def required_tags?
     required = category&.required_tag_ids
     return unless required.present? && !required.empty?
 
