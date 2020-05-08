@@ -61,7 +61,7 @@ class PostTest < ActiveSupport::TestCase
     category = categories(:main)
     post_type = post_types(:question)
     post = Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
-                       title: 'abcd efgh ijkl mnop',
+                       title: 'abcd efgh ijkl mnop', tags_cache: ['discussion'],
                        score: 0, user: users(:standard_user), post_type: post_type, category: category)
     assert_equal false, post.errors.any?, 'Category-allowed post type had errors on save'
     assert_not_nil post.id
@@ -73,7 +73,7 @@ class PostTest < ActiveSupport::TestCase
     category = categories(:main)
     post_type = post_types(:help_doc)
     post = Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
-                       title: 'abcd efgh ijkl mnop',
+                       title: 'abcd efgh ijkl mnop', tags_cache: ['discussion'],
                        score: 0, user: users(:standard_user), post_type: post_type, category: category)
     assert_equal true, post.errors.any?, 'Category-disallowed post type had no errors on save'
     assert_equal "The #{post_type.name} post type is not allowed in the #{category.name} category.",
