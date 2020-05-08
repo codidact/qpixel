@@ -30,6 +30,13 @@ class ApplicationRecord < ActiveRecord::Base
 
     ActiveRecord::Base.send(:sanitize_sql_array, ["MATCH (#{cols}) AGAINST (? IN BOOLEAN MODE)", term])
   end
+
+  def self.sanitize_sql_in(ary)
+    return "(NULL)" unless ary.present? && ary.respond_to?(:map)
+
+    ary = ary.map { |el| ActiveRecord::Base.sanitize_sql_array(['?', el]) }
+    "(#{ary.join(', ')})"
+  end
 end
 
 module UserSortable

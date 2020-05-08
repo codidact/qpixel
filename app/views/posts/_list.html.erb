@@ -27,9 +27,11 @@
     <div class="has-padding-top-2">
       <% if is_question %>
         <% tag_set = post.tag_set %>
-        <% post.tags.each do |tag| %>
-          <% required = post.category&.required_tag_ids&.include? tag.id %>
-          <% topic = post.category&.topic_tag_ids&.include? tag.id %>
+        <% required_ids = post.category&.required_tag_ids %>
+        <% topic_ids = post.category&.topic_tag_ids %>
+        <% post.tags.category_order(required_ids, topic_ids).each do |tag| %>
+          <% required = required_ids&.include? tag.id %>
+          <% topic = topic_ids&.include? tag.id %>
           <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
                       class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
         <% end %>
