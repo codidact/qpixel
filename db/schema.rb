@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_07_235849) do
+ActiveRecord::Schema.define(version: 2020_05_08_112958) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -49,8 +49,10 @@ ActiveRecord::Schema.define(version: 2020_05_07_235849) do
     t.text "answering_guidance_override"
     t.integer "min_view_trust_level"
     t.bigint "license_id"
+    t.integer "sequence"
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
+    t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
 

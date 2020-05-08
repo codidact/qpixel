@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create]
 
   def index
-    @categories = Category.all.order(:name)
+    @categories = Category.all.order(:sequence, :name)
   end
 
   def show
@@ -74,7 +74,7 @@ class CategoriesController < ApplicationController
 
   def category_params
     params.require(:category).permit(:name, :short_wiki, :tag_set_id, :is_homepage, :min_trust_level, :button_text,
-                                     :color_code, :min_view_trust_level, :license_id, display_post_types: [],
+                                     :color_code, :min_view_trust_level, :license_id, :sequence, display_post_types: [],
                                      post_type_ids: [])
   end
 
