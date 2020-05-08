@@ -15,6 +15,10 @@ class PostsController < ApplicationController
   def new
     @category = Category.find(params[:category_id])
     @post = Post.new(category: @category, post_type_id: params[:post_type_id])
+    if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
+      flash[:danger] = "You don't have a high enough trust level to post in the #{@category.name} category."
+      redirect_back fallback_location: root_path
+    end
   end
 
   def create
