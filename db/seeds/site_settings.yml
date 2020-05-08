@@ -221,3 +221,17 @@
   category: Integrations
   description: >
     Enable transferring pre-imported content from Stack Exchange to the associated user's account here.
+
+- name: AnalyticsURL
+  value: ~
+  value_type: string
+  category: Integrations
+  description: >
+    Full URL to a Matomo analytics instance, with leading protocol and trailing slash.
+
+- name: AnalyticsSiteId
+  value: ~
+  value_type: string
+  category: Integrations
+  description: >
+    Site ID for this community in your Matomo analytics instance.
