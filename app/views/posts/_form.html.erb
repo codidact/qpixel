@@ -38,6 +38,15 @@
 
   <div class="form-group">
     <%= f.label :tags_cache, 'Tags (at least one):', class: 'form-element' %>
+    <% required_tags = @category.required_tags.to_a %>
+    <% unless required_tags.empty? %>
+      <span class="form-caption">
+        Requires at least one of
+        <% required_tags.each do |tag| %>
+          <span class="badge is-tag is-filled"><%= tag.name %></span>
+        <% end %>
+      </span>
+    <% end %>
     <%= f.select :tags_cache, options_for_select(@post.tags_cache.map { |t| [t, t] }, selected: @post.tags_cache),
                  { include_blank: true }, multiple: true, class: "form-element js-tag-select",
                  data: { tag_set: @category.tag_set_id } %>

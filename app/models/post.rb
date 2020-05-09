@@ -30,17 +30,18 @@ class Post < ApplicationRecord
   validate :stripped_minimum, if: :question?
   validate :category_allows_post_type
   validate :license_available
+  validate :required_tags?
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id]) }
-  scope :list_includes, -> { includes(:user, user: :avatar_attachment) }
+  scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
 
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_tag_associations, if: :question?
+  before_validation :update_tag_associations, if: :question?
   after_create :create_initial_revision
   after_create :add_license_if_nil
 
@@ -228,6 +229,15 @@ class Post < ApplicationRecord
   def add_license_if_nil
     if license.nil?
       update(license: License.site_default)
+    end
+  end
+
+  def required_tags?
+    required = category&.required_tag_ids
+    return unless required.present? && !required.empty?
+
+    unless tag_ids.any? { |t| required.include? t }
+      errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
     end
   end
 end

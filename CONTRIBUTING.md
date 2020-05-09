@@ -36,7 +36,7 @@ request. Here they are:
  * There is a .rubocop.yml file provided in the project and rubocop is included in the bundle; please run `bundle exec rubocop` for 
    Ruby style checking.
  
-When writing CSS, keep in mind that our design framework, [Co-Design](https://design.codidact.org/) is available in Core, and
+When writing CSS, keep in mind that our design framework, [Co-Design](https://design.codidact.org/) is available in QPixel, and
 should be used where possible. Avoid writing custom CSS if you can; favour using components and atomic classes from Co-Design.
 
 We also have some [guidelines for commit messages](https://github.com/codidact/core/wiki/Committing-guidelines). Again, please

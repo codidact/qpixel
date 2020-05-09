@@ -2,6 +2,8 @@ class Category < ApplicationRecord
   include CommunityRelated
 
   has_and_belongs_to_many :post_types
+  has_and_belongs_to_many :required_tags, class_name: 'Tag', join_table: 'categories_required_tags'
+  has_and_belongs_to_many :topic_tags, class_name: 'Tag', join_table: 'categories_topic_tags'
   has_many :posts
   belongs_to :tag_set
   belongs_to :license

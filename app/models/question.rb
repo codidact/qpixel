@@ -11,15 +11,6 @@ class Question < Post
     PostType.mapping['Question']
   end
 
-  validates :title, :body, :tags_cache, presence: true
-  validate :tags_in_tag_set
-  validate :maximum_tags
-  validate :maximum_tag_length
-  validate :no_spaces_in_tags
-  validate :stripped_minimum
-
-  after_save :update_tag_associations
-
   def answers
     Answer.where(parent: self)
   end

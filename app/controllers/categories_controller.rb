@@ -75,7 +75,7 @@ class CategoriesController < ApplicationController
   def category_params
     params.require(:category).permit(:name, :short_wiki, :tag_set_id, :is_homepage, :min_trust_level, :button_text,
                                      :color_code, :min_view_trust_level, :license_id, :sequence, display_post_types: [],
-                                     post_type_ids: [])
+                                     post_type_ids: [], required_tag_ids: [], topic_tag_ids: [])
   end
 
   def verify_view_access

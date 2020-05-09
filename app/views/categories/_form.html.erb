@@ -31,7 +31,7 @@
     <%= f.label :tag_set_id, 'Tag set', class: 'form-element' %>
     <span class="form-caption">Which tag set may posts in this category draw from?</span>
     <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
-                 { include_blank: true }, class: 'form-element' %>
+                 { include_blank: true }, class: 'form-element js-category-tag-set-select' %>
   </div>
 
   <div class="form-group">
@@ -88,6 +88,41 @@
       appear later.
     </span>
     <%= f.number_field :sequence, class: 'form-element' %>
+  </div>
+
+  <div class="form-group js-category-tags-group">
+    <%= f.label :required_tag_ids, 'Required tags', class: 'form-element' %>
+    <span class="form-caption js-tags-group-caption">
+      <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
+        Required tags for this category - every post will be required to have one of these tags.
+      </span>
+      <span data-state="absent" style="<%= @category.tag_set.nil? ? '' : 'display: none' %>">
+        Select a tag set first.
+      </span>
+    </span>
+    <% disabled = @category.tag_set.nil? %>
+    <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
+                                                       selected: @category.required_tag_ids),
+                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-required-tags',
+                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
+  </div>
+
+  <div class="form-group js-category-tags-group">
+    <%= f.label :required_tag_ids, 'Topic tags', class: 'form-element' %>
+    <span class="form-caption js-tags-group-caption">
+      <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
+        Tags that will be highlighted as the most important tag on a question.
+        <a href="javascript:void(0)" class="js-add-required-topic">Add all required tags</a>
+      </span>
+      <span data-state="absent" style="<%= @category.tag_set.nil? ? '' : 'display: none' %>">
+        Select a tag set first.
+      </span>
+    </span>
+
+    <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
+                                                       selected: @category.topic_tag_ids),
+                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-topic-tags',
+                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 
   <%= f.submit 'Save', class: 'button is-filled' %>
