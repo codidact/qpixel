@@ -14,7 +14,6 @@ class VotesController < ApplicationController
     vote = post.votes.create(user: current_user, vote_type: params[:vote_type].to_i, recv_user: post.user)
 
     if vote.errors.any?
-      puts "hi"
       render json: { status: 'failed', message: vote.errors.full_messages.join('. ') }, status: 403
       return
     end
