@@ -7,10 +7,12 @@ class Vote < ApplicationRecord
 
   after_create :apply_rep_change
   after_create :change_post_score
+  before_destroy :check_valid
   before_destroy :reverse_rep_change
   before_destroy :restore_post_score
 
   validates :vote_type, inclusion: [1, -1]
+  validate :post_not_deleted
 
   def self.total_rep_change(col)
     col = col.includes(:post)
@@ -55,5 +57,15 @@ class Vote < ApplicationRecord
 
   def restore_post_score
     post.update!(score: post.score - vote_type)
+  end
+
+  def post_not_deleted
+    if post.deleted?
+      errors.add(:base, 'Votes are locked on deleted posts')
+    end
+  end
+
+  def check_valid
+    throw :abort unless valid?
   end
 end
