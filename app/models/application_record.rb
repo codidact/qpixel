@@ -32,7 +32,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def self.sanitize_sql_in(ary)
-    return "(NULL)" unless ary.present? && ary.respond_to?(:map)
+    return '(NULL)' unless ary.present? && ary.respond_to?(:map)
 
     ary = ary.map { |el| ActiveRecord::Base.sanitize_sql_array(['?', el]) }
     "(#{ary.join(', ')})"
