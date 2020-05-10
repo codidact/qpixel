@@ -3,6 +3,8 @@ require 'optparse'
 require 'open-uri'
 require 'csv'
 
+require_relative 'dump_import'
+
 $logger = ::Logger.new(STDOUT)
 $logger.level = :info
 
@@ -19,9 +21,25 @@ def msg2str(msg)
 end
 
 $logger.formatter = proc do |severity, time, progname, msg|
-  colors = { 'DEBUG' => "\033[0;37m", 'INFO' => "\033[1;36m", 'WARN' => "\033[1;33m", 'ERROR' => "\033[1;31m", 'FATAL' => "\033[0;31m" }
-  "%s, [%s #%d] %s%5s%s -- %s: %s\n" % [severity[0..0], time.strftime('%Y-%m-%d %H:%M:%S'), $$, colors[severity], severity,
-                                         "\033[0m", progname, msg2str(msg)]
+  colors = { 'DEBUG' => "\033[0;37m", 'INFO' => "\033[1;36m", 'WARN' => "\033[1;33m", 'ERROR' => "\033[1;31m",
+             'FATAL' => "\033[0;31m" }
+  "%s, [%s #%d] %s%5s%s -- %s: %s\n" % [severity[0..0], time.strftime('%Y-%m-%d %H:%M:%S'), $$, colors[severity],
+                                        severity, "\033[0m", progname, msg2str(msg)]
+end
+
+def domain_from_api_param(api_param)
+  nonstandard = {
+    stackoverflow: '.com',
+    superuser: '.com',
+    serverfault: '.net',
+    askubuntu: '.com',
+    mathoverflow: '.net'
+  }
+  if nonstandard.keys.include? api_param.to_sym
+    "#{api_param}#{nonstandard[api_param.to_sym]}"
+  else
+    "#{api_param}.stackexchange.com"
+  end
 end
 
 ERROR_CODES = {
@@ -86,9 +104,16 @@ unless @options.query.present?
 end
 
 unless @options.key.present?
-  $logger.warn 'No key specified. Can run without one, but only for a limited run. Large imports will require a key for added quota.'
+  $logger.warn 'No key specified. Can run without one, but only for a limited run. Large imports will require a key ' \
+               'for added quota.'
 end
 
 RequestContext.community = Community.find(@options.community)
 
+# ==================================================================================================================== #
 
+domain = domain_from_api_param(@options.site)
+
+users = DumpImport.do_xml_transform(site_domain: domain, data_type: 'Users', dump_path: @options.path)
+posts = DumpImport.do_xml_transform(site_domain: domain, data_type: 'Posts', community_id: @options.community,
+                                    category_id: @options.category, dump_path: @options.path)

@@ -52,6 +52,9 @@ gem 'stackprof', '~> 0.2'
 gem 'e2mmap', '~> 0.1'
 gem 'thwait', '~> 0.1'
 
+# Stuff for imports
+gem 'ruby-progressbar', '~> 1.10'
+
 group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'

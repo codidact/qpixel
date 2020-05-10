@@ -1,4 +1,38 @@
 class DumpImport
+  def self.posts_field_map(community_id, category_id, site_domain)
+    {
+      id: :id,
+      post_type_id: :post_type_id,
+      created_at: :creation_date,
+      score: :score,
+      body: :body,
+      body_markdown: :body,
+      user_id: :owner_user_id,
+      last_activity: :last_activity_date,
+      title: :title,
+      tags_cache: Proc.new { |row| transform_tags(row) },
+      answer_count: :answer_count,
+      parent_id: :parent_id,
+      att_source: Proc.new { |row| "https://#{site_domain}#{row['post_type_id'] == '1' ? '/q/' : '/a/'}#{row['id']}" },
+      att_license_name: Proc.new { |row| determine_license(row)[0] },
+      att_license_link: Proc.new { |row| determine_license(row)[1] },
+      community_id: community_id,
+      category_id: category_id
+    }
+  end
+
+  def self.users_field_map(site_domain)
+    {
+      id: :id,
+      created_at: :creation_date,
+      username: :display_name,
+      website: :website_url,
+      profile: Proc.new { |row| generate_profile(row, site_domain) },
+      profile_markdown: Proc.new { |row| generate_profile(row, site_domain) },
+      se_acct_id: :account_id
+    }
+  end
+
   def self.transform_tags(row)
     tags = row['tags']&.split('><')&.map { |t| t.gsub(/[<>]/, '') }
     tags.nil? ? nil : "---\n- " + tags.join("\n- ")
@@ -13,8 +47,8 @@ class DumpImport
     end
   end
 
-  def self.generate_profile(row)
-    profile_url = "https://#{SITE}/u/#{row['id']}"
+  def self.generate_profile(row, site_domain)
+    profile_url = "https://#{site_domain}/u/#{row['id']}"
     "<p>This user was automatically created as the author of content sourced from Stack Exchange.</p>" \
     "<p>The original profile on Stack Exchange can be found here: <a href=\"#{profile_url}\">#{profile_url}</a>"
   end
@@ -33,8 +67,41 @@ class DumpImport
     input_file_path = File.join(dump_path, "#{data_type}.xml")
     output_file_path = File.join(dump_path, "#{data_type}_Formatted.xml")
 
-    
+    field_map = case data_type
+                when 'Posts'
+                  DumpImport.posts_field_map(community_id, category_id, site_domain)
+                when 'Users'
+                  DumpImport.users_field_map(site_domain)
+                else
+                  raise ArgumentError, "Unsupported data type #{data_type.inspect}"
+                end
+
+    document = Nokogiri::XML(File.read(input_file_path))
+    rows = document.css("#{data_type.downcase} row").to_a
+    rows = rows.map { |r| r.attributes.map { |n, a| [n.underscore, a.content] }.to_h }
+
+    progress = ProgressBar.create(title: "#{data_type} (#{rows.size})", total: rows.size, progress_mark: '█')
+
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.resultset do
+        rows.each do |row|
+          xml.row do
+            field_map.each do |field, source|
+              if source.is_a? Symbol
+                xml.send(field, row[source.to_s])
+              elsif source.is_a? Proc
+                xml.send(field, source.call(row))
+              else
+                xml.send(field, source)
+              end
+            end
+          end
+          progress.increment
+        end
+      end
+    end
+
+    File.write(output_file_path, builder.to_xml)
+    rows
   end
 end
-
-DumpImport.do_xml_transform
