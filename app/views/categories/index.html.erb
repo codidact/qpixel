@@ -1,6 +1,7 @@
 <h1>Categories</h1>
 
 <% @categories.each do |cat| %>
+  <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
   <div class="widget">
     <div class="widget--body">
       <h3><%= cat.name %></h3>

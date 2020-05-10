@@ -40,10 +40,6 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  # Configure web console
-  config.web_console.whitelisted_ips = "82.69.87.121"
-  config.web_console.whiny_requests  = false
-
   config.action_mailer.delivery_method = :ses
   config.action_mailer.default_url_options = { host: 'writing.codidact.com', port: 80 }
 
