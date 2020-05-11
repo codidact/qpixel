@@ -86,6 +86,10 @@ opt_parser = OptionParser.new do |opts|
     @options.category = category
   end
 
+  opts.on('-m', '--mode=MODE', 'Specify the mode to work in (full, process, or import)') do |mode|
+    @options.mode = mode || 'full'
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
@@ -112,8 +116,15 @@ RequestContext.community = Community.find(@options.community)
 
 # ==================================================================================================================== #
 
-domain = domain_from_api_param(@options.site)
+if @options.mode == 'full' || @options.mode == 'process'
+  domain = domain_from_api_param(@options.site)
 
-users = DumpImport.do_xml_transform(site_domain: domain, data_type: 'Users', dump_path: @options.path)
-posts = DumpImport.do_xml_transform(site_domain: domain, data_type: 'Posts', community_id: @options.community,
-                                    category_id: @options.category, dump_path: @options.path)
+  users = DumpImport.do_xml_transform(domain, 'Users', @options)
+  posts = DumpImport.do_xml_transform(domain, 'Posts', @options)
+
+  DumpImport.generate_community_users(users, @options)
+
+  if @options.mode == 'process'
+
+  end
+end

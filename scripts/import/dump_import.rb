@@ -59,10 +59,10 @@ class DumpImport
   # @param community_id The community ID that records will be inserted into. Required if data_type is Posts.
   # @param category_id The category ID that posts should be inserted into. Required if data_type is Posts.
   # @param dump_path The path to the downloaded, uncompressed data dump directory.
-  def self.do_xml_transform(site_domain: nil, data_type: nil, community_id: nil, category_id: nil, dump_path: nil)
-    if site_domain.nil? || data_type.nil? || dump_path.nil? || data_type == 'Posts' && (community_id.nil? || category_id.nil?)
-      raise ArgumentError, 'Invalid arguments'
-    end
+  def self.do_xml_transform(site_domain, data_type, options)
+    dump_path = options.path
+    community_id = options.community
+    category_id = options.category
 
     input_file_path = File.join(dump_path, "#{data_type}.xml")
     output_file_path = File.join(dump_path, "#{data_type}_Formatted.xml")
@@ -103,5 +103,27 @@ class DumpImport
 
     File.write(output_file_path, builder.to_xml)
     rows
+  end
+
+  def self.generate_community_users(users, options)
+    output_file_path = File.join(options.path, 'CommunityUsers_Formatted.xml')
+
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.resultset do
+        users.each do |user|
+          xml.row do
+            xml.community_id options.community
+            xml.user_id user['id']
+            xml.is_moderator 0
+            xml.is_admin 0
+            xml.reputation 1
+            xml.created_at DateTime.now.iso8601
+            xml.updated_at DateTime.now.iso8601
+          end
+        end
+      end
+    end
+
+    File.write(output_file_path, builder.to_xml)
   end
 end
