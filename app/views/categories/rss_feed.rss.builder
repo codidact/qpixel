@@ -6,7 +6,7 @@ xml.feed xmlns: 'http://www.w3.org/2005/Atom' do
     xml.name "#{SiteSetting['SiteName']} - Codidact"
   end
   xml.link nil, rel: 'self', href: category_url(@category)
-  xml.updated @posts.maximum(:created_at).iso8601
+  xml.updated @posts.maximum(:created_at)&.iso8601 || RequestContext.community.created_at&.iso8601
 
   @posts.each do |post|
     xml.entry do
@@ -16,8 +16,8 @@ xml.feed xmlns: 'http://www.w3.org/2005/Atom' do
         xml.name post.user.username
         xml.uri user_url(post.user)
       end
-      xml.published post.created_at.iso8601
-      xml.updated post.updated_at.iso8601
+      xml.published post.created_at&.iso8601
+      xml.updated post.updated_at&.iso8601
       xml.link href: question_path(post)
       xml.summary post.body.truncate(200), type: 'html'
     end
