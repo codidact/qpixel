@@ -157,3 +157,11 @@ hr {
   position: fixed !important;
   z-index: 9999;
 }
+
+.category-header--tabs-container {
+  overflow-x: scroll;
+
+  @media screen and (min-width: $screen-md) {
+    overflow-x: unset;
+  }
+}
