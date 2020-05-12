@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_115752) do
+ActiveRecord::Schema.define(version: 2020_05_12_115318) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -217,7 +217,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.text "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -292,6 +292,33 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
     t.bigint "community_id", null: false
     t.index ["community_id"], name: "index_subscriptions_on_community_id"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
+  create_table "suggested_edits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "post_id"
+    t.bigint "user_id"
+    t.bigint "community_id"
+    t.text "body"
+    t.string "title"
+    t.string "tags_cache"
+    t.text "body_markdown"
+    t.string "comment"
+    t.boolean "active"
+    t.boolean "accepted"
+    t.datetime "decided_at"
+    t.bigint "decided_by_id"
+    t.string "rejected_comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_suggested_edits_on_community_id"
+    t.index ["decided_by_id"], name: "index_suggested_edits_on_decided_by_id"
+    t.index ["post_id"], name: "index_suggested_edits_on_post_id"
+    t.index ["user_id"], name: "index_suggested_edits_on_user_id"
+  end
+
+  create_table "suggested_edits_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "suggested_edit_id", null: false
+    t.bigint "tag_id", null: false
   end
 
   create_table "suspicious_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -389,6 +416,10 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
   add_foreign_key "site_settings", "communities"
   add_foreign_key "subscriptions", "communities"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "suggested_edits", "communities"
+  add_foreign_key "suggested_edits", "posts"
+  add_foreign_key "suggested_edits", "users"
+  add_foreign_key "suggested_edits", "users", column: "decided_by_id"
   add_foreign_key "tags", "communities"
   add_foreign_key "votes", "communities"
 end

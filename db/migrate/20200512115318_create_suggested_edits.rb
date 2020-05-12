@@ -1,14 +1,17 @@
 class CreateSuggestedEdits < ActiveRecord::Migration[5.2]
   def change
     create_table :suggested_edits do |t|
-      t.references :posts, foreign_key: true
-      t.references :users, foreign_key: true
+      t.references :post, foreign_key: true
+      t.references :user, foreign_key: true
       t.references :community, foreign_key: true
       
-      t.string :body, null: true
+      t.text :body, null: true
       t.string :title, null: true
       t.string :tags_cache, null: true
-      t.string :body_markdown, null: true
+      t.text :body_markdown, null: true
+
+      
+      t.string :comment, null: true
       
       t.boolean :active
       t.boolean :accepted
