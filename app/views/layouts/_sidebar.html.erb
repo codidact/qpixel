@@ -59,4 +59,18 @@
       </p>
     </div>
   </div>
+
+  <% chat = SiteSetting['ChatLink'] %>
+  <% if chat.present? %>
+    <div class="widget has-margin-4">
+      <div class="widget--header">
+        Chat
+      </div>
+      <div class="widget--body">
+        <p>
+          <%= link_to 'Join us in chat!', chat %>
+        </p>
+      </div>
+    </div>
+  <% end %>
 </div>

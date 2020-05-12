@@ -235,3 +235,10 @@
   category: Integrations
   description: >
     Site ID for this community in your Matomo analytics instance.
+
+- name: ChatLink
+  value: ~
+  value_type: string
+  category: Integrations
+  description: >
+    Link to your chat platform of choice.
