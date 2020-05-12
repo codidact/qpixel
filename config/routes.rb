@@ -80,6 +80,8 @@ Rails.application.routes.draw do
   get    'posts/:id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
   patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
+  get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
+
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help
 

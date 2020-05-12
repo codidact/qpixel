@@ -1,0 +1,99 @@
+<% content_for :title, "Suggested Edit #" + @edit.id.to_s %>
+<% post = @edit.post %>
+<% is_question = post.post_type_id == Question.post_type_id %>
+
+<h1>Review Suggested Edit</h1>
+
+<% if @edit.active? %>
+<div class="notice is-info">
+    <p>This edit was suggested by another user. Good edits: </p>
+    <ul>
+        <li>Improve clarity or fix errors like broken links.</li>
+        <li>Do not drastically change the post or add content the author would reasonably object to.</li>
+        <li>Do not change the style unneccessarily (for example, do not change spelling that is valid in other English dialects).</li>
+    </ul>
+</div>
+<% end %>
+
+<div class="widget">
+    <div class="widget--body h-bg-tertiary-050">
+        <% if @edit.pending? %>
+        <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong> This suggested edit is pending review.</p>
+        <% elsif @edit.approved? %>
+        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong> This suggested edit was approved and applied to the post.</p>
+        <% elsif @edit.rejected? %>
+            <% if @edit.rejected_comment %>
+            <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong> This suggested edit was rejected: <%= @edit.rejected_comment %></p>
+            <% else %>
+            <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong> This suggested edit was rejected.</p>
+            <% end %>
+        <% end %>
+    </div>
+    <div class="widget--body">
+        <label for="summary" class="form-element">Suggested edit summary:</label>
+        <input class="form-element" readonly value="<%= @edit.comment %>">
+    </div>
+    <div class="widget--body">
+        <div class="diff">
+        <% if is_question %>
+            <!-- Title -->
+            <div class="diff-section">
+                <% if @edit.title.nil? %>
+                    <div class="diff-inline">
+                        <h1 class="h-m-0"><%= post.title %></h1>
+                    </div>
+                <% else %>
+                    <div class="diff-old is-changed raw-markdown"><h1><%= post.title %></h1></div>
+                    <div class="diff-new is-changed raw-markdown"><h1><%= @edit.title %></h1></div>
+                <% end %>
+            </div>
+        <% end %>
+
+            <!-- Body -->
+            <div class="diff-section">
+                <% if @edit.body_markdown.nil? %>
+                    <div class="diff-inline raw-markdown"><%= post.body_markdown %></div>
+                <% else %>
+                    <div class="diff-old is-changed raw-markdown"><%= post.body_markdown %></div>
+                    <div class="diff-new is-changed raw-markdown"><%= @edit.body_markdown %></div>
+                <% end %>
+            </div>
+
+
+        <% if is_question && !@edit.tags_cache.nil? %>
+            <!-- Tags -->
+            <% tag_set = post.tag_set %>
+            <% required_ids = post.category&.required_tag_ids %>
+            <% topic_ids = post.category&.topic_tag_ids %>
+            <div class="diff-section">
+                <div class="diff-old is-changed">
+                    <% post.tags.category_sort_by(required_ids, topic_ids).each do |tag| %>
+                    <% required = required_ids&.include? tag.id %>
+                    <% topic = topic_ids&.include? tag.id %>
+                    <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
+                                class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
+                    <% end %>
+                </div>
+                <div class="diff-new is-changed">
+                    <% @edit.tags.category_sort_by(required_ids, topic_ids).each do |tag| %>
+                    <% required = required_ids&.include? tag.id %>
+                    <% topic = topic_ids&.include? tag.id %>
+                    <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
+                                class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
+                    <% end %>
+                </div>
+            </div>
+        <% end %>
+
+        </div>
+    </div>
+    <div class="widget--body">
+        <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.user) %>	
+    </div>
+    <% if @edit.active? %>
+    <div class="widget--footer">
+        <button class="button is-filled is-medium">Approve</button>
+        <button class="button is-filled is-medium">Reject (with optional reason)</button>
+    </div>
+    <% end %>
+</div>
