@@ -4,7 +4,13 @@ require 'redcarpet/render_strip'
 
 Rails.application.eager_load!
 
-Dir.glob(Rails.root.join('db/seeds/**/*.yml')).each do |f|
+if ENV['SEEDS'].present?
+  find_glob = "db/seeds/**/#{ENV['SEEDS'].underscore}.yml"
+else
+  find_glob = 'db/seeds/**/*.yml'
+end
+
+Dir.glob(Rails.root.join(find_glob)).each do |f|
   basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
   type = basename.gsub('.yml', '').singularize.classify.constantize
   begin
