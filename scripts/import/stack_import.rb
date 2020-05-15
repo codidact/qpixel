@@ -4,6 +4,7 @@ require 'open-uri'
 require 'csv'
 
 require_relative 'dump_import'
+require_relative 'database_import'
 
 $logger = ::Logger.new(STDOUT)
 $logger.level = :info
@@ -90,6 +91,10 @@ opt_parser = OptionParser.new do |opts|
     @options.mode = mode || 'full'
   end
 
+  opts.on('-a', '--tag-set=ID', 'Specify the tag set into which to add new tags') do |tag_set|
+    @options.tag_set = tag_set
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
@@ -117,14 +122,44 @@ RequestContext.community = Community.find(@options.community)
 # ==================================================================================================================== #
 
 if @options.mode == 'full' || @options.mode == 'process'
+  Dir.chdir Rails.root
+  unless Dir.exist?(Rails.root.join('import-data'))
+    Dir.mkdir(Rails.root.join('import-data'))
+  end
+
   domain = domain_from_api_param(@options.site)
 
-  users = DumpImport.do_xml_transform(domain, 'Users', @options)
-  posts = DumpImport.do_xml_transform(domain, 'Posts', @options)
+  users, users_file = DumpImport.do_xml_transform(domain, 'Users', @options)
+  posts, posts_file = DumpImport.do_xml_transform(domain, 'Posts', @options)
 
-  DumpImport.generate_community_users(users, @options)
+  tags_file = DumpImport.generate_tags(posts, @options)
 
   if @options.mode == 'process'
-
+    files = [users_file, posts_file, tags_file].map { |s| s.to_s.gsub("#{Rails.root.to_s}/", '') }
+    `tar -cvzf qpixel-import.tar.gz #{files.join(' ')}`
+    $logger.info 'Written qpixel-import.tar.gz.'
+    exit 0
   end
+end
+
+if @options.mode == 'import'
+  Dir.chdir Rails.root
+  `tar -xvzf qpixel-import.tar.gz`
+  $logger.info 'Decompressed & unarchived qpixel-import.tar.gz.'
+  # Now we have all the files in import-data/ and can continue with the same process for either
+  # full or import-only modes
+end
+
+if @options.mode == 'import' || @options.mode == 'full'
+  @importer = DatabaseImport.new @options, domain_from_api_param(@options.site)
+  @importer.load_data('import-data/Users_Formatted.xml', 'users',
+                      ['id', 'created_at', 'username', 'website', 'profile', 'profile_markdown', 'se_acct_id'])
+  @importer.load_data('import-data/Posts_Formatted.xml', 'posts',
+                      ['id', 'post_type_id', 'created_at', 'score', 'body', 'body_markdown', 'user_id', 'last_activity',
+                       'title', 'tags_cache', 'answer_count', 'parent_id', 'att_source', 'att_license_name',
+                       'att_license_link', 'category_id', 'community_id'])
+  @importer.load_data('import-data/Tags_Formatted.xml', 'tags',
+                      ['community_id', 'tag_set_id', 'name', 'created_at', 'updated_at'])
+
+  @importer.run
 end

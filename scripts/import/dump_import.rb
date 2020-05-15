@@ -5,11 +5,11 @@ class DumpImport
       post_type_id: :post_type_id,
       created_at: :creation_date,
       score: :score,
-      body: :body,
-      body_markdown: :body,
+      body: Proc.new { |row| CGI.unescapeHTML(row['body'] || '') },
+      body_markdown: Proc.new { |row| CGI.unescapeHTML(row['body'] || '') },
       user_id: :owner_user_id,
       last_activity: :last_activity_date,
-      title: :title,
+      title: Proc.new { |row| CGI.unescapeHTML(row['title'] || '') },
       tags_cache: Proc.new { |row| transform_tags(row) },
       answer_count: :answer_count,
       parent_id: :parent_id,
@@ -25,7 +25,7 @@ class DumpImport
     {
       id: :id,
       created_at: :creation_date,
-      username: :display_name,
+      username: Proc.new { |row| CGI.unescapeHTML(row['display_name'] || '') },
       website: :website_url,
       profile: Proc.new { |row| generate_profile(row, site_domain) },
       profile_markdown: Proc.new { |row| generate_profile(row, site_domain) },
@@ -65,7 +65,7 @@ class DumpImport
     category_id = options.category
 
     input_file_path = File.join(dump_path, "#{data_type}.xml")
-    output_file_path = File.join(dump_path, "#{data_type}_Formatted.xml")
+    output_file_path = Rails.root.join('import-data', "#{data_type}_Formatted.xml")
 
     field_map = case data_type
                 when 'Posts'
@@ -101,29 +101,33 @@ class DumpImport
       end
     end
 
-    File.write(output_file_path, builder.to_xml)
-    rows
+    File.write(output_file_path, builder.to_xml(encoding: 'UTF-8'))
+    [rows, output_file_path]
   end
 
-  def self.generate_community_users(users, options)
-    output_file_path = File.join(options.path, 'CommunityUsers_Formatted.xml')
+  def self.generate_tags(posts, options)
+    output_file_path = Rails.root.join('import-data', 'Tags_Formatted.xml')
+
+    unique_tags = posts.map { |p| p['tags'].present? ? p['tags'].split('><').map { |t| t.gsub(/[<>]/, '') } : [] }
+                       .flatten.uniq
+    progress = ProgressBar.create(title: "Tags (#{unique_tags.size})", total: unique_tags.size, progress_mark: '█')
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.resultset do
-        users.each do |user|
+        unique_tags.each do |tag|
           xml.row do
             xml.community_id options.community
-            xml.user_id user['id']
-            xml.is_moderator 0
-            xml.is_admin 0
-            xml.reputation 1
+            xml.tag_set_id options.tag_set
+            xml.name tag
             xml.created_at DateTime.now.iso8601
             xml.updated_at DateTime.now.iso8601
           end
+          progress.increment
         end
       end
     end
 
-    File.write(output_file_path, builder.to_xml)
+    File.write(output_file_path, builder.to_xml(encoding: 'UTF-8'))
+    output_file_path
   end
 end
