@@ -20,9 +20,12 @@ class AnswersController < ApplicationController
                                              body: AnswersController.renderer.render(params[:answer][:body_markdown]),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
-    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
-                                       share_question_url(@question))
+    unless current_user.id == @question.user.id
+      @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
+                                         share_question_url(@question))
+    end
     if @answer.save
+      @question.update(last_activity: DateTime.now, last_activity_by: current_user)
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
       render :new, status: 422
