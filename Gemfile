@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 # Essential gems: servers, adapters, Rails + Rails requirements, Devise
 gem 'coffee-rails', '~> 4.2.2'
+gem 'counter_culture', '~> 2.0'
 gem 'devise', '~> 4.7'
 gem 'jquery-rails', '~> 4.3.5'
 gem 'mysql2', '~> 0.5.3'

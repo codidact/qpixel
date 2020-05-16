@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_115752) do
+ActiveRecord::Schema.define(version: 2020_05_16_162625) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -218,7 +218,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
     t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.text "att_source"
+    t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
     t.string "doc_slug"
@@ -228,6 +228,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
     t.bigint "duplicate_post_id"
     t.bigint "category_id"
     t.bigint "license_id"
+    t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
@@ -238,6 +239,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_115752) do
     t.index ["license_id"], name: "index_posts_on_license_id"
     t.index ["parent_id"], name: "index_posts_on_parent_id"
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
+    t.index ["tags_cache"], name: "index_posts_on_tags_cache"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 

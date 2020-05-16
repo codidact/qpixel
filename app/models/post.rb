@@ -5,7 +5,7 @@ class Post < ApplicationRecord
 
   belongs_to :user
   belongs_to :post_type
-  belongs_to :parent, class_name: 'Post', required: false, counter_cache: :answer_count
+  belongs_to :parent, class_name: 'Post', required: false
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
@@ -17,6 +17,8 @@ class Post < ApplicationRecord
   has_many :post_histories, dependent: :destroy
   has_many :flags, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
+
+  counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
 
   serialize :tags_cache, Array
 
