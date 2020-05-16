@@ -32,16 +32,6 @@ class PostTest < ActiveSupport::TestCase
     assert_equal previous_rep, post.user.reputation
   end
 
-  test 'adding an answer should increase answer_count' do
-    question = posts(:question_one)
-    pre_count = question.answer_count
-    Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
-                score: 0, user: users(:standard_user), parent: question, post_type_id: Answer.post_type_id,
-                category: question.category)
-    post_count = question.answer_count
-    assert_equal pre_count + 1, post_count
-  end
-
   test 'reassigning post should move post votes and rep change' do
     post = posts(:question_one)
     rep_change = Vote.total_rep_change(post.votes)
