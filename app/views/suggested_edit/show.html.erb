@@ -18,14 +18,15 @@
 <div class="widget">
     <div class="widget--body h-bg-tertiary-050">
         <% if @edit.pending? %>
-        <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong> This suggested edit is pending review.</p>
+        <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
         <% elsif @edit.approved? %>
-        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong> This suggested edit was approved and applied to the post.</p>
+        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong><br>This suggested edit was approved and applied to the post <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.decided_by) %>.</p>
         <% elsif @edit.rejected? %>
             <% if @edit.rejected_comment %>
-            <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong> This suggested edit was rejected: <%= @edit.rejected_comment %></p>
+                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.decided_by) %>:</p>
+                <p class="h-m-0"><%= @edit.rejected_comment %></p>
             <% else %>
-            <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong> This suggested edit was rejected.</p>
+                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.decided_by) %>.</p>
             <% end %>
         <% end %>
     </div>
