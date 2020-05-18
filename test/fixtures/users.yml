@@ -5,6 +5,7 @@ standard_user:
   username: standard_user
   is_global_admin: false
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 closer:
   email: closer@qpixel-test.net
@@ -17,6 +18,7 @@ closer:
   is_global_moderator: false
   login_token: abcdefghijklmnopqrstuvwxyz01
   login_token_expires_at: 2099-01-01T00:00:00.000000Z
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 editor:
   email: editor@qpixel-test.net
@@ -27,6 +29,7 @@ editor:
   is_global_moderator: false
   login_token: abcdefghijklmnopqrstuvwxyz02
   login_token_expires_at: 2000-01-01T00:00:00.000000Z
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 deleter:
   email: delete@qpixel-test.net
@@ -35,6 +38,7 @@ deleter:
   username: deleter
   is_global_admin: false
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 moderator:
   email: moderator@qpixel-test.net
@@ -43,6 +47,7 @@ moderator:
   username: moderator
   is_global_admin: false
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 admin:
   email: admin@qpixel-test.net
@@ -51,6 +56,7 @@ admin:
   username: admin
   is_global_admin: false
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 global_moderator:
   email: global-moderator@qpixel-test.net
@@ -59,6 +65,7 @@ global_moderator:
   username: global-moderator
   is_global_admin: false
   is_global_moderator: true
+  confirmed_at: 2020-01-01T00:00:00.000000Z
 
 global_admin:
   email: global-admin@qpixel-test.net
@@ -67,3 +74,4 @@ global_admin:
   username: global-admin
   is_global_admin: true
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
