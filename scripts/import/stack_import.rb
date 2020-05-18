@@ -3,6 +3,7 @@ require 'optparse'
 require 'open-uri'
 require 'csv'
 
+require_relative 'api_import'
 require_relative 'dump_import'
 require_relative 'database_import'
 
@@ -42,14 +43,6 @@ def domain_from_api_param(api_param)
     "#{api_param}.stackexchange.com"
   end
 end
-
-ERROR_CODES = {
-  no_site: 1,
-  undefined_mode: 2,
-  invalid_specifier: 3,
-  invalid_query_format: 4,
-  no_query: 5
-}
 
 @options = OpenStruct.new
 opt_parser = OptionParser.new do |opts|
@@ -102,19 +95,13 @@ opt_parser = OptionParser.new do |opts|
 end
 opt_parser.parse!
 
-unless @options.site.present?
-  $logger.fatal 'Site must be specified'
-  exit ERROR_CODES[:no_site]
-end
+require = [:query, :path, :community, :category, :mode, :tag_set]
 
-unless @options.query.present?
-  $logger.fatal 'Query revision ID must be specified'
-  exit ERROR_CODES[:no_query]
-end
-
-unless @options.key.present?
-  $logger.warn 'No key specified. Can run without one, but only for a limited run. Large imports will require a key ' \
-               'for added quota.'
+require.each do |r|
+  unless @options[r].present?
+    $logger.fatal "#{r.to_s} must be provided. Use --help for a list of parameters."
+    exit 1
+  end
 end
 
 RequestContext.community = Community.find(@options.community)
@@ -129,8 +116,24 @@ if @options.mode == 'full' || @options.mode == 'process'
 
   domain = domain_from_api_param(@options.site)
 
+  query_response = Net::HTTP.get_response(URI("https://data.stackexchange.com/#{@options.site}/csv/#{@options.query}"))
+  query_results = CSV.parse(query_response.body)
+  required_ids = query_results.map { |r| r[0].to_s }
+
+  api_importer = APIImport.new @options
+
   users, users_file = DumpImport.do_xml_transform(domain, 'Users', @options)
-  posts, posts_file = DumpImport.do_xml_transform(domain, 'Posts', @options)
+  posts, posts_file = DumpImport.do_xml_transform(domain, 'Posts', @options) do |rows|
+    ids = rows.map { |r| r['id'].to_s }
+    missing = required_ids.select { |e| !ids.include? e }
+    excess = ids.select { |e| !required_ids.include? e }
+    $logger.info "#{ids.size} rows in dump, #{missing.size} to get from API, #{excess.size} excess"
+
+    rows = rows.select { |r| !excess.include? r['id'].to_s }
+    rows = rows.concat(api_importer.posts(missing) || [])
+
+    rows
+  end
 
   tags_file = DumpImport.generate_tags(posts, @options)
 

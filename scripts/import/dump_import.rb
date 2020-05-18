@@ -80,6 +80,9 @@ class DumpImport
     rows = document.css("#{data_type.downcase} row").to_a
     rows = rows.map { |r| r.attributes.map { |n, a| [n.underscore, a.content] }.to_h }
 
+    # Allow calling code to add and filter rows before we dump to file.
+    rows = block_given? ? yield(rows) : rows
+
     progress = ProgressBar.create(title: "#{data_type} (#{rows.size})", total: rows.size, progress_mark: '█')
 
     builder = Nokogiri::XML::Builder.new do |xml|
