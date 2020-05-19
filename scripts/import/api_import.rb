@@ -18,7 +18,7 @@ class APIImport
     full_uri.query = params.map { |k, v| "#{k}=#{v}" }.join('&')
 
     if @backoff.present? && @backoff.future?
-      seconds = @backoff - DateTime.now
+      seconds = (@backoff - DateTime.now) * 86400
       $logger.debug "Waiting #{seconds.to_i}s for backoff"
       sleep seconds.to_i
     end
