@@ -32,7 +32,7 @@ class Post < ApplicationRecord
   validate :stripped_minimum, if: :question?
   validate :category_allows_post_type
   validate :license_available
-  validate :required_tags?
+  validate :required_tags?, if: -> { post_type_id == Question.post_type_id }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
