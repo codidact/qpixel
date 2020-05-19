@@ -104,6 +104,10 @@ require.each do |r|
   end
 end
 
+unless @options.key.present?
+  $logger.warn 'No key supplied. Can run without for a limited import, but larger datasets will need a key.'
+end
+
 RequestContext.community = Community.find(@options.community)
 
 # ==================================================================================================================== #
@@ -118,19 +122,31 @@ if @options.mode == 'full' || @options.mode == 'process'
 
   query_response = Net::HTTP.get_response(URI("https://data.stackexchange.com/#{@options.site}/csv/#{@options.query}"))
   query_results = CSV.parse(query_response.body)
-  required_ids = query_results.map { |r| r[0].to_s }
+  required_ids = query_results.map { |r| r[0].to_s }.drop(1)
 
   api_importer = APIImport.new @options
 
-  users, users_file = DumpImport.do_xml_transform(domain, 'Users', @options)
   posts, posts_file = DumpImport.do_xml_transform(domain, 'Posts', @options) do |rows|
     ids = rows.map { |r| r['id'].to_s }
     missing = required_ids.select { |e| !ids.include? e }
     excess = ids.select { |e| !required_ids.include? e }
-    $logger.info "#{ids.size} rows in dump, #{missing.size} to get from API, #{excess.size} excess"
+    $logger.info "#{ids.size} post rows in dump, #{missing.size} to get from API, #{excess.size} excess"
 
     rows = rows.select { |r| !excess.include? r['id'].to_s }
     rows = rows.concat(api_importer.posts(missing) || [])
+
+    rows
+  end
+
+  required_user_ids = posts.map { |p| p['owner_user_id'] }.uniq
+  users, users_file = DumpImport.do_xml_transform(domain, 'Users', @options) do |rows|
+    ids = rows.map { |r| r['id'].to_s }
+    missing = required_user_ids.select { |e| !ids.include? e }
+    excess = ids.select { |e| !required_user_ids.include? e }
+    $logger.info "#{ids.size} user rows in dump, #{missing.size} to get from API, #{excess.size} excess"
+
+    rows = rows.select { |r| !excess.include? r['id'].to_s }
+    rows = rows.concat(api_importer.users(missing) || [])
 
     rows
   end

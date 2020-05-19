@@ -13,7 +13,7 @@ class DumpImport
       tags_cache: Proc.new { |row| transform_tags(row) },
       answer_count: :answer_count,
       parent_id: :parent_id,
-      att_source: Proc.new { |row| "https://#{site_domain}#{row['post_type_id'] == '1' ? '/q/' : '/a/'}#{row['id']}" },
+      att_source: Proc.new { |row| "https://#{site_domain}#{row['post_type_id'].to_s == '1' ? '/q/' : '/a/'}#{row['id']}" },
       att_license_name: Proc.new { |row| determine_license(row)[0] },
       att_license_link: Proc.new { |row| determine_license(row)[1] },
       community_id: community_id,
