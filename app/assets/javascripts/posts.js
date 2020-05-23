@@ -43,6 +43,8 @@ $(() => {
     tags: true
   });
 
+  let mathjaxTimeout = null;
+
   $('.post-field').on('keyup markdown', evt => {
     if (!window.converter) {
       window.converter = new showdown.Converter();
@@ -54,5 +56,13 @@ $(() => {
       const html = converter.makeHtml(text);
       $(evt.target).parents('.form-group').siblings('.post-preview').html(html);
     }, 0);
+
+    if (mathjaxTimeout) {
+      clearTimeout(mathjaxTimeout);
+    }
+
+    mathjaxTimeout = setTimeout(() => {
+      MathJax.typeset();
+    }, 2000);
   });
 });
