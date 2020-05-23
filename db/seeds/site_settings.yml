@@ -242,3 +242,10 @@
   category: Integrations
   description: >
     Link to your chat platform of choice.
+
+- name: SidebarNoticeText
+  value: ~
+  value_type: text
+  category: Display
+  description: >
+    Text to display in a notice box at the top of the sidebar. Markdown allowed.
