@@ -102,7 +102,7 @@ class Post < ApplicationRecord
   end
 
   def pending_suggested_edit
-    SuggestedEdit.where(post_id: self.id).take
+    SuggestedEdit.where(post_id: self.id, active: true).take
   end
 
   private

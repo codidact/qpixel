@@ -1,6 +1,6 @@
 <% content_for :title, "Edit Answer" %>
 
-<h1>Edit Answer</h1>
+<h1><%= check_your_post_privilege(@answer, 'Edit') ? "Edit Answer" : "Suggest Edit for Answer" %></h1>
 <% if @answer.errors.any? %>
   <div class="notice is-danger">
     <p>The following <%= "error".pluralize(@answer.errors.count) %> prevented the answer from being updated:</p>
@@ -26,7 +26,7 @@
     <%= text_field_tag :edit_comment, params[:edit_comment], class: 'form-element' %>
   </div>
   <div class="form-group">
-    <%= f.submit "Save changes", class: "button is-filled" %>
+    <%= f.submit (check_your_post_privilege(@answer, 'Edit') ? "Save changes" : "Suggest changes"), class: "button is-filled" %>
   </div>
 <% end %>
 

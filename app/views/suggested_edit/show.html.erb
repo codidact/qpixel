@@ -1,10 +1,11 @@
 <% content_for :title, "Suggested Edit #" + @edit.id.to_s %>
 <% post = @edit.post %>
 <% is_question = post.post_type_id == Question.post_type_id %>
+<% may_decide = check_your_post_privilege(post, 'Edit') && @edit.user.id != current_user.id %>
 
 <h1>Review Suggested Edit</h1>
 
-<% if @edit.active? %>
+<% if @edit.active? && may_decide %>
 <div class="notice is-info">
     <p>This edit was suggested by another user. Good edits: </p>
     <ul>
@@ -91,10 +92,20 @@
     <div class="widget--body">
         <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.user) %>	
     </div>
-    <% if @edit.active? %>
+    <% if @edit.active? && may_decide %>
     <div class="widget--footer">
-        <button class="button is-filled is-medium">Approve</button>
-        <button class="button is-filled is-medium">Reject (with optional reason)</button>
+        <button class="button is-filled is-medium" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
+        <button class="button is-filled is-medium js-suggested-edit-reject">Reject (with optional reason)</button>
+
+        
+<div class="widget js-suggested-edit-reject-dialog is-hidden">
+    <div class="widget--header">Rejecting this suggested edit</div>
+    <div class="widget--body">
+        <input class="js-rejection-reason form-element" placeholder="Why do you reject this edit? (optional)">
+        <button class="button is-outlined is-medium " data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
+    </div>
+</div>
+
     </div>
     <% end %>
 </div>

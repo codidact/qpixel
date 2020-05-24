@@ -81,6 +81,8 @@ Rails.application.routes.draw do
   patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
+  post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
+  post 'posts/suggested-edit/:id/reject',  to: 'suggested_edit#reject', as: :suggested_edit_reject
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help
