@@ -3,7 +3,10 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new)
+
+  # noinspection RubyArgCount
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, no_intra_emphasis: true,
+                                                strikethrough: true)
 
   def self.renderer
     @@markdown_renderer

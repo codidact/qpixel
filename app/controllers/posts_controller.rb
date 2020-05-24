@@ -6,7 +6,8 @@ class PostsController < ApplicationController
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help]
 
-  @@plain_renderer = Redcarpet::Markdown.new(Redcarpet::Render::StripDown.new)
+  # noinspection RubyArgCount
+  @@plain_renderer = Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
 
   def self.renderer
     @@plain_renderer

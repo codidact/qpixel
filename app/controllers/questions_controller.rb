@@ -6,7 +6,9 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
 
   # noinspection RubyArgCount
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true)
+  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true,
+                                                no_intra_emphasis: true, tables: true, strikethrough: true,
+                                                footnotes: true)
 
   def self.renderer
     @@markdown_renderer
