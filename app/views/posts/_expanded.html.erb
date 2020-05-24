@@ -63,7 +63,7 @@
       <% if post.deleted %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
-            <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
+            <strong>deleted</strong> by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% if post.deleted_by.id == post.user.id %>
@@ -78,6 +78,12 @@
           <% end %>
 
           <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
+        </div>
+      <% end %>
+
+      <% if check_your_post_privilege(post, 'Edit') && post.has_pending_suggested_edit? %>
+        <div class="notice h-p-2">
+          <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id)%>" class="button is-outlined is-muted is-small">Review changes</a></p>
         </div>
       <% end %>
 

@@ -67,7 +67,7 @@ class Post < ApplicationRecord
     parent.nil? ? category.tag_set : parent.category.tag_set
   end
 
-  def meta?
+  def meta? 
     false
   end
 
@@ -95,6 +95,14 @@ class Post < ApplicationRecord
 
   def answer?
     post_type_id == Answer.post_type_id
+  end
+
+  def has_pending_suggested_edit?
+    !pending_suggested_edit.nil?
+  end
+
+  def pending_suggested_edit
+    SuggestedEdit.where(post_id: self.id).take
   end
 
   private
