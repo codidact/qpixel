@@ -65,43 +65,50 @@ class QuestionsController < ApplicationController
   def edit; end
 
   def update
+    unless current_user&.has_post_privilege?('Edit', @question)
+      return update_as_suggested_edit
+    end
+
     body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
 
-    if current_user&.has_post_privilege?('Edit', @question)
-
-      PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
-                                                       after: params[:question][:body_markdown], comment: params[:edit_comment])
-      if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
-                                                body: body_rendered, last_activity: DateTime.now,
-                                                last_activity_by: current_user))
-        redirect_to url_for(controller: :questions, action: :show, id: @question.id)
-      else
-        render :edit
-      end
-
+    PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
+                                                     after: params[:question][:body_markdown],
+                                                     comment: params[:edit_comment])
+    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
+                                              body: body_rendered, last_activity: DateTime.now,
+                                              last_activity_by: current_user))
+      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
-      new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
-      updates = {
-        post: @question,
-        user: current_user,
-        community: @question.community,
-        body: body_rendered,
-        title: params[:question][:title] != @question.title ? params[:question][:title] : nil,
-        tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : nil,
-        body_markdown: params[:question][:body_markdown] != @question.body_markdown ? params[:question][:body_markdown] : nil,
-        comment: params[:edit_comment],
-        active: true, accepted: false,
-        decided_at: nil, decided_by: nil,
-        rejected_comment: nil
-      }
+      render :edit
+    end
+  end
 
-      @edit = SuggestedEdit.new(updates)
-      if @edit.save
-        redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)
-      else
-        @post.errors = @edit.errors
-        render :edit
-      end
+  def update_as_suggested_edit
+    body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
+
+    new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
+
+    updates = {
+      post: @question,
+      user: current_user,
+      community: @question.community,
+      body: body_rendered,
+      title: params[:question][:title] != @question.title ? params[:question][:title] : nil,
+      tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : nil,
+      body_markdown: params[:question][:body_markdown] != @question.body_markdown ?
+                                            params[:question][:body_markdown] : nil,
+      comment: params[:edit_comment],
+      active: true, accepted: false,
+      decided_at: nil, decided_by: nil,
+      rejected_comment: nil
+    }
+
+    @edit = SuggestedEdit.new(updates)
+    if @edit.save
+      redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)
+    else
+      @post.errors = @edit.errors
+      render :edit
     end
   end
 

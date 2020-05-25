@@ -37,7 +37,8 @@ class AnswersController < ApplicationController
     if current_user&.has_post_privilege?('Edit', @answer)
 
       PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
-                                                     after: params[:answer][:body_markdown], comment: params[:edit_comment])
+                                                     after: params[:answer][:body_markdown],
+                                                     comment: params[:edit_comment])
       if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
                                             last_activity: DateTime.now, last_activity_by: current_user))
         redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
