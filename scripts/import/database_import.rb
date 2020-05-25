@@ -104,7 +104,9 @@ class DatabaseImport
           "SELECT name, current_timestamp, current_timestamp, community_id, tag_set_id FROM #{table 'tags'}"
 
     # Last step: re-associate tags with posts
-    associate_tags
+    unless @options.skip_tags
+      associate_tags
+    end
   end
 
   def associate_tags

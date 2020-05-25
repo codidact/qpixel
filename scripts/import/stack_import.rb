@@ -88,6 +88,10 @@ opt_parser = OptionParser.new do |opts|
     @options.tag_set = tag_set
   end
 
+  opts.on('--skip-tags', 'Skip updating tag associations if you don\'t care about them for some reason.') do
+    @options.skip_tags = true
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit

@@ -18,7 +18,7 @@ class APIImport
     full_uri.query = params.map { |k, v| "#{k}=#{v}" }.join('&')
 
     if @backoff.present? && @backoff.future?
-      seconds = (@backoff - DateTime.now) * 86400
+      seconds = ((@backoff - DateTime.now) * 86400) + 1
       $logger.debug "Waiting #{seconds.to_i}s for backoff"
       sleep seconds.to_i
     end
@@ -44,7 +44,7 @@ class APIImport
     posts = []
     groups.each do |group|
       posts = posts.concat request("https://api.stackexchange.com/2.2/posts/#{group.join(';')}",
-                                   filter: @filters[:posts])['items']
+                                   filter: @filters[:posts], pagesize: '100')['items']
     end
 
     keyed = posts.map do |post|
@@ -67,7 +67,7 @@ class APIImport
     question_groups = question_ids.in_groups_of(100).map(&:compact)
     question_groups.each do |qg|
       data = request("https://api.stackexchange.com/2.2/questions/#{qg.join(';')}",
-                     filter: @filters[:questions])['items']
+                     filter: @filters[:questions], pagesize: '100')['items']
       data.each do |question|
         keyed[question['question_id']] = keyed[question['question_id']].merge({
           'answer_count' => question['answer_count'],
@@ -78,10 +78,11 @@ class APIImport
 
     answers = keyed.values.select { |p| p['post_type_id'] == 2 }
     answer_ids = answers.map { |a| a['id'] }
+
     answer_groups = answer_ids.in_groups_of(100).map(&:compact)
     answer_groups.each do |ag|
       data = request("https://api.stackexchange.com/2.2/answers/#{ag.join(';')}",
-                     filter: @filters[:answers])['items']
+                     filter: @filters[:answers], pagesize: '100')['items']
       data.each do |answer|
         keyed[answer['answer_id']] = keyed[answer['answer_id']].merge({
           'parent_id' => answer['question_id']
@@ -97,7 +98,7 @@ class APIImport
     users = []
     groups.each do |group|
       users = users.concat request("https://api.stackexchange.com/2.2/users/#{group.join(';')}",
-                                   filter: @filters[:users])['items']
+                                   filter: @filters[:users], pagesize: '100')['items']
     end
 
     users.each.with_index do |user, idx|
