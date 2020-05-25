@@ -32,37 +32,39 @@ class AnswersController < ApplicationController
   def edit; end
 
   def update
-    body_rendered = AnswersController.renderer.render(params[:answer][:body_markdown])
+    unless current_user&.has_post_privilege?('Edit', @answer)
+      return update_as_suggested_edit
+    end
 
-    if current_user&.has_post_privilege?('Edit', @answer)
-      PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
-                                                     after: params[:answer][:body_markdown],
-                                                     comment: params[:edit_comment])
-      if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
-                                            last_activity: DateTime.now, last_activity_by: current_user))
-        redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
-      else
-        render :edit
-      end
+    PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
+                                                    after: params[:answer][:body_markdown],
+                                                    comment: params[:edit_comment])
+    if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                                          last_activity: DateTime.now, last_activity_by: current_user))
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
-      updates = {
-        post: @answer,
-        user: current_user,
-        community: @answer.community,
-        body: body_rendered,
-        body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
-        comment: params[:edit_comment],
-        active: true, accepted: false,
-        decided_at: nil, decided_by: nil,
-        rejected_comment: nil
-      }
-      @edit = SuggestedEdit.new(updates)
-      if @edit.save
-        redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)
-      else
-        @post.errors = @edit.errors
-        render :edit
-      end
+      render :edit
+    end
+  end
+
+  def update_as_suggested_edit
+    updates = {
+      post: @answer,
+      user: current_user,
+      community: @answer.community,
+      body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+      body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
+      comment: params[:edit_comment],
+      active: true, accepted: false,
+      decided_at: nil, decided_by: nil,
+      rejected_comment: nil
+    }
+    @edit = SuggestedEdit.new(updates)
+    if @edit.save
+      redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)
+    else
+      @post.errors = @edit.errors
+      render :edit
     end
   end
 

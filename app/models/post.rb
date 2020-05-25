@@ -114,7 +114,6 @@ class Post < ApplicationRecord
         tags << tag
       end
     end
-
     tags.each do |tag|
       unless tags_cache.include? tag.name
         tags.delete tag

@@ -88,8 +88,8 @@ class QuestionsController < ApplicationController
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown
-      params[:question][:body_markdown]
-    end
+                      params[:question][:body_markdown]
+                    end
 
     updates = {
       post: @question,
