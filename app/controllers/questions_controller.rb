@@ -88,6 +88,12 @@ class QuestionsController < ApplicationController
 
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
+    if params[:question][:body_markdown] != @question.body_markdown
+      body_markdown = params[:question][:body_markdown]
+    else
+      body_markdown = nil
+    end
+
     updates = {
       post: @question,
       user: current_user,
@@ -95,8 +101,7 @@ class QuestionsController < ApplicationController
       body: body_rendered,
       title: params[:question][:title] != @question.title ? params[:question][:title] : nil,
       tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : nil,
-      body_markdown: params[:question][:body_markdown] != @question.body_markdown ?
-                                            params[:question][:body_markdown] : nil,
+      body_markdown: body_markdown,
       comment: params[:edit_comment],
       active: true, accepted: false,
       decided_at: nil, decided_by: nil,

@@ -11,23 +11,22 @@ class SuggestedEditController < ApplicationController
     @post = @edit.post
     check_your_privilege('Edit', @post)
 
-    body_rendered = QuestionsController.renderer.render(@edit.body_markdown)
-
     PostHistory.post_edited(@post, @edit.user, before: @post.body_markdown,
                                                after: @edit.body_markdown, comment: params[:edit_comment])
 
     if @post.update(applied_details)
       @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
-                   decided_by: current_user, updated_at: DateTime.now)
+                                                  decided_by: current_user, updated_at: DateTime.now)
       if @post.question?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) }, status: 200)
+        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
+                                                                id: @post.id) }, status: 200)
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                                qid: @post.parent.id, id: @post.id) }, status: 200)
+                                                        qid: @post.parent.id, id: @post.id) }, status: 200)
       end
       return
     else
-      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
+      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' +
                                      ' the post criteria. Reject and make the changes yourself.' }, status: 400)
     end
 
@@ -44,7 +43,7 @@ class SuggestedEditController < ApplicationController
     now = DateTime.now
 
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
-                    decided_by: current_user, updated_at: now)
+                                                    decided_by: current_user, updated_at: now)
       render(json: { status: 'success' }, status: 200)
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)

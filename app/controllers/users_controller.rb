@@ -83,8 +83,8 @@ class UsersController < ApplicationController
                                .to_h.select { |_, cs| cs.include?('user_id') }
                                .map do |k, _|
       k.singularize.classify.constantize
-    rescue
-      nil
+                     rescue
+                       nil
     end .compact
     needs_transfer.each do |model|
       model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
