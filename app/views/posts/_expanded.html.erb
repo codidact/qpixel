@@ -81,7 +81,7 @@
         </div>
       <% end %>
 
-      <% if check_your_post_privilege(post, 'Edit') && post.has_pending_suggested_edit? %>
+      <% if check_your_post_privilege(post, 'Edit') && post.pending_suggested_edit? %>
         <div class="notice h-p-2">
           <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small">Review changes</a></p>
         </div>
@@ -128,13 +128,13 @@
         <div class="post--actions">
           <%= link_to 'history', post_history_path(post) %> &middot;
           <% if check_your_post_privilege(post, 'Edit') %>
-            <% if post.has_pending_suggested_edit? %>
+            <% if post.pending_suggested_edit? %>
               <%= link_to 'review suggested edit', suggested_edit_url(post.pending_suggested_edit.id), class: "h-fw-bold" %> &middot;
             <% else %>
               <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
             <% end %>
           <% elsif !current_user.nil? %>
-            <% if post.has_pending_suggested_edit? %>
+            <% if post.pending_suggested_edit? %>
               <span>suggested edit pending...</span> &middot;
             <% else %>
               <%= link_to 'suggest edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;

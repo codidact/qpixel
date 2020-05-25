@@ -62,18 +62,15 @@ class QuestionsController < ApplicationController
     @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
-    return if current_user.nil?
-
     body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
 
     if current_user&.has_post_privilege?('Edit', @question)
 
       PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
-                              after: params[:question][:body_markdown], comment: params[:edit_comment])
+                                                       after: params[:question][:body_markdown], comment: params[:edit_comment])
       if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
                                                 body: body_rendered, last_activity: DateTime.now,
                                                 last_activity_by: current_user))
