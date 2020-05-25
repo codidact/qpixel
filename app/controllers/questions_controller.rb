@@ -85,13 +85,10 @@ class QuestionsController < ApplicationController
 
   def update_as_suggested_edit
     body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
-
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
-    if params[:question][:body_markdown] != @question.body_markdown
-      body_markdown = params[:question][:body_markdown]
-    else
-      body_markdown = nil
+    body_markdown = if params[:question][:body_markdown] != @question.body_markdown
+      params[:question][:body_markdown]
     end
 
     updates = {

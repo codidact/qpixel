@@ -56,7 +56,6 @@ class AnswersController < ApplicationController
         decided_at: nil, decided_by: nil,
         rejected_comment: nil
       }
-
       @edit = SuggestedEdit.new(updates)
       if @edit.save
         redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)

@@ -26,7 +26,7 @@ class SuggestedEditController < ApplicationController
       end
       return
     else
-      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' +
+      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
                                      ' the post criteria. Reject and make the changes yourself.' }, status: 400)
     end
 
