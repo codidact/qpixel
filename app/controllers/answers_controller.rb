@@ -61,7 +61,7 @@ class AnswersController < ApplicationController
     }
     @edit = SuggestedEdit.new(updates)
     if @edit.save
-      redirect_to url_for(controller: :suggested_edit, action: :show, id: @edit.id)
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
       @post.errors = @edit.errors
       render :edit
