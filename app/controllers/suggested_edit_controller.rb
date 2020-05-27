@@ -17,6 +17,7 @@ class SuggestedEditController < ApplicationController
     if @post.update(applied_details)
       @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
                                                   decided_by: current_user, updated_at: DateTime.now)
+      flash[:success] = 'Edit approved successfully.' 
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
@@ -44,7 +45,14 @@ class SuggestedEditController < ApplicationController
 
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
                                                     decided_by: current_user, updated_at: now)
-      render(json: { status: 'success' }, status: 200)
+      flash[:success] = 'Edit rejected successfully.' 
+      if @post.question?
+        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
+                                                                id: @post.id) }, status: 200)
+      elsif @post.answer?
+        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
+                                                        qid: @post.parent.id, id: @post.id) }, status: 200)
+      end
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
     end
@@ -61,14 +69,14 @@ class SuggestedEditController < ApplicationController
       {
         title: @edit.title,
         tags_cache: @edit.tags_cache&.reject(&:empty?),
-        body: body_rendered,
+        body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
         last_activity_by: @edit.user
       }.compact
     elsif @post.answer?
       {
-        body: body_rendered,
+        body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
         last_activity_by: @edit.user

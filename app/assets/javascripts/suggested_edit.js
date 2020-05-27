@@ -43,7 +43,7 @@ $(document).on('ready', function () {
                     QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, this);
                 }
                 else {
-                    window.location.reload();
+                    window.location.href = response.redirect_url;
                 }
             })
             .fail((jqXHR, textStatus, errorThrown) => {

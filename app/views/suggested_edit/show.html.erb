@@ -18,6 +18,9 @@
 
 <div class="widget">
     <div class="widget--body h-bg-tertiary-050">
+        <div class="h-f-r">
+            <a class="button is-muted is-outlined" href="<%= @edit.on_question? ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id)  %>">Return to post</a>
+        </div>
         <% if @edit.pending? %>
         <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
         <% elsif @edit.approved? %>
@@ -101,7 +104,7 @@
 <div class="widget js-suggested-edit-reject-dialog is-hidden">
     <div class="widget--header">Rejecting this suggested edit</div>
     <div class="widget--body">
-        <input class="js-rejection-reason form-element" placeholder="Why do you reject this edit? (optional)">
+        <input class="js-rejection-reason form-element" placeholder="Why are you rejecting this edit?">
         <button class="button is-outlined is-medium " data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
     </div>
 </div>
