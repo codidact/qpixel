@@ -17,7 +17,7 @@ class SuggestedEditController < ApplicationController
     if @post.update(applied_details)
       @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
                                                   decided_by: current_user, updated_at: DateTime.now)
-      flash[:success] = 'Edit approved successfully.' 
+      flash[:success] = 'Edit approved successfully.'
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
@@ -45,7 +45,7 @@ class SuggestedEditController < ApplicationController
 
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
                                                     decided_by: current_user, updated_at: now)
-      flash[:success] = 'Edit rejected successfully.' 
+      flash[:success] = 'Edit rejected successfully.'
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
