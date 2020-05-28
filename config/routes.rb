@@ -92,6 +92,9 @@ Rails.application.routes.draw do
     post 'enable/code',                    to: 'two_factor#confirm_enable_code', as: :two_factor_confirm_enable
     get  'disable/code',                   to: 'two_factor#disable_code', as: :two_factor_disable_code
     post 'disable/code',                   to: 'two_factor#confirm_disable_code', as: :two_factor_confirm_disable
+    post 'disable/link-email',             to: 'two_factor#send_disable_email', as: :two_factor_send_disable_email
+    get  'disable/link/:token',            to: 'two_factor#disable_link', as: :two_factor_disable_link
+    post 'disable/link',                   to: 'two_factor#confirm_disable_link', as: :two_factor_confirm_disable_link
   end
 
   get    'users',                          to: 'users#index', as: :users

@@ -80,5 +80,5 @@ Rails.application.configure do
   config.active_storage.service = :s3
 
   config.action_mailer.delivery_method = :ses
-  config.action_mailer.default_url_options = { host: 'writing.codidact.com', port: 80 }
+  config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
 end

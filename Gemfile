@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.6.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements, Devise
 gem 'coffee-rails', '~> 4.2.2'
