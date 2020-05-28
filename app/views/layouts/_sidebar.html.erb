@@ -5,7 +5,6 @@
   <% if notice_text.present? %>
     <% cache SiteSetting.find_by(name: 'SidebarNoticeText') do %>
       <div class="widget has-margin-4 is-warning">
-        <h4 class="widget--header has-margin-0">Please Note</h4>
         <div class="widget--body">
           <%= raw(sanitize(QuestionsController.renderer.render(notice_text), scrubber: scrubber)) %>
         </div>
