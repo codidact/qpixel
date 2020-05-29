@@ -85,7 +85,7 @@ class UsersController < ApplicationController
       k.singularize.classify.constantize
                      rescue
                        nil
-    end .compact
+    end.compact
     needs_transfer.each do |model|
       model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
     end
