@@ -110,8 +110,8 @@ end
 
 require = {
   full: [:site, :query, :path, :community, :category, :tag_set],
-  process: [:site, :query, :path],
-  import: [:site, :community, :category, :tag_set]
+  process: [:site, :query, :path, :community, :category, :tag_set],
+  import: [:site]
 }
 
 require[@options.mode.to_sym].each do |r|
