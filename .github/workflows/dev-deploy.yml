@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Copy key
+    - name: Set up SSH key
       run: |
         echo "${{ secrets.DEV_DEPLOY_KEY }}" > ~/deploy_key
+        chmod 700 ~/deploy_key
     
     - name: Run SSH deploy command
       run: |
