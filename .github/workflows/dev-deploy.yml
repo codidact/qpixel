@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Copy key
       run: |
-        echo ${{ secrets.DEV_DEPLOY_KEY }} > ~/deploy_key
+        echo "${{ secrets.DEV_DEPLOY_KEY }}" > ~/deploy_key
     
     - name: Run SSH deploy command
       run: |
