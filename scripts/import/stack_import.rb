@@ -111,7 +111,8 @@ end
 require = {
   full: [:site, :query, :path, :community, :category, :tag_set],
   process: [:site, :query, :path, :community, :category, :tag_set],
-  import: [:site]
+  import: [:site, :community, :category, :tag_set],
+  tags: [:site, :tag_set]
 }
 
 require[@options.mode.to_sym].each do |r|
@@ -205,4 +206,9 @@ if @options.mode == 'import' || @options.mode == 'full'
                       ['community_id', 'tag_set_id', 'name', 'created_at', 'updated_at'])
 
   @importer.run
+end
+
+if @options.mode == 'tags'
+  @importer = DatabaseImport.new @options, domain_from_api_param(@options.site)
+  @importer.associate_tags
 end
