@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_28_145307) do
+ActiveRecord::Schema.define(version: 2020_06_01_113238) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(version: 2020_05_28_145307) do
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["deleted"], name: "index_posts_on_deleted"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
+    t.index ["last_activity"], name: "index_posts_on_last_activity"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
     t.index ["license_id"], name: "index_posts_on_license_id"
     t.index ["parent_id"], name: "index_posts_on_parent_id"

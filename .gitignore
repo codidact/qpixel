@@ -37,3 +37,6 @@ deploy
 /config/master.key
 
 .byebug_history
+
+import-data/
+qpixel-import.tar.gz
