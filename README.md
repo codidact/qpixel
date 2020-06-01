@@ -66,7 +66,7 @@ You can create the first user account in the application, which should be runnin
 to an admin account, run `rails c` for a console, followed by:
 
 ```ruby
-User.last.update(is_global_admin: true)
+User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
 
 ## License
