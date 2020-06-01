@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Post < ApplicationRecord
   require 'redcarpet/render_strip'
 
@@ -250,3 +251,4 @@ class Post < ApplicationRecord
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
