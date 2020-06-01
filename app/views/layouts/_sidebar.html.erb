@@ -12,7 +12,7 @@
     <% end %>
   <% end %>
 
-  <% if Rails.env.development? || @hot_questions.size > 0 %>
+  <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Hot Posts</h4>
       <% @hot_questions.each do |hq| %>

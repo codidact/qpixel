@@ -105,9 +105,9 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_hot_questions
-    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 30.minutes) do
-      Post.undeleted.where(updated_at: (Rails.env.development? ? 365 : 1).days.ago..Time.now)
-          .where(parent_id: nil).includes(:category)
+    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
+      Post.undeleted.where(updated_at: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
+          .where(post_type_id: Question.post_type_id).includes(:category)
           .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
     end
   end
