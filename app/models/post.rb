@@ -43,6 +43,7 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
+  after_save :update_category_activity, if: :question?
   before_validation :update_tag_associations, if: :question?
   after_create :create_initial_revision
   after_create :add_license_if_nil
@@ -240,6 +241,12 @@ class Post < ApplicationRecord
 
     unless tag_ids.any? { |t| required.include? t }
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
+    end
+  end
+
+  def update_category_activity
+    if saved_changes.include? 'last_activity'
+      category.update_activity(last_activity)
     end
   end
 end
