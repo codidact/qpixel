@@ -100,7 +100,7 @@
               <% tag_set = post.tag_set %>
               <% required_ids = post.category&.required_tag_ids %>
               <% topic_ids = post.category&.topic_tag_ids %>
-              <% post.tags.category_sort_by(required_ids, topic_ids).each do |tag| %>
+              <% category_sort_tags(post.tags, required_ids, topic_ids).each do |tag| %>
                 <% next if tag.nil? %>
                 <% required = required_ids&.include? tag.id %>
                 <% topic = topic_ids&.include? tag.id %>
