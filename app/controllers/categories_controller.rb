@@ -90,7 +90,7 @@ class CategoriesController < ApplicationController
                               SiteSetting['LotteryAgeDeprecationSpeed']] }
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .includes(:post_type).list_includes.paginate(page: params[:page], per_page: 50)
+                      .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                       .order(sort_param)
   end
 
