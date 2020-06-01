@@ -8,7 +8,7 @@
   </div>
 <% end %>
 
-<% post_count = @posts.count %>
+<% post_count = @posts.to_a.size %>
 <div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
   <div>
     <%= short_number_to_human post_count, precision: 1, significant: false %>
