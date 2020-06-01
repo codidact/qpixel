@@ -16,4 +16,4 @@ jobs:
     
     - name: Run SSH deploy command
       run: |
-        ssh -i ~/deploy_key -o StrictHostKeyChecking=no ubuntu@34.238.159.212 "cd /var/apps/qpixel ; bash -l ./deploy ${GITHUB_REF##*/}"
+        ssh -i ~/deploy_key -o StrictHostKeyChecking=no ubuntu@dev.codidact.org "cd /var/apps/qpixel ; bash -l ./deploy ${GITHUB_REF##*/}"
