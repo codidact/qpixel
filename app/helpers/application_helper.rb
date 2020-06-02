@@ -60,4 +60,19 @@ module ApplicationHelper
                              [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
                              [:table, :strikethrough, :autolink]
   end
+
+  # This isn't a perfect way to strip out Markdown, so it should only be used for non-critical things like
+  # page descriptions - things that will later be supplemented by the full formatted content.
+  def strip_markdown(md)
+    # Remove block-level formatting: headers, hr, references, images, HTML tags
+    md = md.gsub(/(?:^#+ +|^-{3,}|^\[[^\]]+\]: ?.+$|^!\[[^\]]+\](?:\([^)]+\)|\[[^\]]+\])$|<[^>]+>)/, '')
+
+    # Remove inline formatting: bold, italic, strike etc.
+    md = md.gsub(/[*_~]+/, '')
+
+    # Remove links and inline images but replace them with their text/alt text.
+    md = md.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+
+    md
+  end
 end

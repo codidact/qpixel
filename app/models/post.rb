@@ -90,7 +90,7 @@ class Post < ApplicationRecord
   end
 
   def body_plain
-    PostsController.renderer.render(body_markdown)
+    ActionController::Base.helpers.strip_markdown(body_markdown)
   end
 
   def question?
