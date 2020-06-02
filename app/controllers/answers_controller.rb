@@ -12,7 +12,7 @@ class AnswersController < ApplicationController
   def create
     @question = Question.find params[:id]
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-                                             body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                                             body: helpers.render_markdown(params[:answer][:body_markdown]),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
     unless current_user.id == @question.user.id
@@ -36,7 +36,7 @@ class AnswersController < ApplicationController
 
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
-    if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+    if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
                                           last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else

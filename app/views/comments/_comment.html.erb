@@ -1,6 +1,6 @@
 <div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
   <p class="comment--content">
-    <%= raw(sanitize(CommentsController.renderer.render(comment.content), scrubber: CommentScrubber.new)) %>
+    <%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %>
     <span class="comment--meta">
       &mdash; <%= link_to comment.user.username, user_path(comment.user) %>
         <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>

@@ -6,7 +6,7 @@
     <% cache SiteSetting.find_by(name: 'SidebarNoticeText') do %>
       <div class="widget has-margin-4 is-warning">
         <div class="widget--body">
-          <%= raw(sanitize(QuestionsController.renderer.render(notice_text), scrubber: scrubber)) %>
+          <%= raw(sanitize(render_markdown(notice_text), scrubber: scrubber)) %>
         </div>
       </div>
     <% end %>

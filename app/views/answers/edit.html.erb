@@ -40,7 +40,7 @@
     <h4 class="widget--header has-margin-0">Hints and Tips</h4>
     <div class="widget--body">
     <% guidance = @answer.category.answering_guidance_override || SiteSetting['AnsweringGuidance'] %>
-      <%= raw(sanitize(QuestionsController.renderer.render(guidance), scrubber: scrubber)) %>
+      <%= raw(sanitize(render_markdown(guidance), scrubber: scrubber)) %>
     </div>
   </div>
 <% end %>

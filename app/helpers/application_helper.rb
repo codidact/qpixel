@@ -54,4 +54,10 @@ module ApplicationHelper
              format: '%n%u' }.merge(opts)
     ActiveSupport::NumberHelper.number_to_human(*args, **opts)
   end
+
+  def render_markdown(md)
+    CommonMarker.render_html md,
+                             [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
+                             [:table, :strikethrough, :autolink]
+  end
 end

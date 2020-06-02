@@ -64,7 +64,7 @@ class QuestionsController < ApplicationController
 
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
                             after: params[:question][:body_markdown], comment: params[:edit_comment])
-    body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
+    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))

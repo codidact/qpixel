@@ -16,7 +16,7 @@
 
 <% if @posts.nil? %>
     <h3>Advanced Search Options</h3>
-    <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
+    <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
 
     <p class="has-color-tertiary-500"><em>Search for something to start finding posts.</em></p>
 <% else %>
