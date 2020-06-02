@@ -1,6 +1,4 @@
 class PostsController < ApplicationController
-  require 'redcarpet/render_strip'
-
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
   before_action :set_post, only: [:edit_help, :update_help]
   before_action :check_permissions, only: [:edit_help, :update_help]
