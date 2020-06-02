@@ -6,13 +6,6 @@ class PostsController < ApplicationController
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help]
 
-  # noinspection RubyArgCount
-  @@plain_renderer = Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
-
-  def self.renderer
-    @@plain_renderer
-  end
-
   def new
     @category = Category.find(params[:category_id])
     @post = Post.new(category: @category, post_type_id: params[:post_type_id])

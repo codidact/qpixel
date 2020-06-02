@@ -5,15 +5,6 @@ class QuestionsController < ApplicationController
                                             :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
 
-  # noinspection RubyArgCount
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true,
-                                                no_intra_emphasis: true, tables: true, strikethrough: true,
-                                                footnotes: true)
-
-  def self.renderer
-    @@markdown_renderer
-  end
-
   def index
     sort_params = { activity: :last_activity, age: :created_at, score: :score }
     sort_param = sort_params[params[:sort]&.to_sym] || :last_activity

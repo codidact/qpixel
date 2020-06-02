@@ -17,7 +17,7 @@ gem 'tzinfo-data', '~> 1.2019.3'
 gem 'uglifier', '>= 1.3.0'
 
 # Markdown support in both directions.
-gem 'redcarpet', '~> 3.5'
+gem 'commonmarker', '~> 0.21'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.

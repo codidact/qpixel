@@ -4,18 +4,9 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete]
 
-  # noinspection RubyArgCount
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true,
-                                                no_intra_emphasis: true, tables: true, strikethrough: true,
-                                                footnotes: true)
-
   def new
     @answer = Answer.new
     @question = Question.find params[:id]
-  end
-
-  def self.renderer
-    @@markdown_renderer
   end
 
   def create

@@ -4,14 +4,6 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
 
-  # noinspection RubyArgCount
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, no_intra_emphasis: true,
-                                                strikethrough: true)
-
-  def self.renderer
-    @@markdown_renderer
-  end
-
   def create
     @comment = Comment.new comment_params.merge(user: current_user)
     if @comment.save
