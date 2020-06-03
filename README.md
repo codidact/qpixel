@@ -10,13 +10,25 @@ it before following these instructions.
 
 ### Install prerequisites
 
-    sudo apt update
-    sudo apt install gcc
-    sudo apt install make
-    sudo apt install libmysqlclient-dev
-    sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
-    sudo apt install mysql-server
-    
+For Linux:
+
+```
+sudo apt update
+sudo apt install gcc
+sudo apt install make
+sudo apt install libmysqlclient-dev
+sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
+sudo apt install mysql-server
+```
+
+For Mac:
+
+```
+xcode-select --install
+brew install mysql bison openssl mysql-client
+bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
+```
+
 ### Install JS runtime
 If you already have Node.JS installed, you can skip this step. If not, [download and install it](https://nodejs.org/en/download/).
 
