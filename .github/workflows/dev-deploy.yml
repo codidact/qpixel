@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: nelonoel/branch-name@v1
     - name: Set up SSH key
       run: |
         echo "${{ secrets.DEV_DEPLOY_KEY }}" > ~/deploy_key
@@ -16,4 +17,4 @@ jobs:
     
     - name: Run SSH deploy command
       run: |
-        ssh -i ~/deploy_key -o StrictHostKeyChecking=no ubuntu@dev.codidact.org "cd /var/apps/qpixel ; bash -l ./deploy ${GITHUB_REF##*/}"
+        ssh -i ~/deploy_key -o StrictHostKeyChecking=no ubuntu@dev.codidact.org "cd /var/apps/qpixel ; bash -l ./deploy ${BRANCH_NAME}"
