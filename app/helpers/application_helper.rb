@@ -58,7 +58,7 @@ module ApplicationHelper
   def render_markdown(markdown)
     CommonMarker.render_doc(markdown,
                             [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
-                            [:table, :strikethrough, :autolink]).to_html
+                            [:table, :strikethrough, :autolink]).to_html(:UNSAFE)
   end
 
   # This isn't a perfect way to strip out Markdown, so it should only be used for non-critical things like
