@@ -1,7 +1,5 @@
 # rubocop:disable Metrics/ClassLength
 class Post < ApplicationRecord
-  require 'redcarpet/render_strip'
-
   include CommunityRelated
 
   belongs_to :user
@@ -90,7 +88,7 @@ class Post < ApplicationRecord
   end
 
   def body_plain
-    PostsController.renderer.render(body_markdown)
+    ApplicationController.helpers.strip_markdown(body_markdown)
   end
 
   def question?

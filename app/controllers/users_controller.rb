@@ -116,7 +116,7 @@ class UsersController < ApplicationController
       @user.avatar.attach(params[:user][:avatar])
     end
 
-    profile_rendered = QuestionsController.renderer.render(profile_params[:profile_markdown])
+    profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
     else

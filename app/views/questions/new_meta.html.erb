@@ -28,7 +28,7 @@
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Hints and Tips</h4>
       <div class="widget--body">
-        <%= raw(sanitize(QuestionsController.renderer.render(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+        <%= raw(sanitize(render_markdown(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
       </div>
     </div>
   <% end %>

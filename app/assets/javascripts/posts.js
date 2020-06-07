@@ -47,13 +47,17 @@ $(() => {
 
   $('.post-field').on('keyup markdown', evt => {
     if (!window.converter) {
-      window.converter = new showdown.Converter();
-      window.converter.setFlavor('github');
+      window.converter = window.markdownit({
+        html: true,
+        breaks: false,
+        linkify: true
+      });
+      window.converter.use(window.markdownitFootnote);
     }
     window.setTimeout(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
-      const html = converter.makeHtml(text);
+      const html = converter.render(text);
       $(evt.target).parents('.form-group').siblings('.post-preview').html(html);
     }, 0);
 
@@ -63,6 +67,6 @@ $(() => {
 
     mathjaxTimeout = setTimeout(() => {
       MathJax.typeset();
-    }, 2000);
+    }, 1000);
   });
 });
