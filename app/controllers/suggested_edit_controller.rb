@@ -7,9 +7,12 @@ class SuggestedEditController < ApplicationController
 
   def approve
     return unless @edit.active?
-
     @post = @edit.post
-    check_your_privilege('Edit', @post)
+    unless check_your_privilege('Edit', @post, false)
+      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to approve edits' }, status: 400)
+        
+      return
+    end
 
     PostHistory.post_edited(@post, @edit.user, before: @post.body_markdown,
                                                after: @edit.body_markdown, comment: params[:edit_comment])
@@ -21,14 +24,17 @@ class SuggestedEditController < ApplicationController
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
+                                                                
+        return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) }, status: 200)
+        return
       end
-      return
     else
       render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
                                      ' the post criteria. Reject and make the changes yourself.' }, status: 400)
+      return
     end
 
     render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
@@ -39,7 +45,12 @@ class SuggestedEditController < ApplicationController
     return unless @edit.active?
 
     @post = @edit.post
-    check_your_privilege('Edit', @post)
+
+    unless check_your_privilege('Edit', @post, false)
+      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
+        
+      return
+    end
 
     now = DateTime.now
 
@@ -49,12 +60,15 @@ class SuggestedEditController < ApplicationController
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
+        return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) }, status: 200)
+        return
       end
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
+      return
     end
   end
 
