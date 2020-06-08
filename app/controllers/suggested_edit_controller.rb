@@ -25,7 +25,7 @@ class SuggestedEditController < ApplicationController
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
-                                                    
+
         return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
