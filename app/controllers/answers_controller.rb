@@ -3,26 +3,24 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete]
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new)
 
   def new
     @answer = Answer.new
     @question = Question.find params[:id]
   end
 
-  def self.renderer
-    @@markdown_renderer
-  end
-
   def create
     @question = Question.find params[:id]
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-                                             body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                                             body: helpers.render_markdown(params[:answer][:body_markdown]),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
-    @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
-                                       share_question_url(@question))
+    unless current_user.id == @question.user.id
+      @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
+                                         share_question_url(@question))
+    end
     if @answer.save
+      @question.update(last_activity: DateTime.now, last_activity_by: current_user)
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
       render :new, status: 422
@@ -37,9 +35,8 @@ class AnswersController < ApplicationController
     end
 
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
-                                                    after: params[:answer][:body_markdown],
-                                                    comment: params[:edit_comment])
-    if @answer.update(answer_params.merge(body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+                            after: params[:answer][:body_markdown], comment: params[:edit_comment])
+    if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
                                           last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
@@ -52,7 +49,7 @@ class AnswersController < ApplicationController
       post: @answer,
       user: current_user,
       community: @answer.community,
-      body: AnswersController.renderer.render(params[:answer][:body_markdown]),
+      body: helpers.render_markdown(params[:answer][:body_markdown]),
       body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
       comment: params[:edit_comment],
       active: true, accepted: false,

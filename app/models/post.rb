@@ -1,11 +1,10 @@
+# rubocop:disable Metrics/ClassLength
 class Post < ApplicationRecord
-  require 'redcarpet/render_strip'
-
   include CommunityRelated
 
   belongs_to :user
   belongs_to :post_type
-  belongs_to :parent, class_name: 'Post', required: false, counter_cache: :answer_count
+  belongs_to :parent, class_name: 'Post', required: false
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
@@ -17,6 +16,8 @@ class Post < ApplicationRecord
   has_many :post_histories, dependent: :destroy
   has_many :flags, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
+
+  counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
 
   serialize :tags_cache, Array
 
@@ -30,7 +31,7 @@ class Post < ApplicationRecord
   validate :stripped_minimum, if: :question?
   validate :category_allows_post_type
   validate :license_available
-  validate :required_tags?
+  validate :required_tags?, if: -> { post_type_id == Question.post_type_id }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -41,6 +42,7 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
+  after_save :update_category_activity, if: :question?
   before_validation :update_tag_associations, if: :question?
   after_create :create_initial_revision
   after_create :add_license_if_nil
@@ -86,7 +88,7 @@ class Post < ApplicationRecord
   end
 
   def body_plain
-    PostsController.renderer.render(body_markdown)
+    ApplicationController.helpers.strip_markdown(body_markdown)
   end
 
   def question?
@@ -247,4 +249,11 @@ class Post < ApplicationRecord
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
     end
   end
+
+  def update_category_activity
+    if saved_changes.include? 'last_activity'
+      category.update_activity(last_activity)
+    end
+  end
 end
+# rubocop:enable Metrics/ClassLength

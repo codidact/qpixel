@@ -1,0 +1,6 @@
+### Disable two-factor authentication ###
+
+Someone recently requested a link to turn off two-factor authentication on your Codidact account.
+If that was you, great! Use this link to disable 2FA: <%= two_factor_disable_link_url(@token, host: @host) %>
+
+If this wasn't you, you should change your password: <%= edit_user_registration_url(host: @host) %>

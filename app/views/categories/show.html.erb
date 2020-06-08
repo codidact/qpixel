@@ -3,7 +3,7 @@
 <% if @category.short_wiki %>
   <div class="is-lead">
     <% cache [@category, 'description-rendered'] do %>
-      <%= raw(sanitize(QuestionsController.renderer.render(@category.short_wiki), scrubber: scrubber)) %>
+      <%= raw(sanitize(render_markdown(@category.short_wiki), scrubber: scrubber)) %>
     <% end %>
   </div>
 <% end %>

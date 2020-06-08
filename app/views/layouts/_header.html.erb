@@ -98,7 +98,7 @@
         <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
           <%= cat.name %>
           <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-            <span class="has-color-red-700">⏺</span>
+            <span class="has-color-red-700"><i class="fas fa-circle"></i></span>
           <% end %>
         <% end %>
       <% end %>

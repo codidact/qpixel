@@ -41,4 +41,6 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.active_storage.service = :test
+
+  config.action_mailer.default_url_options = { host: 'test.host' }
 end

@@ -235,3 +235,25 @@
   category: Integrations
   description: >
     Site ID for this community in your Matomo analytics instance.
+
+- name: ChatLink
+  value: ~
+  value_type: string
+  category: Integrations
+  description: >
+    Link to your chat platform of choice.
+
+- name: SidebarNoticeText
+  value: ~
+  value_type: text
+  category: Display
+  description: >
+    Text to display in a notice box at the top of the sidebar. Markdown allowed.
+
+- name: MathJaxEnabled
+  value: false
+  value_type: boolean
+  category: Display
+  description: >
+    Enable MathJax on this site for math display. This will incur a small penalty in page loading times, so consider
+    whether you really need it.

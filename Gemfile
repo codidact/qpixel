@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
+ruby '2.6.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements, Devise
 gem 'coffee-rails', '~> 4.2.2'
+gem 'counter_culture', '~> 2.0'
 gem 'devise', '~> 4.7'
 gem 'jquery-rails', '~> 4.3.5'
 gem 'mysql2', '~> 0.5.3'
@@ -15,7 +17,7 @@ gem 'tzinfo-data', '~> 1.2019.3'
 gem 'uglifier', '>= 1.3.0'
 
 # Markdown support in both directions.
-gem 'redcarpet', '~> 3.5'
+gem 'commonmarker', '~> 0.21'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.
@@ -50,6 +52,9 @@ gem 'stackprof', '~> 0.2'
 # import needs thwait and ActiveSupport needs e2mmap.
 gem 'e2mmap', '~> 0.1'
 gem 'thwait', '~> 0.1'
+
+# Stuff for imports
+gem 'ruby-progressbar', '~> 1.10'
 
 group :test do
   gem 'minitest', '~> 5.10.3'

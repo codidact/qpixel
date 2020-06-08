@@ -41,7 +41,7 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.action_mailer.delivery_method = :ses
-  config.action_mailer.default_url_options = { host: 'writing.codidact.com', port: 80 }
+  config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
 
   config.active_storage.service = :s3
 end

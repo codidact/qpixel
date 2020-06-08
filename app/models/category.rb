@@ -16,9 +16,15 @@ class Category < ApplicationRecord
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
     Rails.cache.fetch key, expires_in: 5.minutes do
       Rack::MiniProfiler.step "Redis: category last visit (#{key})" do
+        activity_key = "#{community_id}/#{id}/last_activity"
         last_visit = RequestContext.redis.get(key)
-        last_visit.nil? || (posts.maximum(:last_activity) || DateTime.parse) > DateTime.parse(last_visit)
+        last_activity = RequestContext.redis.get(activity_key) || DateTime.parse
+        last_visit.nil? || last_activity > DateTime.parse(last_visit)
       end
     end
+  end
+
+  def update_activity(last_activity)
+    RequestContext.redis.set("#{community_id}/#{id}/last_activity", last_activity)
   end
 end

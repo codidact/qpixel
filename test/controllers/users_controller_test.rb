@@ -88,7 +88,7 @@ class UsersControllerTest < ActionController::TestCase
         k.singularize.classify.constantize
                        rescue
                          nil
-      end .compact
+      end.compact
       pre_counts = needs_transfer.map { |model| [model, model.count] }.to_h
 
       id = users(:standard_user).id

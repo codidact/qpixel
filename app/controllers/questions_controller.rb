@@ -5,13 +5,6 @@ class QuestionsController < ApplicationController
                                             :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
 
-  # noinspection RubyArgCount
-  @@markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true)
-
-  def self.renderer
-    @@markdown_renderer
-  end
-
   def index
     sort_params = { activity: :last_activity, age: :created_at, score: :score }
     sort_param = sort_params[params[:sort]&.to_sym] || :last_activity
@@ -69,11 +62,9 @@ class QuestionsController < ApplicationController
       return update_as_suggested_edit
     end
 
-    body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
-
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
-                                                     after: params[:question][:body_markdown],
-                                                     comment: params[:edit_comment])
+                            after: params[:question][:body_markdown], comment: params[:edit_comment])
+    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))
@@ -84,7 +75,7 @@ class QuestionsController < ApplicationController
   end
 
   def update_as_suggested_edit
-    body_rendered = QuestionsController.renderer.render(params[:question][:body_markdown])
+    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown

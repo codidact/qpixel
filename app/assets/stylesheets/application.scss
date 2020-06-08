@@ -165,3 +165,30 @@ hr {
     overflow-x: unset;
   }
 }
+
+.widget.is-warning {
+  background: lighten($warning, 33%);
+  border: 1px solid lighten($warning, 10%);
+  color: darken($warning, 45%);
+
+  .widget--header {
+    border-bottom: 1px solid lighten($warning, 10%);
+  }
+}
+
+.footnote-ref a::before {
+  content: '[';
+}
+
+.footnote-ref a::after {
+  content: ']';
+}
+
+.footnotes-sep + .footnotes {
+  border-top: 0;
+}
+
+.footnotes {
+  border-top: 1px solid $muted-graphic;
+  font-size: 0.9em;
+}

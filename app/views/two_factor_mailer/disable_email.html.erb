@@ -1,0 +1,7 @@
+<h3>Disable two-factor authentication</h3>
+<p>
+  Someone recently requested a link to turn off two-factor authentication on your Codidact account.
+  If that was you, great! <%= link_to 'Use this link to disable 2FA', two_factor_disable_link_url(@token, host: @host) %>
+</p>
+
+<p>If this wasn't you, you should <%= link_to 'change your password', edit_user_registration_url(host: @host) %></p>

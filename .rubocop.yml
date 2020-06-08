@@ -8,13 +8,19 @@ AllCops:
     - 'scripts/**/*'
     - 'bin/**/*'
 
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
 Layout/HashAlignment:
   Enabled: false
 Layout/LineLength:
   Max: 120
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: false
 
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
 Lint/RaiseException:
   Enabled: true
 Lint/StructNewOverride:
@@ -39,6 +45,9 @@ Style/ClassVars:
   Enabled: false
 Style/Documentation:
   Enabled: false  # No need for specific documentation comments, but please add inline comments where necessary.
+Style/ExponentialNotation:
+  Enabled: true
+  EnforcedStyle: scientific
 Style/FrozenStringLiteralComment:
   Enabled: false
 Style/GlobalVars:
@@ -58,6 +67,8 @@ Style/IfUnlessModifier:
 Style/RegexpLiteral:
   Enabled: false
 Style/RescueStandardError:
+  Enabled: false
+Style/SlicingWithRange:
   Enabled: false
 Style/SymbolArray:
   Enabled: false

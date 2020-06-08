@@ -1,7 +1,18 @@
 <div class="grid--cell is-4-lg is-12">
   <%= yield(:sidebar) %>
 
-  <% if Rails.env.development? || @hot_questions.size > 0 %>
+  <% notice_text = SiteSetting['SidebarNoticeText'] %>
+  <% if notice_text.present? %>
+    <% cache SiteSetting.find_by(name: 'SidebarNoticeText') do %>
+      <div class="widget has-margin-4 is-warning">
+        <div class="widget--body">
+          <%= raw(sanitize(render_markdown(notice_text), scrubber: scrubber)) %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Hot Posts</h4>
       <% @hot_questions.each do |hq| %>
@@ -59,4 +70,18 @@
       </p>
     </div>
   </div>
+
+  <% chat = SiteSetting['ChatLink'] %>
+  <% if chat.present? %>
+    <div class="widget has-margin-4">
+      <div class="widget--header">
+        Chat
+      </div>
+      <div class="widget--body">
+        <p>
+          <%= link_to 'Join us in chat!', chat %>
+        </p>
+      </div>
+    </div>
+  <% end %>
 </div>

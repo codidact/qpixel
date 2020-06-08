@@ -85,7 +85,7 @@ class UsersController < ApplicationController
       k.singularize.classify.constantize
                      rescue
                        nil
-    end .compact
+    end.compact
     needs_transfer.each do |model|
       model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
     end
@@ -116,7 +116,7 @@ class UsersController < ApplicationController
       @user.avatar.attach(params[:user][:avatar])
     end
 
-    profile_rendered = QuestionsController.renderer.render(profile_params[:profile_markdown])
+    profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
     else
