@@ -26,7 +26,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test 'signed-out shouldn't be able to approve' do
+  test 'signed-out shouldn\'t be able to approve' do
     suggested_edit = suggested_edits(:accepted_suggested_edit)
     suggested_edit.update(active: true, accepted: false)
 
@@ -34,7 +34,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_response(400)
   end
 
-  test 'signed-out shouldn't be able to reject' do
+  test 'signed-out shouldn\'t be able to reject' do
     suggested_edit = suggested_edits(:accepted_suggested_edit)
     suggested_edit.update(active: true, accepted: false)
 
@@ -42,7 +42,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_response(400)
   end
 
-  test 'already decided edit shouldn't be able to be approved' do
+  test 'already decided edit shouldn\'t be able to be approved' do
     sign_in users(:editor)
 
     suggested_edit = suggested_edits(:accepted_suggested_edit)
@@ -52,7 +52,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_response(204)
   end
 
-  test 'already decided edit shouldn't be able to be rejected' do
+  test 'already decided edit shouldn\'t be able to be rejected' do
     sign_in users(:editor)
 
     suggested_edit = suggested_edits(:accepted_suggested_edit)
