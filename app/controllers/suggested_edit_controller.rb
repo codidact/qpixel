@@ -7,10 +7,11 @@ class SuggestedEditController < ApplicationController
 
   def approve
     return unless @edit.active?
+
     @post = @edit.post
     unless check_your_privilege('Edit', @post, false)
       render(json: { status: 'error', redirect_url: 'You need the Edit privilege to approve edits' }, status: 400)
-        
+
       return
     end
 
@@ -24,7 +25,7 @@ class SuggestedEditController < ApplicationController
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
-                                                                
+                                                    
         return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
@@ -48,7 +49,7 @@ class SuggestedEditController < ApplicationController
 
     unless check_your_privilege('Edit', @post, false)
       render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
-        
+
       return
     end
 
@@ -60,15 +61,12 @@ class SuggestedEditController < ApplicationController
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) }, status: 200)
-        return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) }, status: 200)
-        return
       end
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
-      return
     end
   end
 
