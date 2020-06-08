@@ -75,4 +75,30 @@ module ApplicationHelper
 
     markdown
   end
+
+  def generic_share_link(post)
+    case post.post_type_id
+    when Question.post_type_id
+      share_question_url(post)
+    when Answer.post_type_id
+      share_answer_url(qid: post.parent_id, id: post.id)
+    when Article.post_type_id
+      share_article_url(post)
+    else
+      '#'
+    end
+  end
+
+  def generic_edit_link(post)
+    case post.post_type_id
+    when Question.post_type_id
+      edit_question_url(post)
+    when Answer.post_type_id
+      edit_answer_url(post)
+    when Article.post_type_id
+      edit_article_url(post)
+    else
+      '#'
+    end
+  end
 end

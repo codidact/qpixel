@@ -1,13 +1,12 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
+<% is_top_level = post.parent_id.nil? %>
+<% has_tags = is_top_level && !post.tag_ids.empty? %>
 
-<div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_question ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
-  <% if is_question %>
+<div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>">
+  <% if is_top_level %>
     <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
-      <% if post.meta? %>
-        <span class="badge is-tag is-master-tag">meta</span>
-      <% end %>
       <%= post.title %>
-      <%= post.closed ? "[closed]" : "" %>
+      <%= is_question && post.closed ? "[closed]" : "" %>
     </h1>
   <% end %>
 
@@ -95,7 +94,7 @@
               <div class="has-clear-clear"></div>
             </div>
           </div>
-          <% if is_question %>
+          <% if has_tags %>
             <div class="post--tags has-padding-2">
               <% tag_set = post.tag_set %>
               <% required_ids = post.category&.required_tag_ids %>
@@ -121,8 +120,8 @@
 
         <div class="post--actions">
           <%= link_to 'history', post_history_path(post) %> &middot;
-          <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
-          <%= link_to 'permalink', is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) %> &middot;
+          <%= link_to 'edit', generic_edit_link(post) %> &middot;
+          <%= link_to 'permalink', generic_share_link(post) %> &middot;
           <% if is_question && !post.closed %>
             <a href="#" class="close-dialog-link">close</a> &middot;
           <% elsif is_question && post.closed %>
