@@ -101,4 +101,15 @@ module ApplicationHelper
       '#'
     end
   end
+
+  def generic_show_link(post)
+    case post.post_type_id
+    when Question.post_type_id
+      question_url(post)
+    when Article.post_type_id
+      article_url(post)
+    else
+      '#'
+    end
+  end
 end

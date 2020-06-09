@@ -9,46 +9,6 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_response(200)
   end
 
-  test 'should get recently deleted questions' do
-    sign_in users(:moderator)
-    get :recently_deleted_questions
-    assert_not_nil assigns(:questions)
-    assigns(:questions).each do |question|
-      assert_equal true, question.deleted
-    end
-    assert_response(200)
-  end
-
-  test 'should get recently deleted answers' do
-    sign_in users(:moderator)
-    get :recently_deleted_answers
-    assert_not_nil assigns(:answers)
-    assigns(:answers).each do |answer|
-      assert_equal true, answer.deleted
-    end
-    assert_response(200)
-  end
-
-  test 'should get recently undeleted questions' do
-    sign_in users(:moderator)
-    get :recently_undeleted_questions
-    assert_not_nil assigns(:questions)
-    assigns(:questions).each do |question|
-      assert_equal false, question.deleted
-    end
-    assert_response(200)
-  end
-
-  test 'should get recently undeleted answers' do
-    sign_in users(:moderator)
-    get :recently_undeleted_answers
-    assert_not_nil assigns(:answers)
-    assigns(:answers).each do |answer|
-      assert_equal false, answer.deleted
-    end
-    assert_response(200)
-  end
-
   test 'should require authentication to access pages' do
     sign_out :user
     [:index, :recently_deleted_answers, :recently_deleted_questions, :recently_undeleted_answers,

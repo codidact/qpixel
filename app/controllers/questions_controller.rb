@@ -65,7 +65,7 @@ class QuestionsController < ApplicationController
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
                             after: params[:question][:body_markdown], comment: params[:edit_comment])
     body_rendered = helpers.render_markdown(params[:question][:body_markdown])
-    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject(&:empty?),
+    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject { |e| e.to_s.empty? },
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
@@ -191,11 +191,15 @@ class QuestionsController < ApplicationController
   def set_question
     @question = Question.find params[:id]
   rescue
-    if current_user.has_privilege?('ViewDeleted')
+    if current_user&.has_privilege?('ViewDeleted')
       @question ||= Question.unscoped.find params[:id]
     end
     if @question.nil?
-      render template: 'errors/not_found', status: 404
+      not_found
+      return
+    end
+    unless @question.post_type_id == Question.post_type_id
+      not_found
     end
   end
 end

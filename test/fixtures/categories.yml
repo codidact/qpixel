@@ -6,9 +6,11 @@ main:
   short_wiki: Main Q&A
   display_post_types:
     - <%= Question.post_type_id %>
+    - <%= Article.post_type_id %>
   post_types:
     - question
     - answer
+    - article
   tag_set: main
   license: cc_by_sa
 
