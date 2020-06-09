@@ -17,7 +17,8 @@ class Vote < ApplicationRecord
   def self.total_rep_change(col)
     col = col.includes(:post)
     settings = SiteSetting.where(name: ['QuestionUpVoteRep', 'QuestionDownVoteRep',
-                                        'AnswerUpVoteRep', 'AnswerDownVoteRep'])
+                                        'AnswerUpVoteRep', 'AnswerDownVoteRep',
+                                        'ArticleUpVoteRep', 'ArticleDownVoteRep'])
                           .map { |ss| [ss.name, ss.value] }.to_h
     rep_changes = PostType.mapping.map do |k, v|
       vote_types = { 1 => 'Up', -1 => 'Down' }
@@ -45,7 +46,9 @@ class Vote < ApplicationRecord
       [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
       [post_type_ids['Question'], -1] => 'QuestionDownVoteRep',
       [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
-      [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep'
+      [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep',
+      [post_type_ids['Article'], 1] => 'ArticleUpVoteRep',
+      [post_type_ids['Article'], -1] => 'ArticleDownVoteRep'
     }
     rep_change = SiteSetting[setting_names[[post.post_type_id, vote_type]]] || 0
     recv_user.update!(reputation: recv_user.reputation + direction * rep_change)
