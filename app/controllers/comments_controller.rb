@@ -88,6 +88,8 @@ class CommentsController < ApplicationController
   def comment_link(comment)
     if comment.post.question?
       question_path(comment.post, anchor: "comment-#{comment.id}")
+    elsif comment.post.article?
+      article_path(comment.post, anchor: "comment-#{comment.id}")
     else
       question_path(comment.post.parent, anchor: "comment-#{comment.id}")
     end
