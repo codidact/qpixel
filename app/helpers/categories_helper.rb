@@ -19,6 +19,8 @@ module CategoriesHelper
                             @post.category
                           elsif defined?(@question) && !@question.category.nil?
                             @question.category
+                          elsif defined?(@article) && !@article.category.nil?
+                            @article.category
                           end
   end
 end
