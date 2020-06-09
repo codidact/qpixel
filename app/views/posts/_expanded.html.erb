@@ -8,7 +8,7 @@
       <%= post.title %>
       <%= is_question && post.closed ? "[closed]" : "" %>
       <% category = defined?(@category) ? @category : post.category %>
-      <% if category.display_post_types.reject { |e| e.to_s.nil? }.size > 1 %>
+      <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
     </h1>
