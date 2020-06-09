@@ -189,4 +189,10 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_not_nil flash[:danger]
     assert_response(302)
   end
+
+  test 'should prevent using questions routes for articles' do
+    sign_in users(:deleter) # deliberate; catch ViewDeleted using unscoped
+    get :show, params: { id: posts(:article_one).id }
+    assert_response 404
+  end
 end

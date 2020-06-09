@@ -54,6 +54,20 @@
   description: >
     The reputation change to the post's author when an answer is downvoted.
 
+- name: ArticleUpVoteRep
+  value: 10
+  value_type: integer
+  category: ReputationAndVoting
+  description: >
+    The reputation change to the post's author when an article is upvoted.
+
+- name: ArticleDownVoteRep
+  value: -2
+  value_type: integer
+  category: ReputationAndVoting
+  description: >
+    The reputation change to the post's author when an article is downvoted.
+
 - name: AllowSelfVotes
   value: false
   value_type: boolean

@@ -1,3 +1,5 @@
+<% with_post_type ||= false %>
+
 <% content_for :head do %>
   <%= render 'posts/markdown_script' %>
 <% end %>
@@ -25,7 +27,20 @@
 
 <%= form_for @post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
   <%= f.hidden_field :category_id %>
-  <%= f.hidden_field :post_type_id %>
+
+  <% if with_post_type %>
+    <div class="form-group">
+      <%= f.label :post_type_id, 'Post type', class: 'form-element' %>
+      <span class="form-caption">What kind of post is this? Questions can have answers; articles only have comments.</span>
+      <% ids = @category.display_post_types.reject { |e| e.to_s.empty? } %>
+      <% post_types = PostType.where(id: ids) %>
+      <% opts = post_types.map { |pt| [pt.name, pt.id] } %>
+      <%= f.select :post_type_id, options_for_select(opts, selected: @post.post_type_id),
+                   { include_blank: true }, class: 'form-element' %>
+    </div>
+  <% else %>
+    <%= f.hidden_field :post_type_id %>
+  <% end %>
 
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
 

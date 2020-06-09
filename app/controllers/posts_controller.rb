@@ -15,7 +15,8 @@ class PostsController < ApplicationController
 
   def create
     @category = Category.find(params[:category_id])
-    @post = Post.new(post_params.merge(category: @category, user: current_user, post_type_id: params[:post_type_id],
+    @post = Post.new(post_params.merge(category: @category, user: current_user,
+                                       post_type_id: params[:post][:post_type_id] || params[:post_type_id],
                                        body: helpers.render_markdown(params[:post][:body_markdown])))
 
     if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
@@ -25,7 +26,7 @@ class PostsController < ApplicationController
     end
 
     if @post.save
-      redirect_to question_path(@post)
+      redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: 400
     end
