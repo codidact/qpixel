@@ -17,6 +17,12 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
     created = 0
     skipped = 0
     data.each do |seed|
+      seed.each do |attr, value|
+        if value.is_a?(String) && value.start_with?("$FILE ")
+          seed[attr] = File.read(Rails.root.join('db/seeds', value.gsub("$FILE ", '')))
+        end
+      end
+
       seeds = if type.column_names.include? 'community_id'
                 # if model includes a community_id, create the seed for every community
                 Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
