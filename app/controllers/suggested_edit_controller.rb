@@ -69,7 +69,7 @@ class SuggestedEditController < ApplicationController
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
     end
   end
-  
+
   private
 
   def set_suggested_edit
