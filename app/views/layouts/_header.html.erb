@@ -112,7 +112,8 @@
                     class: "category-header--nav-item #{active?(current_cat) ? 'is-active' : ''}" %>
         <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
         <div class="category-header--nav-separator"></div>
-        <%= link_to create_post_path(category_id: current_cat.id, post_type_id: Question.post_type_id),
+        <% ptid = current_cat.display_post_types.reject { |e| e.to_s.empty? }.first || Question.post_type_id %>
+        <%= link_to create_post_path(category_id: current_cat.id, post_type_id: ptid),
                     class: 'category-header--nav-item is-button' do %>
           <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
         <% end %>

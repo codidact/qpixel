@@ -147,3 +147,44 @@ help_doc:
   user: admin
   community: sample
   license: cc_by_sa
+
+article_one:
+  post_type: article
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+
+deleted_article:
+  post_type: article
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: admin

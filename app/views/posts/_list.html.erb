@@ -1,5 +1,5 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
-<% is_meta = (is_question && post.meta?) || (!is_question && post.parent.meta?) %>
+<% is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
 <% active_user = post.last_activity_by || post.user %>
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
@@ -25,10 +25,14 @@
       last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>	
     </p>
     <div class="has-padding-top-2">
+      <% category = defined?(@category) ? @category : post.category %>
+      <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+        <%= post_type_badge(post.post_type.name) %>
+      <% end %>
       <% if is_question %>
         <% tag_set = post.tag_set %>
-        <% required_ids = defined?(@category) ? @category&.required_tag_ids : post.category&.required_tag_ids %>
-        <% topic_ids = defined?(@category) ? @category&.topic_tag_ids : post.category&.topic_tag_ids %>
+        <% required_ids = category&.required_tag_ids %>
+        <% topic_ids = category&.topic_tag_ids %>
         <% category_sort_tags(post.tags, required_ids, topic_ids).each do |tag| %>
           <% required = required_ids&.include? tag.id %>
           <% topic = topic_ids&.include? tag.id %>

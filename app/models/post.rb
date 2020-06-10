@@ -23,15 +23,15 @@ class Post < ApplicationRecord
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
-  validates :title, :body, :tags_cache, presence: true, if: :question?
-  validate :tags_in_tag_set, if: :question?
-  validate :maximum_tags, if: :question?
-  validate :maximum_tag_length, if: :question?
-  validate :no_spaces_in_tags, if: :question?
-  validate :stripped_minimum, if: :question?
+  validates :title, :body, :tags_cache, presence: true, if: -> { question? || article? }
+  validate :tags_in_tag_set, if: -> { question? || article? }
+  validate :maximum_tags, if: -> { question? || article? }
+  validate :maximum_tag_length, if: -> { question? || article? }
+  validate :no_spaces_in_tags, if: -> { question? || article? }
+  validate :stripped_minimum, if: -> { question? || article? }
   validate :category_allows_post_type
   validate :license_available
-  validate :required_tags?, if: -> { post_type_id == Question.post_type_id }
+  validate :required_tags?, if: -> { question? || article? }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -42,8 +42,8 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_category_activity, if: :question?
-  before_validation :update_tag_associations, if: :question?
+  after_save :update_category_activity, if: -> { question? || article? }
+  before_validation :update_tag_associations, if: -> { question? || article? }
   after_create :create_initial_revision
   after_create :add_license_if_nil
 
@@ -53,7 +53,7 @@ class Post < ApplicationRecord
 
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
   # override them later with more efficient methods.
-  ['Question', 'Answer', 'PolicyDoc', 'HelpDoc'].each do |pt|
+  ['Question', 'Answer', 'PolicyDoc', 'HelpDoc', 'Article'].each do |pt|
     define_method "#{pt.underscore}?" do
       post_type_id == pt.constantize.post_type_id
     end

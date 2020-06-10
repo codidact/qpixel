@@ -4,7 +4,7 @@
 
 <div class="item-list">
   <% @questions.each do |question| %>
-    <%= render 'posts/list', post: question %>
+    <%= render 'posts/type_agnostic', post: question %>
   <% end %>
 </div><br/>
 

@@ -15,7 +15,8 @@ class PostsController < ApplicationController
 
   def create
     @category = Category.find(params[:category_id])
-    @post = Post.new(post_params.merge(category: @category, user: current_user, post_type_id: params[:post_type_id],
+    @post = Post.new(post_params.merge(category: @category, user: current_user,
+                                       post_type_id: params[:post][:post_type_id] || params[:post_type_id],
                                        body: helpers.render_markdown(params[:post][:body_markdown])))
 
     if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
@@ -25,7 +26,7 @@ class PostsController < ApplicationController
     end
 
     if @post.save
-      redirect_to question_path(@post)
+      redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: 400
     end
@@ -83,7 +84,10 @@ class PostsController < ApplicationController
   end
 
   def document
-    @post = Post.find_by(doc_slug: params[:slug])
+    @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
+    if @post.help_category == '$Disabled'
+      not_found
+    end
   end
 
   def upload
@@ -101,18 +105,22 @@ class PostsController < ApplicationController
   end
 
   def help_center
-    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:title)
-                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:category) }
+    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id])
+                 .or(Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                         community_id: nil))
+                 .where.not(help_category: '$Disabled')
+                 .order(:help_ordering, :title)
+                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:help_category) }
   end
 
   private
 
   def new_post_params
-    params.require(:post).permit(:post_type_id, :title, :doc_slug, :category, :body_markdown)
+    params.require(:post).permit(:post_type_id, :title, :doc_slug, :help_category, :body_markdown, :help_ordering)
   end
 
   def help_post_params
-    params.require(:post).permit(:title, :category, :body_markdown)
+    params.require(:post).permit(:title, :help_category, :body_markdown, :help_ordering)
   end
 
   def post_params
@@ -122,7 +130,7 @@ class PostsController < ApplicationController
   end
 
   def set_post
-    @post = Post.find(params[:id])
+    @post = Post.unscoped.find(params[:id])
   end
 
   def check_permissions

@@ -68,6 +68,14 @@ Rails.application.routes.draw do
   post   'questions/:id/close',            to: 'questions#close', as: :close_question
   post   'questions/:id/reopen',           to: 'questions#reopen', as: :reopen_question
 
+  scope 'articles' do
+    get    ':id',                          to: 'articles#show', as: :article
+    get    ':id/edit',                     to: 'articles#edit', as: :edit_article
+    patch  ':id/edit',                     to: 'articles#update', as: :update_article
+    delete ':id/delete',                   to: 'articles#destroy', as: :destroy_article
+    delete ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
+  end
+
   get    'posts/:id/history',              to: 'post_history#post', as: :post_history
   get    'posts/search',                   to: 'search#search', as: :search
   post   'posts/upload',                   to: 'posts#upload', as: :upload
@@ -139,6 +147,7 @@ Rails.application.routes.draw do
 
   get    'q/:id',                          to: 'posts#share_q', as: :share_question
   get    'a/:qid/:id',                     to: 'posts#share_a', as: :share_answer
+  get    'ar/:id',                         to: 'articles#share', as: :share_article
 
   get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription

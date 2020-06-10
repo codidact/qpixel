@@ -4,6 +4,9 @@ question:
 answer:
   name: Answer
 
+article:
+  name: Article
+
 policy_doc:
   name: PolicyDoc
 

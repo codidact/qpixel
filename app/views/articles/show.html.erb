@@ -1,0 +1,8 @@
+<% content_for :title, @article.title.truncate(50) %>
+<% content_for :description do %>
+  <% Rails.cache.fetch "posts/#{@article.id}/description" do %>
+    <%= @article.body_plain[0..74].strip %>...
+  <% end %>
+<% end %>
+
+<%= render 'posts/expanded', post: @article %>
