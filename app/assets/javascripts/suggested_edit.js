@@ -1,5 +1,5 @@
 $(document).on('ready', function () {
-    $("[data-suggested-edit-approve]").bind("click", (ev) => {
+    $("[data-suggested-edit-approve]").on("click", (ev) => {
         ev.preventDefault();
         const self = $(ev.target);
 
@@ -21,12 +21,12 @@ $(document).on('ready', function () {
                 console.log(jqXHR.responseText);
             });
     });
-    $(".js-suggested-edit-reject").bind("click", (ev) => {
+    $(".js-suggested-edit-reject").on("click", (ev) => {
         ev.preventDefault();
         
         $(".js-suggested-edit-reject-dialog").toggleClass("is-hidden")
     });
-    $("[data-suggested-edit-reject]").bind("click", (ev) => {
+    $("[data-suggested-edit-reject]").on("click", (ev) => {
         ev.preventDefault();
         const self = $(ev.target);
 

@@ -6,7 +6,7 @@ class SuggestedEditController < ApplicationController
   end
 
   def approve
-    return unless @edit.active?
+    not_found unless @edit.active?
 
     @post = @edit.post
     unless check_your_privilege('Edit', @post, false)
@@ -24,12 +24,12 @@ class SuggestedEditController < ApplicationController
       flash[:success] = 'Edit approved successfully.'
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
-                                                                id: @post.id) }, status: 200)
+                                                                id: @post.id) })
 
         return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                        qid: @post.parent.id, id: @post.id) }, status: 200)
+                                                        qid: @post.parent.id, id: @post.id) })
         return
       end
     else
@@ -43,7 +43,7 @@ class SuggestedEditController < ApplicationController
   end
 
   def reject
-    return unless @edit.active?
+    not_found unless @edit.active?
 
     @post = @edit.post
 
@@ -60,21 +60,21 @@ class SuggestedEditController < ApplicationController
       flash[:success] = 'Edit rejected successfully.'
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
-                                                                id: @post.id) }, status: 200)
+                                                                id: @post.id) })
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                        qid: @post.parent.id, id: @post.id) }, status: 200)
+                                                        qid: @post.parent.id, id: @post.id) })
       end
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
     end
   end
+  
+  private
 
   def set_suggested_edit
     @edit = SuggestedEdit.find(params[:id])
   end
-
-  private
 
   def applied_details
     if @post.question?
