@@ -16,6 +16,8 @@ class User < ApplicationRecord
   has_many :error_logs, dependent: :nullify
   has_one :community_user, -> { for_context }, autosave: true
   has_one_attached :avatar, dependent: :destroy
+  has_many :suggested_edits, dependent: :destroy
+  has_many :suggested_edits_decided, class_name: 'SuggestedEdit', foreign_key: 'decided_by_id', dependent: :nullify
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
