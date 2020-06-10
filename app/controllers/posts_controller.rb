@@ -108,7 +108,7 @@ class PostsController < ApplicationController
     @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id])
                  .or(Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                          community_id: nil))
-                 .where.not(help_category: '$Disabled')
+                 .where(Arel.sql("posts.help_category IS NULL OR posts.help_category != '$Disabled'"))
                  .order(:help_ordering, :title)
                  .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:help_category) }
   end
