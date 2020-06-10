@@ -6,7 +6,7 @@ class SuggestedEditController < ApplicationController
   end
 
   def approve
-    not_found unless @edit.active?
+    return not_found unless @edit.active?
 
     @post = @edit.post
     unless check_your_privilege('Edit', @post, false)
@@ -43,7 +43,7 @@ class SuggestedEditController < ApplicationController
   end
 
   def reject
-    not_found unless @edit.active?
+    return not_found unless @edit.active?
 
     @post = @edit.post
 

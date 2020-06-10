@@ -97,18 +97,6 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_response(302)
   end
 
-  test 'should require edit privileges to get edit page' do
-    sign_in users(:standard_user)
-    get :edit, params: { id: posts(:question_two).id }
-    assert_response(401)
-  end
-
-  test 'should require edit privileges to update existing question' do
-    sign_in users(:standard_user)
-    patch :update, params: { id: posts(:question_two).id }
-    assert_response(401)
-  end
-
   test 'should require delete privileges to mark question deleted' do
     sign_in users(:editor)
     delete :destroy, params: { id: posts(:question_one).id }

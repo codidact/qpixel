@@ -16,6 +16,7 @@ class Post < ApplicationRecord
   has_many :post_histories, dependent: :destroy
   has_many :flags, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
+  has_many :suggested_edits, dependent: :destroy
 
   counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
 
