@@ -23,7 +23,7 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
         end
       end
 
-      seeds = if type.column_names.include? 'community_id'
+      seeds = if type.column_names.include?('community_id') && !seed.include?('community_id')
                 # if model includes a community_id, create the seed for every community
                 Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
               else

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_10_150214) do
+ActiveRecord::Schema.define(version: 2020_06_10_152647) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -179,7 +179,7 @@ ActiveRecord::Schema.define(version: 2020_06_10_150214) do
     t.text "before_state"
     t.text "after_state"
     t.text "comment"
-    t.bigint "community_id", null: false
+    t.bigint "community_id"
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
@@ -223,7 +223,7 @@ ActiveRecord::Schema.define(version: 2020_06_10_150214) do
     t.string "att_license_link"
     t.string "doc_slug"
     t.bigint "last_activity_by_id"
-    t.bigint "community_id", null: false
+    t.bigint "community_id"
     t.bigint "close_reason_id"
     t.bigint "duplicate_post_id"
     t.bigint "category_id"

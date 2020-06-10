@@ -84,7 +84,7 @@ class PostsController < ApplicationController
   end
 
   def document
-    @post = Post.find_by(doc_slug: params[:slug])
+    @post = Post.unscoped.find_by(doc_slug: params[:slug])
   end
 
   def upload
@@ -102,7 +102,10 @@ class PostsController < ApplicationController
   end
 
   def help_center
-    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:help_ordering, :title)
+    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id])
+                 .or(Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                         community_id: nil))
+                 .order(:help_ordering, :title)
                  .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:help_category) }
   end
 

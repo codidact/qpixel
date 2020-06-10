@@ -1,18 +1,26 @@
 - post_type_id: <%= PolicyDoc.post_type_id %>
   title: Terms of Service
-  body_markdown: >
-    This document has been created for you as a placeholder. You should edit it to add your own Terms of Service.
-  body: >
-    <p>This document has been created for you as a placeholder. You should edit it to add your own Terms of Service.</p>
+  body_markdown: $FILE posts/tos.html
+  body: $FILE posts/tos.html
   doc_slug: tos
   help_category: Legal
+  community_id: ~
 
-- post_type_id: <%= HelpDoc.post_type_id %>
+- post_type_id: <%= PolicyDoc.post_type_id %>
+  title: Code of Conduct
+  body_markdown: $FILE posts/coc.html
+  body: $FILE posts/coc.html
+  doc_slug: code-of-conduct
+  help_category: About Codidact
+  community_id: ~
+
+- post_type_id: <%= PolicyDoc.post_type_id %>
   title: Codidact FAQ
   body_markdown: $FILE posts/global_faq.html
   body: $FILE posts/global_faq.html
   doc_slug: codidact-faq
-  help_category: Codidact
+  help_category: About Codidact
+  community_id: ~
 
 - post_type_id: <%= HelpDoc.post_type_id %>
   title: FAQ
