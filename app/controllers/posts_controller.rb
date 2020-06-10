@@ -110,7 +110,8 @@ class PostsController < ApplicationController
                                          community_id: nil))
                  .where(Arel.sql("posts.help_category IS NULL OR posts.help_category != '$Disabled'"))
                  .order(:help_ordering, :title)
-                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:help_category) }
+                 .group_by(&:post_type_id)
+                 .transform_values { |posts| posts.group_by { |p| p.help_category.present? ? p.help_category : nil } }
   end
 
   private
