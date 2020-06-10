@@ -84,7 +84,7 @@ class PostsController < ApplicationController
   end
 
   def document
-    @post = Post.unscoped.find_by(doc_slug: params[:slug])
+    @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
   end
 
   def upload
