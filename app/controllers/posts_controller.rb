@@ -102,18 +102,18 @@ class PostsController < ApplicationController
   end
 
   def help_center
-    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:title)
-                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:category) }
+    @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id]).order(:help_ordering, :title)
+                 .group_by(&:post_type_id).transform_values { |posts| posts.group_by(&:help_category) }
   end
 
   private
 
   def new_post_params
-    params.require(:post).permit(:post_type_id, :title, :doc_slug, :category, :body_markdown)
+    params.require(:post).permit(:post_type_id, :title, :doc_slug, :help_category, :body_markdown, :help_ordering)
   end
 
   def help_post_params
-    params.require(:post).permit(:title, :category, :body_markdown)
+    params.require(:post).permit(:title, :help_category, :body_markdown, :help_ordering)
   end
 
   def post_params
