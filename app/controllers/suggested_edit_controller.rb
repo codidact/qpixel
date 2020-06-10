@@ -26,24 +26,19 @@ class SuggestedEditController < ApplicationController
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) })
 
-        return
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) })
-        return
       elsif @post.article?
         render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
           id: @post.id) })
-        return
+      else
+        render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
       end
     else
       render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
                                      ' the post criteria. Reject and make the changes yourself.' }, status: 400)
-      return
     end
-
-    render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
-    nil
   end
 
   def reject
