@@ -76,9 +76,7 @@
     Whether or not voting for your own posts is allowed.
 
 - name: AskingGuidance
-  value: >
-    <p>Questions get better answers if they...</p><ul><li>are specific</li><li>are not mostly
-    or entirely based on opinions</li><li>are well written</li></ul></p>
+  value: $FILE site_settings/asking_guidance.html
   value_type: text
   category: HelpAndGuidance
   description: >

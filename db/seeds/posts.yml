@@ -5,3 +5,15 @@
   body: >
     <p>This document has been created for you as a placeholder. You should edit it to add your own Terms of Service.</p>
   doc_slug: tos
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Codidact FAQ
+  body_markdown: $FILE posts/global_faq.html
+  body: $FILE posts/global_faq.html
+  doc_slug: codidact-faq
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: FAQ
+  body_markdown: $FILE posts/local_faq.html
+  body: $FILE posts/local_faq.html
+  doc_slug: faq
