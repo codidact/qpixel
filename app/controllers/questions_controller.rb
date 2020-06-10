@@ -88,7 +88,7 @@ class QuestionsController < ApplicationController
       community: @question.community,
       body: body_rendered,
       title: params[:question][:title] != @question.title ? params[:question][:title] : nil,
-      tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : nil,
+      tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : @question.tags_cache,
       body_markdown: body_markdown,
       comment: params[:edit_comment],
       active: true, accepted: false,

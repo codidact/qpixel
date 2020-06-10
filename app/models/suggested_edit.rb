@@ -24,7 +24,11 @@ class SuggestedEdit < ApplicationRecord
     post.question?
   end
 
-  before_validation :update_tag_associations, if: :on_question?
+  def on_article?
+    post.article?
+  end
+
+  before_validation :update_tag_associations, if: :on_question? || :on_article?
 
   def update_tag_associations
     return if tags_cache.nil? # Don't update if this doesn't affect tags

@@ -1,6 +1,6 @@
 <% content_for :title, "Suggested Edit #" + @edit.id.to_s %>
 <% post = @edit.post %>
-<% is_question = post.post_type_id == Question.post_type_id %>
+<% is_question_or_article = @edit.on_question? || @edit.on_article? %>
 <% may_decide = check_your_post_privilege(post, 'Edit') && @edit.user.id != current_user.id %>
 
 <h1>Review Suggested Edit</h1>
@@ -19,7 +19,7 @@
 <div class="widget">
     <div class="widget--body h-bg-tertiary-050">
         <div class="h-f-r">
-            <a class="button is-muted is-outlined" href="<%= @edit.on_question? ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id)  %>">Return to post</a>
+            <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">Return to post</a>
         </div>
         <% if @edit.pending? %>
         <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
@@ -40,7 +40,7 @@
     </div>
     <div class="widget--body">
         <div class="diff">
-        <% if is_question %>
+        <% if is_question_or_article %>
             <!-- Title -->
             <div class="diff-section">
                 <% if @edit.title.nil? %>
@@ -65,7 +65,7 @@
             </div>
 
 
-        <% if is_question && !@edit.tags_cache.nil? %>
+        <% if is_question_or_article && @edit.tags_cache != post.tags_cache %>
             <!-- Tags -->
             <% tag_set = post.tag_set %>
             <% required_ids = post.category&.required_tag_ids %>

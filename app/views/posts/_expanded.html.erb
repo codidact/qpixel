@@ -1,4 +1,5 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
+<% is_article = post.post_type_id == Article.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
 <% has_tags = is_top_level && !post.tag_ids.empty? %>
 
@@ -146,7 +147,7 @@
             <% if post.pending_suggested_edit? %>
               <span>suggested edit pending...</span> &middot;
             <% else %>
-              <%= link_to 'suggest edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
+              <%= link_to 'suggest edit', is_question ? edit_question_path(post) : (is_article ?edit_article_path(post) : edit_answer_path(post)) %> &middot;
             <% end %>
           <% end %>
           <%= link_to 'permalink', generic_share_link(post) %> &middot;

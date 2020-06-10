@@ -31,6 +31,10 @@ class SuggestedEditController < ApplicationController
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) })
         return
+      elsif @post.article?
+        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
+          id: @post.id) })
+        return
       end
     else
       render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
@@ -64,6 +68,9 @@ class SuggestedEditController < ApplicationController
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) })
+      elsif @post.article?
+        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
+          id: @post.id) })
       end
     else
       render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
@@ -77,7 +84,7 @@ class SuggestedEditController < ApplicationController
   end
 
   def applied_details
-    if @post.question?
+    if @post.question? || @post.article?
       {
         title: @edit.title,
         tags_cache: @edit.tags_cache&.reject(&:empty?),
