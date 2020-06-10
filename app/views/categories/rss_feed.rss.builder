@@ -1,7 +1,7 @@
 xml.instruct! :xml, version: '1.0'
 xml.feed xmlns: 'http://www.w3.org/2005/Atom' do
   xml.id category_feed_url(@category)
-  xml.title "New Questions - #{@category.name} - #{SiteSetting['SiteName']}"
+  xml.title "New Posts - #{@category.name} - #{SiteSetting['SiteName']}"
   xml.author do
     xml.name "#{SiteSetting['SiteName']} - Codidact"
   end
@@ -10,7 +10,7 @@ xml.feed xmlns: 'http://www.w3.org/2005/Atom' do
 
   @posts.each do |post|
     xml.entry do
-      xml.id question_url(post)
+      xml.id generic_show_link(post)
       xml.title post.title
       xml.author do
         xml.name post.user.username
@@ -18,7 +18,7 @@ xml.feed xmlns: 'http://www.w3.org/2005/Atom' do
       end
       xml.published post.created_at&.iso8601
       xml.updated post.last_activity&.iso8601
-      xml.link href: question_path(post)
+      xml.link href: generic_show_link(post)
       xml.summary post.body.truncate(200), type: 'html'
     end
   end
