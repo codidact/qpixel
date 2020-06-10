@@ -85,6 +85,9 @@ class PostsController < ApplicationController
 
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
+    if @post.help_category == '$Disabled'
+      not_found
+    end
   end
 
   def upload
