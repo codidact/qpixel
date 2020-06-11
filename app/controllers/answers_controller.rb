@@ -58,6 +58,8 @@ class AnswersController < ApplicationController
     }
     @edit = SuggestedEdit.new(updates)
     if @edit.save
+      @answer.user.create_notification("Edit suggested on your answer to #{@answer.parent.title.truncate(50)}",
+                                       share_answer_url(qid: @answer.parent_id, id: @answer.id))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
       @post.errors = @edit.errors

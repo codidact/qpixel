@@ -98,6 +98,8 @@ class QuestionsController < ApplicationController
 
     @edit = SuggestedEdit.new(updates)
     if @edit.save
+      @question.user.create_notification("Edit suggested on your post #{@question.title.truncate(50)}",
+                                         question_url(@question))
       redirect_to url_for(controller: :questions, action: :show, id: @question.id)
     else
       @post.errors = @edit.errors

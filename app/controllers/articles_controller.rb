@@ -55,6 +55,8 @@ class ArticlesController < ApplicationController
 
     @edit = SuggestedEdit.new(updates)
     if @edit.save
+      @article.user.create_notification("Edit suggested on your post #{@article.title.truncate(50)}",
+                                        article_url(@article))
       redirect_to article_path(@article.id)
     else
       @post.errors = @edit.errors
