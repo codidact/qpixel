@@ -4,9 +4,9 @@
 <% desc = "#{SiteSetting['SiteName']} on Codidact - open, community-run Q&A knowledge sharing" %>
 <meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
 
-<% page_title = Rails.env.development? ? '[DEV] ' : '' +
+<% page_title = (Rails.env.development? ? '[DEV] ' : '') +
                 SiteSetting['SiteName'] +
-                content_for?(:title) ? yield(:title) : '' %>
+                (content_for?(:title) ? yield(:title) : '') %>
 <title>
   <%= page_title %>
 </title>
