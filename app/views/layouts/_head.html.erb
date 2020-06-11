@@ -6,7 +6,7 @@
 
 <% page_title = (Rails.env.development? ? '[DEV] ' : '') +
                 SiteSetting['SiteName'] +
-                (content_for?(:title) ? yield(:title) : '') %>
+                (content_for?(:title) ? content_for(:title) : '') %>
 <title>
   <%= page_title %>
 </title>
