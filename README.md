@@ -73,6 +73,12 @@ Set up the database:
 Run the server!
 
     rails s
+    
+You'll need to create a Community record before the server will display any content. In a console, run:
+
+```ruby
+Community.create(name: 'Dev Community', host: 'localhost:3000')
+```
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
 to an admin account, run `rails c` for a console, followed by:
