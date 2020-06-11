@@ -6,11 +6,14 @@ class SuggestedEditController < ApplicationController
   end
 
   def approve
-    return not_found unless @edit.active?
+    unless @edit.active?
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      return
+    end
 
     @post = @edit.post
     unless check_your_privilege('Edit', @post, false)
-      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to approve edits' }, status: 400)
+      render(json: { status: 'error', message: 'You need the Edit privilege to approve edits' }, status: 400)
 
       return
     end
@@ -23,26 +26,27 @@ class SuggestedEditController < ApplicationController
                                                   decided_by: current_user, updated_at: DateTime.now)
       flash[:success] = 'Edit approved successfully.'
       if @post.question?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
-                                                                id: @post.id) })
+        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) })
 
       elsif @post.answer?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
                                                         qid: @post.parent.id, id: @post.id) })
       elsif @post.article?
-        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
-          id: @post.id) })
+        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share, id: @post.id) })
       else
         render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
       end
     else
-      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfill' \
+      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfil' \
                                      ' the post criteria. Reject and make the changes yourself.' }, status: 400)
     end
   end
 
   def reject
-    return not_found unless @edit.active?
+    unless @edit.active?
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      return
+    end
 
     @post = @edit.post
 
