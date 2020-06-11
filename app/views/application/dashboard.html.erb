@@ -21,7 +21,7 @@
             <% categories.each do |cat| %>
                 <% next unless (cat.min_view_trust_level || -1) < 0 %>
                 <div class="widget--body">
-                <%= link_to "//"+category_path(cat) do %>
+                <%= link_to "//"+c.host+category_path(cat) do %>
                     <%= cat.name %>
                     <% if user_signed_in? && cat.new_posts_for?(current_user) %>
                         <span class="badge is-status" title="new posts for you"></span>
