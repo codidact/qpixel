@@ -5,8 +5,8 @@
 <meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
 
 <% page_title = (Rails.env.development? ? '[DEV] ' : '') +
-                SiteSetting['SiteName'] +
-                (content_for?(:title) ? content_for(:title) : '') %>
+                SiteSetting['SiteName'].to_s +
+                (content_for?(:title) ? ' - ' + content_for(:title) : '') %>
 <title>
   <%= page_title %>
 </title>
