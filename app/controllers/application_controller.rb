@@ -12,6 +12,11 @@ class ApplicationController < ActionController::Base
     redirect_to helpers.upload_remote_url(params[:key])
   end
 
+  def dashboard
+    @communities = Community.all
+    render layout: 'without_sidebar'
+  end
+
   protected
 
   def configure_permitted_parameters
