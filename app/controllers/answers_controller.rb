@@ -27,12 +27,12 @@ class AnswersController < ApplicationController
     end
   end
 
-  def edit
-    check_your_privilege('Edit', @answer)
-  end
+  def edit; end
 
   def update
-    return unless check_your_privilege('Edit', @answer)
+    unless current_user&.has_post_privilege?('Edit', @answer)
+      return update_as_suggested_edit
+    end
 
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
@@ -40,6 +40,27 @@ class AnswersController < ApplicationController
                                           last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
     else
+      render :edit
+    end
+  end
+
+  def update_as_suggested_edit
+    updates = {
+      post: @answer,
+      user: current_user,
+      community: @answer.community,
+      body: helpers.render_markdown(params[:answer][:body_markdown]),
+      body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
+      comment: params[:edit_comment],
+      active: true, accepted: false,
+      decided_at: nil, decided_by: nil,
+      rejected_comment: nil
+    }
+    @edit = SuggestedEdit.new(updates)
+    if @edit.save
+      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+    else
+      @post.errors = @edit.errors
       render :edit
     end
   end

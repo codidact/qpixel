@@ -12,12 +12,12 @@ class ArticlesController < ApplicationController
     redirect_to article_path(params[:id])
   end
 
-  def edit
-    check_your_privilege('Edit', @article)
-  end
+  def edit; end
 
   def update
-    return unless check_your_privilege('Edit', @article)
+    unless current_user&.has_post_privilege?('Edit', @article)
+      return update_as_suggested_edit
+    end
 
     PostHistory.post_edited(@article, current_user, before: @article.body_markdown,
                             after: params[:article][:body_markdown], comment: params[:edit_comment])
@@ -27,6 +27,37 @@ class ArticlesController < ApplicationController
                                             last_activity_by: current_user))
       redirect_to article_path(@article)
     else
+      render :edit
+    end
+  end
+
+  def update_as_suggested_edit
+    body_rendered = helpers.render_markdown(params[:article][:body_markdown])
+    new_tags_cache = params[:article][:tags_cache]&.reject(&:empty?)
+
+    body_markdown = if params[:article][:body_markdown] != @article.body_markdown
+                      params[:article][:body_markdown]
+                    end
+
+    updates = {
+      post: @article,
+      user: current_user,
+      community: @article.community,
+      body: body_rendered,
+      title: params[:article][:title] != @article.title ? params[:article][:title] : nil,
+      tags_cache: new_tags_cache != @article.tags_cache ? new_tags_cache : @article.tags_cache,
+      body_markdown: body_markdown,
+      comment: params[:edit_comment],
+      active: true, accepted: false,
+      decided_at: nil, decided_by: nil,
+      rejected_comment: nil
+    }
+
+    @edit = SuggestedEdit.new(updates)
+    if @edit.save
+      redirect_to article_path(@article.id)
+    else
+      @post.errors = @edit.errors
       render :edit
     end
   end

@@ -16,6 +16,7 @@ class Post < ApplicationRecord
   has_many :post_histories, dependent: :destroy
   has_many :flags, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
+  has_many :suggested_edits, dependent: :destroy
 
   counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
 
@@ -99,6 +100,14 @@ class Post < ApplicationRecord
     post_type_id == Answer.post_type_id
   end
 
+  def pending_suggested_edit?
+    SuggestedEdit.where(post_id: id, active: true).any?
+  end
+
+  def pending_suggested_edit
+    SuggestedEdit.where(post_id: id, active: true).last
+  end
+
   private
 
   def update_tag_associations
@@ -108,7 +117,6 @@ class Post < ApplicationRecord
         tags << tag
       end
     end
-
     tags.each do |tag|
       unless tags_cache.include? tag.name
         tags.delete tag

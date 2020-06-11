@@ -23,18 +23,18 @@ module SearchHelper
 
       case parameter
       when 'score'
-        next unless value =~ valid_value[:numeric]
+        next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
         ["score #{operator.present? ? operator : '='} ?", val.to_i]
       when 'created'
-        next unless value =~ valid_value[:date]
+        next unless value.match?(valid_value[:date])
 
         operator, val, timeframe = date_value_sql value
         ["created_at #{operator.present? ? operator : '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})",
          val.to_i]
       when 'user'
-        next unless value =~ valid_value[:numeric]
+        next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
         ["user_id #{operator.present? ? operator : '='} ?", val.to_i]

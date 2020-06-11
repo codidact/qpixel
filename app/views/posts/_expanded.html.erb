@@ -1,4 +1,5 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
+<% is_article = post.post_type_id == Article.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
 <% has_tags = is_top_level && !post.tag_ids.empty? %>
 
@@ -66,7 +67,7 @@
       <% if post.deleted %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
-            <strong>deleted</strong> by  <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
+            <strong>deleted</strong> by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% if post.deleted_by.id == post.user.id %>
@@ -82,6 +83,18 @@
 
           <p>Users with the undelete privilege may vote to undelete this post if it has been deleted incorrectly.</p>
         </div>
+      <% end %>
+
+      <% if post.pending_suggested_edit? %>
+        <% if check_your_post_privilege(post, 'Edit') %>
+          <div class="notice h-p-2">
+            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small">Review changes</a></p>
+          </div>
+        <% elsif post.pending_suggested_edit.user.id == current_user&.id %>
+          <div class="notice h-p-2">
+            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>">pending review</a></strong>.</p>
+          </div>
+        <% end %>
       <% end %>
 
       <div class="post--body">
@@ -124,7 +137,19 @@
 
         <div class="post--actions">
           <%= link_to 'history', post_history_path(post) %> &middot;
-          <%= link_to 'edit', generic_edit_link(post) %> &middot;
+          <% if check_your_post_privilege(post, 'Edit') %>
+            <% if post.pending_suggested_edit? %>
+              <%= link_to 'review suggested edit', suggested_edit_url(post.pending_suggested_edit.id), class: "h-fw-bold" %> &middot;
+            <% else %>
+              <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
+            <% end %>
+          <% elsif !current_user.nil? %>
+            <% if post.pending_suggested_edit? %>
+              <span>suggested edit pending...</span> &middot;
+            <% else %>
+              <%= link_to 'suggest edit', is_question ? edit_question_path(post) : (is_article ?edit_article_path(post) : edit_answer_path(post)) %> &middot;
+            <% end %>
+          <% end %>
           <%= link_to 'permalink', generic_share_link(post) %> &middot;
           <% if is_question && !post.closed %>
             <a href="#" class="close-dialog-link">close</a> &middot;

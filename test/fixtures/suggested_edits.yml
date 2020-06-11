@@ -1,0 +1,63 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+pending_suggested_edit:
+  post: question_one
+  user: standard_user
+  community: sample
+  body: TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+  title: TITLE TEST TEST TEST TEST TEST TEST
+  body_markdown: <p>TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST</p>
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  comment: TESTING THIS STUFF
+  active: true
+  accepted: false
+
+accepted_suggested_edit:
+  post: question_one
+  user: standard_user
+  community: sample
+  body: TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+  title: TITLE TEST TEST TEST TEST TEST TEST
+  body_markdown: <p>TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST</p>
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  comment: TESTING THIS STUFF
+  active: false
+  accepted: true
+  decided_at: 2000-01-01T00:00:00.000000Z
+  decided_by: editor
+
+rejected_suggested_edit:
+  post: question_two
+  user: standard_user
+  community: sample
+  body: TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+  title: TITLE TEST TEST TEST TEST TEST TEST
+  body_markdown: <p>TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST</p>
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  comment: TESTING THIS STUFF
+  active: false
+  accepted: false
+  decided_at: 2000-01-01T00:00:00.000000Z
+  decided_by: editor
+  rejected_comment: NO WAY

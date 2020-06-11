@@ -52,7 +52,7 @@
 
   <div class="form-group">
     <% button_text = is_meta ? "Ask Meta Question" : "Ask Question" %>
-    <%= f.submit is_edit ? "Save Changes" : button_text, class: "button is-filled" %><br/>
+    <%= f.submit is_edit ? (check_your_post_privilege(@question, 'Edit') ? "Save changes" : "Suggest changes") : button_text, class: "button is-filled" %><br/>
   </div>
   <% if !is_edit %>
     <% if is_meta %>
