@@ -1,5 +1,4 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
-<% is_article = post.post_type_id == Article.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
 <% has_tags = is_top_level && !post.tag_ids.empty? %>
 

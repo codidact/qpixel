@@ -5,4 +5,14 @@
   <% end %>
 <% end %>
 
+<% content_for :head do %>
+  <meta name="twitter:card" content="summary" />
+  <% if @article.user.twitter.present? %>
+    <meta name="twitter:creator" content="@<%= @article.user.twitter %>" />
+  <% end %>
+  <meta property="og:url" content="<%= question_url(@article) %>" />
+  <meta property="og:title" content="<%= @article.title %>" />
+  <meta property="og:description" content="<%= @article.body_plain[0..150].strip %>..." />
+<% end %>
+
 <%= render 'posts/expanded', post: @article %>
