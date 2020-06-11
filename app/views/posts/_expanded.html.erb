@@ -141,13 +141,13 @@
             <% if post.pending_suggested_edit? %>
               <%= link_to 'review suggested edit', suggested_edit_url(post.pending_suggested_edit.id), class: "h-fw-bold" %> &middot;
             <% else %>
-              <%= link_to 'edit', is_question ? edit_question_path(post) : edit_answer_path(post) %> &middot;
+              <%= link_to 'edit', generic_edit_link(post) %> &middot;
             <% end %>
           <% elsif !current_user.nil? %>
             <% if post.pending_suggested_edit? %>
               <span>suggested edit pending...</span> &middot;
             <% else %>
-              <%= link_to 'suggest edit', is_question ? edit_question_path(post) : (is_article ?edit_article_path(post) : edit_answer_path(post)) %> &middot;
+              <%= link_to 'suggest edit', generic_edit_link(post) %> &middot;
             <% end %>
           <% end %>
           <%= link_to 'permalink', generic_share_link(post) %> &middot;
