@@ -177,6 +177,7 @@ Rails.application.routes.draw do
   end
 
   get   'uploads/:key',                  to: 'application#upload', as: :uploaded
+  get   'dashboard',                     to: 'application#dashboard', as: :dashboard
 
   get   '403',                           to: 'errors#forbidden'
   get   '404',                           to: 'errors#not_found'
