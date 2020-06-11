@@ -4,12 +4,11 @@
 <% desc = "#{SiteSetting['SiteName']} on Codidact - open, community-run Q&A knowledge sharing" %>
 <meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
 
+<% page_title = Rails.env.development? ? '[DEV] ' : '' +
+                SiteSetting['SiteName'] +
+                content_for?(:title) ? yield(:title) : '' %>
 <title>
-  <%= Rails.env.development? ? '[DEV] ' : '' %>
-  <%= SiteSetting['SiteName'] %>
-  <% if content_for?(:title) %>
-    - <%= yield(:title) %>
-  <% end %>
+  <%= page_title %>
 </title>
 
 <link rel="icon" href="<%= SiteSetting['IconPath'] || '/assets/favicon.ico' %>" />
@@ -41,3 +40,14 @@
 <%= csrf_meta_tags %>
 
 <%= yield(:head) %>
+
+<% if content_for? :twitter_card_meta %>
+  <%= yield :twitter_card_meta %>
+<% else %>
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@CodidactQA" />
+  <meta property="og:url" content="<%= request.original_url %>" />
+  <meta property="og:title" content="<%= page_title %>" />
+  <meta property="og:description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
+  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
+<% end %>

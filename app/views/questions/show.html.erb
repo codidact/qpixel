@@ -6,7 +6,7 @@
   <% end %>
 <% end %>
 
-<% content_for :head do %>
+<% content_for :twitter_card_meta do %>
   <meta name="twitter:card" content="summary" />
   <% if @question.user.twitter.present? %>
     <meta name="twitter:creator" content="@<%= @question.user.twitter %>" />
@@ -14,6 +14,7 @@
   <meta property="og:url" content="<%= question_url(@question) %>" />
   <meta property="og:title" content="<%= @question.title %>" />
   <meta property="og:description" content="<%= @question.body_plain[0..150].strip %>..." />
+  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
 <%= render 'posts/expanded', post: @question %>
