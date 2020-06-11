@@ -58,30 +58,31 @@
 <div class="header-slide inbox">
 </div>
 <div class="header-slide mobile-menu">
-  <%= link_to 'Categories', categories_path, class: 'header--item' %>
-  <%= link_to 'Users', users_path, class: 'header-slide--item' %>
-  <%= link_to 'Search', search_path, class: 'header-slide--item' %>
+  <div class="menu">
+    <%= link_to 'Categories', categories_path, class: 'menu--item' %>
+    <%= link_to 'Users', users_path, class: 'menu--item' %>
+    <%= link_to 'Search', search_path, class: 'menu--item' %>
 
-  <div class='header-slide--separator'></div>
+    <div class='header-slide--separator'></div>
 
-  <%= link_to 'Help', help_center_path, class: 'header-slide--item' %>
+    <%= link_to 'Help', help_center_path, class: 'menu--item' %>
 
-  <div class='header-slide--separator'></div>
-
-  <% if user_signed_in? %>
-    <% if current_user.is_admin || current_user.is_moderator %>
-      <%= link_to flag_queue_path, class: 'header-slide--item' do %>
-        <% if @open_flags > 0 %>
-          <span class="header-slide--alert"><%= @open_flags %></span>
+    <% if user_signed_in? %>
+      <% if current_user.is_admin || current_user.is_moderator %>
+        <%= link_to flag_queue_path, class: 'menu--item' do %>
+          <% if @open_flags > 0 %>
+            <span class="badge is-status"><%= @open_flags %></span>
+          <% end %>
+          Flags
         <% end %>
-        Flags
       <% end %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+    </div>
+    <% else %>
+    </div>
+      <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
+      <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
     <% end %>
-    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header-slide--item' %>
-  <% else %>
-    <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
-    <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
-  <% end %>
 </div>
 
 <% if expandable? %>
