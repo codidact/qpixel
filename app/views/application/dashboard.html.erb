@@ -8,7 +8,7 @@
         <div class="widget">
             <div class="widget--header is-complex">
                 <div class="has-text-align-center has-font-weight-bold has-font-size-display">
-                    <%= link_to c.host, class: "dashboard-full-center" do %>
+                    <%= link_to "//"+c.host, class: "dashboard-full-center" do %>
                         <% if !logo_setting.nil? %>
                             <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
                         <% else %>
@@ -19,9 +19,9 @@
             </div>
             <div class="widget--body h-fw-bold h-bg-tertiary-050"><i class="fa fa-file-alt"></i> Posts</div>
             <% categories.each do |cat| %>
-                <% next unless cat.min_view_trust_level || -1 < 0 %>
+                <% next unless (cat.min_view_trust_level || -1) < 0 %>
                 <div class="widget--body">
-                <%= link_to category_path(cat, host: c.host) do %>
+                <%= link_to "//"+category_path(cat) do %>
                     <%= cat.name %>
                     <% if user_signed_in? && cat.new_posts_for?(current_user) %>
                         <span class="badge is-status" title="new posts for you"></span>
