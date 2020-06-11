@@ -3,16 +3,16 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!, only: [:index]
 
   def index
-    @notifications = Notification.where(user: current_user).paginate(page: params[:page], per_page: 100)
+    @notifications = Notification.unscoped.where(user: current_user).paginate(page: params[:page], per_page: 100)
                                  .order(Arel.sql('is_read ASC, created_at DESC'))
     respond_to do |format|
       format.html { render :index }
-      format.json { render json: @notifications }
+      format.json { render json: @notifications, methods: :community_name }
     end
   end
 
   def read
-    @notification = Notification.find params[:id]
+    @notification = Notification.unscoped.find params[:id]
 
     unless @notification.user == current_user
       respond_to do |format|
@@ -43,7 +43,7 @@ class NotificationsController < ApplicationController
   end
 
   def read_all
-    @notifications = Notification.where(user: current_user, is_read: false)
+    @notifications = Notification.unscoped.where(user: current_user, is_read: false)
     if @notifications.update_all(is_read: true)
       respond_to do |format|
         format.html do

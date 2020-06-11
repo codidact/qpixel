@@ -16,26 +16,26 @@ $(() => {
         headers: { 'Accept': 'application/json' }
       });
       const data = await resp.json();
-      $inbox.html('');
+      const $inboxContainer = $inbox.find(".inbox--container");
+      $inboxContainer.html('');
   
       const unread = data.filter(n => !n.is_read);
       const read = data.filter(n => n.is_read);
+
+      console.log(read);
   
-      if (unread.length === 0) {
-        $inbox.append(`<div class="has-padding-2 has-margin-left-2 has-margin-right-2"><em>No unread notifications</em></div>`)
-      }
       unread.forEach(notification => {
-        const item = $(`<a href="${notification.link}" data-id="${notification.id}" class="header-slide--item"><span class="header-slide--alert">unread</span>${notification.content}</a>"`);
-        $inbox.append(item);
+        const item = $(`<div class="widget is-teal h-m-0 h-m-b-2"><div class="widget--body h-p-2"><div class="h-c-tertiary-600 h-fs-caption">${notification.community_name} &middot; <strong>unread</strong></div><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></div></div>`);
+        $inboxContainer.append(item);
       });
   
-      $inbox.append(`<div role="separator" class="header-slide--separator"></div>`);
+      $inboxContainer.append(`<div role="separator" class="header-slide--separator"></div>`);
       read.forEach(notification => {
-        const item = $(`<a href="${notification.link}" data-id="${notification.id}" class="header-slide--item has-font-weight-normal">${notification.content}</a>"`);
-        $inbox.append(item);
+        const item = $(`<div class="widget h-m-0 h-m-b-2"><div class="widget--body h-p-2"><div class="h-c-tertiary-600 h-fs-caption">${notification.community_name} &middot; read</div><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></div></div>"`);
+        $inboxContainer.append(item);
       });
   
-      $inbox.append(`<a href="/users/me/notifications" class="header-slide--item has-font-weight-normal"><em>See all your notifications &raquo;</em></a>`);
+      $inboxContainer.append(`<a href="/users/me/notifications" class="button is-muted is-small">See all your notifications &raquo;</a>`);
    } else {
       await fetch(`/notifications/read_all`, {
         method: 'POST',
