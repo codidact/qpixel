@@ -49,7 +49,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: false)
 
     post :approve, params: { id: suggested_edit.id }
-    assert_response(404)
+    assert_response(409)
   end
 
   test 'already decided edit shouldn\'t be able to be rejected' do
@@ -59,7 +59,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: true)
 
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    assert_response(404)
+    assert_response(409)
   end
 
   test 'approving edit should change status and apply it' do
