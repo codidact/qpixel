@@ -192,3 +192,14 @@ hr {
   border-top: 1px solid $muted-graphic;
   font-size: 0.9em;
 }
+
+
+.dashboard-full-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    height: 1.25em;
+  }
+}

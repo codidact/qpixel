@@ -8,13 +8,13 @@
         <div class="widget">
             <div class="widget--header is-complex">
                 <div class="has-text-align-center has-font-weight-bold has-font-size-display">
-                    <a href="//<%= c.host %>" style="display: flex; justify-content: center; align-items: center;">
+                    <%= link_to c.host, class: "dashboard-full-center" do %>
                         <% if !logo_setting.nil? %>
-                            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" style="height: 1.25em;">
+                            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
                         <% else %>
                             <%= c.name %>
                         <% end%>
-                    </a>
+                    <% end %>
                 </div>
             </div>
             <div class="widget--body h-fw-bold h-bg-tertiary-050"><i class="fa fa-file-alt"></i> Posts</div>
@@ -32,17 +32,17 @@
             <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
                 <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
                 <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
-            <div class="widget--body h-fw-bold h-bg-tertiary-050">
-                <i class="fa fa-flag"></i>
-                <a href="<%= flag_queue_url(host: c.host) %>">Flags</a>
-                (global mods only)
+                <div class="widget--body h-fw-bold h-bg-tertiary-050">
+                    <i class="fa fa-flag"></i>
+                    <a href="<%= flag_queue_url(host: c.host) %>">Flags</a>
+                    (global mods only)
                 </div>
-            <div class="widget--body">
-            <% if open_flags != 0 %>
-                <div class="h-c-red-700 h-fw-bold"><span class="badge is-tag is-red is-small"><%= open_flags %></span> open flags</div>
-            <% end %>
-                <div><span class="badge is-tag is-muted is-small"><%= resolved_flags %></span> resolved flags</div>
-            </div>
+                <div class="widget--body">
+                    <% if open_flags != 0 %>
+                        <div class="h-c-red-700 h-fw-bold"><span class="badge is-tag is-red is-small"><%= open_flags %></span> open flags</div>
+                    <% end %>
+                    <div><span class="badge is-tag is-muted is-small"><%= resolved_flags %></span> resolved flags</div>
+                </div>
             <% end %>
         </div>
     </div>
