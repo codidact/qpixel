@@ -2,7 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <% desc = "#{SiteSetting['SiteName']} on Codidact - open, community-run Q&A knowledge sharing" %>
-<meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
+<meta name="description" content="<%= content_for?(:description) ? CGI.unescapeHTML(content_for(:description)) : desc %>" />
 
 <% page_title = (Rails.env.development? ? '[DEV] ' : '') +
                 SiteSetting['SiteName'].to_s +
