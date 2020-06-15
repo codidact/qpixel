@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_10_152647) do
+ActiveRecord::Schema.define(version: 2020_06_12_154828) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -217,7 +217,7 @@ ActiveRecord::Schema.define(version: 2020_06_10_152647) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -249,6 +249,7 @@ ActiveRecord::Schema.define(version: 2020_06_10_152647) do
   create_table "posts_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "tag_id"
     t.bigint "post_id"
+    t.index ["post_id", "tag_id"], name: "index_posts_tags_on_post_id_and_tag_id", unique: true
     t.index ["post_id"], name: "index_posts_tags_on_post_id"
     t.index ["tag_id"], name: "index_posts_tags_on_tag_id"
   end
