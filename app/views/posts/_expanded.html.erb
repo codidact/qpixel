@@ -163,9 +163,6 @@
                         method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
           <% end %> &middot;
           <a href="#" class="flag-dialog-link">flag</a>
-          <% if moderator? %>
-            &middot; <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>">tools</a>
-          <% end %>
           <% flags_count = post.flags.where(handled_by_id: nil).count %>
           <% if moderator? && flags_count > 0 %>
           &middot; <a href="#" class="show-all-flags-dialog-link has-font-weight-bold">show <%= pluralize(flags_count, "flag") %></a>
@@ -304,7 +301,3 @@
     </div>
   </div>
 </div>
-
-<% if moderator? %>
-  <%= render 'posts/post_tools', post: post %>
-<% end %>

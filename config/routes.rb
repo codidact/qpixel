@@ -135,7 +135,6 @@ Rails.application.routes.draw do
   patch  'answers/:id/edit',               to: 'answers#update', as: :update_answer
   delete 'answers/:id/delete',             to: 'answers#destroy', as: :delete_answer
   post   'answers/:id/delete',             to: 'answers#undelete', as: :undelete_answer
-  post   'answers/:id/convert/:post_id',   to: 'answers#convert_to_comment', as: :convert_to_comment
 
   post   'flags/new',                      to: 'flags#new', as: :new_flag
 

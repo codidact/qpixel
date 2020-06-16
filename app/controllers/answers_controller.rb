@@ -1,9 +1,8 @@
 # Web controller. Provides actions that relate to answers. Pretty much the standard set of resources, really - it's
 # questions that have a few more actions.
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :convert_to_comment]
-  before_action :set_answer, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
-  before_action :verify_admin, only: [:convert_to_comment]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete]
+  before_action :set_answer, only: [:edit, :update, :destroy, :undelete]
 
   def new
     @answer = Answer.new
@@ -106,15 +105,6 @@ class AnswersController < ApplicationController
       flash[:danger] = "Can't undelete this answer right now. Try again later."
     end
     redirect_to question_path(@answer.parent)
-  end
-
-  def convert_to_comment
-    text = @answer.body_markdown
-    comments = helpers.split_words_max_length(text, 500)
-    created = comments.map do |c|
-      Comment.create(user: @answer.user, post_id: params[:post_id], community: @answer.community, content: c)
-    end
-    render json: { success: true, comments: created.map(&:id) }
   end
 
   private
