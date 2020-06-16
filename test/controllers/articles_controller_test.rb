@@ -2,6 +2,7 @@ require 'test_helper'
 
 class ArticlesControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
+  include ApplicationTestHelper
 
   test 'should get show article page' do
     get :show, params: { id: posts(:article_one).id }
@@ -34,8 +35,8 @@ class ArticlesControllerTest < ActionController::TestCase
                                                                     body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
                                                                     tags_cache: ['discussion', 'support'] } }
     assert_not_nil assigns(:article)
-    assert_equal ['discussion', 'support'], assigns(:article).tags_cache
-    assert_equal ['discussion', 'support'], assigns(:article).tags.map(&:name)
+    assert_array_equal ['discussion', 'support'], assigns(:article).tags_cache
+    assert_array_equal ['discussion', 'support'], assigns(:article).tags.map(&:name)
     assert_response(302)
   end
 

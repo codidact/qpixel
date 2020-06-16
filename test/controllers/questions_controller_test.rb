@@ -2,6 +2,7 @@ require 'test_helper'
 
 class QuestionsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
+  include ApplicationTestHelper
 
   test 'should get index' do
     get :index
@@ -52,8 +53,8 @@ class QuestionsControllerTest < ActionController::TestCase
                                                                       body_markdown: 'ABCDEF GHIJKL MNOPQR STUVWX YZ',
                                                                       tags_cache: ['discussion', 'support'] } }
     assert_not_nil assigns(:question)
-    assert_equal ['discussion', 'support'], assigns(:question).tags_cache
-    assert_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
+    assert_array_equal ['discussion', 'support'], assigns(:question).tags_cache
+    assert_array_equal ['discussion', 'support'], assigns(:question).tags.map(&:name)
     assert_response(302)
   end
 
