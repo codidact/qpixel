@@ -163,7 +163,7 @@
                         method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
           <% end %> &middot;
           <a href="#" class="flag-dialog-link">flag</a>
-          <% if moderator? %>
+          <% if current_user&.has_privilege?('SeeTools') %>
             &middot; <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>">tools</a>
           <% end %>
           <% flags_count = post.flags.where(handled_by_id: nil).count %>

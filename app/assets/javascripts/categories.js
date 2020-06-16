@@ -42,4 +42,21 @@ $(() => {
     });
     $topic.val(union).trigger('change');
   });
+
+  $('.js-category-change-select').each((i, el) => {
+    const $tgt = $(el);
+    console.log('hi');
+    $tgt.select2({
+      ajax: {
+        url: '/categories',
+        headers: { 'Accept': 'application/json' },
+        delay: 100,
+        processResults: data => ({results: data.map(c => ({id: c.id, text: c.name}))}),
+      }
+    });
+  });
+
+  $('.js-change-category').on('ajax:success', ev => {
+    location.reload();
+  });
 });

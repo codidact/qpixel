@@ -6,6 +6,12 @@ class CategoriesController < ApplicationController
 
   def index
     @categories = Category.all.order(:sequence, :name)
+    respond_to do |format|
+      format.html { }
+      format.json do
+        render json: @categories
+      end
+    end
   end
 
   def show

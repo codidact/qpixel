@@ -52,3 +52,14 @@ admin_only:
   min_trust_level: 6
   min_view_trust_level: 6
   license: cc_by_sa
+
+articles_only:
+  community: sample
+  name: Articles
+  short_wiki: Articles
+  display_post_types:
+    - <%= Article.post_type_id %>
+  post_types:
+    - article
+  tag_set: main
+  license: cc_by_sa

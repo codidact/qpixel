@@ -1,6 +1,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
   before_action :set_post, only: [:edit_help, :update_help]
+  before_action :set_scoped_post, only: [:change_category]
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help]
 
@@ -114,6 +115,29 @@ class PostsController < ApplicationController
                  .transform_values { |posts| posts.group_by { |p| p.help_category.present? ? p.help_category : nil } }
   end
 
+  def change_category
+    @target = Category.find params[:target_id]
+    unless helpers.can_change_category(current_user, @target)
+      render json: { success: false, errors: ["You don't have permission to make that change."] }, status: 403
+      return
+    end
+
+    unless @target.post_type_ids.include? @post.post_type_id
+      render json: { success: false, errors: ["This post type is not allowed in the #{@target.name} category."] },
+             status: 409
+      return
+    end
+
+    @post.category = @target
+    new_tags = @post.tags.map do |tag|
+      existing = Tag.where(tag_set: @target.tag_set, name: tag.name).first
+      existing.nil? ? Tag.create(tag_set: @target.tag_set, name: tag.name) : existing
+    end
+    @post.tags = new_tags
+    @post.save
+    render json: { success: true }
+  end
+
   private
 
   def new_post_params
@@ -132,6 +156,10 @@ class PostsController < ApplicationController
 
   def set_post
     @post = Post.unscoped.find(params[:id])
+  end
+
+  def set_scoped_post
+    @post = Post.find(params[:id])
   end
 
   def check_permissions

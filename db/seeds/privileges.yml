@@ -6,3 +6,7 @@
   threshold: 1000
 - name: ViewDeleted
   threshold: 1000
+- name: ChangeCategory
+  threshold: 500
+- name: SeeTools
+  threshold: 500

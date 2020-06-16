@@ -48,7 +48,11 @@ select.form-element {
   }
 }
 
+.select2 {
+  margin: 0.4em 0;
+}
+
 .select2-container {
   width: 100% !important;
-  margin: 0.4em 0;
+  z-index: 9999;
 }

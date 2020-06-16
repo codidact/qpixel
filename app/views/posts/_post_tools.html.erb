@@ -22,6 +22,25 @@
           <% end %>
         </details>
       <% end %>
+      <% if current_user&.has_privilege?('ChangeCategory') %>
+        <details>
+          <summary>Change category</summary>
+          <p>
+            Moves this post into another category that you specify. You must have permission to create posts there, and
+            this post type must be allowed in the target category.
+          </p>
+          <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
+            <div class="form-group">
+              <%= label_tag :target_id, 'Target Category', class: 'form-element' %>
+              <span class="form-caption">Choose a category to move this post to.</span>
+              <%= select_tag :target_id, options_for_select([]), include_blank: true,
+                             class: 'form-element js-category-change-select' %>
+            </div>
+
+            <%= submit_tag 'Move', class: 'button is-filled' %>
+          <% end %>
+        </details>
+      <% end %>
     </div>
   </div>
 </div>
