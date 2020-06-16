@@ -4,7 +4,7 @@
   <% notice_text = SiteSetting['SidebarNoticeText'] %>
   <% if notice_text.present? %>
     <% cache SiteSetting.find_by(name: 'SidebarNoticeText') do %>
-      <div class="widget has-margin-4 is-warning">
+      <div class="widget has-margin-4 is-yellow">
         <div class="widget--body">
           <%= raw(sanitize(render_markdown(notice_text), scrubber: scrubber)) %>
         </div>
