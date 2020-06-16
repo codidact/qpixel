@@ -13,9 +13,9 @@
           </p>
           <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
             <div class="form-group">
-              <%= label_tag :post_id, 'Post ID', class: 'form-element' %>
+              <%= label_tag :post_id, 'Post ID', class: 'form-element', for: "post_id_#{post.id}" %>
               <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
-              <%= number_field_tag :post_id, nil, class: 'form-element' %>
+              <%= number_field_tag :post_id, nil, class: 'form-element', id: "post_id_#{post.id}" %>
             </div>
 
             <%= submit_tag 'Convert', class: 'button is-filled'  %>
@@ -31,10 +31,10 @@
           </p>
           <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
             <div class="form-group">
-              <%= label_tag :target_id, 'Target Category', class: 'form-element' %>
+              <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
               <span class="form-caption">Choose a category to move this post to.</span>
               <%= select_tag :target_id, options_for_select([]), include_blank: true,
-                             class: 'form-element js-category-change-select' %>
+                             class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
             </div>
 
             <%= submit_tag 'Move', class: 'button is-filled' %>

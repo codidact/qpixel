@@ -45,7 +45,6 @@ $(() => {
 
   $('.js-category-change-select').each((i, el) => {
     const $tgt = $(el);
-    console.log('hi');
     $tgt.select2({
       ajax: {
         url: '/categories',
