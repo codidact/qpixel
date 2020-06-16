@@ -107,6 +107,8 @@ class DatabaseImport
     unless @options.skip_tags
       associate_tags
     end
+
+    cleanup
   end
 
   def associate_tags
@@ -119,5 +121,24 @@ class DatabaseImport
       query @base.sanitize_sql_array([ins_sql, id, "%#{tag}%", @options.community, @options.category])
     end
     $logger.debug "Updated post associations for #{tags.size} tags"
+  end
+
+  def cleanup
+    # Remove attribution notices from posts where the user isn't an imported user
+    sql = "UPDATE #{table 'posts', @database} p INNER JOIN #{table 'users', @database} u ON p.user_id = u.id " \
+          "SET p.att_source = NULL, p.att_license_link = NULL, p.att_license_name = NULL " \
+          "WHERE u.email NOT LIKE '%localhost' AND p.community_id = ? AND p.category_id = ?"
+    query @base.sanitize_sql_array([sql, @options.community, @options.category])
+
+    # Remove duplicate CommunityUser records
+    sql = "DELETE a FROM community_users a INNER JOIN community_users b ON a.user_id = b.community_id AND " \
+          "a.community_id = b.community_id AND a.id != b.id WHERE a.created_at > b.created_at AND " \
+          "a.community_id = ?"
+    query @base.sanitize_sql_array([sql, @options.community])
+
+    if @options.zero_scores
+      sql = "UPDATE posts SET score = 0 WHERE community_id = ? AND category_id = ?"
+      query @base.sanitize_sql_array([sql, @options.community, @options.category])
+    end
   end
 end

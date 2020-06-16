@@ -29,7 +29,8 @@ class DumpImport
       website: :website_url,
       profile: Proc.new { |row| generate_profile(row, site_domain) },
       profile_markdown: Proc.new { |row| generate_profile(row, site_domain) },
-      se_acct_id: :account_id
+      se_acct_id: :account_id,
+      email: Proc.new { |row| "#{row['id']}@stack-import.localhost" }
     }
   end
 
