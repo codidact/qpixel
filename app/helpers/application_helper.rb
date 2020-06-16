@@ -117,12 +117,11 @@ module ApplicationHelper
     words = text.split ' '
     splat = [[]]
     words.each do |word|
-      if splat[-1].map { |w| w.length + 1 }.sum - 1 <= max_length - word.length
-        splat[-1] << word
-      else
+      # Unless the current last element has enough space to take the extra word, create a new one.
+      unless splat[-1].map { |w| w.length + 1 }.sum - 1 <= max_length - word.length
         splat << []
-        splat[-1] << word
       end
+      splat[-1] << word
     end
     splat.map { |s| s.join(' ') }
   end

@@ -114,6 +114,7 @@ class AnswersController < ApplicationController
     created = comments.map do |c|
       Comment.create(user: @answer.user, post_id: params[:post_id], community: @answer.community, content: c)
     end
+    @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
     render json: { success: true, comments: created.map(&:id) }
   end
 

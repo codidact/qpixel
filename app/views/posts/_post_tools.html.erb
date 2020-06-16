@@ -5,7 +5,23 @@
       Moderator Tools
     </div>
     <div class="modal--body">
+      <% if post.answer? %>
+        <details>
+          <summary>Convert to comment</summary>
+          <p>
+            Converts this answer to a comment (or series of comments, if it's too long for one) on the post you specify.
+          </p>
+          <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
+            <div class="form-group">
+              <%= label_tag :post_id, 'Post ID', class: 'form-element' %>
+              <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
+              <%= number_field_tag :post_id, nil, class: 'form-element' %>
+            </div>
 
+            <%= submit_tag 'Convert', class: 'button is-filled'  %>
+          <% end %>
+        </details>
+      <% end %>
     </div>
   </div>
 </div>
