@@ -112,4 +112,18 @@ module ApplicationHelper
       '#'
     end
   end
+
+  def split_words_max_length(text, max_length)
+    words = text.split ' '
+    splat = [[]]
+    words.each do |word|
+      if splat[-1].map { |w| w.length + 1 }.sum - 1 <= max_length - word.length
+        splat[-1] << word
+      else
+        splat << []
+        splat[-1] << word
+      end
+    end
+    splat.map { |s| s.join(' ') }
+  end
 end
