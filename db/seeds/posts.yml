@@ -28,3 +28,10 @@
   body: $FILE posts/local_faq.html
   doc_slug: faq
   help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Formatting Posts
+  body_markdown: $FILE posts/formatting.html
+  body: $FILE posts/formatting.html
+  doc_slug: formatting
+  help_category: Site Information
