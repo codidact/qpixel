@@ -11,11 +11,13 @@ question_one:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   user: standard_user
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 question_two:
   post_type: question
@@ -30,11 +32,13 @@ question_two:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   user: editor
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 deleted:
   post_type: question
@@ -49,7 +53,7 @@ deleted:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   user: standard_user
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
@@ -57,6 +61,8 @@ deleted:
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 closed:
   post_type: question
@@ -71,7 +77,7 @@ closed:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   closed: true
   closed_by: closer
   closed_at: 2019-01-01T00:00:00.000000Z
@@ -79,28 +85,34 @@ closed:
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 answer_one:
   post_type: answer
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
-  score: 0
+  score: 0.5
   parent: question_one
   user: standard_user
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 answer_two:
   post_type: answer
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
-  score: 0
+  score: 0.5
   parent: question_one
   user: editor
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 really_old_answer:
   post_type: answer
@@ -113,12 +125,14 @@ really_old_answer:
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 deleted_answer:
   post_type: answer
   body: A4D ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
-  score: 0
+  score: 0.5
   parent: question_one
   user: closer
   deleted: true
@@ -127,6 +141,8 @@ deleted_answer:
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 policy_doc:
   post_type: policy_doc
@@ -161,11 +177,13 @@ article_one:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   user: standard_user
   community: sample
   category: main
   license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
 
 deleted_article:
   post_type: article
@@ -180,7 +198,7 @@ deleted_article:
     - discussion
     - support
     - bug
-  score: 0
+  score: 0.5
   user: standard_user
   community: sample
   category: main
@@ -188,3 +206,5 @@ deleted_article:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: admin
+  upvote_count: 0
+  downvote_count: 0
