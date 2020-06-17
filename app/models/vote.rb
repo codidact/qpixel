@@ -76,9 +76,9 @@ class Vote < ApplicationRecord
 
   def remove_counter
     if vote_type == 1
-      post.update(upvote_count: post.upvote_count - 1)
+      post.update(upvote_count: [post.upvote_count - 1, 0].max)
     elsif vote_type == -1
-      post.update(downvote_count: post.downvote_count - 1)
+      post.update(downvote_count: [post.downvote_count - 1, 0].max)
     end
     post.recalc_score
   end
