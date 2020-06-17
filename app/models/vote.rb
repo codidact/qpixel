@@ -5,6 +5,8 @@ class Vote < ApplicationRecord
   belongs_to :user, required: true
   belongs_to :recv_user, class_name: 'User', required: true
 
+  counter_culture :post, column_name: proc { |model| model.counter_column }
+
   after_create :apply_rep_change
   after_create :change_post_score
   before_destroy :check_valid
@@ -70,5 +72,15 @@ class Vote < ApplicationRecord
 
   def check_valid
     throw :abort unless valid?
+  end
+
+  def counter_column
+    if vote_type > 0
+      'upvote_count'
+    elsif vote_type < 0
+      'downvote_count'
+    else
+      nil
+    end
   end
 end

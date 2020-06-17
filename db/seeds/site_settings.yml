@@ -269,3 +269,11 @@
   description: >
     Enable MathJax on this site for math display. This will incur a small penalty in page loading times, so consider
     whether you really need it.
+
+- name: ScoringVariable
+  value: 2
+  value_type: integer
+  category: AdvancedSettings
+  description: >
+    Variable N value to use in the scoring algorithm. DO NOT SET THIS TO ZERO, IT WILL BREAK YOUR SITE. Generally
+    best left alone unless you understand the mathematics at play.

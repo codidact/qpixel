@@ -108,6 +108,10 @@ class Post < ApplicationRecord
     SuggestedEdit.where(post_id: id, active: true).last
   end
 
+  def recalc_score
+
+  end
+
   private
 
   def update_tag_associations

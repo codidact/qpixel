@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_12_154828) do
+ActiveRecord::Schema.define(version: 2020_06_16_224440) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -230,6 +230,8 @@ ActiveRecord::Schema.define(version: 2020_06_12_154828) do
     t.bigint "license_id"
     t.string "help_category"
     t.integer "help_ordering"
+    t.integer "upvote_count", default: 0, null: false
+    t.integer "downvote_count", default: 0, null: false
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"

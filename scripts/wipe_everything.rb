@@ -1,3 +1,8 @@
+unless Rails.env.development?
+  puts "You're on production. Don't be dumb."
+  exit 255
+end
+
 def exec(sql)
   ActiveRecord::Base.connection.execute sql
 end
