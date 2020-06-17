@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_16_224440) do
+ActiveRecord::Schema.define(version: 2020_06_17_140007) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -203,7 +203,7 @@ ActiveRecord::Schema.define(version: 2020_06_16_224440) do
     t.string "title"
     t.text "body"
     t.string "tags_cache"
-    t.integer "score", default: 0, null: false
+    t.decimal "score", precision: 10, scale: 8, default: "0.0", null: false
     t.integer "parent_id"
     t.integer "user_id"
     t.boolean "closed", default: false, null: false

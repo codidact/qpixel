@@ -5,6 +5,7 @@ class VotesController < ApplicationController
 
   def create
     post = Post.find(params[:post_id])
+    ap [post.upvote_count, post.downvote_count]
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
@@ -19,20 +20,22 @@ class VotesController < ApplicationController
     end
 
     modified = !destroyed.empty?
-    state = { status: (modified ? 'modified' : 'OK'), vote_id: vote.id, post_score: post.score }
+    state = { status: (modified ? 'modified' : 'OK'), vote_id: vote.id, upvotes: post.upvote_count,
+              downvotes: post.downvote_count }
 
     render json: state
   end
 
   def destroy
     vote = Vote.find params[:id]
+    post = vote.post
 
     if vote.user != current_user
       render(json: { status: 'failed', message: 'You are not authorized to remove this vote.' }, status: 403) && return
     end
 
     if vote.destroy
-      render json: { status: 'OK', post_score: vote.post.score }
+      render json: { status: 'OK', upvotes: post.upvote_count, downvotes: post.downvote_count }
     else
       render json: { status: 'failed', message: vote.errors.full_messages.join('. ') }, status: 403
     end

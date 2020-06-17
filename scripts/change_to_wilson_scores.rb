@@ -6,12 +6,14 @@ votes = Vote.unscoped.all.group(:post_id, :vote_type).count
 # {[123, 1] => 34, [123, -1] => 43, [124, 1] => 45, [124, -1] => 56} into
 # {123 => {1 => 34, -1 => 43}, 124 => {1 => 45, -1 => 56}}
 puts "02: Vote translation"
-votes = votes.to_a.group_by { |v| v[0][0] }.map { |i, v| [i, v.map { |g| [g[0][1], g[1]] }.to_h] }.to_h
+all_ids = Post.unscoped.all.pluck(:id).map { |i| [i, {}] }.to_h
+votes = all_ids.merge(votes.to_a.group_by { |v| v[0][0] }.map { |i, v| [i, v.map { |g| [g[0][1], g[1]] }.to_h] }.to_h)
 
 # Generate and execute sanitized update SQL for each post.
 progress = ProgressBar.create(title: "03: UPDATEs", total: votes.size, progress_mark: '█')
 votes.each do |post_id, vote_counts|
   params = []
+  vote_counts = { 1 => 0, -1 => 0 }.merge(vote_counts)
   updates = vote_counts.map do |vt, count|
     attrib = { 1 => 'upvote_count', -1 => 'downvote_count' }[vt]
     params << count
@@ -24,4 +26,8 @@ votes.each do |post_id, vote_counts|
   progress.increment
 end
 
-# TODO add actual score calculation
+puts "04: update scores"
+score_update = "UPDATE posts p INNER JOIN (SELECT * FROM " \
+               "(SELECT id, (upvote_count + 2)/(upvote_count + downvote_count + 4) AS score FROM posts) i) q " \
+               "ON p.id = q.id SET p.score = q.score"
+ActiveRecord::Base.connection.execute score_update

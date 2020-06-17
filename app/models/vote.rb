@@ -5,13 +5,12 @@ class Vote < ApplicationRecord
   belongs_to :user, required: true
   belongs_to :recv_user, class_name: 'User', required: true
 
-  counter_culture :post, column_name: proc { |model| model.counter_column }
-
   after_create :apply_rep_change
-  after_create :change_post_score
   before_destroy :check_valid
   before_destroy :reverse_rep_change
-  before_destroy :restore_post_score
+
+  after_create :add_counter
+  after_destroy :remove_counter
 
   validates :vote_type, inclusion: [1, -1]
   validate :post_not_deleted
@@ -28,6 +27,16 @@ class Vote < ApplicationRecord
     end.to_h
 
     col.reduce(0) { |sum, vote| sum + rep_changes[vote.post.post_type_id][vote.vote_type] }
+  end
+
+  def counter_column
+    if vote_type > 0
+      'upvote_count'
+    elsif vote_type < 0
+      'downvote_count'
+    else
+      nil
+    end
   end
 
   private
@@ -56,14 +65,6 @@ class Vote < ApplicationRecord
     recv_user.update!(reputation: recv_user.reputation + direction * rep_change)
   end
 
-  def change_post_score
-    post.update!(score: post.score + vote_type)
-  end
-
-  def restore_post_score
-    post.update!(score: post.score - vote_type)
-  end
-
   def post_not_deleted
     if post.deleted?
       errors.add(:base, 'Votes are locked on deleted posts')
@@ -74,13 +75,21 @@ class Vote < ApplicationRecord
     throw :abort unless valid?
   end
 
-  def counter_column
-    if vote_type > 0
-      'upvote_count'
-    elsif vote_type < 0
-      'downvote_count'
-    else
-      nil
+  def add_counter
+    if vote_type == 1
+      post.update(upvote_count: post.upvote_count + 1)
+    elsif vote_type == -1
+      post.update(downvote_count: post.downvote_count + 1)
     end
+    post.recalc_score
+  end
+
+  def remove_counter
+    if vote_type == 1
+      post.update(upvote_count: post.upvote_count - 1)
+    elsif vote_type == -1
+      post.update(downvote_count: post.downvote_count - 1)
+    end
+    post.recalc_score
   end
 end

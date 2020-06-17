@@ -47,6 +47,7 @@ class Post < ApplicationRecord
   before_validation :update_tag_associations, if: -> { question? || article? }
   after_create :create_initial_revision
   after_create :add_license_if_nil
+  after_save :recalc_score
 
   def self.search(term)
     match_search term, posts: :body_markdown
@@ -109,7 +110,10 @@ class Post < ApplicationRecord
   end
 
   def recalc_score
-
+    variable = SiteSetting['ScoringVariable']
+    sql = "UPDATE posts SET score = (upvote_count + ?) / (upvote_count + downvote_count + (2 * ?)) WHERE id = ?"
+    sanitized = ActiveRecord::Base.sanitize_sql_array([sql, variable, variable, id])
+    ActiveRecord::Base.connection.execute sanitized
   end
 
   private

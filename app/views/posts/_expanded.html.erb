@@ -16,7 +16,7 @@
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <div class="grid--cell">
-      <div class="post--votes has-text-align-center">
+      <div class="post--votes has-text-align-center" title="<%= post.score %>">
         <% existing_vote = my_vote(post) %>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
                 data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
@@ -24,9 +24,11 @@
               <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
             </svg>
         </button>
-        <% votes = post.votes.group(:vote_type).count(:vote_type) %>
-        <div class="score has-font-size-subtitle has-color-tertiary-600 has-font-weight-medium" title="+<%= votes[1] || 0 %>/-<%= votes[-1] || 0 %>">
-          <%= post.score %>
+        <div class="score has-font-size-subtitle  has-font-weight-medium js-upvote-count">
+          +<%= post.upvote_count %>
+        </div>
+        <div class="score has-font-size-subtitle  has-font-weight-medium js-downvote-count">
+          &minus;<%= post.downvote_count %>
         </div>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
                 data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
