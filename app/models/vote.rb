@@ -29,16 +29,6 @@ class Vote < ApplicationRecord
     col.reduce(0) { |sum, vote| sum + rep_changes[vote.post.post_type_id][vote.vote_type] }
   end
 
-  def counter_column
-    if vote_type > 0
-      'upvote_count'
-    elsif vote_type < 0
-      'downvote_count'
-    else
-      nil
-    end
-  end
-
   private
 
   def apply_rep_change
