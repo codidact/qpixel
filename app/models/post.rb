@@ -110,7 +110,7 @@ class Post < ApplicationRecord
   end
 
   def recalc_score
-    variable = SiteSetting['ScoringVariable']
+    variable = SiteSetting['ScoringVariable'] || 2
     sql = 'UPDATE posts SET score = (upvote_count + ?) / (upvote_count + downvote_count + (2 * ?)) WHERE id = ?'
     sanitized = ActiveRecord::Base.sanitize_sql_array([sql, variable, variable, id])
     ActiveRecord::Base.connection.execute sanitized
