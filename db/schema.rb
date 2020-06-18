@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_17_140007) do
+ActiveRecord::Schema.define(version: 2020_06_18_094826) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -109,6 +109,9 @@ ActiveRecord::Schema.define(version: 2020_06_17_140007) do
     t.integer "reputation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_suspended"
+    t.datetime "suspension_end"
+    t.string "suspension_public_comment"
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
@@ -217,7 +220,7 @@ ActiveRecord::Schema.define(version: 2020_06_17_140007) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -411,6 +414,19 @@ ActiveRecord::Schema.define(version: 2020_06_17_140007) do
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
+  create_table "warnings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.text "body"
+    t.boolean "is_suspension"
+    t.datetime "suspension_end"
+    t.boolean "active"
+    t.bigint "author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_warnings_on_author_id"
+    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
@@ -436,4 +452,6 @@ ActiveRecord::Schema.define(version: 2020_06_17_140007) do
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
   add_foreign_key "tags", "communities"
   add_foreign_key "votes", "communities"
+  add_foreign_key "warnings", "community_users"
+  add_foreign_key "warnings", "users", column: "author_id"
 end
