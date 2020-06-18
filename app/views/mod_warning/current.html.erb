@@ -12,13 +12,19 @@
 <% else %>
 <div class="notice is-warning">
     <%= raw(sanitize(@warning_message_html, scrubber: scrubber)) %>
-    <p>This is a formal warning. If you continue to break our rules, we will suspend your account. If you have any questions regarding the rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com">meta.codidact.com</a>. If you have any questions about this warning or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
-    <label for="approve-checkbox" class="form-element h-m-v-2">
-        <input type="checkbox" class="form-checkbox-element" id="approve-checkbox" name="approve-checkbox">
-        I have read this warning and will follow the rules from now on.
-    </label>
+    <p>This is <strong>a formal warning</strong>. If you continue to break our rules, we will suspend your account. If you have any questions regarding the rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com">meta.codidact.com</a>. If you have any questions about this warning or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
 
-    <button class="button is-filled">Continue</button>
-    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+    <%= form_with url: current_mod_warning_approve_path, method: 'post' do %>
+        <label for="approve-checkbox" class="form-element h-m-v-2">
+            <input type="checkbox" class="form-checkbox-element" id="approve-checkbox" name="approve_checkbox">
+            <% if @failed_to_click_checkbox %>
+                <strong>You need to accept this in order to continue:</strong>
+            <% end %>
+            I have read this warning and will follow the rules from now on.
+        </label>
+
+        <%= submit_tag 'Continue', class: 'button is-filled' %>
+        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+    <% end %>
 </div>
 <% end %>

@@ -129,10 +129,10 @@ class ApplicationController < ActionController::Base
   def check_if_warning_or_suspension_pending
     return if current_user.nil?
 
-    warning = ModWarning.where(community_user: current_user.community_user, active: true).last
-    return if warning.nil?
+    warning = ModWarning.where(community_user: current_user.community_user, active: true).any?
+    return unless warning
 
-    path = Rails.application.routes.recognize_path(request.path)
+    path = Rails.application.routes.recognize_path(request.path, method: request.env["REQUEST_METHOD"])
 
     # Ignore devise and warning routes
     return if path[:controller] == 'custom_sessions'

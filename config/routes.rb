@@ -180,6 +180,7 @@ Rails.application.routes.draw do
   end
 
   get   'warning',                       to: 'mod_warning#current', as: :current_mod_warning
+  post  'warning/approve',               to: 'mod_warning#approve', as: :current_mod_warning_approve
 
   get   'uploads/:key',                  to: 'application#upload', as: :uploaded
   get   'dashboard',                     to: 'application#dashboard', as: :dashboard
