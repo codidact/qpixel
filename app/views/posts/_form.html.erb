@@ -58,7 +58,10 @@
       <span class="form-caption">
         Requires at least one of
         <% required_tags.each do |tag| %>
-          <span class="badge is-tag is-filled"><%= tag.name %></span>
+          <a class="badge is-tag is-filled js-add-required-tag" href="javascript:void(0)" data-tag-id="<%= tag.id %>"
+             data-tag-name="<%= tag.name %>">
+            <%= tag.name %>
+          </a>
         <% end %>
       </span>
     <% end %>
