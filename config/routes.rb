@@ -119,7 +119,7 @@ Rails.application.routes.draw do
   get    'users/:id',                      to: 'users#show', as: :user
   get    'users/:id/flags',                to: 'flags#history', as: :flag_history
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
-  get    'users/:id/posts/:type',          to: 'users#posts', as: :user_posts
+  get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   get    'users/me/notifications',         to: 'notifications#index', as: :notifications
   get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
