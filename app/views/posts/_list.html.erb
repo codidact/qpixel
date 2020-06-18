@@ -6,10 +6,10 @@
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
     <span class="item-list--number">
-      <span class=" js-upvote-count">+<%= post.upvote_count %></span>
+      <span class="js-upvote-count has-font-size-subheading">+<%= post.upvote_count %></span>
     </span>
     <span class="item-list--number">
-      <span class=" js-downvote-count">&minus;<%= post.downvote_count %></span>
+      <span class="js-downvote-count has-font-size-subheading">&minus;<%= post.downvote_count %></span>
     </span>
   </div>
   <div class="item-list--text-value is-primary">

@@ -24,10 +24,10 @@
               <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
             </svg>
         </button>
-        <div class="score has-font-size-subtitle  has-font-weight-medium js-upvote-count">
+        <div class="score has-font-size-subheading has-font-weight-medium js-upvote-count">
           +<%= post.upvote_count %>
         </div>
-        <div class="score has-font-size-subtitle  has-font-weight-medium js-downvote-count">
+        <div class="score has-font-size-subheading has-font-weight-medium js-downvote-count">
           &minus;<%= post.downvote_count %>
         </div>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
