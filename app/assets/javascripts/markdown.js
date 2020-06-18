@@ -28,8 +28,11 @@ $(() => {
     };
 
     if (Object.keys(actions).indexOf(action) !== -1) {
+      const preSelection = [$field[0].selectionStart, $field[0].selectionEnd];
       insertIntoField($field, actions[action][0], actions[action][1]);
       $field.focus();
+      $field[0].selectionStart = preSelection[0] + actions[action][0].length;
+      $field[0].selectionEnd = preSelection[1] + actions[action][0].length;
     }
   });
 
