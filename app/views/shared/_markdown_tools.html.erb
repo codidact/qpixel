@@ -33,13 +33,13 @@
   </div>
 
   <div class="button-list is-gutterless">
-    <%= md_button label: 'Link', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-link-insert' do %>
+    <%= md_button label: 'Link', class: 'is-icon-only', data_modal: '#markdown-link-insert' do %>
       <i class="fas fa-fw fa-link"></i>
     <% end %>
     <%= md_button action: 'quote', label: 'Block quote', class: 'is-icon-only' do %>
       <i class="fas fa-fw fa-quote-left"></i>
     <% end %>
-    <%= md_button label: 'Insert image', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-image-upload' do %>
+    <%= md_button label: 'Insert image', class: 'is-icon-only', data_modal: '#markdown-image-upload' do %>
       <i class="fas fa-fw fa-images"></i>
     <% end %>
   </div>
