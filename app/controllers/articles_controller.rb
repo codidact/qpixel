@@ -16,8 +16,8 @@ class ArticlesController < ApplicationController
 
   def update
     can_post_in_category = @article.category.present? &&
-                           (@article.category.min_trust_level || -1) <= current_user&.trust_level
-    if !current_user&.has_post_privilege?('Edit', @article) || !can_post_in_category
+      (@article.category.min_trust_level || -1) <= current_user&.trust_level
+    unless current_user&.has_post_privilege?('Edit', @article) && can_post_in_category
       return update_as_suggested_edit
     end
 
