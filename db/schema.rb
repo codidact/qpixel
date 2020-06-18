@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_18_094826) do
+ActiveRecord::Schema.define(version: 2020_06_18_124645) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -414,6 +414,16 @@ ActiveRecord::Schema.define(version: 2020_06_18_094826) do
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
+  create_table "warning_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_warning_templates_on_community_id"
+  end
+
   create_table "warnings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.text "body"
@@ -452,6 +462,7 @@ ActiveRecord::Schema.define(version: 2020_06_18_094826) do
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
   add_foreign_key "tags", "communities"
   add_foreign_key "votes", "communities"
+  add_foreign_key "warning_templates", "communities"
   add_foreign_key "warnings", "community_users"
   add_foreign_key "warnings", "users", column: "author_id"
 end
