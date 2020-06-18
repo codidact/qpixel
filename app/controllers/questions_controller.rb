@@ -58,7 +58,9 @@ class QuestionsController < ApplicationController
   def edit; end
 
   def update
-    unless current_user&.has_post_privilege?('Edit', @question)
+    can_post_in_category = @question.category.present? &&
+      (@question.category.min_trust_level || -1) <= current_user&.trust_level
+    if !current_user&.has_post_privilege?('Edit', @question) || !can_post_in_category
       return update_as_suggested_edit
     end
 
