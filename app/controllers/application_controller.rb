@@ -138,6 +138,7 @@ class ApplicationController < ActionController::Base
     return if path[:controller] == 'custom_sessions'
     return if path[:controller] == 'users' && path[:action] == 'show' && path[:id] == 'sign_out'
     return if path[:controller] == 'mod_warning'
+    return if path[:controller] == 'errors'
 
     flash.clear
 

@@ -5,7 +5,7 @@
 <% if @warning.is_suspension %>
 <div class="notice is-danger">
     <%= raw(sanitize(@warning_message_html, scrubber: scrubber)) %>
-    <p>We have decided to <strong>temporarily suspend your account</strong> (ends in XXX). You are free to return afterwards, as long as you start following the site rules. If you continue to break our rules, we might need to remove your account. If you have any questions about this suspension or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
+    <p>We have decided to <strong>temporarily suspend your account</strong> (ends <span title="<%= current_user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(current_user.community_user.suspension_end) %></span>). You are free to return afterwards, as long as you start following the site rules. If you continue to break our rules, we might need to remove your account. If you have any questions about this suspension or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
 
     <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
 </div>
