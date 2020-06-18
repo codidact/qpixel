@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
+  before_action :check_if_warning_or_suspension_pending
 
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
@@ -123,5 +124,23 @@ class ApplicationController < ActionController::Base
     @header_categories = Rails.cache.fetch("#{RequestContext.community_id}/header_categories") do
       Category.all.order(sequence: :asc, id: :asc)
     end
+  end
+
+  def check_if_warning_or_suspension_pending
+    return if current_user.nil?
+
+    warning = ModWarning.where(community_user: current_user.community_user, active: true).last
+    return if warning.nil?
+
+    path = Rails.application.routes.recognize_path(request.path)
+
+    # Ignore devise and warning routes
+    return if path[:controller] == 'custom_sessions'
+    return if path[:controller] == 'users' && path[:action] == 'show' && path[:id] == 'sign_out'
+    return if path[:controller] == 'mod_warning'
+
+    flash.clear
+
+    return redirect_to(current_mod_warning_path)
   end
 end
