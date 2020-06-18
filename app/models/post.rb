@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/ClassLength
 class Post < ApplicationRecord
   include CommunityRelated
 
@@ -265,4 +264,3 @@ class Post < ApplicationRecord
     end
   end
 end
-# rubocop:enable Metrics/ClassLength
