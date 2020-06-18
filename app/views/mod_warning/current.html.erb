@@ -1,0 +1,24 @@
+<h1>Important message</h1>
+
+<p class="is-lead">Hello <%= current_user.username %>, you have an important message from the <%= SiteSetting['SiteName'] %> community moderation team:</p>
+
+<% if @warning.is_suspension %>
+<div class="notice is-danger">
+    <%= raw(sanitize(@warning_message_html, scrubber: scrubber)) %>
+    <p>We have decided to <strong>temporarily suspend your account</strong> (ends in XXX). You are free to return afterwards, as long as you start following the site rules. If you continue to break our rules, we might need to remove your account. If you have any questions about this suspension or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
+
+    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+</div>
+<% else %>
+<div class="notice is-warning">
+    <%= raw(sanitize(@warning_message_html, scrubber: scrubber)) %>
+    <p>This is a formal warning. If you continue to break our rules, we will suspend your account. If you have any questions regarding the rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com">meta.codidact.com</a>. If you have any questions about this warning or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
+    <label for="approve-checkbox" class="form-element h-m-v-2">
+        <input type="checkbox" class="form-checkbox-element" id="approve-checkbox" name="approve-checkbox">
+        I have read this warning and will follow the rules from now on.
+    </label>
+
+    <button class="button is-filled">Continue</button>
+    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+</div>
+<% end %>

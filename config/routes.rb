@@ -179,6 +179,8 @@ Rails.application.routes.draw do
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
   end
 
+  get   'warning',                       to: 'mod_warning#current', as: :current_mod_warning
+
   get   'uploads/:key',                  to: 'application#upload', as: :uploaded
   get   'dashboard',                     to: 'application#dashboard', as: :dashboard
 

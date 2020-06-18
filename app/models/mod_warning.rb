@@ -1,3 +1,6 @@
 class ModWarning < ApplicationRecord
-    self.table_name = 'warning' # Warning class name not accepted by Rails, hence this needed
+    # Warning class name not accepted by Rails, hence this needed
+    self.table_name = 'warnings'
+
+    belongs_to :community_user
 end
