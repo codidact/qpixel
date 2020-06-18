@@ -193,3 +193,12 @@ hr {
     height: 1.25em;
   }
 }
+
+.inbox {
+  max-width: 400px;
+}
+
+.inbox--container {
+  max-height: 600px;
+  overflow-y: scroll;
+}
