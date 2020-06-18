@@ -1,3 +1,3 @@
 class WarningTemplate < ApplicationRecord
-    include CommunityRelated
+  include CommunityRelated
 end
