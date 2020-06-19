@@ -13,7 +13,7 @@ class UsersController < ApplicationController
              else
                user_scope.order(sort_param => :desc)
              end.paginate(page: params[:page], per_page: 48)
-    @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id, :post_type_id).count(:post_type_id)
+    @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
   end
 
   def show
