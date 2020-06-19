@@ -132,7 +132,7 @@ class ApplicationController < ActionController::Base
     warning = ModWarning.where(community_user: current_user.community_user, active: true).any?
     return unless warning
 
-    path = Rails.application.routes.recognize_path(request.path, method: request.env["REQUEST_METHOD"])
+    path = Rails.application.routes.recognize_path(request.path, method: request.env['REQUEST_METHOD'])
 
     # Ignore devise and warning routes
     return if path[:controller] == 'custom_sessions'
@@ -142,6 +142,6 @@ class ApplicationController < ActionController::Base
 
     flash.clear
 
-    return redirect_to(current_mod_warning_path)
+    redirect_to(current_mod_warning_path)
   end
 end
