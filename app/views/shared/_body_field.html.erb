@@ -4,7 +4,7 @@
     <% classes = 'form-element post-field js-post-field widget--body h-b-0 h-m-0' %>
     <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
     <% saved_at = RequestContext.redis.get("saved_post_at.#{current_user&.id}.#{request.path}") %>
-    <% saved_at = DateTime.parse(saved_at || '') rescue 0 %>
+    <% saved_at = DateTime.parse(saved_at || '') rescue Date.new(2000, 1, 1) %>
     <% value = RequestContext.redis.exists(key) && post.updated_at <= DateTime.parse(saved_at || '') ?
                    { value: RequestContext.redis.get(key), class: classes + ' js-draft-loaded' } : {} %>
     <%= render 'shared/markdown_tools' %>
