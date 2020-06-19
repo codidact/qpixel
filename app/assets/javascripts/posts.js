@@ -66,7 +66,7 @@ $(() => {
   let mathjaxTimeout = null;
   let draftTimeout = null;
 
-  $('.post-field').on('keyup markdown', evt => {
+  $('.post-field').on('focus keyup markdown', evt => {
     if (!window.converter) {
       window.converter = window.markdownit({
         html: true,
@@ -95,5 +95,12 @@ $(() => {
     draftTimeout = setTimeout(() => {
       saveDraft(text, $(ev.target));
     }, 3000);
+  }).trigger('markdown');
+
+  $('.js-draft-loaded').each((i, e) => {
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+      <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
+      You've edited this post before but didn't save it. We loaded your edits here for you.
+    </div>`);
   });
 });

@@ -14,7 +14,7 @@
 <%= render 'posts/image_upload' %>
 
 <%= form_for answer, url: create_answer_path do |f| %>
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: answer %>
 
   <div class="form-group">
     <%= f.label :license_id, 'License', class: 'form-element' %>

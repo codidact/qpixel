@@ -19,7 +19,7 @@
     <%= f.text_field :title, class: "form-element" %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: @article %>
 
   <div class="post-preview"></div>
 

@@ -140,7 +140,11 @@ class PostsController < ApplicationController
 
   def save_draft
     key = "saved_post.#{current_user.id}.#{params[:path]}"
+    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
     RequestContext.redis.set key, params[:post]
+    RequestContext.redis.set saved_at, DateTime.now.iso8601
+    RequestContext.redis.expire key, 86400 * 7
+    RequestContext.redis.expire saved_at, 86400 * 7
     render json: { success: true, key: key }
   end
 

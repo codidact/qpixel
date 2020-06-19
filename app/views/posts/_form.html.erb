@@ -42,7 +42,7 @@
     <%= f.hidden_field :post_type_id %>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: @post %>
 
   <div class="post-preview"></div>
 
