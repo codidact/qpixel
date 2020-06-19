@@ -22,7 +22,8 @@ class ModWarningController < ApplicationController
   end
 
   def log
-    @warnings = ModWarning.where(community_user: @user.community_user).all
+    @warnings = ModWarning.where(community_user: @user.community_user).order(created_at: :desc).all
+    render layout: 'without_sidebar'
   end
 
   def new
@@ -35,7 +36,6 @@ class ModWarningController < ApplicationController
 
   def set_warning
     @warning = ModWarning.where(community_user: current_user.community_user, active: true).last
-    @warning_message_html = helpers.render_markdown(@warning.body)
     not_found if @warning.nil?
   end
 
