@@ -23,7 +23,7 @@ $(() => {
     const $select = $tgt.parents('.form-group').find('select');
     const existing = $select.find(`option[value=${tagId}]`);
     if (existing.length > 0) {
-      $select.val([tagId, ...$select.val()]).trigger('change');
+      $select.val([tagId, ...($select.val() || [])]).trigger('change');
     }
     else {
       const option = new Option(tagName, tagId, false, true);
