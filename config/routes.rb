@@ -181,6 +181,9 @@ Rails.application.routes.draw do
 
   get   'warning',                       to: 'mod_warning#current', as: :current_mod_warning
   post  'warning/approve',               to: 'mod_warning#approve', as: :current_mod_warning_approve
+  get   'warning/log/:user_id',          to: 'mod_warning#log', as: :mod_warning_log
+  get   'warning/new/:user_id',          to: 'mod_warning#new', as: :new_mod_warning
+  post  'warning/new/:user_id',          to: 'mod_warning#create', as: :create_mod_warning
 
   get   'uploads/:key',                  to: 'application#upload', as: :uploaded
   get   'dashboard',                     to: 'application#dashboard', as: :dashboard
