@@ -43,7 +43,28 @@ $(() => {
     tags: true
   });
 
+  const saveDraft = async (postText, $field) => {
+    const resp = await fetch('/posts/save-draft', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        post: postText,
+        path: location.pathname
+      })
+    });
+    if (resp.status === 200) {
+      const $el = $(`<span class="has-color-green-600">Draft saved</span>`);
+      $field.parents('.widget').after($el);
+      $el.fadeOut(1500, function () { $(this).remove() });
+    }
+  };
+
   let mathjaxTimeout = null;
+  let draftTimeout = null;
 
   $('.post-field').on('keyup markdown', evt => {
     if (!window.converter) {
@@ -68,5 +89,11 @@ $(() => {
     mathjaxTimeout = setTimeout(() => {
       MathJax.typeset();
     }, 1000);
+  }).on('keyup', ev => {
+    clearTimeout(draftTimeout);
+    const text = $(ev.target).val();
+    draftTimeout = setTimeout(() => {
+      saveDraft(text, $(ev.target));
+    }, 3000);
   });
 });

@@ -138,6 +138,12 @@ class PostsController < ApplicationController
     render json: { success: true }
   end
 
+  def save_draft
+    key = "saved_post.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.set key, params[:post]
+    render json: { success: true, key: key }
+  end
+
   private
 
   def new_post_params
