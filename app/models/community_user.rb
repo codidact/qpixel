@@ -7,6 +7,10 @@ class CommunityUser < ApplicationRecord
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
 
   def suspended?
-    is_suspended
+    return true if is_suspended && !suspension_end.past?
+    if is_suspended
+      update(is_suspended: false, suspension_public_comment: nil, suspension_end: nil)
+    end
+    false
   end
 end
