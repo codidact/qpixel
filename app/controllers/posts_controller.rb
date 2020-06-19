@@ -148,6 +148,13 @@ class PostsController < ApplicationController
     render json: { success: true, key: key }
   end
 
+  def delete_draft
+    key = "saved_post.#{current_user.id}.#{params[:path]}"
+    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.del key, saved_at
+    render json: { success: true }
+  end
+
   private
 
   def new_post_params

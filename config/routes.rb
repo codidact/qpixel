@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   get    'posts/search',                   to: 'search#search', as: :search
   post   'posts/upload',                   to: 'posts#upload', as: :upload
   post   'posts/save-draft',               to: 'posts#save_draft', as: :save_draft
+  post   'posts/delete-draft',             to: 'posts#delete_draft', as: :delete_draft
 
   get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
   patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post

@@ -66,7 +66,9 @@ $(() => {
   let mathjaxTimeout = null;
   let draftTimeout = null;
 
-  $('.post-field').on('focus keyup markdown', evt => {
+  const postFields = $('.post-field');
+
+  postFields.on('focus keyup markdown', evt => {
     if (!window.converter) {
       window.converter = window.markdownit({
         html: true,
@@ -96,6 +98,28 @@ $(() => {
       saveDraft(text, $(ev.target));
     }, 3000);
   }).trigger('markdown');
+
+  postFields.parents('form').on('submit', async ev => {
+    const $tgt = $(ev.target);
+    if ($tgt.attr('data-draft-deleted') !== 'true') {
+      ev.preventDefault();
+      const resp = await fetch('/posts/delete-draft', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'X-CSRF-Token': QPixel.csrfToken(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: location.pathname })
+      });
+      if (resp.status === 200) {
+        $tgt.attr('data-draft-deleted', 'true').submit();
+      }
+      else {
+        console.error('Failed to delete draft.');
+      }
+    }
+  });
 
   $('.js-draft-loaded').each((i, e) => {
     $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
