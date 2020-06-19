@@ -5,7 +5,7 @@
     <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
     <% saved_at = RequestContext.redis.get("saved_post_at.#{current_user&.id}.#{request.path}") %>
     <% saved_at = DateTime.parse(saved_at || '') rescue Date.new(2000, 1, 1) %>
-    <% value = RequestContext.redis.exists(key) && post.updated_at <= DateTime.parse(saved_at || '') ?
+    <% value = RequestContext.redis.exists(key) && post.updated_at <= saved_at ?
                    { value: RequestContext.redis.get(key), class: classes + ' js-draft-loaded' } : {} %>
     <%= render 'shared/markdown_tools' %>
     <%= f.text_area field_name, { class: classes, rows: 15, placeholder: 'Start typing your post...' }.merge(value) %>
