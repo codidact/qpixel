@@ -4,8 +4,7 @@
     <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
     <%= render 'shared/markdown_tools' %>
     <%= f.text_area field_name, { class: 'form-element post-field js-post-field widget--body h-b-0 h-m-0',
-                                  rows: 15, placeholder: 'Start typing your post...',
-                                  value: RequestContext.redis.exists(key) ? RequestContext.redis.get(key) : nil } %>
+                                  rows: 15, placeholder: 'Start typing your post...' } %>
     <%= render 'posts/mdhint' %>
   </div>
 </div>
