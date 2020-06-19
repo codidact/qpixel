@@ -179,12 +179,18 @@ Rails.application.routes.draw do
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
   end
 
-  get   'uploads/:key',                  to: 'application#upload', as: :uploaded
-  get   'dashboard',                     to: 'application#dashboard', as: :dashboard
+  get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
-  get   '403',                           to: 'errors#forbidden'
-  get   '404',                           to: 'errors#not_found'
-  get   '409',                           to: 'errors#conflict'
-  get   '422',                           to: 'errors#unprocessable_entity'
-  get   '500',                           to: 'errors#internal_server_error'
+  scope 'dashboard' do
+    root                                   to: 'application#dashboard', as: :dashboard
+    get 'reports',                         to: 'reports#users_global', as: :global_users_report
+    get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
+    get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
+  end
+
+  get   '403',                             to: 'errors#forbidden'
+  get   '404',                             to: 'errors#not_found'
+  get   '409',                             to: 'errors#conflict'
+  get   '422',                             to: 'errors#unprocessable_entity'
+  get   '500',                             to: 'errors#internal_server_error'
 end

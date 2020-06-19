@@ -52,6 +52,14 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def verify_global_moderator
+    if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+      render 'errors/not_found', layout: 'without_sidebar', status: 404
+      return false
+    end
+    true
+  end
+
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Privilege.find_by(name: name)

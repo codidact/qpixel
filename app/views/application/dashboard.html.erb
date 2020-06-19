@@ -1,49 +1,58 @@
 <h1>Dashboard</h1>
 <div class="grid community-list">
-<% @communities.each do |c| %>
+  <% @communities.each do |c| %>
     <% categories = Category.unscoped.where(community: c).order(sequence: :asc, id: :asc) %>
     <% settings = SiteSetting.for_community_id(c.id) %>
     <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
     <div class="grid--cell is-4 is-6-md is-12-sm">
-        <div class="widget">
-            <div class="widget--header is-complex">
-                <div class="has-text-align-center has-font-weight-bold has-font-size-display">
-                    <%= link_to "//"+c.host, class: "dashboard-full-center" do %>
-                        <% if !logo_setting.nil? %>
-                            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
-                        <% else %>
-                            <%= c.name %>
-                        <% end%>
-                    <% end %>
-                </div>
-            </div>
-            <div class="widget--body h-fw-bold h-bg-tertiary-050"><i class="fa fa-file-alt"></i> Posts</div>
-            <% categories.each do |cat| %>
-                <% next unless (cat.min_view_trust_level || -1) < 0 %>
-                <div class="widget--body">
-                <%= link_to "//"+c.host+category_path(cat) do %>
-                    <%= cat.name %>
-                    <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-                        <span class="badge is-status" title="new posts for you"></span>
-                    <% end %>
-                <% end %>
-                </div>
+      <div class="widget">
+        <div class="widget--header is-complex">
+          <div class="has-text-align-center has-font-weight-bold has-font-size-display">
+            <%= link_to "//" + c.host, class: "dashboard-full-center" do %>
+              <% if !logo_setting.nil? %>
+                <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
+              <% else %>
+                <%= c.name %>
+              <% end %>
             <% end %>
-            <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
-                <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
-                <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
-                <div class="widget--body h-fw-bold h-bg-tertiary-050">
-                    <i class="fa fa-flag"></i>
-                    <a href="<%= flag_queue_url(host: c.host) %>">Flags</a>
-                    (global mods only)
-                </div>
-                <div class="widget--body">
-                    <% if open_flags != 0 %>
-                        <div class="h-c-red-700 h-fw-bold"><span class="badge is-tag is-red is-small"><%= open_flags %></span> open flags</div>
-                    <% end %>
-                    <div><span class="badge is-tag is-muted is-small"><%= resolved_flags %></span> resolved flags</div>
-                </div>
-            <% end %>
+          </div>
         </div>
+        <div class="widget--body h-fw-bold h-bg-tertiary-050"><i class="fa fa-file-alt"></i> Posts</div>
+        <% categories.each do |cat| %>
+          <% next unless (cat.min_view_trust_level || -1) < 0 %>
+          <div class="widget--body">
+            <%= link_to "//" + c.host + category_path(cat) do %>
+              <%= cat.name %>
+              <% if user_signed_in? && cat.new_posts_for?(current_user) %>
+                <span class="badge is-status" title="new posts for you"></span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+        <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
+          <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
+          <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
+          <div class="widget--body h-fw-bold h-bg-tertiary-050">
+            <i class="fa fa-flag"></i>
+            <a href="<%= flag_queue_url(host: c.host) %>">Flags</a>
+            (global mods only)
+          </div>
+          <div class="widget--body">
+            <% if open_flags != 0 %>
+              <div class="h-c-red-700 h-fw-bold"><span class="badge is-tag is-red is-small"><%= open_flags %></span>
+                open flags
+              </div>
+            <% end %>
+            <div><span class="badge is-tag is-muted is-small"><%= resolved_flags %></span> resolved flags</div>
+          </div>
+          <div class="widget--body h-fw-bold h-bg-tertiary-050">
+            <%= link_to 'Reports', "//#{c.host}#{users_report_path}" %>
+          </div>
+          <div class="widget--body h-fw-bold h-bg-tertiary-050">
+            <%= link_to 'Global Reports', global_users_report_path %>
+          </div>
+        <% end %>
+      </div>
     </div>
-<% end%>
+  <% end %>
+</div>

@@ -1,15 +1,15 @@
 <%= render 'tabs' %>
 
 <div class="flex-row">
-  <%= stat_panel 'questions', Question.count %>
-  <%= stat_panel 'answers', Answer.count %>
-  <%= stat_panel 'comments', Comment.count %>
-  <%= stat_panel 'posts this month', Post.where('created_at >= ?', 1.month.ago).count %>
+  <%= stat_panel 'questions', @questions.count %>
+  <%= stat_panel 'answers', @answers.count %>
+  <%= stat_panel 'comments', @comments.count %>
+  <%= stat_panel 'posts this month', @this_month.count %>
 </div>
 
 <h3>New posts</h3>
 <%= line_chart [
-  { name: 'Questions', data: Question.where('created_at >= ?', 1.year.ago).undeleted.group_by_week(:created_at).count },
-  { name: 'Answers', data: Answer.where('created_at >= ?', 1.year.ago).undeleted.group_by_week(:created_at).count },
-  { name: 'Comments', data: Comment.where('created_at >= ?', 1.year.ago).undeleted.group_by_week(:created_at).count },
+  { name: 'Questions', data: @questions.group_by_week(:created_at).count },
+  { name: 'Answers', data: @answers.group_by_week(:created_at).count },
+  { name: 'Comments', data: @comments.group_by_week(:created_at).count },
 ] %>
