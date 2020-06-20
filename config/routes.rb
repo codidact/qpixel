@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   get    'admin/privileges',               to: 'admin#privileges', as: :admin_privileges
   get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
   post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
+  get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
+  post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason
