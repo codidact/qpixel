@@ -31,13 +31,19 @@
     <%= f.password_field :password_confirmation, class: 'form-element', autocomplete: "new-password" %>
   </div>
 
+  <div class="notice has-margin-top-4">
+    <p>
+      <i class="fas fa-exclamation-circle"></i> By signing up, you're agreeing to the
+      <%= link_to 'terms of service', '/policy/tos' %>.
+    </p>
+    <p>
+      <i class="fas fa-info-circle"></i> Signing up creates an account for you across our network of sites.
+      When you visit any of our sites, your profile will automatically be ready and waiting for you.
+    </p>
+  </div>
+
   <div class="js-errors has-color-red-600 has-font-size-caption has-padding-2"></div>
   <%= f.submit "Sign up", class: "button is-filled is-very-large" %>
-
-  <div class="notice has-margin-top-4">
-    <i class="fas fa-exclamation-circle"></i> By signing up, you're agreeing to the
-    <%= link_to 'terms of service', 'https://writing.codidact.com/policy/tos' %>.
-  </div>
 
 <% end %><br/>
 
