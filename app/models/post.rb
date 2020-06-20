@@ -221,8 +221,8 @@ class Post < ApplicationRecord
 
   def no_spaces_in_tags
     tags_cache.each do |tag|
-      if tag.include? ' '
-        errors.add(:tags, 'may not include spaces - use hyphens for multiple-word tags')
+      if tag.include?(' ') || tag.include?('_')
+        errors.add(:tags, 'may not include spaces or underscores - use hyphens for multiple-word tags')
       end
     end
   end
