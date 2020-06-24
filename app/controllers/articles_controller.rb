@@ -27,7 +27,7 @@ class ArticlesController < ApplicationController
     if @article.update(article_params.merge(tags_cache: params[:article][:tags_cache]&.reject { |e| e.to_s.empty? },
                                             body: body_rendered, last_activity: DateTime.now,
                                             last_activity_by: current_user))
-      redirect_to article_path(@article)
+      redirect_to share_article_path(@article)
     else
       render :edit
     end
@@ -59,7 +59,7 @@ class ArticlesController < ApplicationController
     if @edit.save
       @article.user.create_notification("Edit suggested on your post #{@article.title.truncate(50)}",
                                         article_url(@article))
-      redirect_to article_path(@article.id)
+      redirect_to share_article_path(@article)
     else
       @post.errors = @edit.errors
       render :edit

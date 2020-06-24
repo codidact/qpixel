@@ -42,7 +42,7 @@ class AnswersController < ApplicationController
     if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
                                           last_activity: DateTime.now, last_activity_by: current_user,
                                           license_id: @answer.license_id))
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+      redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
       render :edit
     end
@@ -64,7 +64,7 @@ class AnswersController < ApplicationController
     if @edit.save
       @answer.user.create_notification("Edit suggested on your answer to #{@answer.parent.title.truncate(50)}",
                                        share_answer_url(qid: @answer.parent_id, id: @answer.id))
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+      redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
       @post.errors = @edit.errors
       render :edit

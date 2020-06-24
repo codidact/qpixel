@@ -70,7 +70,7 @@ class QuestionsController < ApplicationController
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject { |e| e.to_s.empty? },
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))
-      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
+      redirect_to share_question_path(@question)
     else
       render :edit
     end
@@ -102,7 +102,7 @@ class QuestionsController < ApplicationController
     if @edit.save
       @question.user.create_notification("Edit suggested on your post #{@question.title.truncate(50)}",
                                          question_url(@question))
-      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
+      redirect_to share_question_path(@question)
     else
       @post.errors = @edit.errors
       render :edit
