@@ -35,7 +35,7 @@ class Post < ApplicationRecord
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
-  scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id]) }
+  scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
 
   after_save :check_attribution_notice
