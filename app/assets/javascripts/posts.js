@@ -26,7 +26,12 @@ $(() => {
       body: new FormData($tgt[0])
     });
     const data = await resp.json();
-    $tgt.trigger('ajax:success', data);
+    if (resp.status === 200) {
+      $tgt.trigger('ajax:success', data);
+    }
+    else {
+      $tgt.trigger('ajax:failure', data);
+    }
   });
 
   $uploadForm.on('ajax:success', async (evt, data) => {
@@ -37,6 +42,15 @@ $(() => {
     const postText = $postField.val();
     $postField.val(postText.replace(placeholder, `![Image alt text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
+  });
+
+  $uploadForm.on('ajax:failure', async (evt, data) => {
+    const $tgt = $(evt.target);
+    const $postField = $('.js-post-field');
+    const error = data['error'];
+    QPixel.createNotification('danger', error, $tgt);
+    $tgt.parents('.modal').removeClass('is-active');
+    $postField.val($postField.val().replace(placeholder, ''));
   });
 
   $('.js-category-select').select2({
