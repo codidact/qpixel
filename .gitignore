@@ -31,7 +31,8 @@ config/database.yml
 
 deploy
 
-/public/assets/community
+public/assets/community
+app/assets/community
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
