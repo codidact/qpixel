@@ -32,6 +32,7 @@ class Post < ApplicationRecord
   validate :category_allows_post_type
   validate :license_available
   validate :required_tags?, if: -> { question? || article? }
+  validate :moderator_tags, if: -> { question? || article? }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -255,6 +256,19 @@ class Post < ApplicationRecord
 
     unless tag_ids.any? { |t| required.include? t }
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
+    end
+  end
+
+  def moderator_tags
+    mod_tags = category&.moderator_tags&.map(&:name)
+    return unless mod_tags.present? && !mod_tags.empty?
+    return if RequestContext.user&.is_moderator
+
+    sc = changes
+    return unless sc.include? 'tags_cache'
+
+    if (sc['tags_cache'][0] || []) & mod_tags != (sc['tags_cache'][1] || []) & mod_tags
+      errors.add(:base, "You don't have permission to change moderator-only tags.")
     end
   end
 

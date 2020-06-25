@@ -27,12 +27,14 @@
       <% end %>
       <% tag_set = post.tag_set %>
       <% required_ids = category&.required_tag_ids %>
+      <% moderator_ids = category&.moderator_tag_ids %>
       <% topic_ids = category&.topic_tag_ids %>
-      <% category_sort_tags(post.tags, required_ids, topic_ids).each do |tag| %>
-        <% required = required_ids&.include? tag.id %>
-        <% topic = topic_ids&.include? tag.id %>
+      <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+        <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+        <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+        <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
         <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
-                    class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
+                    class: "badge is-tag #{required} #{topic} #{moderator}" %>
       <% end %>
     </div>
   </div>
