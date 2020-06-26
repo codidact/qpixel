@@ -46,17 +46,12 @@
             <p class="is-lead">Decide, whether or not to suspend the user, and if, for how long. Choose an optional message shown publicly on the user profile.</p>
 
             <% if @prior_warning_count == 0 %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>no prior warnings</strong></a>. The system recommends to issue only a warning, unless the user is destructive and needs to be stopped immediately.</p>
-            <% elsif @prior_warning_count == 1 %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>1 prior warning</strong></a>. The system recommends to suspend them for 3 days.</p>
-            <% elsif @prior_warning_count == 2 %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>2 prior warnings</strong></a>. The system recommends to suspend them for 7 days.</p>
-            <% elsif @prior_warning_count == 3 %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>3 prior warnings</strong></a>. The system recommends to suspend them for 30 days.</p>
-            <% elsif @prior_warning_count == 4 %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>4 prior warnings</strong></a>. The system recommends to suspend them for 180 days.</p>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>no prior warnings</strong></a>. The system recommends issuing only a warning, unless the user is destructive and needs to be stopped immediately.</p>
+            <% elsif @prior_warning_count >= 5 %>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong><%= @prior_warning_count %> prior warnings</strong></a>. The system recommends suspending them for 365 days (the maximum).</p>
             <% else %>
-            <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong><%= @prior_warning_count %> prior warnings</strong></a>. The system recommends to suspend them for 365 days (the maximum).</p>
+              <% lengths = { 1 => 3, 2 => 7, 3 => 30, 4 => 180 } %>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong><%= @prior_warning_count %> prior warnings</strong></a>. The system recommends suspending them for <%= lengths[@prior_warning_count] %> days.</p>
             <% end %>
 
             <div class="h-p-2">
