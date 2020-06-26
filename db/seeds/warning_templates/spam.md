@@ -4,4 +4,4 @@ This is a gentle reminder that using an account for promotional purposes is agai
 
 Please take a moment to review the guidelines for promotional content here on $SiteName, which can be found in the [help center](/policy/spam).
 
-While we appreciate your continued contributions to $SiteName, we do ask that everyone stays within the boundaries of the rules about promotional content.
+While we appreciate your continued contributions to $SiteName, we do ask that you stay within the boundaries of the rules about promotional content.

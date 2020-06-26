@@ -135,10 +135,7 @@ class ApplicationController < ActionController::Base
     path = Rails.application.routes.recognize_path(request.path, method: request.env['REQUEST_METHOD'])
 
     # Ignore devise and warning routes
-    return if path[:controller] == 'custom_sessions'
-    return if path[:controller] == 'users' && path[:action] == 'show' && path[:id] == 'sign_out'
-    return if path[:controller] == 'mod_warning'
-    return if path[:controller] == 'errors'
+    return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
 
     flash.clear
 
