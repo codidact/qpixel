@@ -26,7 +26,7 @@ module SearchHelper
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["score #{operator.present? ? operator : '='} ?", val.to_i]
+        ["score #{operator.present? ? operator : '='} ?", val.to_f]
       when 'created'
         next unless value.match?(valid_value[:date])
 
