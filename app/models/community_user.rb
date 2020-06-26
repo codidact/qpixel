@@ -8,9 +8,11 @@ class CommunityUser < ApplicationRecord
 
   def suspended?
     return true if is_suspended && !suspension_end.past?
+
     if is_suspended
       update(is_suspended: false, suspension_public_comment: nil, suspension_end: nil)
     end
+
     false
   end
 end

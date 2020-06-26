@@ -17,7 +17,7 @@ class ModWarning < ApplicationRecord
   def suspension_duration
     1
   end
-  
+
   def suspension_public_notice
     nil
   end

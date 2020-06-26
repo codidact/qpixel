@@ -6,10 +6,11 @@ class WarningTemplate < ApplicationRecord
   def body_as_b64
     body_with_site_replacements = body.gsub '$SiteName', SiteSetting['SiteName']
 
-    if SiteSetting['ChatLink'].nil?
-      body_with_site_replacements = body_with_site_replacements.gsub '$ChatLink', 'chat'
+    body_with_site_replacements = if SiteSetting['ChatLink'].nil?
+      body_with_site_replacements.gsub '$ChatLink', 'chat'
     else
-      body_with_site_replacements = body_with_site_replacements.gsub '$ChatLink', '[chat](' + SiteSetting['ChatLink'] + ')'
+      chat_link = '[chat](' + SiteSetting['ChatLink'] + ')'
+      body_with_site_replacements.gsub '$ChatLink', chat_link
     end
 
     Base64.encode64(body_with_site_replacements)

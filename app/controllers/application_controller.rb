@@ -132,8 +132,6 @@ class ApplicationController < ActionController::Base
     warning = ModWarning.where(community_user: current_user.community_user, active: true).any?
     return unless warning
 
-    path = Rails.application.routes.recognize_path(request.path, method: request.env['REQUEST_METHOD'])
-
     # Ignore devise and warning routes
     return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
 

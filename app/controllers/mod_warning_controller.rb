@@ -16,7 +16,7 @@ class ModWarningController < ApplicationController
       @failed_to_click_checkbox = true
       return render 'current', layout: 'without_sidebar'
     end
-    
+
     @warning.update(active: false)
     redirect_to(root_path)
   end
@@ -35,7 +35,7 @@ class ModWarningController < ApplicationController
 
   def create
     suspension_duration = params[:mod_warning][:suspension_duration].to_i
-    
+
     suspension_duration = 1 if suspension_duration <= 0
     suspension_duration = 365 if suspension_duration > 365
 
