@@ -37,7 +37,7 @@ class SearchHelperTest < ActionView::TestCase
   end
 
   test 'qualifiers_to_sql should return a correct SQL string' do
-    assert_equal 'score = 1 AND created_at <= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 2 WEEK)',
+    assert_equal 'score = 1.0 AND created_at <= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 2 WEEK)',
                  qualifiers_to_sql(['score:1', 'created:>=2w'])
     assert_equal '', qualifiers_to_sql([])
   end
