@@ -34,7 +34,13 @@ class ModWarningController < ApplicationController
   end
 
   def create
-    suspension_end = DateTime.now + params[:mod_warning][:suspension_duration].to_i.days
+    suspension_duration = params[:mod_warning][:suspension_duration].to_i
+    
+    suspension_duration = 1 if suspension_duration <= 0
+    suspension_duration = 365 if suspension_duration > 365
+
+    suspension_end = DateTime.now + suspension_duration.days
+
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: params[:mod_warning][:is_suspension],
                               suspension_end: suspension_end, active: true)
