@@ -50,6 +50,11 @@ module SearchHelper
 
         operator, val = numeric_value_sql value
         ["downvotes #{operator.present? ? operator : '='} ?", val.to_i]
+      when 'votes'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        ["(upvotes - downvotes) #{operator.present? ? operator : '='}", val.to_i]
       end
     end.compact
 
