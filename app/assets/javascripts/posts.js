@@ -103,7 +103,9 @@ $(() => {
     }
 
     mathjaxTimeout = setTimeout(() => {
-      MathJax.typeset();
+      if (window['MathJax']) {
+        MathJax.typeset();
+      }
     }, 1000);
   }).on('keyup', ev => {
     clearTimeout(draftTimeout);

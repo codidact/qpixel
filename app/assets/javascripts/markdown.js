@@ -10,6 +10,11 @@ $(() => {
     $field.val(value).trigger('markdown');
   };
 
+  const replaceSelection = ($field, text) => {
+    const prev = $field.val();
+    $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
+  };
+
   $(document).on('click', '.js-markdown-tool', ev => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
@@ -39,10 +44,28 @@ $(() => {
   $(document).on('click', '.js-markdown-insert-link', ev => {
     ev.preventDefault();
     const $tgt = $(ev.target);
-    const text = $('#markdown-link-name').val();
-    const url = $('#markdown-link-url').val();
+    const $name = $('#markdown-link-name');
+    const text = $name.val();
+    const $url = $('#markdown-link-url');
+    const url = $url.val();
     const markdown = `[${text}](${url})`;
-    insertIntoField($('.js-post-field'), markdown);
+    const $field = $('.js-post-field');
+    if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
+      replaceSelection($field, markdown);
+    }
+    else {
+      insertIntoField($field, markdown);
+    }
     $tgt.parents('.modal').removeClass('is-active');
+    $name.val('');
+    $url.val('');
+  });
+
+  $(document).on('click', '[data-modal="#markdown-link-insert"]', ev => {
+    const $field = $('.js-post-field');
+    const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd);
+    if (selection) {
+      $('#markdown-link-name').val(selection);
+    }
   });
 });
