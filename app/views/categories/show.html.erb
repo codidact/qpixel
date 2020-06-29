@@ -32,8 +32,10 @@
                 class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
     <%= link_to 'Score', query_url(sort: 'score'),
                 class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
-    <%= link_to 'Native', query_url(sort: 'native'),
-                class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}" %>
+    <% if SiteSetting['AllowContentTransfer'] %>
+      <%= link_to 'Native', query_url(sort: 'native'),
+                  class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}" %>
+    <% end %>
     <% if @category.name == 'Q&A' %>
       <%= link_to 'Lottery', query_url(sort: 'lottery'),
                   class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}" %>
