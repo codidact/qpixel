@@ -15,5 +15,11 @@ class SearchController < ApplicationController
                                  score: :score, age: :created_at)
                end
              end
+    @count = begin
+               @posts&.count
+             rescue
+               @posts = nil
+               flash[:danger] = 'Your search syntax is incorrect.'
+             end
   end
 end
