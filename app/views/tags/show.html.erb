@@ -1,1 +1,31 @@
-<h1>Tag: <span class="<%= @classes %> is-large"><%= @tag.name %></span></h1>
+<h1>
+  Posts tagged <span class="<%= @classes %> is-large"><%= @tag.name %></span>
+</h1>
+
+<div class="widget">
+  <div class="widget--body">
+    <%= raw(sanitize(@tag.excerpt, scrubber: scrubber)) %>
+    <% unless @tag.excerpt.present? %>
+      <p class="has-font-size-caption">
+        <em>
+          This tag doesn't have any usage information yet.
+          <% if current_user&.has_privilege?('EditTag') %>
+            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
+          <% end %>
+        </em>
+      </p>
+    <% end %>
+    <hr/>
+    <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+    <% unless @tag.wiki.present? %>
+      <p class="has-font-size-caption">
+        <em>
+          This tag doesn't have a detailed wiki yet.
+          <% if current_user&.has_privilege?('EditTag') %>
+            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
+          <% end %>
+        </em>
+      </p>
+    <% end %>
+  </div>
+</div>

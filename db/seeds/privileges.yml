@@ -10,3 +10,5 @@
   threshold: 500
 - name: SeeTools
   threshold: 500
+- name: EditTag
+  threshold: 750
