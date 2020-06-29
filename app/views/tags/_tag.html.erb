@@ -1,0 +1,9 @@
+<div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <%= link_to tag.name, tag_path(id: category.id, tag_id: tag.id), class: classes %>
+  <span class="has-color-tertiary-900">&times; <%= tag.post_count %></span>
+  <% if tag.excerpt.present? %>
+    <p class="has-font-size-caption">
+      <%= split_words_max_length(strip_markdown(tag.excerpt_markdown), 150) %>
+    </p>
+  <% end %>
+</div>

@@ -112,7 +112,9 @@
       <div class="category-header--name"><%= current_cat.name %></div>
       <div class="category-header--nav">
         <%= link_to 'Posts', category_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) ? 'is-active' : ''}" %>
+                    class: "category-header--nav-item #{active?(current_cat) && controller_name != 'tags' ? 'is-active' : ''}" %>
+        <%= link_to 'Tags', category_tags_path(current_cat),
+                    class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
         <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
         <div class="category-header--nav-separator"></div>
         <% ptid = current_cat.display_post_types.reject { |e| e.to_s.empty? }.first || Question.post_type_id %>

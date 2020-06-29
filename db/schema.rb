@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_25_115618) do
+ActiveRecord::Schema.define(version: 2020_06_29_131408) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -359,11 +359,14 @@ ActiveRecord::Schema.define(version: 2020_06_25_115618) do
 
   create_table "tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "community_id", null: false
     t.bigint "tag_set_id", null: false
+    t.text "wiki_markdown"
+    t.text "excerpt_markdown"
+    t.text "wiki"
+    t.text "excerpt"
     t.index ["community_id"], name: "index_tags_on_community_id"
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
