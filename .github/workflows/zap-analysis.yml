@@ -1,3 +1,4 @@
+name: OWASP ZAP analysis
 on:
   schedule:
     - cron: '0 12 * * 1'
