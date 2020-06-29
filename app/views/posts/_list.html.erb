@@ -28,7 +28,14 @@
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;	
       <% end %>	
-      last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>	
+      last activity <%= time_ago_in_words(post.last_activity) %> ago
+      by <%= link_to active_user.username, user_path(active_user) %>
+      <% if post.att_source.present? %>
+        &middot;
+        <%= link_to post.att_source do %>
+          <i class="fab fa-stack-exchange" title="Imported" aria-label="Imported"></i>
+        <% end %>
+      <% end %>
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
