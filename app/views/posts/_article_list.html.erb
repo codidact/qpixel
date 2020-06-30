@@ -3,6 +3,9 @@
 <% show_category_tag ||= false %>
 <div class="item-list--item <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
+    <div class="meter is-question-score">
+      <div class="meter--bar is-<%= (post.score * 100).to_i %>%"><%= (post.score * 100).to_i %>%</div>
+    </div>
     <span class="item-list--number">
       <span class=" js-upvote-count has-font-size-subheading">+<%= post.upvote_count %></span>
     </span>
