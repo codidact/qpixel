@@ -13,7 +13,7 @@ class Tag < ApplicationRecord
 
   def self.search(term)
     where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
-      .order(sanitize_sql_array(['name LIKE ? DESC, name', "#{sanitize_sql_like(term)}%"]))
+      .order(Arel.sql(sanitize_sql_array(['name LIKE ? DESC, name', "#{sanitize_sql_like(term)}%"])))
   end
 
   def all_children

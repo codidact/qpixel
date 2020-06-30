@@ -27,3 +27,14 @@ status-completed:
   name: status-completed
   community: sample
   tag_set: meta
+
+topic:
+  name: topic-tag
+  community: sample
+  tag_set: main
+
+child:
+  name: child-tag
+  community: sample
+  tag_set: main
+  parent: topic
