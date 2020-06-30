@@ -182,9 +182,10 @@ Rails.application.routes.draw do
     delete ':id',                                  to: 'categories#destroy', as: :destroy_category
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
     get    ':id/tags',                             to: 'tags#category', as: :category_tags
-    get    ':id/tags/:tag_id',                       to: 'tags#show', as: :tag
-    get    ':id/tags/:tag_id/edit',                  to: 'tags#edit', as: :edit_tag
-    patch  ':id/tags/:tag_id/edit',                  to: 'tags#update', as: :update_tag
+    get    ':id/tags/:tag_id',                     to: 'tags#show', as: :tag
+    get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
+    get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
+    patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning

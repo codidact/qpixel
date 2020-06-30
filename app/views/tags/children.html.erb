@@ -1,8 +1,8 @@
-<% content_for :title, "Tags for #{@category.name}" %>
+<% content_for :title, "Child tags of #{@tag.name}" %>
 
-<h1>Tags for <%= @category.name %></h1>
+<h1>Child tags of <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span></h1>
 
-<%= form_tag category_tags_path(@category), method: :get, class: 'form-inline' do %>
+<%= form_tag tag_children_path(id: @category.id, tag_id: @tag.id), method: :get, class: 'form-inline' do %>
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= label_tag :q, 'Search', class: 'form-element' %>

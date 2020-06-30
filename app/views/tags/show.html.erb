@@ -1,12 +1,25 @@
 <% content_for :title, "Posts tagged #{@tag.name}" %>
 
-<h1>
-  Posts tagged <span class="<%= @classes %> is-large"><%= @tag.name %></span>
+<h1 class="has-margin-0 has-margin-top-4">
+  Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span>
 </h1>
+<p class="has-color-tertiary-900 has-font-weight-normal has-margin-0 has-font-family-brand">
+  <% if @tag.parent_id.present? %>
+      Subtag of <%= link_to @tag.parent.name, tag_path(id: @category.id, tag_id: @tag.parent_id),
+                            class: tag_classes(@tag.parent, @category) %>
+  <% end %>
+  <% child_count = @tag.children.count %>
+  <% if @tag.parent_id.present? && child_count > 0 %>
+    &middot;
+  <% end %>
+  <% if child_count > 0 %>
+    <%= link_to pluralize(child_count, 'child tag'), tag_children_path(id: @category.id, tag_id: @tag.id) %>
+  <% end %>
+</p>
 
 <div class="widget">
   <div class="widget--body has-font-size-caption has-color-tertiary-900">
-    <%= raw(sanitize(@tag.excerpt, scrubber: scrubber).gsub("\n", '<br/>')) %>
+    <%= raw(sanitize(@tag.excerpt, scrubber: scrubber)&.gsub("\n", '<br/>')) %>
     <% unless @tag.excerpt.present? %>
       <p class="has-font-size-caption has-margin-0">
         <em>
@@ -45,17 +58,10 @@
   </div>
 
   <div class="button-list is-gutterless has-margin-2">
-    <%= link_to 'Activity', query_url(sort: 'activity'),
-                class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
-                    params[:sort] == 'activity' ? 'is-active' : ''}" %>
-    <%= link_to 'Age', query_url(sort: 'age'),
-                class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
-    <%= link_to 'Score', query_url(sort: 'score'),
-                class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
-    <% if SiteSetting['AllowContentTransfer'] %>
-      <%= link_to 'Native', query_url(sort: 'native'),
-                  class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}" %>
-    <% end %>
+    <%= link_to 'Tag Only', query_url(self: 1),
+                class: "button is-muted is-outlined #{params[:self].present? ? 'is-active' : ''}" %>
+    <%= link_to 'Tag + Children', tag_path(id: @category.id, tag_id: @tag.id),
+                class: "button is-muted is-outlined #{params[:self].nil? ? 'is-active' : ''}" %>
   </div>
 </div>
 

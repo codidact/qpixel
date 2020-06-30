@@ -1,35 +1,29 @@
 discussion:
   name: discussion
-  description: discussion
   community: sample
   tag_set: main
 
 support:
   name: support
-  description: support
   community: sample
   tag_set: main
 
 bug:
   name: bug
-  description: bug
   community: sample
   tag_set: main
 
 feature-request:
   name: feature-request
-  description: feature-request
   community: sample
   tag_set: main
 
 faq:
   name: faq
-  description: faq
   community: sample
   tag_set: meta
 
 status-completed:
   name: status-completed
-  description: status-completed
   community: sample
   tag_set: meta

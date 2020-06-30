@@ -7,4 +7,14 @@ module TagsHelper
          topic_ids.include?(t.id) ? 0 : 1, t.id]
       end
   end
+
+  def tag_classes(tag, category)
+    required_ids = category&.required_tag_ids
+    moderator_ids = category&.moderator_tag_ids
+    topic_ids = category&.topic_tag_ids
+    required = required_ids&.include?(tag.id) ? 'is-filled' : ''
+    topic = topic_ids&.include?(tag.id) ? 'is-outlined' : ''
+    moderator = moderator_ids&.include?(tag.id) ? 'is-red is-outlined' : ''
+    "badge is-tag #{required} #{topic} #{moderator}"
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_30_001048) do
+ActiveRecord::Schema.define(version: 2020_06_30_105117) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -366,7 +366,9 @@ ActiveRecord::Schema.define(version: 2020_06_30_001048) do
     t.text "wiki_markdown"
     t.text "wiki"
     t.text "excerpt"
+    t.bigint "parent_id"
     t.index ["community_id"], name: "index_tags_on_community_id"
+    t.index ["parent_id"], name: "index_tags_on_parent_id"
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
@@ -468,6 +470,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_001048) do
   add_foreign_key "suggested_edits", "users"
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
   add_foreign_key "tags", "communities"
+  add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"
   add_foreign_key "warnings", "community_users"

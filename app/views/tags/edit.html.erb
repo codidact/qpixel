@@ -20,6 +20,17 @@
 
 <%= form_for @tag, url: update_tag_path(id: @category.id, tag_id: @tag.id) do |f| %>
   <div class="form-group">
+    <%= f.label :parent_id, 'Parent tag', class: 'form-element' %>
+    <span class="form-caption">
+      Optional. Select a parent tag to make this part of a tag hierarchy.
+    </span>
+    <%= f.select :parent_id, options_for_select(@tag.parent.present? ? [[@tag.parent.name, @tag.parent_id]] : [],
+                                                selected: @tag.parent.present? ? @tag.parent_id : nil),
+                 { include_blank: true }, class: "form-element js-tag-select",
+                 data: { tag_set: @category.tag_set_id, use_ids: true } %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :excerpt, 'Usage guidance', class: 'form-element' %>
     <span class="form-caption">
       Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
