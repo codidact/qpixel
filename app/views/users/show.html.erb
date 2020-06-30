@@ -1,5 +1,17 @@
 <% content_for :title, "User #{@user.username}" %>
 
+<% if @user.community_user.suspended? %>
+<div class="notice is-danger">
+<% if @user.community_user.suspension_public_comment.nil? %>
+  <p>This user has been <strong>temporarily suspended</strong>.
+<% else %>
+  <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
+<% end %>
+
+  The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
+</div>
+<% end %>
+
 <div class="tabs">
   <% if @user == current_user %>
     <%= link_to "", class: "tabs--item is-active" do %>

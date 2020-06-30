@@ -1,0 +1,11 @@
+- name: Spam
+  body: $FILE warning_templates/spam.md
+  active: true
+
+- name: Rudeness
+  body: $FILE warning_templates/rudeness.md
+  active: true
+
+- name: Many off-topic posts
+  body: $FILE warning_templates/off-topic.md
+  active: true

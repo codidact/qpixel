@@ -1,0 +1,41 @@
+<h1>Warnings send to <%= link_to @user.username, user_path(@user.id) %></h1>
+
+<table class="table is-full-width is-with-hover">
+    <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>From</th>
+        <th>Excerpt</th>
+        <th>Status</th>
+    </tr>
+    <% @warnings.each do |w| %>
+        <tr>
+            <td>
+                <span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span>
+            </td>
+            <td>
+                <% if w.is_suspension %>
+                <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
+                <span class="badge is-tag is-red is-filled">Suspension</span> (<%= diff %>d)
+                <% else %>
+                <span class="badge is-tag is-muted">Warning</span>
+                <% end %>
+            </td>
+            <td>
+                <%= link_to w.author.username, user_path(w.author.id) %>
+            </td>
+            <td>
+                <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
+            </td>
+            <td>
+                <% if w.suspension_active? %>
+                <strong>Current</strong>
+                <% elsif w.active %>
+                <strong>Unread</strong>
+                <% else %>
+                Read
+                <% end %>
+            </td>
+        </tr>
+    <% end %>
+</table>

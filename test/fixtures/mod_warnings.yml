@@ -1,0 +1,24 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+first_warning:
+  community_user: sample_standard_user
+  body: NOBODY EXPECTS THE SPANISH INQUISITION
+  is_suspension: false
+  active: false
+  author: moderator
+
+second_warning:
+  community_user: sample_standard_user
+  body: NOBODY EXPECTS THE SPANISH INQUISITION!
+  is_suspension: true
+  suspension_end: 2000-01-01T00:00:00.000000Z
+  active: false
+  author: moderator
+
+third_warning:
+  community_user: sample_standard_user
+  body: NOBODY EXPECTS THE SPANISH INQUISITION!!!
+  is_suspension: true
+  suspension_end: 5000-01-01T00:00:00.000000Z
+  active: false
+  author: moderator

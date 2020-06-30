@@ -19,6 +19,8 @@ class User < ApplicationRecord
   has_many :suggested_edits, dependent: :destroy
   has_many :suggested_edits_decided, class_name: 'SuggestedEdit', foreign_key: 'decided_by_id', dependent: :nullify
 
+  has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
+
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username

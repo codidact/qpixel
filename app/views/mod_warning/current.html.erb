@@ -1,0 +1,51 @@
+<h1>Important message</h1>
+
+<p class="is-lead">Hello <%= current_user.username %>, you have an important message from the <%= SiteSetting['SiteName'] %> community moderation team:</p>
+
+
+<% if @warning.is_suspension %>
+    <% if @warning.suspension_active? %>
+        <div class="notice is-danger">
+            <%= raw(sanitize(@warning.body_as_html, scrubber: scrubber)) %>
+            <p>Your account has been <strong>temporarily suspended</strong> (ends <span title="<%= current_user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(current_user.community_user.suspension_end) %></span>). We look forward to your return and continued contributions to the site after this period. In the event of continued rule violations after this period, your account may be suspended for longer periods. If you have any questions about this suspension or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
+
+            <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+        </div>
+    <% else %>
+        <div class="notice is-danger">
+            <%= raw(sanitize(@warning.body_as_html, scrubber: scrubber)) %>
+            <p>Your account was <strong>temporarily suspended</strong>, but the suspension period is now over. We look forward to your return and continued contributions to the site. In the event of continued rule violations after this period, however, your account may be suspended for longer periods. If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>.</p></p>
+
+            <%= form_with url: current_mod_warning_approve_path, method: 'post' do %>
+                <label for="approve-checkbox" class="form-element h-m-v-2">
+                    <input type="checkbox" class="form-checkbox-element" id="approve-checkbox" name="approve_checkbox">
+                    <% if @failed_to_click_checkbox %>
+                        <strong>You need to accept this in order to continue:</strong>
+                    <% end %>
+                    I have read this suspension message and will follow the rules from now on.
+                </label>
+
+                <%= submit_tag 'Continue', class: 'button is-filled' %>
+                <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+            <% end %>
+        </div>
+    <% end %>
+<% else %>
+    <div class="notice is-warning">
+        <%= raw(sanitize(@warning.body_as_html, scrubber: scrubber)) %>
+        <p>This is <strong>a formal warning</strong> from the moderation team. In the event of continued violations of the site rules, your account may be suspended. If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this warning or would like to dispute it, <a href="mailto:info@codidact.org">contact us</a>.</p>
+
+        <%= form_with url: current_mod_warning_approve_path, method: 'post' do %>
+            <label for="approve-checkbox" class="form-element h-m-v-2">
+                <input type="checkbox" class="form-checkbox-element" id="approve-checkbox" name="approve_checkbox">
+                <% if @failed_to_click_checkbox %>
+                    <strong>You need to accept this in order to continue:</strong>
+                <% end %>
+                I have read this warning and will follow the rules from now on.
+            </label>
+
+            <%= submit_tag 'Continue', class: 'button is-filled' %>
+            <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+        <% end %>
+    </div>
+<% end %>
