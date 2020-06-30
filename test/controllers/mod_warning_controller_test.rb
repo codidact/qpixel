@@ -2,7 +2,7 @@ require 'test_helper'
 
 class ModWarningControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
-  
+
   test 'should require authentication to access pages' do
     sign_out :user
     [:log, :new].each do |path|
