@@ -8,6 +8,7 @@ class Tag < ApplicationRecord
 
   validates :excerpt, length: { maximum: 600 }, allow_blank: true
   validates :wiki_markdown, length: { maximum: 30000 }, allow_blank: true
+  validate :parent_not_self
   validate :parent_not_own_child
 
   def self.search(term)
@@ -22,6 +23,13 @@ class Tag < ApplicationRecord
   end
 
   private
+
+  def parent_not_self
+    return unless parent_id.present?
+    if parent_id == id
+      errors.add(:base, 'A tag cannot be its own parent.')
+    end
+  end
 
   def parent_not_own_child
     return unless parent_id.present?
