@@ -1,12 +1,14 @@
+<% content_for :title, "Posts tagged #{@tag.name}" %>
+
 <h1>
   Posts tagged <span class="<%= @classes %> is-large"><%= @tag.name %></span>
 </h1>
 
 <div class="widget">
-  <div class="widget--body">
-    <%= raw(sanitize(@tag.excerpt, scrubber: scrubber)) %>
+  <div class="widget--body has-font-size-caption has-color-tertiary-900">
+    <%= raw(sanitize(@tag.excerpt, scrubber: scrubber).gsub("\n", '<br/>')) %>
     <% unless @tag.excerpt.present? %>
-      <p class="has-font-size-caption">
+      <p class="has-font-size-caption has-margin-0">
         <em>
           This tag doesn't have any usage information yet.
           <% if current_user&.has_privilege?('EditTag') %>
@@ -15,10 +17,11 @@
         </em>
       </p>
     <% end %>
-    <hr/>
+  </div>
+  <div class="widget--body">
     <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
     <% unless @tag.wiki.present? %>
-      <p class="has-font-size-caption">
+      <p class="has-font-size-caption has-margin-0">
         <em>
           This tag doesn't have a detailed wiki yet.
           <% if current_user&.has_privilege?('EditTag') %>
@@ -28,4 +31,40 @@
       </p>
     <% end %>
   </div>
+</div>
+
+<% if current_user&.has_privilege?('EditTag') %>
+  <%= link_to 'Edit', edit_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-muted is-outlined' %>
+<% end %>
+
+<% post_count = @posts.count %>
+<div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
+  <div>
+    <%= short_number_to_human post_count, precision: 1, significant: false %>
+    <%= 'post'.pluralize(post_count) %>
+  </div>
+
+  <div class="button-list is-gutterless has-margin-2">
+    <%= link_to 'Activity', query_url(sort: 'activity'),
+                class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
+                    params[:sort] == 'activity' ? 'is-active' : ''}" %>
+    <%= link_to 'Age', query_url(sort: 'age'),
+                class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+    <%= link_to 'Score', query_url(sort: 'score'),
+                class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
+    <% if SiteSetting['AllowContentTransfer'] %>
+      <%= link_to 'Native', query_url(sort: 'native'),
+                  class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="item-list">
+  <% @posts.each do |post| %>
+    <%= render 'posts/type_agnostic', post: post %>
+  <% end %>
+</div>
+
+<div class="has-padding-top-4">
+  <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
 </div>

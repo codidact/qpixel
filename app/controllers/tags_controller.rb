@@ -29,14 +29,23 @@ class TagsController < ApplicationController
             end
   end
 
-  def show; end
-
-  def edit
-
+  def show
+    sort_params = { activity: { last_activity: :desc }, age: { created_at: :desc }, score: { score: :desc },
+                    native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
+    sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
+    @posts = @tag.posts.undeleted.where(post_type_id: @category.display_post_types)
+                 .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
+                 .order(sort_param)
   end
 
-  def update
+  def edit; end
 
+  def update
+    if @tag.update(tag_params.merge(wiki: helpers.render_markdown(params[:tag][:wiki_markdown])))
+      redirect_to tag_path(id: @category.id, tag_id: @tag.id)
+    else
+      render :edit
+    end
   end
 
   private
@@ -54,5 +63,9 @@ class TagsController < ApplicationController
 
   def set_category
     @category = Category.find params[:id]
+  end
+
+  def tag_params
+    params.require(:tag).permit(:excerpt, :wiki_markdown)
   end
 end

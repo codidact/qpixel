@@ -1,0 +1,39 @@
+<% content_for :title, 'Edit tag' %>
+
+<%= render 'posts/markdown_script' %>
+
+<h1>
+  Edit <span class="<%= @classes %> is-large"><%= @tag.name %></span>
+</h1>
+
+<% if @tag.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving this tag:
+
+    <ul>
+      <% @tag.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @tag, url: update_tag_path(id: @category.id, tag_id: @tag.id) do |f| %>
+  <div class="form-group">
+    <%= f.label :excerpt, 'Usage guidance', class: 'form-element' %>
+    <span class="form-caption">
+      Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
+      the tag page.
+    </span>
+    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3 %>
+    <span class="has-float-right has-font-size-caption js-character-count"
+          data-target=".js-tag-excerpt" data-max="600">0 / 600</span>
+  </div>
+
+  <%= render 'shared/body_field', f: f, field_name: :wiki_markdown, field_label: 'Wiki', post: @tag do %>
+    Full usage guidance and any other information you want people to know about this tag.
+  <% end %>
+  <div class="post-preview"></div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+<% end %>

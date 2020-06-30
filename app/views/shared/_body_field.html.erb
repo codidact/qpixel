@@ -1,5 +1,8 @@
 <div class="form-group">
   <%= f.label field_name, field_label, class: "form-element" %>
+  <% if block_given? %>
+    <span class="form-caption"><%= yield %></span>
+  <% end %>
   <div class="widget">
     <% classes = 'form-element post-field js-post-field widget--body h-b-0 h-m-0' %>
     <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
