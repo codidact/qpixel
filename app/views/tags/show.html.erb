@@ -74,3 +74,9 @@
 <div class="has-padding-top-4">
   <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
 </div>
+
+<div class="has-padding-top-4">
+  <%= link_to tag_path(id: @category.id, tag_id: @tag.id, format: 'rss') do %>
+    <i class="fas fa-rss"></i> Tag RSS feed
+  <% end %>
+</div>

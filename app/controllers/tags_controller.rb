@@ -41,6 +41,10 @@ class TagsController < ApplicationController
     @posts = Post.joins(:tags).where(tags: { id: tag_ids }).undeleted.where(post_type_id: @category.display_post_types)
                  .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                  .order(sort_param)
+    respond_to do |format|
+      format.html
+      format.rss
+    end
   end
 
   def edit; end
