@@ -10,7 +10,7 @@ class TagsController < ApplicationController
     @tags = if params[:term].present?
               (@tag_set&.tags || Tag).search(params[:term])
             else
-              (@tag_set&.tags|| Tag.all).order(:name)
+              (@tag_set&.tags || Tag.all).order(:name)
             end.paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
@@ -26,7 +26,7 @@ class TagsController < ApplicationController
             else
               @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
             end.left_joins(:posts).group(Arel.sql('tags.id')).select(Arel.sql('tags.*, COUNT(posts.id) AS post_count'))
-               .paginate(per_page: 96, page: params[:page])
+            .paginate(per_page: 96, page: params[:page])
   end
 
   def show
@@ -68,7 +68,7 @@ class TagsController < ApplicationController
             else
               @tag.children.order(Arel.sql('COUNT(posts.id) DESC'))
             end.left_joins(:posts).group(Arel.sql('tags.id')).select(Arel.sql('tags.*, COUNT(posts.id) AS post_count'))
-               .paginate(per_page: 96, page: params[:page])
+            .paginate(per_page: 96, page: params[:page])
   end
 
   private

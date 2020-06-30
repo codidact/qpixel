@@ -7,7 +7,7 @@ class Tag < ApplicationRecord
   belongs_to :parent, class_name: 'Tag', optional: true
 
   validates :excerpt, length: { maximum: 600 }, allow_blank: true
-  validates :wiki_markdown, length: { maximum: 30000 }, allow_blank: true
+  validates :wiki_markdown, length: { maximum: 30_000 }, allow_blank: true
   validate :parent_not_self
   validate :parent_not_own_child
 
@@ -26,6 +26,7 @@ class Tag < ApplicationRecord
 
   def parent_not_self
     return unless parent_id.present?
+
     if parent_id == id
       errors.add(:base, 'A tag cannot be its own parent.')
     end
@@ -33,6 +34,7 @@ class Tag < ApplicationRecord
 
   def parent_not_own_child
     return unless parent_id.present?
+
     if all_children.include? parent_id
       errors.add(:base, "The #{parent.name} tag is already a child of this tag.")
     end
