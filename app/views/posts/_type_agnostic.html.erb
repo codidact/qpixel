@@ -7,4 +7,7 @@
     'Article' => 'posts/article_list'
   }
 %>
-<%= render post_types_views[post.post_type.name], post: post %>
+<% show_type_tag ||= false %>
+<% show_category_tag ||= false %>
+<%= render post_types_views[post.post_type.name], post: post, show_type_tag: show_type_tag,
+           show_category_tag: show_category_tag %>

@@ -4,7 +4,9 @@ $(() => {
   $('.js-add-comment').on('click', async evt => {
     evt.preventDefault();
 
-    $(evt.target).parent().find('.js-comment-form').show();
+    const $form = $(evt.target).parent().find('.js-comment-form');
+    $form.show();
+    $form.find('.js-comment-content').focus();
   });
 
   $('.js-more-comments').on('click', async evt => {

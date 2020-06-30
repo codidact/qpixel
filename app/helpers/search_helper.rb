@@ -10,6 +10,8 @@ module SearchHelper
     { qualifiers: qualifiers, search: search }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
   def qualifiers_to_sql(qualifiers)
     valid_value = {
       date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
@@ -26,7 +28,7 @@ module SearchHelper
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["score #{operator.present? ? operator : '='} ?", val.to_i]
+        ["score #{operator.present? ? operator : '='} ?", val.to_f]
       when 'created'
         next unless value.match?(valid_value[:date])
 
@@ -38,6 +40,21 @@ module SearchHelper
 
         operator, val = numeric_value_sql value
         ["user_id #{operator.present? ? operator : '='} ?", val.to_i]
+      when 'upvotes'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        ["upvotes #{operator.present? ? operator : '='} ?", val.to_i]
+      when 'downvotes'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        ["downvotes #{operator.present? ? operator : '='} ?", val.to_i]
+      when 'votes'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        ["(upvotes - downvotes) #{operator.present? ? operator : '='}", val.to_i]
       end
     end.compact
 
@@ -47,6 +64,8 @@ module SearchHelper
 
     Arel.sql(sql)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
 
   def numeric_value_sql(value)
     operator = ''

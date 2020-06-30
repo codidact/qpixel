@@ -1,6 +1,6 @@
-<% content_for :title, "#{params[:type].humanize} by #{@user.username}" %>
+<% content_for :title, "Posts by #{@user.username}" %>
 
-<h1><%= params[:type].humanize %> by <%= link_to @user.username, user_path(@user) %></h1>
+<h1>Posts by <%= link_to @user.username, user_path(@user) %></h1>
 
 <div class="button-list is-gutterless">
   <%= link_to 'Score', query_url(sort: 'score'), class: "button is-muted is-outlined " + (active_search?('score') ? "is-active" : "") %>
@@ -9,7 +9,7 @@
 
 <div class="item-list">
   <% @posts.each do |post| %>
-    <%= render 'posts/list', post: post %>
+    <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
   <% end %>
 </div>
 

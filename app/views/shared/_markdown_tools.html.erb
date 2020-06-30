@@ -1,7 +1,9 @@
 <div class="modal is-with-backdrop" id="markdown-link-insert">
   <div class="modal--container">
     <div class="modal--header">
-      <button class="button is-close-button modal--header-button">&times;</button>
+      <button type="button" class="button is-close-button modal--header-button" data-modal="#markdown-link-insert">
+        &times;
+      </button>
       Link
     </div>
     <div class="modal--body">
@@ -19,7 +21,7 @@
   </div>
 </div>
 
-<div class="markdown-tools widget--header">
+<div class="markdown-tools widget--header js-markdown-tools">
   <div class="button-list is-gutterless">
     <%= md_button action: 'bold', label: 'Bold', class: 'is-icon-only' do %>
       <i class="fas fa-fw fa-bold"></i>
@@ -33,13 +35,13 @@
   </div>
 
   <div class="button-list is-gutterless">
-    <%= md_button label: 'Link', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-link-insert' do %>
+    <%= md_button label: 'Link', class: 'is-icon-only', data_modal: '#markdown-link-insert' do %>
       <i class="fas fa-fw fa-link"></i>
     <% end %>
     <%= md_button action: 'quote', label: 'Block quote', class: 'is-icon-only' do %>
       <i class="fas fa-fw fa-quote-left"></i>
     <% end %>
-    <%= md_button label: 'Insert image', class: 'is-icon-only', data_toggle: 'modal', data_target: '#markdown-image-upload' do %>
+    <%= md_button label: 'Insert image', class: 'is-icon-only', data_modal: '#markdown-image-upload' do %>
       <i class="fas fa-fw fa-images"></i>
     <% end %>
   </div>

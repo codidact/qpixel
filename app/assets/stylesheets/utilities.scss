@@ -88,6 +88,10 @@ pre.unformatted {
 
 .badge.is-tag.is-outlined {
   border: 1px solid #001db1;
+
+  &.is-red {
+    border: 1px solid #b3001e;
+  }
 }
 
 .badge.is-tag.is-small {

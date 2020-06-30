@@ -108,7 +108,7 @@
   </div>
 
   <div class="form-group js-category-tags-group">
-    <%= f.label :required_tag_ids, 'Topic tags', class: 'form-element' %>
+    <%= f.label :topic_tag_ids, 'Topic tags', class: 'form-element' %>
     <span class="form-caption js-tags-group-caption">
       <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
         Tags that will be highlighted as the most important tag on a question.
@@ -122,6 +122,23 @@
     <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
                                                        selected: @category.topic_tag_ids),
                  { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-topic-tags',
+                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
+  </div>
+
+  <div class="form-group js-category-tags-group">
+    <%= f.label :moderator_tag_ids, 'Moderator-only tags', class: 'form-element' %>
+    <span class="form-caption js-tags-group-caption">
+      <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
+        Tags that only moderators can use in this category.
+      </span>
+      <span data-state="absent" style="<%= @category.tag_set.nil? ? '' : 'display: none' %>">
+        Select a tag set first.
+      </span>
+    </span>
+
+    <%= f.select :moderator_tag_ids, options_for_select(@category.moderator_tags.map { |t| [t.name, t.id] },
+                                                        selected: @category.moderator_tag_ids),
+                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-moderator-tags',
                  data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
   </div>
 

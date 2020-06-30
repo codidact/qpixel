@@ -7,6 +7,12 @@
   <% end %>
 <% end %>
 
+<% if @post.help_category == '$Moderator' %>
+  <div class="notice is-warning">
+    <i class="fas fa-exclamation-circle"></i> This help article is only available to moderators.
+  </div>
+<% end %>
+
 <h1><%= @post.nil? ? 'This document has not been created yet' : @post.title %></h1>
 <% if @post.nil? %>
   <p>There's meant to be a helpful document here, but the administrator of this site hasn't created it yet.</p>

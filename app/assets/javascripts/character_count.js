@@ -4,7 +4,7 @@ $(() => {
     const $target = $el.siblings($el.attr('data-target'));
     const max = $el.attr('data-max');
 
-    $target.on('keyup', (ev) => {
+    $target.on('keyup cc-reset', (ev) => {
       const $tgt = $(ev.target);
       const count = $tgt.val().length;
       const text = `${count} / ${max}`;
@@ -30,6 +30,10 @@ $(() => {
         }
       }
       $el.text(text);
+    });
+
+    $target.parents('form').on('ajax:success', ev => {
+      $target.val('').trigger('cc-reset');
     });
   });
 });

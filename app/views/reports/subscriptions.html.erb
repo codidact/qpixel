@@ -1,10 +1,10 @@
 <%= render 'tabs' %>
 
 <div class="flex-row">
-  <%= stat_panel 'all', Subscription.where(type: 'all').count %>
-  <%= stat_panel 'interesting', Subscription.where(type: 'interesting').count %>
-  <%= stat_panel 'tag', Subscription.where(type: 'tag').count %>
-  <%= stat_panel 'user', Subscription.where(type: 'user').count %>
+  <%= stat_panel 'all', @types.map { |_, v| v }.sum %>
+  <%= stat_panel 'interesting', @types['interesting'] %>
+  <%= stat_panel 'tag', @types['tag'] %>
+  <%= stat_panel 'user', @types['user'] %>
 </div>
 
 <h3>New subscriptions</h3>

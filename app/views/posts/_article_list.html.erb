@@ -1,15 +1,20 @@
 <% active_user = post.last_activity_by || post.user %>
+<% show_type_tag ||= false %>
+<% show_category_tag ||= false %>
 <div class="item-list--item <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
     <span class="item-list--number">
-      <span class=" js-upvote-count">+<%= post.upvote_count %></span>
+      <span class=" js-upvote-count has-font-size-subheading">+<%= post.upvote_count %></span>
     </span>
     <span class="item-list--number">
-      <span class=" js-downvote-count">&minus;<%= post.downvote_count %></span>
+      <span class=" js-downvote-count has-font-size-subheading">&minus;<%= post.downvote_count %></span>
     </span>
   </div>
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
+      <% if show_category_tag %>
+        <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
+      <% end %>
       <%= link_to post.title, share_article_path(post) %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
@@ -17,17 +22,19 @@
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
-      <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+      <% if show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
       <% tag_set = post.tag_set %>
       <% required_ids = category&.required_tag_ids %>
+      <% moderator_ids = category&.moderator_tag_ids %>
       <% topic_ids = category&.topic_tag_ids %>
-      <% category_sort_tags(post.tags, required_ids, topic_ids).each do |tag| %>
-        <% required = required_ids&.include? tag.id %>
-        <% topic = topic_ids&.include? tag.id %>
+      <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+        <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+        <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+        <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
         <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
-                    class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
+                    class: "badge is-tag #{required} #{topic} #{moderator}" %>
       <% end %>
     </div>
   </div>

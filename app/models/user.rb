@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || false
+    is_global_moderator || community_user&.is_moderator || is_admin || false
   end
 
   def is_admin

@@ -147,60 +147,25 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal 'standard_user', assigns(:user).twitter
   end
 
-  test 'should get full questions list for a user' do
-    get :posts, params: { id: users(:standard_user).id, type: 'questions' }
+  test 'should get full posts list for a user' do
+    get :posts, params: { id: users(:standard_user).id }
     assert_response 200
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)
   end
 
-  test 'should get full questions list in JSON format' do
-    get :posts, params: { id: users(:standard_user).id, type: 'questions', format: 'json' }
-    assert_response 200
-    assert_not_nil assigns(:user)
-    assert_not_nil assigns(:posts)
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-  end
-
-  test 'should get full answers list for a user' do
-    get :posts, params: { id: users(:standard_user).id, type: 'answers' }
-    assert_response 200
-    assert_not_nil assigns(:user)
-    assert_not_nil assigns(:posts)
-  end
-
-  test 'should get full answers list in JSON format' do
-    get :posts, params: { id: users(:standard_user).id, type: 'answers', format: 'json' }
+  test 'should get full posts list in JSON format' do
+    get :posts, params: { id: users(:standard_user).id, format: 'json' }
     assert_response 200
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)
     assert_nothing_raised do
       JSON.parse(response.body)
     end
-  end
-
-  test 'should reject invalid post type for full list' do
-    get :posts, params: { id: users(:standard_user).id, type: 'invalid' }
-    assert_response 400
-    assert_not_nil assigns(:user)
-    assert_nil assigns(:posts)
-  end
-
-  test 'should reject invalid post type for full list and return JSON' do
-    get :posts, params: { id: users(:standard_user).id, type: 'invalid', format: 'json' }
-    assert_response 400
-    assert_not_nil assigns(:user)
-    assert_nil assigns(:posts)
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-    assert_equal 'invalid', JSON.parse(response.body)['status']
   end
 
   test 'should sort full posts lists correctly' do
-    get :posts, params: { id: users(:standard_user).id, type: 'questions', format: :json, sort: 'age' }
+    get :posts, params: { id: users(:standard_user).id, format: :json, sort: 'age' }
     assert_response 200
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)

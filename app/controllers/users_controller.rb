@@ -13,7 +13,7 @@ class UsersController < ApplicationController
              else
                user_scope.order(sort_param => :desc)
              end.paginate(page: params[:page], per_page: 48)
-    @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id, :post_type_id).count(:post_type_id)
+    @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
   end
 
   def show
@@ -21,25 +21,9 @@ class UsersController < ApplicationController
   end
 
   def posts
-    post_types = { questions: Question, answers: Answer }
-    unless post_types.include? params[:type].to_sym
-      respond_to do |format|
-        format.html do
-          render plain: 'No type or invalid type specified (must be one of questions, answers)', status: 400
-        end
-        format.json do
-          render json: { status: 'invalid',
-                         message: 'No type or invalid type specified (must be one of questions, answers)' },
-                 status: 400
-        end
-      end
-      return
-    end
-
-    model = post_types[params[:type].to_sym]
-    @posts = model.undeleted.where(user: @user).user_sort({ term: params[:sort], default: :score },
-                                                          age: :created_at, score: :score)
-                  .paginate(page: params[:page], per_page: 25)
+    @posts = Post.undeleted.where(user: @user).user_sort({ term: params[:sort], default: :score },
+                                                         age: :created_at, score: :score)
+                 .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
         render :posts

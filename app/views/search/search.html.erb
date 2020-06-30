@@ -34,7 +34,7 @@
 
   <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
     <% @posts.each do |post| %>
-      <%= render 'posts/list', post: post %>
+      <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
     <% end %>
   </div>
 <% end %>

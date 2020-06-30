@@ -1,4 +1,3 @@
-<% is_meta ||= false %>
 <% is_edit ||= false %>
 
 <%= render 'posts/markdown_script' %>
@@ -17,16 +16,12 @@
 <%= render 'posts/image_upload' %>
 
 <%= form_for @question, url: is_edit ? edit_question_path(@question) : create_question_path do |f| %>
-  <% if is_meta %>
-    <%= f.hidden_field :category, value: 'Meta' %>
-  <% end %>
-
   <div class="form-group">
     <%= f.label :title, "Title your question:", class: "form-element" %>
     <%= f.text_field :title, class: "form-element" %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body' %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: @question %>
 
   <div class="post-preview"></div>
 
@@ -51,22 +46,7 @@
   <% end %>
 
   <div class="form-group">
-    <% button_text = is_meta ? "Ask Meta Question" : "Ask Question" %>
-    <%= f.submit is_edit ? (check_your_post_privilege(@question, 'Edit') ? "Save changes" : "Suggest changes") : button_text, class: "button is-filled" %><br/>
+    <%= f.submit is_edit ? (check_your_post_privilege(@question, 'Edit') ? "Save changes" : "Suggest changes") : 'Ask Question', class: "button is-filled" %>
+    <%= link_to 'Cancel', is_edit ? question_path(@question) : category_path(@question.category), class: 'button is-outlined is-muted' %>
   </div>
-  <% if !is_edit %>
-    <% if is_meta %>
-      <div class="notice">
-        <i class="fas fa-info-circle"></i>
-        Not meant to be asking on Meta? You're in the wrong place - copy your question text and use
-        <%= link_to 'this page', new_question_path %> to ask it instead.
-      </div>
-    <% else %>
-      <div class="notice">
-        <i class="fas fa-info-circle"></i>
-        Want to ask on Meta instead? You're in the wrong place - copy your question text and use
-        <strong><%= link_to 'this page', new_meta_question_path %></strong> to ask it instead.
-      </div>
-    <% end %>
-  <% end %>
 <% end %>

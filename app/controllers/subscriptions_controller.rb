@@ -61,6 +61,8 @@ class SubscriptionsController < ApplicationController
       'new questions classed as interesting'
     when 'category'
       "new questions in the category '#{Category.find_by(id: qualifier || params[:qualifier])&.name}'"
+    when 'moderators'
+      'announcements and newsletters for moderators'
     else
       'nothing, apparently. How did you get here, again?'
     end

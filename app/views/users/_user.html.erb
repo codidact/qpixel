@@ -2,9 +2,7 @@
   <div class="flex-row-always">
     <div><img src="<%= avatar_url(user) %>" alt="user avatar" height="32" width="32" /></div>
     <div class="user--meta">
-      <% user_posts = defined?(@post_counts) ? { Question.post_type_id => @post_counts[[user.id, Question.post_type_id]],
-                                                 Answer.post_type_id => @post_counts[[user.id, Answer.post_type_id]] } :
-                                               user.posts.group(:post_type_id).count(:post_type_id) %>
+      <% user_posts = defined?(@post_counts) ? @post_counts[user.id] : user.posts.count %>
       <span class="username"><%= link_to  user_path(user), class: "is-not-underlined" do %>
                                <%= user.username %>
                                <% if user.is_admin &&  SiteSetting['AdminBadgeCharacter'] %>
@@ -14,7 +12,7 @@
                                <% end %>
                              <% end %></span>
       <span class="has-color-tertiary-600 has-font-weight-bold"><%= user.reputation %></span>
-      <span><%= user_posts[Question.post_type_id] || 0 %>Q, <%= user_posts[Answer.post_type_id] || 0 %>A</span>
+      <span><%= pluralize(user_posts, 'post') %></span>
     </div>
   </div>
 </div>

@@ -86,12 +86,20 @@ class PostsController < ApplicationController
 
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
-    if @post.help_category == '$Disabled'
+    if @post&.help_category == '$Disabled'
+      not_found
+    end
+    if @post&.help_category == '$Moderator' && !current_user&.is_moderator
       not_found
     end
   end
 
   def upload
+    unless ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES.include? params[:file].content_type
+      acceptable = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES.map { |s| s.gsub('image/', '') }
+      render json: { error: "Images must be one of #{acceptable.join(', ')}" }, status: 400
+      return
+    end
     @blob = ActiveStorage::Blob.create_after_upload!(io: params[:file], filename: params[:file].original_filename,
                                                      content_type: params[:file].content_type)
     render json: { link: uploaded_url(@blob.key) }
@@ -135,6 +143,23 @@ class PostsController < ApplicationController
     end
     @post.tags = new_tags
     @post.save
+    render json: { success: true }
+  end
+
+  def save_draft
+    key = "saved_post.#{current_user.id}.#{params[:path]}"
+    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.set key, params[:post]
+    RequestContext.redis.set saved_at, DateTime.now.iso8601
+    RequestContext.redis.expire key, 86_400 * 7
+    RequestContext.redis.expire saved_at, 86_400 * 7
+    render json: { success: true, key: key }
+  end
+
+  def delete_draft
+    key = "saved_post.#{current_user.id}.#{params[:path]}"
+    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.del key, saved_at
     render json: { success: true }
   end
 

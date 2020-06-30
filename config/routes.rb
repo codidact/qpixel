@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   get    'admin/privileges',               to: 'admin#privileges', as: :admin_privileges
   get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
   post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
+  get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
+  post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason
@@ -79,6 +81,8 @@ Rails.application.routes.draw do
   get    'posts/:id/history',              to: 'post_history#post', as: :post_history
   get    'posts/search',                   to: 'search#search', as: :search
   post   'posts/upload',                   to: 'posts#upload', as: :upload
+  post   'posts/save-draft',               to: 'posts#save_draft', as: :save_draft
+  post   'posts/delete-draft',             to: 'posts#delete_draft', as: :delete_draft
 
   get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
   patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post
@@ -119,7 +123,7 @@ Rails.application.routes.draw do
   get    'users/:id',                      to: 'users#show', as: :user
   get    'users/:id/flags',                to: 'flags#history', as: :flag_history
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
-  get    'users/:id/posts/:type',          to: 'users#posts', as: :user_posts
+  get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   get    'users/me/notifications',         to: 'notifications#index', as: :notifications
   get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
@@ -179,18 +183,24 @@ Rails.application.routes.draw do
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
   end
 
-  get   'warning',                       to: 'mod_warning#current', as: :current_mod_warning
-  post  'warning/approve',               to: 'mod_warning#approve', as: :current_mod_warning_approve
-  get   'warning/log/:user_id',          to: 'mod_warning#log', as: :mod_warning_log
-  get   'warning/new/:user_id',          to: 'mod_warning#new', as: :new_mod_warning
-  post  'warning/new/:user_id',          to: 'mod_warning#create', as: :create_mod_warning
+  get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
+  post  'warning/approve',                 to: 'mod_warning#approve', as: :current_mod_warning_approve
+  get   'warning/log/:user_id',            to: 'mod_warning#log', as: :mod_warning_log
+  get   'warning/new/:user_id',            to: 'mod_warning#new', as: :new_mod_warning
+  post  'warning/new/:user_id',            to: 'mod_warning#create', as: :create_mod_warning
 
-  get   'uploads/:key',                  to: 'application#upload', as: :uploaded
-  get   'dashboard',                     to: 'application#dashboard', as: :dashboard
+  get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
-  get   '403',                           to: 'errors#forbidden'
-  get   '404',                           to: 'errors#not_found'
-  get   '409',                           to: 'errors#conflict'
-  get   '422',                           to: 'errors#unprocessable_entity'
-  get   '500',                           to: 'errors#internal_server_error'
+  scope 'dashboard' do
+    root                                   to: 'application#dashboard', as: :dashboard
+    get 'reports',                         to: 'reports#users_global', as: :global_users_report
+    get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
+    get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
+  end
+
+  get   '403',                             to: 'errors#forbidden'
+  get   '404',                             to: 'errors#not_found'
+  get   '409',                             to: 'errors#conflict'
+  get   '422',                             to: 'errors#unprocessable_entity'
+  get   '500',                             to: 'errors#internal_server_error'
 end
