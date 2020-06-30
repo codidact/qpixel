@@ -2,6 +2,8 @@ class CommunityUser < ApplicationRecord
   belongs_to :community
   belongs_to :user
 
+  has_many :mod_warnings, dependent: :destroy
+
   validates :user_id, uniqueness: { scope: [:community_id] }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
