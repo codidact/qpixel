@@ -259,3 +259,16 @@ THE SOFTWARE.
     drag.state && (drag.state = false);
   });
 })();
+
+
+// ============================================================================================== //
+
+
+$(() => {
+  const el = document.createElement('script');
+  el.src = 'https://www.sefaria.org/linker.js';
+  el.addEventListener('load', () => {
+    sefaria.link();
+  });
+  document.body.appendChild(el);
+});
