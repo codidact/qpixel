@@ -15,8 +15,9 @@ $(() => {
 
   const template = (tag) => {
     const tagSpan = `<span>${tag.text}</span>`;
+    let desc = !!tag.desc ? splitWordsMaxLength(tag.desc, 120) : '';
     const descSpan = !!tag.desc ?
-      `<br/><span class="has-color-tertiary-900 has-font-size-caption">${splitWordsMaxLength(tag.desc, 120)[0]}...</span>` :
+      `<br/><span class="has-color-tertiary-900 has-font-size-caption">${desc[0]}${desc.length > 1 ? '...' : ''}</span>` :
       '';
     return $(tagSpan + descSpan);
   }
