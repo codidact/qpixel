@@ -1,5 +1,4 @@
 class ModWarningController < ApplicationController
-  before_action :authenticate_user!
   before_action :verify_moderator, only: [:log, :new, :create]
 
   before_action :set_warning, only: [:current, :approve]
@@ -10,7 +9,7 @@ class ModWarningController < ApplicationController
   end
 
   def approve
-    return not_found if @warning.is_suspension
+    return not_found if @warning.suspension_active?
 
     if params[:approve_checkbox].nil?
       @failed_to_click_checkbox = true
