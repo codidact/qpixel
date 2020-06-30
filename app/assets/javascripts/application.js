@@ -15,46 +15,6 @@
 //= require jquery_ujs
 //= require_tree .
 
-window.QPixel = {
-  csrfToken: () => {
-    const token = $('meta[name="csrf-token"]').attr('content');
-    QPixel.csrfToken = () => token;
-    return token;
-  },
-
-  createNotification: function(type, message, relativeElement) {
-    $("<div></div>")
-      .addClass("notice has-shadow-3 is-" + type)
-      .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
-      .css({
-        'position': 'fixed',
-        'top': "50px",
-        'left': "50%",
-        'transform': "translateX(-50%)",
-        'z-index': 100,
-        'width': '100%',
-        'max-width': "800px",
-        'cursor': 'pointer'
-      })
-      .on('click', function(ev) {
-        $(this).fadeOut(200, function() {
-          $(this).remove();
-        });
-      })
-      .appendTo(document.body);
-  },
-
-  offset: function(el) {
-    const topLeft = $(el).offset();
-    return {
-      top: topLeft.top,
-      left: topLeft.left,
-      bottom: topLeft.top + $(el).outerHeight(),
-      right: topLeft.left + $(el).outerWidth()
-    };
-  }
-};
-
 $(document).on('ready', function() {
   $("a.flag-dialog-link").bind("click", (ev) => {
     ev.preventDefault();

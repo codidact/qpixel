@@ -1,20 +1,22 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 <% is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
 <% active_user = post.last_activity_by || post.user %>
+<% show_type_tag ||= false %>
+<% show_category_tag ||= false %>
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
   <div class="item-list--number-value">
     <span class="item-list--number">
-      <span class=" js-upvote-count">+<%= post.upvote_count %></span>
+      <span class="js-upvote-count has-font-size-subheading">+<%= post.upvote_count %></span>
     </span>
     <span class="item-list--number">
-      <span class=" js-downvote-count">&minus;<%= post.downvote_count %></span>
+      <span class="js-downvote-count has-font-size-subheading">&minus;<%= post.downvote_count %></span>
     </span>
   </div>
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
-      <%= link_to is_question ? share_question_path(post) : share_answer_path(qid: post.parent_id, id: post.id) do %>
-        <% if (is_question && post.meta?) || (!is_question && post.parent.meta?) %>
-          <span class="badge is-tag is-master-tag is-muted">meta</span>
+      <%= link_to generic_share_link(post) do %>
+        <% if show_category_tag %>
+          <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
         <% end %>
         <%= is_question ? post.title : post.parent.title %>
         <%= is_question && post.closed ? "[closed]" : "" %>
@@ -26,22 +28,31 @@
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;	
       <% end %>	
-      last activity <%= time_ago_in_words(post.last_activity) %> ago by <%= link_to active_user.username, user_path(active_user) %>	
+      last activity <%= time_ago_in_words(post.last_activity) %> ago
+      by <%= link_to active_user.username, user_path(active_user) %>
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
-      <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+      <% if show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
       <% if is_question %>
         <% tag_set = post.tag_set %>
-        <% required_ids = category&.required_tag_ids %>
-        <% topic_ids = category&.topic_tag_ids %>
-        <% category_sort_tags(post.tags, required_ids, topic_ids).each do |tag| %>
-          <% required = required_ids&.include? tag.id %>
-          <% topic = topic_ids&.include? tag.id %>
+        <% required_ids = post.category&.required_tag_ids %>
+        <% moderator_ids = post.category&.moderator_tag_ids %>
+        <% topic_ids = post.category&.topic_tag_ids %>
+        <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+          <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+          <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+          <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
           <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
-                      class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
+                      class: "badge is-tag #{required} #{topic} #{moderator}" %>
+        <% end %>
+      <% end %>
+      <% if post.att_source.present? || post.created_at < RequestContext.community.created_at %>
+        <%= link_to post.att_source, class: 'badge is-tag' do %>
+          <i class="fab fa-stack-exchange" title="Imported <%= post.created_at.iso8601 %>"
+             aria-label="Imported <%= post.created_at.iso8601 %>"></i>
         <% end %>
       <% end %>
     </div>

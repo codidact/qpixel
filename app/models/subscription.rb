@@ -5,7 +5,7 @@ class Subscription < ApplicationRecord
 
   belongs_to :user
 
-  validates :type, presence: true, inclusion: ['all', 'tag', 'user', 'interesting', 'category']
+  validates :type, presence: true, inclusion: ['all', 'tag', 'user', 'interesting', 'category', 'moderators']
   validates :frequency, numericality: { minimum: 1, maximum: 90 }
 
   validate :qualifier_presence

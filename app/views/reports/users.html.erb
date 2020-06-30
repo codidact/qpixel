@@ -14,4 +14,4 @@
 </div>
 
 <h3>New signups</h3>
-<%= line_chart User.where("email NOT LIKE '%localhost'").where('created_at >= ?', 1.year.ago).group_by_week(:created_at).count %>
+<%= line_chart @users %>

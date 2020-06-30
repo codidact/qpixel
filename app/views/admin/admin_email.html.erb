@@ -1,0 +1,21 @@
+<%= render 'posts/markdown_script' %>
+
+<h1>Email moderators</h1>
+<p>
+  This tool allows you to send to the moderators' email distribution list, which will reach any current moderator who is
+  subscribed to it. Use sparingly and non-spammily. Your email will be sent in both HTML (formatted)
+  and plain text (unformatted) forms, so format in a way that will be legible when Markdown is removed.
+</p>
+
+<%= form_with url: send_moderator_email_path do |f| %>
+  <div class="form-group">
+    <%= f.label :subject, 'Subject', class: 'form-element' %>
+    <%= f.text_field :subject,  class: 'form-element' %>
+  </div>
+
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: nil %>
+
+  <div class="post-preview"></div>
+
+  <%= f.submit 'Send', class: 'button is-filled' %>
+<% end %>

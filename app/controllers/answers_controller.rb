@@ -31,15 +31,18 @@ class AnswersController < ApplicationController
   def edit; end
 
   def update
-    unless current_user&.has_post_privilege?('Edit', @answer)
+    can_post_in_category = @answer.parent.category.present? &&
+                           (@answer.parent.category.min_trust_level || -1) <= current_user&.trust_level
+    unless current_user&.has_post_privilege?('Edit', @answer) && can_post_in_category
       return update_as_suggested_edit
     end
 
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
-                                          last_activity: DateTime.now, last_activity_by: current_user))
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+                                          last_activity: DateTime.now, last_activity_by: current_user,
+                                          license_id: @answer.license_id))
+      redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
       render :edit
     end
@@ -61,7 +64,7 @@ class AnswersController < ApplicationController
     if @edit.save
       @answer.user.create_notification("Edit suggested on your answer to #{@answer.parent.title.truncate(50)}",
                                        share_answer_url(qid: @answer.parent_id, id: @answer.id))
-      redirect_to url_for(controller: :questions, action: :show, id: @answer.parent.id)
+      redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
       @post.errors = @edit.errors
       render :edit
@@ -121,7 +124,7 @@ class AnswersController < ApplicationController
   private
 
   def answer_params
-    params.require(:answer).permit(:body_markdown)
+    params.require(:answer).permit(:body_markdown, :license_id)
   end
 
   def set_answer

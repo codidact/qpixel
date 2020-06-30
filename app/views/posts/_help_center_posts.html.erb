@@ -1,7 +1,18 @@
 <% posts.to_a.in_groups_of(3).map(&:compact).each do |row| %>
   <% row.each do |row_data| %>
+    <% next if row_data[0] == '$Moderator' && !current_user&.is_moderator %>
     <div class="widget">
-      <div class="widget--header"><%= row_data[0].present? ? row_data[0] : 'Uncategorized' %></div>
+      <div class="widget--header">
+        <% if row_data[0].present? %>
+          <% if row_data[0] == '$Moderator' %>
+            Moderator Information
+          <% else %>
+            <%= row_data[0] %>
+          <% end %>
+        <% else %>
+          Uncategorized
+        <% end %>
+      </div>
       <div class="widget--body">
         <% row_data[1].each do |post| %>
           <p>

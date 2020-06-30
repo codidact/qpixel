@@ -58,7 +58,9 @@ class QuestionsController < ApplicationController
   def edit; end
 
   def update
-    unless current_user&.has_post_privilege?('Edit', @question)
+    can_post_in_category = @question.category.present? &&
+                           (@question.category.min_trust_level || -1) <= current_user&.trust_level
+    unless current_user&.has_post_privilege?('Edit', @question) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -68,7 +70,7 @@ class QuestionsController < ApplicationController
     if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject { |e| e.to_s.empty? },
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))
-      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
+      redirect_to share_question_path(@question)
     else
       render :edit
     end
@@ -100,7 +102,7 @@ class QuestionsController < ApplicationController
     if @edit.save
       @question.user.create_notification("Edit suggested on your post #{@question.title.truncate(50)}",
                                          question_url(@question))
-      redirect_to url_for(controller: :questions, action: :show, id: @question.id)
+      redirect_to share_question_path(@question)
     else
       @post.errors = @edit.errors
       render :edit

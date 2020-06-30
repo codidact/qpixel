@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/ClassLength
 class Post < ApplicationRecord
   include CommunityRelated
 
@@ -33,10 +32,11 @@ class Post < ApplicationRecord
   validate :category_allows_post_type
   validate :license_available
   validate :required_tags?, if: -> { question? || article? }
+  validate :moderator_tags, if: -> { question? || article? }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
-  scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id]) }
+  scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
 
   after_save :check_attribution_notice
@@ -222,8 +222,8 @@ class Post < ApplicationRecord
 
   def no_spaces_in_tags
     tags_cache.each do |tag|
-      if tag.include? ' '
-        errors.add(:tags, 'may not include spaces - use hyphens for multiple-word tags')
+      if tag.include?(' ') || tag.include?('_')
+        errors.add(:tags, 'may not include spaces or underscores - use hyphens for multiple-word tags')
       end
     end
   end
@@ -259,10 +259,22 @@ class Post < ApplicationRecord
     end
   end
 
+  def moderator_tags
+    mod_tags = category&.moderator_tags&.map(&:name)
+    return unless mod_tags.present? && !mod_tags.empty?
+    return if RequestContext.user&.is_moderator
+
+    sc = changes
+    return unless sc.include? 'tags_cache'
+
+    if (sc['tags_cache'][0] || []) & mod_tags != (sc['tags_cache'][1] || []) & mod_tags
+      errors.add(:base, "You don't have permission to change moderator-only tags.")
+    end
+  end
+
   def update_category_activity
     if saved_changes.include? 'last_activity'
       category.update_activity(last_activity)
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

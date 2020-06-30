@@ -1,6 +1,7 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email]
 
   def index; end
 
@@ -31,5 +32,15 @@ class AdminController < ApplicationController
     @privilege = Privilege.find_by name: params[:name]
     @privilege.update(threshold: params[:threshold])
     render json: { status: 'OK', privilege: @privilege }, status: 202
+  end
+
+  def admin_email; end
+
+  def send_admin_email
+    Thread.new do
+      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
+    end
+    flash[:success] = 'Your email is being sent.'
+    redirect_to admin_path
   end
 end

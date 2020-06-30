@@ -13,6 +13,10 @@ class ErrorsController < ApplicationController
     }
     puts "  Error type #{@exception&.class}, status code #{@status}"
 
+    if @exception&.class == ActionView::MissingTemplate
+      @status = 404
+    end
+
     if @status == 500
       @log = ErrorLog.create(community: RequestContext.community, user: current_user, klass: @exception&.class,
                              message: @exception&.message, backtrace: @exception&.backtrace&.join("\n"),

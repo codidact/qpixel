@@ -1,9 +1,17 @@
 <div class="form-group">
   <%= f.label field_name, field_label, class: "form-element" %>
   <div class="widget">
+    <% classes = 'form-element post-field js-post-field widget--body h-b-0 h-m-0' %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <% value = RequestContext.redis.exists(key) && RequestContext.redis.exists(saved_at_key) &&
+               (post&.updated_at&.nil? ||
+                (post.updated_at || post.created_at || DateTime.now) <=
+                (saved_at || Date.new(2000, 1, 1))) ?
+                   { value: RequestContext.redis.get(key), class: classes + ' js-draft-loaded' } : {} %>
     <%= render 'shared/markdown_tools' %>
-    <%= f.text_area field_name, { class: 'form-element post-field js-post-field widget--body h-b-0 h-m-0',
-                                  rows: 15, placeholder: 'Start typing your post...' } %>
+    <%= f.text_area field_name, { class: classes, rows: 15, placeholder: 'Start typing your post...' }.merge(value) %>
     <%= render 'posts/mdhint' %>
   </div>
 </div>

@@ -26,7 +26,12 @@ $(() => {
       body: new FormData($tgt[0])
     });
     const data = await resp.json();
-    $tgt.trigger('ajax:success', data);
+    if (resp.status === 200) {
+      $tgt.trigger('ajax:success', data);
+    }
+    else {
+      $tgt.trigger('ajax:failure', data);
+    }
   });
 
   $uploadForm.on('ajax:success', async (evt, data) => {
@@ -39,13 +44,45 @@ $(() => {
     $tgt.parents('.modal').removeClass('is-active');
   });
 
+  $uploadForm.on('ajax:failure', async (evt, data) => {
+    const $tgt = $(evt.target);
+    const $postField = $('.js-post-field');
+    const error = data['error'];
+    QPixel.createNotification('danger', error, $tgt);
+    $tgt.parents('.modal').removeClass('is-active');
+    $postField.val($postField.val().replace(placeholder, ''));
+  });
+
   $('.js-category-select').select2({
     tags: true
   });
 
-  let mathjaxTimeout = null;
+  const saveDraft = async (postText, $field) => {
+    const resp = await fetch('/posts/save-draft', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        post: postText,
+        path: location.pathname
+      })
+    });
+    if (resp.status === 200) {
+      const $el = $(`<span class="has-color-green-600">Draft saved</span>`);
+      $field.parents('.widget').after($el);
+      $el.fadeOut(1500, function () { $(this).remove() });
+    }
+  };
 
-  $('.post-field').on('keyup markdown', evt => {
+  let mathjaxTimeout = null;
+  let draftTimeout = null;
+
+  const postFields = $('.post-field');
+
+  postFields.on('focus keyup markdown', evt => {
     if (!window.converter) {
       window.converter = window.markdownit({
         html: true,
@@ -66,7 +103,44 @@ $(() => {
     }
 
     mathjaxTimeout = setTimeout(() => {
-      MathJax.typeset();
+      if (window['MathJax']) {
+        MathJax.typeset();
+      }
     }, 1000);
+  }).on('keyup', ev => {
+    clearTimeout(draftTimeout);
+    const text = $(ev.target).val();
+    draftTimeout = setTimeout(() => {
+      saveDraft(text, $(ev.target));
+    }, 3000);
+  }).trigger('markdown');
+
+  postFields.parents('form').on('submit', async ev => {
+    const $tgt = $(ev.target);
+    if ($tgt.attr('data-draft-deleted') !== 'true') {
+      ev.preventDefault();
+      const resp = await fetch('/posts/delete-draft', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'X-CSRF-Token': QPixel.csrfToken(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: location.pathname })
+      });
+      if (resp.status === 200) {
+        $tgt.attr('data-draft-deleted', 'true').submit();
+      }
+      else {
+        console.error('Failed to delete draft.');
+      }
+    }
+  });
+
+  $('.js-draft-loaded').each((i, e) => {
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+      <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
+      You've edited this post before but didn't save it. We loaded your edits here for you.
+    </div>`);
   });
 });

@@ -3,11 +3,11 @@ $(() => {
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
     const subscriptionId = $sub.data('sub-id');
-    const value = $tgt.is(':checked') ? 1 : 0;
+    const value = !!$tgt.is(':checked');
 
     const resp = await fetch(`/subscriptions/${subscriptionId}/enable`, {
       method: 'POST',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
+      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/json' },
       body: JSON.stringify({enabled: value})
     });
     const data = await resp.json();

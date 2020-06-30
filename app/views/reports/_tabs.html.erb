@@ -1,6 +1,19 @@
-<div class="button-list is-gutterless has-margin-bottom-4">
-  <%= link_to 'Users', users_report_path, class: "button is-muted is-outlined #{current_page?(users_report_path) ? 'is-active' : ''}" %>
-  <%= link_to 'Posts', posts_report_path, class: "button is-muted is-outlined #{current_page?(posts_report_path) ? 'is-active' : ''}" %>
-  <%= link_to 'Subscriptions', subscriptions_report_path,
-              class: "button is-muted is-outlined #{current_page?(subscriptions_report_path) ? 'is-active' : ''}" %>
-</div>
+<% global = current_page?(global_users_report_path) ||
+            current_page?(global_subs_report_path) ||
+            current_page?(global_posts_report_path) %>
+
+<% if global %>
+  <div class="button-list is-gutterless has-margin-bottom-4">
+    <%= link_to 'Users', global_users_report_path, class: "button is-muted is-outlined #{current_page?(global_users_report_path) ? 'is-active' : ''}" %>
+    <%= link_to 'Posts', global_posts_report_path, class: "button is-muted is-outlined #{current_page?(global_posts_report_path) ? 'is-active' : ''}" %>
+    <%= link_to 'Subscriptions', global_subs_report_path,
+                class: "button is-muted is-outlined #{current_page?(global_subs_report_path) ? 'is-active' : ''}" %>
+  </div>
+<% else %>
+  <div class="button-list is-gutterless has-margin-bottom-4">
+    <%= link_to 'Users', users_report_path, class: "button is-muted is-outlined #{current_page?(users_report_path) ? 'is-active' : ''}" %>
+    <%= link_to 'Posts', posts_report_path, class: "button is-muted is-outlined #{current_page?(posts_report_path) ? 'is-active' : ''}" %>
+    <%= link_to 'Subscriptions', subscriptions_report_path,
+                class: "button is-muted is-outlined #{current_page?(subscriptions_report_path) ? 'is-active' : ''}" %>
+  </div>
+<% end %>

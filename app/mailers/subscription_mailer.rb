@@ -3,6 +3,8 @@ class SubscriptionMailer < ApplicationMailer
     @subscription = params[:subscription]
     @questions = @subscription.questions&.includes(:user) || []
 
+    return if @subscription.type == 'Moderators'
+
     if @questions.empty?
       return
     end

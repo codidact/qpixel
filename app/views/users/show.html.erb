@@ -41,14 +41,18 @@
     <h1><%= @user.username %></h1>
     <div class="profile-text">
       <% if @user.profile.nil? || @user.profile.blank? %>
-        <em class="has-color-tertiary-400">A quiet enigma. <%= @user.username %> hasn't written anything about themselves yet.</em>
+        <em class="has-color-tertiary-400">A quiet enigma. We don't know anything about <%= @user.username %> yet.</em>
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
       <hr/>
       <span class="has-font-size-caption">
-        <%= link_to flag_history_path(@user.id), class: 'is-muted' do %>
-          <%= pluralize(@user.flags.count, 'flag') %> cast
+        <% if current_user&.id == @user.id || moderator? %>
+          <%= link_to flag_history_path(@user.id), class: 'is-muted' do %>
+            <%= pluralize(@user.flags.count, 'flag') %>
+          <% end %>
+        <% else %>
+          <span class="is-muted"><%= pluralize(@user.flags.count, 'flag') %></span>
         <% end %>
       </span>
     </div>
@@ -92,31 +96,17 @@
 </div>
 
 
-<h2 class="user-profile-heading">Questions</h2>
-<% if @user.questions.size == 0 %>
-  <em class="text-muted"><%= @user.username %> hasn't asked anything yet.</em>
+<h2 class="user-profile-heading">Posts</h2>
+<% if @user.posts.size == 0 %>
+  <em class="text-muted"><%= @user.username %> hasn't posted anything yet.</em>
 <% else %>
   <div class="item-list">
-    <% @user.questions.undeleted.order(score: :desc).first(5).each do |q| %>
-      <%= render 'posts/list', post: q %>
+    <% @user.posts.undeleted.order(score: :desc).first(5).each do |a| %>
+      <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
     <% end %>
   </div>
-  <%= link_to user_posts_path(@user, type: 'questions'), class: "button is-muted" do %>
-    See all questions &raquo;
-  <% end %>
-<% end %>
-
-<h2 class="user-profile-heading">Answers</h2>
-<% if @user.answers.size == 0 %>
-  <em class="text-muted"><%= @user.username %> hasn't answered anything yet.</em>
-<% else %>
-  <div class="item-list">
-    <% @user.answers.undeleted.order(score: :desc).first(5).each do |a| %>
-      <%= render 'posts/list', post: a %>
-    <% end %>
-  </div>
-  <%= link_to user_posts_path(@user, type: 'answers'), class: "button is-muted" do %>
-    See all answers &raquo;
+  <%= link_to user_posts_path(@user), class: "button is-muted" do %>
+    See all &raquo;
   <% end %>
 <% end %>
 
