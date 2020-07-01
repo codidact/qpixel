@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.6.5-node
-      - image: circleci/mysql:5.7.22
+      - image: circleci/mysql:8.0.20
         environment:
           MYSQL_ROOT_HOST: '%'
           MYSQL_USER: 'root'
