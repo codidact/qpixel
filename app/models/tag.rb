@@ -25,7 +25,7 @@ class Tag < ApplicationRecord
   def parent_chain
     Enumerator.new do |enum|
       parent_group = group
-      while parent_group != nil
+      until parent_group.nil?
         enum.yield parent_group
         parent_group = parent_group.group
       end

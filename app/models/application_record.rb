@@ -43,11 +43,11 @@ class ApplicationRecord < ActiveRecord::Base
     return unless block_given?
 
     transaction do
-      connection.execute "SET @old_sql_mode = @@sql_mode"
+      connection.execute 'SET @old_sql_mode = @@sql_mode'
       connection.execute "SET SESSION sql_mode = REPLACE(REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY,', ''), " \
                          "'ONLY_FULL_GROUP_BY', '')"
       yield
-      connection.execute "SET SESSION sql_mode = @old_sql_mode"
+      connection.execute 'SET SESSION sql_mode = @old_sql_mode'
     end
   end
 end
