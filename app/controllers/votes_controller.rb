@@ -5,7 +5,6 @@ class VotesController < ApplicationController
 
   def create
     post = Post.find(params[:post_id])
-    ap [post.upvote_count, post.downvote_count]
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
