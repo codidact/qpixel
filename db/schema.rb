@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_01_132522) do
+ActiveRecord::Schema.define(version: 2020_07_01_132654) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -246,6 +246,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_132522) do
     t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["deleted"], name: "index_posts_on_deleted"
+    t.index ["downvote_count"], name: "index_posts_on_downvote_count"
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
     t.index ["last_activity"], name: "index_posts_on_last_activity"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
@@ -254,6 +255,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_132522) do
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
     t.index ["score"], name: "index_posts_on_score"
     t.index ["tags_cache"], name: "index_posts_on_tags_cache"
+    t.index ["upvote_count"], name: "index_posts_on_upvote_count"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
