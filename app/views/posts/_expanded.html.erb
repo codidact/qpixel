@@ -138,41 +138,79 @@
 
 
         <div class="post--actions">
-          <%= link_to 'history', post_history_path(post) %> &middot;
-          <% if check_your_post_privilege(post, 'Edit') %>
-            <% if post.pending_suggested_edit? %>
-              <%= link_to 'review suggested edit', suggested_edit_url(post.pending_suggested_edit.id), class: "h-fw-bold" %> &middot;
-            <% else %>
-              <%= link_to 'edit', generic_edit_link(post) %> &middot;
+          <div class="tools">
+              <%= link_to generic_share_link(post), class: 'tools--item' do %>
+                <i class="fa fa-link"></i>
+                Permalink
+              <% end %>
+              <%= link_to post_history_path(post), class: 'tools--item' do %>
+                <i class="fa fa-history"></i>
+                History
+              <% end %>
+            <% if check_your_post_privilege(post, 'Edit') %>
+              <% if post.pending_suggested_edit? %>
+                <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
+                  <i class="fa fa-spell-check"></i>
+                  Review suggested edit
+                <% end %>
+              <% else %>
+                <%= link_to generic_edit_link(post), class: 'tools--item' do %>
+                  <i class="fa fa-pencil-alt"></i>
+                  Edit
+                <% end %>
+              <% end %>
+            <% elsif !current_user.nil? %>
+              <% if post.pending_suggested_edit? %>
+                <span class="tools--item">suggested edit pending...</span>
+              <% else %>
+                <%= link_to generic_edit_link(post), class: 'tools--item' do %>
+                  <i class="fa fa-pencil-alt"></i>
+                  Suggest edit
+                <% end %>
+              <% end %>
             <% end %>
-          <% elsif !current_user.nil? %>
-            <% if post.pending_suggested_edit? %>
-              <span>suggested edit pending...</span> &middot;
-            <% else %>
-              <%= link_to 'suggest edit', generic_edit_link(post) %> &middot;
+            <% if is_question && !post.closed %>
+              <a href="#" class="close-dialog-link tools--item">
+                <i class="fa fa-lock"></i>
+                Close
+              </a>
+            <% elsif is_question && post.closed %>
+              <%= link_to reopen_question_path(post), method: :post, class: 'reopen-question tools--item' do %>
+                <i class="fa fa-unlock"></i>
+                Reopen
+              <% end %>
             <% end %>
-          <% end %>
-          <%= link_to 'permalink', generic_share_link(post) %> &middot;
-          <% if is_question && !post.closed %>
-            <a href="#" class="close-dialog-link">close</a> &middot;
-          <% elsif is_question && post.closed %>
-            <%= link_to 'reopen', reopen_question_path(post), method: :post, class: 'reopen-question' %> &middot;
-          <% end %>
-          <% if !post.deleted %>
-            <%= link_to 'delete', url_for(controller: post.post_type.name.pluralize.downcase.to_sym, action: :destroy, id: post.id),
-                        method: :delete, data: { confirm: 'Are you sure you want to delete this post?' }, class: "is-red" %>
-          <% else %>
-            <%= link_to 'undelete', url_for(controller: post.post_type.name.pluralize.downcase.to_sym, action: :undelete, id: post.id),
-                        method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "is-red" %>
-          <% end %> &middot;
-          <a href="#" class="flag-dialog-link">flag</a>
-          <% if current_user&.has_privilege?('SeeTools') %>
-            &middot; <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>">tools</a>
-          <% end %>
-          <% flags_count = post.flags.where(handled_by_id: nil).count %>
-          <% if moderator? && flags_count > 0 %>
-          &middot; <a href="#" class="show-all-flags-dialog-link has-font-weight-bold">show <%= pluralize(flags_count, "flag") %></a>
-          <% end %>
+            <% if !post.deleted %>
+              <%= link_to url_for(controller: post.post_type.name.pluralize.downcase.to_sym, action: :destroy, id: post.id),
+                          method: :delete, data: { confirm: 'Are you sure you want to delete this post?' }, class: "tools--item is-danger" do %>
+                <i class="fa fa-trash"></i>
+                Delete
+              <% end %>
+            <% else %>
+              <%= link_to url_for(controller: post.post_type.name.pluralize.downcase.to_sym, action: :undelete, id: post.id),
+                          method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "tools--item is-danger is-filled" do %>
+                <i class="fa fa-undo"></i>
+                Restore
+              <% end %>
+            <% end %>
+            <a href="#" class="flag-dialog-link tools--item">
+              <i class="fa fa-flag"></i>
+              Flag
+            </a>
+            <% if current_user&.has_privilege?('SeeTools') %>
+              <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>" class="tools--item">
+                <i class="fa fa-wrench"></i>
+                Tools
+              </a>
+            <% end %>
+            <% flags_count = post.flags.where(handled_by_id: nil).count %>
+            <% if moderator? && flags_count > 0 %>
+              <a href="#" class="show-all-flags-dialog-link tools--item">
+                <i class="fa fa-exclamation-triangle"></i>
+                Show <%= pluralize(flags_count, "flag") %>
+              </a>
+            <% end %>
+          </div>
         </div>
 
         <div class="post--action-dialog js-flag-box">

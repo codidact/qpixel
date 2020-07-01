@@ -75,7 +75,7 @@ Rails.application.routes.draw do
     get    ':id/edit',                     to: 'articles#edit', as: :edit_article
     patch  ':id/edit',                     to: 'articles#update', as: :update_article
     delete ':id/delete',                   to: 'articles#destroy', as: :destroy_article
-    delete ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
+    post   ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
   end
 
   get    'posts/:id/history',              to: 'post_history#post', as: :post_history
