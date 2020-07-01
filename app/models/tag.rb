@@ -3,6 +3,7 @@ class Tag < ApplicationRecord
 
   has_and_belongs_to_many :posts
   has_many :children, class_name: 'Tag', foreign_key: :parent_id
+  has_many :children_with_paths, class_name: 'TagWithPath', foreign_key: :parent_id
   belongs_to :tag_set
   belongs_to :parent, class_name: 'Tag', optional: true
 

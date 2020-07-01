@@ -72,7 +72,7 @@ class TagsController < ApplicationController
     @tags = if params[:q].present?
               @tag.children.search(params[:q])
             elsif params[:hierarchical].present?
-              @tag_set.tags_with_paths.order(:path)
+              @tag.children_with_paths.order(:path)
             else
               @tag.children.order(Arel.sql('COUNT(posts.id) DESC'))
             end
