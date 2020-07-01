@@ -1,0 +1,46 @@
+<p>While searching on a Codidact site, you have several options to help refine your search and make it easier to find what you&#39;re looking for. Searching will search all posts across that site, including Questions, Answers, Meta posts, and whatever other post types your site may have.</p>
+<p><strong>Basic keyword searching</strong></p>
+<p>Let&#39;s say you want to search for the term <code>snake oil</code>. You have a few basic options:</p>
+<ul>
+    <li><p>plain search</p>
+        <p>If you put the text <code>snake oil</code> into the searchbox, Codidact will find all posts that contain <em>either</em> the word <code>snake</code> or <code>oil</code>.</p>
+    </li>
+    <li><p>exact search (quote marks)</p>
+        <p>If you include quote marks around your search term, such as <code>&quot;snake oil&quot;</code>, Codidact will find all posts that contain exactly the phrase <code>snake oil</code>.</p>
+    </li>
+    <li><p>keyword search (plus symbol)</p>
+        <p>If you search for <code>+snake +oil</code>, Codidact will find all posts that contain both the words <code>snake</code> and <code>oil</code>.</p>
+    </li>
+    <li><p>excluding words (minus symbol)</p>
+        <p>If you want to search for <code>snake</code> but exclude the word <code>oil</code> from your results, you can do a search for <code>snake -oil</code>. Codidact will find posts that contain the word <code>snake</code> but do not have the word <code>oil</code>.</p>
+    </li>
+</ul>
+<p><strong>Filtering by score and age</strong></p>
+<p>It&#39;s possible to filter your search to only include results that have been posted within a certain timeframe, or match certain score requirements.</p>
+<ul>
+    <li><p>filtering by post score</p>
+        <p>Codidact uses Wilson scoring to help in sorting posts. (To learn more about how this works, see <a href="/help/scoring">/help/scoring</a> for a detailed explanation.) Every post has a score between 0.0 and 1.0. To use this in search, you can use <code>score:0.5</code> to filter your search to only include posts with a score of at least 0.5.</p>
+    </li>
+    <li><p>filtering by votes</p>
+        <p>If you want to filter by the raw votes that a post has, you can use <code>votes:5</code> to find posts where the net votes (upvotes minus downvotes) of a post equals 5 or higher.</p>
+    </li>
+    <li><p>filtering by upvotes and downvotes</p>
+        <p>If you search for <code>upvotes:4</code>, Codidact will find posts that have received at least 4 upvotes, irrespective of how many downvotes the post has. Likewise, if you search for <code>downvotes:4</code>, Codidact will find posts that have received at least 4 downvotes without taking upvotes into consideration. You can also use a less than (<code>&lt;</code>) symbol to filter for posts that have received no more than a certain number of votes (for instance, <code>downvotes:&lt;4</code> will find posts that have received less than four downvotes total).</p>
+    </li>
+    <li><p>filtering by creation date</p>
+        <p>If you want to only find posts that have been written within a certain timeframe, you can use the <code>created:</code> search operator. <code>created:&lt;1w</code> will find all posts created less than a week ago, where <code>created:&gt;1w</code> will find only posts older than a week. You can use <code>m</code> for minute, <code>h</code> for hour, <code>d</code> for day, <code>w</code> for week, <code>mo</code> for month, and <code>y</code> for year. </p>
+    </li>
+</ul>
+<p><strong>Advanced</strong></p>
+<ul>
+    <li><p>wildcard</p>
+        <p>If you search with an asterisk (<code>*</code>) at the end of a word, such as <code>snake*</code>, Codidact will find all posts that contain words beginning with the letters <code>snake</code>, including words such as <code>snakeskin</code>. (This does <em>not</em> work at the beginning of a word; only the end.)</p>
+    </li>
+    <li><p>results for either one of two words</p>
+        <p>Searching with parentheses will allow you to search for a keyword, and either one of two other words. For instance, <code>+oil +(snake palm)</code> will find posts that contain the word <code>oil</code> and either the word <code>palm</code> or <code>snake</code>.</p>
+    </li>
+    <li><p>weighting keywords</p>
+        <p>When searching with multiple keywords, you can weigh different keywords separately. Using a tilde before a word will lower that word&#39;s weight, and have Codidact sort results with that keyword more towards the back. For instance, <code>+snake ~oil</code> will find all posts that contain the word <code>snake</code>, but rank the results that also contain the word <code>oil</code> lower.</p>
+        <p>If you&#39;re searching with parentheses, you can rank words within those parentheses differently. <code>+snake +(&gt;skin &lt;oil)</code> will find all posts that contain <code>snake</code> and either <code>skin</code> or <code>oil</code>, but will rank results that contain <code>skin</code> higher than the results that contain <code>oil</code>.</p>
+    </li>
+</ul>

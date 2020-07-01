@@ -50,3 +50,38 @@
   body: $FILE posts/moderator.html
   doc_slug: moderator
   help_category: $Moderator
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: How to write good alt text
+  body_markdown: $FILE posts/alt-text.html
+  body: $FILE posts/alt-text.html
+  doc_slug: alt-text
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Categories and post types
+  body_markdown: $FILE posts/articles.html
+  body: $FILE posts/articles.html
+  doc_slug: articles
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: How to ask a great question
+  body_markdown: $FILE posts/how-to-ask.html
+  body: $FILE posts/how-to-ask.html
+  doc_slug: how-to-ask
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Guidelines for referencing and quoting on Codidact sites
+  body_markdown: $FILE posts/referencing.html
+  body: $FILE posts/referencing.html
+  doc_slug: referencing
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Codidact search options
+  body_markdown: $FILE posts/search.html
+  body: $FILE posts/search.html
+  doc_slug: search
+  help_category: Site Information
