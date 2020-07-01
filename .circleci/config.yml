@@ -19,7 +19,7 @@ jobs:
           name: Install packages
           command: |
             sudo apt-get -qq update
-            sudo apt-get -y install git libmysqlclient-dev
+            sudo apt-get -y install git libmariadb-dev
       - checkout
       - restore_cache:
           keys:
