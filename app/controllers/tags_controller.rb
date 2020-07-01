@@ -23,10 +23,16 @@ class TagsController < ApplicationController
     @tag_set = @category.tag_set
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
+            elsif params[:hierarchical].present?
+              @tag_set.tags_with_paths.order(:path)
             else
               @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
-            end.left_joins(:posts).group(Arel.sql('tags.id')).select(Arel.sql('tags.*, COUNT(posts.id) AS post_count'))
-            .paginate(per_page: 96, page: params[:page])
+            end
+    @count = @tags.count
+    table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
+    @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
+              .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
+              .paginate(per_page: 96, page: params[:page])
   end
 
   def show
@@ -65,10 +71,16 @@ class TagsController < ApplicationController
   def children
     @tags = if params[:q].present?
               @tag.children.search(params[:q])
+            elsif params[:hierarchical].present?
+              @tag_set.tags_with_paths.order(:path)
             else
               @tag.children.order(Arel.sql('COUNT(posts.id) DESC'))
-            end.left_joins(:posts).group(Arel.sql('tags.id')).select(Arel.sql('tags.*, COUNT(posts.id) AS post_count'))
-            .paginate(per_page: 96, page: params[:page])
+            end
+    @count = @tags.count
+    table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
+    @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
+                 .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
+                 .paginate(per_page: 96, page: params[:page])
   end
 
   private

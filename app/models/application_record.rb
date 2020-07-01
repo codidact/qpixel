@@ -37,6 +37,19 @@ class ApplicationRecord < ActiveRecord::Base
     ary = ary.map { |el| ActiveRecord::Base.sanitize_sql_array(['?', el]) }
     "(#{ary.join(', ')})"
   end
+
+  # This is a BRILLIANT idea. BRILLIANT, I tell you.
+  def self.with_lax_group_rules
+    return unless block_given?
+
+    transaction do
+      connection.execute "SET @old_sql_mode = @@sql_mode"
+      connection.execute "SET SESSION sql_mode = REPLACE(REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY,', ''), " \
+                         "'ONLY_FULL_GROUP_BY', '')"
+      yield
+      connection.execute "SET SESSION sql_mode = @old_sql_mode"
+    end
+  end
 end
 
 module UserSortable

@@ -1,0 +1,1 @@
+ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))

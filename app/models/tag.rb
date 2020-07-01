@@ -22,6 +22,16 @@ class Tag < ApplicationRecord
     ActiveRecord::Base.connection.execute(query).to_a.map(&:first)
   end
 
+  def parent_chain
+    Enumerator.new do |enum|
+      parent_group = group
+      while parent_group != nil
+        enum.yield parent_group
+        parent_group = parent_group.group
+      end
+    end
+  end
+
   private
 
   def parent_not_self

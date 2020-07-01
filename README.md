@@ -67,6 +67,7 @@ Set up the database:
 
     rails db:create
     rails db:schema:load
+    rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
     rails db:seed
 
