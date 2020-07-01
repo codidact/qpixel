@@ -3,6 +3,8 @@ require 'base64'
 class WarningTemplate < ApplicationRecord
   include CommunityRelated
 
+  validate :name, uniqueness: { scope: [:community_id] }
+
   def body_as_b64
     body_with_site_replacements = body.gsub '$SiteName', SiteSetting['SiteName']
 
