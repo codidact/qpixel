@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.6.5-node
       - image: circleci/mysql:8.0.20
+        command: [--default-authentication-plugin=mysql_native_password]
         environment:
           MYSQL_ROOT_HOST: '%'
           MYSQL_USER: 'root'
@@ -15,10 +16,10 @@ jobs:
 
     steps:
       - run:
-          name: Install Git
+          name: Install packages
           command: |
             sudo apt-get -qq update
-            sudo apt-get -y install git
+            sudo apt-get -y install git libmysqlclient-dev
       - checkout
       - restore_cache:
           keys:
