@@ -86,6 +86,7 @@ class PostsController < ApplicationController
 
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
+    not_found && return if @post.nil?
     if @post&.help_category == '$Disabled'
       not_found
     end
