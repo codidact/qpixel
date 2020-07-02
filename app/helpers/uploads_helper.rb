@@ -5,4 +5,12 @@ module UploadsHelper
     end
     "https://s3.amazonaws.com/#{bucket}/#{blob.is_a?(String) ? blob : blob.key}"
   end
+
+  def valid_image?(io)
+    content_types = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES
+    extensions = content_types.map { |ct| ct.gsub('image/', '') }
+    submitted_extension = io.original_filename.split('.')[-1]
+    content_types.include?(io.content_type) && extensions.include?(submitted_extension) &&
+      extensions.map(&:to_sym).include?(FastImage.type(io))
+  end
 end

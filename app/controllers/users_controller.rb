@@ -97,16 +97,24 @@ class UsersController < ApplicationController
     @user = current_user
 
     if params[:user][:avatar].present?
-      @user.avatar.attach(params[:user][:avatar])
+      if helpers.valid_image?(params[:user][:avatar])
+        @user.avatar.attach(params[:user][:avatar])
+      else
+        @user.errors.add(:avatar, 'must be a valid image')
+        flash[:danger] = "Couldn't update your profile."
+        render :edit_profile
+        return
+      end
     end
 
     profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
+      redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."
+      render :edit_profile
     end
-    redirect_to edit_user_profile_path
   end
 
   def role_toggle

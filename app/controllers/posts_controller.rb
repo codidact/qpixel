@@ -95,9 +95,10 @@ class PostsController < ApplicationController
   end
 
   def upload
-    unless ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES.include? params[:file].content_type
-      acceptable = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES.map { |s| s.gsub('image/', '') }
-      render json: { error: "Images must be one of #{acceptable.join(', ')}" }, status: 400
+    content_types = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES
+    extensions = content_types.map { |ct| ct.gsub('image/', '') }
+    unless helpers.valid_image?(params[:file])
+      render json: { error: "Images must be one of #{extensions.join(', ')}" }, status: 400
       return
     end
     @blob = ActiveStorage::Blob.create_after_upload!(io: params[:file], filename: params[:file].original_filename,

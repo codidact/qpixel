@@ -15,7 +15,17 @@
 
 <h1>Edit Profile</h1>
 
-<%= render 'posts/image_upload' %>
+<% if defined?(@user) && @user.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving your profile:
+
+    <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
 
 <%= form_for current_user, url: update_user_profile_path do |f| %>
   <div class="form-group has-padding-2">
