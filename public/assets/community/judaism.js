@@ -271,4 +271,9 @@ $(() => {
     sefaria.link();
   });
   document.body.appendChild(el);
+
+  const observer = new MutationObserver((list, obs) => {
+    sefaria.link();
+  });
+  observer.observe(document.body, { attributes: false, childList: true, subtree: true });
 });
