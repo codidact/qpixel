@@ -270,10 +270,10 @@ $(() => {
   el.addEventListener('load', () => {
     sefaria.link();
 
-    const observer = new MutationObserver((list, obs) => {
+    /*const observer = new MutationObserver((list, obs) => {
       sefaria.link();
     });
-    observer.observe(document.body, { attributes: false, childList: true, subtree: true });
+    observer.observe(document.body, { attributes: false, childList: true, subtree: true });*/
   });
   document.body.appendChild(el);
 });
