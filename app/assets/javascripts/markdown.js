@@ -67,5 +67,6 @@ $(() => {
     if (selection) {
       $('#markdown-link-name').val(selection);
     }
+    $('#markdown-link-url').focus();
   });
 });
