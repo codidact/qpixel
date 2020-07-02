@@ -269,11 +269,11 @@ $(() => {
   el.src = 'https://www.sefaria.org/linker.js';
   el.addEventListener('load', () => {
     sefaria.link();
+
+    const observer = new MutationObserver((list, obs) => {
+      sefaria.link();
+    });
+    observer.observe(document.body, { attributes: false, childList: true, subtree: true });
   });
   document.body.appendChild(el);
-
-  const observer = new MutationObserver((list, obs) => {
-    sefaria.link();
-  });
-  observer.observe(document.body, { attributes: false, childList: true, subtree: true });
 });
