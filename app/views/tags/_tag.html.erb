@@ -1,4 +1,4 @@
-<div class="grid--cell is-4-lg is-6-md is-12-sm">
+<div class="grid--cell tag-cell <%= params[:hierarchical].present? ? 'is-12-sm is-6' : 'is-4-lg is-6-md is-12-sm' %>">
   <% if tag.respond_to?(:path) && tag.path.present? %>
     <span class="has-font-size-caption">
       <% tag.path.split(' > ')[0..-2].each do |tag| %>

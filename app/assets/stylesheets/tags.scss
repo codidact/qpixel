@@ -1,0 +1,13 @@
+.tag-cell {
+  margin: 0.5em 0;
+
+  &:hover {
+    background: #f0f2ff;
+    transition: all 0.3s ease;
+    border-radius: 0.2em;
+  }
+
+  p {
+    margin: 0;
+  }
+}
