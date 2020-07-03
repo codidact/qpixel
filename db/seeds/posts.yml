@@ -85,3 +85,10 @@
   body: $FILE posts/search.html
   doc_slug: search
   help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Answer scoring and ordering
+  body_markdown: $FILE posts/scoring.html
+  body: $FILE posts/scoring.html
+  doc_slug: scoring
+  help_category: Site Information
