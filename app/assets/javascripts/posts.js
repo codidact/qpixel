@@ -21,6 +21,22 @@ $(() => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
+
+    const $fileInput = $tgt.find('input[type="file"]');
+    const files = $fileInput[0].files;
+    if (files.length > 0 && files[0].size >= 2000000) {
+      $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+      const postField = $('.js-post-field');
+      postField.val(postField.val().replace(placeholder, ''));
+      setTimeout(() => {
+        $tgt.find('.js-max-size').removeClass('error-shake');
+      }, 1000);
+      return;
+    }
+    else {
+      $tgt.find('.js-max-size').removeClass('has-color-red-700');
+    }
+
     const resp = await fetch($tgt.attr('action'), {
       method: $tgt.attr('method'),
       body: new FormData($tgt[0])
