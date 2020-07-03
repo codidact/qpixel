@@ -69,4 +69,18 @@ $(() => {
     }
     $('#markdown-link-url').focus();
   });
+
+  QPixel.addPrePostValidation(text => {
+    // This regex catches Markdown images with no or default alt text.
+    const altRegex = /!\[(?:Image alt text)?\](?:\(.+(?!\\\))\)|\[.+(?!\\\])\])/gi;
+    if (text.match(altRegex)) {
+      const message = `It looks like you're posting an image with no alt text. Alt text is important for ` +
+                      `accessibility. Consider adding alt text to the images in your post - ` +
+                      `<a href="/help/alt-text">read this help article</a> for details and help writing alt text.`;
+      return [false, [{ type: 'warning', message }]];
+    }
+    else {
+      return [true, null];
+    }
+  });
 });

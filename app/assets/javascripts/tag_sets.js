@@ -39,7 +39,7 @@ $(() => {
       $name.text(data.tag_set.name);
     }
     else {
-      QPixel.createNotification('danger', `Failed to change name (${response.status})`, $tgt);
+      QPixel.createNotification('danger', `Failed to change name (${response.status})`);
     }
   });
 });

@@ -1,11 +1,23 @@
+const validators = [];
+
 window.QPixel = {
+  /**
+   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
+   * making AJAX POST requests.
+   * @returns {string}
+   */
   csrfToken: () => {
     const token = $('meta[name="csrf-token"]').attr('content');
     QPixel.csrfToken = () => token;
     return token;
   },
 
-  createNotification: function(type, message, relativeElement) {
+  /**
+   * Create a notification popup - not an inbox notification.
+   * @param type the type to apply to the popup - warning, danger, etc.
+   * @param message the message to show
+   */
+  createNotification: function(type, message) {
     $("<div></div>")
     .addClass("notice has-shadow-3 is-" + type)
     .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
@@ -27,6 +39,11 @@ window.QPixel = {
     .appendTo(document.body);
   },
 
+  /**
+   * Get the absolute offset of an element.
+   * @param el the element for which to find the offset.
+   * @returns {{top: integer, left: integer, bottom: integer, right: integer}}
+   */
   offset: function(el) {
     const topLeft = $(el).offset();
     return {
@@ -37,6 +54,14 @@ window.QPixel = {
     };
   },
 
+  /**
+   * Add a button to the Markdown editor.
+   * @param $buttonHtml the HTML content that the button should show - just text, if you like, or
+   *                    something more complex if you want to.
+   * @param shortName a short name for the action that will be used as the title and aria-label attributes.
+   * @param callback a function that will be passed as the click event callback - should take one
+   *                 parameter, which is the event object.
+   */
   addEditorButton: function ($buttonHtml, shortName, callback) {
     const html = `<a href="javascript:void(0)" class="button is-muted is-outlined" title="${shortName}"
                      aria-label="${shortName}"></a>`;
@@ -56,5 +81,33 @@ window.QPixel = {
     };
 
     insertButton();
+  },
+
+  /**
+   * Add a validator that will be called before creating a post.
+   * callback should take one parameter, the post text, and should return an array in
+   * the following format:
+   *
+   * [
+   *   true | false,  // is the post valid for this check?
+   *   [
+   *     { type: 'warning', message: 'warning message - will not block posting' },
+   *     { type: 'error', message: 'error message - will block posting' }
+   *   ]
+   * ]
+   */
+  addPrePostValidation: function (callback) {
+    validators.push(callback);
+  },
+
+  validatePost: function (postText) {
+    const results = validators.map(x => x(postText));
+    const valid = results.every(x => x[0]);
+    if (valid) {
+      return [true, null];
+    }
+    else {
+      return [false, results.map(x => x[1]).flat()];
+    }
   }
 };

@@ -48,7 +48,7 @@ $(() => {
     const $tgt = $(evt.target);
     const $postField = $('.js-post-field');
     const error = data['error'];
-    QPixel.createNotification('danger', error, $tgt);
+    QPixel.createNotification('danger', error);
     $tgt.parents('.modal').removeClass('is-active');
     $postField.val($postField.val().replace(placeholder, ''));
   });
@@ -142,5 +142,55 @@ $(() => {
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You've edited this post before but didn't save it. We loaded your edits here for you.
     </div>`);
+  });
+
+  postFields.each((i, field) => {
+    $(field).parents('form').on('submit', ev => {
+      ev.preventDefault();
+
+      const $tgt = $(ev.target);
+      if ($tgt.attr('data-validated') === 'true') {
+        return;
+      }
+
+      const text = $(field).val();
+      const validated = QPixel.validatePost(text);
+      if (validated[0] === true) {
+        $tgt.attr('data-validated', 'true');
+        $tgt.submit();
+      }
+      else {
+        const warnings = validated[1].filter(x => x['type'] === 'warning');
+        const errors = validated[1].filter(x => x['type'] === 'error');
+
+        if (warnings.length > 0) {
+          const $warningBox = $(`<div class="notice is-warning"></div>`);
+          const $warningList = $(`<ul></ul>`);
+          warnings.forEach(w => {
+            $warningList.append(`<li>${w['message']}</li>`);
+          });
+          $warningBox.append($warningList);
+          $tgt.find('input[type="submit"]').before($warningBox);
+        }
+
+        if (errors.length > 0) {
+          const $errorBox = $(`<div class="notice is-danger"></div>`);
+          const $errorList = $(`<ul></ul>`);
+          errors.forEach(e => {
+            $errorList.append(`<li>${e['message']}</li>`);
+          });
+          $errorBox.append($errorList);
+          $tgt.find('input[type="submit"]').before($errorBox);
+        }
+
+        if (warnings.length > 0 && errors.length === 0) {
+          $tgt.attr('data-validated', 'true');
+        }
+      }
+
+      setTimeout(() => {
+        $tgt.find('input[type="submit"]').attr('disabled', false);
+      }, 1000);
+    });
   });
 });

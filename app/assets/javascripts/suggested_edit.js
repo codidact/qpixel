@@ -10,14 +10,14 @@ $(document).on('ready', function () {
         })
             .done((response) => {
                 if (response.status !== 'success') {
-                    QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, this);
+                    QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
                 }
                 else {
                     window.location.href = response.redirect_url;
                 }
             })
             .fail((jqXHR, textStatus, errorThrown) => {
-                QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this);
+                QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
                 console.log(jqXHR.responseText);
             });
     });
@@ -40,14 +40,14 @@ $(document).on('ready', function () {
         })
             .done((response) => {
                 if (response.status !== 'success') {
-                    QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, this);
+                    QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
                 }
                 else {
                     window.location.href = response.redirect_url;
                 }
             })
             .fail((jqXHR, textStatus, errorThrown) => {
-                QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this);
+                QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
                 console.log(jqXHR.responseText);
             });
     });

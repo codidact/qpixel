@@ -30,7 +30,7 @@ $(document).on('ready', function() {
     };
 
     if (data['reason'].length < 10) {
-      QPixel.createNotification('danger', "Please enter at least 10 characters.", self);
+      QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }
 
@@ -42,16 +42,16 @@ $(document).on('ready', function() {
     })
     .done((response) => {
       if(response.status !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, this);
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
       }
       else {
-        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.', this);
+        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.');
         self.parents(".js-flag-box").find(".js-flag-comment").val("");
       }
       self.parents(".js-flag-box").removeClass("is-active");
     })
     .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, this);
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
       console.log(jqXHR.responseText);
       self.parents(".js-flag-box").removeClass("is-active");
     });
@@ -86,14 +86,14 @@ $(document).on('ready', function() {
     })
     .done((response) => {
       if(response.status !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message, ev.target);
+        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
       }
       else {
         location.reload();
       }
     })
     .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status, ev.target);
+      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
       console.log(jqXHR.responseText);
     });
   });
@@ -121,7 +121,7 @@ $(document).on('ready', function() {
     })
     .done(function(response) {
       if(response['status'] !== 'success') {
-        QPixel.createNotification('danger', "<strong>Failed:</strong> " + response['message'], this.el);
+        QPixel.createNotification('danger', "<strong>Failed:</strong> " + response['message']);
       }
       else {
         $(this.el).parent().parent().parent().fadeOut(200, function() {
@@ -130,7 +130,7 @@ $(document).on('ready', function() {
       }
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      QPixel.createNotification('danger', "<strong>Failed:</strong> " + jqXHR.status, this.el);
+      QPixel.createNotification('danger', "<strong>Failed:</strong> " + jqXHR.status);
       console.log(jqXHR.responseText);
     });
   });

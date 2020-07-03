@@ -30,11 +30,11 @@ $(() => {
       $tgt.find('.js-comment-content').val('');
     }
     else {
-      QPixel.createNotification('danger', data.message, evt.target);
+      QPixel.createNotification('danger', data.message);
     }
   }).on('ajax:error', async (evt, xhr) => {
     const data = xhr.responseJSON;
-    QPixel.createNotification('danger', data.message, evt.target);
+    QPixel.createNotification('danger', data.message);
   });
 
   $(document).on('click', '.js-comment-edit', async evt => {
@@ -75,7 +75,7 @@ $(() => {
       $comment.html(newComment[0].innerHTML);
     }
     else {
-      QPixel.createNotification('danger', data.message, evt.target);
+      QPixel.createNotification('danger', data.message);
     }
   });
 
@@ -105,7 +105,7 @@ $(() => {
       }
     }
     else {
-      QPixel.createNotification('danger', data.message, evt.target);
+      QPixel.createNotification('danger', data.message);
     }
   });
 });

@@ -13,7 +13,7 @@ $(() => {
     const data = await resp.json();
 
     if (data.status !== 'success') {
-      QPixel.createNotification('danger', 'Failed to update your subscription. Please report this bug on Meta.', $tgt[0]);
+      QPixel.createNotification('danger', 'Failed to update your subscription. Please report this bug on Meta.');
     }
   });
 
@@ -34,7 +34,7 @@ $(() => {
       $sub.remove();
     }
     else {
-      QPixel.createNotification('danger', 'Failed to remove your subscription. Please report this bug on Meta.', $tgt[0]);
+      QPixel.createNotification('danger', 'Failed to remove your subscription. Please report this bug on Meta.');
     }
   });
 });
