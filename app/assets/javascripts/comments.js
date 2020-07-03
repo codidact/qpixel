@@ -19,7 +19,7 @@ $(() => {
       headers: { 'Accept': 'text/html' }
     });
     const data = await resp.text();
-    $tgt.parents('.post--comments').find('.post--comments-container').html(data);
+    $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
     $anchor.remove();
   });
 
