@@ -28,8 +28,8 @@ class QuestionsController < ApplicationController
                  Answer.where(parent_id: @question.id)
                else
                  Answer.where(parent_id: @question.id).undeleted
-               end.user_sort({ term: params[:sort], default: :score },
-                             score: :score, age: :created_at)
+               end.user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC') },
+                             score: Arel.sql('deleted ASC, score DESC'), age: :created_at)
                .paginate(page: params[:page], per_page: 20)
                .includes(:votes, :user, :comments, :license)
 

@@ -117,8 +117,18 @@ $(() => {
 
   postFields.parents('form').on('submit', async ev => {
     const $tgt = $(ev.target);
-    if ($tgt.attr('data-draft-deleted') !== 'true') {
-      ev.preventDefault();
+    const field = $tgt.find('.post-field');
+
+    const draftDeleted = $tgt.attr('data-draft-deleted') === 'true';
+    const isValidated = $tgt.attr('data-validated') === 'true';
+
+    if (draftDeleted && isValidated) {
+      return;
+    }
+    ev.preventDefault();
+
+    // Draft handling
+    if (!draftDeleted) {
       const resp = await fetch('/posts/delete-draft', {
         method: 'POST',
         credentials: 'include',
@@ -129,30 +139,20 @@ $(() => {
         body: JSON.stringify({ path: location.pathname })
       });
       if (resp.status === 200) {
-        $tgt.attr('data-draft-deleted', 'true').submit();
+        $tgt.attr('data-draft-deleted', 'true');
+
+        if (isValidated) {
+          $tgt.submit();
+        }
       }
       else {
         console.error('Failed to delete draft.');
       }
     }
-  });
 
-  $('.js-draft-loaded').each((i, e) => {
-    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
-      <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
-      You've edited this post before but didn't save it. We loaded your edits here for you.
-    </div>`);
-  });
 
-  postFields.each((i, field) => {
-    $(field).parents('form').on('submit', ev => {
-      const $tgt = $(ev.target);
-      if ($tgt.attr('data-validated') === 'true') {
-        return;
-      }
-
-      ev.preventDefault();
-
+    // Validation
+    if (!isValidated) {
       const text = $(field).val();
       const validated = QPixel.validatePost(text);
       if (validated[0] === true) {
@@ -191,6 +191,13 @@ $(() => {
       setTimeout(() => {
         $tgt.find('input[type="submit"]').attr('disabled', false);
       }, 1000);
-    });
+    }
+  });
+
+  $('.js-draft-loaded').each((i, e) => {
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+      <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
+      You've edited this post before but didn't save it. We loaded your edits here for you.
+    </div>`);
   });
 });
