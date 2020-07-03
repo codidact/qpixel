@@ -40,7 +40,6 @@
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
       <% if is_question %>
-        <% tag_set = post.tag_set %>
         <% required_ids = post.category&.required_tag_ids %>
         <% moderator_ids = post.category&.moderator_tag_ids %>
         <% topic_ids = post.category&.topic_tag_ids %>
