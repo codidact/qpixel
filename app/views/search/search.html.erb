@@ -15,10 +15,11 @@
 <% end %>
 
 <% if @posts.nil? %>
-    <h3>Advanced Search Options</h3>
-    <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
+  <h3>Advanced Search Options</h3>
+  <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
+  <p>Further help with searching is available <%= link_to 'in the help center', help_path('search') %>.</p>
 
-    <p class="has-color-tertiary-500"><em>Search for something to start finding posts.</em></p>
+  <p class="has-color-tertiary-500"><em>Search for something to start finding posts.</em></p>
 <% else %>
   <div class="button-list is-gutterless has-float-right">
     <%= link_to 'Relevance', query_url(sort: 'relevance'),
