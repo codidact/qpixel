@@ -146,12 +146,12 @@ $(() => {
 
   postFields.each((i, field) => {
     $(field).parents('form').on('submit', ev => {
-      ev.preventDefault();
-
       const $tgt = $(ev.target);
       if ($tgt.attr('data-validated') === 'true') {
         return;
       }
+
+      ev.preventDefault();
 
       const text = $(field).val();
       const validated = QPixel.validatePost(text);
