@@ -8,12 +8,24 @@ $screen-xl: 1200px;
 $key: #335;
 $muted-text: #666;
 $muted-graphic: #DDD;
-$primary: #00A4EA;
-$secondary: #CD5334;
+$primary: #4B68FF;
+$secondary: #EA7317;
 $warning: #FDD835;
-$danger: #BA1916;
-$success: #76B041;
-$meta: #FFE59A;
+$danger: #EB5959;
+$success: #2ECC71;
+$info: #58A09A;
+
+:root {
+  --key: #{$key};
+  --muted-text: #{$muted-text};
+  --muted-graphic: #{$muted-graphic};
+  --primary: #{$primary};
+  --secondary: #{$secondary};
+  --warning: #{$warning};
+  --danger: #{$danger};
+  --success: #{$success};
+  --info: #{$info};
+}
 
 $font-stack-plain: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 $font-stack-display: 'Red Hat Display', $font-stack-plain;

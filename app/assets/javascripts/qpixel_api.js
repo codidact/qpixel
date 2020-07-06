@@ -100,6 +100,10 @@ window.QPixel = {
     validators.push(callback);
   },
 
+  /**
+   * Internal. Called just before a post is sent to the server to validate that it passes
+   * all custom checks.
+   */
   validatePost: function (postText) {
     const results = validators.map(x => x(postText));
     const valid = results.every(x => x[0]);
@@ -109,5 +113,15 @@ window.QPixel = {
     else {
       return [false, results.map(x => x[1]).flat()];
     }
+  },
+
+  /**
+   * Replace the selected text in an input field with a provided replacement.
+   * @param $field the field in which to replace text
+   * @param text the text with which to replace the selection
+   */
+  replaceSelection: ($field, text) => {
+    const prev = $field.val();
+    $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   }
 };
