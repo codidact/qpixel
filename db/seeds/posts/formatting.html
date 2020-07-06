@@ -1,20 +1,14 @@
 <p>Codidact uses the <a href="https://commonmark.org">CommonMark implementation</a> of Markdown for formatting posts.</p>
-<ul>
-    <li><p><strong>Italics</strong></p>
-        <p>You can <em>italicize</em> a word by placing a single asterisk (<code>*</code>) or single underscore (<code>_</code>) around a word. Either <code>*Codidact*</code> or <code>_Codidact_</code> will render as <em>Codidact</em>.</p>
-    </li>
-    <li><p><strong>Bold</strong></p>
-        <p>You can <strong>bold</strong> a word by placing a double asterisk or double underscore around that word. Either <code>**Codidact**</code> or <code>__Codidact__</code> will render as <strong>Codidact</strong>.</p>
-    </li>
-    <li><p><strong>Monospace / code formatting</strong></p>
-        <p>To make a word monospace, you can surround it with a single backtick (<code>&#96;</code>). This is generally used for code formatting. (Some people use this for emphasis. Don&#39;t do that! Screen readers will read out words formatted as code character by character - use <em>italics</em> or <strong>bold</strong> for emphasis instead.)</p>
-        <p>To mark several lines as code, you can use a code fence. This is three backticks on a newline both on top and at the bottom of your lines of code. Don&#39;t use this for quotes - see below for guidance on quote formatting.</p>
-    </li>
-    <li><p><strong>Links</strong></p>
-        <p>You can generate a link using one of two methods. One way is to encase your link text in square brackets (<code>[ ]</code>) and then the target URL in parentheses (<code>( )</code>). <code>[Codidact](https://codidact.org)</code> will render as <a href="https://codidact.org">Codidact</a>.</p>
-        <p>You can also format a link with the inline text being <code>[Codidact][1]</code>, and then at the bottom of the post include the URL with the format <code>[1]: https://codidact.org</code>. This will look something like this:</p>
-    </li>
-</ul>
+<h3 id="-italics-"><strong>Italics</strong></h3>
+<p>  You can <em>italicize</em> a word by placing a single asterisk (<code>*</code>) or single underscore (<code>_</code>) around a word. Either <code>*Codidact*</code> or <code>_Codidact_</code> will render as <em>Codidact</em>.</p>
+<h3 id="-bold-"><strong>Bold</strong></h3>
+<p>  You can <strong>bold</strong> a word by placing a double asterisk or double underscore around that word. Either <code>**Codidact**</code> or <code>__Codidact__</code> will render as <strong>Codidact</strong>.</p>
+<h3 id="-monospace-code-formatting-"><strong>Monospace / code formatting</strong></h3>
+<p>  To make a word monospace, you can surround it with a single backtick (<code>&#96;</code>). This is generally used for code formatting. (Some people use this for emphasis. Don&#39;t do that! Screen readers will read out words formatted as code character by character - use <em>italics</em> or <strong>bold</strong> for emphasis instead.)</p>
+<p>  To mark several lines as code, you can use a code fence. This is three backticks on a newline both on top and at the bottom of your lines of code. Don&#39;t use this for quotes - see below for guidance on quote formatting.</p>
+<h3 id="-links-"><strong>Links</strong></h3>
+<p>  You can generate a link using one of two methods. One way is to encase your link text in square brackets (<code>[ ]</code>) and then the target URL in parentheses (<code>( )</code>). <code>[Codidact](https://codidact.org)</code> will render as <a href="https://codidact.org">Codidact</a>.</p>
+<p>  You can also format a link with the inline text being <code>[Codidact][1]</code>, and then at the bottom of the post include the URL with the format <code>[1]: https://codidact.org</code>. This will look something like this:</p>
 <pre><code>
   You can check out [<span class="hljs-string">Codidact</span>][<span class="hljs-symbol">1</span>] for an open-source, community-oriented Q&amp;A platform!
 
@@ -25,32 +19,25 @@
     <p>[1]: <a href="https://codidact.org">https://codidact.org</a></p>
 </blockquote>
 <p>  If you&#39;d like to include rollover text for your link, you can put your text, surrounded by quote marks (<code>&quot;</code>), into the URL of your link. For instance, <code>[Codidact](https://codidact.org &quot;The open-source Q&amp;A platform&quot;)</code> will create a link with <code>The open-source Q&amp;A platform</code> as the rollover text.</p>
-<ul>
-    <li><p><strong>Blockquotes</strong></p>
-        <p>When quoting text from somewhere else, you can use a blockquote to signify that this is not your original text, but a quote from somewhere else. Put a greater than symbol (<code>&gt;</code>), followed by a space, before a paragraph to mark that quote as a blockquote. For instance, <code>&gt; This is a blockquote!</code> will render as a quote:</p>
-        <blockquote>
-            <p>This is a blockquote!</p>
-        </blockquote>
-        <p>If you want to include a second paragraph as part of the same quote, you have to include another <code>&gt;</code> before each line, like this:</p>
-    </li>
-</ul>
+<h3 id="-blockquotes-"><strong>Blockquotes</strong></h3>
+<p>  When quoting text from somewhere else, you can use a blockquote to signify that this is not your original text, but a quote from somewhere else. Put a greater than symbol (<code>&gt;</code>), followed by a space, before a paragraph to mark that quote as a blockquote. For instance, <code>&gt; This is a blockquote!</code> will render as a quote:</p>
+<blockquote>
+    <p>This is a blockquote!</p>
+</blockquote>
+<p>  If you want to include a second paragraph as part of the same quote, you have to include another <code>&gt;</code> before each line, like this:</p>
 <pre><code>  &gt; This <span class="hljs-keyword">is</span> a blockquote!
   &gt;
-  &gt;This <span class="hljs-keyword">is</span> part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> same <span class="hljs-literal">quote</span>!
+  &gt; This <span class="hljs-keyword">is</span> part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> same <span class="hljs-literal">quote</span>!
 </code></pre><p>  This will render as a single blockquote:</p>
 <blockquote>
     <p>This is a blockquote!</p>
     <p>This is part of the same quote!</p>
 </blockquote>
 <p>  See also the <a href="/help/referencing">citation and referencing help</a> for guidelines on how to properly reference different quotes from various places.</p>
-<ul>
-    <li><p><strong>Images</strong></p>
-        <p>Embedding images in a post is very similar to the formatting for links (detailed above). The format <code>![alt text](image URL)</code> will embed an image in your post. Please remember to <a href="/help/alt-text">write alt text for your image</a>! Codidact allows you to upload an image directly, or you can embed an external image from image hosting sites such as Imgur.</p>
-    </li>
-    <li><p><strong>Lists</strong></p>
-        <p>You can generate either an ordered list or a bullet list. For a bullet list, you can use either <code>*</code> or <code>-</code> to create your list.</p>
-    </li>
-</ul>
+<h3 id="-images-"><strong>Images</strong></h3>
+<p>  Embedding images in a post is very similar to the formatting for links (detailed above). The format <code>![alt text](image URL)</code> will embed an image in your post. Please remember to <a href="/help/alt-text">write alt text for your image</a>! Codidact allows you to upload an image directly, or you can embed an external image from image hosting sites such as Imgur.</p>
+<h3 id="-lists-"><strong>Lists</strong></h3>
+<p>  You can generate either an ordered list or a bullet list. For a bullet list, you can use either <code>*</code> or <code>-</code> to create your list.</p>
 <pre><code>* List <span class="hljs-keyword">item</span> <span class="hljs-literal">one</span>
 * List <span class="hljs-keyword">item</span> <span class="hljs-literal">two</span>
 </code></pre><p>  This will render like this:</p>
@@ -61,14 +48,10 @@
     </ul>
 </blockquote>
 <p>  If you want to create a numbered list, use <code>1.</code>, <code>2.</code>, etc instead of <code>*</code> or <code>-</code>. Note that the exact number you use, in most cases, is irrelevant - after the first number that you use, no matter what number you put in, Codidact will automatically number it in order. For instance, if you create a list and type <code>1. List item #1</code> for the first line, then <code>3. List item #2</code> for the second line, Codidact will automatically render the <code>3.</code> as a <code>2.</code>. If you begin your list at any other number, such as your first list item is numbered <code>5.</code>, Codidact will continue from that number onwards (with the next number automatically rendering as <code>6.</code>).</p>
-<ul>
-    <li><p><strong>Horizontal line</strong></p>
-        <p>You can use a horizontal line for separating sections of your post. Use <code>---</code> on its own line to generate a horizontal line.</p>
-    </li>
-    <li><p><strong>Headings</strong></p>
-        <p>You can include a heading in your post. Using a single hash symbol (<code>#</code>) before a line of your post will create a large heading, while adding another will create a slightly smaller heading (up to six different heading sizes).</p>
-    </li>
-</ul>
+<h3 id="-horizontal-line-"><strong>Horizontal line</strong></h3>
+<p>  You can use a horizontal line for separating sections of your post. Use <code>---</code> on its own line to generate a horizontal line.</p>
+<h3 id="-headings-"><strong>Headings</strong></h3>
+<p>  You can include a heading in your post. Using a single hash symbol (<code>#</code>) before a line of your post will create a large heading, while adding another will create a slightly smaller heading (up to six different heading sizes).</p>
 <pre><code># Heading <span class="hljs-number">1</span>
 
 ## Heading <span class="hljs-number">2</span>
@@ -79,8 +62,5 @@
     <h2 id="heading-2">Heading 2</h2>
     <h6 id="heading-6">Heading 6</h6>
 </blockquote>
-<ul>
-    <li><p><strong>Footnotes</strong></p>
-        <p>To include a footnote in your post, you can use the syntax <code>[^1]</code>. In your main text, include <code>Text[^1] and more text</code>, and at the bottom (where you want to include your footnote), place a line resembling <code>[^1]: footnote text</code>.</p>
-    </li>
-</ul>
+<h3 id="-footnotes-"><strong>Footnotes</strong></h3>
+<p>  To include a footnote in your post, you can use the syntax <code>[^1]</code>. In your main text, include <code>Text[^1] and more text</code>, and at the bottom (where you want to include your footnote), place a line resembling <code>[^1]: footnote text</code>.</p>
