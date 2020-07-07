@@ -188,7 +188,7 @@
               <% end %>
             <% else %>
               <%= link_to url_for(controller: post.post_type.name.pluralize.downcase.to_sym, action: :undelete, id: post.id),
-                          method: :post, data: { confirm: 'Undelete this question, making it visible to regular users?' }, class: "tools--item is-danger is-filled" do %>
+                          method: :post, data: { confirm: 'Restore this post, making it visible to regular users?' }, class: "tools--item is-danger is-filled" do %>
                 <i class="fa fa-undo"></i>
                 Restore
               <% end %>
