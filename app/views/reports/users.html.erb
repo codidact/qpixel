@@ -1,17 +1,17 @@
 <%= render 'tabs' %>
 
 <div class="flex-row">
-  <%= stat_panel 'users', number_to_human(User.count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
+  <%= stat_panel 'users', number_to_human(@users_all.count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
 
   <%= stat_panel 'native signups',
-                 number_to_human(User.where("email NOT LIKE '%localhost'").count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
+                 number_to_human(@users.count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
 
   <%= stat_panel 'from se',
-                 number_to_human(User.where("email LIKE '%localhost'").count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
+                 number_to_human(@users_se.count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
 
   <%= stat_panel 'this month',
-                 number_to_human(User.where('created_at >= ?', 1.month.ago).count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
+                 number_to_human(@users.where('users.created_at >= ?', 1.month.ago).count, format: '%n%u', units: { thousand: 'k', million: 'M' }) %>
 </div>
 
 <h3>New signups</h3>
-<%= line_chart @users %>
+<%= line_chart @users.group_by_week(:created_at).count %>

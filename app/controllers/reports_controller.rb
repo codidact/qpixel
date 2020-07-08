@@ -4,9 +4,10 @@ class ReportsController < ApplicationController
   before_action :verify_global_moderator, only: [:users_global, :subs_global, :posts_global]
 
   def users
-    @users = User.joins(:community_users).where(community_users: { community_id: RequestContext.community_id })
-                 .where("users.email NOT LIKE '%localhost'")
-                 .where('users.created_at >= ?', 1.year.ago).group_by_week(:created_at).count
+    @users_all = User.joins(:community_users).where(community_users: { community_id: RequestContext.community_id })
+                     .where('users.created_at >= ?', 1.year.ago)
+    @users = @users_all.where("users.email NOT LIKE '%localhost'")
+    @users_se = @users_all.where("users.email LIKE '%localhost'")
   end
 
   def subscriptions
@@ -22,8 +23,9 @@ class ReportsController < ApplicationController
   end
 
   def users_global
-    @users = User.where("users.email NOT LIKE '%localhost'")
-                 .where('users.created_at >= ?', 1.year.ago).group_by_week(:created_at).count
+    @users_all = User.where('users.created_at >= ?', 1.year.ago)
+    @users = @users_all.where("users.email NOT LIKE '%localhost'")
+    @users_se = @users_all.where("users.email LIKE '%localhost'")
     render :users
   end
 
