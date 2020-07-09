@@ -22,9 +22,9 @@
 <%= javascript_include_tag "https://code.jquery.com/jquery-2.2.2.min.js" %>
 <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js" %>
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" %>
-<%= javascript_include_tag "https://unpkg.com/@codidact/co-design@0.11.3/js/co-design.js" %>
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
+<script src="https://unpkg.com/@codidact/co-design@0.11.3/js/co-design.js" defer></script>
 
 <% if SiteSetting['MathJaxEnabled'] %>
   <script>
