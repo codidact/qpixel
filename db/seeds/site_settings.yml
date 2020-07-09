@@ -277,3 +277,10 @@
   description: >
     Variable N value to use in the scoring algorithm. DO NOT SET THIS TO ZERO, IT WILL BREAK YOUR SITE. Generally
     best left alone unless you understand the mathematics at play.
+
+- name: SiteAdSlogan
+  value: Try our Q&A site!
+  value_type: string
+  category: SiteDetails
+  description: >
+    A slogan to be shown on the /ads/community.png page.

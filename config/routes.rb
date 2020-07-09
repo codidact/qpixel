@@ -203,6 +203,10 @@ Rails.application.routes.draw do
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
 
+  scope 'ads' do
+    get 'community.png',                   to: 'advertisment#community', as: :community_ads
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
