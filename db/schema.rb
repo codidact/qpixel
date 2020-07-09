@@ -225,7 +225,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_132654) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"

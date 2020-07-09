@@ -25,7 +25,7 @@
             Flags
           <% end %>
         <% end %>
-        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-toggle="dropdown">
+        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
             <span class="header--alert"><%= unread %></span>
@@ -44,7 +44,7 @@
         <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
         <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
       <% end %>
-      <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-trigger-header-slide=".mobile-menu">
+      <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
           <span class="header--menu-bars">
             <span></span>
             <span></span>
@@ -55,11 +55,11 @@
   </div>
 </header>
 
-<div class="header-slide inbox h-p-0">
+<div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
   <div class="inbox--container h-p-2"></div>
 </div>
-<div class="header-slide mobile-menu">
+<div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
     <%= link_to 'Categories', categories_path, class: 'menu--item' %>
     <%= link_to 'Users', users_path, class: 'menu--item' %>
