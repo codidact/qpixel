@@ -7,7 +7,7 @@
 <% @flags.each do |flag| %>
   <div class="widget">
     <div class="item-list">
-      <%= render 'posts/list', post: flag.post %>
+      <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
     </div>
     <div class="widget--body">
       <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>

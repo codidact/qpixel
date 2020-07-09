@@ -22,8 +22,8 @@
 <h2><%= pluralize(@question.answers.where(deleted: false).count, "answer") %></h2>
 
 <div class="button-list is-gutterless has-float-right">
-  <a href="<%= query_url(sort: 'score') %>" class="button is-muted is-outlined <%= active_search?('score') ? 'is-active' : '' %>">Score</a>
-  <a href="<%= query_url(sort: 'age') %>" class="button is-muted is-outlined <%= active_search?('created_at') ? 'is-active' : '' %>">Active</a>
+  <a href="<%= query_url(sort: 'score') %>" class="button is-muted is-outlined <%= params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : '' %>">Score</a>
+  <a href="<%= query_url(sort: 'age') %>" class="button is-muted is-outlined <%= params[:sort] == 'age' ? 'is-active' : '' %>">Active</a>
 </div>
 
 <div class="has-clear-clear"></div>
