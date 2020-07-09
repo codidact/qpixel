@@ -58,6 +58,9 @@ gem 'thwait', '~> 0.1'
 # Stuff for imports
 gem 'ruby-progressbar', '~> 1.10'
 
+# Image generation
+gem 'rmagick'
+
 group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'

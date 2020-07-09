@@ -34,6 +34,9 @@ If you already have Node.JS installed, you can skip this step. If not, [download
 
 ### Install Redis
 If you haven't already got it, [download and install Redis](https://redis.io/download).
+
+### Install Imagemagick
+If you haven't already installed Imagemagick, you'll need to [install it for your system](https://imagemagick.org/script/download.php)
     
 ### Download QPixel
 Clone the repository and `cd` into the directory:
