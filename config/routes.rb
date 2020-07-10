@@ -203,6 +203,14 @@ Rails.application.routes.draw do
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
 
+  scope 'ads' do
+    root                                   to: 'advertisement#index', as: :ads
+    get 'codidact.png',                    to: 'advertisement#codidact', as: :codidact_ads
+    get 'community.png',                   to: 'advertisement#community', as: :community_ads
+    get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
+    get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'

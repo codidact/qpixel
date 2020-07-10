@@ -101,6 +101,10 @@ class Post < ApplicationRecord
     post_type_id == Answer.post_type_id
   end
 
+  def article?
+    post_type_id == Article.post_type_id
+  end
+
   def pending_suggested_edit?
     SuggestedEdit.where(post_id: id, active: true).any?
   end
