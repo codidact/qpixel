@@ -38,4 +38,9 @@
 
 <% if user_signed_in? && !@question.closed %>
   <%= render 'answers/new', answer: Answer.new, parent: @question %>
+<% elsif !@question.closed %>
+  <p class="has-margin-top-4"></p>
+  <%= link_to new_user_registration_path, class: 'button is-filled is-success h-m-t-4' do %>
+    Sign up to answer this question &raquo;
+  <% end %>
 <% end %>
