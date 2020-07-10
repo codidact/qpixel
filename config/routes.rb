@@ -204,6 +204,7 @@ Rails.application.routes.draw do
   end
 
   scope 'ads' do
+    get 'codidact.png',                    to: 'advertisment#codidact', as: :codidact_ads
     get 'community.png',                   to: 'advertisment#community', as: :community_ads
   end
 
