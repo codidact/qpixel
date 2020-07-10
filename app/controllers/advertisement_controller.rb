@@ -2,7 +2,7 @@ require 'rmagick'
 
 # Neccessary due to rmagick
 # rubocop:disable Metrics/MethodLength
-class AdvertismentController < ApplicationController
+class AdvertisementController < ApplicationController
   include Magick
 
   def index

@@ -204,11 +204,11 @@ Rails.application.routes.draw do
   end
 
   scope 'ads' do
-    root                                   to: 'advertisment#index', as: :ads
-    get 'codidact.png',                    to: 'advertisment#codidact', as: :codidact_ads
-    get 'community.png',                   to: 'advertisment#community', as: :community_ads
-    get 'posts/random.png',                to: 'advertisment#random_question', as: :random_question_ads
-    get 'posts/:id.png',                   to: 'advertisment#specific_question', as: :specific_question_ads
+    root                                   to: 'advertisement#index', as: :ads
+    get 'codidact.png',                    to: 'advertisement#codidact', as: :codidact_ads
+    get 'community.png',                   to: 'advertisement#community', as: :community_ads
+    get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
+    get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
   end
 
   get   '403',                             to: 'errors#forbidden'
