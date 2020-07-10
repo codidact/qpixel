@@ -20,7 +20,8 @@ class AdvertisementController < ApplicationController
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
-    community_url.font_weight = 600
+    community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
+    community_url.font_weight = 700
     community_url.pointsize = 20
     community_url.gravity = CenterGravity
     community_url.annotate ad, 600, 50, 0, 450, 'Try on codidact.com' do
@@ -33,7 +34,8 @@ class AdvertisementController < ApplicationController
 
     on_codidact = Draw.new
     on_codidact.font_family = 'Roboto'
-    on_codidact.font_weight = 600
+    on_codidact.font_weight = 700
+    on_codidact.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     on_codidact.pointsize = 25
     on_codidact.gravity = CenterGravity
     on_codidact.annotate ad, 400, 50, 100, 200, 'The Open Source Q&A Platform.' do
@@ -42,7 +44,8 @@ class AdvertisementController < ApplicationController
 
     slogan = Draw.new
     slogan.font_family = 'Roboto'
-    slogan.font_weight = 500
+    slogan.font_weight = 400
+    slogan.font = './app/assets/imgfonts/Roboto.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
@@ -69,7 +72,8 @@ class AdvertisementController < ApplicationController
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
-    community_url.font_weight = 600
+    community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
+    community_url.font_weight = 700
     community_url.pointsize = 20
     community_url.gravity = CenterGravity
     community_url.annotate ad, 600, 50, 0, 450, @community.host do
@@ -81,7 +85,8 @@ class AdvertisementController < ApplicationController
       name = @community.name
       community_name = Draw.new
       community_name.font_family = 'Roboto'
-      community_name.font_weight = 800
+      community_name.font_weight = 900
+      community_name.font = './app/assets/imgfonts/Roboto-Black.ttf'
       community_name.pointsize = (50 + (100.0 / name.length))
       community_name.gravity = CenterGravity
       community_name.annotate ad, 600, 250, 0, 0, name do
@@ -95,7 +100,8 @@ class AdvertisementController < ApplicationController
 
     on_codidact = Draw.new
     on_codidact.font_family = 'Roboto'
-    on_codidact.font_weight = 600
+    on_codidact.font_weight = 700
+    on_codidact.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     on_codidact.pointsize = 25
     on_codidact.gravity = EastGravity
     on_codidact.annotate ad, 0, 50, 500, 200, 'on codidact.com' do
@@ -104,7 +110,8 @@ class AdvertisementController < ApplicationController
 
     slogan = Draw.new
     slogan.font_family = 'Roboto'
-    slogan.font_weight = 500
+    slogan.font_weight = 400
+    slogan.font = './app/assets/imgfonts/Roboto.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
@@ -163,7 +170,8 @@ class AdvertisementController < ApplicationController
 
     answer = Draw.new
     answer.font_family = 'Roboto'
-    answer.font_weight = 600
+    answer.font_weight = 700
+    answer.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     answer.pointsize = 40
     answer.gravity = CenterGravity
     answer.annotate ad, 600, 50, 0, 10, 'Could you answer' do
@@ -180,7 +188,8 @@ class AdvertisementController < ApplicationController
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
-    community_url.font_weight = 600
+    community_url.font_weight = 700
+    community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     community_url.pointsize = 20
     community_url.gravity = CenterGravity
     community_url.annotate ad, 600, 50, 0, 450, question.community.host do
@@ -189,7 +198,8 @@ class AdvertisementController < ApplicationController
 
     title = Draw.new
     title.font_family = 'Roboto'
-    title.font_weight = 600
+    title.font_weight = 900
+    title.font = './app/assets/imgfonts/Roboto-Black.ttf'
     title.pointsize = 50
     title.gravity = NorthGravity
     position = 0
@@ -226,7 +236,8 @@ class AdvertisementController < ApplicationController
 
     answer = Draw.new
     answer.font_family = 'Roboto'
-    answer.font_weight = 600
+    answer.font_weight = 700
+    answer.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     answer.pointsize = 40
     answer.gravity = CenterGravity
     answer.annotate ad, 600, 120, 0, 10, 'Check out this article' do
@@ -240,7 +251,8 @@ class AdvertisementController < ApplicationController
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
-    community_url.font_weight = 600
+    community_url.font_weight = 700
+    community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     community_url.pointsize = 20
     community_url.gravity = CenterGravity
     community_url.annotate ad, 600, 50, 0, 450, article.community.host do
@@ -249,7 +261,8 @@ class AdvertisementController < ApplicationController
 
     title = Draw.new
     title.font_family = 'Roboto'
-    title.font_weight = 600
+    title.font_weight = 900
+    community_url.font = './app/assets/imgfonts/Roboto-Black.ttf'
     title.pointsize = 50
     title.gravity = NorthGravity
     position = 0
