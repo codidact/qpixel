@@ -118,24 +118,24 @@ class AdvertismentController < ApplicationController
 
 	def specific_question
 		@post = Post.find(params[:id])
-		return if @post.question?
-			       question_ad(@post)
-		       elsif @post.article?
-             article_ad(@post)
-           else
-            not_found
-		       end
+		if @post.question?
+      question_ad(@post)
+    elsif @post.article?
+      article_ad(@post)
+    else
+      not_found
+    end
 	end
 
 	def random_question
 		@post = @hot_questions.sample
-		return if @post.question?
-			       question_ad(@post)
-		       elsif @post.article?
-             article_ad(@post)
-           else
-            not_found
-		       end
+		if @post.question?
+      question_ad(@post)
+    elsif @post.article?
+      article_ad(@post)
+    else
+      not_found
+    end
 	end
 
 	private
