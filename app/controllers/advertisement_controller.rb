@@ -229,14 +229,14 @@ class AdvertisementController < ApplicationController
       if question.title.length > 60
         title.pointsize = 35
         wrap_text(question.title, 500, 35).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 150 + position * 55, line do
+          title.annotate ad, 500, 100, 50, 135 + position * 55, line do
             self.fill = '#333333'
           end
           position += 1
         end
       else
         wrap_text(question.title, 500, 55).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 175 + position * 70, line do
+          title.annotate ad, 500, 100, 50, 160 + position * 70, line do
             self.fill = '#333333'
           end
           position += 1
@@ -306,14 +306,14 @@ class AdvertisementController < ApplicationController
       if article.title.length > 60
         title.pointsize = 35
         wrap_text(article.title, 500, 35).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 150 + position * 55, line do
+          title.annotate ad, 500, 100, 50, 135 + position * 55, line do
             self.fill = '#333333'
           end
           position += 1
         end
       else
         wrap_text(article.title, 500, 55).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 175 + position * 70, line do
+          title.annotate ad, 500, 100, 50, 160 + position * 70, line do
             self.fill = '#333333'
           end
           position += 1
