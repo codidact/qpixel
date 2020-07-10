@@ -163,10 +163,10 @@ class AdvertisementController < ApplicationController
     ad = Image.new(600, 500)
     ad.background_color = 'white'
 
-    uppoer_bar = Draw.new
-    uppoer_bar.fill '#4B68FF'
-    uppoer_bar.rectangle 0, 0, 600, 130
-    uppoer_bar.draw ad
+    upper_bar = Draw.new
+    upper_bar.fill '#4B68FF'
+    upper_bar.rectangle 0, 0, 600, 130
+    upper_bar.draw ad
 
     answer = Draw.new
     answer.font_family = 'Roboto'
@@ -181,19 +181,31 @@ class AdvertisementController < ApplicationController
       self.fill = 'white'
     end
 
-    lower_bar = Draw.new
-    lower_bar.fill '#4B68FF'
-    lower_bar.rectangle 0, 450, 600, 500
-    lower_bar.draw ad
+    icon_path = SiteSetting['SiteLogoPath']
+    if !icon_path.present?
+      community_name = Draw.new
+      community_name.font_family = 'Roboto'
+      community_name.font_weight = 700
+      community_name.font = './app/assets/imgfonts/Roboto-Bold.ttf'
+      community_name.pointsize = 25
+      community_name.gravity = SouthWestGravity
+      community_name.annotate ad, 0, 0, 20, 20, question.community.name do
+        self.fill = '#4B68FF'
+      end
+    else
+      icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+      icon.resize_to_fit!(120, 50)
+      ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+    end
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
     community_url.font_weight = 700
     community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     community_url.pointsize = 20
-    community_url.gravity = CenterGravity
-    community_url.annotate ad, 600, 50, 0, 450, question.community.host do
-      self.fill = 'white'
+    community_url.gravity = SouthEastGravity
+    community_url.annotate ad, 0, 0, 20, 20, question.community.host do
+      self.fill = '#666666'
     end
 
     title = Draw.new
@@ -204,9 +216,9 @@ class AdvertisementController < ApplicationController
     title.gravity = NorthGravity
     position = 0
     if question.title.length > 60
-      title.pointsize = 40
-      wrap_text(question.title, 500, 45).split("\n").each do |line|
-        title.annotate ad, 500, 100, 50, 150 + position * 60, line do
+      title.pointsize = 35
+      wrap_text(question.title, 500, 35).split("\n").each do |line|
+        title.annotate ad, 500, 100, 50, 175 + position * 55, line do
           self.fill = '#333333'
         end
         position += 1
@@ -229,10 +241,10 @@ class AdvertisementController < ApplicationController
     ad = Image.new(600, 500)
     ad.background_color = 'white'
 
-    uppoer_bar = Draw.new
-    uppoer_bar.fill '#4B68FF'
-    uppoer_bar.rectangle 0, 0, 600, 130
-    uppoer_bar.draw ad
+    upper_bar = Draw.new
+    upper_bar.fill '#4B68FF'
+    upper_bar.rectangle 0, 0, 600, 130
+    upper_bar.draw ad
 
     answer = Draw.new
     answer.font_family = 'Roboto'
@@ -244,32 +256,44 @@ class AdvertisementController < ApplicationController
       self.fill = 'white'
     end
 
-    lower_bar = Draw.new
-    lower_bar.fill '#4B68FF'
-    lower_bar.rectangle 0, 450, 600, 500
-    lower_bar.draw ad
+    icon_path = SiteSetting['SiteLogoPath']
+    if !icon_path.present?
+      community_name = Draw.new
+      community_name.font_family = 'Roboto'
+      community_name.font_weight = 700
+      community_name.font = './app/assets/imgfonts/Roboto-Bold.ttf'
+      community_name.pointsize = 25
+      community_name.gravity = SouthWestGravity
+      community_name.annotate ad, 0, 0, 20, 20, article.community.name do
+        self.fill = '#4B68FF'
+      end
+    else
+      icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+      icon.resize_to_fit!(120, 50)
+      ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+    end
 
     community_url = Draw.new
     community_url.font_family = 'Roboto'
     community_url.font_weight = 700
     community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
     community_url.pointsize = 20
-    community_url.gravity = CenterGravity
-    community_url.annotate ad, 600, 50, 0, 450, article.community.host do
-      self.fill = 'white'
+    community_url.gravity = SouthEastGravity
+    community_url.annotate ad, 0, 0, 20, 20, article.community.host do
+      self.fill = '#666666'
     end
 
     title = Draw.new
     title.font_family = 'Roboto'
     title.font_weight = 900
-    community_url.font = './app/assets/imgfonts/Roboto-Black.ttf'
+    title.font = './app/assets/imgfonts/Roboto-Black.ttf'
     title.pointsize = 50
     title.gravity = NorthGravity
     position = 0
     if article.title.length > 60
-      title.pointsize = 40
-      wrap_text(article.title, 500, 45).split("\n").each do |line|
-        title.annotate ad, 500, 100, 50, 150 + position * 60, line do
+      title.pointsize = 35
+      wrap_text(article.title, 500, 35).split("\n").each do |line|
+        title.annotate ad, 500, 100, 50, 175 + position * 55, line do
           self.fill = '#333333'
         end
         position += 1
