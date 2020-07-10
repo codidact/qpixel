@@ -2,6 +2,7 @@ require 'rmagick'
 
 # Neccessary due to rmagick
 # rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 class AdvertisementController < ApplicationController
   include Magick
 
@@ -289,3 +290,4 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
