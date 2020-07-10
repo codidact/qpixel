@@ -5,6 +5,10 @@ require 'rmagick'
 class AdvertismentController < ApplicationController
   include Magick
 
+  def index
+    render layout: 'without_sidebar'
+  end
+
   def codidact
     ad = Image.new(600, 500)
     ad.background_color = 'white'

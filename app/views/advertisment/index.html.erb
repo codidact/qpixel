@@ -1,0 +1,54 @@
+<h1>Advertisements</h1>
+<p class="is-lead">You can, if you want, advertise this Codidact community on your personal homepage or on other sites (with the permission of the providers!)</p>
+<p>There are three available ad types:</p>
+
+<div class="grid">
+    <div class="grid--cell is-12 is-4-lg">
+        <div class="widget">
+            <div class="widget--header h-ta-center h-fw-bold">
+                Codidact network
+            </div>
+            <a href="<%= codidact_ads_url %>"><img src="<%= codidact_ads_url %>" alt="Codidact network ad"></a>
+            <div class="widget--body">
+                <p>Image link:</p>
+                <pre><code><%= codidact_ads_url %></code></pre>
+                <p>Image HTML:</p>
+                <pre><code><%= ('<img src="' + codidact_ads_url + '" alt="Codidact network">') %></code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="grid--cell is-12 is-4-lg">
+        <div class="widget">
+            <div class="widget--header h-ta-center h-fw-bold">
+                Community
+            </div>
+            <a href="<%= community_ads_url %>"><img src="<%= community_ads_url %>" alt="Community ad"></a>
+            <div class="widget--body">
+                <p>Image link:</p>
+                <pre><code><%= community_ads_url %></code></pre>
+                <p>Image HTML:</p>
+                <pre><code><%= ('<img src="' + community_ads_url + '" alt="' + @community.name + '">') %></code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="grid--cell is-12 is-4-lg">
+        <div class="widget">
+            <div class="widget--header h-ta-center h-fw-bold">
+                Posts
+            </div>
+            <a href="<%= random_question_ads_url %>"><img src="<%= random_question_ads_url %>" alt="Random posts ad"></a>
+            <div class="widget--body">
+                <p><strong>Random post</strong> (chosen from hot posts)</p>
+                <p>Image link</p>
+                <pre><code><%= random_question_ads_url %></code></pre>
+                <p>Image HTML:</p>
+                <pre><code><%= ('<img src="' + random_question_ads_url + '" alt="' + @community.name + ' questions">') %></code></pre>
+                <p><strong>Specific post</strong> (replace X with post ID)</p>
+                <p>Image link</p>
+                <pre><code><%= specific_question_ads_url('X') %></code></pre>
+                <p>Image HTML:</p>
+                <pre><code><%= ('<img src="' + specific_question_ads_url('X') + '" alt="(choose an alt text)">') %></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
