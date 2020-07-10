@@ -46,7 +46,7 @@ class AdvertisementController < ApplicationController
     slogan = Draw.new
     slogan.font_family = 'Roboto'
     slogan.font_weight = 400
-    slogan.font = './app/assets/imgfonts/Roboto.ttf'
+    slogan.font = './app/assets/imgfonts/Roboto-Regular.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
@@ -112,7 +112,7 @@ class AdvertisementController < ApplicationController
     slogan = Draw.new
     slogan.font_family = 'Roboto'
     slogan.font_weight = 400
-    slogan.font = './app/assets/imgfonts/Roboto.ttf'
+    slogan.font = './app/assets/imgfonts/Roboto-Regular.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
