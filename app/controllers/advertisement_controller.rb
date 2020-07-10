@@ -2,6 +2,7 @@ require 'rmagick'
 
 # Neccessary due to rmagick
 # rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 class AdvertisementController < ApplicationController
   include Magick
 
@@ -45,7 +46,7 @@ class AdvertisementController < ApplicationController
     slogan = Draw.new
     slogan.font_family = 'Roboto'
     slogan.font_weight = 400
-    slogan.font = './app/assets/imgfonts/Roboto.ttf'
+    slogan.font = './app/assets/imgfonts/Roboto-Regular.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
@@ -111,7 +112,7 @@ class AdvertisementController < ApplicationController
     slogan = Draw.new
     slogan.font_family = 'Roboto'
     slogan.font_weight = 400
-    slogan.font = './app/assets/imgfonts/Roboto.ttf'
+    slogan.font = './app/assets/imgfonts/Roboto-Regular.ttf'
     slogan.pointsize = 30
     slogan.gravity = NorthGravity
     position = 0
@@ -313,3 +314,4 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
