@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  log_type: MyString
+  event_type: MyString
+  related: one
+  related_type: Related
+  user: one
+  comment: MyText
+
+two:
+  log_type: MyString
+  event_type: MyString
+  related: two
+  related_type: Related
+  user: two
+  comment: MyText

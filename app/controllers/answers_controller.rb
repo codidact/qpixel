@@ -118,6 +118,8 @@ class AnswersController < ApplicationController
       Comment.create(user: @answer.user, post_id: params[:post_id], community: @answer.community, content: c)
     end
     @answer.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
+    AuditLog.moderator_audit(event_type: 'convert_to_comment', related: @answer, user: current_user,
+                             comment: created.map(&:id).join(', '))
     render json: { success: true, comments: created.map(&:id) }
   end
 

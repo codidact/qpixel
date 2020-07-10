@@ -30,7 +30,10 @@ class AdminController < ApplicationController
 
   def update_privilege
     @privilege = Privilege.find_by name: params[:name]
-    @privilege.update(threshold: params[:threshold])
+    pre = @privilege.threshold
+    @privilege.update(threshold: params[:threshold]) &&
+      AuditLog.admin_audit(event_type: 'privilege_threshold_update', related: @privilege, user: current_user,
+                           comment: "from <<#{pre}>> to <<#{params[:threshold]}>>")
     render json: { status: 'OK', privilege: @privilege }, status: 202
   end
 
@@ -40,6 +43,8 @@ class AdminController < ApplicationController
     Thread.new do
       AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
     end
+    AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
+                         comment: "Subject: #{params[:subject]}")
     flash[:success] = 'Your email is being sent.'
     redirect_to admin_path
   end
