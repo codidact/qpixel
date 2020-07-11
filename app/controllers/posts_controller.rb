@@ -139,6 +139,7 @@ class PostsController < ApplicationController
       return
     end
 
+    before = @post.category
     @post.category = @target
     new_tags = @post.tags.map do |tag|
       existing = Tag.where(tag_set: @target.tag_set, name: tag.name).first
@@ -146,6 +147,8 @@ class PostsController < ApplicationController
     end
     @post.tags = new_tags
     @post.save
+    AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
+                          comment: "from <<#{before.id}>> to <<#{@target.id}>>")
     render json: { success: true }
   end
 

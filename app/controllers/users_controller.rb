@@ -47,7 +47,9 @@ class UsersController < ApplicationController
       return
     end
 
+    before = @user.attributes_print
     if @user.destroy!
+      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
       render json: { status: 'failed',
@@ -74,10 +76,12 @@ class UsersController < ApplicationController
       model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
     end
 
+    before = @user.attributes_print
     unless @user.destroy
       render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: 500)
       return
     end
+    AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
 
     render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
   end
@@ -94,6 +98,7 @@ class UsersController < ApplicationController
       profile_params[:website] = 'https://' + profile_params[:website]
     end
 
+    before = @user.attributes_print
     @user = current_user
 
     if params[:user][:avatar].present?
@@ -110,6 +115,8 @@ class UsersController < ApplicationController
     profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
+      AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,
+                            comment: "from <<User #{before}>> to <<User #{@user.attributes_print}>>")
       redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."
@@ -120,6 +127,8 @@ class UsersController < ApplicationController
   def role_toggle
     if params[:role] == 'mod'
       @user.community_user.update(is_moderator: !@user.is_moderator)
+      AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                           comment: "moderator to #{@user.is_moderator}")
       render json: { status: 'success' }
       return
     end
@@ -127,18 +136,24 @@ class UsersController < ApplicationController
     if current_user.is_global_admin
       if params[:role] == 'admin'
         @user.community_user.update(is_admin: !@user.is_admin)
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "admin to #{@user.is_admin}")
         render json: { status: 'success' }
         return
       end
 
       if params[:role] == 'mod-global'
         @user.update(is_global_moderator: !@user.is_global_moderator)
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "global mod to #{@user.is_global_moderator}")
         render json: { status: 'success' }
         return
       end
 
       if params[:role] == 'admin-global'
         @user.update(is_global_admin: true)
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "global admin to #{@user.is_global_admin}")
         render json: { status: 'success' }
         return
       end
@@ -202,6 +217,7 @@ class UsersController < ApplicationController
       flash[:success] = 'You are now signed in.'
       user.update(login_token: nil, login_token_expires_at: nil)
       sign_in user
+      AuditLog.user_history(event_type: 'mobile_login', related: user)
       redirect_to root_path
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \

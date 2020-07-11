@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_09_204728) do
+ActiveRecord::Schema.define(version: 2020_07_11_121645) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +42,8 @@ ActiveRecord::Schema.define(version: 2020_07_09_204728) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "community_id"
+    t.index ["community_id"], name: "index_audit_logs_on_community_id"
     t.index ["event_type"], name: "index_audit_logs_on_event_type"
     t.index ["log_type"], name: "index_audit_logs_on_log_type"
     t.index ["related_type", "related_id"], name: "index_audit_logs_on_related_type_and_related_id"
@@ -465,6 +467,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_204728) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"

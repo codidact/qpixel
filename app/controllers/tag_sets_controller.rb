@@ -23,8 +23,11 @@ class TagSetsController < ApplicationController
   end
 
   def update
+    before = @tag_set.attributes_print
     if @tag_set.update(name: params[:name])
       render json: { tag_set: @tag_set, status: 'success' }
+      AuditLog.admin_audit(event_type: 'tag_set_update', related: @tag_set, user: current_user,
+                           comment: "from <<TagSet #{before}>> to <<TagSet #{@tag_set.attributes_print}>>")
     else
       render json: { tag_set: @tag_set, status: 'failed' }, status: 500
     end

@@ -1,16 +1,14 @@
 class AuditLog < ApplicationRecord
+  include CommunityRelated
+
   belongs_to :related, polymorphic: true
   belongs_to :user
 
-  def self.admin_audit(**values)
-    create(values.merge(log_type: 'admin_audit'))
-  end
-
-  def self.moderator_audit(**values)
-    create(values.merge(log_type: 'moderator_audit'))
-  end
-
-  def self.user_annotation(**values)
-    create(values.merge(log_type: 'user_annotation'))
+  class << self
+    [:admin_audit, :moderator_audit, :action_audit, :user_annotation, :user_history].each do |log_type|
+      define_method(log_type, **values) do
+        create(values.merge(log_type: log_type.to_s, community_id: RequestContext.community_id))
+      end
+    end
   end
 end
