@@ -129,8 +129,7 @@ class UsersController < ApplicationController
       @user.community_user.update(is_moderator: !@user.is_moderator)
       AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                            comment: "moderator to #{@user.is_moderator}")
-      render json: { status: 'success' }
-      return
+      render json: { status: 'success' } && return
     end
 
     if current_user.is_global_admin
@@ -138,24 +137,21 @@ class UsersController < ApplicationController
         @user.community_user.update(is_admin: !@user.is_admin)
         AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                              comment: "admin to #{@user.is_admin}")
-        render json: { status: 'success' }
-        return
+        render json: { status: 'success' } && return
       end
 
       if params[:role] == 'mod-global'
         @user.update(is_global_moderator: !@user.is_global_moderator)
         AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                              comment: "global mod to #{@user.is_global_moderator}")
-        render json: { status: 'success' }
-        return
+        render json: { status: 'success' } && return
       end
 
       if params[:role] == 'admin-global'
         @user.update(is_global_admin: true)
         AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                              comment: "global admin to #{@user.is_global_admin}")
-        render json: { status: 'success' }
-        return
+        render json: { status: 'success' } && return
       end
     end
 
