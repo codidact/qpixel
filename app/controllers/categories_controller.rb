@@ -37,9 +37,9 @@ class CategoriesController < ApplicationController
         Category.where.not(id: @category.id).update_all(is_homepage: false)
       end
 
-      attr = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+      before = @category.attributes_print
       AuditLog.admin_audit(event_type: 'category_create', related: @category, user: current_user,
-                           comment: "<<Category #{attr}>>")
+                           comment: "<<Category #{before}>>")
       flash[:success] = 'Your category was created.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
       redirect_to category_path(@category)
@@ -52,14 +52,14 @@ class CategoriesController < ApplicationController
   def edit; end
 
   def update
-    pre = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    before = @category.attributes_print
     if @category.update category_params
       if @category.is_homepage
         Category.where.not(id: @category.id).update_all(is_homepage: false)
       end
-      after = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+      after = @category.attributes_print
       AuditLog.admin_audit(event_type: 'category_update', related: @category, user: current_user,
-                           comment: "from <<Category #{pre}>> to <<Category #{after}>>")
+                           comment: "from <<Category #{before}>> to <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
       redirect_to category_path(@category)
@@ -70,12 +70,12 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    attr = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    before = @category.attributes_print
     unless @category.destroy
       flash[:danger] = "Couldn't delete that category."
     end
     AuditLog.admin_audit(event_type: 'category_destroy', user: current_user,
-                         comment: "<<Category #{attr}>>")
+                         comment: "<<Category #{before}>>")
     redirect_back fallback_location: categories_path
   end
 
