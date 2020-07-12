@@ -17,34 +17,4 @@
   </div>
 </div>
 
-<table class="table is-full-width is-with-hover">
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Event</th>
-      <th>User</th>
-      <th>Related</th>
-      <th>Comment</th>
-      <th>Created</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @logs.each do |log| %>
-      <tr>
-        <td><%= log.log_type.humanize %></td>
-        <td><%= log.event_type.humanize %></td>
-        <td><%= log.user.present? ? link_to(log.user.username, user_path(log.user)) : '' %></td>
-        <td>
-          <% if log.related.present? %>
-            <%= log.related_type %> #<%= log.related_id %>
-            <% if log.related.respond_to? :name %>
-              (<%= log.related.name %>)
-            <% end %>
-          <% end %>
-        </td>
-        <td><%= log.comment %></td>
-        <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<%= render 'log_table' %>

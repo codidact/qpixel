@@ -3,8 +3,8 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :annotations, :annotate]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :annotations, :annotate]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -219,6 +219,23 @@ class UsersController < ApplicationController
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
       not_found
+    end
+  end
+
+  def annotations
+    @logs = AuditLog.where(log_type: 'user_annotation', related: @user).order(created_at: :desc)
+                    .paginate(page: params[:page], per_page: 20)
+    render layout: 'without_sidebar'
+  end
+
+  def annotate
+    @log = AuditLog.user_annotation(event_type: 'annotation', user: current_user, related: @user,
+                                    comment: params[:comment])
+    if !@log.errors.any?
+      redirect_to user_annotations_path(@user)
+    else
+      flash[:danger] = 'Failed to save your annotation.'
+      render :annotations
     end
   end
 
