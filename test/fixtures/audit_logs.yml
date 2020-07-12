@@ -1,17 +1,10 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  log_type: MyString
-  event_type: MyString
+admin_log:
+  community: sample
+  log_type: admin_audit
+  event_type: setting_update
+  related_type: SiteSetting
   related: one
-  related_type: Related
-  user: one
-  comment: MyText
-
-two:
-  log_type: MyString
-  event_type: MyString
-  related: two
-  related_type: Related
-  user: two
-  comment: MyText
+  user: admin
+  comment: some words

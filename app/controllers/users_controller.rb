@@ -64,16 +64,21 @@ class UsersController < ApplicationController
       return
     end
 
-    connection = ApplicationRecord.connection
-    needs_transfer = connection.tables.map { |t| [t, connection.columns(t).map(&:name)] }
-                               .to_h.select { |_, cs| cs.include?('user_id') }
-                               .map do |k, _|
-      k.singularize.classify.constantize
-                     rescue
-                       nil
-    end.compact
-    needs_transfer.each do |model|
-      model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+    relations = User.reflections
+    transfer_id = SiteSetting['SoftDeleteTransferId']
+    relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
+      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
+        @user.send(name).destroy_all
+      else
+        @user.send(name).destroy
+      end
+    end
+    relations.reject { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
+      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
+        @user.send(name)&.update_all(ref.foreign_key => transfer_id)
+      else
+        @user.send(name)&.update(ref.foreign_key => transfer_id)
+      end
     end
 
     before = @user.attributes_print
@@ -98,8 +103,8 @@ class UsersController < ApplicationController
       profile_params[:website] = 'https://' + profile_params[:website]
     end
 
-    before = @user.attributes_print
     @user = current_user
+    before = @user.attributes_print
 
     if params[:user][:avatar].present?
       if helpers.valid_image?(params[:user][:avatar])
@@ -231,7 +236,7 @@ class UsersController < ApplicationController
   def annotate
     @log = AuditLog.user_annotation(event_type: 'annotation', user: current_user, related: @user,
                                     comment: params[:comment])
-    if !@log.errors.any?
+    if @log.errors.none?
       redirect_to user_annotations_path(@user)
     else
       flash[:danger] = 'Failed to save your annotation.'

@@ -82,14 +82,9 @@ class UsersControllerTest < ActionController::TestCase
   test 'soft deleting a user should not lose content' do
     sign_in users(:admin)
     assert_nothing_raised do
-      needs_transfer = ApplicationRecord.connection.tables.map { |t| [t, ApplicationRecord.connection.columns(t).map(&:name)] }
-                                        .to_h.select { |_, cs| cs.include?('user_id') }
-                                        .map do |k, _|
-        k.singularize.classify.constantize
-                       rescue
-                         nil
-      end.compact
-      pre_counts = needs_transfer.map { |model| [model, model.count] }.to_h
+      relations = User.reflections
+      pre_counts = relations.reject { |_, ref| ref.options[:dependent] == :destroy }
+                            .map { |_, ref| [ref.klass, ref.klass.count] }.to_h
 
       id = users(:standard_user).id
       delete :soft_delete, params: { id: id, transfer: users(:editor).id }
@@ -105,7 +100,15 @@ class UsersControllerTest < ActionController::TestCase
 
       pre_counts.each do |model, count|
         # No content should have been lost to deleting the user, just re-assigned.
-        assert_equal count, model.count
+        # There should be one more AuditLog than before the operation, because deleting the user
+        # should create one.
+        if model.name == 'AuditLog'
+          assert_equal count + 1, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
+                                               "got #{model.count}"
+        else
+          assert_equal count, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
+                                           "got #{model.count}"
+        end
       end
     end
   end
@@ -214,6 +217,33 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal true, flash[:danger].start_with?("That login link isn't valid.")
     assert_nil @controller.current_user&.id
   end
+
+  test 'should deny anonymous users access to annotations' do
+    get :annotations, params: { id: users(:standard_user).id }
+    assert_response 404
+  end
+
+  test 'should deny non-mods access to annotations' do
+    sign_in users(:standard_user)
+    get :annotations, params: { id: users(:standard_user).id }
+    assert_response 404
+  end
+
+  test 'should get annotations' do
+    sign_in users(:admin)
+    get :annotations, params: { id: users(:standard_user).id }
+    assert_response 200
+    assert_not_nil assigns(:logs)
+  end
+
+  test 'should annotate user' do
+    sign_in users(:admin)
+    post :annotate, params: { id: users(:standard_user).id, comment: 'some words' }
+    assert_response 302
+    assert_redirected_to user_annotations_path(users(:standard_user))
+  end
+
+  private
 
   def create_other_user
     other_community = Community.create(host: 'other.qpixel.com', name: 'Other')

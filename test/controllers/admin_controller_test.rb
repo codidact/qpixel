@@ -3,7 +3,7 @@ require 'test_helper'
 class AdminControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges].freeze
+  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log].freeze
 
   test 'should get index' do
     sign_in users(:admin)
@@ -61,7 +61,7 @@ class AdminControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should grant global admims access to non admin community' do
+  test 'should grant global admins access to non admin community' do
     RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
     request.env['HTTP_HOST'] = 'other.qpixel.com'
     sign_in users(:global_admin)
@@ -105,5 +105,12 @@ class AdminControllerTest < ActionController::TestCase
     get :error_reports, params: { uuid: error_logs(:without_context).uuid }
     assert_response 200
     assert_not_nil assigns(:reports)
+  end
+
+  test 'should get audit log' do
+    sign_in users(:admin)
+    get :audit_log
+    assert_response 200
+    assert_not_nil assigns(:logs)
   end
 end

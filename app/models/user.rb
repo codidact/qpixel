@@ -6,19 +6,20 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :posts, dependent: :destroy
-  has_many :votes, dependent: :destroy
+  has_many :posts, dependent: :nullify
+  has_many :votes, dependent: :nullify
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
   has_many :flags, dependent: :nullify
   has_many :error_logs, dependent: :nullify
-  has_one :community_user, -> { for_context }, autosave: true
+  has_one :community_user, -> { for_context }, autosave: true, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
-  has_many :suggested_edits, dependent: :destroy
+  has_many :suggested_edits, dependent: :nullify
   has_many :suggested_edits_decided, class_name: 'SuggestedEdit', foreign_key: 'decided_by_id', dependent: :nullify
-
+  has_many :audit_logs, dependent: :nullify
+  has_many :audit_logs_related, class_name: 'AuditLog', foreign_key: 'related_id', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }

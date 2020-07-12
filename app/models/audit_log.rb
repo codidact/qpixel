@@ -1,8 +1,8 @@
 class AuditLog < ApplicationRecord
   include CommunityRelated
 
-  belongs_to :related, polymorphic: true
-  belongs_to :user
+  belongs_to :related, polymorphic: true, required: false
+  belongs_to :user, required: false
 
   class << self
     [:admin_audit, :moderator_audit, :action_audit, :user_annotation, :user_history].each do |log_type|
