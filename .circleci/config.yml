@@ -35,11 +35,12 @@ jobs:
           paths:
             - ~/gems
       - run:
-          name: Prepare database
+          name: Prepare config & database
           environment:
             RAILS_ENV: test
           command: |
             cp config/database.sample.yml config/database.yml
+            cp config/storage.sample.yml config/storage.yml
             bundle exec rails db:create
             bundle exec rails db:schema:load
             bundle exec rails db:migrate
