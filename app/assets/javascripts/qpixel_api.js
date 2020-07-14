@@ -123,5 +123,18 @@ window.QPixel = {
   replaceSelection: ($field, text) => {
     const prev = $field.val();
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
+  },
+
+  _user: null,
+  user: async () => {
+    if (QPixel._user) return QPixel._user;
+    const resp = await fetch('/users/me', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    QPixel._user = await resp.json();
+    return QPixel._user;
   }
 };
