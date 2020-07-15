@@ -41,11 +41,11 @@ class ModWarningController < ApplicationController
     suspension_end = DateTime.now + suspension_duration.days
 
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
-                              body: params[:mod_warning][:body], is_suspension: params[:mod_warning][:is_suspension],
+                              body: params[:mod_warning][:body], is_suspension: !!params[:mod_warning][:is_suspension],
                               suspension_end: suspension_end, active: true)
     if @warning.save
       if !!params[:mod_warning][:is_suspension]
-        @user.community_user.update(is_suspended: params[:mod_warning][:is_suspension], suspension_end: suspension_end,
+        @user.community_user.update(is_suspended: !!params[:mod_warning][:is_suspension], suspension_end: suspension_end,
                      suspension_public_comment: params[:mod_warning][:suspension_public_notice])
       end
 
