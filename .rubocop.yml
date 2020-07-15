@@ -47,6 +47,8 @@ Style/ClassVars:
   Enabled: false
 Style/Documentation:
   Enabled: false  # No need for specific documentation comments, but please add inline comments where necessary.
+Style/DoubleNegation:
+  Enabled: false
 Style/ExponentialNotation:
   Enabled: true
   EnforcedStyle: scientific
