@@ -136,6 +136,13 @@
   description: >
     How much reputation new users initially start with.
 
+- name: FreeVotes
+  value: 5
+  value_type: integer
+  category: ReputationAndVoting
+  description: >
+    How many votes new user accounts have (actual vote count increased by reputation).
+
 - name: SEApiClientId
   value: ""
   value_type: string
