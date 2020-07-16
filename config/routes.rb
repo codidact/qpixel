@@ -93,6 +93,8 @@ Rails.application.routes.draw do
   patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
+  post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+  
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
   post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
