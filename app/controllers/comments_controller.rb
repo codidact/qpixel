@@ -5,6 +5,11 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
 
   def create
+    @post = Post.find(params[:comment][:post_id])
+    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: 403
+      return
+    end
     @comment = Comment.new comment_params.merge(user: current_user)
     if @comment.save
       unless @comment.post.user == current_user

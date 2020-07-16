@@ -319,8 +319,13 @@
             <% end %>
             <% if user_signed_in? %>
               <% if post.deleted %>
-                <span class="has-color-tertiary-500">Comments disabled on deleted posts</span>
+                <p class="has-color-tertiary-500">Comments disabled on deleted posts</p>
+              <% elsif post.comments_disabled && !moderator? && !admin? %>
+                <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post.</p>
               <% else %>
+                <% if post.comments_disabled %>
+                  <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
+                <% end %>
                 <a href="#" class="js-add-comment">Add a comment</a>
   
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
