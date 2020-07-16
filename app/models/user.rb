@@ -132,7 +132,7 @@ class User < ApplicationRecord
   def extract_ip_from(request)
     # Customize this to your environment: if you're not behind a reverse proxy like Cloudflare, you probably
     # don't need this (or you can change it to another header if that's what your reverse proxy uses).
-    request.headers['X-Forwarded-For']
+    request.headers['CF-Connecting-IP']
   end
 
   # rubocop:enable Naming/PredicateName
