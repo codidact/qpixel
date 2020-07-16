@@ -120,18 +120,18 @@ class User < ApplicationRecord
 
   def email_domain_not_blocklisted
     return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
-    
+
     blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
     email_domain = email.split('@')[-1]
     if blocklist.any? { |x| email_domain == x }
       errors.add(:base, ['The inverted database guide has found an insurmountable problem. Please poke it with a ' \
-			 'paperclip before anyone finds out.',
-			 'The modular cable meter has found a problem. You need to kick your IT technician in the ' \
-			 'shins immediately.',
-			 'The integral output port has found a problem. Please take it back to the shop and take ' \
-                         'the rest of the day off.',
-			 'The integral expansion converter has encountered a terminal error. You must take legal ' \
-                         'advice urgently.'].sample)
+       'paperclip before anyone finds out.',
+                         'The modular cable meter has found a problem. You need to kick your IT technician in the ' \
+                         'shins immediately.',
+                         'The integral output port has found a problem. Please take it back to the shop and take ' \
+                                           'the rest of the day off.',
+                         'The integral expansion converter has encountered a terminal error. You must take legal ' \
+                                           'advice urgently.'].sample)
     end
   end
 
