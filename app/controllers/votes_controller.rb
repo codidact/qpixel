@@ -10,7 +10,7 @@ class VotesController < ApplicationController
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
     end
 
-    recent_votes = Vote.where(created_at: 24.hours.ago..Time.now).count
+    recent_votes = Vote.where(created_at: 24.hours.ago..Time.now).where(user: current_user).count
     max_votes_per_day = SiteSetting['FreeVotes'] + (@current_user.reputation - SiteSetting['NewUserInitialRep'])
 
     if recent_votes >= max_votes_per_day
