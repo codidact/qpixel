@@ -79,9 +79,20 @@
       <% end %>
       <% if current_user&.is_moderator %>
         <div>
-          <%= link_to mod_user_path(@user), class: "button is-danger is-outlined is-small" do %>
-            <i class="fas fa-shield-alt"></i> Moderator Tools
-          <% end %>
+          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
+
+          <div class="droppanel" id="mod-tools-drop">
+            <div class="droppanel--header">quick actions</div>
+            <div class="droppanel--menu">
+              <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
+              <a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a>
+              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a>
+              <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
+            </div>
+            <div class="h-m-t-6">
+              <a href="<%= mod_user_path(@user) %>" class="button is-filled">Show all tools</a>
+            </div>
+          </div>
         </div>
       <% end %>
       <% if current_user&.id == @user.id %>
