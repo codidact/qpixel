@@ -125,4 +125,19 @@ module ApplicationHelper
     end
     splat.map { |s| s.join(' ') }
   end
+
+  def deleted_item?(item)
+    return case item.class.to_s
+    when 'Post'
+      item.deleted
+    when 'Comment'
+      item.deleted
+    when 'PostHistory'
+      puts item.inspect
+      puts "*****************************************"
+      false
+    else
+      false
+    end 
+  end
 end

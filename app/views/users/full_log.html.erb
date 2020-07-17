@@ -1,0 +1,141 @@
+<% content_for :title, "Moderator Tools: #{@user.username}" %>
+
+<h1>Full activity log for <%= link_to @user.username, user_path(@user) %></h1>
+
+<p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to them.</p>
+
+<% if params[:filter] == 'interesting' %>
+    <p>You are looking at <em>negative</em> interactions the user had with this site. These are not neccessarily bad, just actions, where you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
+<% end %>
+
+<div class="button-list is-gutterless h-m-v-4">
+    <a class="button is-muted is-outlined" href="?">
+        Show all events
+    </a>
+    <% if @interesting.count > 0 %>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'interesting' ? 'is-active' : '' %>" href="?filter=interesting">
+        Negative
+        <span class="badge is-status"><%= @interesting.count %></span>
+    </a>
+    <% end %>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts">
+        Posts
+        <% if @posts.count > 0 %><span class="badge is-status"><%= @posts.count %></span><% end %>
+    </a>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments">
+        Comments
+        <% if @comments.count > 0 %><span class="badge is-status"><%= @comments.count %></span><% end %>
+    </a>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags">
+        Flags
+        <% if @flags.count > 0 %><span class="badge is-status"><%= @flags.count %></span><% end %>
+    </a>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits">
+        Edits
+        <% if @all_edits.count > 0 %><span class="badge is-status"><%= @all_edits.count %></span><% end %>
+    </a>
+    <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings">
+        Warnings
+        <% if @mod_warnings_received.count > 0 %><span class="badge is-status"><%= @mod_warnings_received.count %></span><% end %>
+    </a>
+</div>
+
+<table class="table is-with-hover is-full-width">
+    <tr>
+        <th>Type</th>
+        <th>On...</th>
+        <th>Excerpt</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+    <% @items.each do |i| %>
+        <tr class="<%= deleted_item?(i) ? 'deleted-content' : '' %>">
+            <% if i.class == Post %>
+                <td>
+                    <span class="h-fw-bold">
+                        <%= (i.question? ? "Question" : (i.article? ? "Article" : "Answer")) %>
+                    </span>
+                </td>
+                <td>&mdash;</td>
+                <td class="h-fs-caption">
+                    <% if !i.answer? %>
+                    <strong><%= i.title %></strong><br>
+                    <% else %>
+                    <strong>A: <%= i.parent.title %></strong><br>
+                    <% end %>
+                    <%= i.body_plain[0..300] + ((i.body_plain.length > 300) ? "..." : "") %><br>
+                    <%= link_to '(more)', generic_share_link(i)%>
+                </td>
+                <td>&mdash;</td>
+            <% elsif i.class == Comment %>
+                <td>
+                    Comment
+                </td>
+                <td>
+                    <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                </td>
+                <td class="h-fs-caption">
+                    <%= i.content[0..300] + ((i.content.length > 300) ? "..." : "") %><br>
+                    <%= link_to '(more)', generic_share_link(i.post) + "#comment-" + i.id.to_s %>
+                </td>
+                <td>&mdash;</td>
+            <% elsif i.class == PostHistory %>
+                <td>
+                    Edit
+                </td>
+                <td>
+                    <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                </td>
+                <td class="h-fs-caption">
+                    <em><%= i.post_history_type.name %></em>:<br><%= i.comment || raw("&mdash;") %>
+                </td>
+                <td>&mdash;</td>
+            <% elsif i.class == SuggestedEdit %>
+                <td>
+                    Suggested Edit
+                </td>
+                <td>
+                    <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                </td>
+                <td class="h-fs-caption">
+                    <em>suggested_edit</em>:<br><%= i.comment %><br><%= link_to '(more)', suggested_edit_url(i.id) %>
+                </td>
+                <td>
+                    <%= (i.pending? ? "pending" : (i.approved? ? "helpful" : "declined")) %>
+                </td>
+            <% elsif i.class == ModWarning %>
+                <td>
+                    <span class="h-fw-bold h-c-red-700">Warning</span>
+                </td>
+                <td>&mdash;</td>
+                <td class="h-fs-caption">
+                    <%= i.body[0..300] + ((i.body.length > 300) ? "..." : "") %>
+                </td>
+                <td>&mdash;</td>
+            <% elsif i.class == Flag %>
+                <td>
+                    Flag
+                </td>
+                <td>
+                    <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                </td>
+                <td class="h-fs-caption">
+                    <%= i.reason[0..300] + ((i.reason.length > 300) ? "..." : "") %><br>
+                </td>
+                <td>
+                    <%= i.status || "pending" %>
+                </td>
+            <% else %>
+                <td>
+                    <span class="badge is-tag is-muted">Unknown</span>
+                </td>
+                <td>&mdash;</td>
+                <td><%= i.class %></td>
+                <td>&mdash;</td>
+            <% end %>
+            <td>
+                <span title="<%= i.created_at.iso8601 %>"><%= time_ago_in_words(i.created_at) %> ago</span>
+            </td>
+        </tr>
+    <% end %>
+</table>

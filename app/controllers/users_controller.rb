@@ -3,8 +3,8 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -49,6 +49,44 @@ class UsersController < ApplicationController
   end
 
   def mod; end
+
+  def full_log
+    @posts = Post.where(user: @user).all
+    @comments = Comment.where(user: @user)
+    @flags = Flag.where(user: @user).all
+    @suggested_edits = SuggestedEdit.where(user: @user).all
+    @edits = PostHistory.where(user: @user).all
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).all
+
+    @all_edits = @suggested_edits + @edits
+
+    @interesting_comments = Comment.where(user: @user, deleted: true).all
+    @interesting_flags = Flag.where(user: @user, status: 'declined').all
+    @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).all
+    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + @interesting_edits + @interesting_posts
+
+    items = case params[:filter]
+    when "posts"
+      @posts
+    when "comments"
+      @comments
+    when "flags"
+      @flags
+    when "edits"
+      @all_edits
+    when "warnings"
+      @mod_warnings_received
+    when "interesting"
+      @interesting
+    else
+      @posts + @comments + @flags + @suggested_edits + @edits + @mod_warnings_received
+    end
+
+    @items = items.sort_by(&:created_at).reverse
+    render layout: 'without_sidebar'
+  end
 
   def destroy
     if @user.votes.count > 100
