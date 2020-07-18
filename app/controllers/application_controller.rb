@@ -70,6 +70,18 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def stop_the_awful_troll
+    puts "******************************************"
+    puts request.inspect
+    puts "******************************************"
+    email_domain = current_user.email.split('@')[-1]
+    is_mail_blocked = BlockedItem.emails.where(value: current_user.email).any?
+    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
+    if is_mail_blocked || is_mail_host_blocked
+      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+    end
+  end
+
   private
 
   def set_globals

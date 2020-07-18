@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
+  before_action :stop_the_awful_troll, except: [:document, :share_q, :share_a, :help_center]
   before_action :set_post, only: [:edit_help, :update_help, :toggle_comments]
   before_action :set_scoped_post, only: [:change_category]
   before_action :check_permissions, only: [:edit_help, :update_help]
