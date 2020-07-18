@@ -87,7 +87,11 @@
                     <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                 </td>
                 <td class="h-fs-caption">
-                    <em><%= i.post_history_type.name %></em>:<br><%= i.comment || raw("&mdash;") %>
+                    <% if i.comment %>
+                    <em><%= i.post_history_type.name %></em>:<br><%= i.comment %>
+                    <% else %>
+                    <em><%= i.post_history_type.name %></em>
+                    <% end %>
                 </td>
                 <td>&mdash;</td>
             <% elsif i.class == SuggestedEdit %>
