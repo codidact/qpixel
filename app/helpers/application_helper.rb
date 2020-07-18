@@ -133,8 +133,6 @@ module ApplicationHelper
     when 'Comment'
       item.deleted
     when 'PostHistory'
-      puts item.inspect
-      puts "*****************************************"
       false
     else
       false

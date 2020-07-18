@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -46,6 +46,29 @@ class UsersController < ApplicationController
         render json: @posts
       end
     end
+  end
+
+  def activity
+    @posts = Post.undeleted.where(user: @user).all
+    @comments = Comment.undeleted.where(user: @user)
+    @suggested_edits = SuggestedEdit.where(user: @user).all
+    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).all
+
+    @all_edits = @suggested_edits + @edits
+
+    items = case params[:filter]
+    when "posts"
+      @posts
+    when "comments"
+      @comments
+    when "edits"
+      @all_edits
+    else
+      @posts + @comments + @all_edits
+    end
+
+    @items = items.sort_by(&:created_at).reverse
+    render layout: 'without_sidebar'
   end
 
   def mod; end
