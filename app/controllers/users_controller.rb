@@ -57,15 +57,15 @@ class UsersController < ApplicationController
     @all_edits = @suggested_edits + @edits
 
     items = case params[:filter]
-    when "posts"
-      @posts
-    when "comments"
-      @comments
-    when "edits"
-      @all_edits
-    else
-      @posts + @comments + @all_edits
-    end
+            when 'posts'
+              @posts
+            when 'comments'
+              @comments
+            when 'edits'
+              @all_edits
+            else
+              @posts + @comments + @all_edits
+            end
 
     @items = items.sort_by(&:created_at).reverse
     render layout: 'without_sidebar'
@@ -88,26 +88,26 @@ class UsersController < ApplicationController
     @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).all
     @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').all
 
-    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + @interesting_edits + @interesting_posts
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+                   @interesting_edits + @interesting_posts
 
-    items = case params[:filter]
-    when "posts"
-      @posts
-    when "comments"
-      @comments
-    when "flags"
-      @flags
-    when "edits"
-      @all_edits
-    when "warnings"
-      @mod_warnings_received
-    when "interesting"
-      @interesting
-    else
-      @posts + @comments + @flags + @suggested_edits + @edits + @mod_warnings_received
-    end
+    @items = (case params[:filter]
+              when 'posts'
+                @posts
+              when 'comments'
+                @comments
+              when 'flags'
+                @flags
+              when 'edits'
+                @all_edits
+              when 'warnings'
+                @mod_warnings_received
+              when 'interesting'
+                @interesting
+              else
+                @posts + @comments + @flags + @suggested_edits + @edits + @mod_warnings_received
+              end).sort_by(&:created_at).reverse
 
-    @items = items.sort_by(&:created_at).reverse
     render layout: 'without_sidebar'
   end
 

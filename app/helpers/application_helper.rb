@@ -127,7 +127,7 @@ module ApplicationHelper
   end
 
   def deleted_item?(item)
-    return case item.class.to_s
+    case item.class.to_s
     when 'Post'
       item.deleted
     when 'Comment'
@@ -136,6 +136,6 @@ module ApplicationHelper
       false
     else
       false
-    end 
+    end
   end
 end
