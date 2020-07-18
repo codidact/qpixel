@@ -26,6 +26,7 @@ class User < ApplicationRecord
   validate :no_links_in_username
   validate :username_not_fake_admin
   validate :email_domain_not_blocklisted
+  validate :email_not_bad_pattern
 
   delegate :reputation, :reputation=, to: :community_user
 
@@ -132,6 +133,15 @@ class User < ApplicationRecord
                                            'the rest of the day off.',
                          'The integral expansion converter has encountered a terminal error. You must take legal ' \
                                            'advice urgently.'].sample)
+    end
+  end
+
+  def email_not_bad_pattern
+    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
+
+    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
+    if patterns.any? { |p| email.match? Regexp.new(p) }
+      errors.add(:base, 'Operations are on pause while we attempt to recapture the codidactyl. Please hold.')
     end
   end
 
