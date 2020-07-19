@@ -65,7 +65,7 @@ class UsersController < ApplicationController
 
     user_email = @user.email
     user_ip = [@user.last_sign_in_ip]
-    
+
     if @user.current_sign_in_ip
       user_ip << @user.current_sign_in_ip
     end

@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
                                             :close, :reopen]
   before_action :stop_the_awful_troll, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
-                                            :close, :reopen]
+                                              :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
 
   def index

@@ -1,6 +1,6 @@
 class SearchController < ApplicationController
   before_action :stop_the_awful_troll
-  
+
   def search
     @posts = if params[:search].present?
                search_data = helpers.parse_search(params[:search])

@@ -51,7 +51,7 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  def self.useful_err_msg 
+  def self.useful_err_msg
     [
       'The inverted database guide has found an insurmountable problem. Please poke it with a ' \
         'paperclip before anyone finds out.',
@@ -67,7 +67,7 @@ class ApplicationRecord < ActiveRecord::Base
       'A five-level precedence operation shifted too long and cannot be recovered without data loss. ' \
         'Please re-enable the encryption protocol.',
       'The server\'s headache has not improved in the last 24 hours. It needs to be rebooted.',
-      'The primary LIFO data recipient is currently on a holiday and will not be back before Thursday.',
+      'The primary LIFO data recipient is currently on a holiday and will not be back before next Thursday.',
       'The operator is currently trying to solve their Rubics cube. We will come back to you, when the ' \
         'second layer is completed.',
       'The encryption protocol offered by the client predates the invention of irregular logarithmic ' \

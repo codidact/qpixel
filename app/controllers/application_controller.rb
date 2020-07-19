@@ -75,10 +75,6 @@ class ApplicationController < ActionController::Base
     email_domain = current_user.email.split('@')[-1]
 
     is_ip_blocked = BlockedItem.ips.where(value: ip).any?
-    puts("#################################")
-    puts is_ip_blocked
-    puts ip
-    puts("#################################")
     is_mail_blocked = BlockedItem.emails.where(value: current_user.email).any?
     is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
 
