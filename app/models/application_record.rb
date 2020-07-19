@@ -70,7 +70,12 @@ class ApplicationRecord < ActiveRecord::Base
       'The primary LIFO data recipient is currently on a holiday and will not be back before Thursday.',
       'The operator is currently trying to solve their Rubics cube. We will come back to you, when the ' \
         'second layer is completed.',
-      'The encryption protocol offered by the client predates the invention of logarithmic functions.'
+      'The encryption protocol offered by the client predates the invention of irregular logarithmic ' \
+        'functions.',
+      'The data in the secondary (backup) user registry is corrupted and needs to be re-filled with ' \
+        'random data again.',
+      'This community has reached a critical mass and collapsed into a black hole. Currently trying to ' \
+        'recover using Hawking radiation.'
     ]
   end
 end
