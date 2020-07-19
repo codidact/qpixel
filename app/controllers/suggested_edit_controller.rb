@@ -1,5 +1,6 @@
 class SuggestedEditController < ApplicationController
   before_action :set_suggested_edit, only: [:show, :approve, :reject]
+  before_action :stop_the_awful_troll, except: [:show]
 
   def show
     render layout: 'without_sidebar'

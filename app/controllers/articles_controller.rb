@@ -1,6 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :set_article
   before_action :check_article
+  before_action :stop_the_awful_troll, only: [:edit, :update, :destroy, :undelete]
 
   def show
     if @article.deleted?

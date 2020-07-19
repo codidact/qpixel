@@ -1,6 +1,7 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
+  before_action :stop_the_awful_troll
   before_action :verify_moderator, only: [:resolve, :queue]
 
   def new

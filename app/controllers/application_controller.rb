@@ -71,15 +71,21 @@ class ApplicationController < ActionController::Base
   end
 
   def stop_the_awful_troll
-    puts "******************************************"
-    puts request.inspect
-    puts "******************************************"
+    ip = current_user.extract_ip_from(request)
     email_domain = current_user.email.split('@')[-1]
+
+    is_ip_blocked = BlockedItem.ips.where(value: ip).any?
     is_mail_blocked = BlockedItem.emails.where(value: current_user.email).any?
     is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
-    if is_mail_blocked || is_mail_host_blocked
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+
+    if is_mail_blocked || is_ip_blocked || is_mail_host_blocked
+      respond_to do |format|
+        format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
+        format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
+      end
+      return false
     end
+    true
   end
 
   private
