@@ -1,6 +1,6 @@
 class BlockedItem < ApplicationRecord
 
-  scope :active, -> { where("expires IS NULL OR expires < NOW()") }
+  scope :active, -> { where("expires IS NULL OR expires > NOW()") }
 
   # Allow for easy checking of type
   ['ip', 'email', 'email_host'].each do |bt|
