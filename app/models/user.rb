@@ -130,6 +130,8 @@ class User < ApplicationRecord
   end
 
   def is_not_blocklisted
+    return unless saved_changes.includes? 'email'
+
     email_domain = email.split('@')[-1]
     is_mail_blocked = BlockedItem.emails.where(value: email).any?
     is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
