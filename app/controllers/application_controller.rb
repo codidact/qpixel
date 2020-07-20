@@ -89,9 +89,10 @@ class ApplicationController < ActionController::Base
     ip = current_user.extract_ip_from(request)
     email_domain = current_user.email.split('@')[-1]
 
-    is_ip_blocked = BlockedItem.ips.where(value: ip).any?
-    is_mail_blocked = BlockedItem.emails.where(value: current_user.email).any?
-    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
+    ip_block = BlockedItem.active.where(item_type: 'ip', value: ip)
+    mail_block = BlockedItem.active.where(item_type: 'email', value: current_user.email)
+    mail_host_block = BlockedItem.active.where(item_type: 'email_host', value: email_domain)
+    is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
     if is_mail_blocked || is_ip_blocked || is_mail_host_blocked
       respond_to do |format|
