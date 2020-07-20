@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
     mail_host_block = BlockedItem.active.where(item_type: 'email_host', value: email_domain)
     is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
-    if is_mail_blocked || is_ip_blocked || is_mail_host_blocked
+    if is_blocked
       respond_to do |format|
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
         format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
