@@ -132,6 +132,20 @@ class UsersController < ApplicationController
       return
     end
 
+    user_email = @user.email
+    user_ip = [@user.last_sign_in_ip]
+
+    if @user.current_sign_in_ip
+      user_ip << @user.current_sign_in_ip
+    end
+
+    BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+                    automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
+    user_ip.map do |ip|
+      BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
+                      automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
+    end
+
     if @user.destroy!
       render json: { status: 'success' }
     else

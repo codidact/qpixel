@@ -1,5 +1,6 @@
 class SubscriptionsController < ApplicationController
   before_action :authenticate_user!
+  before_action :stop_the_awful_troll
   helper_method :phrase_for
 
   def new
