@@ -3,8 +3,8 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -48,7 +48,78 @@ class UsersController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def activity
+    @posts = Post.undeleted.where(user: @user).count
+    @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
+    @suggested_edits = SuggestedEdit.where(user: @user).count
+    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).count
+
+    @all_edits = @suggested_edits + @edits
+
+    items = case params[:filter]
+            when 'posts'
+              Post.undeleted.where(user: @user).all
+            when 'comments'
+              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all
+            when 'edits'
+              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+            else
+              Post.undeleted.where(user: @user).all + \
+              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all + \
+              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+            end
+
+    @items = items.sort_by(&:created_at).reverse
+    render layout: 'without_sidebar'
+  end
+
   def mod; end
+
+  def full_log
+    @posts = Post.where(user: @user).count
+    @comments = Comment.where(user: @user).count
+    @flags = Flag.where(user: @user).count
+    @suggested_edits = SuggestedEdit.where(user: @user).count
+    @edits = PostHistory.where(user: @user).count
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).count
+
+    @all_edits = @suggested_edits + @edits
+
+    @interesting_comments = Comment.where(user: @user, deleted: true).count
+    @interesting_flags = Flag.where(user: @user, status: 'declined').count
+    @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).count
+    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
+
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+                   @interesting_edits + @interesting_posts
+
+    @items = (case params[:filter]
+              when 'posts'
+                Post.where(user: @user).all
+              when 'comments'
+                Comment.where(user: @user).all
+              when 'flags'
+                Flag.where(user: @user).all
+              when 'edits'
+                SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all
+              when 'warnings'
+                ModWarning.where(community_user: @user.community_user).all
+              when 'interesting'
+                Comment.where(user: @user, deleted: true).all + Flag.where(user: @user, status: 'declined').all + \
+                  SuggestedEdit.where(user: @user, active: false, accepted: false).all + \
+                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+              else
+                Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
+                  SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
+                  ModWarning.where(community_user: @user.community_user).all
+              end).sort_by(&:created_at).reverse
+
+    render layout: 'without_sidebar'
+  end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def destroy
     if @user.votes.count > 100
