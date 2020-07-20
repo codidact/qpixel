@@ -2,7 +2,6 @@
 # questions that have a few more actions.
 class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :convert_to_comment]
-  before_action :stop_the_awful_troll, only: [:new, :create, :edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :verify_moderator, only: [:convert_to_comment]
 

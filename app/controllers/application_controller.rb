@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :check_if_warning_or_suspension_pending
+  before_action :stop_the_awful_troll
 
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
@@ -69,8 +70,22 @@ class ApplicationController < ActionController::Base
     end
     true
   end
+  
+  private
 
   def stop_the_awful_troll
+    # There shouldn't be any trolls in
+    # the test environment... :D
+    return true if Rails.env.test?
+
+    # Only stop trolls doing things, not looking
+    # at them.
+    return true if request.method.downcase == 'GET'
+
+    # Trolls can't be awful without user accounts.
+    # System is already checking for auth cases.
+    return true if current_user.nil?
+
     ip = current_user.extract_ip_from(request)
     email_domain = current_user.email.split('@')[-1]
 
@@ -87,8 +102,6 @@ class ApplicationController < ActionController::Base
     end
     true
   end
-
-  private
 
   def set_globals
     setup_request_context || return

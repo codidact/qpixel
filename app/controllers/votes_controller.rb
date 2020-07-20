@@ -2,7 +2,6 @@
 # standard resource set.
 class VotesController < ApplicationController
   before_action :auth_for_voting
-  before_action :stop_the_awful_troll
 
   def create
     post = Post.find(params[:post_id])

@@ -3,8 +3,6 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
-  before_action :stop_the_awful_troll, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                              :qr_login_code, :me]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
 
