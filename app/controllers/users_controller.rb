@@ -3,8 +3,10 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
+                                          :annotate, :annotations]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+                                  :annotate, :annotations]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
