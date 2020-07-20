@@ -75,7 +75,8 @@ class ApplicationRecord < ActiveRecord::Base
       'The data in the secondary (backup) user registry is corrupted and needs to be re-filled with ' \
         'random data again.',
       'This community has reached a critical mass and collapsed into a black hole. Currently trying to ' \
-        'recover using Hawking radiation.'
+        'recover using Hawking radiation.',
+      'Operations are on pause while we attempt to recapture the codidactyl. Please hold.'
     ]
   end
 end
