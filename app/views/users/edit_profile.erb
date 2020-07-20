@@ -1,15 +1,20 @@
 <div class="tabs">
   <%= link_to user_path(current_user), class: "tabs--item" do %>
-    <i class="fas fa-user"></i> Profile
+      <i class="fas fa-user"></i> Profile
+    <% end %>
+  <%= link_to user_activity_path(current_user), class: "tabs--item" do %>
+    Activity
   <% end %>
-  <%= link_to edit_user_registration_path, class: "tabs--item" do %>
-    Account
-  <% end %>
-  <%= link_to edit_user_profile_path, class: "tabs--item is-active" do %>
-    Edit
-  <% end %>
-  <%= link_to subscriptions_path, class: "tabs--item" do %>
-    Subscriptions
+  <% if @user == current_user %>
+    <%= link_to edit_user_registration_path, class: "tabs--item" do %>
+      Account
+    <% end %>
+    <%= link_to edit_user_profile_path, class: "tabs--item is-active" do %>
+      Edit
+    <% end %>
+    <%= link_to subscriptions_path, class: "tabs--item" do %>
+      Subscriptions
+    <% end %>
   <% end %>
 </div>
 
