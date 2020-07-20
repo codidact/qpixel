@@ -128,9 +128,11 @@ Rails.application.routes.draw do
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
   get    'users/:id',                      to: 'users#show', as: :user
   get    'users/:id/flags',                to: 'flags#history', as: :flag_history
+  get    'users/:id/activity',             to: 'users#activity', as: :user_activity
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
+  get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
