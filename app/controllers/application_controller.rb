@@ -74,16 +74,13 @@ class ApplicationController < ActionController::Base
   private
 
   def stop_the_awful_troll
-    # There shouldn't be any trolls in
-    # the test environment... :D
+    # There shouldn't be any trolls in the test environment... :D
     return true if Rails.env.test?
 
-    # Only stop trolls doing things, not looking
-    # at them.
+    # Only stop trolls doing things, not looking at them.
     return true if request.method.upcase == 'GET'
 
-    # Trolls can't be awful without user accounts.
-    # System is already checking for auth cases.
+    # Trolls can't be awful without user accounts. User model is already checking for creation cases.
     return true if current_user.nil?
 
     ip = current_user.extract_ip_from(request)
@@ -95,6 +92,9 @@ class ApplicationController < ActionController::Base
     is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
     if is_blocked.any?
+      AuditLog.block_log(event_type: 'write_request_blocked', related: is_blocked.first,
+                         comment: "ip: #{ip}\nemail: #{current_user.email}\ndomain: #{email_domain}")
+
       respond_to do |format|
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
         format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
