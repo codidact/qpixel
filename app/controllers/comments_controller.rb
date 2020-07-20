@@ -30,7 +30,12 @@ class CommentsController < ApplicationController
   end
 
   def update
+    before = @comment.content
     if @comment.update comment_params
+      unless current_user.id == @comment.user_id
+        AuditLog.moderator_audit(event_type: 'comment_update', related: @comment, user: current_user,
+                                 comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
+      end
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
@@ -41,6 +46,10 @@ class CommentsController < ApplicationController
 
   def destroy
     if @comment.update(deleted: true)
+      unless current_user.id == @comment.user_id
+        AuditLog.moderator_audit(event_type: 'comment_delete', related: @comment, user: current_user,
+                                 comment: "content <<#{@comment.content}>>")
+      end
       render json: { status: 'success' }
     else
       render json: { status: 'failed' }, status: 500
@@ -49,6 +58,10 @@ class CommentsController < ApplicationController
 
   def undelete
     if @comment.update(deleted: false)
+      unless current_user.id == @comment.user_id
+        AuditLog.moderator_audit(event_type: 'comment_undelete', related: @comment, user: current_user,
+                                 comment: "content <<#{@comment.content}>>")
+      end
       render json: { status: 'success' }
     else
       render json: { status: 'failed' }, status: 500

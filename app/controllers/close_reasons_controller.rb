@@ -26,7 +26,11 @@ class CloseReasonsController < ApplicationController
       return
     end
 
+    before = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     @close_reason.update close_reason_params
+    after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    AuditLog.moderator_audit(event_type: 'close_reason_update', related: @close_reason, user: current_user,
+                             comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
 
     if @close_reason.community.nil?
       redirect_to close_reasons_path(global: 1)
@@ -56,6 +60,9 @@ class CloseReasonsController < ApplicationController
                                     active: params[:close_reason][:active],
                                     community: params[:global] == '1' ? nil : @community)
     if @close_reason.save
+      attr = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+      AuditLog.moderator_audit(event_type: 'close_reason_create', related: @close_reason, user: current_user,
+                               comment: "<<CloseReason #{attr}>>")
       if @close_reason.community.nil?
         redirect_to close_reasons_path(global: 1)
       else

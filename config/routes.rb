@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
   get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
   post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
+  get    'admin/audits',                   to: 'admin#audit_log', as: :audit_log
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason
@@ -132,6 +133,8 @@ Rails.application.routes.draw do
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
+  get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
+  post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
   get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications

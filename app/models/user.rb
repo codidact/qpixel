@@ -6,19 +6,20 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :posts, dependent: :destroy
-  has_many :votes, dependent: :destroy
+  has_many :posts, dependent: :nullify
+  has_many :votes, dependent: :nullify
   has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
   has_many :flags, dependent: :nullify
   has_many :error_logs, dependent: :nullify
-  has_one :community_user, -> { for_context }, autosave: true
+  has_one :community_user, -> { for_context }, autosave: true, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
-  has_many :suggested_edits, dependent: :destroy
+  has_many :suggested_edits, dependent: :nullify
   has_many :suggested_edits_decided, class_name: 'SuggestedEdit', foreign_key: 'decided_by_id', dependent: :nullify
-
+  has_many :audit_logs, dependent: :nullify
+  has_many :audit_logs_related, class_name: 'AuditLog', foreign_key: 'related_id', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -125,8 +126,12 @@ class User < ApplicationRecord
 
     blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
     email_domain = email.split('@')[-1]
-    if blocklist.any? { |x| email_domain == x }
+    matched = blocklist.select { |x| email_domain == x }
+    if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+      matched_domains = matched.map { |d| "equals: #{d}" }
+      AuditLog.block_log(event_type: 'user_email_domain_blocked',
+                         comment: "email: #{email}\n#{matched_domains.join("\n")}\nsource: file")
     end
   end
 
@@ -134,10 +139,18 @@ class User < ApplicationRecord
     return unless saved_changes.include? 'email'
 
     email_domain = email.split('@')[-1]
-    is_mail_blocked = BlockedItem.emails.where(value: email).any?
-    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain).any?
-    if is_mail_blocked || is_mail_host_blocked
+    is_mail_blocked = BlockedItem.emails.where(value: email)
+    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain)
+    if is_mail_blocked.any? || is_mail_host_blocked.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+      if is_mail_blocked.any?
+        AuditLog.block_log(event_type: 'user_email_blocked', related: is_mail_blocked.first,
+                           comment: "email: #{email}\nfull match to: #{is_mail_blocked.first.value}")
+      end
+      if is_mail_host_blocked.any?
+        AuditLog.block_log(event_type: 'user_email_domain_blocked', related: is_mail_host_blocked.first,
+                           comment: "email: #{email}\ndomain match to: #{is_mail_host_blocked.first.value}")
+      end
     end
   end
 
@@ -145,8 +158,12 @@ class User < ApplicationRecord
     return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
 
     patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
-    if patterns.any? { |p| email.match? Regexp.new(p) }
+    matched = patterns.select { |p| email.match? Regexp.new(p) }
+    if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+      matched_patterns = matched.map { |p| "matched: #{p}" }
+      AuditLog.block_log(event_type: 'user_email_pattern_match',
+                         comment: "email: #{email}\n#{matched_patterns.join("\n")}")
     end
   end
 
@@ -157,6 +174,8 @@ class User < ApplicationRecord
   def no_links_in_username
     if %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}.match?(username)
       errors.add(:username, 'cannot contain links')
+      AuditLog.block_log(event_type: 'user_username_link_blocked',
+                         comment: "username: #{username}")
     end
   end
 

@@ -31,6 +31,7 @@ class TwoFactorController < ApplicationController
     totp = ROTP::TOTP.new(current_user.two_factor_token)
     if totp.verify(params[:code], drift_behind: 15, drift_ahead: 15)
       current_user.update(enabled_2fa: true)
+      AuditLog.user_history(event_type: 'two_factor_enabled', related: current_user)
       flash[:success] = 'Success! 2FA has been enabled on your account.'
       redirect_to two_factor_status_path
     else
@@ -50,6 +51,7 @@ class TwoFactorController < ApplicationController
     totp = ROTP::TOTP.new(current_user.two_factor_token)
     if totp.verify(params[:code], drift_behind: 15, drift_ahead: 15)
       current_user.update(two_factor_token: nil, enabled_2fa: false)
+      AuditLog.user_history(event_type: 'two_factor_disabled', related: current_user)
       flash[:success] = 'Success! 2FA has been disabled on your account.'
       redirect_to two_factor_status_path
     else

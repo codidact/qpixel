@@ -1,0 +1,20 @@
+<h1>Audit logs</h1>
+
+<div class="category-meta">
+  <h3><%= pluralize(@logs.count, 'log') %></h3>
+  <div class="button-list is-gutterless">
+    <% classes = 'button is-outlined is-muted' %>
+    <%= link_to 'Age', query_url(sort: 'age'),
+                class: "#{classes} #{params[:sort] == 'age' || params[:sort].nil? ? 'is-active' : ''}" %>
+    <%= link_to 'Type', query_url(sort: 'type'),
+                class: "#{classes} #{params[:sort] == 'type' ? 'is-active' : ''}" %>
+    <%= link_to 'Event', query_url(sort: 'event'),
+                class: "#{classes} #{params[:sort] == 'event' ? 'is-active' : ''}" %>
+    <%= link_to 'Related', query_url(sort: 'related'),
+                class: "#{classes} #{params[:sort] == 'related' ? 'is-active' : ''}" %>
+    <%= link_to 'User', query_url(sort: 'user'),
+                class: "#{classes} #{params[:sort] == 'user' ? 'is-active' : ''}" %>
+  </div>
+</div>
+
+<%= render 'log_table' %>

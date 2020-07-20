@@ -3,8 +3,10 @@ require 'net/http'
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
+                                          :annotate, :annotations]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+                                  :annotate, :annotations]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -132,6 +134,7 @@ class UsersController < ApplicationController
       return
     end
 
+    before = @user.attributes_print
     user_email = @user.email
     user_ip = [@user.last_sign_in_ip]
 
@@ -141,12 +144,12 @@ class UsersController < ApplicationController
 
     BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
                     automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
-    user_ip.map do |ip|
+    user_ip.compact.map do |ip|
       BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
                       automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
     end
-
     if @user.destroy!
+      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
       render json: { status: 'failed',
@@ -161,22 +164,29 @@ class UsersController < ApplicationController
       return
     end
 
-    connection = ApplicationRecord.connection
-    needs_transfer = connection.tables.map { |t| [t, connection.columns(t).map(&:name)] }
-                               .to_h.select { |_, cs| cs.include?('user_id') }
-                               .map do |k, _|
-      k.singularize.classify.constantize
-                     rescue
-                       nil
-    end.compact
-    needs_transfer.each do |model|
-      model.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+    relations = User.reflections
+    transfer_id = SiteSetting['SoftDeleteTransferId']
+    relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
+      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
+        @user.send(name).destroy_all
+      else
+        @user.send(name).destroy
+      end
+    end
+    relations.reject { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
+      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
+        @user.send(name)&.update_all(ref.foreign_key => transfer_id)
+      else
+        @user.send(name)&.update(ref.foreign_key => transfer_id)
+      end
     end
 
+    before = @user.attributes_print
     unless @user.destroy
       render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: 500)
       return
     end
+    AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
 
     render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
   end
@@ -194,6 +204,7 @@ class UsersController < ApplicationController
     end
 
     @user = current_user
+    before = @user.attributes_print
 
     if params[:user][:avatar].present?
       if helpers.valid_image?(params[:user][:avatar])
@@ -209,6 +220,8 @@ class UsersController < ApplicationController
     profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
+      AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,
+                            comment: "from <<User #{before}>>\nto <<User #{@user.attributes_print}>>")
       redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."
@@ -219,27 +232,31 @@ class UsersController < ApplicationController
   def role_toggle
     if params[:role] == 'mod'
       @user.community_user.update(is_moderator: !@user.is_moderator)
-      render json: { status: 'success' }
-      return
+      AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                           comment: "moderator to #{@user.is_moderator}")
+      render json: { status: 'success' } && return
     end
 
     if current_user.is_global_admin
       if params[:role] == 'admin'
         @user.community_user.update(is_admin: !@user.is_admin)
-        render json: { status: 'success' }
-        return
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "admin to #{@user.is_admin}")
+        render json: { status: 'success' } && return
       end
 
       if params[:role] == 'mod-global'
         @user.update(is_global_moderator: !@user.is_global_moderator)
-        render json: { status: 'success' }
-        return
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "global mod to #{@user.is_global_moderator}")
+        render json: { status: 'success' } && return
       end
 
       if params[:role] == 'admin-global'
         @user.update(is_global_admin: true)
-        render json: { status: 'success' }
-        return
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "global admin to #{@user.is_global_admin}")
+        render json: { status: 'success' } && return
       end
     end
 
@@ -301,11 +318,29 @@ class UsersController < ApplicationController
       flash[:success] = 'You are now signed in.'
       user.update(login_token: nil, login_token_expires_at: nil)
       sign_in user
+      AuditLog.user_history(event_type: 'mobile_login', related: user)
       redirect_to root_path
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
       not_found
+    end
+  end
+
+  def annotations
+    @logs = AuditLog.where(log_type: 'user_annotation', related: @user).order(created_at: :desc)
+                    .paginate(page: params[:page], per_page: 20)
+    render layout: 'without_sidebar'
+  end
+
+  def annotate
+    @log = AuditLog.user_annotation(event_type: 'annotation', user: current_user, related: @user,
+                                    comment: params[:comment])
+    if @log.errors.none?
+      redirect_to user_annotations_path(@user)
+    else
+      flash[:danger] = 'Failed to save your annotation.'
+      render :annotations
     end
   end
 

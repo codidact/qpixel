@@ -8,6 +8,7 @@
     <ul>
       <li><a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a></li>
       <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
+      <li><%= link_to 'annotations on user', user_annotations_path(@user) %></li>
       <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a></li>
       <li><a href="/warning/new/<%= @user.id %>">warn or suspend user</a></li>
     </ul>

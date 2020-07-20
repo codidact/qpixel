@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2020_07_18_163608) do
-
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -31,6 +30,23 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "audit_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "log_type"
+    t.string "event_type"
+    t.string "related_type"
+    t.bigint "related_id"
+    t.bigint "user_id"
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "community_id"
+    t.index ["community_id"], name: "index_audit_logs_on_community_id"
+    t.index ["event_type"], name: "index_audit_logs_on_event_type"
+    t.index ["log_type"], name: "index_audit_logs_on_log_type"
+    t.index ["related_type", "related_id"], name: "index_audit_logs_on_related_type_and_related_id"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
   create_table "blocked_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -235,7 +251,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
+    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -461,6 +477,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audit_logs", "communities"
+  add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
   add_foreign_key "comments", "communities"

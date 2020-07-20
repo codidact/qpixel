@@ -1,0 +1,10 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+admin_log:
+  community: sample
+  log_type: admin_audit
+  event_type: setting_update
+  related_type: SiteSetting
+  related: one
+  user: admin
+  comment: some words

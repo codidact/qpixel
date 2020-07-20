@@ -19,6 +19,10 @@ class ApplicationRecord < ActiveRecord::Base
     ApplicationRecord.match_search(term, **cols)
   end
 
+  def attributes_print
+    attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')
+  end
+
   def self.sanitize_for_search(term, **cols)
     cols = cols.map do |k, v|
       if v.is_a?(Array)
