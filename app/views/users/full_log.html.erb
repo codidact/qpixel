@@ -2,10 +2,10 @@
 
 <h1>Full activity log for <%= link_to @user.username, user_path(@user) %></h1>
 
-<p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to them.</p>
+<p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to it.</p>
 
 <% if params[:filter] == 'interesting' %>
-    <p>You are looking at <em>negative</em> interactions the user had with this site. These are not neccessarily bad, just actions, where you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
+    <p>You are looking at <em>negative</em> interactions the user had with this site. These are not necessarily bad, just actions at which you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
 <% end %>
 
 <div class="button-list is-gutterless h-m-v-4">
