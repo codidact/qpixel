@@ -132,7 +132,7 @@ Rails.application.routes.draw do
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
-  get   'users/:id/mod/activity-log',      to: 'users#full_log', as: :full_user_log
+  get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
