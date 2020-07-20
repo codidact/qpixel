@@ -133,6 +133,19 @@ class UsersController < ApplicationController
     end
 
     before = @user.attributes_print
+    user_email = @user.email
+    user_ip = [@user.last_sign_in_ip]
+
+    if @user.current_sign_in_ip
+      user_ip << @user.current_sign_in_ip
+    end
+
+    BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+                    automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
+    user_ip.compact.map do |ip|
+      BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
+                      automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
+    end
     if @user.destroy!
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }

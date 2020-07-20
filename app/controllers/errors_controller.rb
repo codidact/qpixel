@@ -8,6 +8,7 @@ class ErrorsController < ApplicationController
       403 => 'errors/forbidden',
       404 => 'errors/not_found',
       409 => 'errors/conflict',
+      418 => 'errors/stat',
       422 => 'errors/unprocessable_entity',
       500 => 'errors/internal_server_error'
     }

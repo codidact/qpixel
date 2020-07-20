@@ -222,6 +222,7 @@ Rails.application.routes.draw do
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
+  get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '500',                             to: 'errors#internal_server_error'
 end

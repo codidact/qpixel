@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :check_if_warning_or_suspension_pending
+  before_action :stop_the_awful_troll
 
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
@@ -71,6 +72,37 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def stop_the_awful_troll
+    # There shouldn't be any trolls in
+    # the test environment... :D
+    return true if Rails.env.test?
+
+    # Only stop trolls doing things, not looking
+    # at them.
+    return true if request.method.upcase == 'GET'
+
+    # Trolls can't be awful without user accounts.
+    # System is already checking for auth cases.
+    return true if current_user.nil?
+
+    ip = current_user.extract_ip_from(request)
+    email_domain = current_user.email.split('@')[-1]
+
+    ip_block = BlockedItem.active.where(item_type: 'ip', value: ip)
+    mail_block = BlockedItem.active.where(item_type: 'email', value: current_user.email)
+    mail_host_block = BlockedItem.active.where(item_type: 'email_host', value: email_domain)
+    is_blocked = ip_block.or(mail_block).or(mail_host_block)
+
+    if is_blocked.any?
+      respond_to do |format|
+        format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
+        format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
+      end
+      return false
+    end
+    true
+  end
 
   def set_globals
     setup_request_context || return
