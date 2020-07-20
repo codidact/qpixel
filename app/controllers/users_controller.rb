@@ -71,7 +71,7 @@ class UsersController < ApplicationController
     BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
                     automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
     user_ip.map do |ip|
-      BlockedItem.new(item_type: 'ip', value: ip, expires: DateTime.now + 180.days,
+      BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
                       automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
     end
 
