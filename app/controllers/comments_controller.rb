@@ -34,7 +34,7 @@ class CommentsController < ApplicationController
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_update', related: @comment, user: current_user,
-                                 comment: "from <<#{before}>> to <<#{@comment.content}>>")
+                                 comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }

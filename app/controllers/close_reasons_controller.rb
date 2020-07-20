@@ -30,7 +30,7 @@ class CloseReasonsController < ApplicationController
     @close_reason.update close_reason_params
     after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     AuditLog.moderator_audit(event_type: 'close_reason_update', related: @close_reason, user: current_user,
-                             comment: "from <<CloseReason #{before}>> to <<CloseReason #{after}>>")
+                             comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
 
     if @close_reason.community.nil?
       redirect_to close_reasons_path(global: 1)

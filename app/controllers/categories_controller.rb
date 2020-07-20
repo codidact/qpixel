@@ -59,7 +59,7 @@ class CategoriesController < ApplicationController
       end
       after = @category.attributes_print
       AuditLog.admin_audit(event_type: 'category_update', related: @category, user: current_user,
-                           comment: "from <<Category #{before}>> to <<Category #{after}>>")
+                           comment: "from <<Category #{before}>>\nto <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
       redirect_to category_path(@category)

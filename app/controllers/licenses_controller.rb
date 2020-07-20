@@ -34,7 +34,7 @@ class LicensesController < ApplicationController
         License.where(default: true).where.not(id: @license.id).update_all(default: false)
       end
       AuditLog.admin_audit(event_type: 'license_update', related: @license, user: current_user,
-                           comment: "from <<License #{before}>> to <<License #{@license.attributes_print}>>")
+                           comment: "from <<License #{before}>>\nto <<License #{@license.attributes_print}>>")
       redirect_to licenses_path
     else
       render :edit, status: 400
@@ -48,7 +48,7 @@ class LicensesController < ApplicationController
     else
       @license.update(enabled: !@license.enabled)
       AuditLog.admin_audit(event_type: 'license_toggle', related: @license, user: current_user,
-                           comment: "enabled from #{before} to #{@license.enabled?}")
+                           comment: "enabled from #{before}\nto #{@license.enabled?}")
     end
     redirect_to licenses_path
   end

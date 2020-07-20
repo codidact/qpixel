@@ -33,7 +33,7 @@ class AdminController < ApplicationController
     pre = @privilege.threshold
     @privilege.update(threshold: params[:threshold]) &&
       AuditLog.admin_audit(event_type: 'privilege_threshold_update', related: @privilege, user: current_user,
-                           comment: "from <<#{pre}>> to <<#{params[:threshold]}>>")
+                           comment: "from <<#{pre}>>\nto <<#{params[:threshold]}>>")
     render json: { status: 'OK', privilege: @privilege }, status: 202
   end
 

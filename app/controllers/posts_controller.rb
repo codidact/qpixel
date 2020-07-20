@@ -148,7 +148,7 @@ class PostsController < ApplicationController
     @post.tags = new_tags
     @post.save
     AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
-                          comment: "from <<#{before.id}>> to <<#{@target.id}>>")
+                          comment: "from <<#{before.id}>>\nto <<#{@target.id}>>")
     render json: { success: true }
   end
 

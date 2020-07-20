@@ -135,7 +135,7 @@ class UsersController < ApplicationController
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
       AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,
-                            comment: "from <<User #{before}>> to <<User #{@user.attributes_print}>>")
+                            comment: "from <<User #{before}>>\nto <<User #{@user.attributes_print}>>")
       redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."
