@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
 
     # Only stop trolls doing things, not looking
     # at them.
-    return true if request.method.downcase == 'GET'
+    return true if request.method.upcase == 'GET'
 
     # Trolls can't be awful without user accounts.
     # System is already checking for auth cases.
@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
     mail_host_block = BlockedItem.active.where(item_type: 'email_host', value: email_domain)
     is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
-    if is_blocked
+    if is_blocked.any?
       respond_to do |format|
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
         format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
