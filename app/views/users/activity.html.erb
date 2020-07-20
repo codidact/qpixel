@@ -1,8 +1,8 @@
 <div class="tabs">
-  <%= link_to user_path(current_user), class: "tabs--item" do %>
+  <%= link_to user_path(@user), class: "tabs--item" do %>
       <i class="fas fa-user"></i> Profile
     <% end %>
-  <%= link_to user_activity_path(current_user), class: "tabs--item is-active" do %>
+  <%= link_to user_activity_path(@user), class: "tabs--item is-active" do %>
     Activity
   <% end %>
   <% if @user == current_user %>
