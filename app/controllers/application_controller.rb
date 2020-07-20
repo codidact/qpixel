@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
     end
     true
   end
-  
+
   private
 
   def stop_the_awful_troll
