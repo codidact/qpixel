@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_11_121645) do
-
+ActiveRecord::Schema.define(version: 2020_07_16_191141) do
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -48,6 +47,16 @@ ActiveRecord::Schema.define(version: 2020_07_11_121645) do
     t.index ["log_type"], name: "index_audit_logs_on_log_type"
     t.index ["related_type", "related_id"], name: "index_audit_logs_on_related_type_and_related_id"
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "blocked_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "type"
+    t.text "value"
+    t.datetime "expires"
+    t.boolean "automatic"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -257,6 +266,7 @@ ActiveRecord::Schema.define(version: 2020_07_11_121645) do
     t.integer "help_ordering"
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
+    t.boolean "comments_disabled"
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"

@@ -1,23 +1,30 @@
 <% unless SiteSetting['AnalyticsURL'].nil? || SiteSetting['AnalyticsSiteId'].nil? %>
   <% cache [RequestContext.community, SiteSetting['AnalyticsURL'], SiteSetting['AnalyticsSiteId']] do %>
-    <script type="text/javascript">
-      var _paq = window._paq || [];
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    <script async defer type="text/javascript">
+      (async () => {
+        var _paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
 
-      <% if user_signed_in? %>
-        _paq.push(['setUserId', '<%= current_user.id %>']);
-      <% else %>
-        _paq.push(['resetUserId']);
-      <% end %>
+        const user = await QPixel.user();
+        if (user) {
+          _paq.push(['setUserId', `${user.id}`]);
+        } else {
+          _paq.push(['resetUserId']);
+        }
 
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function() {
-        var u="<%= SiteSetting['AnalyticsURL'] %>";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
-        _paq.push(['setSiteId', '<%= SiteSetting['AnalyticsSiteId'] %>']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+          var u = "<%= SiteSetting['AnalyticsURL'] %>";
+          _paq.push(['setTrackerUrl', u + 'matomo.php']);
+          _paq.push(['setSiteId', '<%= SiteSetting['AnalyticsSiteId'] %>']);
+          var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+          g.type = 'text/javascript';
+          g.async = true;
+          g.defer = true;
+          g.src = u + 'matomo.js';
+          s.parentNode.insertBefore(g, s);
+        })();
       })();
     </script>
     <noscript><p>

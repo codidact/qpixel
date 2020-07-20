@@ -94,6 +94,8 @@ Rails.application.routes.draw do
   patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
+  post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+  
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
   post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
@@ -121,13 +123,14 @@ Rails.application.routes.draw do
   post   'users/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
   get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
   get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
+  get    'users/me',                       to: 'users#me', as: :users_me
+  get    'users/me/notifications',         to: 'notifications#index', as: :notifications
+  get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
+  patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
   get    'users/:id',                      to: 'users#show', as: :user
   get    'users/:id/flags',                to: 'flags#history', as: :flag_history
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
-  get    'users/me/notifications',         to: 'notifications#index', as: :notifications
-  get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
-  patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user

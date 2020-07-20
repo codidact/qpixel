@@ -2,9 +2,9 @@ require 'net/http'
 
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code]
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :annotations, :annotate]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :annotations, :annotate]
+                                            :qr_login_code, :me]
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle]
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -18,6 +18,20 @@ class UsersController < ApplicationController
 
   def show
     render layout: 'without_sidebar'
+  end
+
+  def me
+    @user = current_user
+    respond_to do |format|
+      format.html do
+        redirect_to user_path(@user)
+      end
+      format.json do
+        data = [:id, :username, :is_moderator, :is_admin, :is_global_moderator, :is_global_admin, :trust_level,
+                :se_acct_id].map { |a| [a, @user.send(a)] }.to_h
+        render json: data
+      end
+    end
   end
 
   def posts

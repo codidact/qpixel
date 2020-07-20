@@ -26,6 +26,8 @@ class User < ApplicationRecord
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
+  validate :email_domain_not_blocklisted
+  validate :email_not_bad_pattern
 
   delegate :reputation, :reputation=, to: :community_user
 
@@ -118,6 +120,32 @@ class User < ApplicationRecord
     end
   end
 
+  def email_domain_not_blocklisted
+    return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
+
+    blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
+    email_domain = email.split('@')[-1]
+    if blocklist.any? { |x| email_domain == x }
+      errors.add(:base, ['The inverted database guide has found an insurmountable problem. Please poke it with a ' \
+                         'paperclip before anyone finds out.',
+                         'The modular cable meter has found a problem. You need to kick your IT technician in the ' \
+                         'shins immediately.',
+                         'The integral output port has found a problem. Please take it back to the shop and take ' \
+                         'the rest of the day off.',
+                         'The integral expansion converter has encountered a terminal error. You must take legal ' \
+                         'advice urgently.'].sample)
+    end
+  end
+
+  def email_not_bad_pattern
+    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
+
+    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
+    if patterns.any? { |p| email.match? Regexp.new(p) }
+      errors.add(:base, 'Operations are on pause while we attempt to recapture the codidactyl. Please hold.')
+    end
+  end
+
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
   end
@@ -126,6 +154,14 @@ class User < ApplicationRecord
     if %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}.match?(username)
       errors.add(:username, 'cannot contain links')
     end
+  end
+
+  protected
+
+  def extract_ip_from(request)
+    # Customize this to your environment: if you're not behind a reverse proxy like Cloudflare, you probably
+    # don't need this (or you can change it to another header if that's what your reverse proxy uses).
+    request.headers['CF-Connecting-IP']
   end
 
   # rubocop:enable Naming/PredicateName

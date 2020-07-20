@@ -10,6 +10,15 @@ class VotesController < ApplicationController
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
     end
 
+    recent_votes = Vote.where(created_at: 24.hours.ago..Time.now, user: current_user).count
+    max_votes_per_day = SiteSetting['FreeVotes'] + (@current_user.reputation - SiteSetting['NewUserInitialRep'])
+
+    if recent_votes >= max_votes_per_day
+      vote_limit_msg = 'You have used your daily vote limit: ' + recent_votes.to_s + '/' + max_votes_per_day.to_s
+      render json: { status: 'failed', message: vote_limit_msg }, status: 403
+      return
+    end
+
     destroyed = post.votes.where(user: current_user).destroy_all
     vote = post.votes.create(user: current_user, vote_type: params[:vote_type].to_i, recv_user: post.user)
 
