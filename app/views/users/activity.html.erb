@@ -26,15 +26,15 @@
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts">
         Posts
-        <% if @posts.count > 0 %><span class="badge is-status"><%= @posts.count %></span><% end %>
+        <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments">
         Comments
-        <% if @comments.count > 0 %><span class="badge is-status"><%= @comments.count %></span><% end %>
+        <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits">
         Edits
-        <% if @all_edits.count > 0 %><span class="badge is-status"><%= @all_edits.count %></span><% end %>
+        <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span><% end %>
     </a>
 </div>
 

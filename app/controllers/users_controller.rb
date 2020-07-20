@@ -48,23 +48,27 @@ class UsersController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def activity
-    @posts = Post.undeleted.where(user: @user).all
-    @comments = Comment.undeleted.where(user: @user)
-    @suggested_edits = SuggestedEdit.where(user: @user).all
-    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).all
+    @posts = Post.undeleted.where(user: @user).count
+    @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
+    @suggested_edits = SuggestedEdit.where(user: @user).count
+    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).count
 
     @all_edits = @suggested_edits + @edits
 
     items = case params[:filter]
             when 'posts'
-              @posts
+              Post.undeleted.where(user: @user).all
             when 'comments'
-              @comments
+              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all
             when 'edits'
-              @all_edits
+              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
             else
-              @posts + @comments + @all_edits
+              Post.undeleted.where(user: @user).all + \
+              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all + \
+              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
             end
 
     @items = items.sort_by(&:created_at).reverse
@@ -74,42 +78,48 @@ class UsersController < ApplicationController
   def mod; end
 
   def full_log
-    @posts = Post.where(user: @user).all
-    @comments = Comment.where(user: @user)
-    @flags = Flag.where(user: @user).all
-    @suggested_edits = SuggestedEdit.where(user: @user).all
-    @edits = PostHistory.where(user: @user).all
-    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).all
+    @posts = Post.where(user: @user).count
+    @comments = Comment.where(user: @user).count
+    @flags = Flag.where(user: @user).count
+    @suggested_edits = SuggestedEdit.where(user: @user).count
+    @edits = PostHistory.where(user: @user).count
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).count
 
     @all_edits = @suggested_edits + @edits
 
-    @interesting_comments = Comment.where(user: @user, deleted: true).all
-    @interesting_flags = Flag.where(user: @user, status: 'declined').all
-    @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).all
-    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+    @interesting_comments = Comment.where(user: @user, deleted: true).count
+    @interesting_flags = Flag.where(user: @user, status: 'declined').count
+    @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).count
+    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
 
     @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
               when 'posts'
-                @posts
+                Post.where(user: @user).all
               when 'comments'
-                @comments
+                Comment.where(user: @user).all
               when 'flags'
-                @flags
+                Flag.where(user: @user).all
               when 'edits'
-                @all_edits
+                SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all
               when 'warnings'
-                @mod_warnings_received
+                ModWarning.where(community_user: @user.community_user).all
               when 'interesting'
-                @interesting
+                Comment.where(user: @user, deleted: true).all + Flag.where(user: @user, status: 'declined').all + \
+                  SuggestedEdit.where(user: @user, active: false, accepted: false).all + \
+                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
               else
-                @posts + @comments + @flags + @suggested_edits + @edits + @mod_warnings_received
+                Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
+                  SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
+                  ModWarning.where(community_user: @user.community_user).all
               end).sort_by(&:created_at).reverse
 
     render layout: 'without_sidebar'
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def destroy
     if @user.votes.count > 100

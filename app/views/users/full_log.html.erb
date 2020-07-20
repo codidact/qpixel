@@ -12,31 +12,31 @@
     <a class="button is-muted is-outlined" href="?">
         Show all events
     </a>
-    <% if @interesting.count > 0 %>
+    <% if @interesting > 0 %>
     <a class="button is-muted is-outlined <%= params[:filter] == 'interesting' ? 'is-active' : '' %>" href="?filter=interesting">
         Negative
-        <span class="badge is-status"><%= @interesting.count %></span>
+        <span class="badge is-status"><%= @interesting %></span>
     </a>
     <% end %>
     <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts">
         Posts
-        <% if @posts.count > 0 %><span class="badge is-status"><%= @posts.count %></span><% end %>
+        <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments">
         Comments
-        <% if @comments.count > 0 %><span class="badge is-status"><%= @comments.count %></span><% end %>
+        <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags">
         Flags
-        <% if @flags.count > 0 %><span class="badge is-status"><%= @flags.count %></span><% end %>
+        <% if @flags > 0 %><span class="badge is-status"><%= @flags %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits">
         Edits
-        <% if @all_edits.count > 0 %><span class="badge is-status"><%= @all_edits.count %></span><% end %>
+        <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span><% end %>
     </a>
     <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings">
         Warnings
-        <% if @mod_warnings_received.count > 0 %><span class="badge is-status"><%= @mod_warnings_received.count %></span><% end %>
+        <% if @mod_warnings_received > 0 %><span class="badge is-status"><%= @mod_warnings_received %></span><% end %>
     </a>
 </div>
 
