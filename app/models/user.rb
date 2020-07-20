@@ -126,13 +126,13 @@ class User < ApplicationRecord
     email_domain = email.split('@')[-1]
     if blocklist.any? { |x| email_domain == x }
       errors.add(:base, ['The inverted database guide has found an insurmountable problem. Please poke it with a ' \
-       'paperclip before anyone finds out.',
+                         'paperclip before anyone finds out.',
                          'The modular cable meter has found a problem. You need to kick your IT technician in the ' \
                          'shins immediately.',
                          'The integral output port has found a problem. Please take it back to the shop and take ' \
-                                           'the rest of the day off.',
+                         'the rest of the day off.',
                          'The integral expansion converter has encountered a terminal error. You must take legal ' \
-                                           'advice urgently.'].sample)
+                         'advice urgently.'].sample)
     end
   end
 
