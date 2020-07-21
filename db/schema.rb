@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_18_163608) do
+ActiveRecord::Schema.define(version: 2020_07_21_185230) do
+
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -214,10 +215,22 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
     t.text "after_state"
     t.text "comment"
     t.bigint "community_id"
+    t.string "before_title"
+    t.string "after_title"
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
     t.index ["user_id"], name: "index_post_histories_on_user_id"
+  end
+
+  create_table "post_history_tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "post_history_id"
+    t.bigint "tag_id"
+    t.string "relationship"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_history_id"], name: "index_post_history_tags_on_post_history_id"
+    t.index ["tag_id"], name: "index_post_history_tags_on_tag_id"
   end
 
   create_table "post_history_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -489,6 +502,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
   add_foreign_key "post_histories", "communities"
+  add_foreign_key "post_history_tags", "post_histories"
+  add_foreign_key "post_history_tags", "tags"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "licenses"

@@ -113,6 +113,5 @@ class LicensesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:license)
     assert_equal true, assigns(:license).default
     assert_equal 1, License.where(default: true).count
-    puts License.where(default: true)
   end
 end

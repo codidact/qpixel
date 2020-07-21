@@ -120,3 +120,31 @@ pre.unformatted {
   90% { transform: translate(5px); }
   100% { transform: translate(-5px); }
 }
+
+.diff {
+  .raw-markdown {
+    white-space: unset;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      min-height: 20px;
+
+      del, ins {
+        text-decoration: none;
+      }
+
+      del > strong {
+        text-decoration: line-through;
+      }
+
+      ins > strong {
+        text-decoration: underline;
+      }
+    }
+  }
+}
