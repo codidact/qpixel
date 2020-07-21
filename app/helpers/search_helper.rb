@@ -11,7 +11,6 @@ module SearchHelper
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/MethodLength
   def qualifiers_to_sql(qualifiers)
     valid_value = {
       date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
@@ -65,7 +64,6 @@ module SearchHelper
     Arel.sql(sql)
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
 
   def numeric_value_sql(value)
     operator = ''
