@@ -32,6 +32,8 @@ class User < ApplicationRecord
 
   delegate :reputation, :reputation=, to: :community_user
 
+  after_create :send_welcome_tour_message
+
   def self.list_includes
     includes(:posts, :avatar_attachment)
   end
@@ -183,6 +185,11 @@ class User < ApplicationRecord
     # Customize this to your environment: if you're not behind a reverse proxy like Cloudflare, you probably
     # don't need this (or you can change it to another header if that's what your reverse proxy uses).
     request.headers['CF-Connecting-IP'] || request.ip
+  end
+
+  def send_welcome_tour_message
+    create_notification('👋 Welcome to ' + SiteSetting['SiteName'] + '! Take our tour to find out, ' \
+                        'how this site works.', '/tour')
   end
 
   # rubocop:enable Naming/PredicateName
