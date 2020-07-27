@@ -1,0 +1,16 @@
+.codidactyl {
+    width: 80px;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+.codidactyl + .is-flexible { width: 0; }
+
+.codidactyl-sticky {
+    position: sticky;
+    top: 0.5rem;
+    padding: 1rem;
+}
+
+.codidactyl-small {
+    max-height: 1em;
+}
