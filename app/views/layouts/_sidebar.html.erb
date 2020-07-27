@@ -12,19 +12,48 @@
     <% end %>
   <% end %>
 
-  <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
+  <% if Rails.env.development? || @hot_questions.to_a.size > 0 || @pinned_links.to_a.size > 0 %>
     <div class="widget has-margin-4">
-      <h4 class="widget--header has-margin-0">Hot Posts</h4>
+    <% if Rails.env.development? || @pinned_links.to_a.size > 0 %>
+      <div class="widget--header">Featured</div>
+      <% @pinned_links.each do |pl| %>
+        <div class="widget--body">
+          <% pl_link = pl.post.nil? ? pl.link : generic_share_link(pl.post) %>
+          <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
+          <%= link_to pl_link, class: 'h-fw-bold' do %>
+            <%= pl_label %>
+          <% end %>
+        <% unless pl.shown_before.nil? %>
+          <div>
+            &mdash;
+            <% if !pl.shown_after.nil? %>
+              <% if pl.shown_after < DateTime.now %>
+                ends in  <%= time_ago_in_words(pl.shown_before) %>
+              <% else %>
+                starts in <%= time_ago_in_words(pl.shown_after) %>
+              <% end %>
+            <% else %>
+              in <%= time_ago_in_words(pl.shown_before) %>
+            <% end %>
+          </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+    <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
+      <div class="widget--header">Hot Posts</div>
       <% @hot_questions.each do |hq| %>
         <div class="widget--body">
+          <% unless hq.category.nil? %>
+            <%= hq.category.name %>
+            &mdash;
+          <% end %>
           <%= link_to question_path(hq) do %>
-            <% unless hq.category.nil? %>
-              <span class="badge is-tag is-master-tag"><%= hq.category.name %></span>
-            <% end %>
             <%= hq.title %>
           <% end %>
         </div>
       <% end %>
+    <% end %>
     </div>
   <% end %>
 
