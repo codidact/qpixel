@@ -72,7 +72,7 @@ class User < ApplicationRecord
   end
 
   def unread_count
-    notifications.where(is_read: false).count
+    notifications.unscoped.where(user: self, is_read: false).count
   end
 
   def questions
