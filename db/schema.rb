@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_18_163608) do
+ActiveRecord::Schema.define(version: 2020_07_27_183756) do
+
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -204,6 +205,20 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "pinned_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "label"
+    t.string "link"
+    t.bigint "post_id"
+    t.boolean "active"
+    t.datetime "shown_after"
+    t.datetime "shown_before"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_pinned_links_on_community_id"
+    t.index ["post_id"], name: "index_pinned_links_on_post_id"
+  end
+
   create_table "post_histories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "post_history_type_id"
     t.integer "user_id"
@@ -251,7 +266,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -488,6 +503,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_163608) do
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
+  add_foreign_key "pinned_links", "communities"
+  add_foreign_key "pinned_links", "posts"
   add_foreign_key "post_histories", "communities"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
