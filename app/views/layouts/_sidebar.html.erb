@@ -93,27 +93,18 @@
       <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
     </div>
     <div class="widget--body">
+<% chat = SiteSetting['ChatLink'] %>
       <p>
         This site is part of the <a href="https://codidact.com">Codidact network</a>.
         We have other sites too &mdash; take a look!
       </p>
+      <% if chat.present? %>
+      <p>
+        You can also <%= link_to 'join us in chat', chat %>!
+      </p>
+      <% end %>
       <p>
         Want to advertise this site? <%= link_to 'Use our templates!', ads_path %>
       </p>
     </div>
   </div>
-
-  <% chat = SiteSetting['ChatLink'] %>
-  <% if chat.present? %>
-    <div class="widget has-margin-4">
-      <div class="widget--header">
-        Chat
-      </div>
-      <div class="widget--body">
-        <p>
-          <%= link_to 'Join us in chat!', chat %>
-        </p>
-      </div>
-    </div>
-  <% end %>
-</div>

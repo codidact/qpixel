@@ -1,28 +1,67 @@
 <% content_for :title, "Moderator Dashboard" %>
 
 <h1>Moderator Dashboard</h1>
-<p>This page serves as a repository of links to the various tools you have access to as an administrative user. While
+<p>This page serves as a repository of links to the various tools you have access to as a moderator. While
   you use these, remember that the data in them is usually moderator-only, and should likely not be shared
   with anyone outside of that team unless you've ensured it's safe to share.</p>
-<ul>
-  <li><a href="/mod/flags">Flag queue</a></li>
-  <li>Recent deletions: <a href="/mod/deleted/questions">questions</a>, <a href="/mod/deleted/answers">answers</a></li>
-  <li>Recent undeletions: <a href="/mod/undeleted/questions">questions</a>, <a href="/mod/undeleted/answers">answers</a></li>
-  <li><%= link_to 'Create a help center page', new_help_post_path %></li>
-  <li><%= link_to 'Reports', users_report_path %></li>
-  <li><%= link_to 'Edit close reasons', close_reasons_path %></li>
-</ul>
 
-<h3>Safe to Share</h3>
-<p>Although for the most part, the information available under the /mod routes is sensitive or confidential, there are
-  cases where it's beneficial to share the information. If you're going to do this, make sure it's safe to share.
-  In general terms, this means that the information you share:</p>
-<ul>
-  <li>should not make it easier to circumvent the system - if you know details of systems that are generally not very
-    well-known, it's best to keep them secret so the system can't be circumvented</li>
-  <li>should not contain private details of <em>any</em> user</li>
-  <li>should not be discourteous to anyone - talk and speculation of bans and removals is inconsiderate to a user who
-    can't respond</li>
-</ul>
-<p>Apply common sense - think of what effect this information will have before you share it. If in doubt, check it with
-  another member of your team.</p>
+<div class="grid">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fa fa-flag"></i>
+        <a href="/mod/flags">Flag Queue</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-trash"></i>
+        <a href="/mod/deleted">Recent Deletions</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-undo"></i>
+        <a href="/mod/undeleted">Recent Undeletions</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-file-alt"></i>
+        <a href="<%= new_help_post_path %>">Create Help Center Page</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-chart-line"></i>
+        <a href="<%= users_report_path %>">Reports</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-hand-paper"></i>
+        <a href="<%= close_reasons_path %>">Close Reasons</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% chat = SiteSetting['ChatLink'] %>
+<% if chat.present? %>
+<p>As a moderator, you should join our <a href="<%= chat %>">community chat server</a>. Ping a Codidact team member there and you'll receive access to a special moderator-only lounge, where you can discuss moderation questions with your fellow moderators.</p>
+<% end %>
