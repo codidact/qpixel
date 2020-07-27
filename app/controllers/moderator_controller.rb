@@ -5,21 +5,8 @@ class ModeratorController < ApplicationController
 
   def index; end
 
-  def recently_deleted_questions
-    @questions = Question.unscoped.where(deleted: true).order('deleted_at DESC')
+  def recently_deleted_posts
+    @posts = Post.unscoped.where(community: @community, deleted: true).order('deleted_at DESC')
                          .paginate(page: params[:page], per_page: 50)
-  end
-
-  def recently_deleted_answers
-    @answers = Answer.where(deleted: true).order('deleted_at DESC').paginate(page: params[:page], per_page: 50)
-  end
-
-  def recently_undeleted_questions
-    @questions = Question.unscoped.where(deleted: false).where.not(deleted_at: nil)
-                         .paginate(page: params[:page], per_page: 50)
-  end
-
-  def recently_undeleted_answers
-    @answers = Answer.where(deleted: false).where.not(deleted_at: nil).paginate(page: params[:page], per_page: 50)
   end
 end

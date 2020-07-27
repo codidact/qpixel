@@ -44,10 +44,7 @@ Rails.application.routes.draw do
   end
 
   get    'mod',                            to: 'moderator#index', as: :moderator
-  get    'mod/deleted/questions',          to: 'moderator#recently_deleted_questions', as: :recently_deleted_questions
-  get    'mod/deleted/answers',            to: 'moderator#recently_deleted_answers', as: :recently_deleted_answers
-  get    'mod/undeleted/questions',        to: 'moderator#recently_undeleted_questions', as: :recently_undeleted_questions
-  get    'mod/undeleted/answers',          to: 'moderator#recently_undeleted_answers', as: :recently_undeleted_answers
+  get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
