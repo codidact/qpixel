@@ -43,7 +43,7 @@
 
   <div class="form-group has-padding-1">
     <%= f.label :active, "Active?", class: "form-element" %>
-    <%= f.select :active, options_for_select([['yes', true], ['no', false]], selected: @link.community&.id),
+    <%= f.select :active, options_for_select([['yes', true], ['no', false]], selected: @link.active),
                  {}, class: 'form-element' %>
   </div>
 
