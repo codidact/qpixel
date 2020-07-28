@@ -4,11 +4,18 @@ class PinnedLinksController < ApplicationController
 
     def index
         if current_user.is_global_moderator && params[:global] == '2'
-            @links = PinnedLink.unscoped.all
+            links = PinnedLink.unscoped
         elsif current_user.is_global_moderator && params[:global] == '1'
-            @links = PinnedLink.where(community: nil).all
+            links = PinnedLink.where(community: nil)
         else
-            @links = PinnedLink.where(community: @community).all
+            links = PinnedLink.where(community: @community)
+        end
+        if params[:filter] == 'all'
+            @links = links.all
+        elsif params[:filter] == 'inactive'
+            @links = links.where(active: false).all
+        else
+            @links = links.where(active: true).all
         end
         render layout: 'without_sidebar'
     end
@@ -19,7 +26,7 @@ class PinnedLinksController < ApplicationController
 
     def create
         data = pinned_link_params
-        post = !data[:post].present? ? nil : Post.where(data[:post]).first
+        post = !data[:post_id].present? ? nil : Post.where(data[:post_id]).first
         community = !data[:community].present? ? nil : Community.where(data[:community]).first
         
         @link = PinnedLink.create data.merge(post: post, community: community)
@@ -46,7 +53,7 @@ class PinnedLinksController < ApplicationController
 
         before = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
         data = pinned_link_params
-        post = !data[:post].present? ? nil : Post.where(data[:post]).first
+        post = !data[:post_id].present? ? nil : Post.where(data[:post_id]).first
         community = !data[:community].present? ? nil : Community.where(data[:community]).first
         @link.update data.merge(post: post, community: community)
         after = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')

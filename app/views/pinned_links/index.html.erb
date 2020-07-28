@@ -1,13 +1,31 @@
 <h1>Featured Links</h1>
 <p class="is-lead">Featured links allow you as a moderator to draw attention to issues or posts of importance to the community. Use them sparingly and only when needed, because they tend to get ignored if used too often.</p>
 
-<% if current_user.is_global_moderator %>
-  <div class="button-list is-gutterless has-margin-bottom-4">
-    <%= link_to "current community", "?global=0", class: "button is-muted is-outlined #{(params[:global]=='0' || params[:global].nil?) ? 'is-active' : ''}" %>
-    <%= link_to "global", "?global=1", class: "button is-muted is-outlined #{(params[:global]=='1') ? 'is-active' : ''}" %>
-    <%= link_to "everywhere", "?global=2", class: "button is-muted is-outlined #{(params[:global]=='2') ? 'is-active' : ''}" %>
-  </div>
-<% end %>
+<div class="grid has-margin-bottom-4">
+    <% if current_user.is_global_moderator %>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <%= link_to "current community", "?global=0&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='0' || params[:global].nil?) ? 'is-active' : ''}" %>
+            <%= link_to "global", "?global=1&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='1') ? 'is-active' : ''}" %>
+            <%= link_to "everywhere", "?global=2&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='2') ? 'is-active' : ''}" %>
+        </div>
+    </div>
+    <% end %>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <%= link_to "active", "?global="+(params[:global]||'0')+"&filter=active", class: "button is-muted is-outlined #{(params[:filter]=='active' || params[:filter].nil?) ? 'is-active' : ''}" %>
+            <%= link_to "inactive", "?global="+(params[:global]||'0')+"&filter=inactive", class: "button is-muted is-outlined #{(params[:filter]=='inactive') ? 'is-active' : ''}" %>
+            <%= link_to "all", "?global="+(params[:global]||'0')+"&filter=all", class: "button is-muted is-outlined #{(params[:filter]=='all') ? 'is-active' : ''}" %>
+        </div>
+    </div>
+    <div class="grid--cell is-flexible">
+    </div>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <a href="<%= new_pinned_link_path %>" class="button is-filled"><i class="fa fa-plus"></i> New</a>
+        </div>
+    </div>
+</div>
 
 <table class="table is-with-hover">
     <tr>
@@ -61,5 +79,3 @@
         </tr>
     <% end %>
 </table>
-
-<a href="<%= new_pinned_link_path %>" class="button is-filled">New featured link</a>

@@ -184,6 +184,6 @@ img {
   z-index: 3;
 }
 
-.widget .widget--header:not(:first-child) {
+.widget .widget--body + .widget--header {
   border-top: 1px solid #d0d9dd;
 }
