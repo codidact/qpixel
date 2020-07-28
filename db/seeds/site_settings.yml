@@ -291,3 +291,10 @@
   category: SiteDetails
   description: >
     A slogan to be shown on the /ads/community.png page.
+
+- name: HotPostsScoreThreshold
+  value: 1
+  value_type: integer
+  category: AdvancedSettings
+  description: >
+    The minimum score a question must have to qualify for selection for the Hot Posts sidebar and for being selected as random advertisement.
