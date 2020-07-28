@@ -187,3 +187,6 @@ img {
 .widget .widget--body + .widget--header {
   border-top: 1px solid #d0d9dd;
 }
+.widget.is-tertiary .widget--body + .widget--header {
+  border-top: 1px solid #9daeb7;
+}
