@@ -155,7 +155,7 @@ class ApplicationController < ActionController::Base
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
-    end 
+    end
     @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)

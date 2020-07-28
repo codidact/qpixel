@@ -1,4 +1,4 @@
 class PinnedLink < ApplicationRecord
-    include MaybeCommunityRelated
-    belongs_to :post
+  include MaybeCommunityRelated
+  belongs_to :post
 end
