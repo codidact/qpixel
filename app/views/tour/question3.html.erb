@@ -127,7 +127,7 @@
       <div class="post--container grid is-nowrap">
         <div class="grid--cell">
           <div class="post--votes has-text-align-center" title="0.5">
-            <button class="vote-button button is-icon-only-button" onclick="tour_firstAnswerUpvote(this);" aria-label="Upvote">
+            <button class="vote-button button is-icon-only-button" onclick="tour.firstAnswerUpvote(this);" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
               </svg>
@@ -254,7 +254,7 @@
                 </a> <a class="tools--item" href="#">
                   <i class="fa fa-history"></i>
                   History
-                </a> <a href="#!" class="flag-dialog-link tools--item" data-toggle=".post--action-dialog" data-toggle-property="class" data-toggle-value="is-active">
+                </a> <a href="#!" class="flag-dialog-link tools--item">
                   <i class="fa fa-flag"></i>
                   Flag
                 </a>
@@ -271,7 +271,7 @@
                   <input class="form-element js-flag-comment" id="flag-bad-post>
                 </div>
                 <div class="widget--footer">
-                  <button class="js-tour-flag-link button is-filled is-muted" onclick="tour_secondAnswerFlag(this);">
+                  <button class="js-tour-flag-link button is-filled is-muted" onclick="tour.secondAnswerFlag(this);">
                     Flag for moderator attention
                   </button>
                 </div>

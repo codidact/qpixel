@@ -31,10 +31,10 @@
                     </tr>
                 <% @header_categories.each do |cat| %>
                     <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
-                        <tr>
-                            <td class="h-fw-bold"><%= cat.name %></td>
-                            <td><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
-                        </tr>
+                    <tr>
+                        <td class="h-fw-bold"><%= cat.name %></td>
+                        <td><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
+                    </tr>
                 <% end %>
                 </table>
                 <p>We also have more post types than questions and answers.</p>
@@ -138,6 +138,10 @@
                     <li>The local <strong>meta category</strong></a> is the right place to ask questions about this community and its rules. It can also be used for support questions or community-specific bugs or feature requests.</li>
                     <li><a href="https://meta.codidact.com"><strong>Codidact Meta</strong></a> is where network-wide governance questions are considered and where support questions, bug reports and feature requests can be posted.</li>
                 </ol>
+                <% chat = SiteSetting['ChatLink'] %>
+                <% if chat.present? %>
+                <p>You might also want to <a href="<%= chat %>">join our community chat</a> and chat with other community members.</p>
+                <% end %>
             </div>
             <div class="widget--footer step-6-footer">
                 <a href="/tour/end" class="button is-filled">Next</a>

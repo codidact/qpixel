@@ -24,7 +24,7 @@ $(() => {
 
   $('.js-tag-select').each((i, el) => {
     const $tgt = $(el);
-    var $this;
+    let $this;
     const useIds = $tgt.attr('data-use-ids') === 'true';
     $tgt.select2({
       tags: $tgt.attr('data-create') !== 'false',
