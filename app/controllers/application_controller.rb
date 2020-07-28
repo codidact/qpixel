@@ -151,7 +151,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.seconds) do
+    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end

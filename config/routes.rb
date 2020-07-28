@@ -52,6 +52,14 @@ Rails.application.routes.draw do
   get    'mod/votes/user/:id',             to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
 
+  scope 'mod/featured' do
+    root                                   to: 'pinned_links#index', as: :pinned_links
+    get   'new',                           to: 'pinned_links#new', as: :new_pinned_link
+    post  'new',                           to: 'pinned_links#create', as: :create_pinned_link
+    get   ':id/edit',                      to: 'pinned_links#edit', as: :edit_pinned_link
+    patch ':id/edit',                      to: 'pinned_links#update', as: :update_pinned_link
+  end
+
   get    'questions',                      to: 'questions#index', as: :questions
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
   get    'meta',                           to: 'questions#meta', as: :meta

@@ -1,0 +1,64 @@
+<h1>New featured link</h1>
+
+<% if @link.errors.any? %>
+  <div class="notice is-danger">
+    These errors prevented this link being saved:
+    <ul>
+      <% @link.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @link, url: create_pinned_link_path do |f| %>
+  <div class="form-group has-padding-1">
+    <%= f.label :label, "Shown label", class: "form-element" %>
+    <div class="form-caption">What is shown in the sidebar. This will be ignored, when a post is set.</div>
+    <%= f.text_area :label, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :link, "Target link", class: "form-element" %>
+    <div class="form-caption">What the label is linked to in the sidebar. This will be ignored, when a post is set.</div>
+    <%= f.text_field :link, class: "form-element" %>
+  </div>
+
+  <% if current_user.is_global_moderator %>
+  <div class="form-group has-padding-1">
+    <%= f.label :community, "Community", class: "form-element" %>
+    <div class="form-caption">Which sidebar this is shown in the sidebar. Global if blank.</div>
+    <% communities = Community.all %>
+    <% ocs = communities.map { |c| [c.name, c.id] } %>
+    <%= f.select :community, options_for_select(ocs, selected: @link.community&.id),
+                { include_blank: true }, class: 'form-element' %>
+  </div>
+  <% end %>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :post, "ID of target post", class: "form-element" %>
+    <div class="form-caption">You can link to a post of this community. Will override label and link.</div>
+    <%= f.number_field :post, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :active, "Active?", class: "form-element" %>
+    <%= f.select :active, options_for_select([['yes', true], ['no', false]], selected: @link.community&.id),
+                 {}, class: 'form-element' %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :shown_before, "Shown before", class: "form-element" %>
+    <div class="form-caption">Link will expire showing on that date. Will be shown in the sidebar as meta data.</div>
+    <%= f.date_field :shown_before, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :shown_after, "Begin of Event", class: "form-element" %>
+    <div class="form-caption">Use only, when shown before is set. Use, when your event spans more than one day. Will indicate, whether the event already started or ended in the sidebar. Does not affect visibility.</div>
+    <%= f.date_field :shown_after, class: "form-element" %>
+  </div>
+
+  <%= f.submit "Create", class: "button is-filled" %>
+  <%= link_to "Cancel", pinned_links_path(global: params[:global]), class: "button" %>
+<% end %>
