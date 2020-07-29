@@ -1,6 +1,7 @@
 require 'rmagick'
 
 # Neccessary due to rmagick
+# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/BlockLength
@@ -148,7 +149,8 @@ class AdvertisementController < ApplicationController
 
   def specific_category
     @category = Category.find(params[:id])
-    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}", expires_in: 5.minutes do
+    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}",
+                              expires_in: 5.minutes do
       select_random_post(@category)
     end
     if @post.question?
@@ -167,6 +169,7 @@ class AdvertisementController < ApplicationController
     if @post.nil?
       return community
     end
+
     if @post.question?
       question_ad(@post)
     elsif @post.article?
@@ -178,15 +181,15 @@ class AdvertisementController < ApplicationController
 
   private
 
-  def select_random_post(category=nil)
+  def select_random_post(category = nil)
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
     Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
-            .where(post_type_id: Question.post_type_id)
-            .where(category: category)
-            .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
-            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
+        .where(post_type_id: Question.post_type_id)
+        .where(category: category)
+        .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
+        .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
   end
 
   def wrap_text(text, width, font_size)
@@ -355,5 +358,6 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/AbcSize
 # rubocop:enable Metrics/BlockLength
