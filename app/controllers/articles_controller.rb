@@ -21,10 +21,14 @@ class ArticlesController < ApplicationController
       return update_as_suggested_edit
     end
 
+    tags_cache = params[:article][:tags_cache]&.reject { |e| e.to_s.empty? }
+    after_tags = Tag.where(tag_set_id: @article.category.tag_set_id, name: tags_cache)
     PostHistory.post_edited(@article, current_user, before: @article.body_markdown,
-                            after: params[:article][:body_markdown], comment: params[:edit_comment])
+                            after: params[:article][:body_markdown], comment: params[:edit_comment],
+                            before_title: @article.title, after_title: params[:article][:title],
+                            before_tags: @article.tags, after_tags: after_tags)
     body_rendered = helpers.render_markdown(params[:article][:body_markdown])
-    if @article.update(article_params.merge(tags_cache: params[:article][:tags_cache]&.reject { |e| e.to_s.empty? },
+    if @article.update(article_params.merge(tags_cache: tags_cache,
                                             body: body_rendered, last_activity: DateTime.now,
                                             last_activity_by: current_user))
       redirect_to share_article_path(@article)

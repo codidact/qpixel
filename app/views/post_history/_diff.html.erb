@@ -1,0 +1,81 @@
+<div class="diff">
+  <% if before.present? && after.present? %>
+    <% if before.is_a?(String) && after.is_a?(String) %>
+      <% diff = Diffy::SplitDiff.new(before, after, format: :html) %>
+      <div class="diff-section">
+        <div class="diff-old is-changed raw-markdown">
+          <%= raw(sanitize(diff.left, scrubber: scrubber)) %>
+        </div>
+        <div class="diff-new is-changed raw-markdown">
+          <%= raw(sanitize(diff.right, scrubber: scrubber)) %>
+        </div>
+      </div>
+    <% else %>
+      <div class="diff-section">
+        <% required_ids = post.category&.required_tag_ids %>
+        <% moderator_ids = post.category&.moderator_tag_ids %>
+        <% topic_ids = post.category&.topic_tag_ids %>
+        <div class="diff-old is-changed">
+          <% category_sort_tags(before, required_ids, topic_ids, moderator_ids).each do |tag| %>
+            <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+            <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+            <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+            <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                        class: "badge is-tag #{required} #{topic} #{moderator}" %>
+          <% end %>
+        </div>
+        <div class="diff-new is-changed">
+          <% category_sort_tags(after, required_ids, topic_ids, moderator_ids).each do |tag| %>
+            <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+            <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+            <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+            <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                        class: "badge is-tag #{required} #{topic} #{moderator}" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% elsif before.present? %>
+    <div class="diff-section">
+      <% if before.is_a?(String) %>
+        <div class="diff-new is-changed raw-markdown">
+          <%= raw(sanitize(before, scrubber: scrubber).gsub("\n", "<br/>")) %>
+        </div>
+      <% else %>
+        <div class="diff-new is-changed">
+          <% required_ids = post.category&.required_tag_ids %>
+          <% moderator_ids = post.category&.moderator_tag_ids %>
+          <% topic_ids = post.category&.topic_tag_ids %>
+          <% category_sort_tags(before, required_ids, topic_ids, moderator_ids).each do |tag| %>
+            <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+            <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+            <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+            <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                        class: "badge is-tag #{required} #{topic} #{moderator}" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% elsif after.present? %>
+    <div class="diff-section">
+      <% if after.is_a?(String) %>
+        <div class="diff-new is-changed raw-markdown">
+          <%= raw(sanitize(after, scrubber: scrubber).gsub("\n", "<br/>")) %>
+        </div>
+      <% else %>
+        <div class="diff-new is-changed">
+          <% required_ids = post.category&.required_tag_ids %>
+          <% moderator_ids = post.category&.moderator_tag_ids %>
+          <% topic_ids = post.category&.topic_tag_ids %>
+          <% category_sort_tags(after, required_ids, topic_ids, moderator_ids).each do |tag| %>
+            <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+            <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+            <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+            <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                        class: "badge is-tag #{required} #{topic} #{moderator}" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

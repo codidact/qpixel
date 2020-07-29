@@ -12,7 +12,6 @@ class ErrorsController < ApplicationController
       422 => 'errors/unprocessable_entity',
       500 => 'errors/internal_server_error'
     }
-    puts "  Error type #{@exception&.class}, status code #{@status}"
 
     if @exception&.class == ActionView::MissingTemplate
       @status = 404

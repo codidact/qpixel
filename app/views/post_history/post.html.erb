@@ -26,19 +26,12 @@
         <% end %>
       </span>
     </summary>
-    <div class="diff">
-      <div class="diff-section">
-        <% if event.before_state.present? %>
-          <div class="diff-old is-changed raw-markdown">
-            <%= raw(sanitize(event.before_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
-          </div>
-        <% end %>
-        <% if event.after_state.present? %>
-          <div class="diff-new is-changed raw-markdown">
-            <%= raw(sanitize(event.after_state, scrubber: scrubber).gsub("\n", '<br/>')) %>
-          </div>
-        <% end %>
-      </div>
-    </div>
+    <% if event.before_title.present? || event.after_title.present? %>
+      <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
+    <% end %>
+    <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
+    <% if event.before_tags.present? || event.after_tags.present? %>
+      <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
+    <% end %>
   </details>
 <% end %>

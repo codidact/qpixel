@@ -28,6 +28,7 @@ class QuestionsController < ApplicationController
                  Answer.where(parent_id: @question.id)
                else
                  Answer.where(parent_id: @question.id).undeleted
+                       .or(Answer.where(parent_id: @question.id, user_id: current_user&.id))
                end.user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC') },
                              score: Arel.sql('deleted ASC, score DESC'), age: :created_at)
                .paginate(page: params[:page], per_page: 20)
@@ -64,10 +65,14 @@ class QuestionsController < ApplicationController
       return update_as_suggested_edit
     end
 
+    tags_cache = params[:question][:tags_cache]&.reject { |e| e.to_s.empty? }
+    after_tags = Tag.where(tag_set_id: @question.category.tag_set_id, name: tags_cache)
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
-                            after: params[:question][:body_markdown], comment: params[:edit_comment])
+                            after: params[:question][:body_markdown], comment: params[:edit_comment],
+                            before_title: @question.title, after_title: params[:question][:title],
+                            before_tags: @question.tags, after_tags: after_tags)
     body_rendered = helpers.render_markdown(params[:question][:body_markdown])
-    if @question.update(question_params.merge(tags_cache: params[:question][:tags_cache]&.reject { |e| e.to_s.empty? },
+    if @question.update(question_params.merge(tags_cache: tags_cache,
                                               body: body_rendered, last_activity: DateTime.now,
                                               last_activity_by: current_user))
       redirect_to share_question_path(@question)

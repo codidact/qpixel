@@ -8,7 +8,6 @@ module AdvertisementHelper
   # scan buffer. This has the effect of reversing RTL sections in-place, which seems to correct their direction.
   #
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/PerceivedComplexity
   def do_rtl_witchcraft(str)
     chars = str.chars
@@ -46,7 +45,7 @@ module AdvertisementHelper
                      end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
+
   # rubocop:enable Metrics/PerceivedComplexity
 
   def rtl?(char)

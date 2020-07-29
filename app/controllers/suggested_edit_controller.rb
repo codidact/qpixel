@@ -18,8 +18,11 @@ class SuggestedEditController < ApplicationController
       return
     end
 
-    PostHistory.post_edited(@post, @edit.user, before: @post.body_markdown,
-                                               after: @edit.body_markdown, comment: params[:edit_comment])
+    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: params[:edit_comment] }
+    if @post.question? || @post.article?
+      opts.merge(before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags)
+    end
+    PostHistory.post_edited(@post, @edit.user, **opts)
 
     if @post.update(applied_details)
       @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,

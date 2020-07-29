@@ -27,6 +27,7 @@ gem 'chartkick', '~> 3.3'
 gem 'groupdate', '~> 4.3'
 
 # View stuff.
+gem 'diffy', '~> 3.3'
 gem 'jbuilder', '~> 2.10'
 gem 'rqrcode', '~> 1.1'
 gem 'will_paginate', '~> 3.3'

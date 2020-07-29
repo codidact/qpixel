@@ -180,7 +180,7 @@ class Post < ApplicationRecord
   end
 
   def create_initial_revision
-    PostHistory.initial_revision(self, user, after: body_markdown)
+    PostHistory.initial_revision(self, user, after: body_markdown, after_title: title, after_tags: tags)
   end
 
   def category_allows_post_type
