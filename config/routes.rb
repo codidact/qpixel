@@ -222,6 +222,7 @@ Rails.application.routes.draw do
     get 'community.png',                   to: 'advertisement#community', as: :community_ads
     get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
     get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
+    get 'category/:id.png',                to: 'advertisement#specific_category', as: :specific_category_ads
   end
 
   get   '403',                             to: 'errors#forbidden'

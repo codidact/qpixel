@@ -146,9 +146,26 @@ class AdvertisementController < ApplicationController
     end
   end
 
+  def specific_category
+    @category = Category.find(params[:id])
+    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}", expires_in: 5.minutes do
+      select_random_post(@category)
+    end
+    if @post.question?
+      question_ad(@post)
+    elsif @post.article?
+      article_ad(@post)
+    else
+      not_found
+    end
+  end
+
   def random_question
-    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/random_hot_post", expires_in: 5.minutes do
-      @hot_questions.sample
+    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_hot_post", expires_in: 5.minutes do
+      select_random_post
+    end
+    if @post.nil?
+      return community
     end
     if @post.question?
       question_ad(@post)
@@ -160,6 +177,17 @@ class AdvertisementController < ApplicationController
   end
 
   private
+
+  def select_random_post(category=nil)
+    if category.nil?
+      category = Category.where(use_for_advertisement: true)
+    end
+    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
+            .where(post_type_id: Question.post_type_id)
+            .where(category: category)
+            .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
+            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
+  end
 
   def wrap_text(text, width, font_size)
     columns = (width * 2.0 / font_size).to_i
