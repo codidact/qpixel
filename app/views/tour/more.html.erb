@@ -113,8 +113,12 @@
     <div class="grid--cell is-flexible">
         <div class="widget">
             <div class="widget--body">
+                <% if !current_user.nil? %>
                 <p>By the way, we have generated a user profile for you, which is publicly visible to other users.</p>
                 <p>It's currently mostly blank, but you can <a href="/users/edit/profile">personalize it</a> if you want.</a></p>
+                <% else %>
+                <p>By the way. When this here looks interesting, why don't you <a href="/users/sign_up">sign up</a> and create an account to join our communities?</p>
+                <% end %>
             </div>
             <div class="widget--footer step-5-footer">
                 <a href="#5" data-step-from=".step-5-footer" data-step-to=".step-6" class="button is-filled">Next</a>

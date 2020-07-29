@@ -29,7 +29,7 @@
       <div class="post--container grid is-nowrap">
         <div class="grid--cell">
           <div class="post--votes has-text-align-center" title="0.5">
-            <button class="vote-button button is-icon-only-button" aria-label="Upvote">
+            <button class="tour-vote-button button is-icon-only-button" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
               </svg>
@@ -40,7 +40,7 @@
             <div class="score has-font-size-subheading js-downvote-count">
               &minus;0
             </div>
-            <button class="vote-button button is-icon-only-button " aria-label="Downvote">
+            <button class="tour-vote-button button is-icon-only-button " aria-label="Downvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
               </svg>
@@ -68,7 +68,7 @@
               <div class="post--author has-float-right has-color-tertiary">
                 <div title="2020-07-10T09:32:35Z">just now</div>
                 <div>
-                  <img alt="user avatar" src="<%= avatar_url(current_user) %>" height="32" width="32"
+                  <img alt="user avatar" src="<%= current_user.nil? ? avatar_url(User.find(-1)) : avatar_url(current_user) %>" height="32" width="32"
                     class="has-float-left" />
                   <div class="has-padding-1 has-float-left">
                     <a href="#"><%= current_user&.username || "user31415" %></a> <span
@@ -127,7 +127,7 @@
       <div class="post--container grid is-nowrap">
         <div class="grid--cell">
           <div class="post--votes has-text-align-center" title="0.5">
-            <button class="vote-button button is-icon-only-button" onclick="tour.firstAnswerUpvote(this);" aria-label="Upvote">
+            <button class="tour-vote-button button is-icon-only-button" onclick="tour.firstAnswerUpvote(this);" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
               </svg>
@@ -138,7 +138,7 @@
             <div class="score has-font-size-subheading js-downvote-count">
               &minus;0
             </div>
-            <button class="vote-button button is-icon-only-button " aria-label="Downvote">
+            <button class="tour-vote-button button is-icon-only-button " aria-label="Downvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
               </svg>
@@ -206,7 +206,7 @@
       <div class="post--container grid is-nowrap">
         <div class="grid--cell">
           <div class="post--votes has-text-align-center" title="0.5">
-            <button class="vote-button button is-icon-only-button" aria-label="Upvote">
+            <button class="tour-vote-button button is-icon-only-button" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
               </svg>
@@ -217,7 +217,7 @@
             <div class="score has-font-size-subheading js-downvote-count">
               &minus;0
             </div>
-            <button class="vote-button button is-icon-only-button " aria-label="Downvote">
+            <button class="tour-vote-button button is-icon-only-button " aria-label="Downvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                 <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
               </svg>
