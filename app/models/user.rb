@@ -189,6 +189,7 @@ class User < ApplicationRecord
 
   def send_welcome_tour_message
     return if id == -1
+
     create_notification('👋 Welcome to ' + SiteSetting['SiteName'] + '! Take our tour to find out ' \
                         'how this site works.', '/tour')
   end
