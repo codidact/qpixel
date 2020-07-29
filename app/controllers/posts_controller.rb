@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
-  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments]
+  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments, :feature]
   before_action :set_scoped_post, only: [:change_category]
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help, :toggle_comments]
@@ -163,6 +163,22 @@ class PostsController < ApplicationController
         end
       end
     end
+    render json: { success: true }
+  end
+
+  def feature
+    data = {
+      label: @post.parent.nil? ? @post.title : @post.parent.title,
+      link: helpers.generic_show_link(@post),
+      post: @post,
+      active: true
+    }
+    @link = PinnedLink.create data
+
+    attr = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
+                            comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
+    flash[:success] = 'Post has been featured. Due to caching it may take some time, until the changes apply.'
     render json: { success: true }
   end
 

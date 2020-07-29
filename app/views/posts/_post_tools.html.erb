@@ -69,6 +69,17 @@
           <% end %>
         </details>
       <% end %>
+      <% if moderator? %>
+        <details>
+          <summary>Feature post</summary>
+          <p>
+            You can feature this post by linking it in the sidebar. You can edit the link options later in the moderator tools.
+          </p>
+          <%= form_tag post_feature_url(post), remote: true, class: 'js-feature-post' do %>
+            <%= submit_tag 'Feature post', class: 'button is-filled'  %>
+          <% end %>
+        </details>
+      <% end %>
     </div>
   </div>
 </div>
