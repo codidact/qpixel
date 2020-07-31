@@ -24,17 +24,34 @@ $(() => {
 
   $('.js-tag-select').each((i, el) => {
     const $tgt = $(el);
+    let $this;
     const useIds = $tgt.attr('data-use-ids') === 'true';
     $tgt.select2({
       tags: $tgt.attr('data-create') !== 'false',
       ajax: {
         url: '/tags',
         data: function (params) {
-          return Object.assign(params, { tag_set: $(this).data('tag-set') });
+          $this = $(this);
+          // (for the tour)
+          if ($this.data('tag-set') == "-1") {
+            return Object.assign(params, { tag_set: "1" });
+          }
+          return Object.assign(params, { tag_set: $this.data('tag-set') });
         },
         headers: { 'Accept': 'application/json' },
         delay: 100,
         processResults: data => {
+          // (for the tour)
+          if ($this.data('tag-set') == "-1") {
+            return {
+              results: [
+                { id: 1, text: "hot-red-firebreather", desc: "Very cute dragon" },
+                { id: 2, text: "training", desc: "How to train a dragon" },
+                { id: 3, text: "behavior", desc: "How a dragon behaves" },
+                { id: 4, text: "sapphire-blue-waterspouter", desc: "Other cute dragon" }
+              ]
+            }
+          }
           return {results: data.map(t => ({id: useIds ? t.id : t.name, text: t.name, desc: t.excerpt}))};
         },
       },

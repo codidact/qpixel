@@ -226,6 +226,15 @@ Rails.application.routes.draw do
     get 'category/:id.png',                to: 'advertisement#specific_category', as: :specific_category_ads
   end
 
+  scope 'tour' do
+    root                                   to: 'tour#index', as: :tour
+    get 'q',                               to: 'tour#question1', as: :tour_q1
+    get 'ask',                             to: 'tour#question2', as: :tour_q2
+    get 'qa',                              to: 'tour#question3', as: :tour_q3
+    get 'more',                            to: 'tour#more', as: :tour_more
+    get 'end',                             to: 'tour#end', as: :tour_end
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'

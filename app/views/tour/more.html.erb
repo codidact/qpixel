@@ -1,0 +1,155 @@
+<div class="grid step-1" id="1">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <p>Yay!</p>
+                <p>You have successfully learned the basics of using our Q&A site. However, there are some more things you should know, which differentiate us from other communities.</p>
+            </div>
+            <div class="widget--footer step-1-footer">
+                <a href="#2" data-step-from=".step-1-footer" data-step-to=".step-2" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid step-2 hide" id="2">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <p>First, there is more than just pure questions and answers. We have multiple categories (which you can navigate through in the top bar), which structure content. The categories are for different purposes. Click each category to see its description, or click the "Categories" link at the top to see all of them. Here are the current descriptions for this site:</p>
+
+                <table class="table">
+                    <tr>
+                        <th>Category</th>
+                        <th>Description</th>
+                    </tr>
+                <% @header_categories.each do |cat| %>
+                    <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
+                    <tr>
+                        <td class="h-fw-bold"><%= cat.name %></td>
+                        <td><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
+                    </tr>
+                <% end %>
+                </table>
+                <p>We also have more post types than questions and answers.</p>
+                <p>Their usage depends on the category, but it's possible to write</p>
+                <ul>
+                    <li>questions (with answers, can be voted and commented on) and</li>
+                    <li>articles (without answers, can be voted and commented on).</li>
+                </ul>
+            </div>
+            <div class="widget--footer step-2-footer">
+                <a href="#3" data-step-from=".step-2-footer" data-step-to=".step-3" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid step-3 hide" id="3">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <p>Another thing: this site is community-run.</p>
+                <p>There is no for-profit company behind it, and the organization providing the platform won't interfere with community business.</p>
+                <p>This means that all community-governance issues need to be decided in the local meta category. This is a special category, which isn't about the topic of the current site but about the community. There is also a global Meta community on <a href="https://meta.codidact.com">meta.codidact.com</a>, where network-wide issues are resolved.</p>
+                <p>If you want a new feature or if you find a bug, you can (and should) suggest/report it in the local meta category or on Codidact Meta.</p>
+            </div>
+            <div class="widget--footer step-3-footer">
+                <a href="#4" data-step-from=".step-3-footer" data-step-to=".step-4" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid step-4 hide" id="4">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <p>Did you know that there are other communities, too? You can check them out on <a href="https://codidact.com">codidact.com</a>  and decide if you want to join them:</p>
+                <div class="grid community-list">
+                    <% @communities.each do |c| %>
+                        <% settings = SiteSetting.for_community_id(c.id) %>
+                        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+                        <div class="grid--cell is-4 is-6-md is-12-sm">
+                            <div class="widget">
+                                <div class="widget--header is-complex">
+                                    <div class="has-text-align-center has-font-weight-bold has-font-size-display">
+                                        <%= link_to "//" + c.host, class: "dashboard-full-center" do %>
+                                            <% if !logo_setting.nil? %>
+                                                <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
+                                            <% else %>
+                                                <%= c.name %>
+                                            <% end %>
+                                        <% end %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+            <div class="widget--footer step-4-footer">
+                <a href="#5" data-step-from=".step-4-footer" data-step-to=".step-5" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid step-5 hide" id="5">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <% if !current_user.nil? %>
+                <p>By the way, we have generated a user profile for you, which is publicly visible to other users.</p>
+                <p>It's currently mostly blank, but you can <a href="/users/edit/profile">personalize it</a> if you want.</a></p>
+                <% else %>
+                <p>By the way. When this here looks interesting, why don't you <a href="/users/sign_up">sign up</a> and create an account to join our communities?</p>
+                <% end %>
+            </div>
+            <div class="widget--footer step-5-footer">
+                <a href="#5" data-step-from=".step-5-footer" data-step-to=".step-6" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid step-6 hide" id="6">
+    <div class="grid--cell codidactyl">
+        <img src="/assets/codidactyl.png" alt="Codidactyl">
+    </div>
+    <div class="grid--cell is-flexible">
+        <div class="widget">
+            <div class="widget--body">
+                <p>Great. You are almost finished.</p>
+                <p>Looking for more information? Here are some more places to find help:</p>
+                <ol>
+                    <li>The <a href="/help"><strong>help center</strong></a> contains useful help and policy documents, which explain how the site works.</li>
+                    <li>The local <strong>meta category</strong></a> is the right place to ask questions about this community and its rules. It can also be used for support questions or community-specific bugs or feature requests.</li>
+                    <li><a href="https://meta.codidact.com"><strong>Codidact Meta</strong></a> is where network-wide governance questions are considered and where support questions, bug reports, and feature requests can be posted.</li>
+                </ol>
+                <% chat = SiteSetting['ChatLink'] %>
+                <% if chat.present? %>
+                <p>You might also want to <a href="<%= chat %>">join our community chat</a> and chat with other community members.</p>
+                <% end %>
+            </div>
+            <div class="widget--footer step-6-footer">
+                <a href="/tour/end" class="button is-filled">Next</a>
+            </div>
+        </div>
+    </div>
+</div>
