@@ -159,9 +159,9 @@ class ApplicationController < ActionController::Base
     @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
-            .where(post_type_id: Question.post_type_id)
-            .where(category: Category.where(use_for_hot_posts: true))
-            .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
+            .where(post_type_id: [Question.post_type_id, Article.post_type_id])
+            .joins(:category).where(categories: { use_for_hot_posts: true })
+            .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
             .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
       end
     end
