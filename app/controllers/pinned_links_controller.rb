@@ -59,7 +59,11 @@ class PinnedLinksController < ApplicationController
   private
 
   def set_pinned_link
-    @link = PinnedLink.find params[:id]
+    @link = if current_user.is_global_moderator
+              PinnedLink.unscoped.find params[:id]
+            else
+              PinnedLink.find params[:id]
+            end
   end
 
   def pinned_link_params
