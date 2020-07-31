@@ -1,0 +1,10 @@
+<% content_for :title, "Recently Deleted Posts" %>
+
+<h1>Recently Deleted Posts</h1>
+<div class="item-list">
+  <% @posts.each do |post| %>
+    <%= render 'posts/type_agnostic', post: post %>
+  <% end %>
+</div>
+
+<%= will_paginate @posts, renderer: BootstrapPagination::Rails %>

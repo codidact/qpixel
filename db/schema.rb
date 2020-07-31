@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_21_185230) do
+ActiveRecord::Schema.define(version: 2020_07_28_093322) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -77,6 +77,8 @@ ActiveRecord::Schema.define(version: 2020_07_21_185230) do
     t.integer "min_view_trust_level"
     t.bigint "license_id"
     t.integer "sequence"
+    t.boolean "use_for_hot_posts", default: true
+    t.boolean "use_for_advertisement", default: true
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["sequence"], name: "index_categories_on_sequence"
@@ -205,6 +207,20 @@ ActiveRecord::Schema.define(version: 2020_07_21_185230) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
+  create_table "pinned_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "label"
+    t.string "link"
+    t.bigint "post_id"
+    t.boolean "active"
+    t.datetime "shown_after"
+    t.datetime "shown_before"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_pinned_links_on_community_id"
+    t.index ["post_id"], name: "index_pinned_links_on_post_id"
+  end
+
   create_table "post_histories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "post_history_type_id"
     t.integer "user_id"
@@ -264,7 +280,7 @@ ActiveRecord::Schema.define(version: 2020_07_21_185230) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -501,6 +517,8 @@ ActiveRecord::Schema.define(version: 2020_07_21_185230) do
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "notifications", "communities"
+  add_foreign_key "pinned_links", "communities"
+  add_foreign_key "pinned_links", "posts"
   add_foreign_key "post_histories", "communities"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"

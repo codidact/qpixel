@@ -34,20 +34,42 @@
     <div class="grid--cell is-12 is-4-lg">
         <div class="widget">
             <div class="widget--header h-ta-center h-fw-bold">
-                Posts
+                Random Posts
             </div>
             <a href="<%= random_question_ads_url %>"><img src="<%= random_question_ads_url %>" alt="Random posts ad"></a>
             <div class="widget--body">
-                <p><strong>Random post</strong> (chosen from hot posts)</p>
                 <p>Image link</p>
                 <pre><code><%= random_question_ads_url %></code></pre>
                 <p>Image HTML:</p>
                 <pre><code><%= ('<img src="' + random_question_ads_url + '" alt="' + @community.name + ' questions">') %></code></pre>
-                <p><strong>Specific post</strong> (replace X with post ID)</p>
+            </div>
+        </div>
+    </div>
+    <div class="grid--cell is-12 is-4-lg">
+        <div class="widget">
+            <div class="widget--header h-ta-center h-fw-bold">
+                Specific Post
+            </div>
+            <div class="widget--body">
                 <p>Image link</p>
                 <pre><code><%= specific_question_ads_url('X') %></code></pre>
                 <p>Image HTML:</p>
                 <pre><code><%= ('<img src="' + specific_question_ads_url('X') + '" alt="(choose an alt text)">') %></code></pre>
+                <p><em>You need to replace X with the post ID</em></p>
+            </div>
+        </div>
+    </div>
+    <div class="grid--cell is-12 is-4-lg">
+        <div class="widget">
+            <div class="widget--header h-ta-center h-fw-bold">
+                Random from Category
+            </div>
+            <div class="widget--body">
+                <p>Image link</p>
+                <pre><code><%= specific_category_ads_url('X') %></code></pre>
+                <p>Image HTML:</p>
+                <pre><code><%= ('<img src="' + specific_category_ads_url('X') + '" alt="(choose an alt text)">') %></code></pre>
+                <p><em>You need to replace X with the category ID</em></p>
             </div>
         </div>
     </div>

@@ -108,7 +108,7 @@ class ApplicationController < ActionController::Base
     setup_request_context || return
     setup_user
 
-    pull_hot_questions
+    pull_pinned_links_and_hot_questions
     pull_categories
 
     if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
@@ -150,12 +150,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def pull_hot_questions
+  def pull_pinned_links_and_hot_questions
+    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.hours) do
+      Rack::MiniProfiler.step 'pinned_links: cache miss' do
+        PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
+      end
+    end
     @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
-            .where(post_type_id: Question.post_type_id).includes(:category)
-            .order('score DESC').limit(SiteSetting['HotQuestionsCount'])
+            .where(post_type_id: Question.post_type_id)
+            .where(category: Category.where(use_for_hot_posts: true))
+            .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
+            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
       end
     end
   end

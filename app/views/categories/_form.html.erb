@@ -90,6 +90,40 @@
     <%= f.number_field :sequence, class: 'form-element' %>
   </div>
 
+  <div class="form-group">
+    <%= f.label :asking_guidance_override, class: 'form-element' %>
+    <span class="form-caption">
+      This field overrides the default asking guidance and is shown when a new post is created. Leave blank to use site-default.
+    </span>
+    <%= f.text_area :asking_guidance_override, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :answering_guidance_override, class: 'form-element' %>
+    <span class="form-caption">
+      This field overrides the default answering guidance and is shown when a new answer is created. Leave blank to use site-default.
+    </span>
+    <%= f.text_area :answering_guidance_override, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :use_for_hot_posts, class: 'form-element' %>
+    <span class="form-caption">
+      Whether the posts of this category are eligible to be selected as  hot posts.
+    </span>
+    <%= f.select :use_for_hot_posts, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_hot_posts),
+                 {}, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :use_for_advertisement, class: 'form-element' %>
+    <span class="form-caption">
+      Whether the posts of this category are eligible to be selected as random advertisement.
+    </span>
+    <%= f.select :use_for_advertisement, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_advertisement),
+                 {}, class: 'form-element' %>
+  </div>
+
   <div class="form-group js-category-tags-group">
     <%= f.label :required_tag_ids, 'Required tags', class: 'form-element' %>
     <span class="form-caption js-tags-group-caption">

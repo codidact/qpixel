@@ -1,0 +1,52 @@
+<%= form_for @link, url: url do |f| %>
+  <div class="form-group has-padding-1">
+    <%= f.label :label, "Shown label", class: "form-element" %>
+    <div class="form-caption">What is shown in the sidebar. This will be ignored when a post is set.</div>
+    <%= f.text_area :label, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :link, "Target link", class: "form-element" %>
+    <div class="form-caption">What the label is linked to in the sidebar. This will be ignored when a post is set.</div>
+    <%= f.text_field :link, class: "form-element" %>
+  </div>
+
+  <% if current_user.is_global_moderator %>
+  <div class="form-group has-padding-1">
+    <%= f.label :community, "Community", class: "form-element" %>
+    <div class="form-caption">Which sidebar this is shown in the sidebar. Global if blank.</div>
+    <% communities = Community.all %>
+    <% ocs = communities.map { |c| [c.name, c.id] } %>
+    <%= f.select :community, options_for_select(ocs, selected: @link.community&.id),
+                { include_blank: true }, class: 'form-element' %>
+  </div>
+  <% end %>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :post_id, "ID of target post", class: "form-element" %>
+    <div class="form-caption">You can link to a post within this community. Will override label and link.</div>
+    <%= f.number_field :post_id, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :active, "Active?", class: "form-element" %>
+    <%= f.select :active, options_for_select([['yes', true], ['no', false]], selected: @link.active),
+                 {}, class: 'form-element' %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :shown_before, "End date", class: "form-element" %>
+    <div class="form-caption">Link will show until this date. Will be shown in the sidebar.</div>
+    <%= f.date_field :shown_before, class: "form-element" %>
+  </div>
+
+  <div class="form-group has-padding-1">
+    <%= f.label :shown_after, "Start date", class: "form-element" %>
+    <div class="form-caption">Used to display in the sidebar when the event starts. Does not affect visibility - the event
+      will show immediately.</div>
+    <%= f.date_field :shown_after, class: "form-element" %>
+  </div>
+
+  <%= f.submit "Update", class: "button is-filled" %>
+  <%= link_to "Cancel", pinned_links_path(global: params[:global]), class: "button" %>
+<% end %>

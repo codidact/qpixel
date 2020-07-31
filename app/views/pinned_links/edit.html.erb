@@ -1,0 +1,14 @@
+<h1>Edit featured link</h1>
+
+<% if @link.errors.any? %>
+  <div class="notice is-danger">
+    These errors prevented this link being saved:
+    <ul>
+      <% @link.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= render 'form', url: update_pinned_link_path(global: params[:global]) %>

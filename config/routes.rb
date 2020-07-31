@@ -44,16 +44,21 @@ Rails.application.routes.draw do
   end
 
   get    'mod',                            to: 'moderator#index', as: :moderator
-  get    'mod/deleted/questions',          to: 'moderator#recently_deleted_questions', as: :recently_deleted_questions
-  get    'mod/deleted/answers',            to: 'moderator#recently_deleted_answers', as: :recently_deleted_answers
-  get    'mod/undeleted/questions',        to: 'moderator#recently_undeleted_questions', as: :recently_undeleted_questions
-  get    'mod/undeleted/answers',          to: 'moderator#recently_undeleted_answers', as: :recently_undeleted_answers
+  get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
   patch  'mod/votes/investigated/:id',     to: 'suspicious_votes#investigated', as: :investigated_suspicious_vote
   get    'mod/votes/user/:id',             to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
+
+  scope 'mod/featured' do
+    root                                   to: 'pinned_links#index', as: :pinned_links
+    get   'new',                           to: 'pinned_links#new', as: :new_pinned_link
+    post  'new',                           to: 'pinned_links#create', as: :create_pinned_link
+    get   ':id/edit',                      to: 'pinned_links#edit', as: :edit_pinned_link
+    patch ':id/edit',                      to: 'pinned_links#update', as: :update_pinned_link
+  end
 
   get    'questions',                      to: 'questions#index', as: :questions
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
@@ -95,6 +100,7 @@ Rails.application.routes.draw do
 
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
   post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+  post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
   
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
@@ -217,6 +223,7 @@ Rails.application.routes.draw do
     get 'community.png',                   to: 'advertisement#community', as: :community_ads
     get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
     get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
+    get 'category/:id.png',                to: 'advertisement#specific_category', as: :specific_category_ads
   end
 
   get   '403',                             to: 'errors#forbidden'
