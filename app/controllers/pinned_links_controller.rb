@@ -67,6 +67,7 @@ class PinnedLinksController < ApplicationController
       params.require(:pinned_link).permit(:label, :link, :post, :active, :shown_before, :shown_after, :community_id)
     else
       params.require(:pinned_link).permit(:label, :link, :post, :active, :shown_before, :shown_after)
+            .merge(community_id: RequestContext.community_id)
     end
   end
 end
