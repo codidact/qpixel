@@ -64,9 +64,9 @@ class PinnedLinksController < ApplicationController
 
   def pinned_link_params
     if current_user.is_global_moderator
-      params.require(:pinned_link).permit(:label, :link, :post, :active, :shown_before, :shown_after, :community_id)
+      params.require(:pinned_link).permit(:label, :link, :post_id, :active, :shown_before, :shown_after, :community_id)
     else
-      params.require(:pinned_link).permit(:label, :link, :post, :active, :shown_before, :shown_after)
+      params.require(:pinned_link).permit(:label, :link, :post_id, :active, :shown_before, :shown_after)
             .merge(community_id: RequestContext.community_id)
     end
   end
