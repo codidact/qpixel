@@ -5,17 +5,23 @@
     <% if current_user.is_global_moderator %>
     <div class="grid--cell">
         <div class="button-list is-gutterless">
-            <%= link_to "current community", "?global=0&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='0' || params[:global].nil?) ? 'is-active' : ''}" %>
-            <%= link_to "global", "?global=1&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='1') ? 'is-active' : ''}" %>
-            <%= link_to "everywhere", "?global=2&filter="+(params[:filter]||'active'), class: "button is-muted is-outlined #{(params[:global]=='2') ? 'is-active' : ''}" %>
+            <%= link_to "current community", query_url(global: '0', filter: params[:filter] || 'active'),
+                        class: "button is-muted is-outlined #{(params[:global] == '0' || params[:global].nil?) ? 'is-active' : ''}" %>
+            <%= link_to "global", query_url(global: '1', filter: params[:filter] || 'active'),
+                        class: "button is-muted is-outlined #{(params[:global] == '1') ? 'is-active' : ''}" %>
+            <%= link_to "everywhere", query_url(global: '2', filter: params[:filter] || 'active'),
+                        class: "button is-muted is-outlined #{(params[:global] == '2') ? 'is-active' : ''}" %>
         </div>
     </div>
     <% end %>
     <div class="grid--cell">
         <div class="button-list is-gutterless">
-            <%= link_to "active", "?global="+(params[:global]||'0')+"&filter=active", class: "button is-muted is-outlined #{(params[:filter]=='active' || params[:filter].nil?) ? 'is-active' : ''}" %>
-            <%= link_to "inactive", "?global="+(params[:global]||'0')+"&filter=inactive", class: "button is-muted is-outlined #{(params[:filter]=='inactive') ? 'is-active' : ''}" %>
-            <%= link_to "all", "?global="+(params[:global]||'0')+"&filter=all", class: "button is-muted is-outlined #{(params[:filter]=='all') ? 'is-active' : ''}" %>
+            <%= link_to "active", query_url(global: params[:global] || '0', filter: 'active'),
+                        class: "button is-muted is-outlined #{(params[:filter] == 'active' || params[:filter].nil?) ? 'is-active' : ''}" %>
+            <%= link_to "inactive", query_url(global: params[:global] || '0', filter: 'inactive'),
+                        class: "button is-muted is-outlined #{(params[:filter] == 'inactive') ? 'is-active' : ''}" %>
+            <%= link_to "all", query_url(global: params[:global] || '0', filter: 'all'),
+                        class: "button is-muted is-outlined #{(params[:filter] == 'all') ? 'is-active' : ''}" %>
         </div>
     </div>
     <div class="grid--cell is-flexible">

@@ -178,7 +178,7 @@ class PostsController < ApplicationController
     attr = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
                             comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
-    flash[:success] = 'Post has been featured. Due to caching it may take some time, until the changes apply.'
+    flash[:success] = 'Post has been featured. Due to caching, it may take some time until the changes apply.'
     render json: { success: true }
   end
 

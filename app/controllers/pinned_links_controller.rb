@@ -33,10 +33,9 @@ class PinnedLinksController < ApplicationController
 
     attr = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                            comment: "<<PinnedLink #{attr}>>")
+                             comment: "<<PinnedLink #{attr}>>")
 
-    flash[:success] = 'Your pinned link has been created. Due to caching, it may take some time, '\
-                      'until it is shown.'
+    flash[:success] = 'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
     redirect_to pinned_links_path
   end
 
@@ -58,10 +57,9 @@ class PinnedLinksController < ApplicationController
     @link.update data.merge(post: post, community: community)
     after = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     AuditLog.moderator_audit(event_type: 'pinned_link_update', related: @link, user: current_user,
-                            comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
+                             comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
 
-    flash[:success] = 'The pinned link has been updated. Due to caching, it may take some time, ' \
-                      'until it is shown.'
+    flash[:success] = 'The pinned link has been updated. Due to caching, it may take some time until it is shown.'
     redirect_to pinned_links_path
   end
 
