@@ -3,7 +3,7 @@
 <% active_user = post.last_activity_by || post.user %>
 <% show_type_tag ||= false %>
 <% show_category_tag ||= false %>
-<div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>">
+<div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
   <div class="item-list--number-value">
     <div class="meter is-question-score">
       <div class="meter--bar is-<%= (post.score * 100).to_i %>%"><%= (post.score * 100).to_i %>%</div>
@@ -17,7 +17,7 @@
   </div>
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
-      <%= link_to generic_share_link(post) do %>
+      <%= link_to generic_share_link(post), 'data-ckb-item-link' => '' do %>
         <% if show_category_tag %>
           <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
         <% end %>

@@ -7,93 +7,93 @@
 
 <div class="grid">
   <% if current_user.is_global_admin %>
-    <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
       <div class="widget">
         <div class="widget--body">
           <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-cogs"></i>
-          <%= link_to 'Global Site Settings', global_settings_path %>
+          <%= link_to 'Global Site Settings', global_settings_path, 'data-ckb-item-link' => '' %>
         </div>
       </div>
     </div>
 
-    <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
       <div class="widget">
         <div class="widget--body">
           <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-tags"></i>
-          <%= link_to 'Global Tag Sets', global_tag_sets_path %>
+          <%= link_to 'Global Tag Sets', global_tag_sets_path, 'data-ckb-item-link' => '' %>
         </div>
       </div>
     </div>
 
-    <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
       <div class="widget">
         <div class="widget--body">
           <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-envelope"></i>
-          <%= link_to 'Email Moderators', moderator_email_path %>
+          <%= link_to 'Email Moderators', moderator_email_path, 'data-ckb-item-link' => '' %>
         </div>
       </div>
     </div>
   <% end %>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-cogs"></i>
-        <%= link_to 'Site Settings', site_settings_path %>
+        <%= link_to 'Site Settings', site_settings_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-tags"></i>
-        <%= link_to 'Tag Sets', tag_sets_path %>
+        <%= link_to 'Tag Sets', tag_sets_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-sliders-h"></i>
-        <%= link_to 'Privileges', admin_privileges_path %>
+        <%= link_to 'Privileges', admin_privileges_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-exclamation-triangle"></i>
-        <%= link_to 'Error Reports', admin_error_reports_path %>
+        <%= link_to 'Error Reports', admin_error_reports_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-hand-paper"></i>
-        <%= link_to 'Close Reasons', close_reasons_path %>
+        <%= link_to 'Close Reasons', close_reasons_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-balance-scale"></i>
-        <%= link_to 'Licenses', licenses_path %>
+        <%= link_to 'Licenses', licenses_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-user-secret"></i>
-        <%= link_to 'Audit Log', audit_log_path %>
+        <%= link_to 'Audit Log', audit_log_path, 'data-ckb-item-link' => '' %>
       </div>
     </div>
   </div>
