@@ -1,0 +1,15 @@
+.__keyboard_help {
+    padding: 1rem;
+    font-family: monospace;
+    white-space: pre-wrap;
+    width: 350px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 0.25rem;
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+}
+.__keyboard_selected {
+    outline: 0.25rem solid red;
+}

@@ -1,4 +1,4 @@
-<div class="grid--cell tag-cell <%= params[:hierarchical].present? ? 'is-12-sm is-6' : 'is-4-lg is-6-md is-12-sm' %>">
+<div class="grid--cell tag-cell <%= params[:hierarchical].present? ? 'is-12-sm is-6' : 'is-4-lg is-6-md is-12-sm' %>" data-ckb-list-item data-ckb-item-type="link">
   <% if tag.respond_to?(:path) && tag.path.present? %>
     <span class="has-font-size-caption">
       <% tag.path.split(' > ')[0..-2].each do |tag| %>
@@ -6,7 +6,7 @@
       <% end %>
     </span>
   <% end %>
-  <%= link_to tag.name, tag_path(id: category.id, tag_id: tag.id), class: classes %>
+  <%= link_to tag.name, tag_path(id: category.id, tag_id: tag.id), class: classes, 'data-ckb-item-link' => '' %>
   <span class="has-color-tertiary-900">&times;&nbsp;<%= tag.post_count %></span>
   <% if tag.excerpt.present? %>
     <p class="has-font-size-caption has-color-tertiary-900">
