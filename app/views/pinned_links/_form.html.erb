@@ -13,11 +13,11 @@
 
   <% if current_user.is_global_moderator %>
   <div class="form-group has-padding-1">
-    <%= f.label :community, "Community", class: "form-element" %>
+    <%= f.label :community_id, "Community", class: "form-element" %>
     <div class="form-caption">Which sidebar this is shown in the sidebar. Global if blank.</div>
     <% communities = Community.all %>
     <% ocs = communities.map { |c| [c.name, c.id] } %>
-    <%= f.select :community, options_for_select(ocs, selected: @link.community&.id),
+    <%= f.select :community_id, options_for_select(ocs, selected: @link.community_id),
                 { include_blank: true }, class: 'form-element' %>
   </div>
   <% end %>

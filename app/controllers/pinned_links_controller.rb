@@ -25,13 +25,9 @@ class PinnedLinksController < ApplicationController
   end
 
   def create
-    data = pinned_link_params
-    post = !data[:post_id].present? ? nil : Post.where(data[:post_id]).first
-    community = !data[:community].present? ? nil : Community.where(data[:community]).first
+    @link = PinnedLink.create pinned_link_params
 
-    @link = PinnedLink.create data.merge(post: post, community: community)
-
-    attr = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    attr = @link.attributes_print
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
                              comment: "<<PinnedLink #{attr}>>")
 
@@ -41,21 +37,18 @@ class PinnedLinksController < ApplicationController
 
   def edit
     unless current_user.is_global_moderator
-      return not_found if @link.community.id != @community.id
+      return not_found if @link.community_id != RequestContext.community_id
     end
   end
 
   def update
     unless current_user.is_global_moderator
-      return not_found if @link.community.id != @community.id
+      return not_found if @link.community_id != RequestContext.community_id
     end
 
-    before = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
-    data = pinned_link_params
-    post = !data[:post_id].present? ? nil : Post.where(data[:post_id]).first
-    community = !data[:community].present? ? nil : Community.where(data[:community]).first
-    @link.update data.merge(post: post, community: community)
-    after = @link.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    before = @link.attributes_print
+    @link.update pinned_link_params
+    after = @link.attributes_print
     AuditLog.moderator_audit(event_type: 'pinned_link_update', related: @link, user: current_user,
                              comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
 
