@@ -1,0 +1,20 @@
+<div class="tabs">
+  <% puts user %>
+  <%= link_to user_path(user), class: "tabs--item #{current_page?(user_path(user)) ? 'is-active' : ''}" do %>
+    <i class="fas fa-user"></i> Profile
+  <% end %>
+  <%= link_to user_activity_path(user), class: "tabs--item #{current_page?(user_activity_path(user)) ? 'is-active' : ''}" do %>
+    Activity
+  <% end %>
+  <% if user == current_user %>
+    <%= link_to edit_user_registration_path, class: "tabs--item #{current_page?(edit_user_registration_path) ? 'is-active' : ''}" do %>
+      Account
+    <% end %>
+    <%= link_to edit_user_profile_path, class: "tabs--item #{current_page?(edit_user_profile_path) ? 'is-active' : ''}" do %>
+      Edit
+    <% end %>
+    <%= link_to subscriptions_path, class: "tabs--item #{current_page?(subscriptions_path) ? 'is-active' : ''}" do %>
+      Subscriptions
+    <% end %>
+  <% end %>
+</div>
