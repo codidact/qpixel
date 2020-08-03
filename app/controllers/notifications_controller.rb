@@ -22,14 +22,14 @@ class NotificationsController < ApplicationController
       return
     end
 
-    @notification.is_read = true
+    @notification.is_read = !@notification.is_read
     if @notification.save
       respond_to do |format|
         format.html do
           flash[:notice] = 'Marked as read.'
           render :index
         end
-        format.json { render json: { status: 'success' } }
+        format.json { render json: { status: 'success', notification: @notification }, methods: :community_name }
       end
     else
       respond_to do |format|
