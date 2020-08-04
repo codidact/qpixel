@@ -1,10 +1,22 @@
+<% logo_path = SiteSetting['SiteLogoPath'] %>
+<% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
+
 <header class="header has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
   <div class="container header--container">
     <div class="header--brand">
-      <% if SiteSetting['SiteLogoPath'].present? %>
-        <a href="/" class="header--site-name" aria-label="Home"><img alt src="<%= SiteSetting['SiteLogoPath'] %>" /></a>
+      <% if mobile_logo_path.present? %>
+        <a href="/" class="header--site-name __mobile-only" aria-label="Home"><img alt src="<%= mobile_logo_path %>" /></a>
+        <% if logo_path.present? %>
+          <a href="/" class="header--site-name __desktop-only" aria-label="Home"><img alt src="<%= logo_path %>" /></a>
+        <% else %>
+          <a href="/" class="header--site-name __desktop-only" aria-label="Home"><%= SiteSetting['SiteName'] %></a>
+        <% end %>
       <% else %>
-        <a href="/" class="header--site-name" aria-label="Home"><%= SiteSetting['SiteName'] %></a>
+        <% if logo_path.present? %>
+          <a href="/" class="header--site-name" aria-label="Home"><img alt src="<%= logo_path %>" /></a>
+        <% else %>
+          <a href="/" class="header--site-name" aria-label="Home"><%= SiteSetting['SiteName'] %></a>
+        <% end %>
       <% end %>
     </div>
     <nav class="header--menu">

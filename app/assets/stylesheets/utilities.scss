@@ -148,3 +148,15 @@ pre.unformatted {
     }
   }
 }
+
+.__mobile-only {
+  @media screen and (min-width: $screen-sm) {
+    display: none;
+  }
+}
+
+.__desktop-only {
+  @media screen and (max-width: $screen-sm) {
+    display: none;
+  }
+}

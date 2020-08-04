@@ -12,6 +12,13 @@
   description: >
     The path, relative to the root of the domain, to the site's logo file. Can also be an absolute URL.
 
+- name: MobileLogoPath
+  value: ~
+  value_type: string
+  category: SiteDetails
+  description: >
+    The path to a simplified, squarer version of the site logo for use on mobile or small-screen devices.
+
 - name: SiteCategoryHeaderDefaultColor
   value: blue
   value_type: string
