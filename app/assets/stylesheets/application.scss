@@ -190,3 +190,13 @@ img {
 .widget.is-tertiary .widget--body + .widget--header {
   border-top: 1px solid #9daeb7;
 }
+
+pre {
+  background: #f0f0f0;
+  border: 0;
+}
+
+pre .hljs {
+  padding: 0;
+  background: inherit;
+}

@@ -27,6 +27,13 @@
 <%= javascript_include_tag 'application' %>
 <script src="https://unpkg.com/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
 
+<% if SiteSetting['SyntaxHighlightingEnabled'] %>
+  <link rel="stylesheet"
+        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+  <script defer>hljs.initHighlightingOnLoad();</script>
+<% end %>
+
 <% if SiteSetting['MathJaxEnabled'] %>
   <script>
     MathJax = {
