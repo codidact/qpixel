@@ -256,6 +256,13 @@ class UsersController < ApplicationController
                              comment: "global admin to #{@user.is_global_admin}")
         render json: { status: 'success' } && return
       end
+
+      if params[:role] == 'staff'
+        @user.update(staff: !@user.staff)
+        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                             comment: "staff to #{@user.staff}")
+        render json: { status: 'success' } && return
+      end
     end
 
     render json: { status: 'error', message: "Role not found: #{params[:role]}" }

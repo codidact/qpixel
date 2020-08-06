@@ -23,7 +23,17 @@
     </div>
   </div>
   <div class="user-profile--name">
-    <h1><%= @user.username %></h1>
+    <h1>
+      <%= @user.username %>
+      <% if @user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
+        <span class="badge is-user-role"><%= SiteSetting['AdminBadgeCharacter'] %></span>
+      <% elsif @user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
+        <span class="badge is-user-role"><%= SiteSetting['ModBadgeCharacter'] %></span>
+      <% end %>
+      <% if @user.staff? %>
+        <span class="badge is-tag is-green">staff</span>
+      <% end %>
+    </h1>
     <div class="profile-text">
       <% if @user.profile.nil? || @user.profile.blank? %>
         <em class="has-color-tertiary-400">A quiet enigma. We don't know anything about <%= @user.username %> yet.</em>
