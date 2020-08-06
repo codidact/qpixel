@@ -125,6 +125,7 @@ class User < ApplicationRecord
 
   def email_domain_not_blocklisted
     return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
+    return unless saved_changes.include? 'email'
 
     blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
     email_domain = email.split('@')[-1]
@@ -158,6 +159,7 @@ class User < ApplicationRecord
 
   def email_not_bad_pattern
     return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
+    return unless saved_changes.include? 'email'
 
     patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
     matched = patterns.select { |p| email.match? Regexp.new(p) }
