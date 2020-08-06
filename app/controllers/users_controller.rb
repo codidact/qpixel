@@ -49,7 +49,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def activity
     @posts = Post.undeleted.where(user: @user).count
     @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
@@ -118,7 +117,6 @@ class UsersController < ApplicationController
 
     render layout: 'without_sidebar'
   end
-  # rubocop:enable Metrics/AbcSize
 
   def destroy
     if @user.votes.count > 100
