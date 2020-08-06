@@ -17,7 +17,7 @@ class ErrorsController < ApplicationController
       @status = 404
     end
 
-    if @status == 500
+    if @exception.present? && [422, 500].include?(@status)
       @log = ErrorLog.create(community: RequestContext.community, user: current_user, klass: @exception&.class,
                              message: @exception&.message, backtrace: @exception&.backtrace&.join("\n"),
                              request_uri: request.original_url, host: request.raw_host_with_port,
