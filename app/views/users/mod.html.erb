@@ -20,22 +20,22 @@
   <div class="widget--header">Granting / revoking special permissions</div>
   <div class="widget--body">
     <p>You can grant or revoke special user permissions to this user.</p>
-    <% if @user.is_moderator %>
-      <button class="button is-filled js-role-grant-btn" data-toggle="mod" data-user="<%= @user.id %>">Revoke Moderator</button>
+    <% if @user.community_user.is_moderator %>
+      <button class="button is-filled js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">Revoke Moderator</button>
     <% else %>
-      <button class="button is-outlined js-role-grant-btn" data-toggle="mod" data-user="<%= @user.id %>">Grant Moderator</button>
+      <button class="button is-outlined js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">Grant Moderator</button>
     <% end %>
     <% if @current_user.is_global_admin %>
-      <% if @user.is_admin %>
-        <button class="button is-filled js-role-grant-btn" data-toggle="admin" data-user="<%= @user.id %>">Revoke Admin</button>
+      <% if @user.community_user.is_admin %>
+        <button class="button is-filled js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">Revoke Admin</button>
       <% else %>
-        <button class="button is-outlined js-role-grant-btn" data-toggle="admin" data-user="<%= @user.id %>">Grant Admin</button>
+        <button class="button is-outlined js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">Grant Admin</button>
       <% end %>
   
       <% if @user.is_global_moderator %>
-        <button class="button is-filled js-role-grant-btn" data-toggle="mod-global" data-user="<%= @user.id %>">Revoke Global Moderator</button>
+        <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Revoke Global Moderator</button>
       <% else %>
-        <button class="button is-outlined js-role-grant-btn" data-toggle="mod-global" data-user="<%= @user.id %>">Grant Gobal Moderator</button>
+        <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Grant Global Moderator</button>
       <% end %>
   
       <p>
@@ -44,9 +44,9 @@
       </p>
   
       <% if @user.is_global_admin %>
-        <button class="button is-muted is-filled" disabled>This user is a Global Admin</button>
+        <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">Revoke Global Admin</button>
       <% else %>
-        <button class="button is-outlined js-role-grant-btn" data-toggle="admin-global" data-user="<%= @user.id %>">Grant Gobal Admin</button>
+        <button class="button is-outlined js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">Grant Global Admin</button>
       <% end %>
 
       <p>
@@ -54,10 +54,10 @@
         to help others identify who's who.
       </p>
 
-      <% if @user.is_global_moderator %>
-        <button class="button is-filled js-role-grant-btn" data-toggle="staff" data-user="<%= @user.id %>">Revoke Staff</button>
+      <% if @user.staff? %>
+        <button class="button is-filled js-role-grant-btn" data-role="staff" data-user="<%= @user.id %>">Revoke Staff</button>
       <% else %>
-        <button class="button is-outlined js-role-grant-btn" data-toggle="staff" data-user="<%= @user.id %>">Grant Staff</button>
+        <button class="button is-outlined js-role-grant-btn" data-role="staff" data-user="<%= @user.id %>">Grant Staff</button>
       <% end %>
     <% end %>
   </div>

@@ -139,28 +139,4 @@ $(document).on('ready', function() {
   $('.js-first-visit-notice').on('close.bs.alert', async () => {
     document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
   });
-
-
-  $('.js-role-grant-btn').on("click", (e) => {
-    const $this = $(e.target);
-
-    $.ajax({
-      'type': 'POST',
-      'url': '/users/' + $this.attr("data-user") + "/mod/toggle-role",
-      'data': { role: $this.attr("data-toggle") },
-      'target': $this
-    })
-    .done((response) => {
-      if (response.status !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
-      }
-      else {
-        window.location.reload();
-      }
-    })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
-      console.log(jqXHR.responseText);
-    });
-  });
 });
