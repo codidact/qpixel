@@ -47,7 +47,18 @@
         <button class="button is-muted is-filled" disabled>This user is a Global Admin</button>
       <% else %>
         <button class="button is-outlined js-role-grant-btn" data-toggle="admin-global" data-user="<%= @user.id %>">Grant Gobal Admin</button>
-      <% end %>   
+      <% end %>
+
+      <p>
+        You can also add "staff" status. This status grants no abilities, but marks the user's profile with a "staff" indicator
+        to help others identify who's who.
+      </p>
+
+      <% if @user.is_global_moderator %>
+        <button class="button is-filled js-role-grant-btn" data-toggle="staff" data-user="<%= @user.id %>">Revoke Staff</button>
+      <% else %>
+        <button class="button is-outlined js-role-grant-btn" data-toggle="staff" data-user="<%= @user.id %>">Grant Staff</button>
+      <% end %>
     <% end %>
   </div>
 </div>
