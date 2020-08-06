@@ -1,5 +1,6 @@
 require 'net/http'
 
+# rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
@@ -227,6 +228,8 @@ class UsersController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def role_toggle
     if params[:role] == 'mod'
       @user.community_user.update(is_moderator: !@user.is_moderator)
@@ -267,6 +270,8 @@ class UsersController < ApplicationController
 
     render json: { status: 'error', message: "Role not found: #{params[:role]}" }
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def stack_redirect
     response = Net::HTTP.post_form(URI('https://stackoverflow.com/oauth/access_token/json'),
@@ -360,3 +365,4 @@ class UsersController < ApplicationController
     User.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 end
+# rubocop:enable Metrics/ClassLength
