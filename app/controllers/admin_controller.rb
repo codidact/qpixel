@@ -83,8 +83,7 @@ class AdminController < ApplicationController
     render
   end
 
-  def setup
-  end
+  def setup; end
 
   def setup_save
     settings = SiteSetting.for_community_id(@community.id)
@@ -101,7 +100,7 @@ class AdminController < ApplicationController
 
     # Audit Log
     AuditLog.admin_audit(event_type: 'setup_site', related: @new_community, user: current_user,
-                         comment: "Site Settings updated via /admin/setup")
+                         comment: 'Site Settings updated via /admin/setup')
 
     render
   end
