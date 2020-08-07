@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
-  before_action :verify_global_admin, only: [:admin_email, :send_admin_email]
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site]
 
   def index; end
 
@@ -56,5 +56,30 @@ class AdminController < ApplicationController
                                related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
                     .paginate(page: params[:page], per_page: 100)
     render layout: 'without_sidebar'
+  end
+
+  def new_site
+    @new_community = Community.new
+  end
+
+  def create_site
+    @new_community = Community.create(name: params[:community][:name], host: params[:community][:host])
+
+    # Run Seeds
+    Rails.application.load_seed
+
+    # Manage Site Settings
+    settings = SiteSetting.for_community_id(@new_community.id)
+    settings.find_by(name: 'SiteName').update(value: @new_community.name)
+
+    # Audit Log
+    AuditLog.admin_audit(event_type: 'new_site', related: @new_community, user: current_user,
+                         comment: "<<Community #{@new_community.attributes_print}>>")
+
+    # Clear cache
+    Rails.cache.clear
+
+    # Render template
+    render
   end
 end
