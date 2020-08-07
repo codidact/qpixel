@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
-  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site]
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup]
 
   def index; end
 
@@ -80,6 +80,29 @@ class AdminController < ApplicationController
     Rails.cache.clear
 
     # Render template
+    render
+  end
+
+  def setup
+  end
+
+  def setup_save
+    settings = SiteSetting.for_community_id(@community.id)
+    settings.find_by(name: 'SiteCategoryHeaderDefaultColor').update(value: params[:primary_color])
+    settings.find_by(name: 'SiteLogoPath').update(value: params[:logo_url])
+    settings.find_by(name: 'SiteAdSlogan').update(value: params[:ad_slogan])
+    settings.find_by(name: 'MathJaxEnabled').update(value: params[:mathjax])
+    settings.find_by(name: 'ChatLink').update(value: params[:chat_link])
+    settings.find_by(name: 'AnalyticsURL').update(value: params[:analytics_url])
+    settings.find_by(name: 'AnalyticsSiteId').update(value: params[:analytics_id])
+
+    # Clear cache
+    Rails.cache.clear
+
+    # Audit Log
+    AuditLog.admin_audit(event_type: 'setup_site', related: @new_community, user: current_user,
+                         comment: "Site Settings updated via /admin/setup")
+
     render
   end
 end
