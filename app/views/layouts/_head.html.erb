@@ -11,7 +11,8 @@
   <%= page_title %>
 </title>
 
-<link rel="icon" href="<%= SiteSetting['IconPath'] || '/assets/favicon.ico' %>" />
+<% icon_path = SiteSetting['IconPath'] %>
+<link rel="icon" href="<%= icon_path.present? ? icon_path : '/assets/favicon.ico' %>" />
 
 <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
 <%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.12.0/dist/codidact.css" %>
@@ -25,6 +26,13 @@
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
 <script src="https://unpkg.com/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
+
+<% if SiteSetting['SyntaxHighlightingEnabled'] %>
+  <link rel="stylesheet"
+        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+  <script defer>hljs.initHighlightingOnLoad();</script>
+<% end %>
 
 <% if SiteSetting['MathJaxEnabled'] %>
   <script>

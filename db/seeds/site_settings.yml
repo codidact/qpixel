@@ -12,6 +12,13 @@
   description: >
     The path, relative to the root of the domain, to the site's logo file. Can also be an absolute URL.
 
+- name: MobileLogoPath
+  value: ~
+  value_type: string
+  category: SiteDetails
+  description: >
+    The path to a simplified, squarer version of the site logo for use on mobile or small-screen devices.
+
 - name: SiteCategoryHeaderDefaultColor
   value: blue
   value_type: string
@@ -275,6 +282,14 @@
   category: Display
   description: >
     Enable MathJax on this site for math display. This will incur a small penalty in page loading times, so consider
+    whether you really need it.
+
+- name: SyntaxHighlightingEnabled
+  value: false
+  value_type: boolean
+  category: Display
+  description: >
+    Enable highlight.js syntax highlighting on this site. This incurs a small penalty in page loading times, so consider
     whether you really need it.
 
 - name: ScoringVariable

@@ -1,5 +1,4 @@
 require 'net/http'
-
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
@@ -50,7 +49,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def activity
     @posts = Post.undeleted.where(user: @user).count
     @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
@@ -119,7 +117,6 @@ class UsersController < ApplicationController
 
     render layout: 'without_sidebar'
   end
-  # rubocop:enable Metrics/AbcSize
 
   def destroy
     if @user.votes.count > 100
@@ -228,37 +225,25 @@ class UsersController < ApplicationController
   end
 
   def role_toggle
-    if params[:role] == 'mod'
-      @user.community_user.update(is_moderator: !@user.is_moderator)
-      AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
-                           comment: "moderator to #{@user.is_moderator}")
-      render json: { status: 'success' } && return
+    role_map = { mod: :is_moderator, admin: :is_admin, mod_global: :is_global_moderator, admin_global: :is_global_admin,
+                 staff: :staff }
+    unless role_map.keys.include?(params[:role].underscore.to_sym)
+      render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: 400
     end
 
-    if current_user.is_global_admin
-      if params[:role] == 'admin'
-        @user.community_user.update(is_admin: !@user.is_admin)
-        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
-                             comment: "admin to #{@user.is_admin}")
-        render json: { status: 'success' } && return
-      end
-
-      if params[:role] == 'mod-global'
-        @user.update(is_global_moderator: !@user.is_global_moderator)
-        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
-                             comment: "global mod to #{@user.is_global_moderator}")
-        render json: { status: 'success' } && return
-      end
-
-      if params[:role] == 'admin-global'
-        @user.update(is_global_admin: true)
-        AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
-                             comment: "global admin to #{@user.is_global_admin}")
-        render json: { status: 'success' } && return
-      end
+    key = params[:role].underscore.to_sym
+    attrib = role_map[key]
+    if [:mod, :admin].include? key
+      new_value = !@user.community_user.send(attrib)
+      @user.community_user.update(attrib => new_value)
+    else
+      new_value = !@user.send(attrib)
+      @user.update(attrib => new_value)
     end
+    AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
+                         comment: "#{attrib} to #{new_value}")
 
-    render json: { status: 'error', message: "Role not found: #{params[:role]}" }
+    render json: { status: 'success' }
   end
 
   def stack_redirect

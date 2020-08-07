@@ -1,17 +1,4 @@
-<div class="tabs">
-  <%= link_to user_path(current_user), class: "tabs--item" do %>
-    <i class="fas fa-user"></i> Profile
-  <% end %>
-  <%= link_to edit_user_registration_path, class: "tabs--item" do %>
-    Account
-  <% end %>
-  <%= link_to edit_user_profile_path, class: "tabs--item" do %>
-    Edit
-  <% end %>
-  <%= link_to subscriptions_path, class: "tabs--item is-active" do %>
-    Subscriptions
-  <% end %>
-</div>
+<%= render 'users/tabs', user: current_user %>
 
 <h1>Your Subscriptions</h1>
 <p>These are all the email subscriptions you're currently signed up for. You can turn them off or remove them entirely from here.</p>

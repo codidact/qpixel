@@ -102,16 +102,7 @@
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
   
         <div class="post--meta has-margin-bottom-4">
-          <div class="post--author has-float-right has-color-tertiary">
-            <div title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</div>
-            <div>
-              <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" class="has-float-left" />
-              <div class="has-padding-1 has-float-left">
-                <%= link_to post.user.username, user_path(post.user) %> <span class="badge is-user-trust-level is-muted"><%= post.user.reputation %></span>
-              </div>
-              <div class="has-clear-clear"></div>
-            </div>
-          </div>
+          <%= render 'users/post_usercard', post: post %>
           <% if has_tags %>
             <div class="post--tags has-padding-2">
               <% tag_set = post.tag_set %>

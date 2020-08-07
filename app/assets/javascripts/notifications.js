@@ -1,4 +1,22 @@
 $(() => {
+  const makeNotification = notification => {
+    const template = `<div class="js-notification widget h-m-0 h-m-b-2 ${notification.is_read ? 'read' : 'is-teal'}">
+        <div class="widget--body h-p-2">
+            <div class="h-c-tertiary-600 h-fs-caption">
+                ${notification.community_name} &middot;
+                ${notification.is_read ? 'read' : `<strong>unread</strong>`} &middot;
+                <span data-livestamp="${notification.created_at}">${notification.created_at}</span>
+            </div>
+            <p><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></p>
+            <p class="has-font-size-caption"><a href="javascript:void(0)" data-notif-id="${notification.id}" class="js-notification-toggle">
+                <i class="fas fa-${notification.is_read ? 'envelope' : 'envelope-open'}"></i>
+                mark ${notification.is_read ? 'unread' : 'read'}
+            </a></p>
+        </div>
+    </div>`;
+    return template;
+  };
+
   $('.inbox-toggle').on('click', async evt => {
     evt.preventDefault();
     const $inbox = $('.inbox');
@@ -13,17 +31,15 @@ $(() => {
   
       const unread = data.filter(n => !n.is_read);
       const read = data.filter(n => n.is_read);
-
-      console.log(read);
   
       unread.forEach(notification => {
-        const item = $(`<div class="widget is-teal h-m-0 h-m-b-2"><div class="widget--body h-p-2"><div class="h-c-tertiary-600 h-fs-caption">${notification.community_name} &middot; <strong>unread</strong></div><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></div></div>`);
+        const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
   
       $inboxContainer.append(`<div role="separator" class="header-slide--separator"></div>`);
       read.forEach(notification => {
-        const item = $(`<div class="widget h-m-0 h-m-b-2"><div class="widget--body h-p-2"><div class="h-c-tertiary-600 h-fs-caption">${notification.community_name} &middot; read</div><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></div></div>"`);
+        const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
   
@@ -39,7 +55,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.inbox a:not(.no-unread):not(.read)', async evt => {
+  $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async evt => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
     await fetch(`/notifications/${id}/read`, {
@@ -50,5 +66,28 @@ $(() => {
     const $inboxCount = $('.inbox-count');
     const currentCount = parseInt($inboxCount.text(), 10);
     $inboxCount.text(currentCount - 1);
+  });
+
+  $(document).on('click', '.js-notification-toggle', async ev => {
+    ev.stopPropagation();
+
+    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
+    const id = $tgt.attr('data-notif-id');
+    const resp = await fetch(`/notifications/${id}/read`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error('Failed to toggle notification read state. Wat?');
+      return;
+    }
+
+    $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
+    const $inboxCount = $('.inbox-count');
+    const currentCount = parseInt($inboxCount.text(), 10);
+    const newCount = data.notification.is_read ? currentCount - 1 : currentCount + 1;
+    $inboxCount.text(newCount);
   });
 });
