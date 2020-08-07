@@ -12,6 +12,7 @@ class Tag < ApplicationRecord
   validates :wiki_markdown, length: { maximum: 30_000 }, allow_blank: true
   validate :parent_not_self
   validate :parent_not_own_child
+  validates :name, uniqueness: { scope: [:tag_set_id] }
 
   def self.search(term)
     where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
