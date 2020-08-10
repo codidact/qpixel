@@ -1,0 +1,2 @@
+class UserPrivilege < ApplicationRecord
+end

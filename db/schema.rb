@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_06_103121) do
+ActiveRecord::Schema.define(version: 2020_08_10_153831) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -280,7 +280,7 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -431,6 +431,32 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
+  create_table "trust_levels", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "name"
+    t.text "description"
+    t.string "internal_id"
+    t.string "icon"
+    t.decimal "post_score_threshold", precision: 10, scale: 8
+    t.decimal "edit_score_threshold", precision: 10, scale: 8
+    t.decimal "flag_score_threshold", precision: 10, scale: 8
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_trust_levels_on_community_id"
+  end
+
+  create_table "user_privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.bigint "trust_level_id"
+    t.boolean "is_suspended", default: false
+    t.datetime "suspension_end"
+    t.text "suspension_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_user_id"], name: "index_user_privileges_on_community_user_id"
+    t.index ["trust_level_id"], name: "index_user_privileges_on_trust_level_id"
+  end
+
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password"
@@ -537,6 +563,9 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
+  add_foreign_key "trust_levels", "communities"
+  add_foreign_key "user_privileges", "community_users"
+  add_foreign_key "user_privileges", "trust_levels"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"
   add_foreign_key "warnings", "community_users"

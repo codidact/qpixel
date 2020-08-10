@@ -1,0 +1,2 @@
+class TrustLevel < ApplicationRecord
+end
