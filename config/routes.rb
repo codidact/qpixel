@@ -210,6 +210,7 @@ Rails.application.routes.draw do
 
   get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
+  get   'tl-calc',                         to: 'application#tl_calc', as: :tl_calc
   scope 'dashboard' do
     root                                   to: 'application#dashboard', as: :dashboard
     get 'reports',                         to: 'reports#users_global', as: :global_users_report

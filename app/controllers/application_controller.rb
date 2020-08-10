@@ -19,6 +19,32 @@ class ApplicationController < ActionController::Base
     render layout: 'without_sidebar'
   end
 
+  def tl_calc
+    sb = !params[:recalc].present?
+    response = \
+      "<pre>" \
+      "Trust Level calculation for for user w/ Id=#{current_user.id}\n\n" \
+      "(1) Scores for thresholds\n\n" \
+      "Post score: #{current_user.community_user.post_score} / 1.0\n" \
+      "Edit score: #{current_user.community_user.edit_score} / 1.0\n" \
+      "Flag score: #{current_user.community_user.flag_score} / 1.0\n\n" \
+      "(2) User Privileges\n\n" \
+      'P(unrestricted) = ' + current_user.community_user.recalc_privilege('unrestricted', sandbox: sb).to_s + "\n" \
+      'P(edit_posts)   = ' + current_user.community_user.recalc_privilege('edit_posts', sandbox: sb).to_s + "\n" \
+      'P(edit_posts)   = ' + current_user.community_user.recalc_privilege('edit_posts', sandbox: sb).to_s + "\n" \
+      'P(edit_tags)    = ' + current_user.community_user.recalc_privilege('edit_tags', sandbox: sb).to_s + "\n" \
+      'P(flag_close)   = ' + current_user.community_user.recalc_privilege('flag_close', sandbox: sb).to_s + "\n" \
+      'P(flag_curate)  = ' + current_user.community_user.recalc_privilege('flag_curate', sandbox: sb).to_s + "\n" \
+      'P(mod)          = ' + current_user.community_user.recalc_privilege('mod', sandbox: sb).to_s + "</pre>" \
+      '<hr><p><a href="?recalc=1"><strong>Really update TLs</strong></a></p>'
+
+    if !sb
+      response += '<p>Successfully updated trust levels</p>'
+    end
+
+    render inline: response.html_safe
+  end
+
   protected
 
   def configure_permitted_parameters
