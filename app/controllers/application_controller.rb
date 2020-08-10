@@ -20,23 +20,30 @@ class ApplicationController < ActionController::Base
   end
 
   def tl_calc
+    return not_found unless current_user
+
     sb = !params[:recalc].present?
     response = \
-      "<pre>" \
-      "Trust Level calculation for for user w/ Id=#{current_user.id}\n\n" \
+      "<h1>Trust Level calculation</h1>\n<pre>" \
+      "User.Id = #{current_user.id}\n\n" \
       "(1) Scores for thresholds\n\n" \
       "Post score: #{current_user.community_user.post_score} / 1.0\n" \
       "Edit score: #{current_user.community_user.edit_score} / 1.0\n" \
       "Flag score: #{current_user.community_user.flag_score} / 1.0\n\n" \
       "(2) User Privileges\n\n" \
-      'P(unrestricted) = ' + current_user.community_user.recalc_privilege('unrestricted', sandbox: sb).to_s + "\n" \
-      'P(edit_posts)   = ' + current_user.community_user.recalc_privilege('edit_posts', sandbox: sb).to_s + "\n" \
-      'P(edit_posts)   = ' + current_user.community_user.recalc_privilege('edit_posts', sandbox: sb).to_s + "\n" \
-      'P(edit_tags)    = ' + current_user.community_user.recalc_privilege('edit_tags', sandbox: sb).to_s + "\n" \
-      'P(flag_close)   = ' + current_user.community_user.recalc_privilege('flag_close', sandbox: sb).to_s + "\n" \
-      'P(flag_curate)  = ' + current_user.community_user.recalc_privilege('flag_curate', sandbox: sb).to_s + "\n" \
-      'P(mod)          = ' + current_user.community_user.recalc_privilege('mod', sandbox: sb).to_s + "</pre>" \
-      '<hr><p><a href="?recalc=1"><strong>Update TLs</strong></a></p>'
+      'P(unrestricted) = ' + current_user.community_user.recalc_privilege('unrestricted', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('unrestricted').to_s + ")\n" \
+      'P(edit_posts)   = ' + current_user.community_user.recalc_privilege('edit_posts', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('edit_posts').to_s + ")\n" \
+      'P(edit_tags)    = ' + current_user.community_user.recalc_privilege('edit_tags', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('edit_tags').to_s + ")\n" \
+      'P(flag_close)   = ' + current_user.community_user.recalc_privilege('flag_close', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('flag_close').to_s + ")\n" \
+      'P(flag_curate)  = ' + current_user.community_user.recalc_privilege('flag_curate', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('flag_curate').to_s + ")\n" \
+      'P(mod)          = ' + current_user.community_user.recalc_privilege('mod', sandbox: sb).to_s + "\t\t" + \
+                         '(is ' + current_user.community_user.privilege?('mod').to_s + ")</pre>" \
+      '<p><a href="?recalc=1"><button>Update TLs</button></a></p>'
 
     if !sb
       response += '<p>Successfully updated trust level records!</p>'

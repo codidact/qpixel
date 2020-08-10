@@ -48,11 +48,15 @@ class CommunityUser < ApplicationRecord
   end
 
   def privilege?(internal_id, ignore_suspension: false)
+    unless internal_id == 'mod'
+      return true if privilege? 'mod'
+    end
+
     priv = TrustLevel.where(internal_id: internal_id).first
     if ignore_suspension
       UserPrivilege.where(community_user_id: id, trust_level: priv).any?
     else
-      UserPrivilege.where(community_user_id: id, trust_level: priv, is_suspended: false).any
+      UserPrivilege.where(community_user_id: id, trust_level: priv, is_suspended: false).any?
     end
   end
 
@@ -74,9 +78,7 @@ class CommunityUser < ApplicationRecord
     priv = TrustLevel.where(internal_id: internal_id).first
 
     # Do not recalculate privileges which are only manually given
-    return false if priv.post_score_threshold.nil? && \
-                    priv.edit_score_threshold.nil? && \
-                    priv.flag_score_threshold.nil?
+    return false if priv.manual?
 
     # Abort if any of the checks fails
     return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold
