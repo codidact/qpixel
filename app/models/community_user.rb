@@ -25,7 +25,7 @@ class CommunityUser < ApplicationRecord
       good_posts = Post.where(user: user).where('score > 0.5').count
       bad_posts = Post.where(user: user).where('score < 0.5').count
 
-      good_posts / (good_posts + bad_posts + 2.0)
+      (good_posts + 1.0) / (good_posts + bad_posts + 2.0)
     end
   end
 
@@ -34,7 +34,7 @@ class CommunityUser < ApplicationRecord
       good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
       bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
 
-      good_edits / (good_edits + bad_edits + 2.0)
+      (good_edits + 1.0) / (good_edits + bad_edits + 2.0)
     end
   end
 
@@ -43,7 +43,7 @@ class CommunityUser < ApplicationRecord
       good_flags = Flag.where(user: user).where(status: 'helpful').count
       bad_flags = Flag.where(user: user).where(status: 'declined').count
 
-      good_flags / (good_flags + bad_flags + 2.0)
+      (good_flags + 1.0) / (good_flags + bad_flags + 2.0)
     end
   end
 
@@ -86,7 +86,7 @@ class CommunityUser < ApplicationRecord
     # If not sandbox mode, create new privilege entry
     grant_privilege(internal_id) unless sandbox
 
-    granted
+    true
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 

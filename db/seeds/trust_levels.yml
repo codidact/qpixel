@@ -3,7 +3,7 @@
   icon: fas fa-heartbeat
   description: >
     New user restrictions are removed: No limit on posts, vote and comment anywhere
-  post_score_threshold: 0.6  # min. +3/-0
+  post_score_threshold: 0.8  # min. +3/-0
   edit_score_threshold: null
   flag_score_threshold: null
 
@@ -13,7 +13,7 @@
   description: >
     Edit all posts (not only own) and review suggested edits to posts
   post_score_threshold: null
-  edit_score_threshold: 0.9   # min. +18/-0
+  edit_score_threshold: 0.95   # min. +18/-0
   flag_score_threshold: null
 
 - name: Edit Tags
@@ -22,7 +22,7 @@
   description: >
     Edit tag metadata (excerpt and wiki) and review suggested edits to tags
   post_score_threshold: null
-  edit_score_threshold: 0.95   # min. +38/-0
+  edit_score_threshold: 0.975   # min. +38/-0
   flag_score_threshold: null
 
 - name: Vote on Holds
@@ -30,18 +30,18 @@
   icon: fas fa-lock
   description: >
     Vote to put questions on hold, vote to reopen on holded questions and review hold votes
-  post_score_threshold: 0.91   # min +20/-0
+  post_score_threshold: 0.95   # min +18/-0
   edit_score_threshold: null
-  flag_score_threshold: 0.96   # min +48/-0
+  flag_score_threshold: 0.98   # min +48/-0
 
 - name: Curate
   internal_id: flag_curate
   icon: fas fa-trash
   description: >
     See and handle flags, lock and unlock posts temporarily and vote to delete and undelete posts
-  post_score_threshold: 0.91   # min +20/-0
+  post_score_threshold: 0.95   # min +18/-0
   edit_score_threshold: null
-  flag_score_threshold: 0.98   # min +98/-0
+  flag_score_threshold: 0.99   # min +98/-0
 
 - name: Moderator
   internal_id: mod

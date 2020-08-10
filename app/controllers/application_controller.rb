@@ -36,10 +36,10 @@ class ApplicationController < ActionController::Base
       'P(flag_close)   = ' + current_user.community_user.recalc_privilege('flag_close', sandbox: sb).to_s + "\n" \
       'P(flag_curate)  = ' + current_user.community_user.recalc_privilege('flag_curate', sandbox: sb).to_s + "\n" \
       'P(mod)          = ' + current_user.community_user.recalc_privilege('mod', sandbox: sb).to_s + "</pre>" \
-      '<hr><p><a href="?recalc=1"><strong>Really update TLs</strong></a></p>'
+      '<hr><p><a href="?recalc=1"><strong>Update TLs</strong></a></p>'
 
     if !sb
-      response += '<p>Successfully updated trust levels</p>'
+      response += '<p>Successfully updated trust level records!</p>'
     end
 
     render inline: response.html_safe
