@@ -30,7 +30,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -88,7 +88,7 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || false
+    is_global_moderator || community_user&.is_moderator || is_admin || privilege?('mod') || false
   end
 
   def is_admin

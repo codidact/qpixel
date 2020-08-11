@@ -210,7 +210,6 @@ Rails.application.routes.draw do
 
   get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
-  get   'tl-calc',                         to: 'application#tl_calc', as: :tl_calc
   scope 'dashboard' do
     root                                   to: 'application#dashboard', as: :dashboard
     get 'reports',                         to: 'reports#users_global', as: :global_users_report
@@ -234,6 +233,12 @@ Rails.application.routes.draw do
     get 'qa',                              to: 'tour#question3', as: :tour_q3
     get 'more',                            to: 'tour#more', as: :tour_more
     get 'end',                             to: 'tour#end', as: :tour_end
+  end
+
+  scope 'abilities' do
+    root                                   to: 'abilities#index', as: :abilities
+    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get ':id',                             to: 'abilities#show', as: :ability
   end
 
   get   '403',                             to: 'errors#forbidden'

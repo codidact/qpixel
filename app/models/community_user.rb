@@ -47,16 +47,18 @@ class CommunityUser < ApplicationRecord
     end
   end
 
+  ## Privilege functions
+
   def privilege?(internal_id, ignore_suspension: false)
     unless internal_id == 'mod'
       return true if privilege? 'mod'
     end
 
-    priv = TrustLevel.where(internal_id: internal_id).first
+    up = privilege(internal_id)
     if ignore_suspension
-      UserPrivilege.where(community_user_id: id, trust_level: priv).any?
+      !up.nil?
     else
-      UserPrivilege.where(community_user_id: id, trust_level: priv, is_suspended: false).any?
+      !up.nil? && !up.suspended?
     end
   end
 
@@ -70,7 +72,6 @@ class CommunityUser < ApplicationRecord
     UserPrivilege.create community_user_id: id, trust_level: priv
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true)
@@ -90,13 +91,12 @@ class CommunityUser < ApplicationRecord
 
     true
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def recalc_privileges(sandbox: false)
-    recalc_privilege('unrestricted', sandbox) unless privilege?('unrestricted', ignore_suspension: true)
-    recalc_privilege('edit_posts', sandbox) unless privilege?('edit_posts', ignore_suspension: true)
-    recalc_privilege('edit_tags', sandbox) unless privilege?('edit_tags', ignore_suspension: true)
-    recalc_privilege('flag_close', sandbox) unless privilege?('flag_close', ignore_suspension: true)
-    recalc_privilege('flag_curate', sandbox) unless privilege?('flag_curate', ignore_suspension: true)
+    recalc_privilege('unrestricted', sandbox: sandbox) unless privilege?('unrestricted', ignore_suspension: true)
+    recalc_privilege('edit_posts', sandbox: sandbox) unless privilege?('edit_posts', ignore_suspension: true)
+    recalc_privilege('edit_tags', sandbox: sandbox) unless privilege?('edit_tags', ignore_suspension: true)
+    recalc_privilege('flag_close', sandbox: sandbox) unless privilege?('flag_close', ignore_suspension: true)
+    recalc_privilege('flag_curate', sandbox: sandbox) unless privilege?('flag_curate', ignore_suspension: true)
   end
 end

@@ -61,6 +61,11 @@ a.header--site-name {
   word-break: break-word;
 }
 
+.notice.is-filled a {
+  color: white !important;
+  font-weight: bold !important;
+}
+
 .item-list--item {
   .item-list--text-value {
     margin: 0 !important;
