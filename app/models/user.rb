@@ -8,7 +8,6 @@ class User < ApplicationRecord
 
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :nullify
-  has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
@@ -45,24 +44,11 @@ class User < ApplicationRecord
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
-
-  def has_privilege?(name)
-    privilege = Privilege.where(name: name).first
-    if privileges.include?(privilege) || is_admin || is_moderator
-      true
-    elsif privilege && reputation >= privilege.threshold
-      privileges << privilege
-      true
-    else
-      false
-    end
-  end
-
   def has_post_privilege?(name, post)
     if post.user == self
       true
     else
-      has_privilege?(name)
+      privilege?(name)
     end
   end
 
@@ -88,7 +74,7 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || privilege?('mod') || false
+    is_global_moderator || community_user&.is_moderator || is_admin || community_user.privilege?('mod') || false
   end
 
   def is_admin

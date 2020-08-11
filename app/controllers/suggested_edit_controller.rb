@@ -12,7 +12,7 @@ class SuggestedEditController < ApplicationController
     end
 
     @post = @edit.post
-    unless check_your_privilege('Edit', @post, false)
+    unless check_your_privilege('edit_posts', @post, false)
       render(json: { status: 'error', message: 'You need the Edit privilege to approve edits' }, status: 400)
 
       return
@@ -53,7 +53,7 @@ class SuggestedEditController < ApplicationController
 
     @post = @edit.post
 
-    unless check_your_privilege('Edit', @post, false)
+    unless check_your_privilege('edit_posts', @post, false)
       render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
 
       return

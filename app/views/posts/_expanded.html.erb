@@ -87,7 +87,7 @@
       <% end %>
 
       <% if post.pending_suggested_edit? %>
-        <% if check_your_post_privilege(post, 'Edit') %>
+        <% if check_your_post_privilege(post, 'edit_posts') %>
           <div class="notice h-p-2">
             <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small">Review changes</a></p>
           </div>
@@ -138,7 +138,7 @@
                 <i class="fa fa-history"></i>
                 History
               <% end %>
-            <% if check_your_post_privilege(post, 'Edit') %>
+            <% if check_your_post_privilege(post, 'edit_post') %>
               <% if post.pending_suggested_edit? %>
                 <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
                   <i class="fa fa-spell-check"></i>
@@ -188,7 +188,7 @@
               <i class="fa fa-flag"></i>
               Flag
             </a>
-            <% if current_user&.has_privilege?('SeeTools') %>
+            <% if current_user&.privilege?('flag_curate') %>
               <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>" class="tools--item">
                 <i class="fa fa-wrench"></i>
                 Tools

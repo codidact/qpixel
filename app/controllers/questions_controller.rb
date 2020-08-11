@@ -21,10 +21,10 @@ class QuestionsController < ApplicationController
 
   def show
     if @question.deleted?
-      check_your_privilege('ViewDeleted', @question) || return
+      check_your_privilege('flag_curate', @question) || return
     end
 
-    @answers = if current_user&.has_privilege?('ViewDeleted')
+    @answers = if current_user&.privilege?('flag_curate')
                  Answer.where(parent_id: @question.id)
                else
                  Answer.where(parent_id: @question.id).undeleted
@@ -61,7 +61,7 @@ class QuestionsController < ApplicationController
   def update
     can_post_in_category = @question.category.present? &&
                            (@question.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('Edit', @question) && can_post_in_category
+    unless current_user&.has_post_privilege?('edit_posts', @question) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -115,7 +115,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    unless check_your_privilege('Delete', @question, false)
+    unless check_your_privilege('flag_curate', @question, false)
       flash[:danger] = 'You must have the Delete privilege to delete questions.'
       redirect_to(question_path(@question)) && return
     end
@@ -135,7 +135,7 @@ class QuestionsController < ApplicationController
   end
 
   def undelete
-    unless check_your_privilege('Delete', @question, false)
+    unless check_your_privilege('flag_curate', @question, false)
       flash[:danger] = 'You must have the Delete privilege to undelete questions.'
       redirect_to(question_path(@question)) && return
     end
@@ -164,7 +164,7 @@ class QuestionsController < ApplicationController
   end
 
   def close
-    unless check_your_privilege('Close', nil, false)
+    unless check_your_privilege('flag_close', nil, false)
       render(json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 403)
       return
     end
@@ -202,7 +202,7 @@ class QuestionsController < ApplicationController
   end
 
   def reopen
-    unless check_your_privilege('Close', nil, false)
+    unless check_your_privilege('flag_close', nil, false)
       flash[:danger] = 'You must have the Close privilege to reopen questions.'
       redirect_to(question_path(@question)) && return
     end
@@ -231,7 +231,7 @@ class QuestionsController < ApplicationController
   def set_question
     @question = Question.find params[:id]
   rescue
-    if current_user&.has_privilege?('ViewDeleted')
+    if current_user&.privilege?('flag_curate')
       @question ||= Question.unscoped.find params[:id]
     end
     if @question.nil?

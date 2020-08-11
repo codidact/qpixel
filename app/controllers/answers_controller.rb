@@ -33,7 +33,7 @@ class AnswersController < ApplicationController
   def update
     can_post_in_category = @answer.parent.category.present? &&
                            (@answer.parent.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('Edit', @answer) && can_post_in_category
+    unless current_user&.has_post_privilege?('edit_posts', @answer) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -72,7 +72,7 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    unless check_your_privilege('Delete', @answer, false)
+    unless check_your_privilege('flag_curate', @answer, false)
       flash[:danger] = 'You must have the Delete privilege to delete answers.'
       redirect_to(question_path(@answer.parent)) && return
     end
@@ -92,7 +92,7 @@ class AnswersController < ApplicationController
   end
 
   def undelete
-    unless check_your_privilege('Delete', @answer, false)
+    unless check_your_privilege('flag_curate', @answer, false)
       flash[:danger] = 'You must have the Delete privilege to undelete answers.'
       redirect_to(question_path(@answer.parent)) && return
     end

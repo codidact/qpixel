@@ -13,7 +13,7 @@ module ApplicationHelper
   end
 
   def check_your_privilege(privilege)
-    current_user&.has_privilege?(privilege)
+    current_user&.privilege?(privilege)
   end
 
   def query_url(base_url = nil, **params)

@@ -22,7 +22,7 @@
           <% end %>
         </details>
       <% end %>
-      <% if current_user&.has_privilege?('ChangeCategory') && (post.question? || post.article?) %>
+      <% if current_user&.privilege?('flag_curate') && (post.question? || post.article?) %>
         <details>
           <summary>Change category</summary>
           <p>

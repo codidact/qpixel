@@ -15,7 +15,7 @@ module UsersHelper
   end
 
   def can_change_category(user, target)
-    user.has_privilege?('ChangeCategory') &&
+    user.privilege?('flag_curate') &&
       (user.is_moderator || user.is_admin || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
   end
 end

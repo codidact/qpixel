@@ -63,8 +63,8 @@ class ApplicationController < ActionController::Base
   end
 
   def check_your_privilege(name, post = nil, render_error = true)
-    unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
-      @privilege = Privilege.find_by(name: name)
+    unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
+      @privilege = TrustLevel.find_by(name: name)
       render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 401 if render_error
       return false
     end
@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+    if user_signed_in? && (current_user.is_moderator)
       @open_flags = Flag.unhandled.count
     end
 
