@@ -9,14 +9,15 @@ $(() => {
     }
 
     const name = $tgt.data('name');
+    const type = $tgt.data('type');
 
-    const resp = await fetch(`/admin/privileges/${name}`, {
+    const resp = await fetch(`/admin/privileges/${name}/${type}`, {
       credentials: 'include'
     });
     const data = await resp.json();
     const value = data.threshold;
 
-    const form = editField.clone().val(value.toString()).attr('data-name', name);
+    const form = editField.clone().val(value.toString()).attr('data-name', name).attr('data-type', type);
     $tgt.addClass('editing').html(form).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
   });
 
@@ -25,9 +26,12 @@ $(() => {
     const $td = $tgt.parent();
     const $input = $td.find('.js-privilege-edit');
     const name = $input.data('name');
+    const type = $input.data('type');
     const value = $input.val();
 
-    const resp = await fetch(`/admin/privileges/${name}`, {
+    if(!value && value !== 0 && value !== "0") { value = null }
+
+    const resp = await fetch(`/admin/privileges/${name}/${type}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
       body: JSON.stringify({threshold: value})
