@@ -18,6 +18,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @abilities = TrustLevel.by_user(@user)
     render layout: 'without_sidebar'
   end
 
