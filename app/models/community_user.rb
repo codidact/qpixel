@@ -87,7 +87,11 @@ class CommunityUser < ApplicationRecord
     return false if !priv.flag_score_threshold.nil? && flag_score < priv.flag_score_threshold
 
     # If not sandbox mode, create new privilege entry
-    grant_privilege(internal_id) unless sandbox
+    unless sandbox
+      grant_privilege(internal_id)
+      AuditLog.user_history(event_type: 'new_ability', related: privilege(internal_id), user: user,
+                            comment: internal_id)
+    end
 
     true
   end
