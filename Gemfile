@@ -23,7 +23,7 @@ gem 'commonmarker', '~> 0.21'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.
-gem 'chartkick', '~> 3.3'
+gem 'chartkick', '~> 3.4'
 gem 'groupdate', '~> 4.3'
 
 # View stuff.
