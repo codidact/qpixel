@@ -1,4 +1,4 @@
-class TrustLevel < ApplicationRecord
+class Ability < ApplicationRecord
   include CommunityRelated
 
   def manual?
@@ -6,10 +6,10 @@ class TrustLevel < ApplicationRecord
   end
 
   def self.by_user(user)
-    privileges = UserPrivilege.where(community_user: user.community_user).all
+    privileges = UserAbility.where(community_user: user.community_user).all
 
     privileges.map do |p|
-      p.trust_level
+      p.ability
     end
   end
 end

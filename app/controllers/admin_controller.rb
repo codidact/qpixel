@@ -16,11 +16,11 @@ class AdminController < ApplicationController
   end
 
   def privileges
-    @abilities = TrustLevel.all
+    @abilities = Ability.all
   end
 
   def show_privilege
-    @ability = TrustLevel.find_by internal_id: params[:name]
+    @ability = Ability.find_by internal_id: params[:name]
     respond_to do |format|
       format.json { render json: @ability }
     end

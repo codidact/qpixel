@@ -1,10 +1,10 @@
 class AbilitiesController < ApplicationController
   def index
-    @abilities = TrustLevel.all
+    @abilities = Ability.all
   end
 
   def show
-    @ability = TrustLevel.where(internal_id: params[:id]).first
+    @ability = Ability.where(internal_id: params[:id]).first
     return not_found if @ability.nil?
 
     @your_ability = current_user.community_user.privilege @ability.internal_id

@@ -63,20 +63,20 @@ class CommunityUser < ApplicationRecord
   end
 
   def privilege(internal_id)
-    priv = TrustLevel.where(internal_id: internal_id).first
-    UserPrivilege.where(community_user_id: id, trust_level: priv).first
+    priv = Ability.where(internal_id: internal_id).first
+    UserAbility.where(community_user_id: id, ability: priv).first
   end
 
   def grant_privilege(internal_id)
-    priv = TrustLevel.where(internal_id: internal_id).first
-    UserPrivilege.create community_user_id: id, trust_level: priv
+    priv = Ability.where(internal_id: internal_id).first
+    UserAbility.create community_user_id: id, ability: priv
   end
 
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true)
 
-    priv = TrustLevel.where(internal_id: internal_id).first
+    priv = Ability.where(internal_id: internal_id).first
 
     # Do not recalculate privileges which are only manually given
     return false if priv.manual?

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TrustLevelTest < ActiveSupport::TestCase
+class UserAbilityTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

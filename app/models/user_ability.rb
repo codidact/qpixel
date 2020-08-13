@@ -1,6 +1,6 @@
-class UserPrivilege < ApplicationRecord
+class UserAbility < ApplicationRecord
   belongs_to :community_user
-  belongs_to :trust_level
+  belongs_to :ability
 
   def suspended?
     return true if is_suspended && suspension_end.nil? # permanent suspension

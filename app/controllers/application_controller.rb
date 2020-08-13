@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
 
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
-      @privilege = TrustLevel.find_by(name: name)
+      @privilege = Ability.find_by(name: name)
       render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 401 if render_error
       return false
     end
