@@ -109,7 +109,7 @@
             <div class="grid--cell">
                 <% if @user.is_global_admin %>
                     <% if @user.id == @current_user.id %>
-                    <button class="button is-filled" disabled>not your own</button>
+                    <div class="h-p-t-2 h-p-r-2" title="You cannot revoke your own network-wide admin status.">nope 😉</div>
                     <% else %>
                     <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">revoke</button>
                     <% end %>
