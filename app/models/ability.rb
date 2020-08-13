@@ -1,6 +1,8 @@
 class Ability < ApplicationRecord
   include CommunityRelated
 
+  validates :internal_id, uniqueness: { scope: [:community_id] }
+
   def manual?
     post_score_threshold.nil? && edit_score_threshold.nil? && flag_score_threshold.nil?
   end

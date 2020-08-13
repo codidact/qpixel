@@ -84,7 +84,7 @@ class CommunityUser < ApplicationRecord
     return false if priv.manual?
 
     # Grant :unrestriced automatically on new sites
-    unless SiteSetting['NewSiteMode'] && internal_id == 'unrestricted'
+    unless SiteSetting['NewSiteMode'] && internal_id.to_s == 'unrestricted'
       # Abort if any of the checks fails
       return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold
       return false if !priv.edit_score_threshold.nil? && edit_score < priv.edit_score_threshold
