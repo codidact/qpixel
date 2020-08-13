@@ -3,9 +3,9 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations]
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges]
+                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -259,6 +259,45 @@ class UsersController < ApplicationController
     AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                          comment: "#{attrib} to #{new_value}")
 
+    render json: { status: 'success' }
+  end
+
+  def mod_privilege_action
+    ability = Ability.find_by internal_id: params[:ability]
+
+    return not_found if ability.internal_id == 'mod'
+
+    if params[:do] == 'grant'
+      ua = @user.community_user.privilege(ability.internal_id)
+      if ua.nil?
+        @user.community_user.grant_privilege(ability.internal_id)
+      elsif ua.is_suspended
+        ua.update is_suspended: false
+        AuditLog.admin_audit(event_type: 'ability_unsuspend', related: @user, user: current_user,
+                             comment: "#{ability.internal_id} ability unsuspended")
+      end
+      AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
+                           comment: "#{ability.internal_id}")
+
+
+    elsif params[:do] == 'suspend'
+      ua = @user.community_user.privilege(ability.internal_id)
+      return not_found if ua.nil?
+
+      # This will 
+      duration = params[:duration]&.to_i
+      duration = duration <= 0 ? nil : duration.days.from_now
+      message = params[:message]
+
+      ua.update is_suspended: true, suspension_end: duration, suspension_message: message
+      @user.create_notification('Your ' + ability.name + ' ability has been suspended. Click for more information.',
+                                ability_url(ability.internal_id))
+
+      AuditLog.admin_audit(event_type: 'ability_suspend', related: @user, user: current_user,
+                           comment: "#{ability.internal_id} ability suspended\n\n#{message}")
+    else
+      return not_found
+    end
     render json: { status: 'success' }
   end
 

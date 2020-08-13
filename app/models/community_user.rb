@@ -68,7 +68,10 @@ class CommunityUser < ApplicationRecord
 
   def grant_privilege(internal_id)
     priv = Ability.where(internal_id: internal_id).first
-    UserAbility.create community_user_id: id, ability: priv
+    ua = UserAbility.create community_user_id: id, ability: priv
+    AuditLog.user_history(event_type: 'new_ability', related: privilege(internal_id), user: user,
+                            comment: internal_id)
+    ua
   end
 
   def recalc_privilege(internal_id, sandbox: false)
@@ -88,8 +91,6 @@ class CommunityUser < ApplicationRecord
     # If not sandbox mode, create new privilege entry
     unless sandbox
       grant_privilege(internal_id)
-      AuditLog.user_history(event_type: 'new_ability', related: privilege(internal_id), user: user,
-                            comment: internal_id)
     end
 
     true

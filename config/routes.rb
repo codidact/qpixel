@@ -139,6 +139,7 @@ Rails.application.routes.draw do
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
   get    'users/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
+  post   'users/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user

@@ -20,7 +20,12 @@
                 <p class="h-m-0 form-caption"><%= a.summary %></p>
             </div>
             <div class="grid--cell">
-                <% if @user.privilege? a.internal_id %>
+                <% ua = @user.privilege a.internal_id%>
+                <% if ua.nil? %>
+                    <button class="button js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">grant</button>
+                <% elsif ua.suspended? %>
+                    <button class="button is-danger is-filled js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">unsuspend</button>
+                <% else %>
                     <button class="button is-danger is-outlined" data-drop="#suspend-ability-<%= a.internal_id %>" data-drop-force-dir="down" data-drop-self-class-toggle="is-active">suspend</button>
                     <div class="droppanel is-large" id="suspend-ability-<%= a.internal_id %>">
                         <div class="droppanel--header">suspend ability to <strong><%= a.name %></strong></div>
@@ -34,8 +39,6 @@
 
                         <button class="button is-danger is-filled js-ability-suspend-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">Suspend</button>
                     </div>
-                <% else %>
-                    <button class="button js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">grant</button>
                 <% end %>
             </div>
         </div>
