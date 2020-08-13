@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations]
+                                  :annotate, :annotations, :mod_privileges]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -117,6 +117,10 @@ class UsersController < ApplicationController
               end).sort_by(&:created_at).reverse
 
     render layout: 'without_sidebar'
+  end
+
+  def mod_privileges
+    @abilities = Ability.all
   end
 
   def destroy
@@ -234,7 +238,18 @@ class UsersController < ApplicationController
 
     key = params[:role].underscore.to_sym
     attrib = role_map[key]
-    if [:mod, :admin].include? key
+    if key == :mod
+      new_value = !@user.community_user.send(attrib)
+      
+      # Set/update ability
+      if new_value
+        @user.community_user.grant_privilege 'mod'
+      else
+        @user.community_user.privilege('mod').destroy
+      end
+
+      @user.community_user.update(attrib => new_value)
+    elsif key == :admin
       new_value = !@user.community_user.send(attrib)
       @user.community_user.update(attrib => new_value)
     else
