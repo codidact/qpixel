@@ -29,9 +29,17 @@
         <% end %>
         <% unless @ability.manual? %>
         <% if params[:thresholds].nil? %>
-        <a href="?thresholds=1">(more)</a>
+            <% if @user.id == current_user.id %>
+                <a href="?thresholds=1">(more)</a>
+            <% else %>
+                <a href="?thresholds=1&for=<%= @user.id %>">(more)</a>
+            <% end %>
         <% else %>
-        <a href="?">(less)</a>
+            <% if @user.id == current_user.id %>
+                <a href="?">(less)</a>
+            <% else %>
+                <a href="?for=<%= @user.id %>">(less)</a>
+            <% end %>
         <% end %>
         <% end %>
         </p>
