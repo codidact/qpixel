@@ -1,4 +1,5 @@
 require 'net/http'
+# rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
@@ -264,24 +265,22 @@ class UsersController < ApplicationController
 
   def mod_privilege_action
     ability = Ability.find_by internal_id: params[:ability]
-
     return not_found if ability.internal_id == 'mod'
 
+    ua = @user.community_user.privilege(ability.internal_id)
+
     if params[:do] == 'grant'
-      ua = @user.community_user.privilege(ability.internal_id)
       if ua.nil?
         @user.community_user.grant_privilege(ability.internal_id)
+        AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
+                             comment: ability.internal_id.to_s)
       elsif ua.is_suspended
         ua.update is_suspended: false
         AuditLog.admin_audit(event_type: 'ability_unsuspend', related: @user, user: current_user,
                              comment: "#{ability.internal_id} ability unsuspended")
       end
-      AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
-                           comment: "#{ability.internal_id}")
-
 
     elsif params[:do] == 'suspend'
-      ua = @user.community_user.privilege(ability.internal_id)
       return not_found if ua.nil?
 
       duration = params[:duration]&.to_i
@@ -291,16 +290,13 @@ class UsersController < ApplicationController
       ua.update is_suspended: true, suspension_end: duration, suspension_message: message
       @user.create_notification('Your ' + ability.name + ' ability has been suspended. Click for more information.',
                                 ability_url(ability.internal_id))
-
       AuditLog.admin_audit(event_type: 'ability_suspend', related: @user, user: current_user,
                            comment: "#{ability.internal_id} ability suspended\n\n#{message}")
 
     elsif params[:do] == 'delete'
-      ua = @user.community_user.privilege(ability.internal_id)
       return not_found if ua.nil?
 
       ua.destroy
-
       AuditLog.admin_audit(event_type: 'ability_remove', related: @user, user: current_user,
                            comment: "#{ability.internal_id} ability removed")
 
@@ -404,3 +400,4 @@ class UsersController < ApplicationController
     User.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 end
+# rubocop:enable Metrics/ClassLength
