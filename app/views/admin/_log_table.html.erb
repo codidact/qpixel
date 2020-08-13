@@ -23,7 +23,7 @@
           <% end %>
         <% end %>
       </td>
-      <td><%= log.comment %></td>
+      <td class="audit-log--body h-ff-code"><%= log.comment %></td>
       <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
     </tr>
   <% end %>
