@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && (current_user.is_moderator)
+    if user_signed_in? && current_user.is_moderator
       @open_flags = Flag.unhandled.count
     end
 

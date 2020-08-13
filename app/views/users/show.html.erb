@@ -122,7 +122,7 @@
       <div class="widget">
         <% @abilities.each do |a| %>
           <div class="widget--body" title="<%= a.summary %>">
-            <i class="fa-fw <%= a.icon %>"></i>
+            <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id) %>">
               <%= a.name %>
             </a>
@@ -137,26 +137,26 @@
     %>
     <table class="table is-full-width">
       <tr>
-        <th colspan=3>
+        <th colspan="3">
           Posts
         </th>
       </tr>
       <tr>
-        <td colspan=2>Count</td>
+        <td colspan="2">Count</td>
         <td>
           <%= @user.posts.undeleted.count %>
         </td>
       </tr>
       <tr>
-        <td colspan=2>Questions</td>
+        <td colspan="2">Questions</td>
         <td><%= posts_by_post_type[Question.post_type_id] || 0 %></td>
       </tr>
       <tr>
-        <td colspan=2>Answers</td>
+        <td colspan="2">Answers</td>
         <td><%= posts_by_post_type[Answer.post_type_id] || 0 %></td>
       </tr>
       <tr>
-        <td colspan=2>Articles</td>
+        <td colspan="2">Articles</td>
         <td><%= posts_by_post_type[Article.post_type_id] || 0 %></td>
       </tr>
     </table>
@@ -170,12 +170,12 @@
 
 
       <tr>
-        <th colspan=3>
+        <th colspan="3">
           Votes
         </th>
       </tr>
       <tr>
-        <td colspan=2>Count</td>
+        <td colspan="2">Count</td>
         <td>
           <%= @user.votes.count %>
         </td>
@@ -203,15 +203,15 @@
         <td><%= votes_by_type[-1] || 0 %></td>
       </tr>
       <tr>
-        <td colspan=2>on Question</td>
+        <td colspan="2">on Question</td>
         <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
       </tr>
       <tr>
-        <td colspan=2>on Answer</td>
+        <td colspan="2">on Answer</td>
         <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
       </tr>
       <tr>
-        <td colspan=2>on Article</td>
+        <td colspan="2">on Article</td>
         <td><%= votes_by_post_type[Article.post_type_id] || 0 %></td>
       </tr>
     </table>
@@ -219,12 +219,12 @@
     <br>
     <table class="table is-full-width">
       <tr>
-        <th colspan=3>
+        <th colspan="3">
           Flags
         </th>
       </tr>
       <tr>
-        <td colspan=2>Count</td>
+        <td colspan="2">Count</td>
         <td>
           <% if current_user&.id == @user.id || moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted' %>

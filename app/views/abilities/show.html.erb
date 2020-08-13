@@ -100,7 +100,7 @@
                 <p><strong>Your use of the <%= @ability.name %> ability has been temporarily suspended (ends <span title="<%= @your_ability.suspension_end.iso8601 %>">in <%= time_ago_in_words(@your_ability.suspension_end) %></span>)</strong>.</p>
             <% end %>
             <p><%= @your_ability.suspension_message %></p>
-            <p>If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this suspension or would like to dispute it, use the Meta category or <a href="mailto:info@codidact.org">contact us</a>.
+            <p>If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this suspension or would like to dispute it, use the Meta category or <a href="mailto:<%= SiteSetting['AdministratorContactEmail'] %>">contact us</a>.
         </div>
     </div>
     <% end %>

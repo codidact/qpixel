@@ -18,7 +18,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @abilities = Ability.by_user(@user)
+    @abilities = Ability.on_user(@user)
     render layout: 'without_sidebar'
   end
 
@@ -240,7 +240,7 @@ class UsersController < ApplicationController
     attrib = role_map[key]
     if key == :mod
       new_value = !@user.community_user.send(attrib)
-      
+
       # Set/update ability
       if new_value
         @user.community_user.grant_privilege 'mod'

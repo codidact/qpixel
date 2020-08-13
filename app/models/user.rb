@@ -74,7 +74,7 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || community_user.privilege?('mod') || false
+    is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
   end
 
   def is_admin

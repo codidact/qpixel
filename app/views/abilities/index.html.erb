@@ -1,6 +1,6 @@
 <h1>Your Abilities</h1>
 
-<p class="is-lead">Abilities show, what the community trusts you to do. You earn them by writing good posts, suggesting good edits or raising good flags.</p>
+<p class="is-lead">Abilities show what the community trusts you to do. You earn them by writing good posts, suggesting good edits or raising good flags.</p>
 
 <p>Here is a list of abilities you can earn (and have earned) on this site:</p>
 
@@ -13,7 +13,7 @@
     <% @abilities.each do |a| %>
     <tr>
         <td>
-            <i class="<%= a.icon %> fa-fw"></i>
+            <i class="fas fa-<%= a.icon %> fa-fw"></i>
         </td>
         <td>
             <h4 class="h-m-0"><a href="<%= ability_url(a.internal_id) %>">

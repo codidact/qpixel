@@ -21,7 +21,7 @@ class CommunityUser < ApplicationRecord
   # Calculation functions for privilege scores
   # These are quite expensive, so we'll cache them for a while
   def post_score
-    Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 2.hours) do
+    Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 24.hours) do
       good_posts = Post.where(user: user).where('score > 0.5').count
       bad_posts = Post.where(user: user).where('score < 0.5').count
 
@@ -30,7 +30,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def edit_score
-    Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 2.hours) do
+    Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 24.hours) do
       good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
       bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
 
@@ -39,7 +39,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def flag_score
-    Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 2.hours) do
+    Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 24.hours) do
       good_flags = Flag.where(user: user).where(status: 'helpful').count
       bad_flags = Flag.where(user: user).where(status: 'declined').count
 
@@ -63,8 +63,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def privilege(internal_id)
-    priv = Ability.where(internal_id: internal_id).first
-    UserAbility.where(community_user_id: id, ability: priv).first
+    UserAbility.joins(:ability).where(community_user_id: id, abilities: { internal_id: internal_id }).first
   end
 
   def grant_privilege(internal_id)
@@ -97,10 +96,8 @@ class CommunityUser < ApplicationRecord
   end
 
   def recalc_privileges(sandbox: false)
-    recalc_privilege('unrestricted', sandbox: sandbox) unless privilege?('unrestricted', ignore_suspension: true)
-    recalc_privilege('edit_posts', sandbox: sandbox) unless privilege?('edit_posts', ignore_suspension: true)
-    recalc_privilege('edit_tags', sandbox: sandbox) unless privilege?('edit_tags', ignore_suspension: true)
-    recalc_privilege('flag_close', sandbox: sandbox) unless privilege?('flag_close', ignore_suspension: true)
-    recalc_privilege('flag_curate', sandbox: sandbox) unless privilege?('flag_curate', ignore_suspension: true)
+    [:unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
+      recalc_privilege(ability, sandbox: sandbox) unless privilege?(ability, ignore_suspension: true)
+    end
   end
 end
