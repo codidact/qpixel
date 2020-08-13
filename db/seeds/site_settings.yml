@@ -313,3 +313,10 @@
   category: AdvancedSettings
   description: >
     The minimum score a question must have to qualify for selection for the Hot Posts sidebar and for being selected as random advertisement.
+
+- name: NewSiteMode
+  value: true
+  value_type: boolean
+  category: ReputationAndVoting
+  description: >
+    New site mode will grant some abilities more easily.

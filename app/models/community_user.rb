@@ -83,10 +83,13 @@ class CommunityUser < ApplicationRecord
     # Do not recalculate privileges which are only manually given
     return false if priv.manual?
 
-    # Abort if any of the checks fails
-    return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold
-    return false if !priv.edit_score_threshold.nil? && edit_score < priv.edit_score_threshold
-    return false if !priv.flag_score_threshold.nil? && flag_score < priv.flag_score_threshold
+    # Grant :unrestriced automatically on new sites
+    unless SiteSetting['NewSiteMode'] && internal_id == 'unrestricted'
+      # Abort if any of the checks fails
+      return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold
+      return false if !priv.edit_score_threshold.nil? && edit_score < priv.edit_score_threshold
+      return false if !priv.flag_score_threshold.nil? && flag_score < priv.flag_score_threshold
+    end
 
     # If not sandbox mode, create new privilege entry
     unless sandbox
