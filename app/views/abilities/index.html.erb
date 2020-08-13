@@ -16,9 +16,10 @@
             <i class="<%= a.icon %> fa-fw"></i>
         </td>
         <td>
-            <a href="<%= ability_url(a.internal_id) %>">
+            <h4 class="h-m-0"><a href="<%= ability_url(a.internal_id) %>">
                 <%= a.name %>
-            </a>
+            </a></h4>
+            <p class="h-m-0 form-caption"><%= a.summary %></p>
         </td>
         <td>
             <% if current_user.privilege? a.internal_id %>
