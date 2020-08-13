@@ -21,7 +21,19 @@
             </div>
             <div class="grid--cell">
                 <% if @user.privilege? a.internal_id %>
-                    <button class="button is-danger is-outlined">suspend</button>
+                    <button class="button is-danger is-outlined" data-drop="#suspend-ability-<%= a.internal_id %>" data-drop-force-dir="down" data-drop-self-class-toggle="is-active">suspend</button>
+                    <div class="droppanel is-large" id="suspend-ability-<%= a.internal_id %>">
+                        <div class="droppanel--header">suspend ability to <strong><%= a.name %></strong></div>
+                        <label class="form-element" for="suspend-ability-<%= a.internal_id %>-duration">Duration:</label>
+                        <div class="form-caption">in days; leave blank for permanent</div>
+                        <input id="suspend-ability-<%= a.internal_id %>-duration" class="form-element" type="number" placeholder="permanent">
+
+                        <label class="form-element" for="suspend-ability-<%= a.internal_id %>-message">Message:</label>
+                        <div class="form-caption">will be privately shown to user</div>
+                        <textarea id="suspend-ability-<%= a.internal_id %>-message" class="form-element is-small"></textarea>
+
+                        <button class="button is-danger is-filled js-ability-suspend-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">Suspend</button>
+                    </div>
                 <% else %>
                     <button class="button js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">grant</button>
                 <% end %>
