@@ -123,7 +123,7 @@
         <% @abilities.each do |a| %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
-            <a href="<%= ability_url(a.internal_id) %>">
+            <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
               <%= a.name %>
             </a>
           </div>

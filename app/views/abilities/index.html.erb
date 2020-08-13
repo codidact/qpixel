@@ -1,4 +1,8 @@
+<% if @user.id == current_user.id %>
 <h1>Your Abilities</h1>
+<% else %>
+<h1>Abilities of <%= @user.username %></h1>
+<% end %>
 
 <p class="is-lead">Abilities show what the community trusts you to do. You earn them by writing good posts, suggesting good edits or raising good flags.</p>
 
@@ -16,13 +20,18 @@
             <i class="fas fa-<%= a.icon %> fa-fw"></i>
         </td>
         <td>
-            <h4 class="h-m-0"><a href="<%= ability_url(a.internal_id) %>">
+            <h4 class="h-m-0">
+            <% if @user.id == current_user.id %>
+                <a href="<%= ability_url(a.internal_id) %>">
+            <% else %>
+                <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
+            <% end %>
                 <%= a.name %>
             </a></h4>
             <p class="h-m-0 form-caption"><%= a.summary %></p>
         </td>
         <td>
-            <% if current_user.privilege? a.internal_id %>
+            <% if @user.privilege? a.internal_id %>
             <p><i class="fas fa-fw fa-check h-c-green-600"></i> yes
             <% else %>
             <p><i class="fas fa-fw fa-times h-c-red-600"></i> no
