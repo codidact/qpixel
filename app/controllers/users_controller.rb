@@ -284,7 +284,6 @@ class UsersController < ApplicationController
       ua = @user.community_user.privilege(ability.internal_id)
       return not_found if ua.nil?
 
-      # This will 
       duration = params[:duration]&.to_i
       duration = duration <= 0 ? nil : duration.days.from_now
       message = params[:message]
@@ -295,6 +294,18 @@ class UsersController < ApplicationController
 
       AuditLog.admin_audit(event_type: 'ability_suspend', related: @user, user: current_user,
                            comment: "#{ability.internal_id} ability suspended\n\n#{message}")
+
+    elsif params[:do] == 'delete'
+      ua = @user.community_user.privilege(ability.internal_id)
+      return not_found if ua.nil?
+
+      ua.destroy
+
+      AuditLog.admin_audit(event_type: 'ability_remove', related: @user, user: current_user,
+                           comment: "#{ability.internal_id} ability removed")
+
+      AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
+                           comment: ability.internal_id)
     else
       return not_found
     end

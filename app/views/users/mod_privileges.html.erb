@@ -8,6 +8,7 @@
     </div>
     <% @abilities.each do |a| %>
     <% next if a.internal_id == 'mod' %>
+    <% ua = @user.privilege a.internal_id%>
     <div class="widget--body">
         <div class="grid">
             <div class="grid--cell">
@@ -18,9 +19,11 @@
                     <%= a.name %>
                 </h4>
                 <p class="h-m-0 form-caption"><%= a.summary %></p>
+                <% unless ua.nil? %>
+                <p class="h-m-0 h-m-t-1 has-font-size-small"><a href="#" class="is-red js-ability-delete-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">Delete</a></p>
+                <% end %>
             </div>
             <div class="grid--cell">
-                <% ua = @user.privilege a.internal_id%>
                 <% if ua.nil? %>
                     <button class="button js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">grant</button>
                 <% elsif ua.suspended? %>

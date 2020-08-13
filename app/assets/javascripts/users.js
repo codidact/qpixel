@@ -38,6 +38,24 @@ $(() => {
     }
   });
 
+  $('.js-ability-delete-btn').on('click', async ev => {
+    if (!confirm('Delete this ability?\n\nThis will remove the ability but it will come back when the abilities are recalculated,\nas long as the requirements are still met.\n\nYou\'ll probably want to use ability suspensions instead.')) return;
+    const $tgt = $(ev.target);
+    const resp = await fetch(`/users/${$tgt.attr('data-user')}/mod/privileges`, {
+      method: 'POST',
+      body: JSON.stringify({ do: 'delete', ability: $tgt.attr('data-ability') }),
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
+      credentials: 'include'
+    });
+    const data = await resp.json();
+    if (resp.status !== 200 || data.status !== 'success') {
+      QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message}`);
+    }
+    else {
+      location.reload();
+    }
+  });
+
   $('.js-ability-suspend-btn').on('click', async ev => {
     const $tgt = $(ev.target);
     const ability = $tgt.attr('data-ability');
