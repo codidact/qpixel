@@ -1,8 +1,8 @@
 class TagsController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :update, :rename]
+  before_action :authenticate_user!, only: [:edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
-  before_action :set_tag, only: [:show, :edit, :update, :children, :rename]
-  before_action :verify_moderator, only: [:rename]
+  before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge]
+  before_action :verify_moderator, only: [:rename, :merge, :select_merge]
 
   def index
     @tag_set = if params[:tag_set].present?
@@ -90,6 +90,38 @@ class TagsController < ApplicationController
     render json: { success: status, tag: @tag }
   end
 
+  def select_merge; end
+
+  def merge
+    @primary = @tag
+    @subordinate = Tag.find params[:merge_with_id]
+
+    # Take the tag off posts
+    posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                'WHERE posts_tags.tag_id = ?'
+    exec([posts_sql, "\n- #{@subordinate.name}", "\n- #{@primary.name}", @subordinate.id])
+
+    # Break hierarchies
+    tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
+    exec([tags_sql, @subordinate.id])
+
+    # Remove references to the tag
+    sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
+    exec([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
+
+    # Nuke it from orbit
+    @subordinate.destroy
+
+    flash[:success] = "Merged #{@subordinate.name} into #{@primary.name}."
+    redirect_to tag_path(id: @category.id, tag_id: @primary.id)
+  end
+
   private
 
   def set_tag
@@ -102,5 +134,9 @@ class TagsController < ApplicationController
 
   def tag_params
     params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id)
+  end
+
+  def exec(sql_array)
+    ApplicationRecord.connection.execute(ActiveRecord::Base.sanitize_sql_array(sql_array))
   end
 end
