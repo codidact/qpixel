@@ -1,7 +1,8 @@
 class TagsController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :update]
+  before_action :authenticate_user!, only: [:edit, :update, :rename]
   before_action :set_category, except: [:index]
-  before_action :set_tag, only: [:show, :edit, :update, :children]
+  before_action :set_tag, only: [:show, :edit, :update, :children, :rename]
+  before_action :verify_moderator, only: [:rename]
 
   def index
     @tag_set = if params[:tag_set].present?
@@ -82,6 +83,11 @@ class TagsController < ApplicationController
     @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
                  .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
+  end
+
+  def rename
+    status = @tag.update(name: params[:name])
+    render json: { success: status, tag: @tag }
   end
 
   private

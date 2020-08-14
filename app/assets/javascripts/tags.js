@@ -74,4 +74,28 @@ $(() => {
       $tgt.parents('.form-group').find('select').append(option).trigger('change');
     }
   });
+
+  $('.js-rename-tag').on('click', async ev => {
+    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
+    const categoryId = $tgt.attr('data-category');
+    const tagId = $tgt.attr('data-tag');
+    const tagName = $tgt.attr('data-name');
+
+    const renameTo = prompt(`Rename tag ${tagName} to:`);
+    if (!!renameTo) {
+      const resp = await fetch(`/categories/${categoryId}/tags/${tagId}/rename`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
+        body: JSON.stringify({ name: renameTo })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        location.reload();
+      }
+      else {
+        console.error('Failed to rename tag, somehow');
+      }
+    }
+  });
 });

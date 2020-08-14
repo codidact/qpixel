@@ -2,6 +2,12 @@
 
 <h1 class="has-margin-0 has-margin-top-4">
   Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span>
+  <% if current_user&.is_moderator %>
+    <a href="#" class="has-font-size-caption js-rename-tag"
+       data-category="<%= @category.id %>" data-tag="<%= @tag.id %>" data-name="<%= @tag.name %>">
+      <i class="fas fa-pencil-alt" aria-label="Rename" title="Rename"></i>
+    </a>
+  <% end %>
 </h1>
 <p class="has-color-tertiary-900 has-font-weight-normal has-margin-0 has-font-family-brand">
   <% if @tag.parent_id.present? %>

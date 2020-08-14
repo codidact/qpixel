@@ -200,6 +200,7 @@ Rails.application.routes.draw do
     get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
     get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
     patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
+    post   ':id/tags/:tag_id/rename',              to: 'tags#rename', as: :rename_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
