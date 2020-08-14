@@ -11,9 +11,14 @@ class VotesController < ApplicationController
     end
 
     recent_votes = Vote.where(created_at: 24.hours.ago..Time.now, user: current_user).count
-    max_votes_per_day = SiteSetting['FreeVotes'] + (@current_user.reputation - SiteSetting['NewUserInitialRep'])
+    max_votes_per_day = SiteSetting['FreeVotes'] + helpers.linearize_progress(@current_user.community_user.post_score)
 
     unless post.parent&.user_id == current_user.id
+      if !@current_user.privilege? 'unrestricted'
+        render json: { status: 'failed', message: 'New users can only vote on answers to their own posts.' }, status: 403
+        return 
+      end
+
       if recent_votes >= max_votes_per_day
         vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + 'votes. Gain more reputation' \
                          ' or come back tomorrow to continue voting.'
