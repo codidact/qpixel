@@ -50,11 +50,14 @@ class AdminController < ApplicationController
   end
 
   def audit_log
-    @logs = AuditLog.where.not(log_type: ['user_annotation', 'user_history'])
-                    .user_sort({ term: params[:sort], default: :created_at },
-                               age: :created_at, type: :log_type, event: :event_type,
-                               related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-                    .paginate(page: params[:page], per_page: 100)
+    @logs = if current_user.is_global_admin
+              AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
+            else
+              AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
+            end.user_sort({ term: params[:sort], default: :created_at },
+                          age: :created_at, type: :log_type, event: :event_type,
+                          related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
+               .paginate(page: params[:page], per_page: 100)
     render layout: 'without_sidebar'
   end
 end
