@@ -10,7 +10,20 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: 403
       return
     end
+
     @comment = Comment.new comment_params.merge(user: current_user)
+
+    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id
+      unless @current_user.privilege? 'unrestricted'
+        AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
+                              comment: "limit: only comment on own posts\n\comment:\n#{@comment.attributes_print}")
+
+        new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to those.'
+        render json: { status: 'failed', message: new_user_comment_block_msg }, status: 400
+        return
+      end
+    end
+
     if @comment.save
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
