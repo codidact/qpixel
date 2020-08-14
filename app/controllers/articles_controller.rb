@@ -72,7 +72,7 @@ class ArticlesController < ApplicationController
 
   def destroy
     unless check_your_privilege('flag_curate', @article, false)
-      flash[:danger] = 'You must have the Delete privilege to delete posts.'
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this article')
       redirect_to article_path(@article) && return
     end
 
@@ -92,7 +92,7 @@ class ArticlesController < ApplicationController
 
   def undelete
     unless check_your_privilege('flag_curate', @article, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete posts.'
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this article')
       redirect_to article_path(@article) && return
     end
 

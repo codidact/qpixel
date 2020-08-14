@@ -13,7 +13,7 @@ class SuggestedEditController < ApplicationController
 
     @post = @edit.post
     unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', message: 'You need the Edit privilege to approve edits' }, status: 400)
+      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') }, status: 400)
 
       return
     end
@@ -54,7 +54,7 @@ class SuggestedEditController < ApplicationController
     @post = @edit.post
 
     unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
+      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') }, status: 400)
 
       return
     end

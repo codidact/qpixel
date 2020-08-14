@@ -12,4 +12,26 @@ module AbilitiesHelper
     linear_score = (2 * score - 1) / (1 - score)
     [0, linear_score].max
   end
+
+  def ability_err_msg(internal_id, action: nil)
+    ability = Ability.find_by internal_id: internal_id
+    ua = current_user.privilege(ability.internal_id)
+    if ua.suspended?
+      if action.nil?
+        "Your use of the #{ability.name} ability has been temporarily suspended. " \
+        "See /abilities/#{ability.internal_id} for more information."
+      else
+        "Your use of the #{ability.name} ability has been temporarily suspended. So you cannot #{action}." \
+        "See /abilities/#{ability.internal_id} for more information."
+      end
+    else
+      if action.nil?
+        "You need the #{ability.name} ability to do this." \
+        "See /abilities/#{ability.internal_id} for more information."
+      else
+        "You need the #{ability.name} ability to #{action}." \
+        "See /abilities/#{ability.internal_id} for more information."
+      end
+    end
+  end
 end

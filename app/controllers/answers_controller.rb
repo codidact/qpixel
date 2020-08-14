@@ -73,7 +73,7 @@ class AnswersController < ApplicationController
 
   def destroy
     unless check_your_privilege('flag_curate', @answer, false)
-      flash[:danger] = 'You must have the Delete privilege to delete answers.'
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this answer')
       redirect_to(question_path(@answer.parent)) && return
     end
 
@@ -93,7 +93,7 @@ class AnswersController < ApplicationController
 
   def undelete
     unless check_your_privilege('flag_curate', @answer, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete answers.'
+      flash[:danger] = flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this answer')
       redirect_to(question_path(@answer.parent)) && return
     end
 

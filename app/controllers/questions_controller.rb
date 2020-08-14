@@ -116,7 +116,7 @@ class QuestionsController < ApplicationController
 
   def destroy
     unless check_your_privilege('flag_curate', @question, false)
-      flash[:danger] = 'You must have the Delete privilege to delete questions.'
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this question')
       redirect_to(question_path(@question)) && return
     end
 
@@ -136,7 +136,7 @@ class QuestionsController < ApplicationController
 
   def undelete
     unless check_your_privilege('flag_curate', @question, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete questions.'
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this question')
       redirect_to(question_path(@question)) && return
     end
 
@@ -165,7 +165,7 @@ class QuestionsController < ApplicationController
 
   def close
     unless check_your_privilege('flag_close', nil, false)
-      render(json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 403)
+      render(json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this question') }, status: 403)
       return
     end
 
@@ -203,7 +203,7 @@ class QuestionsController < ApplicationController
 
   def reopen
     unless check_your_privilege('flag_close', nil, false)
-      flash[:danger] = 'You must have the Close privilege to reopen questions.'
+      flash[:danger] = helpers.ability_err_msg(:flag_close, 'reopen this question')
       redirect_to(question_path(@question)) && return
     end
 
