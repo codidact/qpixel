@@ -4,6 +4,7 @@
 
 <div class="widget">
     <div class="widget--header">
+        <a href="<%= abilities_url(for: @user.id) %>" class="widget--header-link has-float-right" target="_blank">ability page</a>
         Abilities
     </div>
     <% @abilities.each do |a| %>
