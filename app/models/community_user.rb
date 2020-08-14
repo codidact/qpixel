@@ -74,6 +74,7 @@ class CommunityUser < ApplicationRecord
     ua
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true)
@@ -92,12 +93,10 @@ class CommunityUser < ApplicationRecord
     end
 
     # If not sandbox mode, create new privilege entry
-    unless sandbox
-      grant_privilege(internal_id)
-    end
-
+    grant_privilege(internal_id) unless sandbox
     true
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def recalc_privileges(sandbox: false)
     [:unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|

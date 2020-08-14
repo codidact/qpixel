@@ -14,9 +14,13 @@ class VotesController < ApplicationController
     max_votes_per_day = SiteSetting['FreeVotes'] + helpers.linearize_progress(@current_user.community_user.post_score)
 
     unless post.parent&.user_id == current_user.id
-      if !@current_user.privilege? 'unrestricted'
-        render json: { status: 'failed', message: 'New users can only vote on answers to their own posts.' }, status: 403
-        return 
+      unless @current_user.privilege? 'unrestricted'
+        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: @current_user,
+                              comment: "limit: only answers to own posts\n\nvote:\n#{params[:vote_type].to_i}")
+
+        render json: { status: 'failed', message: 'New users can only vote on answers to their own posts.' },
+               status: 403
+        return
       end
 
       if recent_votes >= max_votes_per_day
@@ -24,8 +28,11 @@ class VotesController < ApplicationController
                          ' or come back tomorrow to continue voting.'
 
         if max_votes_per_day <= 0
-          vote_limit_msg = 'You need to gain some reputation on this site before you can start voting.'
+          vote_limit_msg = 'You need to have some positive activity on this site before you can continue voting.'
         end
+
+        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: @current_user,
+                              comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
 
         render json: { status: 'failed', message: vote_limit_msg }, status: 403
         return

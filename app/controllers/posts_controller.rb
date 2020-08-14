@@ -26,6 +26,25 @@ class PostsController < ApplicationController
       return
     end
 
+    recent_top_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+                                 .where(post_type_id: [Question.post_type_id, Article.post_type_id]).count
+    max_posts = if !@current_user.privilege? 'unrestricted'
+                  vote_limit_msg = 'You may only post 3 top-level posts (questions, articles) per day. ' \
+                                   'Once you have some well-received posts, that limit will increase.'
+                  3
+                else
+                  vote_limit_msg = 'You may only post 20 top-level posts per day.'
+                  20
+                end
+
+    if recent_top_level_posts > max_posts
+      @post.errors.add :base, vote_limit_msg
+      AuditLog.rate_limit_log(event_type: 'top_level_post', related: @category, user: @current_user,
+                              comment: "limit: #{max_posts}\n\npost:\n#{@post.attributes_print}")
+      render :new, status: 400
+      return
+    end
+
     if @post.save
       redirect_to helpers.generic_show_link(@post)
     else
