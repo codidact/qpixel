@@ -20,6 +20,8 @@ class AbilitiesController < ApplicationController
   private
 
   def set_user
+    return not_found if current_user.nil?
+
     @user = current_user
     if params[:for]
       @user = User.where(id: params[:for]).first || @user
