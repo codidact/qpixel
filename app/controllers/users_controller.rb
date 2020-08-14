@@ -137,13 +137,16 @@ class UsersController < ApplicationController
       user_ip << @user.current_sign_in_ip
     end
 
-    BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
-                    automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
-    user_ip.compact.map do |ip|
-      BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
-                      automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
+    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+                       automatic: true, reason: 'user destroyed: #' + @user.id.to_s)
+    user_ip.compact.each do |ip|
+      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
+                         automatic: true, reason: 'user destroyed: #' + @user.id.to_s)
     end
     if @user.destroy!
+      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                        deleted: true, deleted_at: DateTime.now,
+                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
@@ -160,7 +163,7 @@ class UsersController < ApplicationController
     end
 
     relations = User.reflections
-    transfer_id = SiteSetting['SoftDeleteTransferId']
+    transfer_id = SiteSetting['SoftDeleteTransferUser']
     relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
       if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
         @user.send(name).destroy_all
