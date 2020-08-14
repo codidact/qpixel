@@ -57,7 +57,7 @@ class AdminController < ApplicationController
             end.user_sort({ term: params[:sort], default: :created_at },
                           age: :created_at, type: :log_type, event: :event_type,
                           related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-               .paginate(page: params[:page], per_page: 100)
+            .paginate(page: params[:page], per_page: 100)
     render layout: 'without_sidebar'
   end
 end
