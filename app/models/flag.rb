@@ -9,5 +9,5 @@ class Flag < ApplicationRecord
   scope :unhandled, -> { where(status: nil) }
 
   scope :confidential, -> { where(post_flag_type: PostFlagType.confidential).or(where(post_flag_type: nil)) }
-  scope :not_confidential, -> { where(post_flag_type: PostFlagType.not_confidential ) }
+  scope :not_confidential, -> { where(post_flag_type: PostFlagType.not_confidential) }
 end

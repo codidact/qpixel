@@ -4,6 +4,7 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
@@ -13,15 +14,14 @@ class CommentsController < ApplicationController
 
     @comment = Comment.new comment_params.merge(user: current_user)
 
-    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id
-      unless @current_user.privilege? 'unrestricted'
-        AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
-                              comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
+    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id || \
+           @current_user.privilege?('unrestricted')
+      AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
+                            comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
 
-        new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to those.'
-        render json: { status: 'failed', message: new_user_comment_block_msg }, status: 400
-        return
-      end
+      new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to those.'
+      render json: { status: 'failed', message: new_user_comment_block_msg }, status: 400
+      return
     end
 
     if @comment.save
@@ -41,6 +41,7 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: 500
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def update
     before = @comment.content

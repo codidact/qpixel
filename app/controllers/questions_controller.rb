@@ -165,7 +165,8 @@ class QuestionsController < ApplicationController
 
   def close
     unless check_your_privilege('flag_close', nil, false)
-      render(json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this question') }, status: 403)
+      render(json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this question') },
+             status: 403)
       return
     end
 

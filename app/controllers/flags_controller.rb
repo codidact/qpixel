@@ -1,7 +1,8 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :flag_verify, only: [:resolve, :queue]
+  before_action :verify_moderator, only: [:queue]
+  before_action :flag_verify, only: [:resolve]
 
   def new
     type = if params[:flag_type].present?
