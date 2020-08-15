@@ -4,7 +4,11 @@ class FlagsController < ApplicationController
   before_action :verify_moderator, only: [:resolve, :queue]
 
   def new
-    @flag = Flag.new(reason: params[:reason], post_id: params[:post_id], user: current_user)
+    type = unless params[:flag_type].nil?
+             PostFlagType.find params[:flag_type]
+           end
+
+    @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id], user: current_user)
     if @flag.save
       render json: { status: 'success' }, status: 201
     else

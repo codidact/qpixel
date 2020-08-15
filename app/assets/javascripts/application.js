@@ -24,12 +24,17 @@ $(document).on('ready', function() {
   $("button.flag-link").bind("click", (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
+    
+    active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
+    reason = active_radio.val() || 'other';
+
     const data = {
+      'flag_type': (reason != 'other') ? reason : null,
       'post_id': self.data("post-id"),
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if (data['reason'].length < 10) {
+    if ((reason == 'other' && data['reason'].length < 10) || (data['reason'].length > 0 && data['reason'].length < 10)) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }

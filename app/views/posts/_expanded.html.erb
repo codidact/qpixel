@@ -206,10 +206,44 @@
 
         <div class="post--action-dialog js-flag-box">
           <div class="widget">
+            <div class="widget--header">Why does this post require moderator attention?</div>
+            <% (PostFlagType.all).each do |reason| %>
+              <div class="widget--body">
+                <div class="grid">
+                  <div class="grid--cell">
+                    <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>" id="flag-reason-<%= reason.id %>">
+                  </div>
+                  <div class="grid--cell is-flexible">
+                    <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>">
+                      <%= reason.name %>
+                      <div class="form-caption">
+                        <%= raw render_markdown(reason.description.gsub "$SiteName", SiteSetting['SiteName']) %>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+              <div class="widget--body">
+                <div class="grid">
+                  <div class="grid--cell">
+                    <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>">
+                  </div>
+                  <div class="grid--cell is-flexible">
+                    <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
+                      other reason
+                      <div class="form-caption">
+                        Please elaborate in the details field below.
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
             <div class="widget--body">
               <label class="form-element" for="flag-post-<%= post.id %>">
-                Why does this post require moderator attention?
+                Details?
               </label>
+              <div class="form-caption">You might want to add some details to your flag.</div>
               <input class="form-element js-flag-comment" id="flag-post-<%= post.id %>">
             </div>
             <div class="widget--footer">
@@ -234,7 +268,7 @@
                       <label class="form-element" for="close-reason-<%= reason.id %>">
                         <%= reason.name %>
                         <div class="form-caption">
-                          <%= reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+                          <%= raw render_markdown(reason.description.gsub "$SiteName", SiteSetting['SiteName']) %>
                         </div>
                       </label>
                       <% if reason.requires_other_post %>

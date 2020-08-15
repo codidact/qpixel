@@ -192,9 +192,9 @@ ActiveRecord::Schema.define(version: 2020_08_15_103111) do
     t.integer "handled_by_id"
     t.datetime "handled_at"
     t.bigint "community_id", null: false
-    t.bigint "post_flag_types_id"
+    t.bigint "post_flag_type_id"
     t.index ["community_id"], name: "index_flags_on_community_id"
-    t.index ["post_flag_types_id"], name: "index_flags_on_post_flag_types_id"
+    t.index ["post_flag_type_id"], name: "index_flags_on_post_flag_type_id"
     t.index ["post_id"], name: "index_flags_on_post_type_and_post_id"
     t.index ["status"], name: "index_flags_on_status"
     t.index ["user_id"], name: "index_flags_on_user_id"

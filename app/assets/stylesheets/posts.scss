@@ -46,6 +46,19 @@ h1 .badge.is-tag.is-master-tag {
   &.is-active {
     display: block;
   }
+
+  label.form-element {
+    margin: 0;
+  }
+
+  .form-caption {
+    margin: 0;
+    margin-top: 4px !important;
+
+    p {
+      margin: 0;
+    }
+  }
 }
 
 .js-close-box .widget--body {
