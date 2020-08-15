@@ -37,6 +37,7 @@
     <div class="h-p-6 h-p-t-2">      
       <h1><%= @user.username %></h1>
 
+      <div class="profile-text">
       <% if @user.website.present? || @user.twitter.present? %>
       <p>
         <% if @user.website.present? %>
@@ -54,6 +55,7 @@
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
+      </div>
 
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
