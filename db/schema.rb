@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_13_141412) do
+ActiveRecord::Schema.define(version: 2020_08_14_203051) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -234,6 +234,19 @@ ActiveRecord::Schema.define(version: 2020_08_13_141412) do
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_pinned_links_on_community_id"
     t.index ["post_id"], name: "index_pinned_links_on_post_id"
+  end
+
+  create_table "post_flag_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "name"
+    t.text "description"
+    t.boolean "confidential"
+    t.boolean "active"
+    t.bigint "post_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_post_flag_types_on_community_id"
+    t.index ["post_type_id"], name: "index_post_flag_types_on_post_type_id"
   end
 
   create_table "post_histories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
