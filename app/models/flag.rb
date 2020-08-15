@@ -3,6 +3,7 @@ class Flag < ApplicationRecord
   include PostRelated
   belongs_to :user
   belongs_to :handled_by, class_name: 'User', required: false
+  belongs_to :post_flag_type
 
   validates :reason, length: { minimum: 10, maximum: 1000 }
 

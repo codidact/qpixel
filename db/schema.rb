@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_14_203051) do
+ActiveRecord::Schema.define(version: 2020_08_15_103111) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -192,7 +192,9 @@ ActiveRecord::Schema.define(version: 2020_08_14_203051) do
     t.integer "handled_by_id"
     t.datetime "handled_at"
     t.bigint "community_id", null: false
+    t.bigint "post_flag_types_id"
     t.index ["community_id"], name: "index_flags_on_community_id"
+    t.index ["post_flag_types_id"], name: "index_flags_on_post_flag_types_id"
     t.index ["post_id"], name: "index_flags_on_post_type_and_post_id"
     t.index ["status"], name: "index_flags_on_status"
     t.index ["user_id"], name: "index_flags_on_user_id"
