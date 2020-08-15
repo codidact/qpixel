@@ -5,8 +5,9 @@ class Flag < ApplicationRecord
   belongs_to :handled_by, class_name: 'User', required: false
   belongs_to :post_flag_type
 
-  validates :reason, length: { minimum: 10, maximum: 1000 }
-
   scope :handled, -> { where.not(status: nil) }
   scope :unhandled, -> { where(status: nil) }
+
+  scope :confidential, -> { where(post_flag_type: PostFlagType.confidential).or(where(post_flag_type: nil)) }
+  scope :not_confidential, -> { where(post_flag_type: PostFlagType.not_confidential ) }
 end

@@ -20,7 +20,7 @@
         <span class="badge is-tag <%= status_colors[(flag.status || 'pending').to_sym] %> is-filled">
           <%= flag.status || 'pending' %>
         </span>
-        <%= flag.reason %>
+        <strong><%= flag.post_flag_type&.name || 'Flag reason' %>: </strong><%= flag.reason %>
         <% if flag.message.present? %>
           &mdash; response: <em><%= flag.message %></em>
         <% end %>

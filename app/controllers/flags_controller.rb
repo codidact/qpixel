@@ -1,10 +1,10 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :verify_moderator, only: [:resolve, :queue]
+  before_action :flag_verify, only: [:resolve, :queue]
 
   def new
-    type = unless params[:flag_type].nil?
+    type = if params[:flag_type].present?
              PostFlagType.find params[:flag_type]
            end
 
@@ -31,12 +31,24 @@ class FlagsController < ApplicationController
   end
 
   def resolve
-    @flag = Flag.find params[:id]
     if @flag.update(status: params[:result], message: params[:message], handled_by: current_user,
                     handled_at: DateTime.now)
       render json: { status: 'success' }
     else
       render json: { status: 'failed', message: 'Failed to save new status.' }, status: 500
+    end
+  end
+
+  private
+
+  def flag_verify
+    @flag = Flag.find params[:id]
+    return false if current_user.nil?
+
+    type = @flag.post_flag_type
+    unless current_user.is_moderator
+      return not_found unless current_user.privilege? 'flag_curate'
+      return not_found if type.nil? || type.confidential
     end
   end
 end

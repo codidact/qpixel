@@ -26,10 +26,10 @@ $(document).on('ready', function() {
     const self = $(ev.target);
     
     active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
-    reason = active_radio.val() || 'other';
+    reason = active_radio.val() || null;
 
     const data = {
-      'flag_type': (reason != 'other') ? reason : null,
+      'flag_type': (reason != -1) ? reason : null,
       'post_id': self.data("post-id"),
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };

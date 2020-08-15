@@ -194,8 +194,12 @@
                 Tools
               </a>
             <% end %>
-            <% flags_count = post.flags.where(handled_by_id: nil).count %>
-            <% if moderator? && flags_count > 0 %>
+            <% flags_count = if current_user.is_moderator
+                               post.flags
+                             else
+                               post.flags.not_confidential
+                             end.where(handled_by_id: nil).count %>
+            <% if current_user&.privilege?('flag_curate') && flags_count > 0 %>
               <a href="#" class="show-all-flags-dialog-link tools--item">
                 <i class="fa fa-exclamation-triangle"></i>
                 Show <%= pluralize(flags_count, "flag") %>
@@ -287,14 +291,15 @@
           </div>
         <% end %>
 
-        <% if moderator? %>
+        <% if current_user&.privilege?('flag_curate') %>
           <div class="post--action-dialog js-flags">
             <div class="widget">
               <div class="widget--header">Flags on this post</div>
               <% post.flags.where(handled_by_id: nil).each do |flag| %>
+                <% next if !current_user.is_moderator && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
                 <div class="widget--body">
                   <div>
-                  <p><%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+                  <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %>: </strong><%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
                   <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
                   <div class="has-float-right has-padding-1">
                     <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
