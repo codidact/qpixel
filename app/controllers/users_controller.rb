@@ -281,12 +281,14 @@ class UsersController < ApplicationController
     Thread.new do
       RequestContext.community = community
 
-      auto_user.posts.each do |post|
-        post.reassign_user(current_user)
-        post.remove_attribution_notice!
+      ApplicationRecord.transaction do
+        auto_user.posts.each do |post|
+          post.reassign_user(current_user)
+          post.remove_attribution_notice!
+        end
+        auto_user.reload.destroy
+        current_user.update(transferred_content: true)
       end
-      auto_user.reload.destroy
-      current_user.update(transferred_content: true)
     end
     flash[:success] = 'Your content is being transferred to you.'
     redirect_to edit_user_profile_path

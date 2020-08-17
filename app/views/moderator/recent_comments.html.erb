@@ -1,0 +1,15 @@
+<% content_for :title, 'Recent Comments' %>
+
+<h1>Recent Comments</h1>
+<p>
+  This is a log of <em>all</em> comments posted recently on this site. This may not be very useful on higher-traffic
+  sites; consider using activity logs on user profiles instead.
+</p>
+
+<% @comments.each do |comment| %>
+  <%= render 'comments/comment', comment: comment %>
+<% end %>
+
+<div class="has-padding-top-4">
+  <%= will_paginate @comments, renderer: BootstrapPagination::Rails %>
+</div>

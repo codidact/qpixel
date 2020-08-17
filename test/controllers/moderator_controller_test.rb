@@ -24,4 +24,11 @@ class ModeratorControllerTest < ActionController::TestCase
       assert_response(404)
     end
   end
+
+  test 'should get recent comments page' do
+    sign_in users(:moderator)
+    get :recent_comments
+    assert_response 200
+    assert_not_nil assigns(:comments)
+  end
 end

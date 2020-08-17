@@ -66,6 +66,7 @@ group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
+  gem 'term-ansicolor', '~> 1.7'
 end
 
 group :development, :test do
