@@ -144,7 +144,7 @@
                 </ol>
                 <% chat = SiteSetting['ChatLink'] %>
                 <% if chat.present? %>
-                <p>You might also want to <a href="<%= chat %>">join our community chat</a> and chat with other community members.</p>
+                <p>You might also want to <%= link_to 'join our community chat', chat %> and chat with other community members.</p>
                 <% end %>
             </div>
             <div class="widget--footer step-6-footer">

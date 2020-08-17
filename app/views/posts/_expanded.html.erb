@@ -93,7 +93,7 @@
           </div>
         <% elsif post.pending_suggested_edit.user.id == current_user&.id %>
           <div class="notice h-p-2">
-            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>">pending review</a></strong>.</p>
+            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
           </div>
         <% end %>
       <% end %>
