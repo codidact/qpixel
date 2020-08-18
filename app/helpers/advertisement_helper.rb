@@ -7,8 +7,6 @@ module AdvertisementHelper
   # into an output buffer - forwards if the section was LTR, reversed if the section was RTL - and clears the
   # scan buffer. This has the effect of reversing RTL sections in-place, which seems to correct their direction.
   #
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def do_rtl_witchcraft(str)
     chars = str.chars
     output_buffer = ''
@@ -44,9 +42,6 @@ module AdvertisementHelper
                        scan_buffer.join('')
                      end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def rtl?(char)
     return false if char.nil?
