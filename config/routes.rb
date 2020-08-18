@@ -100,6 +100,8 @@ Rails.application.routes.draw do
 
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
   post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+  post   'posts/:id/lock',                 to: 'posts#lock', as: :post_lock
+  post   'posts/:id/unlock',               to: 'posts#unlock', as: :post_unlock
   post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
   
 

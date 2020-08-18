@@ -5,6 +5,7 @@
       Moderator Tools
     </div>
     <div class="modal--body">
+    <% unless post.locked? && !moderator? %>
       <% if post.answer? %>
         <details>
           <summary>Convert to comment</summary>
@@ -40,6 +41,37 @@
             <%= submit_tag 'Move', class: 'button is-filled' %>
           <% end %>
         </details>
+      <% end %>
+    <% end %>
+      <% if current_user&.privilege?('flag_curate') %>
+        <% if !post.locked? %>
+        <details>
+          <summary>Lock post</summary>
+          <p>
+            Locking a post disallows edits, comments and votes. Use post closure to disallow answers, too. You should do that before locking the post, because the interface will be hidden afterwards. <% if moderator? %>If you just want to disable comments to shut down a heated discussion, use that tool.<% end %>
+          </p>
+          <%= form_tag post_lock_path(post), remote: true, class: 'js-lock' do %>
+            <%= label_tag :length, 'Locked until', class: 'form-element', for: "purge_comments_id_#{post.id}" %>
+            <% if current_user.is_moderator %>
+              <div class="form-caption">You can set an end date, at which the post will automatically unlock.</div>
+            <% else %>
+              <div class="form-caption">You have to set an end date, at which the post will automatically unlock. Will default to 7 if none chosen. Maximum value: 30 days</div>
+            <% end %>
+              <%= number_field_tag :length, class: 'form-element' %>
+            <%= submit_tag 'Lock', class: 'button is-filled' %>
+          <% end %>
+        </details>
+      <% elsif !post.locked_until.nil? || moderator? || post.locked_by.id == current_user.id %>
+        <details>
+          <summary>Unlock post</summary>
+          <p>
+            Unlocking the post allows edits, comments and votes again.
+          </p>
+          <%= form_tag post_unlock_path(post), remote: true, class: 'js-lock' do %>
+            <%= submit_tag 'Unlock', class: 'button is-filled' %>
+          <% end %>
+        </details>
+        <% end %>
       <% end %>
       <% if moderator? && !post.comments_disabled %>
         <details>

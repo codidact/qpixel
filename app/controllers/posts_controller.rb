@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
-  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments, :feature]
+  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments, :feature, :lock, :unlock]
   before_action :set_scoped_post, only: [:change_category]
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help, :toggle_comments]
@@ -182,6 +182,37 @@ class PostsController < ApplicationController
         end
       end
     end
+    render json: { success: true }
+  end
+
+  def lock
+    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found if @post.locked?
+
+    length = params[:length].to_i
+    if length
+      if !current_user.is_moderator && length > 30
+        length = 30
+      end
+      end_date = length.days.from_now
+    elsif current_user.is_moderator
+      end_date = nil
+    else
+      end_date = 7.days.from_now
+    end
+
+    @post.update locked: true, locked_by: current_user,
+                 locked_at: DateTime.now, locked_until: end_date
+    render json: { success: true }
+  end
+
+  def unlock
+    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found unless @post.locked?
+    return not_found if @post.locked_until.nil? && !current_user.is_moderator
+
+    @post.update locked: false, locked_by: nil,
+                 locked_at: nil, locked_until: nil
     render json: { success: true }
   end
 
