@@ -73,10 +73,11 @@ class ApplicationController < ActionController::Base
 
   def check_if_locked
     return if current_user.is_moderator
+
     post = @post || @question || @article || @answer || Post.where(id: params[:post_id]).first || \
            Post.where(id: params[:comment][:post_id]).first
     if post.locked?
-      return respond_to do |format|
+      respond_to do |format|
         format.html { render 'errors/locked', layout: 'without_sidebar', status: 401 }
         format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: 401 }
       end
