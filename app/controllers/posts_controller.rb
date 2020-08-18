@@ -27,7 +27,7 @@ class PostsController < ApplicationController
     end
 
     recent_top_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
-                                 .where(post_type_id: [Question.post_type_id, Article.post_type_id]).count
+                                 .where(post_type_id: top_level_post_types).count
     max_posts = if !@current_user.privilege? 'unrestricted'
                   vote_limit_msg = 'You may only post 3 top-level posts (questions, articles) per day. ' \
                                    'Once you have some well-received posts, that limit will increase.'

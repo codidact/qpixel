@@ -29,7 +29,7 @@
   internal_id: flag_close
   icon: lock
   summary: >
-    Vote to put questions on hold, vote to reopen on holded questions and review hold votes
+    Vote to put questions on hold, see pending hold votes, and vote to keep open or reopen.
   post_score_threshold: 0.95   # min +18/-0
   edit_score_threshold: null
   flag_score_threshold: 0.98   # min +48/-0

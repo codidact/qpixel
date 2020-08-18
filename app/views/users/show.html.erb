@@ -108,8 +108,8 @@
         <img alt="user avatar" src="<%= avatar_url(@user, 512) %>" />
       </div>
       <% if @user.staff? %>
-      <div class="widget--body h-ta-center" title="This user is an official Codidact Staff member.">
-        <i class="fas fa-users-cog"></i> Codidact Staff
+      <div class="widget--body h-ta-center" title="This user is an official Staff member.">
+        <i class="fas fa-users-cog"></i> Staff
       </div>
       <% elsif @user.is_moderator || @user.is_admin %>
       <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">

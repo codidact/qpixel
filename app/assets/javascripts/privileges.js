@@ -29,7 +29,7 @@ $(() => {
     const type = $input.data('type');
     const value = $input.val();
 
-    if(!value && value !== 0 && value !== "0") { value = null }
+    if(!value && value !== "0") { value = null }
 
     const resp = await fetch(`/admin/privileges/${name}/${type}`, {
       method: 'POST',

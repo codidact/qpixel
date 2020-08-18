@@ -84,6 +84,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def top_level_post_types
+    [Question.post_type_id, Article.post_type_id]
+  end
+
   private
 
   def stop_the_awful_troll

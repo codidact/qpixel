@@ -21,7 +21,7 @@ module AbilitiesHelper
         "Your use of the #{ability.name} ability has been temporarily suspended. " \
         "See /abilities/#{ability.internal_id} for more information."
       else
-        "Your use of the #{ability.name} ability has been temporarily suspended. So you cannot #{action}." \
+        "Your use of the #{ability.name} ability has been temporarily suspended, so you cannot #{action}." \
         "See /abilities/#{ability.internal_id} for more information."
       end
     else

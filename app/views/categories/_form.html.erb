@@ -40,7 +40,7 @@
       Users must have at least this trust level to post in this category. Leave blank to allow
       anyone to post.
     </span>
-    <%= f.select :min_trust_level, options_for_select([['everyone', 0], ['anyone with an user account', 1], ['all but new users', 2], ['veteran users', 3], ['moderators only', 4], ['staff only', 5]], selected: @category.min_trust_level),
+    <%= f.select :min_trust_level, options_for_select([['everyone', 0], ['anyone with a user account', 1], ['all but new users', 2], ['veteran users', 3], ['moderators only', 4], ['staff only', 5]], selected: @category.min_trust_level),
                  {}, class: 'form-element' %>
   </div>
 
@@ -50,7 +50,7 @@
       Users under this trust level cannot see that this category exists. Leave blank to leave the category public.
       This can be different (higher or lower) than the minimum posting trust level.
     </span>
-    <%= f.select :min_view_trust_level, options_for_select([['everyone', 0], ['anyone with an user account', 1], ['all but new users', 2], ['veteran users', 3], ['moderators only', 4], ['staff only', 5]], selected: @category.min_view_trust_level),
+    <%= f.select :min_view_trust_level, options_for_select([['everyone', 0], ['anyone with a user account', 1], ['all but new users', 2], ['veteran users', 3], ['moderators only', 4], ['staff only', 5]], selected: @category.min_view_trust_level),
                  {}, class: 'form-element' %>
   </div>
 

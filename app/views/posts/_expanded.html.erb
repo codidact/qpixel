@@ -236,7 +236,7 @@
           <div class="widget">
             <div class="widget--header">Why does this post require moderator attention?</div>
             <% unless post.locked? %>
-              <% (PostFlagType.all).each do |reason| %>
+              <% PostFlagType.all.each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">

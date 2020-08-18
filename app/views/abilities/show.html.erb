@@ -1,5 +1,5 @@
 <div class="has-float-right">
-    <% if @user.id == current_user.id %>
+    <% if @user.id == current_user&.id %>
         <a href="<%= abilities_url %>" class="button is-muted">Return to list</a>
     <% else %>
         <a href="<%= abilities_url(for: @user.id) %>" class="button is-muted">Return to list</a>
@@ -14,14 +14,14 @@
     <div class="widget--body">
         <p class="h-m-0"><i class="fas fa-fw fa-times h-c-red-600"></i> 
 
-        <% if @user.id == current_user.id %>
+        <% if @user.id == current_user&.id %>
         You have not yet earned this ability.
         <% else %>
         <%= @user.username %> has not yet earned this ability.
         <% end %>
         
         <% if @user.community_user.privilege? 'mod' %>
-            <% if @user.id == current_user.id %>
+            <% if @user.id == current_user&.id %>
             However, as a moderator you still have all abilities.
             <% else %>
             However, as a moderator <%= @user.username %> still has all abilities.
@@ -29,13 +29,13 @@
         <% end %>
         <% unless @ability.manual? %>
         <% if params[:thresholds].nil? %>
-            <% if @user.id == current_user.id %>
+            <% if @user.id == current_user&.id %>
                 <a href="?thresholds=1">(more)</a>
             <% else %>
                 <a href="?thresholds=1&for=<%= @user.id %>">(more)</a>
             <% end %>
         <% else %>
-            <% if @user.id == current_user.id %>
+            <% if @user.id == current_user&.id %>
                 <a href="?">(less)</a>
             <% else %>
                 <a href="?for=<%= @user.id %>">(less)</a>
@@ -112,13 +112,13 @@
 <% else %>
 <div class="widget">
     <div class="widget--body">
-        <% if @user.id == current_user.id %>
+        <% if @user.id == current_user&.id %>
         <p class="h-m-0"><i class="fas fa-fw fa-check h-c-green-600"></i> You have already earned this ability.</p>
         <% else %>
         <p class="h-m-0"><i class="fas fa-fw fa-check h-c-green-600"></i> <%= @user.username %> has already earned this ability.</p>
         <% end %>
     </div>
-    <% if @your_ability&.is_suspended && (@user.id == current_user.id || current_user.is_moderator) %>
+    <% if @your_ability&.is_suspended && (@user.id == current_user&.id || current_user.is_moderator) %>
     <div class="widget--body">
         <div class="notice is-danger">
             <% if @your_ability.suspension_end.nil? %>
