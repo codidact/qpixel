@@ -130,19 +130,8 @@ class UsersController < ApplicationController
     end
 
     before = @user.attributes_print
-    user_email = @user.email
-    user_ip = [@user.last_sign_in_ip]
+    @user.block('user destroyed')
 
-    if @user.current_sign_in_ip
-      user_ip << @user.current_sign_in_ip
-    end
-
-    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
-                       automatic: true, reason: 'user destroyed: #' + @user.id.to_s)
-    user_ip.compact.each do |ip|
-      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
-                         automatic: true, reason: 'user destroyed: #' + @user.id.to_s)
-    end
     if @user.destroy!
       Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                                         deleted: true, deleted_at: DateTime.now,

@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
-  before_action :verify_global_admin, only: [:admin_email, :send_admin_email]
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :hellban]
 
   def index; end
 
@@ -59,5 +59,12 @@ class AdminController < ApplicationController
                           related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
             .paginate(page: params[:page], per_page: 100)
     render layout: 'without_sidebar'
+  end
+
+  def hellban
+    @user = User.find params[:id]
+    @user.block("user manually blocked by admin ##{current_user.id}")
+    flash[:success] = 'User fed to STAT.'
+    redirect_back fallback_location: admin_path
   end
 end

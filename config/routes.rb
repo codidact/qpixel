@@ -143,6 +143,7 @@ Rails.application.routes.draw do
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
   get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+  post   'users/:id/hellban',              to: 'admin#hellban', as: :hellban_user
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications

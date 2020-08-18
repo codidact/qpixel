@@ -23,7 +23,7 @@
           <% end %>
         <% end %>
       </td>
-      <td><%= log.comment %></td>
+      <td><pre class="pre-wrap"><%= log.comment %></pre></td>
       <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
     </tr>
   <% end %>

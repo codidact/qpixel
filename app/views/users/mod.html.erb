@@ -65,16 +65,21 @@
 <% end %>
 
 <div class="widget">
-<div class="widget--header h-c-red-700"><span class="h-fw-bold">Danger Zone</span></div>
-<div class="widget--body">
-  <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
-    after initiating an action.</p>
-  <div class="delete-actions">
-    <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id), method: :delete, remote: true, class: "destroy-user button is-danger is-filled" %>
-    <% if admin? %>
-      <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id, transfer: SiteSetting['SoftDeleteTransferUser']), method: :delete, remote: true, class: "soft-delete  button is-danger is-filled" %>
-    <% end %>
+  <div class="widget--header h-c-red-700"><span class="h-fw-bold">Danger Zone</span></div>
+  <div class="widget--body">
+    <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
+      after initiating an action.</p>
+    <div class="delete-actions">
+      <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id),
+                  method: :delete, remote: true, class: 'destroy-user button is-danger is-filled' %>
+      <% if admin? %>
+        <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id,
+                                           transfer: SiteSetting['SoftDeleteTransferUser']),
+                    method: :delete, remote: true, class: 'soft-delete button is-danger is-filled' %>
+      <% end %>
+      <% if current_user.is_global_admin %>
+        <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
+      <% end %>
+    </div>
   </div>
-</div>
-
 </div>
