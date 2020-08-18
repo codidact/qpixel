@@ -12,9 +12,9 @@
     <% @abilities.each do |a| %>
       <tr>
         <td><strong><%= a.name %></strong></td>
-        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="post"><%= a.post_score_threshold %></td>
-        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="edit"><%= a.edit_score_threshold %></td>
-        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="flag"><%= a.flag_score_threshold %></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="post"><%= a.post_score_threshold || '-' %></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="edit"><%= a.edit_score_threshold || '-' %></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="flag"><%= a.flag_score_threshold || '-' %></td>
       </tr>
     <% end %>
   </tbody>
