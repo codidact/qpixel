@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_15_103111) do
+ActiveRecord::Schema.define(version: 2020_08_15_193704) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -326,6 +326,10 @@ ActiveRecord::Schema.define(version: 2020_08_15_103111) do
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
     t.boolean "comments_disabled"
+    t.boolean "locked", default: false, null: false
+    t.bigint "locked_by_id"
+    t.datetime "locked_at"
+    t.datetime "locked_until"
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -337,6 +341,7 @@ ActiveRecord::Schema.define(version: 2020_08_15_103111) do
     t.index ["last_activity"], name: "index_posts_on_last_activity"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
     t.index ["license_id"], name: "index_posts_on_license_id"
+    t.index ["locked_by_id"], name: "index_posts_on_locked_by_id"
     t.index ["parent_id"], name: "index_posts_on_parent_id"
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
     t.index ["score"], name: "index_posts_on_score"
@@ -570,6 +575,7 @@ ActiveRecord::Schema.define(version: 2020_08_15_103111) do
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "licenses"
   add_foreign_key "posts", "posts", column: "duplicate_post_id"
+  add_foreign_key "posts", "users", column: "locked_by_id"
   add_foreign_key "privileges", "communities"
   add_foreign_key "site_settings", "communities"
   add_foreign_key "subscriptions", "communities"

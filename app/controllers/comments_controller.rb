@@ -3,6 +3,7 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
+  before_action :check_if_locked, only: [:create, :update, :destroy]  
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def create

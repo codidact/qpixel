@@ -4,6 +4,7 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :verify_moderator, only: [:convert_to_comment]
+  before_action :check_if_locked, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
 
   def new
     @answer = Answer.new

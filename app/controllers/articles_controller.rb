@@ -1,6 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :set_article
   before_action :check_article
+  before_action :check_if_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
 
   def show
     if @article.deleted?

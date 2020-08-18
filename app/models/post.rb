@@ -7,6 +7,7 @@ class Post < ApplicationRecord
   belongs_to :closed_by, class_name: 'User', required: false
   belongs_to :deleted_by, class_name: 'User', required: false
   belongs_to :last_activity_by, class_name: 'User', required: false
+  belongs_to :locked_by, class_name: 'User', required: false
   belongs_to :category, required: false
   belongs_to :license, required: false
   has_and_belongs_to_many :tags, dependent: :destroy
@@ -118,6 +119,15 @@ class Post < ApplicationRecord
     sql = 'UPDATE posts SET score = (upvote_count + ?) / (upvote_count + downvote_count + (2 * ?)) WHERE id = ?'
     sanitized = ActiveRecord::Base.sanitize_sql_array([sql, variable, variable, id])
     ActiveRecord::Base.connection.execute sanitized
+  end
+
+  def locked?
+    return true if locked && locked_until.nil? # permanent lock
+    return true if locked && !locked_until.past?
+
+    if locked
+      update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
+    end
   end
 
   private
