@@ -105,8 +105,12 @@ class ApplicationController < ActionController::Base
     is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
     if is_blocked.any?
+      blocked_info = "ip: #{ip}\nemail: #{current_user.email}\ndomain: #{email_domain}"
+      request_info = "request: #{request.method.upcase} #{request.fullpath}"
+      params_info = params.except(*Rails.application.config.filter_parameters).permit!.to_h
+                          .map { |k, v| "  #{k}: #{v}" }.join("\n")
       AuditLog.block_log(event_type: 'write_request_blocked', related: is_blocked.first,
-                         comment: "ip: #{ip}\nemail: #{current_user.email}\ndomain: #{email_domain}")
+                         comment: "#{blocked_info}\n#{request_info}\n#{params_info}")
 
       respond_to do |format|
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }

@@ -23,7 +23,7 @@ gem 'commonmarker', '~> 0.21'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.
-gem 'chartkick', '~> 3.3'
+gem 'chartkick', '~> 3.4'
 gem 'groupdate', '~> 4.3'
 
 # View stuff.
@@ -43,7 +43,7 @@ gem 'whenever', '~> 1.0', require: false
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.8'
 gem 'coveralls', '~> 0.8', require: false
-gem 'rubocop', '~> 0.81'
+gem 'rubocop', '= 0.84'
 
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
 gem 'flamegraph', '~> 0.9'
@@ -66,6 +66,7 @@ group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
+  gem 'term-ansicolor', '~> 1.7'
 end
 
 group :development, :test do

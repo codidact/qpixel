@@ -1,0 +1,26 @@
+<% content_for :title, "Merge tag into #{@tag.name}" %>
+
+<h1 class="has-margin-0 has-margin-top-4">Merge tag into <%= @tag.name %></h1>
+<p>
+  You can select a tag here to merge it into this tag. All of the posts that have the tag you select will have it
+  removed and replaced with this tag, and the selected tag will be deleted. Any children of the selected tag will
+  not be deleted, but will revert to not having a parent. Sad face.
+</p>
+
+<div class="notice is-danger">
+  <h4><i class="fas fa-exclamation-triangle"></i> Destructive action</h4>
+  <p>
+    Merging tags is a <strong>destructive action</strong>, meaning that once done it cannot be reversed. If you pick
+    the wrong tag here and confirm it, not even a developer will be able to undo the merge.
+  </p>
+</div>
+
+<%= form_tag merge_tag_path(id: @category.id, tag_id: @tag.id) do %>
+  <div class="form-group">
+    <%= select_tag :merge_with_id, options_for_select([]),
+                   include_blank: true, class: "form-element js-tag-select",
+                   data: { tag_set: @category.tag_set_id, use_ids: true } %>
+  </div>
+
+  <%= submit_tag 'Confirm Merge', class: 'button is-filled is-danger' %>
+<% end %>

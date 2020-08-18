@@ -45,6 +45,7 @@ Rails.application.routes.draw do
 
   get    'mod',                            to: 'moderator#index', as: :moderator
   get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
+  get    'mod/comments',                   to: 'moderator#recent_comments', as: :recent_comments
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
@@ -146,6 +147,7 @@ Rails.application.routes.draw do
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
   get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+  post   'users/:id/hellban',              to: 'admin#hellban', as: :hellban_user
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
@@ -204,6 +206,9 @@ Rails.application.routes.draw do
     get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
     get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
     patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
+    post   ':id/tags/:tag_id/rename',              to: 'tags#rename', as: :rename_tag
+    get    ':id/tags/:tag_id/merge',               to: 'tags#select_merge', as: :select_tag_merge
+    post   ':id/tags/:tag_id/merge',               to: 'tags#merge', as: :merge_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning

@@ -2,7 +2,7 @@ $(() => {
     _CodidactKeyboard = {
         state: 'home',
         selectedItem: null,
-        user_id: parseInt($('.header--item.is-complex.is-visible-on-mobile[href^="/users/"').attr('href').split("/").pop()),
+        user_id: parseInt($('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href').split("/").pop()),
         is_mod: !!$('.header--item[href="/mod/flags"]').length,
         categories: function () {
             category_elements = $("a.category-header--tab");

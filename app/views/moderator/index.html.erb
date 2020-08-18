@@ -28,7 +28,7 @@
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-file-alt"></i>
-        <a href="<%= new_help_post_path %>">Create Help Page</a>
+        <%= link_to 'Create Help Page', new_help_post_path %>
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-chart-line"></i>
-        <a href="<%= users_report_path %>">Reports</a>
+        <%= link_to 'Reports', users_report_path %>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-hand-paper"></i>
-        <a href="<%= close_reasons_path %>">Close Reasons</a>
+        <%= link_to 'Close Reasons', close_reasons_path %>
       </div>
     </div>
   </div>
@@ -55,7 +55,16 @@
     <div class="widget">
       <div class="widget--body">
         <i class="fas fa-info"></i>
-        <a href="<%= pinned_links_path %>">Featured Links</a>
+        <%= link_to 'Featured Links', pinned_links_path %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-comments"></i>
+        <%= link_to 'Recent Comments', recent_comments_path %>
       </div>
     </div>
   </div>
@@ -63,5 +72,5 @@
 
 <% chat = SiteSetting['ChatLink'] %>
 <% if chat.present? %>
-<p>As a moderator, you should join our <a href="<%= chat %>">community chat server</a>. Ping a Codidact team member there and you'll receive access to a special moderator-only lounge, where you can discuss moderation questions with your fellow moderators.</p>
+<p>As a moderator, you should join our <%= link_to 'community chat server', chat %>. Ping a Codidact team member there and you'll receive access to a special moderator-only lounge, where you can discuss moderation questions with your fellow moderators.</p>
 <% end %>
