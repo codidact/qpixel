@@ -4,8 +4,6 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_locked, only: [:create, :update, :destroy]
-
-  # rubocop:disable Metrics/CyclomaticComplexity
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
@@ -42,7 +40,6 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: 500
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def update
     before = @comment.content
