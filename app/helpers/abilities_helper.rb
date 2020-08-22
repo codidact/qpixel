@@ -6,10 +6,10 @@ module AbilitiesHelper
   # scale, but mean a change of about 2x for the "actual
   # limit" used by the algorithm.
   #
-  # Solution: We transform the ideal case formula y=(x+1)/(x+2)
-  # to x=(2y-1)/(1-y) and use that for the progress bar.
+  # Solution: We transform the ideal case formula y=(x+2)/(x+4)
+  # to x=(4y-2)/(1-y) and use that for the progress bar.
   def linearize_progress(score)
-    linear_score = (2 * score - 1) / (1 - score)
+    linear_score = (4 * score - 2) / (1 - score)
     [0, linear_score].max
   end
 
