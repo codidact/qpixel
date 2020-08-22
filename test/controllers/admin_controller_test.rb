@@ -73,7 +73,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'should get single privilege' do
     sign_in users(:admin)
-    get :show_privilege, params: { name: privileges(:close).name, format: :json }
+    get :show_privilege, params: { name: 'unrestricted', format: :json }
     assert_response 200
     assert_not_nil assigns(:privilege)
     assert_nothing_raised do
@@ -83,7 +83,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'should update privilege threshold' do
     sign_in users(:admin)
-    post :update_privilege, params: { name: privileges(:close).name, threshold: 2000 }
+    post :update_privilege, params: { name: unrestricted, threshold: 0.6, type: 'post' }
     assert_response 202
     assert_not_nil assigns(:privilege)
     assert_equal 2000, assigns(:privilege).threshold

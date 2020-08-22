@@ -4,8 +4,35 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+
+stu_ur:
+  community_user: sample_standard_user
+  ability: unrestricted
+
+c_ur:
+  community_user: sample_closer
+  ability: unrestricted
+
+e_ur:
+  community_user: sample_editor
+  ability: unrestricted
+
+d_ur:
+  community_user: sample_deleter
+  ability: unrestricted
+
+c_fc:
+  community_user: sample_closer
+  ability: flag_close
+
+e_ep:
+  community_user: sample_editor
+  ability: edit_posts
+
+d_fcu:
+  community_user: sample_deleter
+  ability: flag_curate
+
+d_fc:
+  community_user: sample_deleter
+  ability: flag_close

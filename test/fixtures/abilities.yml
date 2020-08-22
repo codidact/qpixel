@@ -1,11 +1,27 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+unrestricted:
+  name: Participate Generally
+  internal_id: unrestricted
+  icon: heartbeat
+
+edit_posts:
+  name: Edit Posts
+  internal_id: edit_posts
+  icon: pen
+
+edit_tags:
+  name: Edit Tags
+  internal_id: edit_tags
+
+flag_close:
+  name: Vote on Holds
+  internal_id: flag_close
+
+flag_curate:
+  name: Curate
+  internal_id: flag_curate
+
+mod:
+  name: Moderator
+  internal_id: mod

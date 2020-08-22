@@ -13,7 +13,7 @@ module AbilitiesHelper
     [0, linear_score].max
   end
 
-  def ability_err_msg(internal_id, action: nil)
+  def ability_err_msg(internal_id, action = nil)
     ability = Ability.find_by internal_id: internal_id
     ua = current_user.privilege(ability.internal_id)
     if ua.suspended?
