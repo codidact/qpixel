@@ -83,7 +83,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'should update privilege threshold' do
     sign_in users(:admin)
-    post :update_privilege, params: { name: unrestricted, threshold: 0.6, type: 'post' }
+    post :update_privilege, params: { name: 'unrestricted', threshold: 0.6, type: 'post' }
     assert_response 202
     assert_not_nil assigns(:privilege)
     assert_equal 2000, assigns(:privilege).threshold
