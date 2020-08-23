@@ -37,7 +37,7 @@ If you haven't already got it, [download and install Redis](https://redis.io/dow
 
 ### Install Imagemagick
 If you haven't already installed Imagemagick, you'll need to [install it for your system](https://imagemagick.org/script/download.php)
-    
+
 ### Download QPixel
 Clone the repository and `cd` into the directory:
 
@@ -65,7 +65,7 @@ contain the correct values for you, but if you've customised your setup you'll n
 Install gems:
 
     bundle install
-    
+
 Set up the database:
 
     rails db:create
@@ -77,12 +77,15 @@ Set up the database:
 Run the server!
 
     rails s
-    
+
 You'll need to create a Community record before the server will display any content. In a console, run:
 
 ```ruby
 Community.create(name: 'Dev Community', host: 'localhost:3000')
 ```
+
+If it keeps not showing content, `Rails.cache.clear` from your console as
+necessary.
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
 to an admin account, run `rails c` for a console, followed by:
