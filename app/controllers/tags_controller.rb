@@ -25,7 +25,11 @@ class TagsController < ApplicationController
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
-              @tag_set.tags_with_paths.order(:path)
+              begin
+                @tag_set.tags_with_paths.order(:path)
+              rescue NoMethodError  # `No 'tags_with_paths' for nil:NilClass`.
+                []
+              end
             else
               begin
                 @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
