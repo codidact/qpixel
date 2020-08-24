@@ -28,4 +28,6 @@
 
 <%= render 'list' %>
 
+<% if @tags != nil then %>
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
+<% end %>

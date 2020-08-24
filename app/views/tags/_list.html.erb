@@ -4,6 +4,7 @@
   <% topic_ids = @category&.topic_tag_ids %>
 
   <% ApplicationRecord.with_lax_group_rules do %>
+   <% if @tags != nil then %>
     <% @tags.each do |tag| %>
       <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
       <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
@@ -11,5 +12,6 @@
       <% classes = "badge is-tag #{required} #{topic} #{moderator}" %>
       <%= render 'tag', category: @category, tag: tag, classes: classes %>
     <% end %>
+   <% end %>
   <% end %>
 </div>

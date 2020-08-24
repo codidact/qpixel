@@ -27,13 +27,21 @@ class TagsController < ApplicationController
             elsif params[:hierarchical].present?
               @tag_set.tags_with_paths.order(:path)
             else
-              @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
+              begin
+                @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
+              rescue NoMethodError  # No `tags` in `@tag_set`.
+                []
+              end
             end
     @count = @tags.count
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
-    @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
+    @tags = begin
+              @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
                  .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
+            rescue NoMethodError  # No `left_joins` in `[]:Array`.
+              nil
+            end
   end
 
   def show
