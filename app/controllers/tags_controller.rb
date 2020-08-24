@@ -23,7 +23,11 @@ class TagsController < ApplicationController
   def category
     @tag_set = @category.tag_set
     @tags = if params[:q].present?
-              @tag_set.tags.search(params[:q])
+              begin
+                @tag_set.tags.search(params[:q])
+              rescue NoMethodError  # `No 'tags' for @tag_set (resolving to nil:NilClass)`.
+                []
+              end
             elsif params[:hierarchical].present?
               begin
                 @tag_set.tags_with_paths.order(:path)
