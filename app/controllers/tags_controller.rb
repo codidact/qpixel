@@ -22,24 +22,21 @@ class TagsController < ApplicationController
 
   def category
     @tag_set = @category.tag_set
-    @tags = if params[:q].present?
-              begin
+    @tags = begin
+              if params[:q].present?
                 @tag_set.tags.search(params[:q])
-              rescue NoMethodError  # `No 'tags' for @tag_set (resolving to nil:NilClass)`.
-                []
-              end
-            elsif params[:hierarchical].present?
-              begin
+              elsif params[:hierarchical].present?
                 @tag_set.tags_with_paths.order(:path)
-              rescue NoMethodError  # `No 'tags_with_paths' for nil:NilClass`.
-                []
-              end
-            else
-              begin
+              else
                 @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
-              rescue NoMethodError  # No `tags` in `@tag_set`.
-                []
               end
+            rescue NoMethodError  # No `tags` for `nil:NilClass` (`@tag_set`) if
+                                  # `params[:q].present?` or not
+                                  # `params[:hierarchical].present?`.
+                                  # Or no 'tags_with_paths' for `nil:NilClass`
+                                  # (`@tag_set`) when not `params[:q].present`
+                                  # and `params[:hierarchical].present?`.
+              []
             end
     @count = @tags.count
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
