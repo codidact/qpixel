@@ -36,7 +36,9 @@ If you already have Node.JS installed, you can skip this step. If not, [download
 If you haven't already got it, [download and install Redis](https://redis.io/download).
 
 ### Install Imagemagick
-If you haven't already installed Imagemagick, you'll need to [install it for your system](https://imagemagick.org/script/download.php)
+
+If you haven't already installed Imagemagick, you'll need to [install it for
+your system][0].
 
 ### Download QPixel
 Clone the repository and `cd` into the directory:
@@ -78,13 +80,14 @@ Run the server!
 
     rails s
 
-You'll need to create a Community record before the server will display any content. In a console, run:
+You'll need to create a Community record before the server will display any
+content. In a Rails console (`rails c`), run:
 
 ```ruby
 Community.create(name: 'Dev Community', host: 'localhost:3000')
 ```
 
-If it keeps not showing content, `Rails.cache.clear` from your console as
+If it keeps not showing content, `Rails.cache.clear` from your Rails console as
 necessary.
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
@@ -95,8 +98,11 @@ User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
 
 ## License
-[AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE)
+[AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
 
 ## Contributing
 Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md) document
 before you start and look at the [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list) for things to do.
+
+
+[0]: https://imagemagick.org/script/download.php
