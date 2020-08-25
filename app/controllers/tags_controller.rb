@@ -40,13 +40,10 @@ class TagsController < ApplicationController
             end
     @count = @tags.count
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
-    @tags = begin
+    @tags = @tags == [] ? nil :
               @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
                  .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
-            rescue NoMethodError  # No `left_joins` in `[]:Array`.
-              nil
-            end
   end
 
   def show
