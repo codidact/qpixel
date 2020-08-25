@@ -12,15 +12,42 @@ window.QPixel = {
     return token;
   },
 
+  /** Counts notifications popped up at any time. */
+  var popped_modals_ct = 0;
+
   /**
    * Create a notification popup - not an inbox notification.
    * @param type the type to apply to the popup - warning, danger, etc.
    * @param message the message to show
    */
   createNotification: function(type, message) {
+    /** Some messages include a date stamp. */
+    var append_date = false;
+    var message_with_date = message;
+    var span, button;
+    if (type === 'danger') {
+      if (popped_modals_ct > 0 ) {
+        /* Modals stack each on top, so repeating an errored action over
+         * and over again is gonna create multiple error modals in the
+         * same exact place. While this happens this way, an user
+         * closing the error modal will not have an immediate visual
+         * action feedback if two or more error modals are printed.
+         * A date is stamped in order to cope with that. */
+        append_date = true;
+      }
+    }
+    if (append_date) {
+      message_with_date += ' (' + new Date(Date.now()).toISOString() + ')';
+    }
+    span = '<span aria-hidden="true">&times;</span>';
+    button = '<button';
+    button += ' type="button" class="button is-close-button"';
+    button += ' data-dismiss="alert" aria-label="Close"';
+    button += '>';
+    button += span + '</button>';
     $("<div></div>")
     .addClass("notice has-shadow-3 is-" + type)
-    .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
+    .html(button + '<p>' + message_with_date + '</p>')
     .css({
       'position': 'fixed',
       'top': "50px",
@@ -34,9 +61,11 @@ window.QPixel = {
     .on('click', function(ev) {
       $(this).fadeOut(200, function() {
         $(this).remove();
+        popped_modals_ct = popped_modals_ct > 0 ? (popped_modals_ct - 1) : 0;
       });
     })
     .appendTo(document.body);
+    popped_modals_ct += 1;
   },
 
   /**
