@@ -2,7 +2,8 @@
 # standard resource set.
 class VotesController < ApplicationController
   before_action :auth_for_voting
-  before_action :check_if_locked
+  before_action :check_if_target_post_locked, only: [:create]
+  before_action :check_if_parent_post_locked, only: [:destroy]
 
   def create
     post = Post.find(params[:post_id])
@@ -76,5 +77,13 @@ class VotesController < ApplicationController
     unless user_signed_in?
       render json: { status: 'failed', message: 'You must be logged in to vote.' }, status: 403
     end
+  end
+
+  def check_if_target_post_locked
+    check_if_locked(Post.find(params[:post_id]))
+  end
+
+  def check_if_parent_post_locked
+    check_if_locked(Vote.find(params[:id]).post)
   end
 end

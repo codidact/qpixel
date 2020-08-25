@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
                                             :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
-  before_action :check_if_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
+  before_action :check_if_question_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
 
   def index
     sort_params = { activity: :last_activity, age: :created_at, score: :score }
@@ -243,5 +243,9 @@ class QuestionsController < ApplicationController
     unless @question.post_type_id == Question.post_type_id
       not_found
     end
+  end
+
+  def check_if_question_locked
+    check_if_locked(@question)
   end
 end

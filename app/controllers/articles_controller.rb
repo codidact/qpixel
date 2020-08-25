@@ -1,7 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :set_article
   before_action :check_article
-  before_action :check_if_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
+  before_action :check_if_article_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
 
   def show
     if @article.deleted?
@@ -128,5 +128,9 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(:body_markdown, :title, :tags_cache)
+  end
+
+  def check_if_article_locked
+    check_if_locked(@article)
   end
 end

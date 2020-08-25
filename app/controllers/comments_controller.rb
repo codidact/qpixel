@@ -3,7 +3,8 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-  before_action :check_if_locked, only: [:create, :update, :destroy]
+  before_action :check_if_target_post_locked, only: [:create]
+  before_action :check_if_parent_post_locked, only: [:update, :destroy]
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
@@ -123,5 +124,13 @@ class CommentsController < ApplicationController
     else
       question_url(comment.post.parent, anchor: "comment-#{comment.id}")
     end
+  end
+
+  def check_if_parent_post_locked
+    check_if_locked(@comment.post)
+  end
+
+  def check_if_target_post_locked
+    check_if_locked(Post.find(params[:comment][:post_id]))
   end
 end
