@@ -1,0 +1,23 @@
+es:
+  g:
+    # Alphabetical order please!
+    at: 'en/a'  # He's at home (en). / Leaving at 9:00 (a).
+    body: 'cuerpo'
+    codidact_network: 'red codidact'
+    comment: 'comentario'
+    community: 'comunidad'
+    created: 'creado/a'  # Masculine / Feminine.
+    error: 'error'
+    event: 'suceso'
+    log: 'registrar/registro'  # Verb / Substantive.
+    logged: 'registrado'
+    name: 'nombrar/nombre'  # Verb / Substantive.
+    privilege: 'privilegio'
+    related: 'relacionado/a'  # Masculine / Feminine.
+    reputation: 'reputación'
+    search: 'buscar/búsqueda'  # Verb / Substantive.
+    send: 'enviar'  # Verb.
+    subject: 'asunto'  # Also 'sujeto', but not in the context I belive this will always be used.
+    threshold: 'umbral'
+    type: 'tipo'
+    user: 'usuario/a'  # Masculine / Feminine.

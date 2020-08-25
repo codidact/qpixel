@@ -1,0 +1,34 @@
+es:
+  admin:
+    dashboard:
+      title: 'Dashboard de administración'
+      blurb: >
+        # es_ES
+        Esta página sirve como repositorio de enlaces a las diversas herramientas a las que tienes acceso en calidad de
+        usuario administrador. Cuando las uses, recuerda que los datos en ellas suelen estar restringidas a sólo
+        administradores o a sólo moderadores, y probablemente no deberían ser compartidos con nadie de fuera de esos
+        equipos.
+    email_being_sent: 'Tu mensaje se está enviando.'  # es_ES
+    email_moderators_blurb: >
+      # es_ES
+      Esta herramienta te permite enviar mensajes a la lista de distribución de correo-e de los moderadores, los cuales
+      llegarán a cualquier moderador suscrito a la misma. Úsala con moderación y absteniéndote de spamear. Tu
+      mensaje será enviado de ambas formas tanto en formato HTML (con formato) como en formato de texto plano (sin
+      formato), así que formatéalo de forma que sea legible cuando su formato Markdown sea suprimido.
+    error_search_uuid: 'Buscar un error por su UUID'
+    privileges_blurb: >
+      # es_ES
+      Aquí puedes definir cuánta reputación será necesaria para adquirir cada uno de los privilegios disponibles.
+      Haz click en cada valor para editarlo.
+    tools:
+      g_site_settings: 'Ajustes Globales del Sitio'
+      g_tag_sets: 'Ajustes Globales de Etiquetas'
+      email_moderators: 'Enviar un correo-e a los Moderadores'
+      error_reports: 'Informes de Error'
+      site_settings: 'Ajustes de Sitio'
+      tag_sets: 'Conjuntos de Etiquetas'
+      privileges: 'Privilegios'
+      close_reasons: 'Razones para Cerrar'
+      licenses: 'Licencias'
+      audit_log: 'Registro de Auditoría'
+    user_fed_stat: 'STAT alimentado con usuario/a.'
