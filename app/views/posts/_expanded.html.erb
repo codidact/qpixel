@@ -127,6 +127,13 @@
         </div>
         <div class="has-clear-clear"></div>
 
+        <div class="has-been-edited">
+          <% if (post.last_activity_by_id == nil) then %>
+            <span><p>Never edited.</p></span>
+          <% else %>
+            <span><p>Last edited <%= post.last_activity %></p></span>
+          <% end %>
+        </div>
 
         <div class="post--actions">
           <div class="tools">
