@@ -38,3 +38,6 @@ deploy
 
 import-data/
 qpixel-import.tar.gz
+
+# Ignore Vim stuff.
+*.swp
