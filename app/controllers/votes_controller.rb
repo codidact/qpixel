@@ -25,8 +25,8 @@ class VotesController < ApplicationController
       end
 
       if recent_votes >= max_votes_per_day
-        vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + 'votes. Gain more reputation' \
-                         ' or come back tomorrow to continue voting.'
+        vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + ' votes. Gain more' \
+                         ' reputation or come back tomorrow to continue voting.'
 
         if max_votes_per_day <= 0
           vote_limit_msg = 'You need to have some positive activity on this site before you can continue voting.'
