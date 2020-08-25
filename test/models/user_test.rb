@@ -8,17 +8,17 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'has_privilege should check against reputation for a standard user' do
-    assert_equal false, users(:standard_user).has_privilege?('Close')
-    assert_equal true, users(:closer).has_privilege?('Close')
+    assert_equal false, users(:standard_user).privilege?('flag_close')
+    assert_equal true, users(:closer).privilege?('flag_close')
   end
 
   test 'has_privilege should grant all to admins and moderators' do
-    assert_equal true, users(:moderator).has_privilege?('Delete')
-    assert_equal true, users(:admin).has_privilege?('Delete')
+    assert_equal true, users(:moderator).privilege?('flag_curate')
+    assert_equal true, users(:admin).privilege?('flag_curate')
   end
 
   test 'has_post_privilege should grant all to OP' do
-    assert_equal true, users(:standard_user).has_post_privilege?('Delete', posts(:question_one))
+    assert_equal true, users(:standard_user).has_post_privilege?('flag_curate', posts(:question_one))
   end
 
   test 'website_domain should strip out everything but domain' do

@@ -13,11 +13,11 @@ class VotesController < ApplicationController
     end
 
     recent_votes = Vote.where(created_at: 24.hours.ago..Time.now, user: current_user).count
-    max_votes_per_day = SiteSetting['FreeVotes'] + helpers.linearize_progress(@current_user.community_user.post_score)
+    max_votes_per_day = SiteSetting['FreeVotes'] + helpers.linearize_progress(current_user.community_user.post_score)
 
     unless post.parent&.user_id == current_user.id
-      unless @current_user.privilege? 'unrestricted'
-        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: @current_user,
+      unless current_user.privilege? 'unrestricted'
+        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
                               comment: "limit: only answers to own posts\n\nvote:\n#{params[:vote_type].to_i}")
 
         render json: { status: 'failed', message: 'New users can only vote on answers to their own posts.' },
@@ -33,7 +33,7 @@ class VotesController < ApplicationController
           vote_limit_msg = 'You need to have some positive activity on this site before you can continue voting.'
         end
 
-        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: @current_user,
+        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
                               comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
 
         render json: { status: 'failed', message: vote_limit_msg }, status: 403

@@ -3,6 +3,7 @@ class CommunityUser < ApplicationRecord
   belongs_to :user
 
   has_many :mod_warnings, dependent: :nullify
+  has_many :user_ability, dependent: :destroy
 
   validates :user_id, uniqueness: { scope: [:community_id] }
 

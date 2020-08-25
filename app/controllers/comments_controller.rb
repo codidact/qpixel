@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
     @comment = Comment.new comment_params.merge(user: current_user)
 
     unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id || \
-           @current_user.privilege?('unrestricted')
+           current_user.privilege?('unrestricted')
       AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
                             comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
 
