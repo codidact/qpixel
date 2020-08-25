@@ -1,5 +1,8 @@
 const validators = [];
 
+/** Counts notifications popped up at any time. */
+let popped_modals_ct = 0;
+
 window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
@@ -11,9 +14,6 @@ window.QPixel = {
     QPixel.csrfToken = () => token;
     return token;
   },
-
-  /** Counts notifications popped up at any time. */
-  let popped_modals_ct = 0;
 
   /**
    * Create a notification popup - not an inbox notification.
