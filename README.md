@@ -74,7 +74,12 @@ Set up the database:
     rails db:schema:load
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
-    rails db:seed
+
+&nbsp;
+
+    $ rails db:seed
+    Category: Created 2, skipped 0
+    [...]
 
 Run the server!
 
