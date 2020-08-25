@@ -75,7 +75,7 @@ class AdminControllerTest < ActionController::TestCase
     sign_in users(:admin)
     get :show_privilege, params: { name: 'unrestricted', format: :json }
     assert_response 200
-    assert_not_nil assigns(:privilege)
+    assert_not_nil assigns(:ability)
     assert_nothing_raised do
       JSON.parse(response.body)
     end
@@ -85,8 +85,8 @@ class AdminControllerTest < ActionController::TestCase
     sign_in users(:admin)
     post :update_privilege, params: { name: 'unrestricted', threshold: 0.6, type: 'post' }
     assert_response 202
-    assert_not_nil assigns(:privilege)
-    assert_equal 2000, assigns(:privilege).threshold
+    assert_not_nil assigns(:ability)
+    assert_equal 0.6, assigns(:ability).post_score_threshold
     assert_nothing_raised do
       JSON.parse(response.body)
     end

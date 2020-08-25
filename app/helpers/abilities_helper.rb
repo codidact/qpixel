@@ -16,7 +16,7 @@ module AbilitiesHelper
   def ability_err_msg(internal_id, action = nil)
     ability = Ability.find_by internal_id: internal_id
     ua = current_user.privilege(ability.internal_id)
-    if ua.suspended?
+    if ua&.suspended?
       if action.nil?
         "Your use of the #{ability.name} ability has been temporarily suspended. " \
         "See /abilities/#{ability.internal_id} for more information."
