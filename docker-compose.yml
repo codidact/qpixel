@@ -18,6 +18,7 @@ services:
     environment:
       - COMMUNITY_NAME=Dinosaur Community
       - RAILS_ENV=development
+      - CONFIRMABLE_ALLOWED_ACCESS_DAYS=2
     env_file:
       - ./docker/dummy.env
     ports:

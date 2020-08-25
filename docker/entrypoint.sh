@@ -1,7 +1,5 @@
 #!/bin/bash
 
-COMMUNITY_NAME=${COMMNITY_NAME:-"Dinosaur Community"}
-
 # Give database chance to finish creation
 sleep 15
 
@@ -13,11 +11,12 @@ if [ ! -f "/db-created" ]; then
     rails db:migrate
     rails db:migrate RAILS_ENV=development
     rails db:seed
-    rails runner "Community.create(name: \"$COMMUNITY_NAME\", host: '0.0.0.0:3000')"
-    # rails runner "User.create(username: \"$COMMUNITY_ADMIN_USERNAME\", password: \"$COMMUNITY_ADMIN_PASSWORD\", email: \"$COMMUNITY_ADMIN_EMAIL\", is_global_admin: true, is_global_moderator: true, staff: true)"
-    rails runner "User.create(username: \"$COMMUNITY_ADMIN_USERNAME\", password:  Digest::SHA1.hexdigest(\"$COMMUNITY_ADMIN_PASSWORD\"), email: \"$COMMUNITY_ADMIN_EMAIL\", is_global_admin: true, is_global_moderator: true, staff: true)"
+    rails r docker/create_admin_and_community.rb
     touch /db-created
 fi
+
+# If this isn't done again, there is a 500 error on the first page about posts
+rails db:seed
 
 # defaults to port 3000
 rails server -b 0.0.0.0
