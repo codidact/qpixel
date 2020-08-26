@@ -176,7 +176,7 @@
   value_type: string
   category: SiteDetails
   description: >
-    The name of the license under which content here is posted.
+    The name of the license under which content here is posted when no other is specified when posting.
 
 - name: ContentLicenseLink
   value: https://creativecommons.org/licenses/by-sa/4.0/
