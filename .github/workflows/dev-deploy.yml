@@ -21,7 +21,7 @@ jobs:
       run: |
         echo "${{ secrets.DEV_DEPLOY_KEY }}" > ~/deploy_key
         chmod 700 ~/deploy_key
-    
+
     - name: Run SSH deploy command
       if: ${{ env.IS_FORK == 'false' }}
       run: |

@@ -31,18 +31,18 @@
       <% else %>
         <button class="button is-outlined js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">Grant Admin</button>
       <% end %>
-  
+
       <% if @user.is_global_moderator %>
         <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Revoke Global Moderator</button>
       <% else %>
         <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Grant Global Moderator</button>
       <% end %>
-  
+
       <p>
         You can also grant global admin permissions, but they can only be revoked by direct database
         access, so be careful to whom you grant them.
       </p>
-  
+
       <% if @user.is_global_admin %>
         <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">Revoke Global Admin</button>
       <% else %>
