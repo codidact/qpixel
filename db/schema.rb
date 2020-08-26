@@ -506,6 +506,11 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
     t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audit_logs", "communities"
+  add_foreign_key "audit_logs", "users"
+  add_foreign_key "categories", "licenses"
+  add_foreign_key "categories", "tag_sets"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
