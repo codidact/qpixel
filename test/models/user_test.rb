@@ -7,12 +7,12 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'has_privilege should check against reputation for a standard user' do
+  test 'privilege? should check against abilities for a standard user' do
     assert_equal false, users(:standard_user).privilege?('flag_close')
     assert_equal true, users(:closer).privilege?('flag_close')
   end
 
-  test 'has_privilege should grant all to admins and moderators' do
+  test 'privilege? should grant all to admins and moderators' do
     assert_equal true, users(:moderator).privilege?('flag_curate')
     assert_equal true, users(:admin).privilege?('flag_curate')
   end
