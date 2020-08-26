@@ -131,7 +131,7 @@
           <% if (post.last_activity_by_id == nil) then %>
             <span><p>Never edited.</p></span>
           <% else %>
-            <span><p>Last edited <%= post.last_activity %></p></span>
+            <span><p>Last edited <%= time_ago_in_words(post.last_activity) %> ago.</p></span>
           <% end %>
         </div>
 
