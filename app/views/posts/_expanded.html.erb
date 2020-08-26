@@ -101,6 +101,9 @@
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
+        <% been_edited = post.last_activity_by_id != nil %>
+        <% if (been_edited) then last_edited_by_self = post.user_id === post.last_activity_by_id end %>
+
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
           <% if has_tags %>
@@ -118,30 +121,25 @@
               <% end %>
             </div>
           <% end %>
-          <% if post.license.present? %>
-            <div class="post--licensing has-margin-left-2">
-              <i class="fas fa-balance-scale" title="License"></i>
-              <%= link_to post.license.name, post.license.url %>
+          <% if post.license.present? or been_edited then %>
+            <div class="post--licensing--edited has-margin-left-2">
+              <% if post.license.present? then %>
+                <i class="fas fa-balance-scale" title="License"></i>
+                <%= link_to post.license.name, post.license.url %>
+              <% end %>
+              <% if post.license.present? and been_edited then %>
+                &nbsp;
+              <% end %>
+              <% if been_edited then %>
+                <i class="fa fa-pencil-alt" title="Edited"></i> <%= time_ago_in_words(post.last_activity) %> ago
+                <% if not last_edited_by_self then %>
+                  by <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>
+                <% end %>
+              <% end %>
             </div>
           <% end %>
         </div>
         <div class="has-clear-clear"></div>
-
-        <% been_edited = post.last_activity_by_id != nil %>
-        <% if (been_edited) then last_edited_by_self = post.user_id === post.last_activity_by_id end %>
-
-        <div class="has-been-edited">
-          <% if not been_edited then %>
-            <span><p>Never edited.</p></span>
-          <% elsif last_edited_by_self then %>
-            <span><p>Last edited <%= time_ago_in_words(post.last_activity) %> ago.</p></span>
-          <% else %>
-            <span><p>
-              Last edited <%= time_ago_in_words(post.last_activity) %> ago by
-              <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>.
-            </p></span>
-          <% end %>
-        </div>
 
         <div class="post--actions">
           <div class="tools">
