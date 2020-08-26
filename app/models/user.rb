@@ -190,9 +190,9 @@ class User < ApplicationRecord
   end
 
   def send_welcome_tour_message
-    return if id == -1
+    return if id == -1 || RequestContext.community.nil?
 
-    create_notification('👋 Welcome to ' + SiteSetting['SiteName'] + '! Take our tour to find out ' \
+    create_notification('👋 Welcome to ' + (SiteSetting['SiteName'] || 'Codidact') + '! Take our tour to find out ' \
                         'how this site works.', '/tour')
   end
 

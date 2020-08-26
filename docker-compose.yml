@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  db:
+    build: 
+      context: "."
+      dockerfile: docker/Dockerfile.db
+    env_file:
+      - ./docker/dummy.env
+    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
+
+  uwsgi:
+    restart: always
+    build: 
+      context: "."
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - COMMUNITY_NAME=Dinosaur Community
+      - RAILS_ENV=development
+      - CONFIRMABLE_ALLOWED_ACCESS_DAYS=2
+    env_file:
+      - ./docker/dummy.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/code
+      - ./static:/var/www/static
+      - ./images:/var/www/images
+    links:
+      - redis
+      - db
+
+  redis:
+    restart: always
+    image: redis:latest
+    depends_on:
+      - db

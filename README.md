@@ -102,6 +102,10 @@ to an admin account, run `rails c` for a console, followed by:
 User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
 
+## Install with Docker
+
+See the README.md in the [docker](docker) folder for complete instructions.
+
 ## License
 [AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
 
