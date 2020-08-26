@@ -36,3 +36,11 @@ d_fcu:
 d_fc:
   community_user: sample_deleter
   ability: flag_close
+
+d_ep:
+  community_user: sample_deleter
+  ability: edit_posts
+
+d_et:
+  community_user: sample_deleter
+  ability: edit_tags
