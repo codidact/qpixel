@@ -100,7 +100,7 @@
 
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
-  
+
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
           <% if has_tags %>
@@ -127,11 +127,19 @@
         </div>
         <div class="has-clear-clear"></div>
 
+        <% been_edited = post.last_activity_by_id != nil %>
+        <% if (been_edited) then last_edited_by_self = post.user_id === post.last_activity_by_id end %>
+
         <div class="has-been-edited">
-          <% if (post.last_activity_by_id == nil) then %>
+          <% if not been_edited then %>
             <span><p>Never edited.</p></span>
-          <% else %>
+          <% elsif last_edited_by_self then %>
             <span><p>Last edited <%= time_ago_in_words(post.last_activity) %> ago.</p></span>
+          <% else %>
+            <span><p>
+              Last edited <%= time_ago_in_words(post.last_activity) %> ago by
+              <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>.
+            </p></span>
           <% end %>
         </div>
 
@@ -282,7 +290,7 @@
         <% end %>
 
         <div class="post--status">
-  
+
           <% if post.att_source.present? %>
             <div class="notice has-margin-2">
               <p>
@@ -305,7 +313,7 @@
               <%= render 'comments/comment', comment: comment %>
             <% end %>
           </div>
-  
+
           <div class="post--comments-links has-margin-top-1">
             <% if comments.count > 5 %>
               <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">
@@ -325,7 +333,7 @@
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
                 <a href="#" class="js-add-comment">Add a comment</a>
-  
+
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
                   <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
@@ -340,7 +348,7 @@
                     </div>
                   </div>
                 <% end %>
-             <% end %>
+              <% end %>
             <% end %>
           </div>
         </div>
