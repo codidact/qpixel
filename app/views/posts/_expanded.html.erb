@@ -131,7 +131,8 @@
                 &nbsp;
               <% end %>
               <% if been_edited then %>
-                <i class="fa fa-pencil-alt" title="Edited"></i> <%= time_ago_in_words(post.last_activity) %> ago
+                <i class="fa fa-pencil-alt" title="Edited"></i>
+                <%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago
                 <% if not last_edited_by_self then %>
                   by <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>
                 <% end %>
