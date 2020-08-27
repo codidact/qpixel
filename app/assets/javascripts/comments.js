@@ -2,6 +2,8 @@ $(() => {
   $('.js-comment-form').hide();
 
   $('.js-add-comment').on('click', async evt => {
+    // User clicked `Add a comment`.
+
     evt.preventDefault();
 
     const $form = $(evt.target).parent().find('.js-comment-form');
@@ -24,6 +26,8 @@ $(() => {
   });
 
   $('.comment-form').on('ajax:success', async (evt, data) => {
+    // Comment posting is succeeded! ^_^
+
     const $tgt = $(evt.target);
     if (data.status === 'success') {
       $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
@@ -32,9 +36,17 @@ $(() => {
     else {
       QPixel.createNotification('danger', data.message);
     }
+
+    // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when reaching
+    // this line. Gets re-labeled again by the line below.
+    $(evt.target).find('.form-group-horizontal > .actions > input').attr('value', 'Post')
   }).on('ajax:error', async (evt, xhr) => {
+    // Comment posting is errored, e.g. it might be too short to be posted.
+
     const data = xhr.responseJSON;
     QPixel.createNotification('danger', data.message);
+
+    // On error, the `Post` button, which has been re-labeled as `Posted`, is re-labeled `Post` back again.
   });
 
   $(document).on('click', '.js-comment-edit', async evt => {
@@ -107,5 +119,10 @@ $(() => {
     else {
       QPixel.createNotification('danger', data.message);
     }
+  });
+
+  $(document).on('click', '.comment-form > .form-group-horizontal > .actions > input', async evt => {
+      // Comment posting has been clicked.
+      $(evt.target).attr('data-disable-with', 'Posting...');
   });
 });
