@@ -120,6 +120,11 @@ class QuestionsController < ApplicationController
       redirect_to(question_path(@question)) && return
     end
 
+    if @question.answer_count > 0 then
+      flash[:danger] = 'Error 1729'
+      redirect_to(question_path(@question)) && return
+    end
+
     if @question.deleted
       flash[:danger] = "Can't delete a deleted question."
       redirect_to(question_path(@question)) && return
