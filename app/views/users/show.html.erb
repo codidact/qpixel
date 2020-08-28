@@ -36,7 +36,8 @@
     </h1>
     <div class="profile-text">
       <% if @user.profile.nil? || @user.profile.blank? %>
-        <em class="has-color-tertiary-400">A quiet enigma. We don't know anything about <%= @user.username %> yet.</em>
+        <em class="has-color-tertiary-400">A quiet enigma. We don't know anything about
+        <%= ApplicationController.helpers.sanitize_username(@user.username) %><% for i in 0..ApplicationController.helpers.directional_formatting_pops_after_username_ct(@user.username) do %>&#x202c;<% end %> yet.</em>
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
@@ -58,7 +59,7 @@
         <% if @user.website.present? %>
           <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
         <% end %>
-  
+
         <% if @user.twitter.present? %>
           <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
         <% end %>

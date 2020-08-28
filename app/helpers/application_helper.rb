@@ -138,4 +138,34 @@ module ApplicationHelper
       false
     end
   end
+
+  def is_rtl_override(char)
+    # rtl_override_hex = '\u202E'
+    char_bytes = char.bytes
+    if char_bytes.length() != 3 then
+      return false
+    end
+    if char_bytes[0] != 226 then  # 0xE2
+      return false
+    end
+    if char_bytes[1] != 128 then  # 0x80
+      return false
+    end
+    if char_bytes[2] != 174 then  # 0xAE
+      return false
+    end
+    return true
+  end
+
+  def sanitize_username(username)
+    return username
+  end
+
+  def directional_formatting_pops_after_username_ct(username)
+    if is_rtl_override(username[0]) then
+      # pop_directional_formatting_hex = '\u202C'
+      return 1
+    end
+    return 0
+  end
 end

@@ -4,7 +4,7 @@
   <p class="comment--content">
     <%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %>
     <span class="comment--meta">
-      &mdash; <%= link_to comment.user.username, user_path(comment.user) %>
+      &mdash; <%= link_to comment.user.username, user_path(comment.user) %><% for i in 0..ApplicationController.helpers.directional_formatting_pops_after_username_ct(comment.user.username) do %>&#x202c;<% end %>
       <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
       <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
         &middot; <a href="#" class="js-comment-edit">edit</a> &middot;
