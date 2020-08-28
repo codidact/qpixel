@@ -102,7 +102,7 @@
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
         <% been_edited = post.last_activity_by_id != nil %>
-        <% if (been_edited) then last_edited_by_self = post.user_id === post.last_activity_by_id end %>
+        <% if (been_edited) then last_edited_by_self = post.user_id == post.last_activity_by_id end %>
 
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
@@ -121,19 +121,19 @@
               <% end %>
             </div>
           <% end %>
-          <% if post.license.present? or been_edited then %>
+          <% if post.license.present? || been_edited %>
             <div class="post--licensing--edited has-margin-left-2">
-              <% if post.license.present? then %>
+              <% if post.license.present? %>
                 <i class="fas fa-balance-scale" title="License"></i>
                 <%= link_to post.license.name, post.license.url %>
               <% end %>
-              <% if post.license.present? and been_edited then %>
+              <% if post.license.present? && been_edited %>
                 &nbsp;
               <% end %>
-              <% if been_edited then %>
+              <% if been_edited %>
                 <i class="fa fa-pencil-alt" title="Edited"></i>
                 <%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago
-                <% if not last_edited_by_self then %>
+                <% if ! last_edited_by_self %>
                   by <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>
                 <% end %>
               <% end %>
