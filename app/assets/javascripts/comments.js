@@ -32,21 +32,22 @@ $(() => {
     if (data.status === 'success') {
       $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
       $tgt.find('.js-comment-content').val('');
+
+      // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when
+      // reaching this line. The line below re-labels it back to `Post`.
+      $tgt.find('input[type="submit"]').attr('value', 'Post')
     }
     else {
       QPixel.createNotification('danger', data.message);
     }
-
-    // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when reaching
-    // this line. Gets re-labeled again by the line below.
-    $(evt.target).find('.form-group-horizontal > .actions > input').attr('value', 'Post')
   }).on('ajax:error', async (evt, xhr) => {
     // Comment posting is errored, e.g. it might be too short to be posted.
 
     const data = xhr.responseJSON;
     QPixel.createNotification('danger', data.message);
 
-    // On error, the `Post` button, which has been re-labeled as `Posted`, is re-labeled `Post` back again.
+    // On error, the `Post` button, which has been re-labeled as `Posted`, will be re-labeled `Post` back again. There's
+    // no need to do anything else at this point in this block, until proven otherwise.
   });
 
   $(document).on('click', '.js-comment-edit', async evt => {
@@ -121,7 +122,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.comment-form > .form-group-horizontal > .actions > input', async evt => {
+  $(document).on('click', '.comment-form input[type="submit"]', async evt => {
       // Comment posting has been clicked.
       $(evt.target).attr('data-disable-with', 'Posting...');
   });
