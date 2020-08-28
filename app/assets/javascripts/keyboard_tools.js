@@ -144,8 +144,7 @@ $(() => {
         }
         else if (e.key === 'Enter') {
             if (_CodidactKeyboard.selectedItemData.type === "link") {
-                const link = $(_CodidactKeyboard.selectedItem).find("[data-ckb-item-link]").attr("href");
-                window.location.href = link;
+                window.location.href = $(_CodidactKeyboard.selectedItem).find("[data-ckb-item-link]").attr("href");
             }
         }
     }
@@ -181,6 +180,8 @@ $(() => {
                 string_response.trim()
             );
             _CodidactKeyboard.state = 'goto/category-tags';
+
+            // FIXME what's happened here? tlink isn't defined
             window.location.href = tlink;
         }
         else if (e.key === 'c') {
