@@ -1,0 +1,22 @@
+en:
+  g:
+    # Alphabetical order please!
+    at: 'at'
+    body: 'body'
+    comment: 'comment'
+    community: 'community'
+    created: 'created'
+    error: 'error'
+    event: 'event'
+    log: 'log'
+    logged: 'logged'
+    name: 'name'
+    privilege: 'privilege'
+    related: 'related'
+    reputation: 'reputation'
+    search: 'search'
+    send: 'send'
+    subject: 'subject'
+    threshold: 'threshold'
+    type: 'type'
+    user: 'user'

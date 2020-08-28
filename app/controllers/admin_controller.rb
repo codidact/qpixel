@@ -45,7 +45,7 @@ class AdminController < ApplicationController
     end
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
-    flash[:success] = 'Your email is being sent.'
+    flash[:success] = t 'admin.email_being_sent'
     redirect_to admin_path
   end
 
@@ -64,7 +64,7 @@ class AdminController < ApplicationController
   def hellban
     @user = User.find params[:id]
     @user.block("user manually blocked by admin ##{current_user.id}")
-    flash[:success] = 'User fed to STAT.'
+    flash[:success] = t 'admin.user_fed_stat'
     redirect_back fallback_location: admin_path
   end
 end
