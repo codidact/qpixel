@@ -120,9 +120,13 @@ class QuestionsController < ApplicationController
       redirect_to(question_path(@question)) && return
     end
 
-    if @question.answer_count > 0 then
-      flash[:danger] = 'Error 1729'
-      redirect_to(question_path(@question)) && return
+    if @question.answer_count > 0
+      prevent = false  # Prevent based on being tied to well scored answers.
+      @question.answers.each{ |x| if x.score >= 0.5 then prevent = true; break; end }
+      if prevent
+        flash[:danger] = 'This question cannot be deleted because it has answers.'
+        redirect_to(question_path(@question)) && return
+      end
     end
 
     if @question.deleted
