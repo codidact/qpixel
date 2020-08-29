@@ -125,7 +125,7 @@ class User < ApplicationRecord
   end
 
   def no_blank_unicode_in_username
-    not_valid = username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
+    not_valid = !username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
     if not_valid
       errors.add(:username, 'may not contain blank unicode characters')
     end
