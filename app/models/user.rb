@@ -26,6 +26,7 @@ class User < ApplicationRecord
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
+  validate :no_blank_unicode_in_username
   validate :email_domain_not_blocklisted
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
@@ -123,6 +124,13 @@ class User < ApplicationRecord
     end
   end
 
+  def no_blank_unicode_in_username
+    not_valid = !username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
+    if not_valid
+      errors.add(:username, 'may not contain blank unicode characters')
+    end
+  end
+
   def email_domain_not_blocklisted
     return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
     return unless saved_changes.include? 'email'
@@ -211,6 +219,5 @@ class User < ApplicationRecord
                          automatic: true, reason: "#{reason}: #" + @user.id.to_s)
     end
   end
-
   # rubocop:enable Naming/PredicateName
 end
