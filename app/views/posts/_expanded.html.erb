@@ -102,13 +102,12 @@
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
         <% been_edited = post.last_activity_by_id != nil %>
-        <% if (been_edited) then last_edited_by_self = post.user_id == post.last_activity_by_id end %>
+        <% if been_edited then last_edited_by_self = post.user_id == post.last_activity_by_id end %>
 
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
           <% if has_tags %>
             <div class="post--tags has-padding-2">
-              <% tag_set = post.tag_set %>
               <% required_ids = post.category&.required_tag_ids %>
               <% moderator_ids = post.category&.moderator_tag_ids %>
               <% topic_ids = post.category&.topic_tag_ids %>
@@ -134,7 +133,7 @@
                 <i class="fa fa-pencil-alt" title="Edited"></i>
                 <span class="has-color-tertiary">
                 <%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago
-                <% if ! last_edited_by_self %>
+                <% unless last_edited_by_self %>
                   by <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>
                 <% end %>
                 </span>
