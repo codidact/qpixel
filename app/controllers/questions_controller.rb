@@ -72,9 +72,9 @@ class QuestionsController < ApplicationController
                             before_title: @question.title, after_title: params[:question][:title],
                             before_tags: @question.tags, after_tags: after_tags)
     body_rendered = helpers.render_markdown(params[:question][:body_markdown])
-    if @question.update(question_params.merge(tags_cache: tags_cache,
-                                              body: body_rendered, last_activity: DateTime.now,
-                                              last_activity_by: current_user))
+    if @question.update(question_params.merge(tags_cache: tags_cache, body: body_rendered,
+                                              last_activity: DateTime.now, last_activity_by: current_user,
+                                              last_edited_at: DateTime.now, last_edited_by: current_user))
       redirect_to share_question_path(@question)
     else
       render :edit

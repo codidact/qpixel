@@ -101,8 +101,8 @@
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
 
-        <% been_edited = post.last_activity_by_id != nil %>
-        <% if been_edited then last_edited_by_self = post.user_id == post.last_activity_by_id end %>
+        <% been_edited = post.last_edited_by_id != nil %>
+        <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
 
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
@@ -132,9 +132,9 @@
               <% if been_edited %>
                 <i class="fa fa-pencil-alt" title="Edited"></i>
                 <span class="has-color-tertiary">
-                <%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago
+                <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
                 <% unless last_edited_by_self %>
-                  by <%= link_to post.last_activity_by.username, user_path(post.last_activity_by_id) %>
+                  by <%= link_to post.last_edited_by.username, user_path(post.last_edited_by) %>
                 <% end %>
                 </span>
               <% end %>

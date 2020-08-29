@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_06_103121) do
+ActiveRecord::Schema.define(version: 2020_08_29_235149) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -296,6 +296,8 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
     t.boolean "comments_disabled"
+    t.datetime "last_edited_at"
+    t.bigint "last_edited_by_id"
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -306,6 +308,7 @@ ActiveRecord::Schema.define(version: 2020_08_06_103121) do
     t.index ["duplicate_post_id"], name: "index_posts_on_duplicate_post_id"
     t.index ["last_activity"], name: "index_posts_on_last_activity"
     t.index ["last_activity_by_id"], name: "index_posts_on_last_activity_by_id"
+    t.index ["last_edited_by_id"], name: "index_posts_on_last_edited_by_id"
     t.index ["license_id"], name: "index_posts_on_license_id"
     t.index ["parent_id"], name: "index_posts_on_parent_id"
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
