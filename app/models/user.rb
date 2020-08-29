@@ -26,7 +26,7 @@ class User < ApplicationRecord
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
-  validate :username_does_not_contain_blank_unicode_characters
+  validate :no_blank_unicode_in_username
   validate :email_domain_not_blocklisted
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
@@ -124,7 +124,7 @@ class User < ApplicationRecord
     end
   end
 
-  def username_does_not_contain_blank_unicode_characters
+  def no_blank_unicode_in_username
     not_valid = username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
     if not_valid
       errors.add(:username, 'may not contain blank unicode characters')
