@@ -59,11 +59,16 @@
                 <% if @edit.body_markdown.nil? %>
                     <div class="diff-inline raw-markdown"><%= post.body_markdown %></div>
                 <% else %>
+                    <%if @edit.active %>
+                    <% diff = Diffy::SplitDiff.new(post.body_markdown, @edit.body_markdown, format: :html) %>
+                    <div class="diff-old is-changed raw-markdown"><%= raw(sanitize(diff.left, scrubber: scrubber)) %></div>
+                    <div class="diff-new is-changed raw-markdown"><%= raw(sanitize(diff.right, scrubber: scrubber)) %></div>
+                    <% else %>
                     <div class="diff-old is-changed raw-markdown"><%= post.body_markdown %></div>
                     <div class="diff-new is-changed raw-markdown"><%= @edit.body_markdown %></div>
+                    <% end %>
                 <% end %>
             </div>
-
 
         <% if is_question_or_article && @edit.tags_cache != post.tags_cache %>
             <!-- Tags -->
