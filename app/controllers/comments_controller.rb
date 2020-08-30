@@ -17,9 +17,9 @@ class CommentsController < ApplicationController
     unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id || \
            current_user.privilege?('unrestricted')
       AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
-                            comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
+                              comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
 
-      new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to those.'
+      new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to them.'
       render json: { status: 'failed', message: new_user_comment_block_msg }, status: 400
       return
     end

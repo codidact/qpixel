@@ -28,17 +28,13 @@ class AdminController < ApplicationController
 
   def update_privilege
     @ability = Ability.find_by internal_id: params[:name]
-    if params[:type] == 'post'
-      pre = @ability.post_score_threshold
-      @ability.update(post_score_threshold: params[:threshold])
-    elsif params[:type] == 'edit'
-      pre = @ability.edit_score_threshold
-      @ability.update(edit_score_threshold: params[:threshold])
-    elsif params[:type] == 'flag'
-      pre = @ability.flag_score_threshold
-      @ability.update(flag_score_threshold: params[:threshold])
-    end && AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
-                           comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
+    type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
+    return not_found if type.nil?
+
+    pre = @ability.send("#{type}_score_threshold".to_sym)
+    @ability.update("#{type}_score_threshold" => params[:threshold])
+    AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
+                         comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
     render json: { status: 'OK', privilege: @ability }, status: 202
   end
 

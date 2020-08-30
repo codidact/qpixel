@@ -15,7 +15,7 @@ $(() => {
       credentials: 'include'
     });
     const data = await resp.json();
-    const value = data[type+'_score_threshold'];
+    const value = data[`${type}_score_threshold`];
 
     const form = editField.clone().val(value ? value.toString() : '').attr('data-name', name).attr('data-type', type);
     $tgt.addClass('editing').html(form).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
@@ -29,11 +29,7 @@ $(() => {
     const type = $input.data('type');
     let value = $input.val();
 
-    if (value == "") {
-      value = null;
-    } else {
-      value = parseFloat(value);
-    }
+    const value = parseFloat($input.val() || '') || null;
 
     const resp = await fetch(`/admin/privileges/${name}`, {
       method: 'POST',
@@ -42,6 +38,6 @@ $(() => {
     });
     const data = await resp.json();
 
-    $td.removeClass('editing').html('').text((data.privilege[type+'_score_threshold'] || '-').toString());
+    $td.removeClass('editing').html('').text((data.privilege[`${type}_score_threshold`] || '-').toString());
   });
 });

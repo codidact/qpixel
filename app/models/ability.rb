@@ -10,4 +10,15 @@ class Ability < ApplicationRecord
   def self.on_user(user)
     Ability.where(id: UserAbility.where(community_user: user.community_user).select(:ability_id).distinct)
   end
+
+  def self.trust_levels
+    {
+      0 => 'everyone',
+      1 => 'anyone with a user account',
+      2 => 'all but new users',
+      3 => 'veteran users',
+      4 => 'moderators only',
+      5 => 'staff only'
+    }
+  end
 end
