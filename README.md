@@ -1,4 +1,4 @@
-# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Test coverage](https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master)](https://coveralls.io/github/ArtOfCode-/qpixel?branch=master)
+# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Test coverage](https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master)](https://coveralls.io/github/ArtOfCode-/qpixel?branch=master) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
 Rails-based version of our core software. Currently under active development towards MVP.
 
 ## Installation
@@ -101,6 +101,10 @@ to an admin account, run `rails c` for a console, followed by:
 ```ruby
 User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
+
+## Install with Docker
+
+See the README.md in the [docker](docker) folder for complete instructions.
 
 ## License
 [AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).

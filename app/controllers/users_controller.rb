@@ -1,6 +1,8 @@
 require 'net/http'
 # rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
+  include Devise::Controllers::Rememberable
+
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
@@ -357,6 +359,7 @@ class UsersController < ApplicationController
       flash[:success] = 'You are now signed in.'
       user.update(login_token: nil, login_token_expires_at: nil)
       sign_in user
+      remember_me user
       AuditLog.user_history(event_type: 'mobile_login', related: user)
       redirect_to root_path
     else

@@ -114,12 +114,14 @@
 
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
-  
+
+        <% been_edited = post.last_edited_by_id != nil %>
+        <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
+
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
           <% if has_tags %>
             <div class="post--tags has-padding-2">
-              <% tag_set = post.tag_set %>
               <% required_ids = post.category&.required_tag_ids %>
               <% moderator_ids = post.category&.moderator_tag_ids %>
               <% topic_ids = post.category&.topic_tag_ids %>
@@ -132,15 +134,28 @@
               <% end %>
             </div>
           <% end %>
-          <% if post.license.present? %>
-            <div class="post--licensing has-margin-left-2">
-              <i class="fas fa-balance-scale" title="License"></i>
-              <%= link_to post.license.name, post.license.url %>
+          <% if post.license.present? || been_edited %>
+            <div class="post--licensing--edited has-margin-left-2">
+              <% if post.license.present? %>
+                <i class="fas fa-balance-scale" title="License"></i>
+                <%= link_to post.license.name, post.license.url %>
+              <% end %>
+              <% if post.license.present? && been_edited %>
+                &nbsp;
+              <% end %>
+              <% if been_edited %>
+                <i class="fa fa-pencil-alt" title="Edited"></i>
+                <span class="has-color-tertiary">
+                <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
+                <% unless last_edited_by_self %>
+                  by <%= link_to post.last_edited_by.username, user_path(post.last_edited_by) %>
+                <% end %>
+                </span>
+              <% end %>
             </div>
           <% end %>
         </div>
         <div class="has-clear-clear"></div>
-
 
         <div class="post--actions">
           <div class="tools">
@@ -340,7 +355,7 @@
         <% end %>
 
         <div class="post--status">
-  
+
           <% if post.att_source.present? %>
             <div class="notice has-margin-2">
               <p>
@@ -363,7 +378,7 @@
               <%= render 'comments/comment', comment: comment %>
             <% end %>
           </div>
-  
+
           <div class="post--comments-links has-margin-top-1">
             <% if comments.count > 5 %>
               <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">
@@ -387,7 +402,7 @@
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
                 <a href="#" class="js-add-comment">Add a comment</a>
-  
+
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
                   <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
@@ -402,7 +417,7 @@
                     </div>
                   </div>
                 <% end %>
-             <% end %>
+              <% end %>
             <% end %>
           </div>
         </div>

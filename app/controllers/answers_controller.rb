@@ -42,6 +42,7 @@ class AnswersController < ApplicationController
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
                                           last_activity: DateTime.now, last_activity_by: current_user,
+                                          last_edited_at: DateTime.now, last_edited_by: current_user,
                                           license_id: @answer.license_id))
       redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else

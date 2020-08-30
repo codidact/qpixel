@@ -1,9 +1,10 @@
 require 'rmagick'
 
-# Neccessary due to rmagick
+# Necessary due to rmagick
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/BlockLength
+# noinspection RubyResolve, DuplicatedCode, RubyArgCount
 class AdvertisementController < ApplicationController
   include Magick
 
@@ -358,5 +359,4 @@ class AdvertisementController < ApplicationController
 end
 # rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/ClassLength
-
 # rubocop:enable Metrics/BlockLength
