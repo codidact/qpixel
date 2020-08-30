@@ -295,6 +295,7 @@ class UsersController < ApplicationController
       flash[:success] = 'You are now signed in.'
       user.update(login_token: nil, login_token_expires_at: nil)
       sign_in user
+      user.remember_me!
       AuditLog.user_history(event_type: 'mobile_login', related: user)
       redirect_to root_path
     else
