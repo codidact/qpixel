@@ -326,15 +326,12 @@ ActiveRecord::Schema.define(version: 2020_08_29_235149) do
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
     t.boolean "comments_disabled"
-<<<<<<< HEAD
     t.boolean "locked", default: false, null: false
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
-=======
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
->>>>>>> develop
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
