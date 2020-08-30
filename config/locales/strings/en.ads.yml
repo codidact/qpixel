@@ -1,0 +1,16 @@
+en:
+  ads:
+    advertisements: 'advertisements'
+    blurb_index: >
+      You can, if you want, advertise this Codidact community on your personal homepage or on other sites
+      (with the permission of the providers!)
+    blurb_types: >
+      There are three available ad types:
+    image_link: 'Image link'
+    image_html: 'Image HTML'
+    random_posts: 'Random posts'
+    specific_post: 'Specific post'
+    random_from_cat: 'Random from Category'
+    replace_x:
+      post: 'Replace X with the post ID'
+      category: 'Replace X with the category ID'
