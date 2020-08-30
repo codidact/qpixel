@@ -27,7 +27,7 @@
       </h1>
 
       <div class="post--container grid is-nowrap">
-        <div class="grid--cell">
+        <div>
           <div class="post--votes has-text-align-center" title="0.5">
             <button class="tour-vote-button button is-icon-only-button" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <div class="grid--cell is-flexible has-padding-2">
+        <div class="has-padding-2">
           <div class="post--body">
             <p>My dragon Martha has constantly been chasing my sheep around, and I'd like to get her to stop this
               behavior.</p>
@@ -65,7 +65,7 @@
               deal with this situation before.</p>
 
             <div class="post--meta has-margin-bottom-4">
-              <div class="post--author has-float-right has-color-tertiary">
+              <div class="post--author has-color-tertiary">
                 <div title="2020-07-10T09:32:35Z">just now</div>
                 <div>
                   <img alt="user avatar" src="<%= current_user.nil? ? avatar_url(User.find(-1)) : avatar_url(current_user) %>" height="32" width="32"
@@ -125,7 +125,7 @@
 
     <div class="post hide js-good-answer" id="good-answer">
       <div class="post--container grid is-nowrap">
-        <div class="grid--cell">
+        <div>
           <div class="post--votes has-text-align-center" title="0.5">
             <button class="tour-vote-button button is-icon-only-button" onclick="tour.firstAnswerUpvote(this);" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
@@ -146,7 +146,7 @@
           </div>
         </div>
 
-        <div class="grid--cell is-flexible has-padding-2">
+        <div class="has-padding-2">
           <div class="post--body">
             <p><strong>Music.</strong></p>
             <p>It is well known, that dragons are quite sensitive to music. If you play the right music, it can calm your dragon down and it won't be chasing your sheep around anymore.</p>
@@ -155,7 +155,7 @@
             <p>I have a dragon-calming playlist, you might want to <a href="#">check it out</a>.</p>
 
             <div class="post--meta has-margin-bottom-4">
-              <div class="post--author has-float-right has-color-tertiary">
+              <div class="post--author has-color-tertiary">
                 <div title="2020-07-10T09:32:35Z">just now</div>
                 <div>
                   <img alt="user avatar" src="/assets/tour-clippy.png" height="32" width="32"
@@ -204,7 +204,7 @@
     </div>
     <div class="post hide js-bad-answer" id="bad-answer">
       <div class="post--container grid is-nowrap">
-        <div class="grid--cell">
+        <div>
           <div class="post--votes has-text-align-center" title="0.5">
             <button class="tour-vote-button button is-icon-only-button" aria-label="Upvote">
               <svg width="2em" height="1.33em" viewbox="0 0 100 50">
@@ -225,12 +225,12 @@
           </div>
         </div>
 
-        <div class="grid--cell is-flexible has-padding-2">
+        <div class="has-padding-2">
           <div class="post--body">
             <p>Well... that's your fault of keeping both a dragon and sheep. How stupid...</p>
 
             <div class="post--meta has-margin-bottom-4">
-              <div class="post--author has-float-right has-color-tertiary">
+              <div class="post--author has-color-tertiary">
                 <div title="2020-07-10T09:32:35Z">just now</div>
                 <div>
                   <img alt="user avatar" src="/assets/tour-evil.png" height="32" width="32"
@@ -268,7 +268,7 @@
                   <label class="form-element" for="flag-bad-post">
                     Why does this post require moderator attention?
                   </label>
-                  <input class="form-element js-flag-comment" id="flag-bad-post>
+                  <input class="form-element js-flag-comment" id="flag-bad-post">
                 </div>
                 <div class="widget--footer">
                   <button class="js-tour-flag-link button is-filled is-muted" onclick="tour.secondAnswerFlag(this);">

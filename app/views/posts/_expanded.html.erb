@@ -15,7 +15,7 @@
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
-    <div class="grid--cell">
+    <div>
       <div class="post--votes has-text-align-center" title="<%= post.score %>">
         <% existing_vote = my_vote(post) %>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="grid--cell is-flexible has-padding-2">
+    <div class="has-padding-2">
       <% if is_question && post.closed %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
