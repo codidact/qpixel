@@ -2,7 +2,7 @@ SET @cid = 3;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (
-	SELECT cu.id, SUM(vq.rep_change) AS total_rep
+	SELECT cu.id, SUM(vq.rep_change) + 1 AS total_rep
 	FROM community_users cu
 	LEFT JOIN (
 	   SELECT v.id, v.community_id, v.recv_user_id,
