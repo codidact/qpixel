@@ -120,15 +120,10 @@ class QuestionsController < ApplicationController
       redirect_to(question_path(@question)) && return
     end
 
-    if @question.answer_count > 0
-      prevent = false  # Prevent based on being tied to well scored answers.
-      @question.answers.each{ |x| if x.score >= 0.5 then prevent = true; break; end }
-      if prevent
-        flash[:danger] = 'This question cannot be deleted because it has answers.'
-        redirect_to(question_path(@question)) && return
-      end
+    if @question.answer_count > 0 && @question.answers.any? { |a| a.score >= 0.5 }
+      flash[:danger] = 'This question cannot be deleted because it has answers.'
+      redirect_to(question_path(@question)) && return
     end
-
     if @question.deleted
       flash[:danger] = "Can't delete a deleted question."
       redirect_to(question_path(@question)) && return
