@@ -9,6 +9,8 @@ class CommunityUser < ApplicationRecord
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
 
+  after_create :prevent_ulysses_case
+
   def suspended?
     return true if is_suspended && !suspension_end.past?
 
@@ -50,8 +52,8 @@ class CommunityUser < ApplicationRecord
 
   ## Privilege functions
 
-  def privilege?(internal_id, ignore_suspension: false)
-    unless internal_id == 'mod'
+  def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
+    unless internal_id == 'mod' || ignore_mod
       return true if user.is_moderator # includes: privilege? 'mod'
     end
 
@@ -77,7 +79,7 @@ class CommunityUser < ApplicationRecord
 
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
-    return true if privilege?(internal_id, ignore_suspension: true)
+    return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: true)
 
     priv = Ability.where(internal_id: internal_id).first
 
@@ -98,8 +100,16 @@ class CommunityUser < ApplicationRecord
   end
 
   def recalc_privileges(sandbox: false)
-    [:unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
-      recalc_privilege(ability, sandbox: sandbox) unless privilege?(ability, ignore_suspension: true)
+    [:everyone, :unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
+      recalc_privilege(ability, sandbox: sandbox)
     end
+  end
+
+  # This check makes sure, that every user gets the
+  # everyone permission upon creation. We do not want
+  # to create a noone by accident.
+  # Polyphemus is very grateful for this.
+  def prevent_ulysses_case
+    recalc_privileges
   end
 end

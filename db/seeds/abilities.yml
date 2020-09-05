@@ -1,8 +1,19 @@
+- name: Everyone
+  internal_id: everyone
+  icon: user
+  summary: >
+    New user abilities: Limited posts, vote on answers to own posts
+  description: $FILE abilities/everyone.html
+  post_score_threshold: 0   # Don't change this, or I'll bite!
+  edit_score_threshold: 0   # Don't change this, or I'll bite!
+  flag_score_threshold: 0   # Don't change this, or I'll bite!
+
 - name: Participate Generally
   internal_id: unrestricted
   icon: heartbeat
   summary: >
     New user restrictions are removed: No limit on posts, vote and comment anywhere
+  description: $FILE abilities/unrestricted.html
   post_score_threshold: 0.75  # min. +4/-0
   edit_score_threshold: null
   flag_score_threshold: null
@@ -11,7 +22,8 @@
   internal_id: edit_posts
   icon: pen
   summary: >
-    Edit all posts (not only own) and review suggested edits to posts
+    Edit all posts and review suggested edits to posts
+  description: $FILE abilities/edit_posts.html
   post_score_threshold: null
   edit_score_threshold: 0.95   # min. +36/-0
   flag_score_threshold: null
@@ -20,7 +32,8 @@
   internal_id: edit_tags
   icon: tags
   summary: >
-    Edit tag metadata (excerpt and wiki) and review suggested edits to tags
+    Edit tag metadata (usage guidance and detailed wiki) and review suggested edits to tags
+  description: $FILE abilities/edit_tags.html
   post_score_threshold: null
   edit_score_threshold: 0.975   # min. +76/-0
   flag_score_threshold: null
@@ -29,7 +42,8 @@
   internal_id: flag_close
   icon: lock
   summary: >
-    Vote to put questions on hold, see pending hold votes, and vote to keep open or reopen.
+    Vote to place questions and articles on hold, or vote to reopen posts
+  description: $FILE abilities/flag_close.html
   post_score_threshold: 0.9    # min +16/-0
   edit_score_threshold: null
   flag_score_threshold: 0.95   # min +36/-0
@@ -38,7 +52,8 @@
   internal_id: flag_curate
   icon: trash
   summary: >
-    See and handle flags, lock and unlock posts temporarily and vote to delete and undelete posts
+    See certain pending flags, lock and unlock posts temporarily, and vote to delete and undelete posts
+  description: $FILE abilities/flag_curate.html
   post_score_threshold: 0.9    # min +16/-0
   edit_score_threshold: null
   flag_score_threshold: 0.99   # min +196/-0
@@ -47,7 +62,8 @@
   internal_id: mod
   icon: star
   summary: >
-    Includes all other privileges, allows seeing all flag types, allows permanent locks and grants binding vote (on hold, delete)
+    Includes all other privileges; allows seeing all flag types, allows permanent locks, and grants binding votes (on hold, delete)
+  description: $FILE abilities/mod.html
   post_score_threshold: null
   edit_score_threshold: null
   flag_score_threshold: null
