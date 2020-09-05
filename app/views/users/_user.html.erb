@@ -6,9 +6,9 @@
       <span class="username"><%= link_to  user_path(user), class: "is-not-underlined", 'data-ckb-item-link' => '' do %>
                                <%= user.username %>
                                <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
-                                 <span class="badge is-user-role"><%= SiteSetting['AdminBadgeCharacter'] %></span>
+                                 <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
                                <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
-                                 <span class="badge is-user-role"><%= SiteSetting['ModBadgeCharacter'] %></span>
+                                 <span class="badge is-user-role" title="Moderator"><%= SiteSetting['ModBadgeCharacter'] %></span>
                                <% end %>
                                <% if user.staff? %>
                                  <span class="badge is-tag is-filled is-green staff-badge">staff</span>
