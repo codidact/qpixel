@@ -1,7 +1,7 @@
 es:
   admin:
     dashboard:
-      title: 'Dashboard de administración'
+      title: 'Cuadro de mandos de administración'
       blurb: >
         # es_ES
         Esta página sirve como repositorio de enlaces a las diversas herramientas a las que tienes acceso en calidad de
