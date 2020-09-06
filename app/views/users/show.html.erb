@@ -58,7 +58,7 @@
         <% if @user.website.present? %>
           <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
         <% end %>
-  
+
         <% if @user.twitter.present? %>
           <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
         <% end %>

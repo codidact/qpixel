@@ -25,12 +25,12 @@
         <%= is_question && post.closed ? "[closed]" : "" %>
       <% end %>
     </div>
-    <p class="has-color-tertiary-600 has-float-right post-list--meta">	
-      <% if is_question %>	
+    <p class="has-color-tertiary-600 has-float-right post-list--meta">
+      <% if is_question %>
         <span class="answer-count <%= post.answer_count == 0 ? 'badge is-tag is-red is-small' : 'h-c-green-700' %>">
           <%= pluralize(post.answer_count, 'answer') %>
-        </span>&nbsp;&middot;&nbsp;	
-      <% end %>	
+        </span>&nbsp;&middot;&nbsp;
+      <% end %>
       last activity <%= time_ago_in_words(post.last_activity) %> ago
       by <%= link_to active_user.username, user_path(active_user) %>
     </p>
