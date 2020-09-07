@@ -93,14 +93,18 @@ class SuggestedEditController < ApplicationController
         body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
-        last_activity_by: @edit.user
+        last_activity_by: @edit.user,
+        last_edited_at: DateTime.now,
+        last_edited_by_id: @edit.user
       }.compact
     elsif @post.answer?
       {
         body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
-        last_activity_by: @edit.user
+        last_activity_by: @edit.user,
+        last_edited_at: DateTime.now,
+        last_edited_by_id: @edit.user
       }.compact
     end
   end
