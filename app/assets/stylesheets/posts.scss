@@ -134,4 +134,9 @@ h1 .badge.is-tag.is-master-tag {
 
 .post--content {
   flex: 1;
+  word-break: break-word;
+
+  @media screen and (min-width: $screen-sm) {
+    max-width: calc(100% - 3em);
+  }
 }
