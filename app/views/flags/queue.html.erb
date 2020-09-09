@@ -10,7 +10,7 @@
       <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
     </div>
     <div class="widget--body">
-      <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+      <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
     </div>
     <div class="widget--footer">
       <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">

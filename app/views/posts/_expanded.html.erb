@@ -277,7 +277,7 @@
               <% post.flags.where(handled_by_id: nil).each do |flag| %>
                 <div class="widget--body">
                   <div>
-                  <p><%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+                  <p><%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
                   <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
                   <div class="has-float-right has-padding-1">
                     <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>

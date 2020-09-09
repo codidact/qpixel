@@ -24,7 +24,7 @@
   </div>
   <div class="user-profile--name">
     <h1>
-      <%= @user.rtl_safe_username %>
+      <span dir="ltr"><%= @user.rtl_safe_username %></span>
       <% if @user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
         <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
       <% elsif @user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
@@ -36,7 +36,9 @@
     </h1>
     <div class="profile-text">
       <% if @user.profile.nil? || @user.profile.blank? %>
-        <em class="has-color-tertiary-400">A quiet enigma. We don't know anything about <%= @user.rtl_safe_username %> yet.</em>
+        <em class="has-color-tertiary-400">
+          A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.
+        </em>
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
@@ -104,7 +106,7 @@
 
 <h2 class="user-profile-heading">Posts</h2>
 <% if @user.posts.size == 0 %>
-  <em class="text-muted"><%= @user.rtl_safe_username %> hasn't posted anything yet.</em>
+  <em class="text-muted"><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</em>
 <% else %>
   <div class="item-list">
     <% @user.posts.undeleted.order(score: :desc).first(5).each do |a| %>
@@ -122,7 +124,7 @@
 %>
 
 <h2 class="user-profile-heading">Votes</h2>
-<p><%= @user.rtl_safe_username %> has cast <%= pluralize(@user.votes.count, "vote") %></p>
+<p><span dir="ltr"><%= @user.rtl_safe_username %></span> has cast <%= pluralize(@user.votes.count, "vote") %></p>
 <table class="table">
   <tr>
     <th colspan=2>Type of vote</th>
