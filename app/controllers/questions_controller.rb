@@ -120,7 +120,7 @@ class QuestionsController < ApplicationController
       redirect_to(question_path(@question)) && return
     end
 
-    if @question.answer_count > 0 && @question.answers.any? { |a| a.score >= 0.5 }
+    if @question.answer_count.positive? && @question.answers.any? { |a| a.score >= 0.5 }
       flash[:danger] = 'This question cannot be deleted because it has answers.'
       redirect_to(question_path(@question)) && return
     end
