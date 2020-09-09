@@ -47,7 +47,7 @@
             <% unless post.close_reason.nil? %>
               as <%= post.close_reason.name %>
             <% end %>
-            by <%= link_to post.closed_by.rtl_safe_username, user_path(post.closed_by) %>
+            by <%= link_to post.closed_by.rtl_safe_username, user_path(post.closed_by), dir: 'ltr'%>
             on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% unless post.close_reason.nil? %>
@@ -68,7 +68,7 @@
       <% if post.deleted %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
-            <strong>deleted</strong> by <%= link_to post.deleted_by.rtl_safe_username, user_path(post.deleted_by) %>
+            <strong>deleted</strong> by <%= link_to post.deleted_by.rtl_safe_username, user_path(post.deleted_by), dir: 'ltr'%>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% if post.deleted_by.id == post.user.id %>
@@ -135,7 +135,7 @@
                   <span class="has-color-tertiary">
                   <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
                   <% unless last_edited_by_self %>
-                    by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by) %>
+                    by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
                   <% end %>
                   </span>
                 <% end %>

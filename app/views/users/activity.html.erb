@@ -1,6 +1,6 @@
 <%= render 'tabs', user: @user %>
 
-<h1>Activity for <%= link_to @user.rtl_safe_username, user_path(@user) %></h1>
+<h1>Activity for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr'%></h1>
 
 <div class="button-list is-gutterless h-m-v-4">
     <a class="button is-muted is-outlined" href="?">

@@ -32,7 +32,7 @@
         </span>&nbsp;&middot;&nbsp;
       <% end %>
       last activity <%= time_ago_in_words(post.last_activity) %> ago
-      by <%= link_to active_user.rtl_safe_username, user_path(active_user) %>
+      by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr'%>
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
