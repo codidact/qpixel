@@ -24,13 +24,19 @@
         <% if @edit.pending? %>
         <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
         <% elsif @edit.approved? %>
-        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong><br>This suggested edit was approved and applied to the post <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.decided_by.username, user_path(@edit.decided_by) %>.</p>
+        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong><br>This suggested edit was approved and
+          applied to the post <%= time_ago_in_words(@edit.decided_at) %> ago by
+          <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by) %>.</p>
         <% elsif @edit.rejected? %>
             <% if @edit.rejected_comment %>
-                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.decided_by.username, user_path(@edit.decided_by) %>:</p>
+                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
+                  <%= time_ago_in_words(@edit.decided_at) %> ago by
+                  <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by) %>:</p>
                 <p class="h-m-0"><%= @edit.rejected_comment %></p>
             <% else %>
-                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected <%= time_ago_in_words(@edit.decided_at) %> ago by <%= link_to @edit.decided_by.username, user_path(@edit.decided_by) %>.</p>
+                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
+                  <%= time_ago_in_words(@edit.decided_at) %> ago by
+                  <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by) %>.</p>
             <% end %>
         <% end %>
     </div>
@@ -97,7 +103,8 @@
         </div>
     </div>
     <div class="widget--body">
-        <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by <%= link_to @edit.user.username, user_path(@edit.user) %>	
+        <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by
+          <%= link_to @edit.user.rtl_safe_username, user_path(@edit.user) %>
     </div>
     <% if @edit.active? && may_decide %>
     <div class="widget--footer">

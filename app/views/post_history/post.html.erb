@@ -16,7 +16,7 @@
           <span class="text-muted">(deleted user)</span>
         <% else %>
           <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-          <%= link_to event.user&.username, user_path(event.user) %>
+          <%= link_to event.user&.rtl_safe_username, user_path(event.user) %>
         <% end %>
         &middot;
         <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)

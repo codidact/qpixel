@@ -4,7 +4,7 @@
     <div class="user--meta">
       <% user_posts = defined?(@post_counts) ? @post_counts[user.id] : user.posts.count %>
       <span class="username"><%= link_to  user_path(user), class: "is-not-underlined", 'data-ckb-item-link' => '' do %>
-                               <%= user.username %>
+                               <%= user.rtl_safe_username %>
                                <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
                                  <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
                                <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>

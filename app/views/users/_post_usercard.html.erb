@@ -4,7 +4,7 @@
     <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" class="has-float-left" />
     <div class="has-padding-1 has-float-left">
       <%= link_to user_path(post.user) do %>
-        <%= post.user.username %>
+        <%= post.user.rtl_safe_username %>
       <% end %>
       <span class="badge is-user-trust-level is-muted"><%= post.user.reputation %></span>
     </div>

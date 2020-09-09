@@ -1,6 +1,6 @@
-<% content_for :title, "Moderator Tools: #{@user.username}" %>
+<% content_for :title, "Moderator Tools: #{@user.rtl_safe_username}" %>
 
-<h1>Moderator Tools: <%= link_to @user.username, user_path(@user) %></h1>
+<h1>Moderator Tools: <%= link_to @user.rtl_safe_username, user_path(@user) %></h1>
 
 <div class="widget">
   <div class="widget--header">Links</div>

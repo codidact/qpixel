@@ -71,7 +71,7 @@
                   <img alt="user avatar" src="<%= current_user.nil? ? avatar_url(User.find(-1)) : avatar_url(current_user) %>" height="32" width="32"
                     class="has-float-left" />
                   <div class="has-padding-1 has-float-left">
-                    <a href="#"><%= current_user&.username || "user31415" %></a> <span
+                    <a href="#"><%= current_user&.rtl_safe_username || "user31415" %></a> <span
                       class="badge is-user-trust-level is-muted"><%= current_user&.reputation || 1 %></span>
                   </div>
                   <div class="has-clear-clear"></div>

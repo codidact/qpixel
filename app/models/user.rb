@@ -100,6 +100,10 @@ class User < ApplicationRecord
     attributes['trust_level'] || recalc_trust_level
   end
 
+  def rtl_safe_username
+    "\u202D#{username}\u202D"
+  end
+
   def recalc_trust_level
     # Temporary hack until we have some things to actually calculate based on.
     trust = if is_admin || is_global_admin
