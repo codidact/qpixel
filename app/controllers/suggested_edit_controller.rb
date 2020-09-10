@@ -40,11 +40,11 @@ class SuggestedEditController < ApplicationController
       elsif @post.article?
         render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share, id: @post.id) })
       else
-        render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
+        render(json: { status: 'error', message: 'Could not approve suggested edit.' }, status: 400)
       end
     else
-      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfil' \
-                                     ' the post criteria. Reject and make the changes yourself.' }, status: 400)
+      render json: { status: 'error',
+                     message: @post.errors.full_messages.join(', ') }, status: 400
     end
   end
 
