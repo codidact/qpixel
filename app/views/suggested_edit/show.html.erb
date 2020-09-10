@@ -6,125 +6,78 @@
 <h1>Review Suggested Edit</h1>
 
 <% if @edit.active? && may_decide %>
-<div class="notice is-info">
+  <div class="notice is-info">
     <p>This edit was suggested by another user. Good edits: </p>
     <ul>
-        <li>Improve clarity or fix errors like broken links.</li>
-        <li>Do not drastically change the post or add content the author would reasonably object to.</li>
-        <li>Do not change the style unneccessarily (for example, do not change spelling that is valid in other English dialects).</li>
+      <li>Improve clarity or fix errors like broken links.</li>
+      <li>Do not drastically change the post or add content the author would reasonably object to.</li>
+      <li>Do not change the style unneccessarily (for example, do not change spelling that is valid in other English dialects).</li>
     </ul>
-</div>
+  </div>
 <% end %>
 
 <div class="widget">
-    <div class="widget--body h-bg-tertiary-050">
-        <div class="h-f-r">
-            <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">Return to post</a>
-        </div>
-        <% if @edit.pending? %>
-        <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
-        <% elsif @edit.approved? %>
-        <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong><br>This suggested edit was approved and
-          applied to the post <%= time_ago_in_words(@edit.decided_at) %> ago by
+  <div class="widget--body h-bg-tertiary-050">
+    <div class="h-f-r">
+      <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">Return to post</a>
+    </div>
+    <% if @edit.pending? %>
+      <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
+    <% elsif @edit.approved? %>
+      <p class="h-m-0"><strong class="h-c-green-700">Approved.</strong><br>This suggested edit was approved and
+        applied to the post <%= time_ago_in_words(@edit.decided_at) %> ago by
+        <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by), dir: 'ltr'%>.</p>
+    <% elsif @edit.rejected? %>
+      <% if @edit.rejected_comment %>
+        <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
+          <%= time_ago_in_words(@edit.decided_at) %> ago by
+          <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by), dir: 'ltr'%>:</p>
+        <p class="h-m-0"><%= @edit.rejected_comment %></p>
+      <% else %>
+        <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
+          <%= time_ago_in_words(@edit.decided_at) %> ago by
           <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by), dir: 'ltr'%>.</p>
-        <% elsif @edit.rejected? %>
-            <% if @edit.rejected_comment %>
-                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
-                  <%= time_ago_in_words(@edit.decided_at) %> ago by
-                  <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by), dir: 'ltr'%>:</p>
-                <p class="h-m-0"><%= @edit.rejected_comment %></p>
-            <% else %>
-                <p class="h-m-0"><strong class="h-c-red-700">Rejected.</strong><br>This suggested edit was rejected
-                  <%= time_ago_in_words(@edit.decided_at) %> ago by
-                  <%= link_to @edit.decided_by.rtl_safe_username, user_path(@edit.decided_by), dir: 'ltr'%>.</p>
-            <% end %>
-        <% end %>
-    </div>
-    <div class="widget--body">
-        <label for="summary" class="form-element">Suggested edit summary:</label>
-        <input class="form-element" readonly value="<%= @edit.comment %>">
-    </div>
-    <div class="widget--body">
-        <div class="diff">
-        <% if is_question_or_article %>
-            <!-- Title -->
-            <div class="diff-section">
-                <% if @edit.title.nil? %>
-                    <div class="diff-inline">
-                        <h1 class="h-m-0"><%= post.title %></h1>
-                    </div>
-                <% else %>
-                    <div class="diff-old is-changed raw-markdown"><h1><%= post.title %></h1></div>
-                    <div class="diff-new is-changed raw-markdown"><h1><%= @edit.title %></h1></div>
-                <% end %>
-            </div>
-        <% end %>
-
-            <!-- Body -->
-            <div class="diff-section">
-                <% if @edit.body_markdown.nil? %>
-                    <div class="diff-inline raw-markdown"><%= post.body_markdown %></div>
-                <% else %>
-                    <%if @edit.active %>
-                    <% diff = Diffy::SplitDiff.new(post.body_markdown, @edit.body_markdown, format: :html) %>
-                    <div class="diff-old is-changed raw-markdown"><%= raw(sanitize(diff.left, scrubber: scrubber)) %></div>
-                    <div class="diff-new is-changed raw-markdown"><%= raw(sanitize(diff.right, scrubber: scrubber)) %></div>
-                    <% else %>
-                    <div class="diff-old is-changed raw-markdown"><%= post.body_markdown %></div>
-                    <div class="diff-new is-changed raw-markdown"><%= @edit.body_markdown %></div>
-                    <% end %>
-                <% end %>
-            </div>
-
-        <% if is_question_or_article && @edit.tags_cache != post.tags_cache %>
-            <!-- Tags -->
-            <% tag_set = post.tag_set %>
-            <% required_ids = post.category&.required_tag_ids %>
-            <% topic_ids = post.category&.topic_tag_ids %>
-            <div class="diff-section">
-                <% tag_set = post.tag_set %>
-                <% required_ids = post.category&.required_tag_ids %>
-                <% topic_ids = post.category&.topic_tag_ids %>
-                <% moderator_ids = post.category&.moderator_tag_ids %>
-                <div class="diff-old is-changed">
-                    <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-                        <% required = required_ids&.include? tag.id %>
-                        <% topic = topic_ids&.include? tag.id %>
-                        <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
-                                    class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
-                    <% end %>
-                </div>
-                <div class="diff-new is-changed">
-                    <% category_sort_tags(@edit.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-                        <% required = required_ids&.include? tag.id %>
-                        <% topic = topic_ids&.include? tag.id %>
-                        <%= link_to tag.name, questions_tagged_path(tag_set: tag_set.id, tag: tag.name),
-                                    class: "badge is-tag #{required ? 'is-filled' : ''} #{topic ? 'is-outlined' : ''}" %>
-                    <% end %>
-                </div>
-            </div>
-        <% end %>
-
-        </div>
-    </div>
-    <div class="widget--body">
-        <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by
-          <%= link_to @edit.user.rtl_safe_username, user_path(@edit.user), dir: 'ltr'%>
-    </div>
-    <% if @edit.active? && may_decide %>
-    <div class="widget--footer">
-        <button class="button is-filled is-medium" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
-        <button class="button is-filled is-medium js-suggested-edit-reject">Reject (with optional reason)</button>
-
-
-<div class="widget js-suggested-edit-reject-dialog is-hidden">
-    <div class="widget--header">Rejecting this suggested edit</div>
-    <div class="widget--body">
-        <input class="js-rejection-reason form-element" placeholder="Why are you rejecting this edit?">
-        <button class="button is-outlined is-medium " data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
-    </div>
-</div>
-
-    </div>
+      <% end %>
     <% end %>
+  </div>
+  <div class="widget--body">
+    <label for="summary" class="form-element">Suggested edit summary:</label>
+    <input id="summary" class="form-element" readonly value="<%= @edit.comment %>">
+  </div>
+  <div class="widget--body">
+    <div class="diff">
+      <% if is_question_or_article %>
+        <%# Title %>
+        <%= render 'post_history/diff', before: @edit.before_title || post.title, after: @edit.title, post: post %>
+      <% end %>
+
+      <%# Body %>
+      <%= render 'post_history/diff', before: @edit.before_body_markdown || post.body_markdown,
+                 after: @edit.body_markdown, post: post %>
+
+      <% if is_question_or_article %>
+        <%# Tags %>
+        <%= render 'post_history/diff', before: @edit.before_tags.any? ? @edit.before_tags : post.tags,
+                   after: @edit.tags, post: post %>
+      <% end %>
+    </div>
+  </div>
+  <div class="widget--body">
+    <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by
+      <%= link_to @edit.user.rtl_safe_username, user_path(@edit.user), dir: 'ltr'%></p>
+  </div>
+  <% if @edit.active? && may_decide %>
+    <div class="widget--footer">
+      <button class="button is-filled is-medium" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
+      <button class="button is-filled is-medium js-suggested-edit-reject">Reject (with optional reason)</button>
+
+      <div class="widget js-suggested-edit-reject-dialog is-hidden">
+        <div class="widget--header">Rejecting this suggested edit</div>
+        <div class="widget--body">
+          <input class="js-rejection-reason form-element" placeholder="Why are you rejecting this edit?">
+          <button class="button is-outlined is-medium " data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

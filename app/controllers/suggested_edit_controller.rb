@@ -23,9 +23,12 @@ class SuggestedEditController < ApplicationController
       opts.merge(before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags)
     end
 
+    before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
+               before_tags: @post.tags.to_a, before_title: @post.title }
+
     if @post.update(applied_details)
-      @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
-                                                  decided_by: current_user, updated_at: DateTime.now)
+      @edit.update(before.merge(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
+                                decided_by: current_user, updated_at: DateTime.now))
       PostHistory.post_edited(@post, @edit.user, **opts)
       flash[:success] = 'Edit approved successfully.'
       if @post.question?
