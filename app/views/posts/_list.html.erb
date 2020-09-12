@@ -3,7 +3,8 @@
 <% active_user = post.last_activity_by || post.user %>
 <% show_type_tag ||= false %>
 <% show_category_tag ||= false %>
-<div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
+<div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted_wrapper? ? 'deleted-content' : '' %>"
+     data-ckb-list-item data-ckb-item-type="link">
   <div class="item-list--number-value">
     <div class="meter is-question-score">
       <div class="meter--bar is-<%= (post.score * 100).to_i %>%"><%= (post.score * 100).to_i %>%</div>

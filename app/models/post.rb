@@ -102,6 +102,10 @@ class Post < ApplicationRecord
     post_type_id == Answer.post_type_id
   end
 
+  def deleted_wrapper?
+    deleted || parent&.deleted || false
+  end
+
   def article?
     post_type_id == Article.post_type_id
   end
