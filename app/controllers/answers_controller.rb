@@ -37,6 +37,15 @@ class AnswersController < ApplicationController
       return update_as_suggested_edit
     end
 
+    if params[:answer][:body_markdown] == @answer.body_markdown
+      same_body = true
+    end
+
+    if same_body
+      flash[:danger] = 'No changes were saved, there were none to save.'
+      redirect_to question_path(@answer.parent) && return
+    end
+
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
@@ -50,6 +59,15 @@ class AnswersController < ApplicationController
   end
 
   def update_as_suggested_edit
+    if params[:answer][:body_markdown] == @answer.body_markdown
+      same_body = true
+    end
+
+    if same_body
+      flash[:danger] = 'No changes were saved, there were none to save.'
+      redirect_to question_path(@answer.parent) && return
+    end
+
     updates = {
       post: @answer,
       user: current_user,
@@ -61,6 +79,7 @@ class AnswersController < ApplicationController
       decided_at: nil, decided_by: nil,
       rejected_comment: nil
     }
+
     @edit = SuggestedEdit.new(updates)
     if @edit.save
       @answer.user.create_notification("Edit suggested on your answer to #{@answer.parent.title.truncate(50)}",

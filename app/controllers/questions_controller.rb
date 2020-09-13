@@ -67,6 +67,24 @@ class QuestionsController < ApplicationController
 
     tags_cache = params[:question][:tags_cache]&.reject { |e| e.to_s.empty? }
     after_tags = Tag.where(tag_set_id: @question.category.tag_set_id, name: tags_cache)
+
+    if @question.tags == after_tags
+      same_tags = true
+    end
+
+    if params[:question][:body_markdown] == @question.body_markdown
+      same_body = true
+    end
+
+    if params[:question][:title] == @question.title
+      same_title = true
+    end
+
+    if same_tags && same_body && same_title
+      flash[:danger] = 'No changes were saved, there were none to save.'
+      redirect_to question_path(@question) && return
+    end
+
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
                             after: params[:question][:body_markdown], comment: params[:edit_comment],
                             before_title: @question.title, after_title: params[:question][:title],
@@ -87,7 +105,23 @@ class QuestionsController < ApplicationController
 
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown
                       params[:question][:body_markdown]
+                      same_body = false
+                    else
+                      same_body = true
                     end
+
+    if @question.tags_cache == new_tags_cache
+      same_tags = true
+    end
+
+    if params[:question][:title] == @question.title
+      same_title = true
+    end
+
+    if same_tags && same_body && same_title
+      flash[:danger] = 'No changes were suggested, there were none to suggest.'
+      redirect_to question_path(@question) && return
+    end
 
     updates = {
       post: @question,
