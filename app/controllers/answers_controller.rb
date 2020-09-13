@@ -43,7 +43,7 @@ class AnswersController < ApplicationController
 
     if same_body
       flash[:danger] = 'No changes were saved, there were none to save.'
-      redirect_to question_path(@answer.parent) && return
+      return redirect_to question_path(@answer.parent)
     end
 
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
@@ -65,7 +65,7 @@ class AnswersController < ApplicationController
 
     if same_body
       flash[:danger] = 'No changes were saved, there were none to save.'
-      redirect_to question_path(@answer.parent) && return
+      return redirect_to question_path(@answer.parent)
     end
 
     updates = {

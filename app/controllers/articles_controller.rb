@@ -38,7 +38,7 @@ class ArticlesController < ApplicationController
 
     if same_tags && same_body && same_title
       flash[:danger] = 'No changes were saved, there were none to save.'
-      redirect_to article_path(@article) && return
+      return redirect_to article_path(@article)
     end
 
     PostHistory.post_edited(@article, current_user, before: @article.body_markdown,
@@ -76,7 +76,7 @@ class ArticlesController < ApplicationController
 
     if same_tags && same_body && same_title
       flash[:danger] = 'No changes were suggested, there were none to suggest.'
-      redirect_to article_path(@article) && return
+      return redirect_to article_path(@article)
     end
 
     updates = {

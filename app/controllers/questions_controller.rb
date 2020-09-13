@@ -82,7 +82,7 @@ class QuestionsController < ApplicationController
 
     if same_tags && same_body && same_title
       flash[:danger] = 'No changes were saved, there were none to save.'
-      redirect_to question_path(@question) && return
+      return redirect_to question_path(@question)
     end
 
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
@@ -120,7 +120,7 @@ class QuestionsController < ApplicationController
 
     if same_tags && same_body && same_title
       flash[:danger] = 'No changes were suggested, there were none to suggest.'
-      redirect_to question_path(@question) && return
+      return redirect_to question_path(@question)
     end
 
     updates = {
