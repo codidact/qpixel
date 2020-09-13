@@ -1,4 +1,4 @@
-- name: Everyone
+- name: Participate
   internal_id: everyone
   icon: user
   summary: >
@@ -8,7 +8,7 @@
   edit_score_threshold: 0   # Don't change this, or I'll bite!
   flag_score_threshold: 0   # Don't change this, or I'll bite!
 
-- name: Participate Generally
+- name: Participate Everywhere
   internal_id: unrestricted
   icon: heartbeat
   summary: >

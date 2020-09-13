@@ -5,6 +5,22 @@
 # below each fixture, per the syntax in the comments below
 #
 
+stu_eo:
+  community_user: sample_standard_user
+  ability: everyone
+
+c_eo:
+  community_user: sample_closer
+  ability: everyone
+
+e_eo:
+  community_user: sample_editor
+  ability: everyone
+
+d_eo:
+  community_user: sample_deleter
+  ability: everyone
+
 stu_ur:
   community_user: sample_standard_user
   ability: unrestricted

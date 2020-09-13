@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 everyone:
-  name: Everyone
+  name: Participate
   internal_id: everyone
   icon: user
   community: sample
 
 unrestricted:
-  name: Participate Generally
+  name: Participate Everywhere
   internal_id: unrestricted
   icon: heartbeat
   community: sample
