@@ -189,7 +189,7 @@ class PostsController < ApplicationController
     return not_found unless current_user.privilege? 'flag_curate'
     return not_found if @post.locked?
 
-    length = params[:length].to_i
+    length = params[:length].present? ? params[:length].to_i : nil
     if length
       if !current_user.is_moderator && length > 30
         length = 30
