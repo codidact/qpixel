@@ -1,5 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+everyone:
+  name: Everyone
+  internal_id: everyone
+  icon: user
+  community: sample
+
 unrestricted:
   name: Participate Generally
   internal_id: unrestricted
