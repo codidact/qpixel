@@ -25,7 +25,7 @@ class ArticlesController < ApplicationController
     after_tags = Tag.where(tag_set_id: @article.category.tag_set_id, name: tags_cache)
 
     if @article.tags == after_tags && @article.body_markdown == params[:article][:body_markdown] &&
-        @article.title == params[:article][:title]
+       @article.title == params[:article][:title]
       flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to article_path(@article)
     end
@@ -53,7 +53,7 @@ class ArticlesController < ApplicationController
                     end
 
     if @article.tags_cache == new_tags_cache && @article.body_markdown == params[:article][:body_markdown] &&
-        @article.title == params[:article][:title]
+       @article.title == params[:article][:title]
       flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to article_path(@article)
     end
