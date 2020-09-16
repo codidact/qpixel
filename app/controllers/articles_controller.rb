@@ -24,20 +24,9 @@ class ArticlesController < ApplicationController
     tags_cache = params[:article][:tags_cache]&.reject { |e| e.to_s.empty? }
     after_tags = Tag.where(tag_set_id: @article.category.tag_set_id, name: tags_cache)
 
-    if @article.tags == after_tags
-      same_tags = true
-    end
-
-    if params[:article][:body_markdown] == @article.body_markdown
-      same_body = true
-    end
-
-    if params[:article][:title] == @article.title
-      same_title = true
-    end
-
-    if same_tags && same_body && same_title
-      flash[:danger] = 'No changes were saved, there were none to save.'
+    if @article.tags == after_tags && @article.body_markdown == params[:article][:body_markdown] &&
+        @article.title == params[:article][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to article_path(@article)
     end
 
@@ -61,21 +50,11 @@ class ArticlesController < ApplicationController
 
     body_markdown = if params[:article][:body_markdown] != @article.body_markdown
                       params[:article][:body_markdown]
-                      same_body = false
-                    else
-                      same_body = true
                     end
 
-    if @article.tags_cache == new_tags_cache
-      same_tags = true
-    end
-
-    if params[:article][:title] == @article.title
-      same_title = true
-    end
-
-    if same_tags && same_body && same_title
-      flash[:danger] = 'No changes were suggested, there were none to suggest.'
+    if @article.tags_cache == new_tags_cache && @article.body_markdown == params[:article][:body_markdown] &&
+        @article.title == params[:article][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to article_path(@article)
     end
 
