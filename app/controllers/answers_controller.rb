@@ -38,14 +38,9 @@ class AnswersController < ApplicationController
     end
 
     if params[:answer][:body_markdown] == @answer.body_markdown
-      same_body = true
-    end
-
-    if same_body
-      flash[:danger] = 'No changes were saved, there were none to save.'
+      flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to question_path(@answer.parent)
     end
-
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
@@ -60,14 +55,9 @@ class AnswersController < ApplicationController
 
   def update_as_suggested_edit
     if params[:answer][:body_markdown] == @answer.body_markdown
-      same_body = true
-    end
-
-    if same_body
-      flash[:danger] = 'No changes were saved, there were none to save.'
+      flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to question_path(@answer.parent)
     end
-
     updates = {
       post: @answer,
       user: current_user,
