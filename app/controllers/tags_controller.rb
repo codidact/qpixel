@@ -96,20 +96,8 @@ class TagsController < ApplicationController
     @primary = @tag
 
     # No merge to self.
-    if params[:merge_with_id].eql? @primary.id.to_s
+    if params[:merge_with_id] == @primary.id.to_s
       flash[:danger] = 'Cannot merge a tag with itself.'
-
-      # redirect_to tag_path(id: @category.id, tag_id: @primary.id) && return
-
-      # render :edit, status: 400
-      # return
-
-      # render json: { success: false, status: 400, tag: @tag }
-      # return
-
-      # render 'tag', category: @category, tag: @tag
-      # return
-
       redirect_back fallback_location: categories_path
       return
     end
