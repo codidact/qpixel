@@ -28,16 +28,21 @@ class PostsController < ApplicationController
 
     recent_top_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
                                  .where(post_type_id: top_level_post_types).count
-    max_posts = if !current_user.privilege? 'unrestricted'
-                  vote_limit_msg = 'You may only post 3 top-level posts (questions, articles) per day. ' \
-                                   'Once you have some well-received posts, that limit will increase.'
-                  3
-                else
-                  vote_limit_msg = 'You may only post 20 top-level posts per day.'
-                  20
-                end
 
-    if recent_top_level_posts > max_posts
+    max_posts = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_TopLevelPosts' : 'RL_NewUserTopLevelPosts']
+    vote_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only post #{max_posts} top-level posts (questions, articles) per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only post #{max_posts} top-level posts per day."
+                     end
+
+    puts '*************************************'
+    puts max_posts
+    puts recent_top_level_posts
+    puts '*************************************'
+
+    if recent_top_level_posts >= max_posts
       @post.errors.add :base, vote_limit_msg
       AuditLog.rate_limit_log(event_type: 'top_level_post', related: @category, user: current_user,
                               comment: "limit: #{max_posts}\n\npost:\n#{@post.attributes_print}")

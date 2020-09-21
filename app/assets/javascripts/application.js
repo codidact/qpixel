@@ -55,10 +55,14 @@ $(document).on('ready', function() {
       }
       self.parents(".js-flag-box").removeClass("is-active");
     })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
-      console.log(jqXHR.responseText);
-      self.parents(".js-flag-box").removeClass("is-active");
+      .fail((jqXHR, textStatus, errorThrown) => {
+        let message = jqXHR.status;
+        try {
+          message = JSON.parse(jqXHR.responseText)['message'];
+        } finally {
+          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
+        }
+        self.parents(".js-flag-box").removeClass("is-active");
     });
   });
 
