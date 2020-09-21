@@ -13,10 +13,36 @@ class AnswersController < ApplicationController
 
   def create
     @question = Question.find params[:id]
+
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-                                             body: helpers.render_markdown(params[:answer][:body_markdown]),
-                                             last_activity: DateTime.now, last_activity_by: current_user,
-                                             category: @question.category))
+      body: helpers.render_markdown(params[:answer][:body_markdown]),
+      last_activity: DateTime.now, last_activity_by: current_user,
+      category: @question.category))
+
+    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+                                    .where(post_type_id: second_level_post_types).count
+
+    max_slps = SiteSetting[if current_user.privilege?('unrestricted')
+                             'RL_SecondLevelPosts'
+                           else
+                             'RL_NewUserSecondLevelPosts'
+                           end]
+
+    post_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only post #{max_slps} answers per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only post #{max_slps} answers per day."
+                     end
+
+    if recent_second_level_posts >= max_slps
+      @answer.errors.add :base, post_limit_msg
+      AuditLog.rate_limit_log(event_type: 'second_level_post', related: @question, user: current_user,
+                              comment: "limit: #{max_slps}\n\npost:\n#{@answer.attributes_print}")
+      render :new, status: 400
+      return
+    end
+
     unless current_user.id == @question.user.id
       @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
                                          share_question_url(@question))
