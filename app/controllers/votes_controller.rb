@@ -12,26 +12,15 @@ class VotesController < ApplicationController
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: 403) && return
     end
 
-    recent_votes = Vote.where(created_at: 24.hours.ago..Time.now, user: current_user).count
-    max_votes_per_day = SiteSetting['FreeVotes'] + helpers.linearize_progress(current_user.community_user.post_score)
+    recent_votes = Vote.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+                       .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
+    max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_NewUserVotes' : 'RL_Votes']
 
     unless post.parent&.user_id == current_user.id
-      unless current_user.privilege? 'unrestricted'
-        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
-                              comment: "limit: only answers to own posts\n\nvote:\n#{params[:vote_type].to_i}")
-
-        render json: { status: 'failed', message: 'New users can only vote on answers to their own posts.' },
-               status: 403
-        return
-      end
-
       if recent_votes >= max_votes_per_day
-        vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + ' votes. Gain more' \
-                         ' reputation or come back tomorrow to continue voting.'
-
-        if max_votes_per_day <= 0
-          vote_limit_msg = 'You need to have some positive activity on this site before you can continue voting.'
-        end
+        vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + ' votes.' \
+                         ' Come back tomorrow to continue voting. Votes on answers to own posts' \
+                         ' are exempt.'
 
         AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
                               comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
