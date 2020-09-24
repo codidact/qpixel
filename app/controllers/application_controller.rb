@@ -90,6 +90,32 @@ class ApplicationController < ActionController::Base
     [Answer.post_type_id]
   end
 
+  def check_edits_limit! (post)
+    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..Time.now, user: current_user).count
+
+    max_edits = SiteSetting[if current_user.privilege?('unrestricted')
+                              'RL_SuggestedEdits'
+                            else
+                              'RL_NewUserSuggestedEdits'
+                            end]
+
+    edit_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only suggest #{max_edits} edits per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only suggest #{max_edits} edits per day."
+                     end
+
+    if recent_edits >= max_edits
+      post.errors.add :base, edit_limit_msg
+      AuditLog.rate_limit_log(event_type: 'suggested_edits', related: post, user: current_user,
+                              comment: "limit: #{max_edits}")
+      render :edit, status: 400
+      return true
+    end
+    false
+  end
+
   private
 
   def stop_the_awful_troll

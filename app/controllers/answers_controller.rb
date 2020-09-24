@@ -77,6 +77,8 @@ class AnswersController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit!
+
     updates = {
       post: @answer,
       user: current_user,
@@ -94,7 +96,7 @@ class AnswersController < ApplicationController
                                        share_answer_url(qid: @answer.parent_id, id: @answer.id))
       redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
-      @post.errors = @edit.errors
+      @answer.errors = @edit.errors
       render :edit
     end
   end

@@ -39,6 +39,8 @@ class ArticlesController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit! @article
+
     body_rendered = helpers.render_markdown(params[:article][:body_markdown])
     new_tags_cache = params[:article][:tags_cache]&.reject(&:empty?)
 
@@ -66,7 +68,7 @@ class ArticlesController < ApplicationController
                                         article_url(@article))
       redirect_to share_article_path(@article)
     else
-      @post.errors = @edit.errors
+      @article.errors = @edit.errors
       render :edit
     end
   end

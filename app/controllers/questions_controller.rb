@@ -83,6 +83,8 @@ class QuestionsController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit! @question
+
     body_rendered = helpers.render_markdown(params[:question][:body_markdown])
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
@@ -110,7 +112,7 @@ class QuestionsController < ApplicationController
                                          question_url(@question))
       redirect_to share_question_path(@question)
     else
-      @post.errors = @edit.errors
+      @question.errors = @edit.errors
       render :edit
     end
   end
