@@ -53,9 +53,9 @@
           <%= form_tag post_lock_path(post), remote: true, class: 'js-lock' do %>
             <%= label_tag :length, 'Locked until', class: 'form-element', for: "purge_comments_id_#{post.id}" %>
             <% if current_user.is_moderator %>
-              <div class="form-caption">You can set an amount of days, after which the post will automatically unlock.</div>
+              <div class="form-caption">You can set an number of days, after which the post will automatically unlock.</div>
             <% else %>
-              <div class="form-caption">You have to set an amount of days, after which the post will automatically unlock. Will default to 7 if none chosen. Maximum value: 30 days</div>
+              <div class="form-caption">You have to set an number of days, after which the post will automatically unlock. Will default to 7 if none chosen. Maximum value: 30 days</div>
             <% end %>
               <%= number_field_tag :length, nil, class: 'form-element' %>
             <%= submit_tag 'Lock', class: 'button is-filled' %>
