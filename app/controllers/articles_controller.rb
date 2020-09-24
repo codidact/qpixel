@@ -23,6 +23,13 @@ class ArticlesController < ApplicationController
 
     tags_cache = params[:article][:tags_cache]&.reject { |e| e.to_s.empty? }
     after_tags = Tag.where(tag_set_id: @article.category.tag_set_id, name: tags_cache)
+
+    if @article.tags == after_tags && @article.body_markdown == params[:article][:body_markdown] &&
+       @article.title == params[:article][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
+      return redirect_to article_path(@article)
+    end
+
     PostHistory.post_edited(@article, current_user, before: @article.body_markdown,
                             after: params[:article][:body_markdown], comment: params[:edit_comment],
                             before_title: @article.title, after_title: params[:article][:title],
@@ -44,6 +51,12 @@ class ArticlesController < ApplicationController
     body_markdown = if params[:article][:body_markdown] != @article.body_markdown
                       params[:article][:body_markdown]
                     end
+
+    if @article.tags_cache == new_tags_cache && @article.body_markdown == params[:article][:body_markdown] &&
+       @article.title == params[:article][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
+      return redirect_to article_path(@article)
+    end
 
     updates = {
       post: @article,

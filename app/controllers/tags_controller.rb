@@ -94,6 +94,14 @@ class TagsController < ApplicationController
 
   def merge
     @primary = @tag
+
+    # No merge to self.
+    if params[:merge_with_id] == @primary.id.to_s
+      flash[:danger] = 'Cannot merge a tag with itself.'
+      redirect_back fallback_location: categories_path
+      return
+    end
+
     @subordinate = Tag.find params[:merge_with_id]
 
     # Take the tag off posts
