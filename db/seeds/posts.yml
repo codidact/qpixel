@@ -106,3 +106,10 @@
   body: $FILE posts/scoring.html
   doc_slug: scoring
   help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: About category access and write permissions
+  body_markdown: $FILE posts/category-permissions.html
+  body: $FILE posts/category-permissions.html
+  doc_slug: category-permissions
+  help_category: $Moderator

@@ -15,11 +15,11 @@ class AnswersController < ApplicationController
     @question = Question.find params[:id]
 
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-      body: helpers.render_markdown(params[:answer][:body_markdown]),
-      last_activity: DateTime.now, last_activity_by: current_user,
-      category: @question.category))
+                         body: helpers.render_markdown(params[:answer][:body_markdown]),
+                         last_activity: DateTime.now, last_activity_by: current_user,
+                         category: @question.category))
 
-    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user)
                                     .where(post_type_id: second_level_post_types).count
 
     max_slps = SiteSetting[if current_user.privilege?('unrestricted')

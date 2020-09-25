@@ -59,7 +59,8 @@ $(document).on('ready', function() {
         let message = jqXHR.status;
         try {
           message = JSON.parse(jqXHR.responseText)['message'];
-        } finally {
+        }
+        finally {
           QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
         }
         self.parents(".js-flag-box").removeClass("is-active");
