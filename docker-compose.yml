@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   db:
-    build: 
+    build:
       context: "."
       dockerfile: docker/Dockerfile.db
     env_file:
@@ -10,7 +10,7 @@ services:
 
   uwsgi:
     restart: always
-    build: 
+    build:
       context: "."
       dockerfile: docker/Dockerfile
     depends_on:

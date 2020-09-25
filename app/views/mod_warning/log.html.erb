@@ -1,4 +1,4 @@
-<h1>Warnings send to <%= link_to @user.username, user_path(@user.id) %></h1>
+<h1>Warnings sent to <%= link_to @user.rtl_safe_username, user_path(@user.id), dir: 'ltr'%></h1>
 
 <table class="table is-full-width is-with-hover">
     <tr>
@@ -22,7 +22,7 @@
                 <% end %>
             </td>
             <td>
-                <%= link_to w.author.username, user_path(w.author.id) %>
+                <%= link_to w.author.rtl_safe_username, user_path(w.author.id), dir: 'ltr'%>
             </td>
             <td>
                 <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>

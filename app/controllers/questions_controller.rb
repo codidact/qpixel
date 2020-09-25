@@ -30,8 +30,8 @@ class QuestionsController < ApplicationController
                else
                  Answer.where(parent_id: @question.id).undeleted
                        .or(Answer.where(parent_id: @question.id, user_id: current_user&.id))
-               end.user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC') },
-                             score: Arel.sql('deleted ASC, score DESC'), age: :created_at)
+               end.user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
+                             score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
                .paginate(page: params[:page], per_page: 20)
                .includes(:votes, :user, :comments, :license)
 
@@ -68,6 +68,13 @@ class QuestionsController < ApplicationController
 
     tags_cache = params[:question][:tags_cache]&.reject { |e| e.to_s.empty? }
     after_tags = Tag.where(tag_set_id: @question.category.tag_set_id, name: tags_cache)
+
+    if @question.tags == after_tags && @question.body_markdown == params[:question][:body_markdown] &&
+       @question.title == params[:question][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
+      return redirect_to question_path(@question)
+    end
+
     PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
                             after: params[:question][:body_markdown], comment: params[:edit_comment],
                             before_title: @question.title, after_title: params[:question][:title],
@@ -91,6 +98,12 @@ class QuestionsController < ApplicationController
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown
                       params[:question][:body_markdown]
                     end
+
+    if @question.tags_cache == new_tags_cache && @question.body_markdown == params[:question][:body_markdown] &&
+       @question.title == params[:question][:title]
+      flash[:danger] = "No changes were saved because you didn't edit the post."
+      return redirect_to question_path(@question)
+    end
 
     updates = {
       post: @question,
@@ -123,6 +136,10 @@ class QuestionsController < ApplicationController
       redirect_to(question_path(@question)) && return
     end
 
+    if @question.answer_count.positive? && @question.answers.any? { |a| a.score >= 0.5 }
+      flash[:danger] = 'This question cannot be deleted because it has answers.'
+      redirect_to(question_path(@question)) && return
+    end
     if @question.deleted
       flash[:danger] = "Can't delete a deleted question."
       redirect_to(question_path(@question)) && return

@@ -19,7 +19,7 @@
     (<%= report.community_id || 'nil' %>)<br/>
 
     <strong><%= t('g.user').capitalize %>:</strong>
-    <%= report.user&.username || '(anon)' %>
+    <%= report.user&.rtl_safe_username || '(anon)' %>
     (<%= report.user_id || 'nil' %>)<br/>
 
     <strong>UUID:</strong>

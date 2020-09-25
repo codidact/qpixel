@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_29_235149) do
+ActiveRecord::Schema.define(version: 2020_09_10_103140) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -423,10 +423,19 @@ ActiveRecord::Schema.define(version: 2020_08_29_235149) do
     t.string "rejected_comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "before_title"
+    t.text "before_body"
+    t.text "before_body_markdown"
+    t.string "before_tags_cache"
     t.index ["community_id"], name: "index_suggested_edits_on_community_id"
     t.index ["decided_by_id"], name: "index_suggested_edits_on_decided_by_id"
     t.index ["post_id"], name: "index_suggested_edits_on_post_id"
     t.index ["user_id"], name: "index_suggested_edits_on_user_id"
+  end
+
+  create_table "suggested_edits_before_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "suggested_edit_id", null: false
+    t.bigint "tag_id", null: false
   end
 
   create_table "suggested_edits_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

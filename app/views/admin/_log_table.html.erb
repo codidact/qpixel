@@ -14,7 +14,7 @@
     <tr>
       <td><%= log.log_type.humanize %></td>
       <td><%= log.event_type.humanize %></td>
-      <td><%= log.user.present? ? link_to(log.user.username, user_path(log.user)) : '' %></td>
+      <td><%= log.user.present? ? link_to(log.user.rtl_safe_username, user_path(log.user)) : '' %></td>
       <td>
         <% if log.related.present? %>
           <%= log.related_type %> #<%= log.related_id %>

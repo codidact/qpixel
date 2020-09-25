@@ -2,7 +2,7 @@
   <%= render 'posts/markdown_script' %>
 <% end %>
 
-<h1>Warn or suspend <%= link_to @user.username, user_path(@user.id) %></h1>
+<h1>Warn or suspend <%= link_to @user.rtl_safe_username, user_path(@user.id), dir: 'ltr'%></h1>
 
 <div class="notice is-warning">
     <p>Use the warning tool only against users who have violated the site rules. Prefer other measurements, such as friendly asking the user to stop certain behaviors in a comment.</p>
@@ -31,7 +31,7 @@
     <div class="widget--body">
         <div class="h-p-4">
             <p class="is-lead">Review the generated message and add details. Do not add salutations or informations about possible suspensions, as they are generated automatically.</p>
-            
+
             <div class="js--warning-template-target">
                 <%= render 'shared/body_field', f: f, field_name: :body, field_label: 'Body' %>
                 <div class="post-preview"></div>

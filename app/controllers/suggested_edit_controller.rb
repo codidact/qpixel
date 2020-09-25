@@ -23,11 +23,14 @@ class SuggestedEditController < ApplicationController
     if @post.question? || @post.article?
       opts.merge(before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags)
     end
-    PostHistory.post_edited(@post, @edit.user, **opts)
+
+    before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
+               before_tags: @post.tags.to_a, before_title: @post.title }
 
     if @post.update(applied_details)
-      @edit.update(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
-                                                  decided_by: current_user, updated_at: DateTime.now)
+      @edit.update(before.merge(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
+                                decided_by: current_user, updated_at: DateTime.now))
+      PostHistory.post_edited(@post, @edit.user, **opts)
       flash[:success] = 'Edit approved successfully.'
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) })
@@ -38,11 +41,11 @@ class SuggestedEditController < ApplicationController
       elsif @post.article?
         render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share, id: @post.id) })
       else
-        render(json: { status: 'error', redirect_url: 'Could not approve suggested edit.' }, status: 400)
+        render(json: { status: 'error', message: 'Could not approve suggested edit.' }, status: 400)
       end
     else
-      render(json: { status: 'error', redirect_url: 'There are issues with this suggested edit. It does not fulfil' \
-                                     ' the post criteria. Reject and make the changes yourself.' }, status: 400)
+      render json: { status: 'error',
+                     message: @post.errors.full_messages.join(', ') }, status: 400
     end
   end
 
@@ -95,14 +98,18 @@ class SuggestedEditController < ApplicationController
         body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
-        last_activity_by: @edit.user
+        last_activity_by: @edit.user,
+        last_edited_at: DateTime.now,
+        last_edited_by_id: @edit.user
       }.compact
     elsif @post.answer?
       {
         body: @edit.body,
         body_markdown: @edit.body_markdown,
         last_activity: DateTime.now,
-        last_activity_by: @edit.user
+        last_activity_by: @edit.user,
+        last_edited_at: DateTime.now,
+        last_edited_by_id: @edit.user
       }.compact
     end
   end

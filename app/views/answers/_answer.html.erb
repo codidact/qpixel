@@ -7,7 +7,7 @@
     <p><a href="/questions/<%= answer.parent.id %>"><%= answer.parent.title %></a></p>
     <p>
       Answered <span title="<%= answer.created_at %>" data-livestamp="<%= answer.created_at.to_time.iso8601 %>"><%= answer.created_at %></span>
-      by <a href="/users/<%= answer.user.id %>"><%= answer.user.username %></a>
+      by <a dir="ltr" href="/users/<%= answer.user.id %>"><%= answer.user.rtl_safe_username %></a>
     </p>
   </div>
   <span class="clearfix"></span>

@@ -104,7 +104,7 @@ Rails.application.routes.draw do
   post   'posts/:id/lock',                 to: 'posts#lock', as: :post_lock
   post   'posts/:id/unlock',               to: 'posts#unlock', as: :post_unlock
   post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
-  
+
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
   post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
