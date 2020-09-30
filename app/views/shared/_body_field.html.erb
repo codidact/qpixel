@@ -4,18 +4,21 @@
     <span class="form-caption"><%= yield %></span>
   <% end %>
   <div class="widget">
+    <% value = {} %>
     <% classes = 'form-element post-field js-post-field widget--body h-b-0 h-m-0' %>
-    <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
-    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
-    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
-    <%
-      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
-      value = [[post.created_at || Date.new(2000, 1, 1), {}], [post.updated_at || Date.new(2000, 1, 1), {}],
-               [saved_at || Date.new(2001, 1, 1), { value: RequestContext.redis.get(key),
-                                                    class: classes + ' js-draft-loaded' }]].max_by do |x|
-        x[0]
-      end[1]
-    %>
+    <% unless post.nil? %>
+      <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
+      <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+      <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+      <%
+        # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+        value = [[post.created_at || Date.new(2000, 1, 1), {}], [post.updated_at || Date.new(2000, 1, 1), {}],
+                 [saved_at || Date.new(2001, 1, 1), { value: RequestContext.redis.get(key),
+                                                      class: classes + ' js-draft-loaded' }]].max_by do |x|
+          x[0]
+        end[1]
+      %>
+    <% end %>
     <%= render 'shared/markdown_tools' %>
     <%= f.text_area field_name, { class: classes, rows: 15, placeholder: 'Start typing your post...' }.merge(value) %>
     <%= render 'posts/mdhint' %>
