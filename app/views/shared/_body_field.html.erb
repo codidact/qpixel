@@ -6,7 +6,7 @@
   <div class="widget">
     <% value = {} %>
     <% classes = 'form-element post-field js-post-field widget--body h-b-0 h-m-0' %>
-    <% unless post.nil? %>
+    <% if defined? post %>
       <% key = "saved_post.#{current_user&.id}.#{request.path}" %>
       <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
       <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>

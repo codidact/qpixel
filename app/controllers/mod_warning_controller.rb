@@ -40,7 +40,7 @@ class ModWarningController < ApplicationController
 
     suspension_end = DateTime.now + suspension_duration.days
 
-    is_suspension = !!params[:mod_warning][:is_suspension]
+    is_suspension = params[:mod_warning][:is_suspension] == "true"
 
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: is_suspension,
