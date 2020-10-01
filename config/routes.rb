@@ -212,6 +212,7 @@ Rails.application.routes.draw do
   get   'warning/log/:user_id',            to: 'mod_warning#log', as: :mod_warning_log
   get   'warning/new/:user_id',            to: 'mod_warning#new', as: :new_mod_warning
   post  'warning/new/:user_id',            to: 'mod_warning#create', as: :create_mod_warning
+  post  'warning/lift/:user_id',            to: 'mod_warning#lift', as: :lift_mod_warning
 
   get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
