@@ -67,7 +67,7 @@ class ModWarningController < ApplicationController
     AuditLog.moderator_audit(event_type: 'warning_lift', related: @warning, user: current_user,
                              comment: "<<Warning #{@warning.attributes_print} >>")
 
-    flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' + \
+    flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' \
                       'explaining your reasons.'
     redirect_to mod_warning_log_path(@user)
   end
