@@ -112,6 +112,11 @@ class AnswersController < ApplicationController
       redirect_to(question_path(@answer.parent)) && return
     end
 
+    if @answer.deleted_by.is_moderator && !current_user.is_moderator
+      flash[:danger] = 'You cannot undelete this post deleted by a moderator.'
+      redirect_to(question_path(@answer.parent)) && return
+    end
+
     if @answer.update(deleted: false, deleted_at: nil, deleted_by: nil,
                       last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@answer, current_user)
