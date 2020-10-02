@@ -114,6 +114,11 @@ class ArticlesController < ApplicationController
       redirect_to article_path(@article) && return
     end
 
+    if @article.deleted_by.is_moderator && !current_user.is_moderator
+      flash[:danger] = 'You cannot undelete this post deleted by a moderator.'
+      redirect_to(article_path(@article)) && return
+    end
+
     if @article.update(deleted: false, deleted_at: nil, deleted_by: nil,
                        last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@article, current_user)

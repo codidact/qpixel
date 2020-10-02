@@ -30,10 +30,15 @@
             <td>
                 <% if w.suspension_active? %>
                 <strong>Current</strong>
+                <%= form_tag lift_mod_warning_url(@user.id), method: :post do %>
+                    <%= submit_tag '(lift)', class: 'link is-red' %>
+                <% end %>
                 <% elsif w.active %>
                 <strong>Unread</strong>
-                <% else %>
+                <% elsif w.read %>
                 Read
+                <% else %>
+                <strong>Lifted</strong>
                 <% end %>
             </td>
         </tr>
