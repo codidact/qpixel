@@ -187,7 +187,7 @@ class AdvertisementController < ApplicationController
       icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
     else
       icon = Magick::ImageList.new
-      icon_path_content = open(icon_path).read
+      icon_path_content = URI.open(icon_path).read
       icon.from_blob(icon_path_content)
     end
     icon
