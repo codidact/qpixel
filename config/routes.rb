@@ -222,6 +222,8 @@ Rails.application.routes.draw do
     get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
+  
+  get    'feature/keyboard-tools',           to: 'application#keyboard_tools', as: :keyboard_tools
 
   scope 'ca' do
     root                                   to: 'advertisement#index', as: :ads
