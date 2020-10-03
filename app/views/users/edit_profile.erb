@@ -52,6 +52,12 @@
   <%= f.submit 'Save', class: 'button is-very-large is-filled' %>
 <% end %>
 
+<h2>Preferences</h2>
+<p>You can edit the following preferences:</p>
+<ul>
+  <li><a href="<%= keyboard_tools_path %>">Enable or disable keyboard tools</a></li>
+</ul>
+
 <% unless SiteSetting['AllowContentTransfer'] %>
   <h2>Link with Stack Exchange</h2>
   <div class="notice is-warning">
