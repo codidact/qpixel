@@ -55,7 +55,7 @@
 <h2>Preferences</h2>
 <p>You can edit the following preferences:</p>
 <ul>
-  <li><a href="<%= keyboard_tools_path %>">Enable or disable keyboard tools</a></li>
+  <li><%= link_to 'Enable or disable keyboard shortcuts', keyboard_tools_path %></li>
 </ul>
 
 <% unless SiteSetting['AllowContentTransfer'] %>

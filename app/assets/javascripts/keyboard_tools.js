@@ -1,13 +1,14 @@
 $(() => {
     const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
-    const keyboardToolsAreEnabled = !!window.localStorage.getItem('keyboard__enable');
+    const keyboardToolsAreEnabled = !!window.localStorage.getItem("keyboard__enable");
 
-    $(".js-keyboard_tools-status").text(keyboardToolsAreEnabled ? 'activated' : 'inactive');
+    $(".js-keyboard_tools-status").text(keyboardToolsAreEnabled ? "activated" : "inactive");
     $(".js-keyboard_tools-toggle").click(() => {
-        if (window.localStorage.getItem('keyboard__enable')) {
-            window.localStorage.removeItem('keyboard__enable');
-        } else {
-            window.localStorage.setItem('keyboard__enable', true);
+        if (window.localStorage.getItem("keyboard__enable")) {
+            window.localStorage.removeItem("keyboard__enable");
+        }
+        else {
+            window.localStorage.setItem("keyboard__enable", true);
         }
         window.location.reload();
     })
