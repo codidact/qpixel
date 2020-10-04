@@ -19,7 +19,9 @@ class CommentsController < ApplicationController
       match = @comment.content.match(/@(?<name>\S+) /)
       if match && match[:name]
         user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
-        user&.create_notification('You were mentioned in a comment', comment_link(@comment))
+        unless user&.id == @comment.post.user_id
+          user&.create_notification('You were mentioned in a comment', comment_link(@comment))
+        end
       end
 
       render json: { status: 'success',
