@@ -14,14 +14,27 @@ class CommentsController < ApplicationController
 
     @comment = Comment.new comment_params.merge(user: current_user)
 
-    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id || \
-           current_user.privilege?('unrestricted')
-      AuditLog.rate_limit_log(event_type: 'comment', related: @post, user: current_user,
-                              comment: "limit: only comment on own posts\n\ncomment:\n#{@comment.attributes_print}")
+    recent_comments = Comment.where(created_at: 24.hours.ago..Time.now, user: current_user).where \
+                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
+                             .where.not(post: Post.where(user_id: current_user.id)).count
+    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
-      new_user_comment_block_msg = 'New users can only comment on their own posts and on answers to them.'
-      render json: { status: 'failed', message: new_user_comment_block_msg }, status: 400
-      return
+    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id
+      if recent_comments >= max_comments_per_day
+        comment_limit_msg = 'You have used your daily comment limit of ' + recent_comments.to_s + ' comments.' \
+                            ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
+                            ' to own posts are exempt.'
+
+        if recent_comments.zero? && !current_user.privilege?('unrestricted')
+          comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
+        end
+
+        AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
+                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
+
+        render json: { status: 'failed', message: comment_limit_msg }, status: 403
+        return
+      end
     end
 
     if @comment.save
