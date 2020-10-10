@@ -1,4 +1,5 @@
 require 'rmagick'
+require 'open-uri'
 
 # Necessary due to rmagick
 # rubocop:disable Metrics/ClassLength
@@ -100,7 +101,7 @@ class AdvertisementController < ApplicationController
           self.fill = 'black'
         end
       else
-        icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+        icon = community_icon(icon_path)
         icon.resize_to_fit!(400, 200)
         ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
       end
@@ -181,6 +182,17 @@ class AdvertisementController < ApplicationController
 
   private
 
+  def community_icon(icon_path)
+    if icon_path.start_with? '/assets/'
+      icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+    else
+      icon = Magick::ImageList.new
+      icon_path_content = URI.open(icon_path).read
+      icon.from_blob(icon_path_content)
+    end
+    icon
+  end
+
   def select_random_post(category = nil)
     if category.nil?
       category = Category.where(use_for_advertisement: true)
@@ -235,7 +247,7 @@ class AdvertisementController < ApplicationController
           self.fill = '#4B68FF'
         end
       else
-        icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+        icon = community_icon(icon_path)
         icon.resize_to_fit!(175, 75)
         ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end
@@ -312,7 +324,7 @@ class AdvertisementController < ApplicationController
           self.fill = '#4B68FF'
         end
       else
-        icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+        icon = community_icon(icon_path)
         icon.resize_to_fit!(120, 50)
         ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end

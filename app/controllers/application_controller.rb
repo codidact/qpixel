@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
     render layout: 'without_sidebar'
   end
 
+  def keyboard_tools; end
+
   protected
 
   def configure_permitted_parameters

@@ -1,8 +1,8 @@
 class ModWarningController < ApplicationController
-  before_action :verify_moderator, only: [:log, :new, :create]
+  before_action :verify_moderator, only: [:log, :new, :create, :lift]
 
   before_action :set_warning, only: [:current, :approve]
-  before_action :set_user, only: [:log, :new, :create]
+  before_action :set_user, only: [:log, :new, :create, :lift]
 
   def current
     render layout: 'without_sidebar'
@@ -16,7 +16,7 @@ class ModWarningController < ApplicationController
       return render 'current', layout: 'without_sidebar'
     end
 
-    @warning.update(active: false)
+    @warning.update(active: false, read: true)
     redirect_to(root_path)
   end
 
@@ -40,11 +40,11 @@ class ModWarningController < ApplicationController
 
     suspension_end = DateTime.now + suspension_duration.days
 
-    is_suspension = !!params[:mod_warning][:is_suspension]
+    is_suspension = params[:mod_warning][:is_suspension] == 'true'
 
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: is_suspension,
-                              suspension_end: suspension_end, active: true)
+                              suspension_end: suspension_end, active: true, read: false)
     if @warning.save
       if is_suspension
         @user.community_user.update(is_suspended: is_suspension, suspension_end: suspension_end,
@@ -55,6 +55,21 @@ class ModWarningController < ApplicationController
     else
       render :new
     end
+  end
+
+  def lift
+    @warning = ModWarning.where(community_user: @user.community_user, active: true).last
+    return not_found if @warning.nil?
+
+    @warning.update(active: false, read: false)
+    @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
+
+    AuditLog.moderator_audit(event_type: 'warning_lift', related: @warning, user: current_user,
+                             comment: "<<Warning #{@warning.attributes_print} >>")
+
+    flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' \
+                      'explaining your reasons.'
+    redirect_to mod_warning_log_path(@user)
   end
 
   private

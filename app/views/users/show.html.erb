@@ -72,7 +72,7 @@
               <a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a>
               <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
               <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a>
+              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
               <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
             </div>
             <div class="h-m-t-6">
