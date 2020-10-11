@@ -64,19 +64,19 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should prevent users from editing comments from another' do
     sign_in users(:editor) # Editor only applies to main posts, not comments.
     patch :update, params: { id: comments(:one).id }
-    assert_response(401)
+    assert_response(403)
   end
 
   test 'should prevent users from deleting comments from another' do
     sign_in users(:editor)
     delete :destroy, params: { id: comments(:one).id }
-    assert_response(401)
+    assert_response(403)
   end
 
   test 'should prevent users from undeleting comments from another' do
     sign_in users(:editor)
     delete :undelete, params: { id: comments(:one).id }
-    assert_response(401)
+    assert_response(403)
   end
 
   test 'should allow moderators to update comment' do
