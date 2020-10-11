@@ -1,5 +1,7 @@
 <% content_for :title, "User #{@user.rtl_safe_username}" %>
 
+<h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
+
 <% if @user.community_user.suspended? %>
   <div class="notice is-danger h-m-b-4">
   <% if @user.community_user.suspension_public_comment.nil? %>
@@ -12,7 +14,7 @@
   </div>
 <% end %>
 
-<div class="tabs">
+<div class="tabs is-classic-tabs">
   <%= link_to user_path(@user), class: "tabs--item is-active" do %>
       <i class="fas fa-user"></i> Profile
     <% end %>
@@ -34,9 +36,7 @@
 
 <div class="grid">
   <div class="grid--cell is-9-lg is-12">
-    <div class="h-p-6 h-p-t-2">      
-      <h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
-
+    <div class="h-p-6 h-p-t-2">
       <div class="profile-text">
       <% if @user.website.present? || @user.twitter.present? %>
       <p>
@@ -180,6 +180,7 @@
           <%= @user.votes.count %>
         </td>
       </tr>
+      <% if @user.id == current_user.id || current_user.is_admin %>
       <tr>
         <td class="has-color-tertiary-600">
           <svg width="1em" height="0.67em" viewbox="0 0 100 50">
@@ -214,8 +215,8 @@
         <td colspan="2">on Article</td>
         <td><%= votes_by_post_type[Article.post_type_id] || 0 %></td>
       </tr>
+      <% end %>
     </table>
-
     <br>
     <table class="table is-full-width">
       <tr>
