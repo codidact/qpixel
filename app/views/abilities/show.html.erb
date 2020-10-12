@@ -118,7 +118,7 @@
         <p class="h-m-0"><i class="fas fa-fw fa-check h-c-green-600"></i> <%= @user.username %> has already earned this ability.</p>
         <% end %>
     </div>
-    <% if @your_ability&.is_suspended && (@user.id == current_user&.id || current_user.is_moderator) %>
+    <% if @your_ability&.is_suspended && (@user.id == current_user&.id || current_user&.is_moderator) %>
     <div class="widget--body">
         <div class="notice is-danger">
             <% if @your_ability.suspension_end.nil? %>
