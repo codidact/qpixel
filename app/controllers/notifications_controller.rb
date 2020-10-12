@@ -16,8 +16,8 @@ class NotificationsController < ApplicationController
 
     unless @notification.user == current_user
       respond_to do |format|
-        format.html { render template: 'errors/forbidden', status: 401 }
-        format.json { render json: nil, status: 401 }
+        format.html { render template: 'errors/forbidden', status: 403 }
+        format.json { render json: nil, status: 403 }
       end
       return
     end

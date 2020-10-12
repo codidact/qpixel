@@ -115,7 +115,7 @@ class QuestionsControllerTest < ActionController::TestCase
   test 'should require viewdeleted privileges to view deleted question' do
     sign_in users(:editor)
     get :show, params: { id: posts(:deleted).id }
-    assert_response(401)
+    assert_response(403)
   end
 
   test 'should close question' do
