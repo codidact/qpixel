@@ -1,0 +1,26 @@
+<div class="nat">
+    <img src="/assets/birthday.svg" alt="">
+    <h1>Codidact Birthday Challenge</h1>
+    <h2>Ranking</h2>
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>User</th>
+            <th>Posts</th>
+            <th>Prize?</th>
+        </tr>
+        <% @ranking.each_with_index do |u, id| %>
+        <tr>
+            <td><%= id + 1 %></td>
+            <td><a href="<%= user_path(u) %>"><span dir="ltr"><%= u.rtl_safe_username %></span></a></td>
+            <td><%= u.post_count %></td>
+            <td title="<%= (id < 3) ? 'T-Shirt + Stickers' : ((id < 50) ? 'Stickers' : '' ) %>"><%= (id < 3) ? '👕🎫' : ((id < 50) ? '🎫' : '' ) %></td>
+        </tr>
+        <% end %>
+    </table>
+    <p>(👕: eligible for a t-shirt; 🎫: eligible for a set of stickers)</p>
+</div>
+
+<script>
+    document.body.parentNode.classList.add('nat-page');
+</script>

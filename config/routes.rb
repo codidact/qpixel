@@ -245,6 +245,7 @@ Rails.application.routes.draw do
 
   scope 'birthday' do
     root                                   to: 'birthday#index', as: :birthday
+    get 'ranking',                         to: 'birthday#ranking', as: :birthday_ranking
   end
 
   get   '403',                             to: 'errors#forbidden'

@@ -19,6 +19,12 @@
     font-size: 3em;
     text-align: center;
 }
+
+.nat h2 {
+    font-size: 2em;
+    font-style: italic;
+    text-align: center;
+}
 .nat img {
     max-width: 200px;
     margin: 0 auto;
@@ -46,4 +52,16 @@
 }
 .nat p.h-ta-center {
     margin-top: 1em;
+}
+
+.nat table {
+    max-width: 600px;
+    width: 100%;
+    margin: 2rem auto;
+    background-color: #fff;
+    font-size: 1.25em;
+}
+.nat table th,
+.nat table td {
+    padding: 0.5em;
 }
