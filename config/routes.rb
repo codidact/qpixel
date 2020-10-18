@@ -243,6 +243,11 @@ Rails.application.routes.draw do
     get 'end',                             to: 'tour#end', as: :tour_end
   end
 
+  scope 'birthday' do
+    root                                   to: 'birthday#index', as: :birthday
+    get 'ranking',                         to: 'birthday#ranking', as: :birthday_ranking
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
