@@ -5,6 +5,10 @@ $(() => {
     const max = $el.attr('data-max');
 
     $target.on('keyup cc-reset', (ev) => {
+      character_count(ev);
+    });
+
+    function character_count(ev) {
       const $tgt = $(ev.target);
       const count = $tgt.val().length;
       const text = `${count} / ${max}`;
@@ -30,6 +34,14 @@ $(() => {
         }
       }
       $el.text(text);
+    }
+
+    $target.bind('paste', function(e) {
+      setTimeout(function() { character_count(e); }, 100);
+    });
+
+    $target.bind('cut', function(e) {
+      setTimeout(function() { character_count(e); }, 100);
     });
 
     $target.parents('form').on('ajax:success', ev => {
