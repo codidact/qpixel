@@ -36,12 +36,14 @@ $(() => {
       $el.text(text);
     }
 
-    $target.bind('paste', function(e) {
-      setTimeout(function() { character_count(e); }, 100);
-    });
-
-    $target.bind('cut', function(e) {
-      setTimeout(function() { character_count(e); }, 100);
+    $target.on('cut paste', function(e) {
+      //   This `millis` constant is not optimal, I just picked a number which is small enough for me to almost not
+      // notice the timed wait (without which this change stops working!), while getting the work done. I guess this
+      // hardwired timed wait might potentially not be slow enough for a browser running in a very CPU-busy client!!!
+      // Here would use a media query on "system load" and choose a `millis` value safe enough so that the code in
+      // `character_count` never gets run ahead of when it's supposed to.
+      const millis = 100;
+      setTimeout(function() { character_count(e); }, millis);
     });
 
     $target.parents('form').on('ajax:success', ev => {
