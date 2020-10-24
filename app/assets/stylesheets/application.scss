@@ -139,8 +139,16 @@ hr {
   content: '[';
 }
 
+div.post-preview .footnote-ref a::before {
+    content: '';
+}
+
 .footnote-ref a::after {
   content: ']';
+}
+
+div.post-preview .footnote-ref a::after {
+    content: '';
 }
 
 .footnotes-sep + .footnotes {
