@@ -13,7 +13,7 @@ jobs:
     - name: Check if forked
       run: |
         if [ -z ${GITHUB_BASE_REF+x} ]; then IS_FORK=false; else IS_FORK=true; fi
-        echo "::set-env name=IS_FORK::${IS_FORK}"
+        echo "{name}={IS_FORK::${IS_FORK}} >> $GITHUB_ENV"
         echo "Is the pull request a fork? ${IS_FORK}"
 
     - name: Set up SSH key
