@@ -23,7 +23,7 @@
           <% notice = SiteSetting['FirstVisitGuidance'] %>
           <% if notice.present? %>
             <div class="notice js-first-visit-notice">
-              <button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close">
+              <button type="button" class="button is-close-button" data-dismiss=".notice.js-first-visit-notice" aria-label="Close" id="fvn-dismiss">
                 <span aria-hidden="true">&times;</span>
               </button>
               <%= raw(sanitize(notice, scrubber: scrubber)) %>
