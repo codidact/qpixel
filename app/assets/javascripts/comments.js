@@ -50,6 +50,14 @@ $(() => {
     // no need to do anything else at this point in this block, until proven otherwise.
   });
 
+  $('.comment-form').find('input[value="Nope"]').on('click', function (data) {
+      const $input_button = $(data.target);
+      const $div_actions = $input_button.parent();
+      const $div_form_group_horizontal = $div_actions.parent();
+      const $form_js_comment_form = $div_form_group_horizontal.parent();
+      $form_js_comment_form.hide();
+  });
+
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();
 
