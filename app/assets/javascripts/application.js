@@ -136,8 +136,8 @@ $(document).on('ready', function() {
   });
 
   if (document.cookie.indexOf('dismiss_fvn') === -1 ) {
-    document.getElementById("fvn-dismiss").onclick = function() {
+    $('#fvn_dismiss').on('click', () => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
-    }
+    });
   };
 });
