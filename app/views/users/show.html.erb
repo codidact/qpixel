@@ -123,7 +123,7 @@
   votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
 %>
 
-<h2 class="user-profile-heading">Votes</h2>
+<h2 class="user-profile-heading">Casted votes</h2>
 <p><span dir="ltr"><%= @user.rtl_safe_username %></span> has cast <%= pluralize(@user.votes.count, "vote") %></p>
 <table class="table">
   <tr>
@@ -190,6 +190,7 @@
   if user_recv_votes_ct > 0
     to_show = how_many < user_recv_votes_ct ? how_many : user_recv_votes_ct
 %>
+<h2 class="user-profile-heading">Received votes</h2>
 <table class="table"><tbody>
   <tr><th>Date</th><th>Community</th><th>Category</th><th>Title</th><th>Type</th></tr>
 <%
