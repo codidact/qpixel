@@ -161,3 +161,49 @@
     <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
   </tr>
 </table>
+<%
+  if @user.votes.count > 0
+    len = @user.votes.count
+    to_show = 10 < len ? 10 : len
+%>
+<table class="table"><tbody>
+  <tr><th>Date</th><th>Community</th><th>Type</th></tr>
+<%
+    for i in 0 .. to_show - 1
+      vote = @user.votes[i]
+      vote_date = vote.created_at.strftime("%b %d, %Y")
+%>
+  <tr>
+    <td><%= vote_date %></td>
+    <td><%= vote.community.name %></td>
+<%
+      if vote.vote_type == 1
+%>
+    <td class="has-color-tertiary-600">
+      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+        <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+      </svg>
+    </td>
+<%
+      elsif vote.vote_type == -1  # if vote.vote_type == 1 ...
+%>
+    <td class="has-color-tertiary-600">
+      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+        <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+      </svg>
+    </td>
+<%
+      else  # if vote.vote_type == 1 ... elsif vote.vote_type == -1 ...
+%>
+    <td>?</td>
+<%
+      end  # if vote.vote_type == 1 ... elsif vote.vote_type == -1 ... else ...
+%>
+  </tr>
+<%
+    end  # for vote in 0 .. to_show - 1 ...
+%>
+</tbody></table>
+<%
+  end  # if @user.votes.count > 0 ...
+%>
