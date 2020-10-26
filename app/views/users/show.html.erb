@@ -162,21 +162,48 @@
   </tr>
 </table>
 <%
-  user_recv_votes = Vote.where('recv_user_id': @user.id).last(10)
+  how_many = 10
+
+  user_recv_votes = Vote.where('recv_user_id': @user.id).last(how_many)
   user_recv_votes_ct = user_recv_votes.count
+
+  post_ids = []
+  for i in 0 .. user_recv_votes_ct - 1
+    post_ids << user_recv_votes[i].post_id
+  end
+
+  # Repeats the `LIMIT` clause (`.last(how_many)`) as a failsafe limit.
+  posts = Post.where(id: post_ids).last(how_many)
+  posts_ct = posts.count
+
+  categories_ids = []
+  for i in 0 .. posts_ct - 1
+    categories_ids << posts[i].category_id
+  end
+
+  # Repeats the `LIMIT` clause (`.last(how_many)`) as a failsafe limit.
+  categories = Category.where(id: categories_ids).last(how_many)
+
+  categories_assocarray_by_id = {}
+  categories.each do |category| categories_assocarray_by_id[category.id] = category end
+
   if user_recv_votes_ct > 0
-    to_show = 10 < user_recv_votes_ct ? 10 : user_recv_votes_ct
+    to_show = how_many < user_recv_votes_ct ? how_many : user_recv_votes_ct
 %>
 <table class="table"><tbody>
-  <tr><th>Date</th><th>Community</th><th>Type</th></tr>
+  <tr><th>Date</th><th>Community</th><th>Category</th><th>Title</th><th>Type</th></tr>
 <%
     for i in 0 .. to_show - 1
       vote = user_recv_votes[i]
       vote_date = vote.created_at.strftime("%b %d, %Y")
+      post = posts[i]
+      category = categories_assocarray_by_id[post.category_id]
 %>
   <tr>
     <td><%= vote_date %></td>
     <td><%= vote.community.name %></td>
+    <td><%= category.name %></td>
+    <td><%= post.title == nil ? 'N/A' : post.title %></td>
 <%
       if vote.vote_type == 1
 %>
