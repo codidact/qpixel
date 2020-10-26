@@ -162,15 +162,16 @@
   </tr>
 </table>
 <%
-  if @user.votes.count > 0
-    len = @user.votes.count
-    to_show = 10 < len ? 10 : len
+  user_recv_votes = Vote.where('recv_user_id': @user.id).last(10)
+  user_recv_votes_ct = user_recv_votes.count
+  if user_recv_votes_ct > 0
+    to_show = 10 < user_recv_votes_ct ? 10 : user_recv_votes_ct
 %>
 <table class="table"><tbody>
   <tr><th>Date</th><th>Community</th><th>Type</th></tr>
 <%
     for i in 0 .. to_show - 1
-      vote = @user.votes[i]
+      vote = user_recv_votes[i]
       vote_date = vote.created_at.strftime("%b %d, %Y")
 %>
   <tr>
@@ -205,5 +206,5 @@
 %>
 </tbody></table>
 <%
-  end  # if @user.votes.count > 0 ...
+  end  # if user_recv_votes_ct > 0 ...
 %>
