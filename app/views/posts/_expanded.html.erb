@@ -200,7 +200,7 @@
               </a>
             <% end %>
             <% unless post.locked? %>
-              <% if check_your_post_privilege(post, 'flag_close') %>
+              <% if check_your_privilege('flag_close') %>
                 <% if is_question && !post.closed %>
                   <a href="#" class="close-dialog-link tools--item">
                     <i class="fa fa-lock"></i>
