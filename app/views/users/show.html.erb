@@ -180,7 +180,7 @@
           <%= @user.votes.count %>
         </td>
       </tr>
-      <% if @user.id == current_user.id || current_user.is_admin %>
+      <% if @user.id == current_user&.id || current_user&.is_admin %>
       <tr>
         <td class="has-color-tertiary-600">
           <svg width="1em" height="0.67em" viewbox="0 0 100 50">
