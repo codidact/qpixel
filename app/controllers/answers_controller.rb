@@ -81,7 +81,7 @@ class AnswersController < ApplicationController
   end
 
   def update_as_suggested_edit
-    return if check_edits_limit!
+    return if check_edits_limit! @answer
 
     if params[:answer][:body_markdown] == @answer.body_markdown
       flash[:danger] = "No changes were saved because you didn't edit the post."
