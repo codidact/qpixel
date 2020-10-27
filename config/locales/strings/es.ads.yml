@@ -1,0 +1,17 @@
+es:
+  ads:
+    advertisements: 'anuncios'
+    blurb_index: >
+      # es_ES
+      Puedes, si quieres, anunciar esta comunidad Codidact en tu página web personal o en otros sitios
+      (¡con el permiso de los proveedores!)
+    blurb_types: >
+      Hay tres tipos de anuncio disponibles:
+    image_link: 'Enlace a la imagen'
+    image_html: 'HTML de la imagen'
+    random_posts: 'Entradas aleatorias'
+    specific_post: 'Entrada específica'
+    random_from_cat: 'Aleatoria desde Categoría'
+    replace_x:
+      post: 'Reemplazar X con el ID de la entrada'
+      category: 'Reemplazar X con el ID de la categoría'

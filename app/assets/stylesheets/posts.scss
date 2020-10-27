@@ -14,7 +14,7 @@
 
 .post--container {
   max-width: 100%;
-  
+
   .grid--cell.is-flexible {
     flex-grow: 1;
     flex-shrink: 1;
@@ -75,8 +75,68 @@ h1 .badge.is-tag.is-master-tag {
 .post--title {
   display: flex;
   align-items: center;
+  flex-direction: column-reverse;
 
-  > .badge {
-    margin-left: 0.5em;
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row;
+
+    & > .badge {
+      margin-left: 0.5em;
+      display: flex;
+      align-items: center;
+
+      & > i {
+        margin-right: 0.2em;
+      }
+    }
+  }
+}
+
+.post--meta {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+
+  .post--tags, .post--author {
+    padding: 0.2em 0;
+  }
+
+  .post--author {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+  }
+
+  @media screen and (min-width: $screen-md) {
+    flex-direction: row-reverse;
+  }
+}
+
+.post--container {
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: $screen-sm) {
+    flex-direction: row;
+  }
+}
+
+.post--votes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  @media screen and (min-width: $screen-sm) {
+    flex-direction: column;
+  }
+}
+
+.post--content {
+  flex: 1;
+  word-break: break-word;
+
+  @media screen and (min-width: $screen-sm) {
+    max-width: calc(100% - 3em);
   }
 }

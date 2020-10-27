@@ -52,6 +52,13 @@
   help_category: $Moderator
 
 - post_type_id: <%= HelpDoc.post_type_id %>
+  title: Guidance on warnings and suspensions
+  body_markdown: $FILE posts/warnings.html
+  body: $FILE posts/warnings.html
+  doc_slug: warnings
+  help_category: $Moderator
+
+- post_type_id: <%= HelpDoc.post_type_id %>
   title: How to write good alt text
   body_markdown: $FILE posts/alt-text.html
   body: $FILE posts/alt-text.html
@@ -77,6 +84,13 @@
   body_markdown: $FILE posts/referencing.html
   body: $FILE posts/referencing.html
   doc_slug: referencing
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Guidance on available licenses on Codidact sites
+  body_markdown: $FILE posts/licenses.html
+  body: $FILE posts/licenses.html
+  doc_slug: licenses
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>

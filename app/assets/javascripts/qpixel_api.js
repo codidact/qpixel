@@ -1,5 +1,8 @@
 const validators = [];
 
+/** Counts notifications popped up at any time. */
+let popped_modals_ct = 0;
+
 window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
@@ -18,9 +21,31 @@ window.QPixel = {
    * @param message the message to show
    */
   createNotification: function(type, message) {
+    // Some messages include a date stamp, `append_date` governs that.
+    let append_date = false;
+    let message_with_date = message;
+    if (type === 'danger') {
+      if (popped_modals_ct > 0 ) {
+        /* At the time of writing, modals stack each one exactly on top of previous one, so repeating an errored action
+         * over and over again is going to create multiple error modals in the same exact place. While this happens this
+         * way, an user closing the error modal will not have an immediate visual action feedback if two or more error
+         * modals have been printed. A date is stamped in order to cope with that. Could be anything. Probablye a cycle
+         * of different emoji characters would be cuter while having the purpose met. But if so make sure character in
+         * step `i` is actually different than character in step `i + 1`. And then you could print an emoji just every
+         * time a modal is popped up, not just from the second one; removing `mesage_with_date`, using only `message`,
+         * and removing `append_date` and the different situations guarded by it. */
+        append_date = true;
+      }
+    }
+    if (append_date) {
+      message_with_date += ' (' + new Date(Date.now()).toISOString() + ')';
+    }
+    const span = '<span aria-hidden="true">&times;</span>';
+    const button = ('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close">' +
+        span + '</button>');
     $("<div></div>")
     .addClass("notice has-shadow-3 is-" + type)
-    .html('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>' + message+"</p>")
+    .html(button + '<p>' + message_with_date + '</p>')
     .css({
       'position': 'fixed',
       'top': "50px",
@@ -34,9 +59,11 @@ window.QPixel = {
     .on('click', function(ev) {
       $(this).fadeOut(200, function() {
         $(this).remove();
+        popped_modals_ct = popped_modals_ct > 0 ? (popped_modals_ct - 1) : 0;
       });
     })
     .appendTo(document.body);
+    popped_modals_ct += 1;
   },
 
   /**

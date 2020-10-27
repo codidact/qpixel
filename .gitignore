@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Docker environment (production)
+docker/env
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -38,3 +41,6 @@ deploy
 
 import-data/
 qpixel-import.tar.gz
+
+# Ignore Vim stuff.
+*.swp

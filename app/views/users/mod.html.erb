@@ -1,6 +1,6 @@
-<% content_for :title, "Moderator Tools: #{@user.username}" %>
+<% content_for :title, "Moderator Tools: #{@user.rtl_safe_username}" %>
 
-<h1>Moderator Tools: <%= link_to @user.username, user_path(@user) %></h1>
+<h1>Moderator Tools: <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr'%></h1>
 
 <div class="widget">
   <div class="widget--header">Links</div>
@@ -9,7 +9,7 @@
       <li><a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a></li>
       <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
       <li><%= link_to 'annotations on user', user_annotations_path(@user) %></li>
-      <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a></li>
+      <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a> <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %></li>
       <li><a href="/warning/new/<%= @user.id %>">warn or suspend user</a></li>
     </ul>
   </div>
@@ -31,18 +31,18 @@
       <% else %>
         <button class="button is-outlined js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">Grant Admin</button>
       <% end %>
-  
+
       <% if @user.is_global_moderator %>
         <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Revoke Global Moderator</button>
       <% else %>
         <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">Grant Global Moderator</button>
       <% end %>
-  
+
       <p>
         You can also grant global admin permissions, but they can only be revoked by direct database
         access, so be careful to whom you grant them.
       </p>
-  
+
       <% if @user.is_global_admin %>
         <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">Revoke Global Admin</button>
       <% else %>
@@ -65,16 +65,21 @@
 <% end %>
 
 <div class="widget">
-<div class="widget--header h-c-red-700"><span class="h-fw-bold">Danger Zone</span></div>
-<div class="widget--body">
-  <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
-    after initiating an action.</p>
-  <div class="delete-actions">
-    <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id), method: :delete, remote: true, class: "destroy-user button is-danger is-filled" %>
-    <% if admin? %>
-      <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id, transfer: SiteSetting['SoftDeleteTransferUser']), method: :delete, remote: true, class: "soft-delete  button is-danger is-filled" %>
-    <% end %>
+  <div class="widget--header h-c-red-700"><span class="h-fw-bold">Danger Zone</span></div>
+  <div class="widget--body">
+    <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
+      after initiating an action.</p>
+    <div class="delete-actions">
+      <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id),
+                  method: :delete, remote: true, class: 'destroy-user button is-danger is-filled' %>
+      <% if admin? %>
+        <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id,
+                                           transfer: SiteSetting['SoftDeleteTransferUser']),
+                    method: :delete, remote: true, class: 'soft-delete button is-danger is-filled' %>
+      <% end %>
+      <% if current_user.is_global_admin %>
+        <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
+      <% end %>
+    </div>
   </div>
-</div>
-
 </div>

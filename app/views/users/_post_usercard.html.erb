@@ -1,10 +1,10 @@
-<div class="post--author has-float-right has-color-tertiary">
+<div class="post--author has-color-tertiary">
   <div title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</div>
   <div>
     <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" class="has-float-left" />
     <div class="has-padding-1 has-float-left">
-      <%= link_to user_path(post.user) do %>
-        <%= post.user.username %>
+      <%= link_to user_path(post.user), dir: 'ltr' do %>
+        <%= post.user.rtl_safe_username %>
       <% end %>
       <span class="badge is-user-trust-level is-muted"><%= post.user.reputation %></span>
     </div>

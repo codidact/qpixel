@@ -1,12 +1,12 @@
 <table class="table is-full-width is-with-hover">
   <thead>
   <tr>
-    <th>Type</th>
-    <th>Event</th>
-    <th>User</th>
-    <th>Related</th>
-    <th>Comment</th>
-    <th>Created</th>
+    <th><%= t('g.type').capitalize %></th>
+    <th><%= t('g.event').capitalize %></th>
+    <th><%= t('g.user').capitalize %></th>
+    <th><%= t('g.related').capitalize %></th>
+    <th><%= t('g.comment').capitalize %></th>
+    <th><%= t('g.created').capitalize %></th>
   </tr>
   </thead>
   <tbody>
@@ -14,7 +14,7 @@
     <tr>
       <td><%= log.log_type.humanize %></td>
       <td><%= log.event_type.humanize %></td>
-      <td><%= log.user.present? ? link_to(log.user.username, user_path(log.user)) : '' %></td>
+      <td><%= log.user.present? ? link_to(log.user.rtl_safe_username, user_path(log.user)) : '' %></td>
       <td>
         <% if log.related.present? %>
           <%= log.related_type %> #<%= log.related_id %>
@@ -23,7 +23,7 @@
           <% end %>
         <% end %>
       </td>
-      <td><%= log.comment %></td>
+      <td><pre class="pre-wrap"><%= log.comment %></pre></td>
       <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
     </tr>
   <% end %>

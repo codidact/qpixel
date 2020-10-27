@@ -2,7 +2,7 @@
   <summary class="error-report-summary">
     <span class="details">
       <strong><%= report.klass %></strong><br/>
-      <span class="has-font-size-caption has-color-tertiary-600">at <%= report.request_uri %></span>
+      <span class="has-font-size-caption has-color-tertiary-600"><%= t('g.at') %> <%= report.request_uri %></span>
     </span>
     <span class="has-float-right has-color-tertiary-600">
       <%= report.created_at.iso8601 %>
@@ -14,12 +14,12 @@
   </p>
 
   <p>
-    <strong>Community:</strong>
+    <strong><%= t('g.community').capitalize %>:</strong>
     <%= report.community&.name || '(nil)' %>
     (<%= report.community_id || 'nil' %>)<br/>
 
-    <strong>User:</strong>
-    <%= report.user&.username || '(anon)' %>
+    <strong><%= t('g.user').capitalize %>:</strong>
+    <%= report.user&.rtl_safe_username || '(anon)' %>
     (<%= report.user_id || 'nil' %>)<br/>
 
     <strong>UUID:</strong>

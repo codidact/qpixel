@@ -1,6 +1,7 @@
 <h1>Important message</h1>
 
-<p class="is-lead">Hello <%= current_user.username %>, you have an important message from the <%= SiteSetting['SiteName'] %> community moderation team:</p>
+<p class="is-lead">Hello <span dir="ltr"><%= current_user.rtl_safe_username %></span>, you have an important message
+  from the <%= SiteSetting['SiteName'] %> community moderation team:</p>
 
 
 <% if @warning.is_suspension %>

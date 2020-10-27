@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
-  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup]
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup, :setup_save, :hellban]
 
   def index; end
 
@@ -45,16 +45,19 @@ class AdminController < ApplicationController
     end
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
-    flash[:success] = 'Your email is being sent.'
+    flash[:success] = t 'admin.email_being_sent'
     redirect_to admin_path
   end
 
   def audit_log
-    @logs = AuditLog.where.not(log_type: ['user_annotation', 'user_history'])
-                    .user_sort({ term: params[:sort], default: :created_at },
-                               age: :created_at, type: :log_type, event: :event_type,
-                               related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-                    .paginate(page: params[:page], per_page: 100)
+    @logs = if current_user.is_global_admin
+              AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
+            else
+              AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
+            end.user_sort({ term: params[:sort], default: :created_at },
+                          age: :created_at, type: :log_type, event: :event_type,
+                          related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
+            .paginate(page: params[:page], per_page: 100)
     render layout: 'without_sidebar'
   end
 
@@ -135,5 +138,12 @@ class AdminController < ApplicationController
                          comment: 'Site Settings updated via /admin/setup')
 
     render
+  end
+
+  def hellban
+    @user = User.find params[:id]
+    @user.block("user manually blocked by admin ##{current_user.id}")
+    flash[:success] = t 'admin.user_fed_stat'
+    redirect_back fallback_location: admin_path
   end
 end

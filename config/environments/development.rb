@@ -44,4 +44,16 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
 
   config.active_storage.service = :s3
+
+  # Ensure docker ip added to allowed, given that we are in container
+  if File.file?('/.dockerenv') == true
+    host_ip = `/sbin/ip route|awk '/default/ { print $3 }'`.strip
+    config.web_console.whitelisted_ips << host_ip
+
+    # ==> Configuration for :confirmable
+    # A period that the user is allowed to access the website even without
+    # confirming their account.
+    days = ENV['CONFIRMABLE_ALLOWED_ACCESS_DAYS'] || '0'
+    config.allow_unconfirmed_access_for = (days.to_i).days
+  end
 end

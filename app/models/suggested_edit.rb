@@ -4,9 +4,11 @@ class SuggestedEdit < ApplicationRecord
   belongs_to :user
 
   serialize :tags_cache, Array
+  serialize :before_tags_cache, Array
 
   belongs_to :decided_by, class_name: 'User', optional: true
   has_and_belongs_to_many :tags
+  has_and_belongs_to_many :before_tags, class_name: 'Tag', join_table: 'suggested_edits_before_tags'
 
   def pending?
     active

@@ -10,11 +10,19 @@ jobs:
 
     steps:
     - uses: nelonoel/branch-name@v1
+    - name: Check if forked
+      run: |
+        if [ -z ${GITHUB_BASE_REF+x} ]; then IS_FORK=false; else IS_FORK=true; fi
+        echo "::set-env name=IS_FORK::${IS_FORK}"
+        echo "Is the pull request a fork? ${IS_FORK}"
+
     - name: Set up SSH key
+      if: ${{ env.IS_FORK == 'false' }}
       run: |
         echo "${{ secrets.DEV_DEPLOY_KEY }}" > ~/deploy_key
         chmod 700 ~/deploy_key
-    
+
     - name: Run SSH deploy command
+      if: ${{ env.IS_FORK == 'false' }}
       run: |
         ssh -i ~/deploy_key -o StrictHostKeyChecking=no ubuntu@dev.codidact.org "cd /var/apps/qpixel ; bash -l ./deploy ${BRANCH_NAME}"

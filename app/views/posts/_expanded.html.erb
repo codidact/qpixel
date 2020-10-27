@@ -5,8 +5,10 @@
 <div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>" data-ckb-list-item data-ckb-item-type="post" data-ckb-post-id="<%= post.id %>">
   <% if is_top_level %>
     <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
-      <%= post.title %>
-      <%= is_question && post.closed ? "[closed]" : "" %>
+      <span class="post--title-text">
+        <%= post.title %>
+        <%= is_question && post.closed ? "[closed]" : "" %>
+      </span>
       <% category = defined?(@category) ? @category : post.category %>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
@@ -15,7 +17,7 @@
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
-    <div class="grid--cell">
+    <div>
       <div class="post--votes has-text-align-center" title="<%= post.score %>">
         <% existing_vote = my_vote(post) %>
         <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
@@ -39,7 +41,7 @@
       </div>
     </div>
 
-    <div class="grid--cell is-flexible has-padding-2">
+    <div class="post--content has-padding-2">
       <% if is_question && post.closed %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
@@ -47,7 +49,7 @@
             <% unless post.close_reason.nil? %>
               as <%= post.close_reason.name %>
             <% end %>
-            by <%= link_to post.closed_by.username, user_path(post.closed_by) %>
+            by <%= link_to post.closed_by.rtl_safe_username, user_path(post.closed_by), dir: 'ltr'%>
             on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% unless post.close_reason.nil? %>
@@ -68,7 +70,7 @@
       <% if post.deleted %>
         <div class="notice is-warning has-margin-2">
           <h3 class="has-font-weight-normal">
-            <strong>deleted</strong> by <%= link_to post.deleted_by.username, user_path(post.deleted_by) %>
+            <strong>deleted</strong> by <%= link_to post.deleted_by.rtl_safe_username, user_path(post.deleted_by), dir: 'ltr'%>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </h3>
           <% if post.deleted_by.id == post.user.id %>
@@ -93,40 +95,57 @@
           </div>
         <% elsif post.pending_suggested_edit.user.id == current_user&.id %>
           <div class="notice h-p-2">
-            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>">pending review</a></strong>.</p>
+            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
           </div>
         <% end %>
       <% end %>
 
       <div class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
-  
+
+        <% been_edited = post.last_edited_by_id != nil %>
+        <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
+
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
-          <% if has_tags %>
-            <div class="post--tags has-padding-2">
-              <% tag_set = post.tag_set %>
-              <% required_ids = post.category&.required_tag_ids %>
-              <% moderator_ids = post.category&.moderator_tag_ids %>
-              <% topic_ids = post.category&.topic_tag_ids %>
-              <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-                <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-                <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-                <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-                <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                            class: "badge is-tag #{required} #{topic} #{moderator}" %>
-              <% end %>
-            </div>
-          <% end %>
-          <% if post.license.present? %>
-            <div class="post--licensing has-margin-left-2">
-              <i class="fas fa-balance-scale" title="License"></i>
-              <%= link_to post.license.name, post.license.url %>
-            </div>
-          <% end %>
+          <div>
+            <% if has_tags %>
+              <div class="post--tags has-padding-2">
+                <% required_ids = post.category&.required_tag_ids %>
+                <% moderator_ids = post.category&.moderator_tag_ids %>
+                <% topic_ids = post.category&.topic_tag_ids %>
+                <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+                  <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+                  <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+                  <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+                  <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                              class: "badge is-tag #{required} #{topic} #{moderator}" %>
+                <% end %>
+              </div>
+            <% end %>
+            <% if post.license.present? || been_edited %>
+              <div class="post--licensing--edited has-margin-left-2">
+                <% if post.license.present? %>
+                  <i class="fas fa-balance-scale" title="License"></i>
+                  <%= link_to post.license.name, post.license.url %>
+                <% end %>
+                <% if post.license.present? && been_edited %>
+                  &nbsp;
+                <% end %>
+                <% if been_edited %>
+                  <i class="fa fa-pencil-alt" title="Edited"></i>
+                  <span class="has-color-tertiary">
+                  <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
+                  <% unless last_edited_by_self %>
+                    by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
+                  <% end %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
         <div class="has-clear-clear"></div>
-
 
         <div class="post--actions">
           <div class="tools">
@@ -260,7 +279,7 @@
               <% post.flags.where(handled_by_id: nil).each do |flag| %>
                 <div class="widget--body">
                   <div>
-                  <p><%= flag.reason %> &mdash; <a href="/users/<%= flag.user.id %>"><%= flag.user.username %></a></p>
+                  <p><%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
                   <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
                   <div class="has-float-right has-padding-1">
                     <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
@@ -275,7 +294,7 @@
         <% end %>
 
         <div class="post--status">
-  
+
           <% if post.att_source.present? %>
             <div class="notice has-margin-2">
               <p>
@@ -298,7 +317,7 @@
               <%= render 'comments/comment', comment: comment %>
             <% end %>
           </div>
-  
+
           <div class="post--comments-links has-margin-top-1">
             <% if comments.count > 5 %>
               <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">
@@ -318,7 +337,7 @@
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
                 <a href="#" class="js-add-comment">Add a comment</a>
-  
+
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
                   <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
@@ -330,10 +349,11 @@
                     </div>
                     <div class="actions">
                       <%= f.submit 'Post', class: 'button is-outlined' %>
+                      <input type="button" name="discard-comment" value="Discard" class="button is-danger is-outlined" />
                     </div>
                   </div>
                 <% end %>
-             <% end %>
+              <% end %>
             <% end %>
           </div>
         </div>

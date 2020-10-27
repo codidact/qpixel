@@ -1,4 +1,4 @@
-<% content_for :title, "Suspicious Votes for #{@user.username}" %>
+<% content_for :title, "Suspicious Votes for #{@user.rtl_safe_username}" %>
 
 <h1>Suspicious Voting Patterns</h1>
 
@@ -16,8 +16,8 @@
     <% @from.each do |sv| %>
       <% next unless sv.to_user.present? %>
       <tr>
-        <td><a href="/mod/votes/user/<%= @user.id %>"><%= @user.username %></a></td>
-        <td><a href="/mod/votes/user/<%= sv.to_user.id %>"><%= sv.to_user.username %></a></td>
+        <td><a dir="ltr" href="/mod/votes/user/<%= @user.id %>"><%= @user.rtl_safe_username %></a></td>
+        <td><a dir="ltr" href="/mod/votes/user/<%= sv.to_user.id %>"><%= sv.to_user.rtl_safe_username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
         <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv button is-outlined', method: :patch, remote: true %></td>
@@ -26,8 +26,8 @@
     <% @to.each do |sv| %>
       <% next unless sv.from_user.present? %>
       <tr>
-        <td><a href="/mod/votes/user/<%= sv.from_user.id %>"><%= sv.from_user.username %></a></td>
-        <td><a href="/mod/votes/user/<%= @user.id %>"><%= @user.username %></a></td>
+        <td><a dir="ltr" href="/mod/votes/user/<%= sv.from_user.id %>"><%= sv.from_user.rtl_safe_username %></a></td>
+        <td><a dir="ltr" href="/mod/votes/user/<%= @user.id %>"><%= @user.rtl_safe_username %></a></td>
         <td><%= sv.suspicious_count %>/<%= sv.total_count %></td>
         <td><%= (sv.total_count.to_f / sv.suspicious_count.to_f ** 2).round(5) %></td>
         <td><%= link_to "Done", url_for(controller: :suspicious_votes, action: :investigated, id: sv.id), class: 'sv button is-outlined', method: :patch, remote: true %></td>

@@ -1,5 +1,7 @@
 require 'net/http'
 class UsersController < ApplicationController
+  include Devise::Controllers::Rememberable
+
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
@@ -130,20 +132,12 @@ class UsersController < ApplicationController
     end
 
     before = @user.attributes_print
-    user_email = @user.email
-    user_ip = [@user.last_sign_in_ip]
+    @user.block('user destroyed')
 
-    if @user.current_sign_in_ip
-      user_ip << @user.current_sign_in_ip
-    end
-
-    BlockedItem.new(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
-                    automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
-    user_ip.compact.map do |ip|
-      BlockedItem.new(item_type: 'ip', value: ip, expires: 180.days.from_now,
-                      automatic: true, reason: 'user destroyed: #' + @user.id.to_s).save
-    end
     if @user.destroy!
+      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                        deleted: true, deleted_at: DateTime.now,
+                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
@@ -160,7 +154,7 @@ class UsersController < ApplicationController
     end
 
     relations = User.reflections
-    transfer_id = SiteSetting['SoftDeleteTransferId']
+    transfer_id = SiteSetting['SoftDeleteTransferUser']
     relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
       if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
         @user.send(name).destroy_all
@@ -278,12 +272,14 @@ class UsersController < ApplicationController
     Thread.new do
       RequestContext.community = community
 
-      auto_user.posts.each do |post|
-        post.reassign_user(current_user)
-        post.remove_attribution_notice!
+      ApplicationRecord.transaction do
+        auto_user.posts.each do |post|
+          post.reassign_user(current_user)
+          post.remove_attribution_notice!
+        end
+        auto_user.reload.destroy
+        current_user.update(transferred_content: true)
       end
-      auto_user.reload.destroy
-      current_user.update(transferred_content: true)
     end
     flash[:success] = 'Your content is being transferred to you.'
     redirect_to edit_user_profile_path
@@ -301,6 +297,7 @@ class UsersController < ApplicationController
       flash[:success] = 'You are now signed in.'
       user.update(login_token: nil, login_token_expires_at: nil)
       sign_in user
+      remember_me user
       AuditLog.user_history(event_type: 'mobile_login', related: user)
       redirect_to root_path
     else

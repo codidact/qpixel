@@ -124,7 +124,7 @@ hr {
 
 .modal {
   position: fixed !important;
-  z-index: 9999;
+  z-index: 8998;
 }
 
 .category-header--tabs-container {
@@ -139,8 +139,16 @@ hr {
   content: '[';
 }
 
+div.post-preview .footnote-ref a::before {
+    content: '';
+}
+
 .footnote-ref a::after {
   content: ']';
+}
+
+div.post-preview .footnote-ref a::after {
+    content: '';
 }
 
 .footnotes-sep + .footnotes {
@@ -199,4 +207,5 @@ pre {
 pre .hljs {
   padding: 0;
   background: inherit;
+  overflow-x: unset !important;
 }

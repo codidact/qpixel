@@ -9,4 +9,8 @@ class ModeratorController < ApplicationController
     @posts = Post.unscoped.where(community: @community, deleted: true).order('deleted_at DESC')
                  .paginate(page: params[:page], per_page: 50)
   end
+
+  def recent_comments
+    @comments = Comment.all.includes(:user, :post).order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+  end
 end

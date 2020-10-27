@@ -1,12 +1,28 @@
 $(() => {
-    _CodidactKeyboard = {
+    const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
+    const keyboardToolsAreEnabled = !!window.localStorage.getItem("keyboard__enable");
+
+    $(".js-keyboard_tools-status").text(keyboardToolsAreEnabled ? "activated" : "inactive");
+    $(".js-keyboard_tools-toggle").click(() => {
+        if (window.localStorage.getItem("keyboard__enable")) {
+            window.localStorage.removeItem("keyboard__enable");
+        }
+        else {
+            window.localStorage.setItem("keyboard__enable", true);
+        }
+        window.location.reload();
+    })
+
+    if (!keyboardToolsAreEnabled) return;
+
+    window._CodidactKeyboard = {
         state: 'home',
         selectedItem: null,
-        user_id: parseInt($('.header--item.is-complex.is-visible-on-mobile[href^="/users/"').attr('href').split("/").pop()),
+        user_id: !!userLink ? parseInt(userLink.split("/").pop(), 10) : null,
         is_mod: !!$('.header--item[href="/mod/flags"]').length,
         categories: function () {
-            category_elements = $("a.category-header--tab");
-            return_obj = {};
+            const category_elements = $("a.category-header--tab");
+            const return_obj = {};
             category_elements.each(function () {
                 return_obj[this.innerText] = this.getAttribute('href');
             });
@@ -14,7 +30,7 @@ $(() => {
         },
         dialog: function (msg) {
             _CodidactKeyboard.dialogClose();
-            d = document.createElement("div")
+            const d = document.createElement("div")
             d.classList.add("__keyboard_help");
             d.innerText = msg;
             document.body.appendChild(d);
@@ -40,26 +56,32 @@ $(() => {
 
     // Use html, so that all prior attempts to access keyup event have priority
     $("html").on("keyup", function (e) {
-        if (e.target != document.body) return;
-        if (e.key == "Escape") {
+        if (e.target !== document.body) return;
+        if (e.key === "Escape") {
             _CodidactKeyboard.dialogClose();
-        } else if (_CodidactKeyboard.state == 'home') {
+        }
+        else if (_CodidactKeyboard.state === 'home') {
             homeMenu(e);
-        } else if (_CodidactKeyboard.state == 'goto') {
+        }
+        else if (_CodidactKeyboard.state === 'goto') {
             gotoMenu(e);
-        } else if (_CodidactKeyboard.state == 'goto/category') {
+        }
+        else if (_CodidactKeyboard.state === 'goto/category') {
             categoryMenu(e);
-        } else if (_CodidactKeyboard.state == 'goto/category-tags') {
+        }
+        else if (_CodidactKeyboard.state === 'goto/category-tags') {
             categoryTagsMenu(e);
-        } else if (_CodidactKeyboard.state == 'tools') {
+        }
+        else if (_CodidactKeyboard.state === 'tools') {
             toolsMenu(e);
-        } else if (_CodidactKeyboard.state == 'tools/vote') {
+        }
+        else if (_CodidactKeyboard.state === 'tools/vote') {
             voteMenu(e);
         }
     });
 
     function homeMenu(e) {
-        if (e.key == "?") {
+        if (e.key === "?") {
             _CodidactKeyboard.dialog('Codidact Keyboard Shortcuts\n' +
                 '===========================\n' +
                 '?  Open this help\n' +
@@ -74,13 +96,16 @@ $(() => {
                 't  Use a tool (on selection)\n\n' +
                 '(Selection shortcuts will select\n' +
                 'first post, if none selected)'
-                                
+
             );
-        } else if (e.key == 'n') {
-            new_post_link = $('a.category-header--nav-item.is-button').attr('href');
-            if (new_post_link)
+        }
+        else if (e.key === 'n') {
+            const new_post_link = $('a.category-header--nav-item.is-button').attr('href');
+            if (new_post_link) {
                 window.location.href = new_post_link;
-        } else if (e.key == 'g') {
+            }
+        }
+        else if (e.key === 'g') {
             _CodidactKeyboard.dialog('Go to ...\n' +
                 '=========\n' +
                 'm  Main page\n' +
@@ -92,23 +117,26 @@ $(() => {
                 (_CodidactKeyboard.is_mod ? '\nf  Flags (mod only)' : '')
             );
             _CodidactKeyboard.state = 'goto';
-        } else if (e.key == 'k') {
+        }
+        else if (e.key === 'k') {
             if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
             else {
                 _CodidactKeyboard.selectedItem = $(_CodidactKeyboard.selectedItem).nextAll('[data-ckb-list-item]')[0] || _CodidactKeyboard.selectedItem;
             }
             _CodidactKeyboard.updateSelected();
-        } else if (e.key == 'j') {
+        }
+        else if (e.key === 'j') {
             if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
             else {
                 _CodidactKeyboard.selectedItem = $(_CodidactKeyboard.selectedItem).prevAll('[data-ckb-list-item]')[0] || _CodidactKeyboard.selectedItem;
             }
             _CodidactKeyboard.updateSelected();
-        } else if (e.key == 't') {
+        }
+        else if (e.key === 't') {
             if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
             _CodidactKeyboard.updateSelected();
 
-            if (_CodidactKeyboard.selectedItemData.type == "post") {
+            if (_CodidactKeyboard.selectedItemData.type === "post") {
                 _CodidactKeyboard.dialog('Use tool ...\n' +
                     '============\n' +
                     'f  Flag\n' +
@@ -121,38 +149,44 @@ $(() => {
                 );
                 _CodidactKeyboard.state = 'tools';
             }
-        } else if (e.key == 'a') {
-            cl = $('#answer_body_markdown');
+        }
+        else if (e.key === 'a') {
+            const cl = $('#answer_body_markdown');
             cl[0].scrollIntoView({ behavior: "smooth" });
             cl.focus();
             _CodidactKeyboard.dialogClose();
-        } else if (e.key == 'Enter') {
-            if (_CodidactKeyboard.selectedItemData.type == "link") {
-                link = $(_CodidactKeyboard.selectedItem).find("[data-ckb-item-link]").attr("href");
-                window.location.href = link;
+        }
+        else if (e.key === 'Enter') {
+            if (_CodidactKeyboard.selectedItemData.type === "link") {
+                window.location.href = $(_CodidactKeyboard.selectedItem).find("[data-ckb-item-link]").attr("href");
             }
         }
     }
 
     function gotoMenu(e) {
-        if (e.key == 'm') {
+        if (e.key === 'm') {
             window.location.href = '/';
-        } else if (e.key == 'u') {
+        }
+        else if (e.key === 'u') {
             window.location.href = '/users';
-        } else if (e.key == 'h') {
+        }
+        else if (e.key === 'h') {
             window.location.href = '/help';
-        } else if (e.key == 'p') {
+        }
+        else if (e.key === 'p') {
             window.location.href = '/users/' + _CodidactKeyboard.user_id;
-        } else if (e.key == 'f') {
+        }
+        else if (e.key === 'f') {
             window.location.href = '/mod/flags';
-        } else if (e.key == 'f') {
+        }
+        else if (e.key === 'f') {
             window.location.href = '/mod/flags';
-        } else if (e.key == "t") {
-            data = _CodidactKeyboard.categories();
-            data = Object.entries(data);
-            string_response = "";
-            for (var i = 0; i < data.length; i++) {
-                entry = data[i];
+        }
+        else if (e.key === "t") {
+            const data = Object.entries(_CodidactKeyboard.categories());
+            let string_response = "";
+            for (let i = 0; i < data.length; i++) {
+                const entry = data[i];
                 string_response += (i + 1) + "  " + entry[0] + "\n"
             }
             _CodidactKeyboard.dialog('Go to tags of category ...\n' +
@@ -160,13 +194,15 @@ $(() => {
                 string_response.trim()
             );
             _CodidactKeyboard.state = 'goto/category-tags';
+
+            // FIXME what's happened here? tlink isn't defined
             window.location.href = tlink;
-        } else if (e.key == 'c') {
-            data = _CodidactKeyboard.categories();
-            data = Object.entries(data);
-            string_response = "";
-            for (var i = 0; i < data.length; i++) {
-                entry = data[i];
+        }
+        else if (e.key === 'c') {
+            const data = Object.entries(_CodidactKeyboard.categories());
+            let string_response = "";
+            for (let i = 0; i < data.length; i++) {
+                const entry = data[i];
                 string_response += (i + 1) + "  " + entry[0] + "\n"
             }
             _CodidactKeyboard.dialog('Go to category ...\n' +
@@ -180,51 +216,56 @@ $(() => {
     }
 
     function categoryMenu(e) {
-        if (e.key == "c") {
+        if (e.key === "c") {
             window.location.href = "/categories";
-        } else {
-            number = parseInt(e.key);
-            if (number != NaN) {
+        }
+        else {
+            const number = parseInt(e.key);
+            if (!isNaN(number)) {
                 data = _CodidactKeyboard.categories();
-                data = Object.entries(data);
+                const data = Object.entries(data);
             
-                category = data[number - 1];
+                const category = data[number - 1];
                 window.location.href = category[1];
             }
         }
     }
 
     function categoryTagsMenu(e) {
-        number = parseInt(e.key);
-        if (number != NaN) {
-            data = _CodidactKeyboard.categories();
-            data = Object.entries(data);
+        const number = parseInt(e.key);
+        if (!isNaN(number)) {
+            const data = Object.entries(_CodidactKeyboard.categories());
         
-            category = data[number - 1];
+            const category = data[number - 1];
             window.location.href = category[1] + "/tags";
         }
     }
 
     function toolsMenu(e) {
-        if (e.key == 'e') {
+        if (e.key === 'e') {
             window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-pencil-alt').parent().attr("href");
-        } else if (e.key == 'h') {
+        }
+        else if (e.key === 'h') {
             window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-history').parent().attr("href");
-        } else if (e.key == 'l') {
+        }
+        else if (e.key === 'l') {
             window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-link').parent().attr("href");
-        } else if (e.key == 'c') {
-            cl = $(_CodidactKeyboard.selectedItem).find('.js-add-comment');
+        }
+        else if (e.key === 'c') {
+            const cl = $(_CodidactKeyboard.selectedItem).find('.js-add-comment');
             cl.nextAll("form").css("display", "block");
             cl.nextAll("form")[0].scrollIntoView({ behavior: "smooth" });
             cl.nextAll("form").find(".js-comment-content").focus();
             _CodidactKeyboard.dialogClose();
-        } else if (e.key == 'f') {
-            cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-flag-box');
+        }
+        else if (e.key === 'f') {
+            const cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-flag-box');
             cl.addClass("is-active");
             cl[0].scrollIntoView({ behavior: "smooth" });
             cl.find(".js-flag-comment").focus();
             _CodidactKeyboard.dialogClose();
-        } else if (e.key == 'v') {
+        }
+        else if (e.key === 'v') {
             _CodidactKeyboard.dialog('Vote ...\n' +
                 '========\n' +
                 'u  Up\n' +
@@ -232,8 +273,9 @@ $(() => {
                 'c  Close'
             );
             _CodidactKeyboard.state = 'tools/vote';
-        } else if (e.key == 't') {
-            cl = $(_CodidactKeyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
+        }
+        else if (e.key === 't') {
+            let cl = $(_CodidactKeyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
             cl = $(cl.attr("data-modal"));
             cl.toggleClass("is-active");
             cl.focus();
@@ -243,21 +285,22 @@ $(() => {
     }
 
     function voteMenu(e) {
-        if (e.key == 'u') {
-            cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="1"]');
+        if (e.key === 'u') {
+            const cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="1"]');
             cl.click();
             _CodidactKeyboard.dialogClose();
-        } else if (e.key == 'd') {
-            cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="-1"]');
+        }
+        else if (e.key === 'd') {
+            const cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="-1"]');
             cl.click();
             _CodidactKeyboard.dialogClose();
-        } else if (e.key == 'c') {
-            cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-close-box');
+        }
+        else if (e.key === 'c') {
+            const cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-close-box');
             cl.addClass("is-active");
             cl[0].scrollIntoView({ behavior: "smooth" });
             cl.focus();
             _CodidactKeyboard.dialogClose();
         }
-    
     }
 });

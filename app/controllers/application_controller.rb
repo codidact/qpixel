@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
     render layout: 'without_sidebar'
   end
 
+  def keyboard_tools; end
+
   protected
 
   def configure_permitted_parameters
@@ -65,7 +67,7 @@ class ApplicationController < ActionController::Base
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Privilege.find_by(name: name)
-      render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 401 if render_error
+      render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 403 if render_error
       return false
     end
     true
@@ -92,8 +94,12 @@ class ApplicationController < ActionController::Base
     is_blocked = ip_block.or(mail_block).or(mail_host_block)
 
     if is_blocked.any?
+      blocked_info = "ip: #{ip}\nemail: #{current_user.email}\ndomain: #{email_domain}"
+      request_info = "request: #{request.method.upcase} #{request.fullpath}"
+      params_info = params.except(*Rails.application.config.filter_parameters).permit!.to_h
+                          .map { |k, v| "  #{k}: #{v}" }.join("\n")
       AuditLog.block_log(event_type: 'write_request_blocked', related: is_blocked.first,
-                         comment: "ip: #{ip}\nemail: #{current_user.email}\ndomain: #{email_domain}")
+                         comment: "#{blocked_info}\n#{request_info}\n#{params_info}")
 
       respond_to do |format|
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }

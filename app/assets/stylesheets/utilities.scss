@@ -70,6 +70,14 @@ pre.unformatted {
   border: unset;
 }
 
+pre.pre-wrap {
+  max-width: 40em !important;
+  width: 40em !important;
+  overflow-x: scroll;
+  overflow-wrap: break-word;
+  white-space: pre-wrap !important;
+}
+
 .stat-panel {
   flex: 1;
 }

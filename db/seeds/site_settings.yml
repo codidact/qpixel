@@ -176,7 +176,7 @@
   value_type: string
   category: SiteDetails
   description: >
-    The name of the license under which content here is posted.
+    The name of the license under which content here is posted when no other is specified when posting.
 
 - name: ContentLicenseLink
   value: https://creativecommons.org/licenses/by-sa/4.0/
@@ -226,9 +226,9 @@
 
 - name: JITAdvancedSearchHelp
   value: >
-    To further refine your search, you can use additional qualifiers such as `core:>1`.
-    For example, the search `score:>=2 created:<1y grammar` would return only posts mentioning "grammar" that
-    have a score >= 2 and were created less than a year ago.
+    To further refine your search, you can use additional qualifiers such as `score:>0.5`.
+    For example, the search `score:>=0.5 created:<1y grammar` would return only posts mentioning "grammar" that
+    have a score >= 0.5 and were created less than a year ago.
   value_type: text
   category: HelpAndGuidance
   description: >

@@ -26,6 +26,7 @@ class User < ApplicationRecord
   validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
+  validate :no_blank_unicode_in_username
   validate :email_domain_not_blocklisted
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
@@ -99,6 +100,10 @@ class User < ApplicationRecord
     attributes['trust_level'] || recalc_trust_level
   end
 
+  def rtl_safe_username
+    "\u202D#{username}\u202D"
+  end
+
   def recalc_trust_level
     # Temporary hack until we have some things to actually calculate based on.
     trust = if is_admin || is_global_admin
@@ -120,6 +125,13 @@ class User < ApplicationRecord
       if badge.present? && username.include?(badge)
         errors.add(:username, "may not include the #{badge} character")
       end
+    end
+  end
+
+  def no_blank_unicode_in_username
+    not_valid = !username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
+    if not_valid
+      errors.add(:username, 'may not contain blank unicode characters')
     end
   end
 
@@ -190,11 +202,26 @@ class User < ApplicationRecord
   end
 
   def send_welcome_tour_message
-    return if id == -1
+    return if id == -1 || RequestContext.community.nil?
 
-    create_notification('👋 Welcome to ' + SiteSetting['SiteName'] + '! Take our tour to find out ' \
+    create_notification('👋 Welcome to ' + (SiteSetting['SiteName'] || 'Codidact') + '! Take our tour to find out ' \
                         'how this site works.', '/tour')
   end
 
+  def block(reason)
+    user_email = email
+    user_ip = [last_sign_in_ip]
+
+    if current_sign_in_ip
+      user_ip << current_sign_in_ip
+    end
+
+    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+                       automatic: true, reason: "#{reason}: #" + id.to_s)
+    user_ip.compact.uniq.each do |ip|
+      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
+                         automatic: true, reason: "#{reason}: #" + @user.id.to_s)
+    end
+  end
   # rubocop:enable Naming/PredicateName
 end

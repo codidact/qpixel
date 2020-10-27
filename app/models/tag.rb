@@ -10,6 +10,7 @@ class Tag < ApplicationRecord
 
   validates :excerpt, length: { maximum: 600 }, allow_blank: true
   validates :wiki_markdown, length: { maximum: 30_000 }, allow_blank: true
+  validates :name, presence: true, format: { with: /[^ \t]+/, message: 'Tag names may not include spaces' }
   validate :parent_not_self
   validate :parent_not_own_child
   validates :name, uniqueness: { scope: [:tag_set_id] }

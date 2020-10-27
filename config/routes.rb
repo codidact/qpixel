@@ -49,6 +49,7 @@ Rails.application.routes.draw do
 
   get    'mod',                            to: 'moderator#index', as: :moderator
   get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
+  get    'mod/comments',                   to: 'moderator#recent_comments', as: :recent_comments
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
@@ -105,7 +106,7 @@ Rails.application.routes.draw do
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
   post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
   post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
-  
+
 
   get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
   post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
@@ -146,6 +147,7 @@ Rails.application.routes.draw do
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
   get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+  post   'users/:id/hellban',              to: 'admin#hellban', as: :hellban_user
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
@@ -204,6 +206,9 @@ Rails.application.routes.draw do
     get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
     get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
     patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
+    post   ':id/tags/:tag_id/rename',              to: 'tags#rename', as: :rename_tag
+    get    ':id/tags/:tag_id/merge',               to: 'tags#select_merge', as: :select_tag_merge
+    post   ':id/tags/:tag_id/merge',               to: 'tags#merge', as: :merge_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
@@ -211,6 +216,7 @@ Rails.application.routes.draw do
   get   'warning/log/:user_id',            to: 'mod_warning#log', as: :mod_warning_log
   get   'warning/new/:user_id',            to: 'mod_warning#new', as: :new_mod_warning
   post  'warning/new/:user_id',            to: 'mod_warning#create', as: :create_mod_warning
+  post  'warning/lift/:user_id',            to: 'mod_warning#lift', as: :lift_mod_warning
 
   get   'uploads/:key',                    to: 'application#upload', as: :uploaded
 
@@ -220,6 +226,8 @@ Rails.application.routes.draw do
     get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
+  
+  get    'feature/keyboard-tools',           to: 'application#keyboard_tools', as: :keyboard_tools
 
   scope 'ca' do
     root                                   to: 'advertisement#index', as: :ads
@@ -237,6 +245,11 @@ Rails.application.routes.draw do
     get 'qa',                              to: 'tour#question3', as: :tour_q3
     get 'more',                            to: 'tour#more', as: :tour_more
     get 'end',                             to: 'tour#end', as: :tour_end
+  end
+
+  scope 'birthday' do
+    root                                   to: 'birthday#index', as: :birthday
+    get 'ranking',                         to: 'birthday#ranking', as: :birthday_ranking
   end
 
   get   '403',                             to: 'errors#forbidden'

@@ -1,4 +1,4 @@
-# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Test coverage](https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master)](https://coveralls.io/github/ArtOfCode-/qpixel?branch=master)
+# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Test coverage](https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master)](https://coveralls.io/github/ArtOfCode-/qpixel?branch=master) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
 Rails-based version of our core software. Currently under active development towards MVP.
 
 ## Installation
@@ -36,8 +36,10 @@ If you already have Node.JS installed, you can skip this step. If not, [download
 If you haven't already got it, [download and install Redis](https://redis.io/download).
 
 ### Install Imagemagick
-If you haven't already installed Imagemagick, you'll need to [install it for your system](https://imagemagick.org/script/download.php)
-    
+
+If you haven't already installed Imagemagick, you'll need to [install it for
+your system][0].
+
 ### Download QPixel
 Clone the repository and `cd` into the directory:
 
@@ -65,24 +67,33 @@ contain the correct values for you, but if you've customised your setup you'll n
 Install gems:
 
     bundle install
-    
+
 Set up the database:
 
     rails db:create
     rails db:schema:load
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
-    rails db:seed
+
+ 
+
+    $ rails db:seed
+    Category: Created 2, skipped 0
+    [...]
 
 Run the server!
 
     rails s
-    
-You'll need to create a Community record before the server will display any content. In a console, run:
+
+You'll need to create a Community record before the server will display any
+content. In a Rails console (`rails c`), run:
 
 ```ruby
 Community.create(name: 'Dev Community', host: 'localhost:3000')
 ```
+
+If it keeps not showing content, `Rails.cache.clear` from your Rails console as
+necessary.
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
 to an admin account, run `rails c` for a console, followed by:
@@ -91,9 +102,16 @@ to an admin account, run `rails c` for a console, followed by:
 User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
 
+## Install with Docker
+
+See the README.md in the [docker](docker) folder for complete instructions.
+
 ## License
-[AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE)
+[AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
 
 ## Contributing
 Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md) document
 before you start and look at the [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list) for things to do.
+
+
+[0]: https://imagemagick.org/script/download.php

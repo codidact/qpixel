@@ -2,6 +2,8 @@ $(() => {
   $('.js-comment-form').hide();
 
   $('.js-add-comment').on('click', async evt => {
+    // User clicked `Add a comment`.
+
     evt.preventDefault();
 
     const $form = $(evt.target).parent().find('.js-comment-form');
@@ -24,17 +26,35 @@ $(() => {
   });
 
   $('.comment-form').on('ajax:success', async (evt, data) => {
+    // Comment posting is succeeded! ^_^
+
     const $tgt = $(evt.target);
     if (data.status === 'success') {
       $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
       $tgt.find('.js-comment-content').val('');
+
+      // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when
+      // reaching this line. The line below re-labels it back to `Post`.
+      $tgt.find('input[type="submit"]').attr('value', 'Post')
     }
     else {
       QPixel.createNotification('danger', data.message);
     }
   }).on('ajax:error', async (evt, xhr) => {
+    // Comment posting is errored, e.g. it might be too short to be posted.
+
     const data = xhr.responseJSON;
     QPixel.createNotification('danger', data.message);
+
+    // On error, the `Post` button, which has been re-labeled as `Posted`, will be re-labeled `Post` back again. There's
+    // no need to do anything else at this point in this block, until proven otherwise.
+  });
+
+  $('.comment-form').find('input[value="Discard"]').on('click', function(data) {
+      const $tgt = $(data.target);
+      const $form = $tgt.parents('form');
+      $form[0].reset();  // Clear the comment field before hiding the form for a fresh start.
+      $form.hide();
   });
 
   $(document).on('click', '.js-comment-edit', async evt => {
@@ -107,5 +127,10 @@ $(() => {
     else {
       QPixel.createNotification('danger', data.message);
     }
+  });
+
+  $(document).on('click', '.comment-form input[type="submit"]', async evt => {
+      // Comment posting has been clicked.
+      $(evt.target).attr('data-disable-with', 'Posting...');
   });
 });

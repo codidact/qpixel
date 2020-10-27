@@ -15,7 +15,7 @@
     <%= question.body.length > 150 ? '...' : '' %>
   </p>
   <p>
-    &mdash; <%= link_to question.user.username, user_url(question.user, host: @subscription.community.host) %>
+    &mdash; <%= link_to question.user.rtl_safe_username, user_url(question.user, host: @subscription.community.host), dir: 'ltr'%>
     <%= time_ago_in_words(question.created_at) %> ago
   </p>
 <% end %>

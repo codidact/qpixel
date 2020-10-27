@@ -1,0 +1,67 @@
+.nat {
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+.nat-page .nat {
+    opacity: 1;
+}
+.nat-page .category-header,
+.nat-page .footer,
+.nat-page .notice.is-banner,
+.nat-page .header { display: none !important; }
+
+.nat-page {
+    background-color: #eeeeee;
+}
+
+.nat h1 {
+    font-size: 3em;
+    text-align: center;
+}
+
+.nat h2 {
+    font-size: 2em;
+    font-style: italic;
+    text-align: center;
+}
+.nat img {
+    max-width: 200px;
+    margin: 0 auto;
+    display: block;
+}
+
+.nat .nat-plane {
+    z-index: -10;
+    position: absolute;
+    top: -77.5vw;
+    left: -12.5vw; right: 0;
+    height: 100vw;
+    width: 100vw;
+    background-color: #fff;
+    transform: rotate(0deg);
+    border-radius: 25% 55%;
+}
+
+.nat p.is-lead {
+    margin-top: 1em;
+    margin-bottom: 2.5em;
+}
+.nat p {
+    text-align: center;
+}
+.nat p.h-ta-center {
+    margin-top: 1em;
+}
+
+.nat table {
+    max-width: 600px;
+    width: 100%;
+    margin: 2rem auto;
+    background-color: #fff;
+    font-size: 1.25em;
+}
+.nat table th,
+.nat table td {
+    padding: 0.5em;
+}

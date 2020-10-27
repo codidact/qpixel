@@ -57,7 +57,7 @@ deleted:
   user: standard_user
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
-  deleted_by: admin
+  deleted_by: deleter
   community: sample
   category: main
   license: cc_by_sa
@@ -137,7 +137,7 @@ deleted_answer:
   user: closer
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
-  deleted_by: admin
+  deleted_by: deleter
   community: sample
   category: main
   license: cc_by_sa
@@ -205,6 +205,6 @@ deleted_article:
   license: cc_by_sa
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
-  deleted_by: admin
+  deleted_by: deleter
   upvote_count: 0
   downvote_count: 0

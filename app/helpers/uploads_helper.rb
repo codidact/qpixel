@@ -9,7 +9,7 @@ module UploadsHelper
   def valid_image?(io)
     content_types = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES
     extensions = content_types.map { |ct| ct.gsub('image/', '') }
-    submitted_extension = io.original_filename.split('.')[-1]
+    submitted_extension = io.original_filename.split('.')[-1].downcase
     content_types.include?(io.content_type) && extensions.include?(submitted_extension) &&
       extensions.map(&:to_sym).include?(FastImage.type(io))
   end

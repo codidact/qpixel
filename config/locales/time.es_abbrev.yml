@@ -1,0 +1,29 @@
+es_abbrev:
+  datetime:
+    distance_in_words:
+      x_seconds:
+        one: '1seg'
+        other: '%{count}segs'
+      less_than_x_minutes:
+        one: '<1min'
+        other: '<%{count}mins'
+      x_minutes:
+        one: '1min'
+        other: '%{count}mins'
+      about_x_hours:
+        one: '~1h'
+        other: '~%{count}hs'
+      x_hours:
+        one: '1h'
+        other: '%{count}hs'
+      x_days: '%{count}d'
+      x_weeks:
+        one: '1sem'
+        other: '%{count}sems'
+      about_x_months:
+        one: '~1mes'
+        other: '~%{count}meses'
+      x_months:
+        one: '1mes'
+        other: '%{count}meses'
+      x_years: '%{count}a'
