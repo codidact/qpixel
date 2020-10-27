@@ -26,7 +26,12 @@ $(document).on('ready', function() {
     const self = $(ev.target);
     
     const active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
-    const reason = active_radio.val() || null;
+    const reason = parseInt(active_radio.val()) || null;
+
+    if (reason === null) {
+      QPixel.createNotification('danger', "Please choose a reason.");
+      return;
+    }
 
     const data = {
       'flag_type': (reason != -1) ? reason : null,
@@ -34,7 +39,7 @@ $(document).on('ready', function() {
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if ((reason === 'other' && data['reason'].length < 10) || (data['reason'].length > 0 && data['reason'].length < 10)) {
+    if ((reason == -1 && data['reason'].length < 10) || (reason != -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }
