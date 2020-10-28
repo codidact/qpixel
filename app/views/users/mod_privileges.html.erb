@@ -48,6 +48,10 @@
         </div>
     </div>
     <% end%>
+    <div class="widget--footer">
+        <p>You can recalculate the abilities of this user. This will check for all unearned abilities, whether the user is eligible for them and if so, it will grant the ability.</p>
+        <a href="<%= abilities_recalc_url(for: @user.id) %>" class="button is-filled">Recalc Abilities</a>
+    </div>
 </div>
     <% if @current_user.is_admin %>
 <div class="widget">

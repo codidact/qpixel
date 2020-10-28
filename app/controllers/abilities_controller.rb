@@ -1,5 +1,6 @@
 class AbilitiesController < ApplicationController
   before_action :set_user
+  before_action :verify_moderator, only: [:recalc]
 
   def index
     @abilities = Ability.all
@@ -14,7 +15,7 @@ class AbilitiesController < ApplicationController
 
   def recalc
     @user.community_user.recalc_privileges
-    redirect_to abilities_url(for: @user.id)
+    redirect_to user_privileges_url(@user.id)
   end
 
   private
