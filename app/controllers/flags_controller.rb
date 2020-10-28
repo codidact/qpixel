@@ -65,6 +65,7 @@ class FlagsController < ApplicationController
     unless current_user.is_moderator
       return not_found unless current_user.privilege? 'flag_curate'
       return not_found if type.nil? || type.confidential
+      return not_found if current_user.id == @flag.user.id
     end
   end
 end

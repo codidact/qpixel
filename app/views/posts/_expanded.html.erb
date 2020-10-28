@@ -239,10 +239,17 @@
                               else
                                 post.flags.not_confidential
                               end.where(handled_by_id: nil).count %>
+
+              <% own_flags_count = if current_user.is_moderator
+                                     0
+                                   else
+                                     post.flags.not_confidential.where(user: current_user, handled_by_id: nil).count
+                                   end %>
+
               <% if flags_count > 0 %>
                 <a href="#" class="show-all-flags-dialog-link tools--item">
                   <i class="fa fa-exclamation-triangle"></i>
-                  Show <%= pluralize(flags_count, "flag") %>
+                  Show <%= pluralize(flags_count - own_flags_count, "flag") %>
                 </a>
               <% end %>
             <% end %>
@@ -340,6 +347,7 @@
               <div class="widget--header">Flags on this post</div>
               <% post.flags.where(handled_by_id: nil).each do |flag| %>
                 <% next if !current_user.is_moderator && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
+                <% next if !current_user.is_moderator && (current_user.id == flag.user.id) %>
                 <div class="widget--body">
                   <div>
                   <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
