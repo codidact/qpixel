@@ -99,6 +99,8 @@ $(() => {
   const postFields = $('.post-field');
 
   postFields.on('focus keyup markdown', evt => {
+    const $tgt = $(evt.target);
+
     if (!window.converter) {
       window.converter = window.markdownit({
         html: true,
@@ -111,7 +113,8 @@ $(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
       const html = converter.render(text);
-      $(evt.target).parents('.form-group').siblings('.post-preview').html(html);
+      $tgt.parents('.form-group').siblings('.post-preview').html(html);
+      $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
 
     if (mathjaxTimeout) {

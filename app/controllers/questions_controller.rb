@@ -78,7 +78,7 @@ class QuestionsController < ApplicationController
                             after: params[:question][:body_markdown], comment: params[:edit_comment],
                             before_title: @question.title, after_title: params[:question][:title],
                             before_tags: @question.tags, after_tags: after_tags)
-    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
+    body_rendered = helpers.post_markdown(:question, :body_markdown)
     if @question.update(question_params.merge(tags_cache: tags_cache, body: body_rendered,
                                               last_activity: DateTime.now, last_activity_by: current_user,
                                               last_edited_at: DateTime.now, last_edited_by: current_user))
@@ -89,7 +89,7 @@ class QuestionsController < ApplicationController
   end
 
   def update_as_suggested_edit
-    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
+    body_rendered = helpers.post_markdown(:question, :body_markdown)
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown

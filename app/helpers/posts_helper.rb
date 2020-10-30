@@ -1,4 +1,12 @@
 module PostsHelper
+  def post_markdown(scope, field_name)
+    if params['__html'].present?
+      params['__html']
+    else
+      render_markdown(params[scope][field_name])
+    end
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     def initialize
       super

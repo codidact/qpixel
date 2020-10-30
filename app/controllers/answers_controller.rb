@@ -13,7 +13,7 @@ class AnswersController < ApplicationController
   def create
     @question = Question.find params[:id]
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
-                                             body: helpers.render_markdown(params[:answer][:body_markdown]),
+                                             body: helpers.post_markdown(:answer, :body_markdown),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
     unless current_user.id == @question.user.id
@@ -43,7 +43,7 @@ class AnswersController < ApplicationController
     end
     PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
                             after: params[:answer][:body_markdown], comment: params[:edit_comment])
-    if @answer.update(answer_params.merge(body: helpers.render_markdown(params[:answer][:body_markdown]),
+    if @answer.update(answer_params.merge(body: helpers.post_markdown(:answer, :body_markdown),
                                           last_activity: DateTime.now, last_activity_by: current_user,
                                           last_edited_at: DateTime.now, last_edited_by: current_user,
                                           license_id: @answer.license_id))
@@ -62,7 +62,7 @@ class AnswersController < ApplicationController
       post: @answer,
       user: current_user,
       community: @answer.community,
-      body: helpers.render_markdown(params[:answer][:body_markdown]),
+      body: helpers.post_markdown(:answer, :body_markdown),
       body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
       comment: params[:edit_comment],
       active: true, accepted: false,

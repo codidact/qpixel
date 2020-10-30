@@ -34,7 +34,7 @@ class ArticlesController < ApplicationController
                             after: params[:article][:body_markdown], comment: params[:edit_comment],
                             before_title: @article.title, after_title: params[:article][:title],
                             before_tags: @article.tags, after_tags: after_tags)
-    body_rendered = helpers.render_markdown(params[:article][:body_markdown])
+    body_rendered = helpers.post_markdown(:article, :body_markdown)
     if @article.update(article_params.merge(tags_cache: tags_cache, body: body_rendered,
                                             last_activity: DateTime.now, last_activity_by: current_user,
                                             last_edited_at: DateTime.now, last_edited_by: current_user))
@@ -45,7 +45,7 @@ class ArticlesController < ApplicationController
   end
 
   def update_as_suggested_edit
-    body_rendered = helpers.render_markdown(params[:article][:body_markdown])
+    body_rendered = helpers.post_markdown(:article, :body_markdown)
     new_tags_cache = params[:article][:tags_cache]&.reject(&:empty?)
 
     body_markdown = if params[:article][:body_markdown] != @article.body_markdown

@@ -18,7 +18,7 @@ class PostsController < ApplicationController
     @category = Category.find(params[:category_id])
     @post = Post.new(post_params.merge(category: @category, user: current_user,
                                        post_type_id: params[:post][:post_type_id] || params[:post_type_id],
-                                       body: helpers.render_markdown(params[:post][:body_markdown])))
+                                       body: helpers.post_markdown(:post, :body_markdown)))
 
     if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
       @post.errors.add(:base, "You don't have a high enough trust level to post in the #{@category.name} category.")
@@ -47,7 +47,7 @@ class PostsController < ApplicationController
         SiteSetting[setting_name] || '(No such setting)'
       end
     end
-    @post = Post.new(new_post_params.merge(body: helpers.render_markdown(params[:post][:body_markdown]),
+    @post = Post.new(new_post_params.merge(body: helpers.post_markdown(:post, :body_markdown),
                                            user: User.find(-1)))
 
     if @post.policy_doc? && !current_user&.is_admin
@@ -76,7 +76,7 @@ class PostsController < ApplicationController
       end
     end
     PostHistory.post_edited(@post, current_user, before: @post.body_markdown, after: params[:post][:body_markdown])
-    if @post.update(help_post_params.merge(body: helpers.render_markdown(params[:post][:body_markdown]),
+    if @post.update(help_post_params.merge(body: helpers.post_markdown(:post, :body_markdown),
                                            last_activity: DateTime.now, last_activity_by: current_user))
       redirect_to policy_path(slug: @post.doc_slug)
     else
