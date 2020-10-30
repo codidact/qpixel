@@ -168,3 +168,11 @@ pre.pre-wrap {
     display: none;
   }
 }
+
+.footnote-ref a::before {
+  content: '';
+}
+
+.footnote-ref a::after {
+  content: '';
+}
