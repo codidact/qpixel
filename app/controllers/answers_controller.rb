@@ -16,12 +16,12 @@ class AnswersController < ApplicationController
                                              body: helpers.post_markdown(:answer, :body_markdown),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
-    unless current_user.id == @question.user.id
-      @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
-                                         share_question_url(@question))
-    end
     if @answer.save
       @question.update(last_activity: DateTime.now, last_activity_by: current_user)
+      unless current_user.id == @question.user.id
+        @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
+                                           share_question_url(@question))
+      end
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
       render :new, status: 422
