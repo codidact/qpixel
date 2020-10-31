@@ -41,12 +41,12 @@ class AnswersController < ApplicationController
       flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to question_path(@answer.parent)
     end
-    PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
-                            after: params[:answer][:body_markdown], comment: params[:edit_comment])
     if @answer.update(answer_params.merge(body: helpers.post_markdown(:answer, :body_markdown),
                                           last_activity: DateTime.now, last_activity_by: current_user,
                                           last_edited_at: DateTime.now, last_edited_by: current_user,
                                           license_id: @answer.license_id))
+      PostHistory.post_edited(@answer, current_user, before: @answer.body_markdown,
+                              after: params[:answer][:body_markdown], comment: params[:edit_comment])
       redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
       render :edit
