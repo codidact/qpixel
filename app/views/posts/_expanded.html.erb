@@ -341,7 +341,7 @@
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
                   <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
-                  <div class="form-group-horizontal">
+                  <div class="form-group">
                     <div class="form-group">
                       <%= f.label :content, 'Your comment' %>
                       <%= f.text_area :content, class: 'form-element is-small js-comment-content', id: nil, autocomplete: 'off' %>
