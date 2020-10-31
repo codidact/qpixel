@@ -5,7 +5,7 @@
 </p>
 
 <div class="has-text-align-center">
-  <svg height="244" width="244">
+  <svg height="<%= @qr_code.qrcode.module_count * 4 %>" width="<%= @qr_code.qrcode.module_count * 4 %>">
     <%= raw(@qr_code.as_svg(standalone: false, module_size: 4)) %>
   </svg>
 </div>
