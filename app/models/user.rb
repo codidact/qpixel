@@ -101,7 +101,7 @@ class User < ApplicationRecord
   end
 
   def rtl_safe_username
-    "\u202D#{username}\u202D"
+    "#{username}\u202D"
   end
 
   def recalc_trust_level
