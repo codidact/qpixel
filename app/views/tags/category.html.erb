@@ -1,6 +1,6 @@
 <% content_for :title, "Tags for #{@category.name}" %>
 
-<h1>Tags for <%= @category.name %></h1>
+<h1>Tags used in <%= @category.name %></h1>
 
 <%= form_tag category_tags_path(@category), method: :get, class: 'form-inline' do %>
   <div class="form-group-horizontal">
