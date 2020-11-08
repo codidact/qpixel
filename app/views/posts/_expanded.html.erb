@@ -293,6 +293,33 @@
           </div>
         <% end %>
 
+        <% if is_question&& post.children.length >= SiteSetting["TableOfContentsThreshold"] %>
+          <div class="toc" id="toc-example-toggle">
+            <button class="toc--header" data-toggle="#toc-example-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
+            <% post.children.each do |answer| %>
+              <a href="#" class="toc--entry">
+                <div class="toc--badge">
+                  <span class="badge is-tag is-green">+<%= answer.upvote_count %></span>
+                </div>
+                <div class="toc--badge">
+                  <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
+                </div>
+                <div class="toc--full">
+                  <% sanitised = raw(sanitize(answer.body, tags: [])) %>
+                  <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
+                  <p>
+                    <%= sanitised[ 0 ... max_length ] %>
+                    <% if sanitised.length > max_length %>
+                      ...
+                    <% end %>
+                  </p>
+                  <p class="has-font-size-small"><%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago</p>
+                </div>
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+
         <div class="post--status">
 
           <% if post.att_source.present? %>

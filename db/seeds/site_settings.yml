@@ -313,3 +313,17 @@
   category: AdvancedSettings
   description: >
     The minimum score a question must have to qualify for selection for the Hot Posts sidebar and for being selected as random advertisement.
+
+- name: TableOfContentsThreshold
+  value: 5
+  value_type: integer
+  category: Display
+  description: >
+    The number of child posts before the TOC is shown. If the threashold is not met, do not show TOC at all.
+
+- name: TableOfContentsExcerptLength
+  value: 120
+  value_type: integer
+  category: Display
+  description: >
+    The length of the answer shown in the TOC, don't keep it too large, it may fill up the TOC and become unreadable.
