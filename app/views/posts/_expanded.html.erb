@@ -293,7 +293,7 @@
           </div>
         <% end %>
 
-        <% if is_question&& post.children.length >= SiteSetting["TableOfContentsThreshold"] %>
+        <% if is_question && post.children.length >= SiteSetting["TableOfContentsThreshold"] %>
           <div class="toc" id="toc-example-toggle">
             <button class="toc--header" data-toggle="#toc-example-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
             <% post.children.each do |answer| %>
@@ -305,10 +305,10 @@
                   <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
                 </div>
                 <div class="toc--full">
-                  <% sanitised = raw(sanitize(answer.body, tags: [])) %>
+                  <% sanitised = raw(sanitize(answer.body, scrubber: scrubber)) %> %>
                   <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
                   <p>
-                    <%= sanitised[ 0 ... max_length ] %>
+                    <%=raw sanitised[ 0 ... max_length ] %>
                     <% if sanitised.length > max_length %>
                       ...
                     <% end %>
