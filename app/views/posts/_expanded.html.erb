@@ -305,7 +305,7 @@
                   <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
                 </div>
                 <div class="toc--full">
-                  <% sanitised = raw(sanitize(answer.body, scrubber: scrubber)) %> %>
+                  <% sanitised = raw(sanitize(answer.body, scrubber: scrubber)) %>
                   <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
                   <p>
                     <%=raw sanitised[ 0 ... max_length ] %>
