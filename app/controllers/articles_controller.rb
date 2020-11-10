@@ -31,13 +31,14 @@ class ArticlesController < ApplicationController
     end
 
     body_rendered = helpers.post_markdown(:article, :body_markdown)
+    before = { body: @article.body_markdown, title: @article.title, tags: @article.tags }
     if @article.update(article_params.merge(tags_cache: tags_cache, body: body_rendered,
                                             last_activity: DateTime.now, last_activity_by: current_user,
                                             last_edited_at: DateTime.now, last_edited_by: current_user))
-      PostHistory.post_edited(@article, current_user, before: @article.body_markdown,
+      PostHistory.post_edited(@article, current_user, before: before[:body],
                               after: params[:article][:body_markdown], comment: params[:edit_comment],
-                              before_title: @article.title, after_title: params[:article][:title],
-                              before_tags: @article.tags, after_tags: after_tags)
+                              before_title: before[:title], after_title: params[:article][:title],
+                              before_tags: before[:tags], after_tags: after_tags)
       redirect_to share_article_path(@article)
     else
       render :edit
