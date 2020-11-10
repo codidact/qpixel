@@ -319,11 +319,13 @@
   value_type: integer
   category: Display
   description: >
-    The number of child posts before the TOC is shown. If the threashold is not met, do not show TOC at all.
+    The minimum number of child posts before the table of contents is shown. If the number of child posts is less than
+    this threshold, the TOC is not shown.
 
 - name: TableOfContentsExcerptLength
   value: 120
   value_type: integer
   category: Display
   description: >
-    The length of the answer shown in the TOC, don't keep it too large, it may fill up the TOC and become unreadable.
+    The number of characters to show in the answer excerpt in the TOC. The TOC strips most formatting, so beware of large
+    values -- the TOC might become hard to read.

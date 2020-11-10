@@ -294,10 +294,10 @@
         <% end %>
 
         <% if is_question && post.children.length >= SiteSetting["TableOfContentsThreshold"] %>
-          <div class="toc" id="toc-example-toggle">
-            <button class="toc--header" data-toggle="#toc-example-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
+          <div class="toc has-margin-left-4" id="toc-toggle">
+            <button class="toc--header" data-toggle="#toc-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
             <% post.children.each do |answer| %>
-              <a href="#" class="toc--entry">
+              <a href="<%= generic_share_link(answer) %>" class="toc--entry">
                 <div class="toc--badge">
                   <span class="badge is-tag is-green">+<%= answer.upvote_count %></span>
                 </div>
@@ -305,15 +305,15 @@
                   <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
                 </div>
                 <div class="toc--full">
-                  <% sanitised = raw(sanitize(answer.body, scrubber: scrubber)) %>
+                  <% sanitised = strip_markdown(answer.body_markdown) %>
                   <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
                   <p>
-                    <%=raw sanitised[ 0 ... max_length ] %>
+                    <%= sanitised[ 0 ... max_length ] %>
                     <% if sanitised.length > max_length %>
-                      ...
+                      &hellip;
                     <% end %>
                   </p>
-                  <p class="has-font-size-small"><%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago</p>
+                  <p class="has-font-size-small"><%= time_ago_in_words(post.updated_at, locale: :en_abbrev) %> ago</p>
                 </div>
               </a>
             <% end %>
