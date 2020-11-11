@@ -19,84 +19,42 @@ docker-compose build db
 docker-compose build redis
 ```
 
-## 2. Secrets
+## 2. Setup and Secrets
 
-Your secrets (the mysql database credentials and admin user name) are stored
-in [docker/dummy.env](docker/dummy.env). You should copy the file to an env file you
-won't add to version control:
+The `docker-compose.yml` file uses a `.env` file in the same directory to load dynamic values used when the docker containers are initialized.
+
+This is useful for setting up custom values locally. Additionally, your secrets (the mysql database credentials and admin user name) are inserted into the running container through the `docker/env` file.
+
+Both the `.env` file and the `docker/env` file are gitignored, so you can change values to suit, these filed need to be copied to the correct locations with some default values. You can do this in one step by executing a bash script.
 
 ```bash
-cp docker/dummy.env docker/env
+# ensure script is executable, from the project root:
+chmod +x docker/local-setup.sh
+docker/local-setup.sh
 ```
 
-And then update them to what you like!
-
-```
-COMMUNITY_ADMIN_USERNAME=admin
-COMMUNITY_ADMIN_PASSWORD=password
-COMMUNITY_ADMIN_EMAIL=admin@noreply.com
-```
-
-If you aren't using the dummy environment file, make sure to change the path in your
-docker-compose.yml - there are two specifications of `env_file` to change.
-
-
-```yaml
-env_file:
-  - ./docker/dummy.env
-```
-to
-```yaml
-env_file:
-  - ./docker/env
-```
-
-You'll also need to put the correct username and password in [docker/mysql-init.sql](docker/mysql-init.sql).
-Make sure to not update this file in version control.
+Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
 
 ## 3. Database File
-Then, copy the docker compose database file to be found as the default database configuration:
+Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/dummy.env) file. The `config/database.yml` should already be gitignored.
 
-```bash
-$ cp config/database.docker.yml config/database.yml
-```
+The `COMMUNITY_NAME` value defined in the `.env` file defines the initial community name on your local DB.
 
-You should change the username and password to be the ones you defined in your [docker/dummy.env](docker/dummy.env) (or the file
-that you created).
-**DO NOT UPDATE THIS FILE AND THEN PUSH TO VERSION CONTROL**.
-
-```
-...
-  username: qpixel
-  password: qpixel
-```
-
-In the docker-compose.yml, you should specify your community name, change the environment variable `COMMUNITY_NAME` in your docker-compose.yml
-
-```
-  uwsgi:
-    restart: always
-    build: 
-      context: "."
-      dockerfile: docker/Dockerfile
-    environment:
-      - COMMUNITY_NAME=Dinosaur Community
-      - RAILS_ENV=development
-```
+the `COMMUNITY_ADMIN_USERNAME`, `COMMUNITY_ADMIN_PASSWORD` and `COMMUNITY_ADMIN_EMAIL` values in the `docker/env` file define the first user you can log in as - however you will need to follow the instructions below to ensure you can log in as that user.
 
 ## 4. Start Containers
 
 Then start your containers! 
 
 ```bash
-docker-compose up -d
+docker-compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
 Creating qpixel_redis_1 ... done
 Creating qpixel_db_1    ... done
 Creating qpixel_uwsgi_1 ... done
 ```
 
 The uwsgi container has a sleep command for 15 seconds to give the database a chance to start,
-so don't expect to see output right away. After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the docker-compose.yml.
+so don't expect to see output right away. After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
 
 ```
 uwsgi_1  | => Booting Puma
@@ -110,7 +68,7 @@ uwsgi_1  | * Listening on tcp://localhost:3000
 uwsgi_1  | Use Ctrl-C to stop
 ```
 
-You should then be able to open your browser to [http://0.0.0.0:3000](http://0.0.0.0:3000)
+You should then be able to open your browser to [http://localhost:3000](http://localhost:3000)
 and see the interface. 
 
 ![img/interface.png](img/interface.png)
@@ -125,8 +83,7 @@ Running via Spring preloader in process 111
 ```
 
 The first user is the system user, so the second user is the admin created during the
-start of the container. And you can of course do this same command for any future users that you don't want to require email
-confirmation for. You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or greater, otherwise the user won't be created. 
+start of the container. And you can of course do this same command for any future users that you don't want to require email confirmation for. You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or greater, otherwise the user won't be created. 
 
 ## 5. Login
 
