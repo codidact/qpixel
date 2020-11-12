@@ -11,10 +11,9 @@
   <div class="dc-content">
     <%= form_tag donation_success_path, method: :post, id: 'stripe-df', data: { intent: @intent.client_secret } do %>
       <%= hidden_field_tag :amount, @amount %>
-      <%= hidden_field_tag :pmid, nil %>
 
       <div class="field">
-        <%= label_tag :billing_name, 'Your name:' %>
+        <%= label_tag :billing_name, 'Name on card:' %>
         <%= text_field_tag :billing_name, nil, class: 'form-element', required: true %>
         <div class="form-caption">
           Required for billing. Not used for anything else, and never made public.

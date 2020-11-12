@@ -23,7 +23,7 @@ $(() => {
   $('.js-dc-amount').on('change', ev => {
     const $tgt = $(ev.target);
     const amount = parseFloat($tgt.val() || '') || 1;
-    $tgt.val(formatter.format(amount).substr(1));
+    $tgt.val(formatter.format(amount).replaceAll(',', '').substr(1));
   });
 
   $('.js-dc-amt-form').on('submit', ev => {
@@ -102,7 +102,7 @@ $(() => {
           card: card,
           billing_details: billingDetails
         },
-        receipt_email: billingDetails.email,
+        receipt_email: 'donations@codidact.org',
         setup_future_usage: 'on_session'
       });
 
@@ -112,10 +112,7 @@ $(() => {
           $tgt.find('[type="submit"]').removeAttr('disabled').text('Pay');
         }, 10);
       }
-      else {
-        $tgt.find('input[name="pmid"]').val(result.paymentIntent.payment_method);
-
-        $tgt.attr('data-completed', 'true');
+      else {$tgt.attr('data-completed', 'true');
         $tgt.submit();
       }
     });

@@ -16,8 +16,7 @@
   <div class="dc-content">
     <%= form_tag donation_intent_path, class: 'js-dc-amt-form' do %>
       <%= label_tag :amount, 'Choose your donation amount (GBP):' %>
-      <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00,
-                           placeholder: "#{'%.2f' % (rand(1000..2999)/100.0).to_s}",
+      <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00, autocomplete: 'off',
                            class: 'form-element dc-amount-field js-dc-amount' %>
       <span class="js-dc-validation has-color-red-600 has-font-size-small"></span>
       <%= submit_tag 'Next', class: 'button is-filled is-large dc-submit' %>
