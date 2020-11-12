@@ -102,7 +102,7 @@ $(() => {
           card: card,
           billing_details: billingDetails
         },
-        receipt_email: 'donations@codidact.org',
+        receipt_email: billingDetails.email,
         setup_future_usage: 'on_session'
       });
 
