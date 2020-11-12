@@ -1,0 +1,103 @@
+@import 'variables';
+
+.dc-container-centered {
+  width: 100%;
+  margin: 0 0.5em;
+  border: 1px solid $muted-text;
+  border-radius: 1em;
+  overflow: hidden;
+
+  @media screen and (min-width: $screen-md) {
+    width: 80%;
+    max-width: 40em;
+    margin: 0 auto;
+  }
+}
+
+.dc-hero {
+  text-align: center;
+  background: $brand;
+  background: linear-gradient(darken(adjust_hue($brand, 45), 10%), 35%, $brand);
+  color: white;
+  padding: 1em 0;
+
+  h1 {
+    font-size: 2.0em;
+    margin: 0;
+  }
+}
+
+.dc-content {
+  padding: 0.2em 0.5em;
+  background: #333;
+  color: $muted-graphic;
+  border-bottom: 1px solid $muted-text;
+  font-size: 0.9em;
+
+  :after {
+    display: table;
+    content: '';
+    clear: both;
+  }
+
+  p {
+    margin: 0 min(max(0.5em, 15%), 4em) 0.5em min(max(0.5em, 15%), 4em);
+    text-align: justify;
+
+    &.lede {
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    &.dc-p-center {
+      text-align: center;
+    }
+  }
+
+  h1 {
+    font-size: 6.0em;
+  }
+
+  form {
+    margin: 2em min(max(0.5em, 15%), 4em) 2em min(max(0.5em, 15%), 4em);
+
+    label {
+      font-weight: bold;
+    }
+
+    .dc-amount-field {
+      text-align: center;
+      font-size: 3em;
+    }
+
+    input[type="submit"], button[type="submit"] {
+      float: right;
+    }
+
+    #stripe-df-card {
+      margin: 1em 0;
+    }
+
+    .form-caption {
+      color: #AAA;
+      margin-top: 0.2em;
+    }
+
+    .stripe-df-intro {
+      justify-content: center;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+      margin: 1em 0;
+
+      & > img {
+        height: 30px;
+        max-width: unset;
+      }
+    }
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+}

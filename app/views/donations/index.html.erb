@@ -1,0 +1,27 @@
+<div class="dc-container-centered">
+  <div class="dc-hero">
+    <h1>Donate</h1>
+  </div>
+  <div class="dc-content">
+    <p class="lede">Thanks for considering donating!</p>
+    <p>
+      <%= SiteSetting['SiteName'] %> is run on software produced by the Codidact
+      Foundation&mdash;a non-profit organisation set up to provide software that helps people get together and learn.
+    </p>
+    <p>
+      As a non-profit, we rely on donations from folks like you who use our software to keep us going. Any amount
+      you're able to give is gratefully received.
+    </p>
+  </div>
+  <div class="dc-content">
+    <%= form_tag donation_intent_path, class: 'js-dc-amt-form' do %>
+      <%= label_tag :amount, 'Choose your donation amount (GBP):' %>
+      <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00,
+                           placeholder: "#{'%.2f' % (rand(1000..2999)/100.0).to_s}",
+                           class: 'form-element dc-amount-field js-dc-amount' %>
+      <span class="js-dc-validation has-color-red-600 has-font-size-small"></span>
+      <%= submit_tag 'Next', class: 'button is-filled is-large dc-submit' %>
+    <% end %>
+  </div>
+</div>
+

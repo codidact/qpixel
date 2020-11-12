@@ -1,0 +1,48 @@
+<div class="dc-container-centered">
+  <div class="dc-hero">
+    <h1>Donate</h1>
+  </div>
+  <div class="dc-content">
+    <p class="lede">Thanks for considering donating!</p>
+    <p class="dc-p-center">You're donating</p>
+    <p class="lede"><%= number_to_currency(@amount, unit: '£') %></p>
+    <p class="dc-p-center">to help us build software and help people learn things</p>
+  </div>
+  <div class="dc-content">
+    <%= form_tag donation_success_path, method: :post, id: 'stripe-df', data: { intent: @intent.client_secret } do %>
+      <%= hidden_field_tag :amount, @amount %>
+      <%= hidden_field_tag :pmid, nil %>
+
+      <div class="field">
+        <%= label_tag :billing_name, 'Your name:' %>
+        <%= text_field_tag :billing_name, nil, class: 'form-element', required: true %>
+        <div class="form-caption">
+          Required for billing. Not used for anything else, and never made public.
+        </div>
+      </div>
+
+      <% if user_signed_in? %>
+        <%= hidden_field_tag :billing_email, current_user.email %>
+      <% else %>
+        <div class="field">
+          <%= label_tag :billing_email, 'Your email address:' %>
+          <%= email_field_tag :billing_email, nil, class: 'form-element', required: true %>
+          <div class="form-caption">
+            Required for billing purposes. You're not signed in, so we won't use this for any other purposes.
+          </div>
+        </div>
+      <% end %>
+
+      <div class="stripe-df-intro">
+        Card data handled by
+        <img alt="Stripe logo" src="/assets/stripe.png" height="30" class="stripe-df-logo" />
+      </div>
+
+      <div id="stripe-df-card"></div>
+      <div id="stripe-df-errors" class="has-color-red-600 has-font-size-small" role="alert"></div>
+      <button type="submit" class="button is-filled is-large" id="stripe-df-submit" data-disable-with="Processing...">
+        Pay
+      </button>
+    <% end %>
+  </div>
+</div>

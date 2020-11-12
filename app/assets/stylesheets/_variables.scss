@@ -14,6 +14,7 @@ $warning: #FDD835;
 $danger: #EB5959;
 $success: #2ECC71;
 $info: #58A09A;
+$brand: #4B68FF;
 
 :root {
   --key: #{$key};
@@ -25,6 +26,7 @@ $info: #58A09A;
   --danger: #{$danger};
   --success: #{$success};
   --info: #{$info};
+  --brand: #{$brand};
 }
 
 $font-stack-plain: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
