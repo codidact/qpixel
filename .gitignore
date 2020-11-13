@@ -44,3 +44,5 @@ qpixel-import.tar.gz
 
 # Ignore Vim stuff.
 *.swp
+
+dump.rdb
