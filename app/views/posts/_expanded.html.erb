@@ -149,9 +149,9 @@
 
         <div class="post--actions">
           <div class="tools">
-              <%= link_to generic_share_link(post), class: 'tools--item' do %>
+              <%= link_to generic_share_link(post), class: 'tools--item js-permalink' do %>
                 <i class="fa fa-link"></i>
-                Permalink
+                <span class="js-text">Permalink</span>
               <% end %>
               <%= link_to post_history_path(post), class: 'tools--item' do %>
                 <i class="fa fa-history"></i>
