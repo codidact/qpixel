@@ -46,15 +46,17 @@
       <% if @show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
-      <% required_ids = post.category&.required_tag_ids %>
-      <% moderator_ids = post.category&.moderator_tag_ids %>
-      <% topic_ids = post.category&.topic_tag_ids %>
-      <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-        <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-        <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-        <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-        <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                    class: "badge is-tag #{required} #{topic} #{moderator}" %>
+      <% if is_question %>
+        <% required_ids = post.category&.required_tag_ids %>
+        <% moderator_ids = post.category&.moderator_tag_ids %>
+        <% topic_ids = post.category&.topic_tag_ids %>
+        <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+          <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+          <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+          <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+          <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                      class: "badge is-tag #{required} #{topic} #{moderator}" %>
+        <% end %>
       <% end %>
       <% if post.att_source.present? || post.created_at < RequestContext.community.created_at %>
         <%= link_to post.att_source, class: 'badge is-tag' do %>
