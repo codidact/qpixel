@@ -41,7 +41,7 @@ $(() => {
     }
   });
 
-  $('#markdown-link-name, #markdown-link-url, #markdown-link-insert').on('keydown', ev => {
+  $('#markdown-link-name, #markdown-link-url').on('keydown', ev => {
     if (ev.keyCode === 13) {
       // don't submit post form on enter in link modal
       ev.stopPropagation();
