@@ -43,6 +43,8 @@ $(() => {
 
   $(document).on('click', '.js-markdown-insert-link', ev => {
     ev.preventDefault();
+    ev.stopPropagation();
+
     const $tgt = $(ev.target);
     const $name = $('#markdown-link-name');
     const text = $name.val();
