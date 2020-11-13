@@ -4,8 +4,10 @@ services:
     build:
       context: "."
       dockerfile: docker/Dockerfile.db
+    volumes:  
+      - ./docker/mysql:/var/lib/mysql
     env_file:
-      - ./docker/dummy.env
+      - ${ENV_FILE_LOCATION}
     command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
 
   uwsgi:
@@ -16,13 +18,13 @@ services:
     depends_on:
       - db
     environment:
-      - COMMUNITY_NAME=Dinosaur Community
-      - RAILS_ENV=development
-      - CONFIRMABLE_ALLOWED_ACCESS_DAYS=2
+      - COMMUNITY_NAME=${COMMUNITY_NAME}
+      - RAILS_ENV=${RAILS_ENV}
+      - CONFIRMABLE_ALLOWED_ACCESS_DAYS=${CONFIRMABLE_ALLOWED_ACCESS_DAYS}
     env_file:
-      - ./docker/dummy.env
+      - ${ENV_FILE_LOCATION}
     ports:
-      - "3000:3000"
+      - "${LOCAL_DEV_PORT}:3000"
     volumes:
       - .:/code
       - ./static:/var/www/static

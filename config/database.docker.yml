@@ -4,8 +4,8 @@ default: &default
   collation: utf8mb4_unicode_ci
   host: db
   port: 3306
-  username: root
-  password: root
+  username: qpixel
+  password: qpixel
 
 development:
   <<: *default
