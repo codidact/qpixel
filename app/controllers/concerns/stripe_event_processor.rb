@@ -8,8 +8,6 @@ class StripeEventProcessor
 
     user = if object[:metadata][:user_id].present?
              User.find(object[:metadata][:user_id])
-           else
-             nil
            end
 
     customer = if user.present? && user.cid.present?
@@ -22,7 +20,7 @@ class StripeEventProcessor
                  end
                else
                  existing = Stripe::Customer.list({ email: billing_details[:email] })[:data]
-                 if existing.size > 0
+                 if !existing.empty?
                    existing[0]
                  else
                    Stripe::Customer.create({ name: billing_details[:name], email: billing_details[:email],
@@ -41,13 +39,13 @@ class StripeEventProcessor
       method.detach
     end
 
-    if cust_methods.size > 0 && cust_methods.any? { |pm| pm[:card][:fingerprint] == method[:card][:fingerprint] }
-      return "Already attached (#{method[:card][:fingerprint]})."
+    if !cust_methods.empty? && cust_methods.any? { |pm| pm[:card][:fingerprint] == method[:card][:fingerprint] }
+      "Already attached (#{method[:card][:fingerprint]})."
     elsif object[:setup_future_usage].present?
       method.attach({ customer: customer.id })
-      return 'Attached.'
+      'Attached.'
     else
-      return 'Future not set up, unable to attach.'
+      'Future not set up, unable to attach.'
     end
   end
 end

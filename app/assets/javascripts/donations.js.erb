@@ -112,7 +112,8 @@ $(() => {
           $tgt.find('[type="submit"]').removeAttr('disabled').text('Pay');
         }, 10);
       }
-      else {$tgt.attr('data-completed', 'true');
+      else {
+        $tgt.attr('data-completed', 'true');
         $tgt.submit();
       }
     });

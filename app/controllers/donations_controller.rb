@@ -18,7 +18,7 @@ class DonationsController < ApplicationController
 
     if amount < 1.00
       flash[:danger] = "Sorry, we can't accept amounts below £1.00. We appreciate your generosity, but the processing "\
-                       "fees make it prohibitive."
+                       'fees make it prohibitive.'
       redirect_to donate_path
       return
     end
@@ -70,9 +70,8 @@ class DonationsController < ApplicationController
       rescue Stripe::StripeError => e
         error_id = SecureRandom.uuid
         ErrorLog.create(community: RequestContext.community, user: current_user, klass: e&.class,
-                        message: e&.message, backtrace: e&.backtrace&.join("\n"),
-                        request_uri: request.original_url, host: request.raw_host_with_port,
-                        uuid: error_id, user_agent: request.user_agent)
+                        message: e&.message, backtrace: e&.backtrace&.join("\n"), request_uri: request.original_url,
+                        host: request.raw_host_with_port, uuid: error_id, user_agent: request.user_agent)
         render status: 500, json: { error: "#{e&.class}: #{error_id} created." }
       end
     else
