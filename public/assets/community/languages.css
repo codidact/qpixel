@@ -1,0 +1,19 @@
+:lang(he), :lang(ar) /* and whatever other RTL languages there are */ {
+    direction: rtl;
+}
+
+:lang(he) {
+    font-family: frank ruhl libre, narkisim, serif;
+}
+
+:lang(ja) {
+    font-family: Noto Sans CJK JP, Noto Sans CJK, Hirajino Kaku Gothic Pro, Meiryo, sans-serif;
+}
+
+:lang(zh-Hant) {
+    font-family: Noto Sans CJK TC, Noto Sans CJK, Microsoft JhengHei, sans-serif;
+}
+
+:lang(zh), lang(zh-Hans) /* Assume Chinese text is simplified if not explicit */ {
+    font-family: Noto Sans CJK SC, Noto Sans CJK, Microsoft YaHei, sans-serif;
+}
