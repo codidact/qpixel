@@ -10,6 +10,12 @@
 # Docker environment (production)
 docker/env
 
+# Don't track changes to the docker-compose .env file only in project root
+/.env
+
+# mount mysql volume so that its easy to interact with the database outside of the container. This also allows persistent database storage
+docker/mysql
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -44,3 +50,5 @@ qpixel-import.tar.gz
 
 # Ignore Vim stuff.
 *.swp
+
+dump.rdb

@@ -208,3 +208,11 @@ details {
     }
   }
 }
+
+.item-list .item-list--item .item-list--number-value {
+  height: unset;
+}
+
+.item-list--item .item-list--number-value .meter {
+  margin-top: 0.5em !important;
+}
