@@ -1,9 +1,21 @@
+/** Web Fonts **/
+
+/* hebrew */
+@font-face {
+  font-family: 'Frank Ruhl Libre';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Frank Ruhl Libre Regular'), local('FrankRuhlLibre-Regular'), url(https://fonts.gstatic.com/s/frankruhllibre/v6/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Ll4ajn.woff2) format('woff2');
+  unicode-range: U+0590-05FF, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
 :lang(he), :lang(ar) /* and whatever other RTL languages there are */ {
     direction: rtl;
 }
 
 :lang(he) {
-    font-family: FrankRuehl, Frank Ruhl Libre, Narkisim, Tahoma, serif;
+    font-family: Frank Ruhl Libre, serif;
 }
 
 :lang(ja) {
