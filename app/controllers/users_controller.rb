@@ -253,7 +253,7 @@ class UsersController < ApplicationController
     end
     AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                          comment: "#{attrib} to #{new_value}")
-    AbilityQueue.add(@user, "Role Change")
+    AbilityQueue.add(@user, 'Role Change')
 
     render json: { status: 'success' }
   end
