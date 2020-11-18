@@ -260,14 +260,14 @@
           <div class="widget">
             <div class="widget--header">Why does this post require moderator attention?</div>
             <% unless post.locked? %>
-              <% PostFlagType.all.each do |reason| %>
+              <% PostFlagType.where(post_type_id: post.post_type.id).or(PostFlagType.where(post_type_id: nil)).each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
-                      <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>" id="flag-reason-<%= reason.id %>">
+                      <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>" id="flag-reason-<%= reason.id %>_<%= post.id  %>">
                     </div>
                     <div class="grid--cell is-flexible">
-                      <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>">
+                      <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>_<%= post.id  %>">
                         <%= reason.name %>
                         <div class="form-caption">
                           <%= raw render_markdown(reason.description.gsub "$SiteName", SiteSetting['SiteName']) %>
