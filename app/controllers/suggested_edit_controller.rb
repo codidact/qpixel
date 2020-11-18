@@ -32,6 +32,7 @@ class SuggestedEditController < ApplicationController
                                 decided_by: current_user, updated_at: DateTime.now))
       PostHistory.post_edited(@post, @edit.user, **opts)
       flash[:success] = 'Edit approved successfully.'
+      AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) })
 
@@ -69,6 +70,7 @@ class SuggestedEditController < ApplicationController
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
                                                     decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
+      AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) })

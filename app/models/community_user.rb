@@ -24,7 +24,7 @@ class CommunityUser < ApplicationRecord
   # Calculation functions for privilege scores
   # These are quite expensive, so we'll cache them for a while
   def post_score
-    Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 24.hours) do
+    Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 3.hours) do
       good_posts = Post.where(user: user).where('score > 0.5').count
       bad_posts = Post.where(user: user).where('score < 0.5').count
 
@@ -33,7 +33,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def edit_score
-    Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 24.hours) do
+    Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 3.hours) do
       good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
       bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
 
@@ -42,7 +42,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def flag_score
-    Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 24.hours) do
+    Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 3.hours) do
       good_flags = Flag.where(user: user).where(status: 'helpful').count
       bad_flags = Flag.where(user: user).where(status: 'declined').count
 

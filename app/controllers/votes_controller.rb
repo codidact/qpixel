@@ -38,6 +38,8 @@ class VotesController < ApplicationController
       return
     end
 
+    AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
+
     modified = !destroyed.empty?
     state = { status: (modified ? 'modified' : 'OK'), vote_id: vote.id, upvotes: post.upvote_count,
               downvotes: post.downvote_count }
@@ -54,6 +56,7 @@ class VotesController < ApplicationController
     end
 
     if vote.destroy
+      AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
       render json: { status: 'OK', upvotes: post.upvote_count, downvotes: post.downvote_count }
     else
       render json: { status: 'failed', message: vote.errors.full_messages.join('. ') }, status: 403
