@@ -73,6 +73,9 @@ class UserTest < ActiveSupport::TestCase
 
   test 'ensure_community_user! creates community_user for new communities' do
     RequestContext.community = Community.create(host: 'other', name: 'Other')
+
+    copy_abilities(RequestContext.community_id)
+
     user = users(:standard_user)
     original_count = user.community_users.count
     original_cu = user.community_user

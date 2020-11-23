@@ -29,6 +29,12 @@ class ActiveSupport::TestCase
   def clear_cache
     Rails.cache.clear
   end
+
+  def copy_abilities(community_id)
+    Ability.unscoped.where(community: Community.first).each do |a|
+      Ability.create(a.attributes.merge(community_id: community_id, id: nil))
+    end
+  end
 end
 
 class ActionController::TestCase
