@@ -1,7 +1,7 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :verify_moderator, only: [:resolve, :queue]
+  before_action :verify_moderator, only: [:resolve, :queue, :handled]
 
   def new
     @flag = Flag.new(reason: params[:reason], post_id: params[:post_id], user: current_user)
@@ -23,7 +23,12 @@ class FlagsController < ApplicationController
   end
 
   def queue
-    @flags = Flag.unhandled.includes(:post).paginate(page: params[:page], per_page: 20)
+    @flags = Flag.unhandled.includes(:post, :user).paginate(page: params[:page], per_page: 20)
+  end
+
+  def handled
+    @flags = Flag.handled.includes(:post, :user, :handled_by).order(created_at: :desc)
+                 .paginate(page: params[:page], per_page: 50)
   end
 
   def resolve

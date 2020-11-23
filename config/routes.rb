@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
   get    'mod/comments',                   to: 'moderator#recent_comments', as: :recent_comments
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
+  get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
   patch  'mod/votes/investigated/:id',     to: 'suspicious_votes#investigated', as: :investigated_suspicious_vote

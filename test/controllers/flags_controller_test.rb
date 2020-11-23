@@ -74,4 +74,22 @@ class FlagsControllerTest < ActionController::TestCase
     assert_equal 'failed', JSON.parse(response.body)['status']
     assert_response(500)
   end
+
+  test 'should get handled flags list' do
+    sign_in users(:moderator)
+    get :handled
+    assert_response 200
+    assert_not_nil assigns(:flags)
+  end
+
+  test 'should require authentication to get handled flags list' do
+    get :handled
+    assert_response 302
+  end
+
+  test 'should require moderator status to get handled flags list' do
+    sign_in users(:standard_user)
+    get :handled
+    assert_response 404
+  end
 end

@@ -1,0 +1,31 @@
+<div class="widget">
+  <div class="item-list">
+    <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
+  </div>
+  <div class="widget--body">
+    <p>
+      <% if flag.reason.present? %>
+        <strong>reason:</strong> <%= flag.reason %>
+      <% else %>
+        <strong>no reason given</strong>
+      <% end %> &mdash;
+      <%= link_to user_path(flag.user) do %>
+        <span dir="ltr"><%= flag.user.rtl_safe_username %></span>
+      <% end %>
+      (<%= link_to 'history', flag_history_path(flag.user) %>)
+    </p>
+    <p>
+      <% status_colors = { helpful: 'is-green', declined: 'is-red', pending: 'is-muted' } %>
+      <span class="badge is-tag <%= status_colors[(flag.status || 'pending').to_sym] %> is-filled">
+        <%= flag.status || 'pending' %>
+      </span>
+      <% if flag.message.present? %>
+        <strong>response:</strong> <%= flag.message %>
+      <% end %>
+      &mdash;
+      <%= link_to user_path(flag.handled_by) do %>
+        <span dir="ltr"><%= flag.handled_by.rtl_safe_username %></span>
+      <% end %>
+    </p>
+  </div>
+</div>
