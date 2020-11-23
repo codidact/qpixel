@@ -1,5 +1,4 @@
 <div class="tabs">
-  <% puts user %>
   <%= link_to user_path(user), class: "tabs--item #{current_page?(user_path(user)) ? 'is-active' : ''}" do %>
     <i class="fas fa-user"></i> Profile
   <% end %>

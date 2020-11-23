@@ -6,8 +6,6 @@
 <% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
 <% @last_activity = !!defined?(last_activity) ? last_activity : true %>
 
-<% puts [defined?(show_type_tag), !!defined?(show_type_tag)] %>
-
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
   <div class="item-list--number-value">
     <div class="meter is-question-score">
