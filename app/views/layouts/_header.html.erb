@@ -40,7 +40,7 @@
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
-            <span class="header--alert"><%= unread %></span>
+            <span class="header--alert inbox-count"><%= unread %></span>
           <% end %>
           <i class='fas fa-inbox' title='Notifications'></i>
         </a>
@@ -70,6 +70,9 @@
 <div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
   <div class="inbox--container h-p-2"></div>
+  <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
+    <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
+  </div>
 </div>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
