@@ -77,7 +77,7 @@
 
 <div class="item-list">
   <% @posts.each do |post| %>
-    <%= render 'posts/type_agnostic', post: post %>
+    <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
   <% end %>
 </div>
 

@@ -1,134 +1,182 @@
 <%= form_for @category, url: submit_path, method: :post do |f| %>
-  <div class="form-group">
-    <%= f.label :name, class: 'form-element' %>
-    <span class="form-caption">This will be public, so make it something simple and recognisable.</span>
-    <%= f.text_field :name, class: 'form-element' %>
-  </div>
+  <details open>
+    <summary>
+      Basic Information
+      <span class="subheading">Name, description</span>
+    </summary>
 
-  <div class="form-group">
-    <%= f.label :short_wiki, class: 'form-element' %>
-    <span class="form-caption">A short description of what this category is for. Markdown supported.</span>
-    <%= f.text_area :short_wiki, class: 'form-element is-small' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :name, class: 'form-element' %>
+      <span class="form-caption">This will be public, so make it something simple and recognisable.</span>
+      <%= f.text_field :name, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :display_post_types, 'Listed post types', class: 'form-element' %>
-    <span class="form-caption">
-      These post types will be displayed on the category's homepage. For a Q&A category, you might only want to show questions.
-    </span>
-    <%= f.select :display_post_types, options_for_select(PostType.mapping.to_a, selected: @category.display_post_types),
-                 { include_blank: true }, multiple: true, class: 'form-element' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :short_wiki, class: 'form-element' %>
+      <span class="form-caption">A short description of what this category is for. Markdown supported.</span>
+      <%= f.text_area :short_wiki, class: 'form-element is-small' %>
+    </div>
+  </details>
 
-  <div class="form-group">
-    <%= f.label :post_type_ids, 'Allowed post types', class: 'form-element' %>
-    <span class="form-caption">Only these post types will be allowed in this category.</span>
-    <%= f.select :post_type_ids, options_for_select(PostType.mapping.to_a, selected: @category.post_type_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element' %>
-  </div>
+  <details>
+    <summary>
+      Posting
+      <span class="subheading">Post types, tag set</span>
+    </summary>
 
-  <div class="form-group">
-    <%= f.label :tag_set_id, 'Tag set', class: 'form-element' %>
-    <span class="form-caption">Which tag set may posts in this category draw from?</span>
-    <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
-                 { include_blank: true }, class: 'form-element js-category-tag-set-select' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :display_post_types, 'Listed post types', class: 'form-element' %>
+      <span class="form-caption">
+        These post types will be displayed on the category's homepage. For a Q&A category, you might only want to show questions.
+      </span>
+      <%= f.select :display_post_types, options_for_select(PostType.mapping.to_a, selected: @category.display_post_types),
+                   { include_blank: true }, multiple: true, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :min_trust_level, 'Minimum posting trust level', class: 'form-element' %>
-    <span class="form-caption">
-      Users must have at least this trust level to post in this category. Leave blank to allow
-      anyone to post.
-    </span>
-    <%= f.select :min_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_trust_level),
-                 {}, class: 'form-element' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :post_type_ids, 'Allowed post types', class: 'form-element' %>
+      <span class="form-caption">Only these post types will be allowed in this category.</span>
+      <%= f.select :post_type_ids, options_for_select(PostType.mapping.to_a, selected: @category.post_type_ids),
+                   { include_blank: true }, multiple: true, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :min_view_trust_level, 'Minimum visible trust level', class: 'form-element' %>
-    <span class="form-caption">
-      Users under this trust level cannot see that this category exists. Leave blank to leave the category public.
-      This can be different (higher or lower) than the minimum posting trust level.
-    </span>
-    <%= f.select :min_view_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_view_trust_level),
-                 {}, class: 'form-element' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :tag_set_id, 'Tag set', class: 'form-element' %>
+      <span class="form-caption">Which tag set may posts in this category draw from?</span>
+      <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
+                   { include_blank: true }, class: 'form-element js-category-tag-set-select' %>
+    </div>
+  </details>
 
-  <div class="form-group">
-    <%= f.label :button_text, 'Post button text', class: 'form-element' %>
-    <span class="form-caption">Customise the text on the "Create Post" button. Leave blank for default.</span>
-    <%= f.text_field :button_text, class: 'form-element' %>
-  </div>
+  <details>
+    <summary>
+      Permissions
+      <span class="subheading">Trust levels, licensing</span>
+    </summary>
 
-  <div class="form-group">
-    <%= f.check_box :is_homepage, class: 'form-checkbox-element' %>
-    <%= f.label :is_homepage, 'Set as homepage?' %>
-    <span class="form-caption">Tick this box to set this category as the site homepage.</span>
-  </div>
+    <div class="form-group">
+      <%= f.label :min_trust_level, 'Minimum posting trust level', class: 'form-element' %>
+      <span class="form-caption">
+        Users must have at least this trust level to post in this category. Leave blank to allow
+        anyone to post.
+      </span>
+      <%= f.select :min_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_trust_level),
+                   {}, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :color_code, 'Header color', class: 'form-element' %>
-    <span class="form-caption">Select a color to be used for the header within this category. Leave empty for site-wide default.</span>
-    <%= f.select :color_code, options_for_select(['turquoise', 'green', 'blue', 'darkblue', 'purple', 'gray', 'bluegray', 'yellow', 'orange', 'pink', 'red'], selected: @category.color_code),
-                 { include_blank: true }, class: 'form-element' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :min_view_trust_level, 'Minimum visible trust level', class: 'form-element' %>
+      <span class="form-caption">
+        Users under this trust level cannot see that this category exists. Leave blank to leave the category public.
+        This can be different (higher or lower) than the minimum posting trust level.
+      </span>
+      <%= f.select :min_view_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_view_trust_level),
+                   {}, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :license_id, 'Default license', class: 'form-element' %>
-    <span class="form-caption">
-      Posts in this category will default to this license. Users can still select a different license
-      if they choose to.
-    </span>
-    <%= f.select :license_id, options_for_select(License.enabled.default_order.map { |l| [l.name, l.id] },
-                                                 selected: @category.license_id), {}, class: 'form-element' %>
-  </div>
+    <div class="form-group">
+      <%= f.label :license_id, 'Default license', class: 'form-element' %>
+      <span class="form-caption">
+        Posts in this category will default to this license. Users can still select a different license
+        if they choose to.
+      </span>
+      <%= f.select :license_id, options_for_select(License.enabled.default_order.map { |l| [l.name, l.id] },
+                                                   selected: @category.license_id), {}, class: 'form-element' %>
+    </div>
+  </details>
 
-  <div class="form-group">
-    <%= f.label :sequence, class: 'form-element' %>
-    <span class="form-caption">
+  <details>
+    <summary>
+      Display
+      <span class="subheading">Homepage, post button, colors, ordering</span>
+    </summary>
+
+    <div class="form-group">
+      <%= f.label :button_text, 'Post button text', class: 'form-element' %>
+      <span class="form-caption">Customise the text on the "Create Post" button. Leave blank for default.</span>
+      <%= f.text_field :button_text, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.check_box :is_homepage, class: 'form-checkbox-element' %>
+      <%= f.label :is_homepage, 'Set as homepage?' %>
+      <span class="form-caption">Tick this box to set this category as the site homepage.</span>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :color_code, 'Header color', class: 'form-element' %>
+      <span class="form-caption">Select a color to be used for the header within this category. Leave empty for site-wide default.</span>
+      <%= f.select :color_code, options_for_select(['turquoise', 'green', 'blue', 'darkblue', 'purple', 'gray', 'bluegray', 'yellow', 'orange', 'pink', 'red'], selected: @category.color_code),
+                   { include_blank: true }, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :sequence, class: 'form-element' %>
+      <span class="form-caption">
       The order in which this category will appear in the header and on the category list page. Higher numbers
       appear later.
     </span>
-    <%= f.number_field :sequence, class: 'form-element' %>
-  </div>
+      <%= f.number_field :sequence, class: 'form-element' %>
+    </div>
+  </details>
 
-  <div class="form-group">
-    <%= f.label :asking_guidance_override, class: 'form-element' %>
-    <span class="form-caption">
+  <details>
+    <summary>
+      Help &amp; Guidance
+      <span class="subheading">Guidance overrides</span>
+    </summary>
+
+    <div class="form-group">
+      <%= f.label :asking_guidance_override, class: 'form-element' %>
+      <span class="form-caption">
       This field overrides the default asking guidance and is shown when a new post is created. Leave blank to use site-default.
     </span>
-    <%= f.text_area :asking_guidance_override, class: 'form-element' %>
-  </div>
+      <%= f.text_area :asking_guidance_override, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :answering_guidance_override, class: 'form-element' %>
-    <span class="form-caption">
+    <div class="form-group">
+      <%= f.label :answering_guidance_override, class: 'form-element' %>
+      <span class="form-caption">
       This field overrides the default answering guidance and is shown when a new answer is created. Leave blank to use site-default.
     </span>
-    <%= f.text_area :answering_guidance_override, class: 'form-element' %>
-  </div>
+      <%= f.text_area :answering_guidance_override, class: 'form-element' %>
+    </div>
+  </details>
 
-  <div class="form-group">
-    <%= f.label :use_for_hot_posts, class: 'form-element' %>
-    <span class="form-caption">
-      Whether the posts of this category are eligible to be selected as  hot posts.
+  <details>
+    <summary>
+      Sharing &amp; Promotion
+      <span class="subheading">Hot posts, advertising</span>
+    </summary>
+
+    <div class="form-group">
+      <%= f.label :use_for_hot_posts, class: 'form-element' %>
+      <span class="form-caption">
+      Whether the posts of this category are eligible to be selected as hot posts.
     </span>
-    <%= f.select :use_for_hot_posts, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_hot_posts),
-                 {}, class: 'form-element' %>
-  </div>
+      <%= f.select :use_for_hot_posts, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_hot_posts),
+                   {}, class: 'form-element' %>
+    </div>
 
-  <div class="form-group">
-    <%= f.label :use_for_advertisement, class: 'form-element' %>
-    <span class="form-caption">
+    <div class="form-group">
+      <%= f.label :use_for_advertisement, class: 'form-element' %>
+      <span class="form-caption">
       Whether the posts of this category are eligible to be selected as random advertisement.
     </span>
-    <%= f.select :use_for_advertisement, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_advertisement),
-                 {}, class: 'form-element' %>
-  </div>
+      <%= f.select :use_for_advertisement, options_for_select([['yes', true], ['no', false]], selected: @category.use_for_advertisement),
+                   {}, class: 'form-element' %>
+    </div>
+  </details>
 
-  <div class="form-group js-category-tags-group">
-    <%= f.label :required_tag_ids, 'Required tags', class: 'form-element' %>
-    <span class="form-caption js-tags-group-caption">
+  <details>
+    <summary>
+      Tagging
+      <span class="subheading">Required, topic, moderator tags</span>
+    </summary>
+
+    <div class="form-group js-category-tags-group">
+      <%= f.label :required_tag_ids, 'Required tags', class: 'form-element' %>
+      <span class="form-caption js-tags-group-caption">
       <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
         Required tags for this category - every post will be required to have one of these tags.
       </span>
@@ -136,16 +184,16 @@
         Select a tag set first.
       </span>
     </span>
-    <% disabled = @category.tag_set.nil? %>
-    <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
-                                                       selected: @category.required_tag_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-required-tags',
-                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
-  </div>
+      <% disabled = @category.tag_set.nil? %>
+      <%= f.select :required_tag_ids, options_for_select(@category.required_tags.map { |t| [t.name, t.id] },
+                                                         selected: @category.required_tag_ids),
+                   { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-required-tags',
+                   data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
+    </div>
 
-  <div class="form-group js-category-tags-group">
-    <%= f.label :topic_tag_ids, 'Topic tags', class: 'form-element' %>
-    <span class="form-caption js-tags-group-caption">
+    <div class="form-group js-category-tags-group">
+      <%= f.label :topic_tag_ids, 'Topic tags', class: 'form-element' %>
+      <span class="form-caption js-tags-group-caption">
       <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
         Tags that will be highlighted as the most important tag on a question.
         <a href="javascript:void(0)" class="js-add-required-topic">Add all required tags</a>
@@ -155,15 +203,15 @@
       </span>
     </span>
 
-    <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
-                                                       selected: @category.topic_tag_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-topic-tags',
-                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
-  </div>
+      <%= f.select :topic_tag_ids, options_for_select(@category.topic_tags.map { |t| [t.name, t.id] },
+                                                      selected: @category.topic_tag_ids),
+                   { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-topic-tags',
+                   data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
+    </div>
 
-  <div class="form-group js-category-tags-group">
-    <%= f.label :moderator_tag_ids, 'Moderator-only tags', class: 'form-element' %>
-    <span class="form-caption js-tags-group-caption">
+    <div class="form-group js-category-tags-group">
+      <%= f.label :moderator_tag_ids, 'Moderator-only tags', class: 'form-element' %>
+      <span class="form-caption js-tags-group-caption">
       <span data-state="present" style="<%= @category.tag_set.nil? ? 'display: none' : '' %>">
         Tags that only moderators can use in this category.
       </span>
@@ -172,11 +220,14 @@
       </span>
     </span>
 
-    <%= f.select :moderator_tag_ids, options_for_select(@category.moderator_tags.map { |t| [t.name, t.id] },
-                                                        selected: @category.moderator_tag_ids),
-                 { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-moderator-tags',
-                 data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
-  </div>
+      <%= f.select :moderator_tag_ids, options_for_select(@category.moderator_tags.map { |t| [t.name, t.id] },
+                                                          selected: @category.moderator_tag_ids),
+                   { include_blank: true }, multiple: true, class: 'form-element js-tag-select js-moderator-tags',
+                   data: { tag_set: @category.tag_set&.id, create: 'false', use_ids: 'true' }, disabled: disabled %>
+    </div>
+  </details>
 
-  <%= f.submit 'Save', class: 'button is-filled' %>
+  <div class="has-margin-top-2">
+    <%= f.submit 'Save', class: 'button is-filled' %>
+  </div>
 <% end %>

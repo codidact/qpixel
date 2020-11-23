@@ -212,7 +212,7 @@ class UsersController < ApplicationController
       end
     end
 
-    profile_rendered = helpers.render_markdown(profile_params[:profile_markdown])
+    profile_rendered = helpers.post_markdown(:user, :profile_markdown)
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
       AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,

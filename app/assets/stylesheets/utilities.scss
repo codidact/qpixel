@@ -168,3 +168,51 @@ pre.pre-wrap {
     display: none;
   }
 }
+
+.footnote-ref a::before {
+  content: '';
+}
+
+.footnote-ref a::after {
+  content: '';
+}
+
+details {
+  border: 1px solid white;
+
+  &[open] {
+    border: 1px solid $muted-graphic;
+    border-radius: 4px;
+    margin-bottom: 0.2em;
+  }
+
+  & > summary {
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: $screen-md) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    & > .subheading {
+      margin-top: 0.3em;
+      font-size: 0.8em;
+      font-weight: normal;
+      color: $muted-text;
+
+      @media screen and (min-width: $screen-md) {
+        margin-top: unset;
+        margin-left: 0.4em;
+      }
+    }
+  }
+}
+
+.item-list .item-list--item .item-list--number-value {
+  height: unset;
+}
+
+.item-list--item .item-list--number-value .meter {
+  margin-top: 0.5em !important;
+}

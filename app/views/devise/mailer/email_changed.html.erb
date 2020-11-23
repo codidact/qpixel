@@ -1,7 +1,22 @@
-<p>Hello <%= @email %>!</p>
+<p>Hello <%= @resource.username %>!</p>
 
 <% if @resource.try(:unconfirmed_email?) %>
-  <p>We're contacting you to notify you that your email is being changed to <%= @resource.unconfirmed_email %>.</p>
+  <p>
+    This email is just to let you know that someone has requested to change your account's email address to
+    <%= @resource.unconfirmed_email %>.
+  </p>
+  <p>
+    If this was you, you can safely ignore this email. If it wasn't, please
+    <%= link_to 'change your password now', edit_user_registration_url(@resource) %> to protect your account.
+  </p>
 <% else %>
-  <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
+  <p>
+    This email is just to let you know that the email address on your account has been changed to <%= @resource.email %>.
+  </p>
+  <p>
+    If this was you, you can safely ignore this email. If it wasn't, please
+    <%= link_to 'change your password now', edit_user_registration_url(@resource) %> to protect your account.
+  </p>
 <% end %><br/>
+
+<%= render 'devise/mailer/friendly_footer' %>

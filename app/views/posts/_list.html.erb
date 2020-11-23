@@ -1,8 +1,13 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
+<% is_article = post.post_type_id == Article.post_type_id %>
 <% is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
 <% active_user = post.last_activity_by || post.user %>
-<% show_type_tag ||= false %>
-<% show_category_tag ||= false %>
+<% @show_type_tag = !!defined?(show_type_tag) ? show_type_tag : false %>
+<% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
+<% @last_activity = !!defined?(last_activity) ? last_activity : true %>
+
+<% puts [defined?(show_type_tag), !!defined?(show_type_tag)] %>
+
 <div class="item-list--item <%= is_meta ? 'post__meta' : '' %> <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
   <div class="item-list--number-value">
     <div class="meter is-question-score">
@@ -18,11 +23,11 @@
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
       <%= link_to generic_share_link(post), 'data-ckb-item-link' => '' do %>
-        <% if show_category_tag %>
+        <% if @show_category_tag %>
           <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
         <% end %>
-        <%= is_question ? post.title : post.parent.title %>
-        <%= is_question && post.closed ? "[closed]" : "" %>
+        <%= (is_question || is_article) ? post.title : post.parent.title %>
+        <%= (is_question || is_article) && post.closed ? "[closed]" : "" %>
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
@@ -31,12 +36,14 @@
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;
       <% end %>
-      last activity <%= time_ago_in_words(post.last_activity) %> ago
-      by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr'%>
+      <% if @last_activity %>
+        last activity <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% end %>
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
-      <% if show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+      <% if @show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post.post_type.name) %>
       <% end %>
       <% if is_question %>

@@ -50,6 +50,13 @@ $(() => {
     // no need to do anything else at this point in this block, until proven otherwise.
   });
 
+  $('.comment-form').find('input[value="Discard"]').on('click', function(data) {
+      const $tgt = $(data.target);
+      const $form = $tgt.parents('form');
+      $form[0].reset();  // Clear the comment field before hiding the form for a fresh start.
+      $form.hide();
+  });
+
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();
 

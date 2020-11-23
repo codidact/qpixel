@@ -91,12 +91,8 @@
         <% end %>
       <% end %>
       <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
-    </div>
-    <% else %>
-    </div>
-      <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-filled' %>
-      <%= link_to 'Sign In', new_user_session_path, class: 'button is-outlined' %>
     <% end %>
+  </div>
 </div>
 
 <% if expandable? %>

@@ -33,7 +33,7 @@ class NotificationsControllerTest < ActionController::TestCase
   test 'should prevent users marking others notifications read' do
     sign_in users(:editor)
     post :read, params: { id: notifications(:one).id, format: :json }
-    assert_response(401)
+    assert_response(403)
   end
 
   test 'should require authentication to get index' do

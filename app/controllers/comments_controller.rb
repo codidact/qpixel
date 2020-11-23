@@ -127,7 +127,7 @@ class CommentsController < ApplicationController
 
   def check_privilege
     unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
-      render template: 'errors/forbidden', status: 401
+      render template: 'errors/forbidden', status: 403
     end
   end
 

@@ -75,14 +75,15 @@ class QuestionsController < ApplicationController
       return redirect_to question_path(@question)
     end
 
-    PostHistory.post_edited(@question, current_user, before: @question.body_markdown,
-                            after: params[:question][:body_markdown], comment: params[:edit_comment],
-                            before_title: @question.title, after_title: params[:question][:title],
-                            before_tags: @question.tags, after_tags: after_tags)
-    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
+    body_rendered = helpers.post_markdown(:question, :body_markdown)
+    before = { body: @question.body_markdown, title: @question.title, tags: @question.tags }
     if @question.update(question_params.merge(tags_cache: tags_cache, body: body_rendered,
                                               last_activity: DateTime.now, last_activity_by: current_user,
                                               last_edited_at: DateTime.now, last_edited_by: current_user))
+      PostHistory.post_edited(@question, current_user, before: before[:body],
+                              after: params[:question][:body_markdown], comment: params[:edit_comment],
+                              before_title: before[:title], after_title: params[:question][:title],
+                              before_tags: before[:tags], after_tags: after_tags)
       redirect_to share_question_path(@question)
     else
       render :edit
@@ -92,7 +93,7 @@ class QuestionsController < ApplicationController
   def update_as_suggested_edit
     return if check_edits_limit! @question
 
-    body_rendered = helpers.render_markdown(params[:question][:body_markdown])
+    body_rendered = helpers.post_markdown(:question, :body_markdown)
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
     body_markdown = if params[:question][:body_markdown] != @question.body_markdown

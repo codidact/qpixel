@@ -404,3 +404,19 @@
   category: RateLimits
   description: >
     The amount of comments users with the unrestricted ability may add on other people's posts within 24h.
+
+- name: TableOfContentsThreshold
+  value: 5
+  value_type: integer
+  category: Display
+  description: >
+    The minimum number of child posts before the table of contents is shown. If the number of child posts is less than
+    this threshold, the TOC is not shown.
+
+- name: TableOfContentsExcerptLength
+  value: 120
+  value_type: integer
+  category: Display
+  description: >
+    The number of characters to show in the answer excerpt in the TOC. The TOC strips most formatting, so beware of large
+    values -- the TOC might become hard to read.

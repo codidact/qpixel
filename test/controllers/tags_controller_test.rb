@@ -89,7 +89,7 @@ class TagsControllerTest < ActionController::TestCase
   test 'should deny edit to unprivileged user' do
     sign_in users(:standard_user)
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
-    assert_response 401
+    assert_response 403
   end
 
   test 'should get edit' do
@@ -111,7 +111,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:discussion).id, excerpt: 'things' } }
-    assert_response 401
+    assert_response 403
   end
 
   test 'should update tag' do

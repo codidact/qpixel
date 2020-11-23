@@ -161,9 +161,9 @@
 
         <div class="post--actions">
           <div class="tools">
-              <%= link_to generic_share_link(post), class: 'tools--item' do %>
+              <%= link_to generic_share_link(post), class: 'tools--item js-permalink' do %>
                 <i class="fa fa-link"></i>
-                Permalink
+                <span class="js-text">Permalink</span>
               <% end %>
               <%= link_to post_history_path(post), class: 'tools--item' do %>
                 <i class="fa fa-history"></i>
@@ -364,6 +364,33 @@
           </div>
         <% end %>
 
+        <% if is_question && post.children.length >= SiteSetting["TableOfContentsThreshold"] && SiteSetting["TableOfContentsThreshold"] != -1 %>
+          <div class="toc has-margin-left-4" id="toc-toggle">
+            <button class="toc--header" data-toggle="#toc-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
+            <% post.children.each do |answer| %>
+              <a href="<%= generic_share_link(answer) %>" class="toc--entry">
+                <div class="toc--badge">
+                  <span class="badge is-tag is-green">+<%= answer.upvote_count %></span>
+                </div>
+                <div class="toc--badge">
+                  <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
+                </div>
+                <div class="toc--full">
+                  <% sanitised = strip_markdown(answer.body_markdown) %>
+                  <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
+                  <p>
+                    <%= sanitised[ 0 ... max_length ] %>
+                    <% if sanitised.length > max_length %>
+                      &hellip;
+                    <% end %>
+                  </p>
+                  <p class="has-font-size-small"><%= time_ago_in_words(post.updated_at, locale: :en_abbrev) %> ago</p>
+                </div>
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+
         <div class="post--status">
 
           <% if post.att_source.present? %>
@@ -416,7 +443,7 @@
                 <%= form_for Comment.new, url: create_comment_path, remote: true, html: { class: 'comment-form js-comment-form', id: nil } do |f| %>
                   <%= f.hidden_field :post_id, value: post.id, id: nil %>
 
-                  <div class="form-group-horizontal">
+                  <div class="form-group">
                     <div class="form-group">
                       <%= f.label :content, 'Your comment' %>
                       <%= f.text_area :content, class: 'form-element is-small js-comment-content', id: nil, autocomplete: 'off' %>
@@ -424,6 +451,7 @@
                     </div>
                     <div class="actions">
                       <%= f.submit 'Post', class: 'button is-outlined' %>
+                      <input type="button" name="discard-comment" value="Discard" class="button is-danger is-outlined" />
                     </div>
                   </div>
                 <% end %>

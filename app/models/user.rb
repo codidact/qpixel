@@ -4,7 +4,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable,
+         :lockable, :omniauthable
 
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :nullify
@@ -87,7 +88,7 @@ class User < ApplicationRecord
   end
 
   def rtl_safe_username
-    "\u202D#{username}\u202D"
+    "#{username}\u202D"
   end
 
   def recalc_trust_level
