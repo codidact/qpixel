@@ -39,7 +39,7 @@ $(document).on('ready', function() {
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if ((reason == -1 && data['reason'].length < 10) || (reason != -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
+    if ((reason === -1 && data['reason'].length < 10) || (reason !== -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }
