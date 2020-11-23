@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= message.subject %></title>
+  <%= stylesheet_link_tag 'https://unpkg.com/@codidact/co-design@0.12.0/dist/codidact.css' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+</head>
+<body>
+  <div class="header">
+    <div class="container header--container">
+      <%= link_to root_url, class: 'header--site-name' do %>
+        <%= image_tag asset_path('codidact.png', host: 'meta.codidact.com', protocol: 'https'), height: 40, width: 167,
+                      alt: 'Codidact logo' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="container">
+    <%= yield %>
+  </div>
+  <div class="footer">
+    <div class="footer--container container">
+      <p>&copy; 2020&mdash; The Codidact Foundation</p>
+      <p>
+        71&ndash;75 Shelton Street<br/>
+        London, UK<br/>
+        WC2H 9JQ
+      </p>
+      <p><a href="mailto:info@codidact.org">info@codidact.org</a></p>
+    </div>
+  </div>
+</body>
+</html>
