@@ -162,7 +162,6 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
   create_table "community_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id", null: false
     t.bigint "user_id", null: false
-    t.boolean "is_moderator"
     t.boolean "is_admin"
     t.integer "reputation"
     t.datetime "created_at", null: false
@@ -170,6 +169,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
     t.boolean "is_suspended"
     t.datetime "suspension_end"
     t.string "suspension_public_comment"
+    t.boolean "is_moderator", default: false
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
@@ -319,7 +319,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", default: -> { "current_timestamp()" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -335,12 +335,12 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
     t.boolean "comments_disabled"
-    t.datetime "last_edited_at"
-    t.bigint "last_edited_by_id"
     t.boolean "locked", default: false, null: false
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
+    t.datetime "last_edited_at"
+    t.bigint "last_edited_by_id"
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -532,7 +532,6 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
     t.string "unconfirmed_email"
     t.string "two_factor_method"
     t.boolean "staff", default: false, null: false
-    t.string "cid"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
