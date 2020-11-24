@@ -4,6 +4,11 @@
 <p>Below is a list of posts that users have flagged. Users are asked to provide a reason when flagging posts for
   moderator attention; use that to help you determine what needs to be done.</p>
 
+<div class="button-list is-gutterless">
+  <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined is-active' %>
+  <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined' %>
+</div>
+
 <% @flags.each do |flag| %>
   <div class="widget">
     <div class="item-list">

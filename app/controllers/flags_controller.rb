@@ -1,7 +1,7 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :verify_moderator, only: [:queue]
+  before_action :verify_moderator, only: [:queue, :handled]
   before_action :flag_verify, only: [:resolve]
 
   def new
@@ -34,7 +34,7 @@ class FlagsController < ApplicationController
 
   def history
     @user = User.find(params[:id])
-    unless @user == current_user || (current_user.is_admin || current_user.is_mod)
+    unless @user == current_user || (current_user.is_admin || current_user.is_moderator)
       not_found
       return
     end
@@ -43,7 +43,12 @@ class FlagsController < ApplicationController
   end
 
   def queue
-    @flags = Flag.unhandled.includes(:post).paginate(page: params[:page], per_page: 20)
+    @flags = Flag.unhandled.includes(:post, :user).paginate(page: params[:page], per_page: 20)
+  end
+
+  def handled
+    @flags = Flag.handled.includes(:post, :user, :handled_by).order(created_at: :desc)
+                 .paginate(page: params[:page], per_page: 50)
   end
 
   def resolve

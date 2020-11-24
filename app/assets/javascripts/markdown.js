@@ -58,12 +58,15 @@ $(() => {
     const url = $url.val();
     const markdown = `[${text}](${url})`;
     const $field = $('.js-post-field');
+
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
       replaceSelection($field, markdown);
     }
     else {
       insertIntoField($field, markdown);
     }
+
+    $field.trigger('markdown');
     $tgt.parents('.modal').removeClass('is-active');
     $name.val('');
     $url.val('');

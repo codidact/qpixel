@@ -87,8 +87,8 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`<span class="has-color-green-600">Draft saved</span>`);
-      $field.parents('.widget').after($el);
+      const $el = $(`&middot; <span class="has-color-green-600">Draft saved</span>`);
+      $field.parents('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
