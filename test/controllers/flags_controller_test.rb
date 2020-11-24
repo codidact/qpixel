@@ -58,7 +58,7 @@ class FlagsControllerTest < ActionController::TestCase
     post :resolve, params: { id: flags(:one).id }
     assert_response(404)
   end
-  
+
   test 'should get handled flags list' do
     sign_in users(:moderator)
     get :handled
