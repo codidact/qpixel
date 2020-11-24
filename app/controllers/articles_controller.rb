@@ -1,10 +1,11 @@
 class ArticlesController < ApplicationController
   before_action :set_article
   before_action :check_article
+  before_action :check_if_article_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
 
   def show
     if @article.deleted?
-      check_your_privilege('ViewDeleted', @article) # || return
+      check_your_privilege('flag_curate', @article) # || return
     end
   end
 
@@ -17,7 +18,7 @@ class ArticlesController < ApplicationController
   def update
     can_post_in_category = @article.category.present? &&
                            (@article.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('Edit', @article) && can_post_in_category
+    unless current_user&.has_post_privilege?('edit_posts', @article) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -46,6 +47,8 @@ class ArticlesController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit! @article
+
     body_rendered = helpers.post_markdown(:article, :body_markdown)
     new_tags_cache = params[:article][:tags_cache]&.reject(&:empty?)
 
@@ -79,14 +82,14 @@ class ArticlesController < ApplicationController
                                         article_url(@article))
       redirect_to share_article_path(@article)
     else
-      @post.errors = @edit.errors
+      @article.errors = @edit.errors
       render :edit
     end
   end
 
   def destroy
-    unless check_your_privilege('Delete', @article, false)
-      flash[:danger] = 'You must have the Delete privilege to delete posts.'
+    unless check_your_privilege('flag_curate', @article, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this article')
       redirect_to article_path(@article) && return
     end
 
@@ -105,8 +108,8 @@ class ArticlesController < ApplicationController
   end
 
   def undelete
-    unless check_your_privilege('Delete', @article, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete posts.'
+    unless check_your_privilege('flag_curate', @article, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this article')
       redirect_to article_path(@article) && return
     end
 
@@ -133,7 +136,7 @@ class ArticlesController < ApplicationController
 
   def set_article
     @article = Article.find params[:id]
-    if @article.deleted && !current_user&.has_post_privilege?('ViewDeleted', @article)
+    if @article.deleted && !current_user&.has_post_privilege?('flag_curate', @article)
       not_found
     end
   end
@@ -146,5 +149,9 @@ class ArticlesController < ApplicationController
 
   def article_params
     params.require(:article).permit(:body_markdown, :title, :tags_cache)
+  end
+
+  def check_if_article_locked
+    check_if_locked(@article)
   end
 end

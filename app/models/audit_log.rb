@@ -5,7 +5,8 @@ class AuditLog < ApplicationRecord
   belongs_to :user, required: false
 
   class << self
-    [:admin_audit, :moderator_audit, :action_audit, :user_annotation, :user_history, :block_log].each do |log_type|
+    [:admin_audit, :moderator_audit, :action_audit, :user_annotation, :user_history, :block_log,
+     :rate_limit_log].each do |log_type|
       define_method(log_type) do |**values|
         create(values.merge(log_type: log_type.to_s, community_id: RequestContext.community_id))
       end

@@ -16,25 +16,26 @@ class AdminController < ApplicationController
   end
 
   def privileges
-    @privileges = Privilege.all.user_sort({ term: params[:sort], default: :threshold },
-                                          rep: :threshold, name: :name)
-                           .paginate(page: params[:page], per_page: 20)
+    @abilities = Ability.all
   end
 
   def show_privilege
-    @privilege = Privilege.find_by name: params[:name]
+    @ability = Ability.find_by internal_id: params[:name]
     respond_to do |format|
-      format.json { render json: @privilege }
+      format.json { render json: @ability }
     end
   end
 
   def update_privilege
-    @privilege = Privilege.find_by name: params[:name]
-    pre = @privilege.threshold
-    @privilege.update(threshold: params[:threshold]) &&
-      AuditLog.admin_audit(event_type: 'privilege_threshold_update', related: @privilege, user: current_user,
-                           comment: "from <<#{pre}>>\nto <<#{params[:threshold]}>>")
-    render json: { status: 'OK', privilege: @privilege }, status: 202
+    @ability = Ability.find_by internal_id: params[:name]
+    type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
+    return not_found if type.nil?
+
+    pre = @ability.send("#{type}_score_threshold".to_sym)
+    @ability.update("#{type}_score_threshold" => params[:threshold])
+    AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
+                         comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
+    render json: { status: 'OK', privilege: @ability }, status: 202
   end
 
   def admin_email; end

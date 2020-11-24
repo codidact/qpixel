@@ -1,0 +1,139 @@
+<div class="has-float-right">
+    <% if @user.id == current_user&.id %>
+        <a href="<%= abilities_url %>" class="button is-muted">Return to list</a>
+    <% else %>
+        <a href="<%= abilities_url(for: @user.id) %>" class="button is-muted">Return to list</a>
+    <% end %>
+</div>
+<h1 class="h-m-t-0"><%= @ability.name %> Ability</h1>
+
+<p class="is-lead"><%= @ability.summary %></p>
+
+<% if @your_ability.nil? %>
+<div class="widget">
+    <div class="widget--body">
+        <p class="h-m-0"><i class="fas fa-fw fa-times h-c-red-600"></i> 
+
+        <% if @user.id == current_user&.id %>
+        You have not yet earned this ability.
+        <% else %>
+        <%= @user.username %> has not yet earned this ability.
+        <% end %>
+        
+        <% if @user.community_user.privilege? 'mod' %>
+            <% if @user.id == current_user&.id %>
+            However, as a moderator you still have all abilities.
+            <% else %>
+            However, as a moderator <%= @user.username %> still has all abilities.
+            <% end %>
+        <% end %>
+        <% unless @ability.manual? %>
+        <% if params[:thresholds].nil? %>
+            <% if @user.id == current_user&.id %>
+                <a href="?thresholds=1">(more)</a>
+            <% else %>
+                <a href="?thresholds=1&for=<%= @user.id %>">(more)</a>
+            <% end %>
+        <% else %>
+            <% if @user.id == current_user&.id %>
+                <a href="?">(less)</a>
+            <% else %>
+                <a href="?for=<%= @user.id %>">(less)</a>
+            <% end %>
+        <% end %>
+        <% end %>
+        </p>
+    </div>
+    <% unless @ability.manual? %>
+        <% unless params[:thresholds].nil? %>
+        <div class="widget--body">
+            <p>You need to reach these thresholds to earn the ability:</p>
+            
+            <% unless @ability.post_score_threshold.nil? %>
+                <% post_score_percent = (linearize_progress(@user.community_user.post_score) / linearize_progress(@ability.post_score_threshold) * 100).to_i %>
+
+                <p><strong>Post score threshold</strong></p>
+                <% if post_score_percent < 100 %>
+                    <p>You need to have more well-received posts.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-<%= post_score_percent %>%"></div>
+                        <div class="meter--label"><%= post_score_percent %>%</div>
+                    </div>
+                <% else %>
+                    <p>You need to have many well-received posts.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-100%"></div>
+                        <div class="meter--label">100%</div>
+                    </div>
+                <% end %>
+            <% end %>
+
+            <% unless @ability.edit_score_threshold.nil? %>
+                <% edit_score_percent = (linearize_progress(@user.community_user.edit_score) / linearize_progress(@ability.edit_score_threshold) * 100).to_i %>
+
+                <p><strong>Edit score threshold</strong></p>
+                <% if edit_score_percent < 100 %>
+                    <p>You need to have more accepted suggested edits.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-<%= edit_score_percent %>%"></div>
+                        <div class="meter--label"><%= edit_score_percent %>%</div>
+                    </div>
+                <% else %>
+                    <p>You need to have many accepted suggested edits.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-100%"></div>
+                        <div class="meter--label">100%</div>
+                    </div>
+                <% end %>
+            <% end %>
+
+            <% unless @ability.flag_score_threshold.nil? %>
+                <% flag_score_percent = (linearize_progress(@user.community_user.flag_score) / linearize_progress(@ability.flag_score_threshold) * 100).to_i %>
+
+                <p><strong>Flag score threshold</strong></p>
+                <% if flag_score_percent < 100 %>
+                    <p>You need to have more helpful flags.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-<%= flag_score_percent %>%"></div>
+                        <div class="meter--label"><%= flag_score_percent %>%</div>
+                    </div>
+                <% else %>
+                    <p>You need to have many helpful flags.</p>
+                    <div class="meter is-progress">
+                        <div class="meter--bar is-100%"></div>
+                        <div class="meter--label">100%</div>
+                    </div>
+                <% end %>
+            <% end %>
+        </div>
+        <% end %>
+    <% end%>
+</div>
+<% else %>
+<div class="widget">
+    <div class="widget--body">
+        <% if @user.id == current_user&.id %>
+        <p class="h-m-0"><i class="fas fa-fw fa-check h-c-green-600"></i> You have already earned this ability.</p>
+        <% else %>
+        <p class="h-m-0"><i class="fas fa-fw fa-check h-c-green-600"></i> <%= @user.username %> has already earned this ability.</p>
+        <% end %>
+    </div>
+    <% if @your_ability&.is_suspended && (@user.id == current_user&.id || current_user&.is_moderator) %>
+    <div class="widget--body">
+        <div class="notice is-danger">
+            <% if @your_ability.suspension_end.nil? %>
+                <p><strong>Your use of the <%= @ability.name %> ability has been suspended.</strong></p>
+            <% else %>
+                <p><strong>Your use of the <%= @ability.name %> ability has been temporarily suspended (ends <span title="<%= @your_ability.suspension_end.iso8601 %>">in <%= time_ago_in_words(@your_ability.suspension_end) %></span>)</strong>.</p>
+            <% end %>
+            <p><%= @your_ability.suspension_message %></p>
+            <p>If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this suspension or would like to dispute it, use the Meta category or <a href="mailto:<%= SiteSetting['AdministratorContactEmail'] %>">contact us</a>.
+        </div>
+    </div>
+    <% end %>
+</div>
+<% end %>
+
+<div class="h-p-2">
+    <%= raw @ability.description %>
+</div>

@@ -4,11 +4,7 @@
   </div>
   <div class="widget--body">
     <p>
-      <% if flag.reason.present? %>
-        <strong>reason:</strong> <%= flag.reason %>
-      <% else %>
-        <strong>no reason given</strong>
-      <% end %> &mdash;
+      <strong><%= flag.post_flag_type&.name || 'Flag reason' %>: </strong><%= flag.reason %> &mdash;
       <%= link_to user_path(flag.user) do %>
         <span dir="ltr"><%= flag.user.rtl_safe_username %></span>
       <% end %>

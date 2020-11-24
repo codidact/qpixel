@@ -1,7 +1,7 @@
 <% content_for :title, "Suggested Edit #" + @edit.id.to_s %>
 <% post = @edit.post %>
 <% is_question_or_article = @edit.on_question? || @edit.on_article? %>
-<% may_decide = check_your_post_privilege(post, 'Edit') && @edit.user.id != current_user.id %>
+<% may_decide = check_your_post_privilege(post, 'edit_posts') && @edit.user.id != current_user.id %>
 
 <h1>Review Suggested Edit</h1>
 

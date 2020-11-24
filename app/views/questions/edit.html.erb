@@ -1,6 +1,6 @@
 <% content_for :title, "Editing '#{@question.title.truncate(50)}'" %>
 
-<h1><%= check_your_post_privilege(@question, 'Edit') ? "Edit Question" : "Suggest Edit for Question" %></h1>
+<h1><%= check_your_post_privilege(@question, 'edit_posts') ? "Edit Question" : "Suggest Edit for Question" %></h1>
 <%= render 'form', is_edit: true %>
 
 <% if SiteSetting['AskingGuidance'] %>

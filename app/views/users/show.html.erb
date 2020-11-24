@@ -1,88 +1,59 @@
 <% content_for :title, "User #{@user.rtl_safe_username}" %>
 
-<% if @user.community_user.suspended? %>
-<div class="notice is-danger">
-<% if @user.community_user.suspension_public_comment.nil? %>
-  <p>This user has been <strong>temporarily suspended</strong>.
-<% else %>
-  <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
-<% end %>
+<h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
 
-  The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
-</div>
+<% if @user.community_user.suspended? %>
+  <div class="notice is-danger h-m-b-4">
+  <% if @user.community_user.suspension_public_comment.nil? %>
+    <p>This user has been <strong>temporarily suspended</strong>.
+  <% else %>
+    <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
+  <% end %>
+
+    The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
+  </div>
 <% end %>
 
 <%= render 'tabs', user: @user %>
 
-<div class="user-profile">
-  <div class="user-profile--image">
-    <img alt="user avatar" src="<%= avatar_url(@user, 64) %>" height="64" width="64" />
-    <div class="user-profile--reputation">
-      <strong class="has-font-size-subheading has-color-tertiary-800"><%= @user.reputation %></strong>
-      reputation
-    </div>
-  </div>
-  <div class="user-profile--name">
-    <h1>
-      <span dir="ltr"><%= @user.rtl_safe_username %></span>
-      <% if @user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
-        <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
-      <% elsif @user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
-        <span class="badge is-user-role" title="Moderator"><%= SiteSetting['ModBadgeCharacter'] %></span>
-      <% end %>
-      <% if @user.staff? %>
-        <span class="badge is-tag is-filled is-green staff-badge">staff</span>
-      <% end %>
-    </h1>
-    <div class="profile-text">
-      <% if @user.profile.nil? || @user.profile.blank? %>
-        <em class="has-color-tertiary-400">
-          A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.
-        </em>
-      <% else %>
-        <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
-      <% end %>
-      <hr/>
-      <span class="has-font-size-caption">
-        <% if current_user&.id == @user.id || moderator? %>
-          <%= link_to flag_history_path(@user.id), class: 'is-muted' do %>
-            <%= pluralize(@user.flags.count, 'flag') %>
-          <% end %>
-        <% else %>
-          <span class="is-muted"><%= pluralize(@user.flags.count, 'flag') %></span>
-        <% end %>
-      </span>
-    </div>
-  </div>
-  <div class="user-profile--sidebar">
-    <div class="profile-details">
+<div class="grid">
+  <div class="grid--cell is-9-lg is-12">
+    <div class="h-p-6 h-p-t-2">
+      <div class="profile-text">
+      <% if @user.website.present? || @user.twitter.present? %>
       <p>
         <% if @user.website.present? %>
-          <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %><br/>
+          <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
+          &nbsp;&nbsp;&nbsp;&nbsp;
         <% end %>
-
         <% if @user.twitter.present? %>
           <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
         <% end %>
       </p>
-    </div>
-    <div>
-      <% if user_signed_in? %>
-        <div>
+      <% end %>
+
+      <% if @user.profile.nil? || @user.profile.blank? %>
+        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.</p>
+      <% else %>
+        <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
+      <% end %>
+      </div>
+
+      <div class="button-list h-p-2">
+        <% if user_signed_in? %>
           <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
-        </div>
-      <% end %>
-      <% if current_user&.is_moderator %>
-        <div>
+        <% end %>
+        <% if current_user&.is_moderator %>
           <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
-
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
             <div class="droppanel--menu">
               <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
               <a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a>
+              <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
+              <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
               <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
               <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
             </div>
@@ -90,74 +61,161 @@
               <a href="<%= mod_user_path(@user) %>" class="button is-filled">Show all tools</a>
             </div>
           </div>
-        </div>
-      <% end %>
-      <% if current_user&.id == @user.id %>
-        <div>
+        <% end %>
+        <% if current_user&.id == @user.id %>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
             <i class="fas fa-mobile-alt"></i> Mobile Sign In
           <% end %>
+        <% end %>
+      </div>
+
+      <h2 class="user-profile-heading">Posts</h2>
+      <% if @user.posts.size == 0 %>
+        <p><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</p>
+      <% else %>
+        <div class="item-list user-profile-post-list">
+          <% @user.posts.undeleted.order(score: :desc).first(15).each do |a| %>
+            <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
+          <% end %>
         </div>
+        <%= link_to user_posts_path(@user), class: "button is-muted" do %>
+          See all &raquo;
+        <% end %>
       <% end %>
     </div>
   </div>
-</div>
+  <div class="grid--cell is-3-lg is-12">
+    <div class="widget is-tertiary">
+      <div class="widget--body user-profile--image">
+        <img alt="user avatar" src="<%= avatar_url(@user, 512) %>" />
+      </div>
+      <% if @user.staff? %>
+      <div class="widget--body h-ta-center" title="This user is an official Staff member.">
+        <i class="fas fa-users-cog"></i> Staff
+      </div>
+      <% elsif @user.is_moderator || @user.is_admin %>
+      <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
+        <i class="fas fa-shield-alt"></i> Moderator
+      </div>
+      <% end %>
+    </div>
 
+    <% unless @abilities.empty? %>
+      <h2>Earned Abilities</h2>
 
-<h2 class="user-profile-heading">Posts</h2>
-<% if @user.posts.size == 0 %>
-  <em class="text-muted"><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</em>
-<% else %>
-  <div class="item-list">
-    <% @user.posts.undeleted.order(score: :desc).first(5).each do |a| %>
-      <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
+      <div class="widget">
+        <% @abilities.each do |a| %>
+          <div class="widget--body" title="<%= a.summary %>">
+            <i class="fa-fw fas fa-<%= a.icon %>"></i>
+            <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
+              <%= a.name %>
+            </a>
+          </div>
+        <% end %>
+      </div>
     <% end %>
+
+    <h2>Statistics</h2>
+    <%
+      posts_by_post_type = @user.posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+    %>
+    <table class="table is-full-width">
+      <tr>
+        <th colspan="3">
+          Posts
+        </th>
+      </tr>
+      <tr>
+        <td colspan="2">Count</td>
+        <td>
+          <%= @user.posts.undeleted.count %>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">Questions</td>
+        <td><%= posts_by_post_type[Question.post_type_id] || 0 %></td>
+      </tr>
+      <tr>
+        <td colspan="2">Answers</td>
+        <td><%= posts_by_post_type[Answer.post_type_id] || 0 %></td>
+      </tr>
+      <tr>
+        <td colspan="2">Articles</td>
+        <td><%= posts_by_post_type[Article.post_type_id] || 0 %></td>
+      </tr>
+    </table>
+
+    <br>
+    <table class="table is-full-width">
+      <%
+        votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
+        votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+      %>
+      <tr>
+        <th colspan="3">
+          Votes
+        </th>
+      </tr>
+      <tr>
+        <td colspan="2">Count</td>
+        <td>
+          <%= @user.votes.count %>
+        </td>
+      </tr>
+      <% if @user.id == current_user&.id || current_user&.is_admin %>
+      <tr>
+        <td class="has-color-tertiary-600">
+          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+            <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+          </svg>
+        </td>
+        <td>
+          Upvotes
+        </td>
+        <td><%= votes_by_type[1] || 0 %></td>
+      </tr>
+      <tr>
+        <td class="has-color-tertiary-600">
+          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
+            <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+          </svg>
+        </td>
+        <td>
+          Downvotes
+        </td>
+        <td><%= votes_by_type[-1] || 0 %></td>
+      </tr>
+      <tr>
+        <td colspan="2">on Question</td>
+        <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
+      </tr>
+      <tr>
+        <td colspan="2">on Answer</td>
+        <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
+      </tr>
+      <tr>
+        <td colspan="2">on Article</td>
+        <td><%= votes_by_post_type[Article.post_type_id] || 0 %></td>
+      </tr>
+      <% end %>
+    </table>
+    <br>
+    <table class="table is-full-width">
+      <tr>
+        <th colspan="3">
+          Flags
+        </th>
+      </tr>
+      <tr>
+        <td colspan="2">Count</td>
+        <td>
+          <% if current_user&.id == @user.id || moderator? %>
+            <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted' %>
+          <% else %>
+            <%= @user.flags.count %>
+          <% end %>
+        </td>
+      </tr>
+    </table>
   </div>
-  <%= link_to user_posts_path(@user), class: "button is-muted" do %>
-    See all &raquo;
-  <% end %>
-<% end %>
-
-<%
-  votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
-  votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
-%>
-
-<h2 class="user-profile-heading">Votes</h2>
-<p><span dir="ltr"><%= @user.rtl_safe_username %></span> has cast <%= pluralize(@user.votes.count, "vote") %></p>
-<table class="table">
-  <tr>
-    <th colspan=2>Type of vote</th>
-    <th>Count</th>
-  </tr>
-  <tr>
-    <td class="has-color-tertiary-600">
-      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-        <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-      </svg>
-    </td>
-    <td>
-      <strong>Upvotes</strong>
-    </td>
-    <td><%= votes_by_type[1] || 0 %></td>
-  </tr>
-  <tr>
-    <td class="has-color-tertiary-600">
-      <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-        <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-      </svg>
-    </td>
-    <td>
-      <strong>Downvotes</strong>
-    </td>
-    <td><%= votes_by_type[-1] || 0 %></td>
-  </tr>
-  <tr>
-    <td colspan=2>on <strong>Question</strong></td>
-    <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
-  </tr>
-  <tr>
-    <td colspan=2>on <strong>Answer</strong></td>
-    <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
-  </tr>
-</table>
+</div>

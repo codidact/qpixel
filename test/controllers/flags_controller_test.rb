@@ -59,22 +59,6 @@ class FlagsControllerTest < ActionController::TestCase
     assert_response(404)
   end
 
-  test 'should prevent short reasons' do
-    sign_in users(:standard_user)
-    post :new, params: { reason: 'ABCDEF', post_id: posts(:answer_two).id, post_type: 'Answer' }
-    assert_equal 'Flag failed to save.', JSON.parse(response.body)['message']
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(500)
-  end
-
-  test 'should prevent long reasons' do
-    sign_in users(:standard_user)
-    post :new, params: { reason: 'ABCDEF' * 1000, post_id: posts(:answer_two).id, post_type: 'Answer' }
-    assert_equal 'Flag failed to save.', JSON.parse(response.body)['message']
-    assert_equal 'failed', JSON.parse(response.body)['status']
-    assert_response(500)
-  end
-
   test 'should get handled flags list' do
     sign_in users(:moderator)
     get :handled

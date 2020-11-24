@@ -4,6 +4,7 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :set_answer, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
   before_action :verify_moderator, only: [:convert_to_comment]
+  before_action :check_if_answer_locked, only: [:edit, :update, :destroy, :undelete, :convert_to_comment]
 
   def new
     @answer = Answer.new
@@ -12,10 +13,40 @@ class AnswersController < ApplicationController
 
   def create
     @question = Question.find params[:id]
+
     @answer = Answer.new(answer_params.merge(parent: @question, user: current_user, score: 0,
                                              body: helpers.post_markdown(:answer, :body_markdown),
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
+
+    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user)
+                                    .where(post_type_id: second_level_post_types).count
+
+    max_slps = SiteSetting[if current_user.privilege?('unrestricted')
+                             'RL_SecondLevelPosts'
+                           else
+                             'RL_NewUserSecondLevelPosts'
+                           end]
+
+    post_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only post #{max_slps} answers per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only post #{max_slps} answers per day."
+                     end
+
+    if recent_second_level_posts >= max_slps
+      @answer.errors.add :base, post_limit_msg
+      AuditLog.rate_limit_log(event_type: 'second_level_post', related: @question, user: current_user,
+                              comment: "limit: #{max_slps}\n\npost:\n#{@answer.attributes_print}")
+      render :new, status: 400
+      return
+    end
+
+    unless current_user.id == @question.user.id
+      @question.user.create_notification("New answer to your question '#{@question.title.truncate(50)}'",
+                                         share_question_url(@question))
+    end
     if @answer.save
       @question.update(last_activity: DateTime.now, last_activity_by: current_user)
       unless current_user.id == @question.user.id
@@ -33,7 +64,7 @@ class AnswersController < ApplicationController
   def update
     can_post_in_category = @answer.parent.category.present? &&
                            (@answer.parent.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('Edit', @answer) && can_post_in_category
+    unless current_user&.has_post_privilege?('edit_posts', @answer) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -56,10 +87,13 @@ class AnswersController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit! @answer
+
     if params[:answer][:body_markdown] == @answer.body_markdown
       flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to question_path(@answer.parent)
     end
+
     updates = {
       post: @answer,
       user: current_user,
@@ -78,14 +112,14 @@ class AnswersController < ApplicationController
                                        share_answer_url(qid: @answer.parent_id, id: @answer.id))
       redirect_to share_answer_path(qid: @answer.parent_id, id: @answer.id)
     else
-      @post.errors = @edit.errors
+      @answer.errors = @edit.errors
       render :edit
     end
   end
 
   def destroy
-    unless check_your_privilege('Delete', @answer, false)
-      flash[:danger] = 'You must have the Delete privilege to delete answers.'
+    unless check_your_privilege('flag_curate', @answer, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this answer')
       redirect_to(question_path(@answer.parent)) && return
     end
 
@@ -104,8 +138,8 @@ class AnswersController < ApplicationController
   end
 
   def undelete
-    unless check_your_privilege('Delete', @answer, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete answers.'
+    unless check_your_privilege('flag_curate', @answer, false)
+      flash[:danger] = flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this answer')
       redirect_to(question_path(@answer.parent)) && return
     end
 
@@ -148,5 +182,9 @@ class AnswersController < ApplicationController
 
   def set_answer
     @answer = Answer.find params[:id]
+  end
+
+  def check_if_answer_locked
+    check_if_locked(@answer)
   end
 end

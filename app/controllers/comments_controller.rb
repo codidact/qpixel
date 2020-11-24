@@ -3,14 +3,40 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-
+  before_action :check_if_target_post_locked, only: [:create]
+  before_action :check_if_parent_post_locked, only: [:update, :destroy]
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: 403
       return
     end
+
     @comment = Comment.new comment_params.merge(user: current_user)
+
+    recent_comments = Comment.where(created_at: 24.hours.ago..Time.now, user: current_user).where \
+                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
+                             .where.not(post: Post.where(user_id: current_user.id)).count
+    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+
+    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id
+      if recent_comments >= max_comments_per_day
+        comment_limit_msg = 'You have used your daily comment limit of ' + recent_comments.to_s + ' comments.' \
+                            ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
+                            ' to own posts are exempt.'
+
+        if recent_comments.zero? && !current_user.privilege?('unrestricted')
+          comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
+        end
+
+        AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
+                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
+
+        render json: { status: 'failed', message: comment_limit_msg }, status: 403
+        return
+      end
+    end
+
     if @comment.save
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
@@ -113,5 +139,13 @@ class CommentsController < ApplicationController
     else
       question_url(comment.post.parent, anchor: "comment-#{comment.id}")
     end
+  end
+
+  def check_if_parent_post_locked
+    check_if_locked(@comment.post)
+  end
+
+  def check_if_target_post_locked
+    check_if_locked(Post.find(params[:comment][:post_id]))
   end
 end

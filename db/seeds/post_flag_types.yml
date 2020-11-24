@@ -1,0 +1,27 @@
+- name: it's spam
+  description: >
+    This post advertises a product without disclosing the author's affiliation or without it being relevant to the topic ([spam](/policy/spam)).
+  confidential: false
+  active: true
+  post_type_id: null
+
+- name: it's rude
+  description: >
+    This post violates the [Code of Conduct](/policy/code-of-conduct), as a reasonable person would find it inappropriate.
+  confidential: false
+  active: true
+  post_type_id: null
+
+- name: needs author's attention
+  description: >
+    This question is off-topic or cannot be reasonably answered in its current form and needs revision by its author.
+  confidential: false
+  active: true
+  post_type_id: <%= Question.post_type_id %>
+
+- name: is a duplicate
+  description: >
+    This question has been asked before and has already been answered. It should be marked as a duplicate.
+  confidential: false
+  active: true
+  post_type_id: <%= Question.post_type_id %>

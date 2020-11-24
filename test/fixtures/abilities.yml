@@ -1,0 +1,39 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+everyone:
+  name: Participate
+  internal_id: everyone
+  icon: user
+  community: sample
+
+unrestricted:
+  name: Participate Everywhere
+  internal_id: unrestricted
+  icon: heartbeat
+  community: sample
+
+edit_posts:
+  name: Edit Posts
+  internal_id: edit_posts
+  icon: pen
+  community: sample
+
+edit_tags:
+  name: Edit Tags
+  internal_id: edit_tags
+  community: sample
+
+flag_close:
+  name: Vote on Holds
+  internal_id: flag_close
+  community: sample
+
+flag_curate:
+  name: Curate
+  internal_id: flag_curate
+  community: sample
+
+mod:
+  name: Moderator
+  internal_id: mod
+  community: sample

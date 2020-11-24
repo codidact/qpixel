@@ -4,6 +4,7 @@ class QuestionsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
                                             :close, :reopen]
   before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
+  before_action :check_if_question_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
 
   def index
     sort_params = { activity: :last_activity, age: :created_at, score: :score }
@@ -21,10 +22,10 @@ class QuestionsController < ApplicationController
 
   def show
     if @question.deleted?
-      check_your_privilege('ViewDeleted', @question) || return
+      check_your_privilege('flag_curate', @question) || return
     end
 
-    @answers = if current_user&.has_privilege?('ViewDeleted')
+    @answers = if current_user&.privilege?('flag_curate')
                  Answer.where(parent_id: @question.id)
                else
                  Answer.where(parent_id: @question.id).undeleted
@@ -61,7 +62,7 @@ class QuestionsController < ApplicationController
   def update
     can_post_in_category = @question.category.present? &&
                            (@question.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('Edit', @question) && can_post_in_category
+    unless current_user&.has_post_privilege?('edit_posts', @question) && can_post_in_category
       return update_as_suggested_edit
     end
 
@@ -90,6 +91,8 @@ class QuestionsController < ApplicationController
   end
 
   def update_as_suggested_edit
+    return if check_edits_limit! @question
+
     body_rendered = helpers.post_markdown(:question, :body_markdown)
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
 
@@ -123,14 +126,14 @@ class QuestionsController < ApplicationController
                                          question_url(@question))
       redirect_to share_question_path(@question)
     else
-      @post.errors = @edit.errors
+      @question.errors = @edit.errors
       render :edit
     end
   end
 
   def destroy
-    unless check_your_privilege('Delete', @question, false)
-      flash[:danger] = 'You must have the Delete privilege to delete questions.'
+    unless check_your_privilege('flag_curate', @question, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this question')
       redirect_to(question_path(@question)) && return
     end
 
@@ -153,8 +156,8 @@ class QuestionsController < ApplicationController
   end
 
   def undelete
-    unless check_your_privilege('Delete', @question, false)
-      flash[:danger] = 'You must have the Delete privilege to undelete questions.'
+    unless check_your_privilege('flag_curate', @question, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this question')
       redirect_to(question_path(@question)) && return
     end
 
@@ -187,8 +190,9 @@ class QuestionsController < ApplicationController
   end
 
   def close
-    unless check_your_privilege('Close', nil, false)
-      render(json: { status: 'failed', message: 'You must have the Close privilege to close questions.' }, status: 403)
+    unless check_your_privilege('flag_close', nil, false)
+      render(json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this question') },
+             status: 403)
       return
     end
 
@@ -225,8 +229,8 @@ class QuestionsController < ApplicationController
   end
 
   def reopen
-    unless check_your_privilege('Close', nil, false)
-      flash[:danger] = 'You must have the Close privilege to reopen questions.'
+    unless check_your_privilege('flag_close', nil, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_close, 'reopen this question')
       redirect_to(question_path(@question)) && return
     end
 
@@ -254,7 +258,7 @@ class QuestionsController < ApplicationController
   def set_question
     @question = Question.find params[:id]
   rescue
-    if current_user&.has_privilege?('ViewDeleted')
+    if current_user&.privilege?('flag_curate')
       @question ||= Question.unscoped.find params[:id]
     end
     if @question.nil?
@@ -264,5 +268,9 @@ class QuestionsController < ApplicationController
     unless @question.post_type_id == Question.post_type_id
       not_found
     end
+  end
+
+  def check_if_question_locked
+    check_if_locked(@question)
   end
 end

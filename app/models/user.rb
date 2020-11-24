@@ -9,7 +9,6 @@ class User < ApplicationRecord
 
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :nullify
-  has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
@@ -32,7 +31,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -47,24 +46,11 @@ class User < ApplicationRecord
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
-
-  def has_privilege?(name)
-    privilege = Privilege.where(name: name).first
-    if privileges.include?(privilege) || is_admin || is_moderator
-      true
-    elsif privilege && reputation >= privilege.threshold
-      privileges << privilege
-      true
-    else
-      false
-    end
-  end
-
   def has_post_privilege?(name, post)
     if post.user == self
       true
     else
-      has_privilege?(name)
+      privilege?(name)
     end
   end
 
@@ -90,7 +76,7 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || false
+    is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
   end
 
   def is_admin
@@ -107,10 +93,14 @@ class User < ApplicationRecord
 
   def recalc_trust_level
     # Temporary hack until we have some things to actually calculate based on.
-    trust = if is_admin || is_global_admin
-              6
-            elsif is_moderator || is_global_moderator
+    trust = if staff?
               5
+            elsif is_moderator || is_global_moderator || is_admin || is_global_admin
+              4
+            elsif privilege?('flag_close') || privilege?('edit_posts')
+              3
+            elsif privilege?('unrestricted')
+              2
             else
               1
             end

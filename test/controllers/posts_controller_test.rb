@@ -182,7 +182,7 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'should change category' do
-    sign_in users(:editor)
+    sign_in users(:deleter)
     post :change_category, params: { id: posts(:article_one).id, target_id: categories(:articles_only).id }
     assert_response 200
     assert_not_nil assigns(:post)
@@ -204,7 +204,7 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'should refuse to change category of wrong post type' do
-    sign_in users(:editor)
+    sign_in users(:deleter)
     post :change_category, params: { id: posts(:question_one).id, target_id: categories(:articles_only).id }
     assert_response 409
     assert_nothing_raised do

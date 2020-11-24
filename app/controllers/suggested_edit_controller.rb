@@ -12,8 +12,9 @@ class SuggestedEditController < ApplicationController
     end
 
     @post = @edit.post
-    unless check_your_privilege('Edit', @post, false)
-      render(json: { status: 'error', message: 'You need the Edit privilege to approve edits' }, status: 400)
+    unless check_your_privilege('edit_posts', @post, false)
+      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: 400)
 
       return
     end
@@ -31,6 +32,7 @@ class SuggestedEditController < ApplicationController
                                 decided_by: current_user, updated_at: DateTime.now))
       PostHistory.post_edited(@post, @edit.user, **opts)
       flash[:success] = 'Edit approved successfully.'
+      AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) })
 
@@ -56,8 +58,9 @@ class SuggestedEditController < ApplicationController
 
     @post = @edit.post
 
-    unless check_your_privilege('Edit', @post, false)
-      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
+    unless check_your_privilege('edit_posts', @post, false)
+      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: 400)
 
       return
     end
@@ -67,6 +70,7 @@ class SuggestedEditController < ApplicationController
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
                                                     decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
+      AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
       if @post.question?
         render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
                                                                 id: @post.id) })

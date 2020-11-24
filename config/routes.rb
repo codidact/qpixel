@@ -102,6 +102,8 @@ Rails.application.routes.draw do
 
   post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
   post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+  post   'posts/:id/lock',                 to: 'posts#lock', as: :post_lock
+  post   'posts/:id/unlock',               to: 'posts#unlock', as: :post_unlock
   post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
 
 
@@ -140,6 +142,8 @@ Rails.application.routes.draw do
   get    'users/:id/activity',             to: 'users#activity', as: :user_activity
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
+  get    'users/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
+  post   'users/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
@@ -242,6 +246,12 @@ Rails.application.routes.draw do
     get 'qa',                              to: 'tour#question3', as: :tour_q3
     get 'more',                            to: 'tour#more', as: :tour_more
     get 'end',                             to: 'tour#end', as: :tour_end
+  end
+
+  scope 'abilities' do
+    root                                   to: 'abilities#index', as: :abilities
+    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get ':id',                             to: 'abilities#show', as: :ability
   end
 
   scope 'birthday' do

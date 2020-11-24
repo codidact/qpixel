@@ -24,12 +24,22 @@ $(document).on('ready', function() {
   $("button.flag-link").bind("click", (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
+    
+    const active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
+    const reason = parseInt(active_radio.val()) || null;
+
+    if (reason === null) {
+      QPixel.createNotification('danger', "Please choose a reason.");
+      return;
+    }
+
     const data = {
+      'flag_type': (reason != -1) ? reason : null,
       'post_id': self.data("post-id"),
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if (data['reason'].length < 10) {
+    if ((reason === -1 && data['reason'].length < 10) || (reason !== -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }
@@ -50,10 +60,15 @@ $(document).on('ready', function() {
       }
       self.parents(".js-flag-box").removeClass("is-active");
     })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
-      console.log(jqXHR.responseText);
-      self.parents(".js-flag-box").removeClass("is-active");
+      .fail((jqXHR, textStatus, errorThrown) => {
+        let message = jqXHR.status;
+        try {
+          message = JSON.parse(jqXHR.responseText)['message'];
+        }
+        finally {
+          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
+        }
+        self.parents(".js-flag-box").removeClass("is-active");
     });
   });
 

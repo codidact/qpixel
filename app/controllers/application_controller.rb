@@ -65,12 +65,58 @@ class ApplicationController < ActionController::Base
   end
 
   def check_your_privilege(name, post = nil, render_error = true)
-    unless current_user&.has_privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
-      @privilege = Privilege.find_by(name: name)
+    unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
+      @privilege = Ability.find_by(name: name)
       render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 403 if render_error
       return false
     end
     true
+  end
+
+  def check_if_locked(post)
+    return if current_user.is_moderator
+
+    if post.locked?
+      respond_to do |format|
+        format.html { render 'errors/locked', layout: 'without_sidebar', status: 401 }
+        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: 401 }
+      end
+    end
+  end
+
+  def top_level_post_types
+    [Question.post_type_id, Article.post_type_id]
+  end
+
+  def second_level_post_types
+    [Answer.post_type_id]
+  end
+
+  def check_edits_limit!(post)
+    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+                                .where('active = TRUE OR accepted = FALSE').count
+
+    max_edits = SiteSetting[if current_user.privilege?('unrestricted')
+                              'RL_SuggestedEdits'
+                            else
+                              'RL_NewUserSuggestedEdits'
+                            end]
+
+    edit_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only suggest #{max_edits} edits per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only suggest #{max_edits} edits per day."
+                     end
+
+    if recent_edits >= max_edits
+      post.errors.add :base, edit_limit_msg
+      AuditLog.rate_limit_log(event_type: 'suggested_edits', related: post, user: current_user,
+                              comment: "limit: #{max_edits}")
+      render :edit, status: 400
+      return true
+    end
+    false
   end
 
   private
@@ -117,7 +163,7 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+    if user_signed_in? && current_user.is_moderator
       @open_flags = Flag.unhandled.count
     end
 

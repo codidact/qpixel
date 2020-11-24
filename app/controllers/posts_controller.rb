@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center]
-  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments, :feature]
+  before_action :set_post, only: [:edit_help, :update_help, :toggle_comments, :feature, :lock, :unlock]
   before_action :set_scoped_post, only: [:change_category]
   before_action :check_permissions, only: [:edit_help, :update_help]
   before_action :verify_moderator, only: [:new_help, :create_help, :toggle_comments]
@@ -23,6 +23,25 @@ class PostsController < ApplicationController
     if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
       @post.errors.add(:base, "You don't have a high enough trust level to post in the #{@category.name} category.")
       render :new, status: 403
+      return
+    end
+
+    recent_top_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+                                 .where(post_type_id: top_level_post_types).count
+
+    max_posts = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_TopLevelPosts' : 'RL_NewUserTopLevelPosts']
+    post_limit_msg = if !current_user.privilege? 'unrestricted'
+                       "You may only post #{max_posts} top-level posts (questions, articles) per day. " \
+                       'Once you have some well-received posts, that limit will increase.'
+                     else
+                       "You may only post #{max_posts} top-level posts per day."
+                     end
+
+    if recent_top_level_posts >= max_posts
+      @post.errors.add :base, post_limit_msg
+      AuditLog.rate_limit_log(event_type: 'top_level_post', related: @category, user: current_user,
+                              comment: "limit: #{max_posts}\n\npost:\n#{@post.attributes_print}")
+      render :new, status: 400
       return
     end
 
@@ -163,6 +182,37 @@ class PostsController < ApplicationController
         end
       end
     end
+    render json: { success: true }
+  end
+
+  def lock
+    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found if @post.locked?
+
+    length = params[:length].present? ? params[:length].to_i : nil
+    if length
+      if !current_user.is_moderator && length > 30
+        length = 30
+      end
+      end_date = length.days.from_now
+    elsif current_user.is_moderator
+      end_date = nil
+    else
+      end_date = 7.days.from_now
+    end
+
+    @post.update locked: true, locked_by: current_user,
+                 locked_at: DateTime.now, locked_until: end_date
+    render json: { success: true }
+  end
+
+  def unlock
+    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found unless @post.locked?
+    return not_found if @post.locked_until.nil? && !current_user.is_moderator
+
+    @post.update locked: false, locked_by: nil,
+                 locked_at: nil, locked_until: nil
     render json: { success: true }
   end
 

@@ -29,7 +29,7 @@
       <%= link_to 'Help', help_center_path, class: 'header--item' %>
 
       <% if user_signed_in? %>
-        <% if current_user.is_admin || current_user.is_moderator %>
+        <% if current_user.is_moderator %>
           <%= link_to flag_queue_path, class: 'header--item' do %>
             <% if @open_flags > 0 %>
               <span class="header--alert"><%= @open_flags %></span>

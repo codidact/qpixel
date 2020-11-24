@@ -46,7 +46,7 @@
   <% end %>
 
   <div class="form-group">
-    <%= f.submit is_edit ? (check_your_post_privilege(@question, 'Edit') ? "Save changes" : "Suggest changes") : 'Ask Question', class: "button is-filled" %>
+    <%= f.submit is_edit ? (check_your_post_privilege(@question, 'edit_posts') ? "Save changes" : "Suggest changes") : 'Ask Question', class: "button is-filled" %>
     <%= link_to 'Cancel', is_edit ? question_path(@question) : category_path(@question.category), class: 'button is-outlined is-muted' %>
   </div>
 <% end %>

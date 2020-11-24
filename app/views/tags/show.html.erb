@@ -34,7 +34,7 @@
       <p class="has-font-size-caption has-margin-0">
         <em>
           This tag doesn't have any usage information yet.
-          <% if current_user&.has_privilege?('EditTag') %>
+          <% if current_user&.privilege?('edit_tags') %>
             <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
           <% end %>
         </em>
@@ -47,7 +47,7 @@
       <p class="has-font-size-caption has-margin-0">
         <em>
           This tag doesn't have a detailed wiki yet.
-          <% if current_user&.has_privilege?('EditTag') %>
+          <% if current_user&.privilege?('edit_tags') %>
             <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
           <% end %>
         </em>
@@ -56,7 +56,7 @@
   </div>
 </div>
 
-<% if current_user&.has_privilege?('EditTag') %>
+<% if current_user&.privilege?('edit_tags') %>
   <%= link_to 'Edit', edit_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-muted is-outlined' %>
 <% end %>
 

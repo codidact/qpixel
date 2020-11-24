@@ -27,8 +27,8 @@
     <div class="form-group">
       <%= f.label :display_post_types, 'Listed post types', class: 'form-element' %>
       <span class="form-caption">
-      These post types will be displayed on the category's homepage. For a Q&A category, you might only want to show questions.
-    </span>
+        These post types will be displayed on the category's homepage. For a Q&A category, you might only want to show questions.
+      </span>
       <%= f.select :display_post_types, options_for_select(PostType.mapping.to_a, selected: @category.display_post_types),
                    { include_blank: true }, multiple: true, class: 'form-element' %>
     </div>
@@ -60,7 +60,8 @@
         Users must have at least this trust level to post in this category. Leave blank to allow
         anyone to post.
       </span>
-      <%= f.number_field :min_trust_level, class: 'form-element', min: 0, max: 10, step: 1 %>
+      <%= f.select :min_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_trust_level),
+                   {}, class: 'form-element' %>
     </div>
 
     <div class="form-group">
@@ -69,7 +70,8 @@
         Users under this trust level cannot see that this category exists. Leave blank to leave the category public.
         This can be different (higher or lower) than the minimum posting trust level.
       </span>
-      <%= f.number_field :min_view_trust_level, class: 'form-element', min: 0, max: 10, step: 1 %>
+      <%= f.select :min_view_trust_level, options_for_select(Ability.trust_levels.invert.each_pair, selected: @category.min_view_trust_level),
+                   {}, class: 'form-element' %>
     </div>
 
     <div class="form-group">
