@@ -1,4 +1,6 @@
-<a href="<%= generic_share_link(answer) %>" class="toc--entry <%= 'deleted-content' if answer.deleted? %>">
+<%= link_to generic_share_link(answer), class: "toc--entry #{answer.deleted? ? 'deleted-content' : ''}" do %>
+  ... (rest of this HTML goes here) ...
+<% end %>  
   <div class="toc--badge">
     <span class="badge is-tag is-green">+<%= answer.upvote_count %></span>
   </div>
