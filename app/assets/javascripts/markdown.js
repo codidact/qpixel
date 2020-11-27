@@ -29,7 +29,8 @@ $(() => {
       bullet: ['\n * ', null],
       numbered: ['\n 1. ', null],
       heading: ['\n# ', null],
-      hr: ['\n\n-----\n\n', null]
+      hr: ['\n\n-----\n\n', null],
+      table: ['\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n', null]
     };
 
     if (Object.keys(actions).indexOf(action) !== -1) {
