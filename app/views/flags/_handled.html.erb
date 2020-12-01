@@ -18,9 +18,11 @@
       <% if flag.message.present? %>
         <strong>response:</strong> <%= flag.message %>
       <% end %>
-      &mdash;
-      <%= link_to user_path(flag.handled_by) do %>
-        <span dir="ltr"><%= flag.handled_by.rtl_safe_username %></span>
+      <% if flag.handled_by_id.present? %>
+        &mdash;
+        <%= link_to user_path(flag.handled_by) do %>
+          <span dir="ltr"><%= flag.handled_by.rtl_safe_username %></span>
+        <% end %>
       <% end %>
     </p>
   </div>
