@@ -170,6 +170,8 @@ class PostsController < ApplicationController
     end
   end
 
+  # TODO: delete, undelete, close, reopen
+
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
     not_found && return if @post.nil?
