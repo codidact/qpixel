@@ -1,42 +1,9 @@
 # Web controller. Provides actions that relate to questions - this is essentially the standard set of resources, plus a
 # couple for the extra question lists (such as listing by tag).
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :new_meta, :create, :edit, :update, :destroy, :undelete,
-                                            :close, :reopen]
-  before_action :set_question, only: [:show, :edit, :update, :destroy, :undelete, :close, :reopen]
-  before_action :check_if_question_locked, only: [:edit, :update, :destroy, :undelete, :close, :reopen]
-
-  def index
-    sort_params = { activity: :last_activity, age: :created_at, score: :score }
-    sort_param = sort_params[params[:sort]&.to_sym] || :last_activity
-    @questions = Question.list_includes.main.undeleted.order(sort_param => :desc)
-                         .paginate(page: params[:page], per_page: 25)
-  end
-
-  def meta
-    sort_params = { activity: :last_activity, age: :created_at, score: :score }
-    sort_param = sort_params[params[:sort]&.to_sym] || :last_activity
-    @questions = Question.list_includes.meta.undeleted.order(sort_param => :desc)
-                         .paginate(page: params[:page], per_page: 25)
-  end
-
-  def show
-    if @question.deleted?
-      check_your_privilege('flag_curate', @question) || return
-    end
-
-    @answers = if current_user&.privilege?('flag_curate')
-                 Answer.where(parent_id: @question.id)
-               else
-                 Answer.where(parent_id: @question.id).undeleted
-                       .or(Answer.where(parent_id: @question.id, user_id: current_user&.id))
-               end.user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
-                             score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
-               .paginate(page: params[:page], per_page: 20)
-               .includes(:votes, :user, :comments, :license)
-
-    @close_reasons = CloseReason.active
-  end
+  before_action :authenticate_user!, only: [:destroy, :undelete, :close, :reopen]
+  before_action :set_question, only: [:destroy, :undelete, :close, :reopen]
+  before_action :check_if_question_locked, only: [:destroy, :undelete, :close, :reopen]
 
   def tagged
     @tag = Tag.find_by name: params[:tag], tag_set_id: params[:tag_set]
@@ -55,80 +22,6 @@ class QuestionsController < ApplicationController
               .limit(25).select(:id).pluck(:id).to_a
     end
     @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
-  end
-
-  def edit; end
-
-  def update
-    can_post_in_category = @question.category.present? &&
-                           (@question.category.min_trust_level || -1) <= current_user&.trust_level
-    unless current_user&.has_post_privilege?('edit_posts', @question) && can_post_in_category
-      return update_as_suggested_edit
-    end
-
-    tags_cache = params[:question][:tags_cache]&.reject { |e| e.to_s.empty? }
-    after_tags = Tag.where(tag_set_id: @question.category.tag_set_id, name: tags_cache)
-
-    if @question.tags == after_tags && @question.body_markdown == params[:question][:body_markdown] &&
-       @question.title == params[:question][:title]
-      flash[:danger] = "No changes were saved because you didn't edit the post."
-      return redirect_to question_path(@question)
-    end
-
-    body_rendered = helpers.post_markdown(:question, :body_markdown)
-    before = { body: @question.body_markdown, title: @question.title, tags: @question.tags }
-    if @question.update(question_params.merge(tags_cache: tags_cache, body: body_rendered,
-                                              last_activity: DateTime.now, last_activity_by: current_user,
-                                              last_edited_at: DateTime.now, last_edited_by: current_user))
-      PostHistory.post_edited(@question, current_user, before: before[:body],
-                              after: params[:question][:body_markdown], comment: params[:edit_comment],
-                              before_title: before[:title], after_title: params[:question][:title],
-                              before_tags: before[:tags], after_tags: after_tags)
-      redirect_to share_question_path(@question)
-    else
-      render :edit
-    end
-  end
-
-  def update_as_suggested_edit
-    return if check_edits_limit! @question
-
-    body_rendered = helpers.post_markdown(:question, :body_markdown)
-    new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
-
-    body_markdown = if params[:question][:body_markdown] != @question.body_markdown
-                      params[:question][:body_markdown]
-                    end
-
-    if @question.tags_cache == new_tags_cache && @question.body_markdown == params[:question][:body_markdown] &&
-       @question.title == params[:question][:title]
-      flash[:danger] = "No changes were saved because you didn't edit the post."
-      return redirect_to question_path(@question)
-    end
-
-    updates = {
-      post: @question,
-      user: current_user,
-      community: @question.community,
-      body: body_rendered,
-      title: params[:question][:title] != @question.title ? params[:question][:title] : nil,
-      tags_cache: new_tags_cache != @question.tags_cache ? new_tags_cache : @question.tags_cache,
-      body_markdown: body_markdown,
-      comment: params[:edit_comment],
-      active: true, accepted: false,
-      decided_at: nil, decided_by: nil,
-      rejected_comment: nil
-    }
-
-    @edit = SuggestedEdit.new(updates)
-    if @edit.save
-      @question.user.create_notification("Edit suggested on your post #{@question.title.truncate(50)}",
-                                         question_url(@question))
-      redirect_to share_question_path(@question)
-    else
-      @question.errors = @edit.errors
-      render :edit
-    end
   end
 
   def destroy

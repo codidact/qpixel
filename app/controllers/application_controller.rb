@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   before_action :check_if_warning_or_suspension_pending
   before_action :stop_the_awful_troll
 
+  helper_method :top_level_post_types, :second_level_post_types
+
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
   end
@@ -85,11 +87,15 @@ class ApplicationController < ActionController::Base
   end
 
   def top_level_post_types
-    [Question.post_type_id, Article.post_type_id]
+    Rails.cache.fetch 'top_level_post_types' do
+      PostType.where(is_top_level: true).select(:id).map(&:id)
+    end
   end
 
   def second_level_post_types
-    [Answer.post_type_id]
+    Rails.cache.fetch 'second_level_post_types' do
+      PostType.where(is_top_level: false).select(:id).map(&:id)
+    end
   end
 
   def check_edits_limit!(post)

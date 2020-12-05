@@ -1,8 +1,8 @@
 class CategoriesController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :homepage, :rss_feed]
-  before_action :verify_admin, except: [:index, :show, :homepage, :rss_feed]
+  before_action :authenticate_user!, except: [:index, :show, :homepage, :rss_feed, :post_types]
+  before_action :verify_admin, except: [:index, :show, :homepage, :rss_feed, :post_types]
   before_action :set_category, except: [:index, :homepage, :new, :create]
-  before_action :verify_view_access, except: [:index, :homepage, :new, :create]
+  before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
     @categories = Category.all.order(:sequence, :name)
@@ -81,6 +81,13 @@ class CategoriesController < ApplicationController
 
   def rss_feed
     set_list_posts
+  end
+
+  def post_types
+    @post_types = @category.post_types.where(is_top_level: true)
+    if @post_types.count == 1
+      redirect_to new_category_post_path(post_type: @post_types.first, category: @category)
+    end
   end
 
   private

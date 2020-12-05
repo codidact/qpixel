@@ -1,0 +1,5 @@
+<h1 class="has-margin-bottom-2">New Post in <%= @category.name %></h1>
+<p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
+
+<%= render 'form', with_post_type: @category.display_post_types.reject { |e| e.to_s.empty? }.size > 1,
+           submit_path: create_post_path(@category.id) %>

@@ -1,52 +1,61 @@
+<%#
+  Full post view, containing all details and interactions.
+  Variables:
+    post : the Post instance to display
+%>
+
+<% category ||= defined?(@category) ? @category : post.category %>
+<% post_type ||= defined?(@post_type) ? @post_type : post.post_type %>
+
 <% is_question = post.post_type_id == Question.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
-<% has_tags = is_top_level && !post.tag_ids.empty? %>
 
 <div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>" data-ckb-list-item data-ckb-item-type="post" data-ckb-post-id="<%= post.id %>">
   <% if is_top_level %>
     <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
       <span class="post--title-text">
         <%= post.title %>
-        <%= is_question && post.closed ? "[closed]" : "" %>
+        <%= post_type.is_closeable && post.closed ? "[closed]" : "" %>
       </span>
-      <% category = defined?(@category) ? @category : post.category %>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
-        <%= post_type_badge(post.post_type.name) %>
+        <%= post_type_badge(post_type.name) %>
       <% end %>
     </h1>
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
-    <div>
-      <div class="post--votes has-text-align-center" title="<%= post.score %>">
-        <% existing_vote = my_vote(post) %>
-        <% unless post.locked? %>
-          <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
-                  data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
-              <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-              </svg>
-          </button>
-        <% end %>
-        <div class="score has-font-size-subheading js-upvote-count">
-          +<%= post.upvote_count %>
+    <% if post_type.has_votes %>
+      <div>
+        <div class="post--votes has-text-align-center" title="<%= post.score %>">
+          <% existing_vote = my_vote(post) %>
+          <% unless post.locked? %>
+            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
+                    data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
+                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                  <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+                </svg>
+            </button>
+          <% end %>
+          <div class="score has-font-size-subheading js-upvote-count">
+            +<%= post.upvote_count %>
+          </div>
+          <div class="score has-font-size-subheading js-downvote-count">
+            &minus;<%= post.downvote_count %>
+          </div>
+          <% unless post.locked? %>
+            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>" <%= (post.locked?) ? 'disabled' : '' %>
+                    data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
+                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                  <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+                </svg>
+            </button>
+          <% end %>
         </div>
-        <div class="score has-font-size-subheading js-downvote-count">
-          &minus;<%= post.downvote_count %>
-        </div>
-        <% unless post.locked? %>
-          <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>" <%= (post.locked?) ? 'disabled' : '' %>
-                  data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
-              <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-              </svg>
-          </button>
-        <% end %>
       </div>
-    </div>
+    <% end %>
 
     <div class="post--content has-padding-2">
-      <% if is_question && post.closed %>
+      <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
             <strong>Closed</strong>
@@ -100,7 +109,7 @@
         </div>
       <% end %>
 
-      <% if post.pending_suggested_edit? %>
+      <% if post_type.is_public_editable && post.pending_suggested_edit? %>
         <% if check_your_post_privilege(post, 'edit_posts') %>
           <div class="notice h-p-2">
             <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small">Review changes</a></p>
@@ -121,7 +130,7 @@
         <div class="post--meta has-margin-bottom-4">
           <%= render 'users/post_usercard', post: post %>
           <div>
-            <% if has_tags %>
+            <% if post_type.has_tags %>
               <div class="post--tags has-padding-2">
                 <% required_ids = post.category&.required_tag_ids %>
                 <% moderator_ids = post.category&.moderator_tag_ids %>
@@ -135,7 +144,7 @@
                 <% end %>
               </div>
             <% end %>
-            <% if post.license.present? || been_edited %>
+            <% if (post_type.has_license && post.license.present?) || been_edited %>
               <div class="post--licensing--edited has-margin-left-2">
                 <% if post.license.present? %>
                   <i class="fas fa-balance-scale" title="License"></i>
@@ -161,15 +170,15 @@
 
         <div class="post--actions">
           <div class="tools">
-              <%= link_to generic_share_link(post), class: 'tools--item js-permalink' do %>
-                <i class="fa fa-link"></i>
-                <span class="js-text">Permalink</span>
-              <% end %>
-              <%= link_to post_history_path(post), class: 'tools--item' do %>
-                <i class="fa fa-history"></i>
-                History
-              <% end %>
-            <% unless post.locked? %>
+            <%= link_to generic_share_link(post), class: 'tools--item js-permalink' do %>
+              <i class="fa fa-link"></i>
+              <span class="js-text">Permalink</span>
+            <% end %>
+            <%= link_to post_history_path(post), class: 'tools--item' do %>
+              <i class="fa fa-history"></i>
+              History
+            <% end %>
+            <% unless post.locked? || !post_type.is_public_editable %>
               <% if check_your_post_privilege(post, 'edit_post') %>
                 <% if post.pending_suggested_edit? %>
                   <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
@@ -177,7 +186,7 @@
                     Review suggested edit
                   <% end %>
                 <% else %>
-                  <%= link_to generic_edit_link(post), class: 'tools--item' do %>
+                  <%= link_to edit_post_path(post), class: 'tools--item' do %>
                     <i class="fa fa-pencil-alt"></i>
                     Edit
                   <% end %>
@@ -186,27 +195,27 @@
                 <% if post.pending_suggested_edit? %>
                   <span class="tools--item">suggested edit pending...</span>
                 <% else %>
-                  <%= link_to generic_edit_link(post), class: 'tools--item' do %>
+                  <%= link_to edit_post_path(post), class: 'tools--item' do %>
                     <i class="fa fa-pencil-alt"></i>
                     Suggest edit
                   <% end %>
                 <% end %>
               <% end %>
             <% end %>
-            <% unless current_user.nil? %>
+            <% if user_signed_in? %>
               <a href="#" class="flag-dialog-link tools--item">
                 <i class="fa fa-flag"></i>
                 Flag
               </a>
             <% end %>
-            <% unless post.locked? %>
+            <% unless post.locked? || !post_type.is_closeable %>
               <% if check_your_privilege('flag_close') %>
-                <% if is_question && !post.closed %>
+                <% if !post.closed %>
                   <a href="#" class="close-dialog-link tools--item">
                     <i class="fa fa-lock"></i>
                     Close
                   </a>
-                <% elsif is_question && post.closed %>
+                <% elsif post.closed %>
                   <%= link_to reopen_question_path(post), method: :post, class: 'reopen-question tools--item' do %>
                     <i class="fa fa-unlock"></i>
                     Reopen
@@ -234,13 +243,13 @@
                 <i class="fa fa-wrench"></i>
                 Tools
               </a>
-              <% flags_count = if current_user.is_moderator
-                                post.flags
-                              else
-                                post.flags.not_confidential
-                              end.where(handled_by_id: nil).count %>
+              <% flags_count = if current_user&.is_moderator
+                                 post.flags
+                               else
+                                 post.flags.not_confidential
+                               end.where(handled_by_id: nil).count %>
 
-              <% own_flags_count = if current_user.is_moderator
+              <% own_flags_count = if current_user&.is_moderator
                                      0
                                    else
                                      post.flags.not_confidential.where(user: current_user, handled_by_id: nil).count
@@ -249,7 +258,7 @@
               <% if flags_count > 0 %>
                 <a href="#" class="show-all-flags-dialog-link tools--item">
                   <i class="fa fa-exclamation-triangle"></i>
-                  Show <%= pluralize(flags_count - own_flags_count, "flag") %>
+                  Show <%= pluralize(flags_count - own_flags_count, 'flag') %>
                 </a>
               <% end %>
             <% end %>
@@ -286,9 +295,9 @@
                   <div class="grid--cell is-flexible">
                     <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
                       other reason
-                      <div class="form-caption">
+                      <span class="form-caption">
                         Please elaborate in the details field below.
-                      </div>
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -308,11 +317,11 @@
           </div>
         </div>
 
-        <% if is_question %>
+        <% if post_type.is_closeable %>
           <div class="post--action-dialog js-close-box">
             <div class="widget">
               <div class="widget--header">Why should this post be closed?</div>
-              <% (@close_reasons || CloseReason.all).each do |reason| %>
+              <% CloseReason.active.each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
@@ -392,7 +401,6 @@
         <% end %>
 
         <div class="post--status">
-
           <% if post.att_source.present? %>
             <div class="notice has-margin-2">
               <p>
@@ -403,8 +411,8 @@
               </p>
             </div>
           <% end %>
-       </div>
-         <div class="post--comments has-padding-4">
+        </div>
+        <div class="post--comments has-padding-4">
           <h4 class="has-margin-0">
             <%= pluralize(post.comments.undeleted.size, 'comment') %>
             <span class="has-color-tertiary-500"><%= (moderator? && post.comments.deleted.size != 0) ? '(deleted: ' + post.comments.deleted.size.to_s + ')' : '' %></span>

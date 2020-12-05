@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_23_132854) do
+ActiveRecord::Schema.define(version: 2020_12_04_170746) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -298,6 +298,16 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
 
   create_table "post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
+    t.text "description"
+    t.boolean "has_answers", default: false, null: false
+    t.boolean "has_votes", default: false, null: false
+    t.boolean "has_tags", default: false, null: false
+    t.boolean "has_parent", default: false, null: false
+    t.boolean "has_category", default: false, null: false
+    t.boolean "has_license", default: false, null: false
+    t.boolean "is_public_editable", default: false, null: false
+    t.boolean "is_closeable", default: false, null: false
+    t.boolean "is_top_level", default: false, null: false
     t.index ["name"], name: "index_post_types_on_name"
   end
 
@@ -337,7 +347,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_132854) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked"
+    t.boolean "locked", default: false, null: false
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"

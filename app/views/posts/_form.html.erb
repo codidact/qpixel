@@ -1,81 +1,85 @@
-<% with_post_type ||= false %>
+<%#
+  Post create/edit form covering all post types.
+  Variables:
+    post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
+    submit_path   : the URL to submit the form to (must accept POST requests)
+    post_type     : a PostType instance describing the requested post type
+    category      : a Category instance, required if the post type has a category, indicating which category to post in
+    parent        : a Post instance containing the parent for this post (required if the post type has a parent)
+    inline_parent : optional, default  true: display an inline copy of the parent? (if present)
+    type_summary  : optional, default  true: display a summary of the requested post type?
+    edit_comment  : optional, default false: include a field for an edit comment?
+%>
 
 <% content_for :head do %>
   <%= render 'posts/markdown_script' %>
 <% end %>
 
-<div class="notice is-info">
-  <p><strong>Posting Tips</strong></p>
-  <div class="has-font-size-caption">
-  <% guidance = @category.asking_guidance_override %>
-  <%= raw(sanitize(render_markdown(guidance.present? ? guidance : SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
-  </div>
-</div>
-
-<% if @post.errors.any? %>
-  <div class="notice is-danger is-filled">
-    <p>The following errors prevented your post being saved:</p>
-    <ul>
-      <% @post.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
 <%= render 'posts/image_upload' %>
 
-<%= form_for @post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
-  <%= f.hidden_field :category_id %>
+<%= form_for post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
+  <%= f.hidden_field :post_type_id, value: post.post_type_id || post_type.id %>
 
-  <% if with_post_type %>
-    <div class="form-group">
-      <%= f.label :post_type_id, 'Post type', class: 'form-element' %>
-      <span class="form-caption">What kind of post is this? Questions can have answers; articles only have comments.</span>
-      <% ids = @category.display_post_types.reject { |e| e.to_s.empty? } %>
-      <% post_types = PostType.where(id: ids) %>
-      <% opts = post_types.map { |pt| [pt.name, pt.id] } %>
-      <%= f.select :post_type_id, options_for_select(opts, selected: @post.post_type_id),
-                   { include_blank: true }, class: 'form-element' %>
-    </div>
-  <% else %>
-    <%= f.hidden_field :post_type_id %>
+  <% if post_type.has_category? %>
+    <%= f.hidden_field :category_id, value: post.category_id || category.id %>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: @post %>
+  <% if post_type.has_parent? %>
+    <%= f.hidden_field :parent_id, value: post.parent_id || parent.id %>
+  <% end %>
+
+  <% if !defined?(type_summary) || (defined?(type_summary) && type_summary) %>
+    <p>
+      <span class="has-font-size-larger">
+        You're writing a new <strong><%= post_type.name %></strong>
+        <% if post_type.has_category? && category.present? %>
+          in <strong><%= category.name %></strong>
+        <% end %>
+      </span><br/>
+      <span class="has-font-size-smaller has-color-tertiary-700">
+        <%= post_type.description %>
+      </span>
+    </p>
+  <% end %>
+
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: post %>
 
   <div class="post-preview"></div>
 
-  <div class="form-group">
-    <%= f.label :title, 'Summarize your post with a title:', class: 'form-element' %>
-    <%= f.text_field :title, class: 'form-element' %>
-  </div>
+  <% unless post_type.has_parent? %>
+    <div class="form-group">
+      <%= f.label :title, 'Summarize your post with a title:', class: 'form-element' %>
+      <%= f.text_field :title, class: 'form-element' %>
+    </div>
+  <% end %>
 
-  <div class="form-group">
-    <%= f.label :tags_cache, 'Tags (at least one):', class: 'form-element' %>
-    <% required_tags = @category.required_tags.to_a %>
-    <% unless required_tags.empty? %>
-      <span class="form-caption">
-        Requires at least one of
-        <% required_tags.each do |tag| %>
-          <a class="badge is-tag is-filled js-add-required-tag" href="javascript:void(0)" data-tag-id="<%= tag.id %>"
-             data-tag-name="<%= tag.name %>">
-            <%= tag.name %>
-          </a>
-        <% end %>
-      </span>
-    <% end %>
-    <%= f.select :tags_cache, options_for_select(@post.tags_cache.map { |t| [t, t] }, selected: @post.tags_cache),
-                 { include_blank: true }, multiple: true, class: "form-element js-tag-select",
-                 data: { tag_set: @category.tag_set_id } %>
-  </div>
+  <% if post_type.has_tags? && category.present? %>
+    <div class="form-group">
+      <%= f.label :tags_cache, 'Tags (at least one):', class: 'form-element' %>
+      <% required_tags = category.required_tags.to_a %>
+      <% unless required_tags.empty? %>
+        <span class="form-caption">
+          Requires at least one of
+          <% required_tags.each do |tag| %>
+            <a class="badge is-tag is-filled js-add-required-tag" href="javascript:void(0)" data-tag-id="<%= tag.id %>"
+               data-tag-name="<%= tag.name %>">
+              <%= tag.name %>
+            </a>
+          <% end %>
+        </span>
+      <% end %>
+      <%= f.select :tags_cache, options_for_select(post.tags_cache.map { |t| [t, t] }, selected: post.tags_cache),
+                   { include_blank: true }, multiple: true, class: "form-element js-tag-select",
+                   data: { tag_set: category.tag_set_id } %>
+    </div>
+  <% end %>
 
-  <% unless @post.id.present? %>
+  <% if post_type.has_category? && category.present? && post_type.has_license? && !post.id.present? %>
     <div class="form-group">
       <%= f.label :license_id, 'License', class: 'form-element' %>
       <span class="form-caption">
         <% site_default = License.site_default %>
-        <% category_default = @category.license %>
+        <% category_default = category.license %>
         <% if site_default.present? %>
           site default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= site_default.id %>">
             <%= site_default.name %>
@@ -90,13 +94,34 @@
           </a>
         <% end %>
       </span>
-      <%= f.select :license_id, options_for_select(License.enabled.default_order(@category).map { |l| [l.name, l.id] },
-                                                   selected: @post.license_id), {}, class: 'form-element' %>
+      <%= f.select :license_id, options_for_select(License.enabled.default_order(category).map { |l| [l.name, l.id] },
+                                                   selected: post.license_id), {}, class: 'form-element' %>
+    </div>
+  <% end %>
+
+  <% if defined?(edit_comment) && edit_comment %>
+    <hr/>
+    <div class="form-group">
+      <%= label_tag :edit_comment, 'Edit comment', class: 'form-element' %>
+      <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
     </div>
   <% end %>
 
   <div class="actions">
-    <%= f.submit "Save Post in #{@category.name}", class: 'button is-filled' %>
-    <%= link_to 'Cancel', category_path(@category), class: 'button is-muted is-outlined' %>
+    <% if post_type.has_category && category.present? %>
+      <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
+      <%= link_to 'Cancel', category_path(category), class: 'button is-muted is-outlined is-danger',
+                  data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
+    <% else %>
+      <%= f.submit 'Save Post', class: 'button is-filled' %>
+      <%= link_to 'Cancel', :back, class: 'button is-muted is-outlined is-danger',
+                  data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
+    <% end %>
   </div>
+<% end %>
+
+<% if (!defined?(inline_parent) || (defined?(inline_parent) && inline_parent)) && defined?(parent) && parent.present? %>
+  <h2>Responding to:</h2>
+
+  <%= render 'posts/expanded', post: parent  %>
 <% end %>

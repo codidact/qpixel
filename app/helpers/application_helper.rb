@@ -103,13 +103,19 @@ module ApplicationHelper
   end
 
   def generic_show_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      question_url(post)
-    when Article.post_type_id
-      article_url(post)
+    if top_level_post_types.include? post.post_type_id
+      post_url(post)
+    elsif second_level_post_types.include? post.post_type_id
+      post_url(post.parent, anchor: "answer-#{post.id}")
     else
-      '#'
+      case post.post_type_id
+      when HelpDoc.post_type_id
+        help_path(post.slug)
+      when PolicyDoc.post_type_id
+        policy_path(post.slug)
+      else
+        '#'
+      end
     end
   end
 
@@ -137,5 +143,13 @@ module ApplicationHelper
     else
       false
     end
+  end
+
+  def i18ns(key, **subs)
+    s = I18n.t key
+    subs.each do |f, r|
+      s = s.gsub ":#{f}", r.to_s
+    end
+    s
   end
 end

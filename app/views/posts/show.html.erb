@@ -1,0 +1,52 @@
+<% content_for :title, @post.title.truncate(50) %>
+<% content_for :description do %>
+  <% Rails.cache.fetch "posts/#{@post.id}/description" do %>
+    <%= @post.body_plain[0..74].strip %>...
+    <%= @post.children.any? ? @post.children.first.body_plain[0..74].strip : '' %>
+  <% end %>
+<% end %>
+
+<% content_for :twitter_card_meta do %>
+  <meta name="twitter:card" content="summary" />
+  <% if @post.user.twitter.present? %>
+    <meta name="twitter:creator" content="@<%= @post.user.twitter %>" />
+  <% end %>
+  <meta property="og:url" content="<%= post_url(@post) %>" />
+  <meta property="og:title" content="<%= @post.title %>" />
+  <meta property="og:description" content="<%= @post.body_plain[0..150].strip %>..." />
+  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
+<% end %>
+
+<%= render 'posts/expanded', post: @post %>
+
+<% if @post.post_type.has_answers %>
+  <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
+
+  <div class="button-list is-gutterless has-float-right">
+    <a href="<%= query_url(sort: 'score') %>" class="button is-muted is-outlined <%= params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : '' %>">Score</a>
+    <a href="<%= query_url(sort: 'age') %>" class="button is-muted is-outlined <%= params[:sort] == 'age' ? 'is-active' : '' %>">Active</a>
+  </div>
+
+  <div class="has-clear-clear"></div>
+
+  <% @children.each do |answer| %>
+    <%= render 'posts/expanded', post: answer %>
+  <% end %>
+
+  <div class="text-center">
+    <%= will_paginate @children, renderer: BootstrapPagination::Rails %>
+  </div>
+
+  <% if user_signed_in? && !@post.closed %>
+    <h2>Your Answer</h2>
+    <%= render 'posts/form', post: Post.new(post_type_id: Answer.post_type_id, category: @post.category,
+                                            parent: @post), type_summary: false,
+                             category: @post.category, post_type: PostType['Answer'], inline_parent: false,
+                             submit_path: create_response_path(post_type: PostType['Answer'], parent: @post) %>
+  <% elsif !@post.closed %>
+    <p class="has-margin-top-4"></p>
+    <%= link_to new_user_registration_path, class: 'button is-filled is-success h-m-t-4' do %>
+      Sign up to answer this question &raquo;
+    <% end %>
+  <% end %>
+<% end %>

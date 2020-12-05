@@ -86,30 +86,40 @@ Rails.application.routes.draw do
     post   ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
   end
 
-  get    'posts/:id/history',              to: 'post_history#post', as: :post_history
-  get    'posts/search',                   to: 'search#search', as: :search
-  post   'posts/upload',                   to: 'posts#upload', as: :upload
-  post   'posts/save-draft',               to: 'posts#save_draft', as: :save_draft
-  post   'posts/delete-draft',             to: 'posts#delete_draft', as: :delete_draft
+  scope 'posts' do
+    get    'new/:post_type',           to: 'posts#new', as: :new_post
+    get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
+    get    'new/:post_type/:category', to: 'posts#new', as: :new_category_post
+    post   'new/:post_type',           to: 'posts#create', as: :create_post
+    post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
+    post   'new/:post_type/:category', to: 'posts#create', as: :create_category_post
 
-  get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
-  patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post
+    get    ':id',                      to: 'posts#show', as: :post
 
-  get    'posts/new-help',                 to: 'posts#new_help', as: :new_help_post
-  post   'posts/new-help',                 to: 'posts#create_help', as: :create_help_post
-  get    'posts/:id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
-  patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
+    get    ':id/history',              to: 'post_history#post', as: :post_history
+    get    'search',                   to: 'search#search', as: :search
+    post   'upload',                   to: 'posts#upload', as: :upload
+    post   'save-draft',               to: 'posts#save_draft', as: :save_draft
+    post   'delete-draft',             to: 'posts#delete_draft', as: :delete_draft
 
-  post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
-  post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
-  post   'posts/:id/lock',                 to: 'posts#lock', as: :post_lock
-  post   'posts/:id/unlock',               to: 'posts#unlock', as: :post_unlock
-  post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
+    get    ':id/edit',                 to: 'posts#edit', as: :edit_post
+    patch  ':id/edit',                 to: 'posts#update', as: :update_post
 
+    #get    'new-help',                 to: 'posts#new_help', as: :new_help_post
+    #post   'new-help',                 to: 'posts#create_help', as: :create_help_post
+    get    ':id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
+    patch  ':id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
-  get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
-  post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
-  post 'posts/suggested-edit/:id/reject',  to: 'suggested_edit#reject', as: :suggested_edit_reject
+    post   ':id/category',             to: 'posts#change_category', as: :change_category
+    post   ':id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+    post   ':id/lock',                 to: 'posts#lock', as: :post_lock
+    post   ':id/unlock',               to: 'posts#unlock', as: :post_unlock
+    post   ':id/feature',              to: 'posts#feature', as: :post_feature
+
+    get    'suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
+    post   'suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
+    post   'suggested-edit/:id/reject',  to: 'suggested_edit#reject', as: :suggested_edit_reject
+  end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help
@@ -195,12 +205,13 @@ Rails.application.routes.draw do
     root                                           to: 'categories#index', as: :categories
     get    'new',                                  to: 'categories#new', as: :new_category
     post   'new',                                  to: 'categories#create', as: :create_category
-    get    ':category_id/posts/new/:post_type_id', to: 'posts#new', as: :new_post
-    post   ':category_id/posts/new/:post_type_id', to: 'posts#create', as: :create_post
+    #    get    ':category_id/posts/new/:post_type_id', to: 'posts#new_old', as: :old_new_post
+    #    post   ':category_id/posts/new/:post_type_id', to: 'posts#create_old', as: :old_create_post
     get    ':id',                                  to: 'categories#show', as: :category
     get    ':id/edit',                             to: 'categories#edit', as: :edit_category
     post   ':id/edit',                             to: 'categories#update', as: :update_category
     delete ':id',                                  to: 'categories#destroy', as: :destroy_category
+    get    ':id/types',                            to: 'categories#post_types', as: :category_post_types
     get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
     get    ':id/tags',                             to: 'tags#category', as: :category_tags
     get    ':id/tags/:tag_id',                     to: 'tags#show', as: :tag
