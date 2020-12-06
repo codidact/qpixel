@@ -171,10 +171,6 @@ class Post < ApplicationRecord
 
   def copy_last_activity_to_parent
     sc = saved_changes
-    # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
-    # override them later with more efficient methods.
-    # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
-    # permanent lock
     if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id')) \
        && !parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
       Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
