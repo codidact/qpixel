@@ -62,63 +62,40 @@ Rails.application.routes.draw do
     patch ':id/edit',                      to: 'pinned_links#update', as: :update_pinned_link
   end
 
-  get    'questions',                      to: 'questions#index', as: :questions
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
-  get    'meta',                           to: 'questions#meta', as: :meta
   get    'questions/feed',                 to: 'questions#feed', as: :question_feed
-  get    'questions/ask',                  to: 'questions#new', as: :new_question
-  get    'meta/ask',                       to: 'questions#new_meta', as: :new_meta_question
-  post   'questions/ask',                  to: 'questions#create', as: :create_question
   get    'questions/tagged/:tag_set/:tag', to: 'questions#tagged', as: :questions_tagged
-  get    'questions/:id',                  to: 'questions#show', as: :question
-  get    'questions/:id/edit',             to: 'questions#edit', as: :edit_question
-  patch  'questions/:id/edit',             to: 'questions#update', as: :update_question
-  delete 'questions/:id/delete',           to: 'questions#destroy', as: :delete_question
-  post   'questions/:id/undelete',         to: 'questions#undelete', as: :undelete_question
-  post   'questions/:id/close',            to: 'questions#close', as: :close_question
-  post   'questions/:id/reopen',           to: 'questions#reopen', as: :reopen_question
-
-  scope 'articles' do
-    get    ':id',                          to: 'articles#show', as: :article
-    get    ':id/edit',                     to: 'articles#edit', as: :edit_article
-    patch  ':id/edit',                     to: 'articles#update', as: :update_article
-    delete ':id/delete',                   to: 'articles#destroy', as: :destroy_article
-    post   ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
-  end
+  get    'questions/:id',                  to: 'posts#redirect', as: :question
 
   scope 'posts' do
-    get    'new/:post_type',           to: 'posts#new', as: :new_post
+    get    'new/:post_type',               to: 'posts#new', as: :new_post
     get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
-    get    'new/:post_type/:category', to: 'posts#new', as: :new_category_post
-    post   'new/:post_type',           to: 'posts#create', as: :create_post
+    get    'new/:post_type/:category',     to: 'posts#new', as: :new_category_post
+    post   'new/:post_type',               to: 'posts#create', as: :create_post
     post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
-    post   'new/:post_type/:category', to: 'posts#create', as: :create_category_post
+    post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
 
-    get    ':id',                      to: 'posts#show', as: :post
+    get    ':id',                          to: 'posts#show', as: :post
 
-    get    ':id/history',              to: 'post_history#post', as: :post_history
-    get    'search',                   to: 'search#search', as: :search
-    post   'upload',                   to: 'posts#upload', as: :upload
-    post   'save-draft',               to: 'posts#save_draft', as: :save_draft
-    post   'delete-draft',             to: 'posts#delete_draft', as: :delete_draft
+    get    ':id/history',                  to: 'post_history#post', as: :post_history
+    get    'search',                       to: 'search#search', as: :search
+    post   'upload',                       to: 'posts#upload', as: :upload
+    post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
+    post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
 
-    get    ':id/edit',                 to: 'posts#edit', as: :edit_post
-    patch  ':id/edit',                 to: 'posts#update', as: :update_post
+    get    ':id/edit',                     to: 'posts#edit', as: :edit_post
+    patch  ':id/edit',                     to: 'posts#update', as: :update_post
 
-    #get    'new-help',                 to: 'posts#new_help', as: :new_help_post
-    #post   'new-help',                 to: 'posts#create_help', as: :create_help_post
-    get    ':id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
-    patch  ':id/edit-help',            to: 'posts#update_help', as: :update_help_post
 
-    post   ':id/category',             to: 'posts#change_category', as: :change_category
-    post   ':id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
-    post   ':id/lock',                 to: 'posts#lock', as: :post_lock
-    post   ':id/unlock',               to: 'posts#unlock', as: :post_unlock
-    post   ':id/feature',              to: 'posts#feature', as: :post_feature
+    post   ':id/category',                 to: 'posts#change_category', as: :change_category
+    post   ':id/toggle_comments',          to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+    post   ':id/lock',                     to: 'posts#lock', as: :post_lock
+    post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
+    post   ':id/feature',                  to: 'posts#feature', as: :post_feature
 
-    get    'suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
-    post   'suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
-    post   'suggested-edit/:id/reject',  to: 'suggested_edit#reject', as: :suggested_edit_reject
+    get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
+    post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
+    post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
@@ -166,12 +143,6 @@ Rails.application.routes.draw do
   post   'votes/new',                      to: 'votes#create', as: :create_vote
   delete 'votes/:id',                      to: 'votes#destroy', as: :destroy_vote
 
-  get    'questions/:id/answer',           to: 'answers#new', as: :new_answer
-  post   'questions/:id/answer',           to: 'answers#create', as: :create_answer
-  get    'answers/:id/edit',               to: 'answers#edit', as: :edit_answer
-  patch  'answers/:id/edit',               to: 'answers#update', as: :update_answer
-  delete 'answers/:id/delete',             to: 'answers#destroy', as: :delete_answer
-  post   'answers/:id/delete',             to: 'answers#undelete', as: :undelete_answer
   post   'answers/:id/convert',            to: 'answers#convert_to_comment', as: :convert_to_comment
 
   post   'flags/new',                      to: 'flags#new', as: :new_flag
@@ -202,25 +173,23 @@ Rails.application.routes.draw do
   get    'help',                           to: 'posts#help_center', as: :help_center
 
   scope 'categories' do
-    root                                           to: 'categories#index', as: :categories
-    get    'new',                                  to: 'categories#new', as: :new_category
-    post   'new',                                  to: 'categories#create', as: :create_category
-    #    get    ':category_id/posts/new/:post_type_id', to: 'posts#new_old', as: :old_new_post
-    #    post   ':category_id/posts/new/:post_type_id', to: 'posts#create_old', as: :old_create_post
-    get    ':id',                                  to: 'categories#show', as: :category
-    get    ':id/edit',                             to: 'categories#edit', as: :edit_category
-    post   ':id/edit',                             to: 'categories#update', as: :update_category
-    delete ':id',                                  to: 'categories#destroy', as: :destroy_category
-    get    ':id/types',                            to: 'categories#post_types', as: :category_post_types
-    get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
-    get    ':id/tags',                             to: 'tags#category', as: :category_tags
-    get    ':id/tags/:tag_id',                     to: 'tags#show', as: :tag
-    get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
-    get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
-    patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
-    post   ':id/tags/:tag_id/rename',              to: 'tags#rename', as: :rename_tag
-    get    ':id/tags/:tag_id/merge',               to: 'tags#select_merge', as: :select_tag_merge
-    post   ':id/tags/:tag_id/merge',               to: 'tags#merge', as: :merge_tag
+    root                                   to: 'categories#index', as: :categories
+    get    'new',                          to: 'categories#new', as: :new_category
+    post   'new',                          to: 'categories#create', as: :create_category
+    get    ':id',                          to: 'categories#show', as: :category
+    get    ':id/edit',                     to: 'categories#edit', as: :edit_category
+    post   ':id/edit',                     to: 'categories#update', as: :update_category
+    delete ':id',                          to: 'categories#destroy', as: :destroy_category
+    get    ':id/types',                    to: 'categories#post_types', as: :category_post_types
+    get    ':id/feed',                     to: 'categories#rss_feed', as: :category_feed
+    get    ':id/tags',                     to: 'tags#category', as: :category_tags
+    get    ':id/tags/:tag_id',             to: 'tags#show', as: :tag
+    get    ':id/tags/:tag_id/children',    to: 'tags#children', as: :tag_children
+    get    ':id/tags/:tag_id/edit',        to: 'tags#edit', as: :edit_tag
+    patch  ':id/tags/:tag_id/edit',        to: 'tags#update', as: :update_tag
+    post   ':id/tags/:tag_id/rename',      to: 'tags#rename', as: :rename_tag
+    get    ':id/tags/:tag_id/merge',       to: 'tags#select_merge', as: :select_tag_merge
+    post   ':id/tags/:tag_id/merge',       to: 'tags#merge', as: :merge_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
