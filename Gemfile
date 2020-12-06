@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '~> 2.6'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 4.2.2'
@@ -46,7 +46,7 @@ gem 'whenever', '~> 1.0', require: false
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.8'
 gem 'coveralls', '~> 0.8', require: false
-gem 'rubocop', '= 0.84'
+gem 'rubocop', '~> 1'
 
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
 gem 'flamegraph', '~> 0.9'
