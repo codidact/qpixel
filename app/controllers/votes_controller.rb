@@ -1,5 +1,3 @@
-# Web controller. Provides actions for using voting features - essentially a stripped-down and renamed version of the
-# standard resource set.
 class VotesController < ApplicationController
   before_action :auth_for_voting
   before_action :check_if_target_post_locked, only: [:create]
@@ -16,18 +14,16 @@ class VotesController < ApplicationController
                        .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
     max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes']
 
-    unless post.parent&.user_id == current_user.id
-      if recent_votes >= max_votes_per_day
-        vote_limit_msg = 'You have used your daily vote limit of ' + recent_votes.to_s + ' votes.' \
-                         ' Come back tomorrow to continue voting. Votes on answers to own posts' \
-                         ' are exempt.'
+    if !post.parent&.user_id == current_user.id && recent_votes >= max_votes_per_day
+      vote_limit_msg = "You have used your daily vote limit of #{recent_votes} votes." \
+                       ' Come back tomorrow to continue voting. Votes on answers to own posts' \
+                       ' are exempt.'
 
-        AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
-                              comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
+      AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
+                            comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
 
-        render json: { status: 'failed', message: vote_limit_msg }, status: 403
-        return
-      end
+      render json: { status: 'failed', message: vote_limit_msg }, status: 403
+      return
     end
 
     destroyed = post.votes.where(user: current_user).destroy_all

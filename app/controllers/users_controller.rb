@@ -1,4 +1,5 @@
 require 'net/http'
+
 # rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
@@ -195,7 +196,7 @@ class UsersController < ApplicationController
     if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
       # parsed correctly in the view later on.
-      profile_params[:website] = 'https://' + profile_params[:website]
+      profile_params[:website] = "https://#{profile_params[:website]}"
     end
 
     @user = current_user
@@ -238,7 +239,8 @@ class UsersController < ApplicationController
     permission = permission_map[key]
     return not_found unless current_user.send(permission)
 
-    if key == :mod
+    case key
+    when :mod
       new_value = !@user.community_user.send(attrib)
 
       # Set/update ability
@@ -249,7 +251,7 @@ class UsersController < ApplicationController
       end
 
       @user.community_user.update(attrib => new_value)
-    elsif key == :admin
+    when :admin
       new_value = !@user.community_user.send(attrib)
       @user.community_user.update(attrib => new_value)
     else
@@ -269,7 +271,8 @@ class UsersController < ApplicationController
 
     ua = @user.community_user.privilege(ability.internal_id)
 
-    if params[:do] == 'grant'
+    case params[:do]
+    when 'grant'
       if ua.nil?
         @user.community_user.grant_privilege(ability.internal_id)
         AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
@@ -280,7 +283,7 @@ class UsersController < ApplicationController
                              comment: "#{ability.internal_id} ability unsuspended")
       end
 
-    elsif params[:do] == 'suspend'
+    when 'suspend'
       return not_found if ua.nil?
 
       duration = params[:duration]&.to_i
@@ -288,12 +291,12 @@ class UsersController < ApplicationController
       message = params[:message]
 
       ua.update is_suspended: true, suspension_end: duration, suspension_message: message
-      @user.create_notification('Your ' + ability.name + ' ability has been suspended. Click for more information.',
+      @user.create_notification("Your #{ability.name} ability has been suspended. Click for more information.",
                                 ability_url(ability.internal_id))
       AuditLog.admin_audit(event_type: 'ability_suspend', related: @user, user: current_user,
                            comment: "#{ability.internal_id} ability suspended\n\n#{message}")
 
-    elsif params[:do] == 'delete'
+    when 'delete'
       return not_found if ua.nil?
 
       ua.destroy

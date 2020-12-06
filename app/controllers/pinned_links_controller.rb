@@ -10,9 +10,10 @@ class PinnedLinksController < ApplicationController
             else
               PinnedLink.where(community: @community)
             end
-    @links = if params[:filter] == 'all'
+    @links = case params[:filter]
+             when 'all'
                links.all
-             elsif params[:filter] == 'inactive'
+             when 'inactive'
                links.where(active: false).all
              else
                links.where(active: true).all
@@ -36,14 +37,14 @@ class PinnedLinksController < ApplicationController
   end
 
   def edit
-    unless current_user.is_global_moderator
-      return not_found if @link.community_id != RequestContext.community_id
+    if !current_user.is_global_moderator && @link.community_id != RequestContext.community_id
+      not_found
     end
   end
 
   def update
-    unless current_user.is_global_moderator
-      return not_found if @link.community_id != RequestContext.community_id
+    if !current_user.is_global_moderator && @link.community_id != RequestContext.community_id
+      return not_found
     end
 
     before = @link.attributes_print

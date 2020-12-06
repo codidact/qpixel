@@ -14,7 +14,7 @@ class FlagsController < ApplicationController
 
     if recent_flags >= max_flags_per_day
       flag_limit_msg = 'Thank you. Flags from people like you help us keep this site clean.' \
-                       ' However, you have reached your daily flag limit of ' + max_flags_per_day.to_s + \
+                       " However, you have reached your daily flag limit of #{max_flags_per_day}" \
                        ' flags. Please come back tomorrow to continue flagging.'
 
       AuditLog.rate_limit_log(event_type: 'flag', related: Post.find(params[:post_id]), user: current_user,

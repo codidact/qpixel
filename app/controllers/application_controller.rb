@@ -108,11 +108,11 @@ class ApplicationController < ActionController::Base
                               'RL_NewUserSuggestedEdits'
                             end]
 
-    edit_limit_msg = if !current_user.privilege? 'unrestricted'
+    edit_limit_msg = if current_user.privilege? 'unrestricted'
+                       "You may only suggest #{max_edits} edits per day."
+                     else
                        "You may only suggest #{max_edits} edits per day. " \
                        'Once you have some well-received posts, that limit will increase.'
-                     else
-                       "You may only suggest #{max_edits} edits per day."
                      end
 
     if recent_edits >= max_edits

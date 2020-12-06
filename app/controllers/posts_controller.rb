@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
@@ -101,9 +102,9 @@ class PostsController < ApplicationController
                   Post.where(parent_id: @post.id).undeleted
                       .or(Post.where(parent_id: @post.id, user_id: current_user&.id))
                 end.includes(:votes, :user, :comments, :license, :post_type)
-                   .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
-                              score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
-                   .paginate(page: params[:page], per_page: 20)
+                .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
+                           score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
+                .paginate(page: params[:page], per_page: 20)
   end
 
   def edit; end
@@ -112,8 +113,6 @@ class PostsController < ApplicationController
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags }
     after_tags = if @post_type.has_category?
                    Tag.where(tag_set_id: @post.category.tag_set_id, name: params[:post][:tags_cache])
-                 else
-                   nil
                  end
     body_rendered = helpers.post_markdown(:post, :body)
     new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
@@ -148,9 +147,9 @@ class PostsController < ApplicationController
           post: @post,
           user: current_user,
           body: body_rendered == @post.body ? nil : body_rendered,
-          title: params[:post][:title] != @post.title ? params[:post][:title] : nil,
-          tags_cache: new_tags_cache != @post.tags_cache ? new_tags_cache : @post.tags_cache,
-          body_markdown: params[:post][:body_markdown] != @post.body_markdown ? params[:post][:body_markdown] : nil,
+          title: params[:post][:title] == @post.title ? nil : params[:post][:title],
+          tags_cache: new_tags_cache == @post.tags_cache ? @post.tags_cache : new_tags_cache,
+          body_markdown: params[:post][:body_markdown] == @post.body_markdown ? nil : params[:post][:body_markdown],
           comment: params[:edit_comment],
           active: true, accepted: false
         }
@@ -243,12 +242,19 @@ class PostsController < ApplicationController
   def toggle_comments
     @post.comments_disabled = !@post.comments_disabled
     @post.save
-    if @post.comments_disabled
-      if params[:delete_all_comments]
-        @post.comments.undeleted.map do |c|
-          c.deleted = true
-          c.save
-        end
+    # def new_old
+    #   @category = Category.find(params[:category_id])
+    #   @post = Post.new(category: @category, post_type_id: params[:post_type_id])
+    #   if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
+    #     flash[:danger] = "You don't have a high enough trust level to post in the #{@category.name} category."
+    #     redirect_back fallback_location: root_path
+    #   end
+    # end
+    # TODO: delete, undelete, close, reopen
+    if @post.comments_disabled && params[:delete_all_comments]
+      @post.comments.undeleted.map do |c|
+        c.deleted = true
+        c.save
       end
     end
     render json: { success: true }
@@ -321,14 +327,14 @@ class PostsController < ApplicationController
   private
 
   def post_params
-    p = params.require(:post).permit(:post_type_id, :category_id,:title, :body_markdown, :post_type_id,
+    p = params.require(:post).permit(:post_type_id, :category_id, :title, :body_markdown, :post_type_id,
                                      :license_id, tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
 
   def edit_post_params
-    p = params.require(:post).permit(:post_type_id, :category_id,:title, :body_markdown, :post_type_id, tags_cache: [])
+    p = params.require(:post).permit(:post_type_id, :category_id, :title, :body_markdown, :post_type_id, tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
@@ -369,3 +375,4 @@ class PostsController < ApplicationController
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

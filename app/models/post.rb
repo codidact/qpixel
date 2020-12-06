@@ -19,7 +19,7 @@ class Post < ApplicationRecord
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
 
-  counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
+  counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
 
   serialize :tags_cache, Array
 
@@ -171,10 +171,13 @@ class Post < ApplicationRecord
 
   def copy_last_activity_to_parent
     sc = saved_changes
-    if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id'))
-      unless parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
-        Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
-      end
+    # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
+    # override them later with more efficient methods.
+    # Three updates: one to remove rep from previous user, one to reassign, one to re-grant rep to new user
+    # permanent lock
+    if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id')) \
+       && !parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
+      Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
     end
   end
 

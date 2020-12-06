@@ -2,9 +2,9 @@ require 'rmagick'
 require 'open-uri'
 
 # Necessary due to rmagick
-# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/ClassLength
 # noinspection RubyResolve, DuplicatedCode, RubyArgCount
 class AdvertisementController < ApplicationController
   include Magick
@@ -89,7 +89,11 @@ class AdvertisementController < ApplicationController
       end
 
       icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(400, 200)
+        ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
+      else
         name = @community.name
         community_name = Draw.new
         community_name.font_family = 'Roboto'
@@ -100,10 +104,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 600, 250, 0, 0, name do
           self.fill = 'black'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(400, 200)
-        ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
       end
 
       on_codidact = Draw.new
@@ -184,10 +184,10 @@ class AdvertisementController < ApplicationController
 
   def community_icon(icon_path)
     if icon_path.start_with? '/assets/'
-      icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(icon_path)}")
     else
       icon = Magick::ImageList.new
-      icon_path_content = URI.open(icon_path).read
+      icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
       icon.from_blob(icon_path_content)
     end
     icon
@@ -236,7 +236,11 @@ class AdvertisementController < ApplicationController
       end
 
       icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(175, 75)
+        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+      else
         community_name = Draw.new
         community_name.font_family = 'Roboto'
         community_name.font_weight = 700
@@ -246,10 +250,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 0, 0, 20, 20, question.community.name do
           self.fill = '#4B68FF'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(175, 75)
-        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end
 
       community_url = Draw.new
@@ -313,7 +313,11 @@ class AdvertisementController < ApplicationController
       end
 
       icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(120, 50)
+        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+      else
         community_name = Draw.new
         community_name.font_family = 'Roboto'
         community_name.font_weight = 700
@@ -323,10 +327,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 0, 0, 20, 20, article.community.name do
           self.fill = '#4B68FF'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(120, 50)
-        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end
 
       community_url = Draw.new
@@ -370,5 +370,5 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/ClassLength

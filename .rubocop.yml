@@ -8,6 +8,7 @@ AllCops:
     - 'scripts/**/*'
     - 'bin/**/*'
   NewCops: enable
+  SuggestExtensions: false
 
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
@@ -31,12 +32,14 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Max: 30
+Metrics/BlockNesting:
+  Max: 5
 Metrics/ClassLength:
   Max: 300
 Metrics/CyclomaticComplexity:
   Max: 30
 Metrics/MethodLength:
-  Max: 40
+  Max: 60
 Metrics/ModuleLength:
   Max: 200
 Metrics/PerceivedComplexity:
@@ -68,6 +71,8 @@ Style/HashTransformValues:
 Style/IfInsideElse:
   Enabled: false
 Style/IfUnlessModifier:
+  Enabled: false
+Style/OptionalBooleanParameter:
   Enabled: false
 Style/RegexpLiteral:
   Enabled: false
