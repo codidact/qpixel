@@ -7,9 +7,7 @@ class CommunityUser < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: [:community_id] }
 
-  scope :for_context, -> do
-    where(community_id: RequestContext.community_id)
-  end
+  scope :for_context, -> { where(community_id: RequestContext.community_id) }
 
   after_create :prevent_ulysses_case
 
