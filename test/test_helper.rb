@@ -35,6 +35,15 @@ class ActiveSupport::TestCase
       Ability.create(a.attributes.merge(community_id: community_id, id: nil))
     end
   end
+
+  def sample
+    OpenStruct.new(
+      title: 'This is a sample title',
+      body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
+      body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
+      tags_cache: ['discussion', 'posts', 'tags']
+    )
+  end
 end
 
 class ActionController::TestCase

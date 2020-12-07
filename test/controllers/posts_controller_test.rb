@@ -75,4 +75,14 @@ class PostsControllerTest < ActionController::TestCase
     get :new, params: { post_type: post_types(:question).id, category: categories(:main).id }
     assert_redirected_to new_user_session_path
   end
+
+  test 'can create help post' do
+    sign_in users(:moderator)
+    post :create, params: { post_type: post_types(:help_doc).id,
+                            post: { post_type_id: post_types(:help_doc).id, title: sample.title,
+                                    body_markdown: sample.body_markdown } }
+    assert_response 302
+    assert_not_nil assigns(:post).id
+    assert_redirected_to help_path(assigns(:post).doc_slug)
+  end
 end
