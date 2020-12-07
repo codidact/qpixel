@@ -13,8 +13,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'privilege? should grant all to admins and moderators' do
-    assert_equal true, users(:moderator).privilege?('flag_curate')
-    assert_equal true, users(:admin).privilege?('flag_curate')
+    assert_equal true, users(:global_moderator).privilege?('flag_curate')
+    assert_equal true, users(:global_admin).privilege?('flag_curate')
   end
 
   test 'has_post_privilege should grant all to OP' do
@@ -28,9 +28,10 @@ class UserTest < ActiveSupport::TestCase
   test 'community_user is based on context' do
     user = users(:standard_user)
     community = Community.create(host: 'other', name: 'Other')
-    cu1 = user.community_users.create(community: community)
+    copy_abilities(community.id)
     RequestContext.community = community
-    assert_equal user.community_user, cu1
+    cu1 = user.community_users.create(community: community)
+    assert_equal user.community_user.reload, cu1
   end
 
   test 'is_moderator for community moderator' do
