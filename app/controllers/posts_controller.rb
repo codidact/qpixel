@@ -30,11 +30,11 @@ class PostsController < ApplicationController
                                  .where(post_type_id: top_level_post_types).count
 
     max_posts = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_TopLevelPosts' : 'RL_NewUserTopLevelPosts']
-    post_limit_msg = if !current_user.privilege? 'unrestricted'
+    post_limit_msg = if current_user.privilege? 'unrestricted'
+                       "You may only post #{max_posts} top-level posts per day."
+                     else
                        "You may only post #{max_posts} top-level posts (questions, articles) per day. " \
                        'Once you have some well-received posts, that limit will increase.'
-                     else
-                       "You may only post #{max_posts} top-level posts per day."
                      end
 
     if recent_top_level_posts >= max_posts
@@ -174,12 +174,10 @@ class PostsController < ApplicationController
   def toggle_comments
     @post.comments_disabled = !@post.comments_disabled
     @post.save
-    if @post.comments_disabled
-      if params[:delete_all_comments]
-        @post.comments.undeleted.map do |c|
-          c.deleted = true
-          c.save
-        end
+    if @post.comments_disabled && params[:delete_all_comments]
+      @post.comments.undeleted.map do |c|
+        c.deleted = true
+        c.save
       end
     end
     render json: { success: true }

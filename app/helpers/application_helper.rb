@@ -71,9 +71,7 @@ module ApplicationHelper
     markdown = markdown.gsub(/[*_~]+/, '')
 
     # Remove links and inline images but replace them with their text/alt text.
-    markdown = markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
-
-    markdown
+    markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
   end
 
   def generic_share_link(post)
@@ -114,7 +112,7 @@ module ApplicationHelper
   end
 
   def split_words_max_length(text, max_length)
-    words = text.split ' '
+    words = text.split
     splat = [[]]
     words.each do |word|
       # Unless the current last element has enough space to take the extra word, create a new one.
@@ -128,12 +126,8 @@ module ApplicationHelper
 
   def deleted_item?(item)
     case item.class.to_s
-    when 'Post'
+    when 'Post', 'Comment'
       item.deleted
-    when 'Comment'
-      item.deleted
-    when 'PostHistory'
-      false
     else
       false
     end

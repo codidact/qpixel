@@ -7,6 +7,8 @@ AllCops:
     - 'db/**/*'
     - 'scripts/**/*'
     - 'bin/**/*'
+  NewCops: enable
+  SuggestExtensions: false
 
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
@@ -67,6 +69,8 @@ Style/HashTransformValues:
 Style/IfInsideElse:
   Enabled: false
 Style/IfUnlessModifier:
+  Enabled: false
+Style/OptionalBooleanParameter:
   Enabled: false
 Style/RegexpLiteral:
   Enabled: false

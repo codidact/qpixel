@@ -6,6 +6,6 @@ class BlockedItem < ApplicationRecord
     define_method "#{bt.underscore}?" do
       item_type == bt
     end
-    scope (bt + 's').to_sym, -> { active.where(item_type: bt) }
+    scope "#{bt}s".to_sym, -> { active.where(item_type: bt) }
   end
 end

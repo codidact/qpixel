@@ -53,8 +53,12 @@ class CommunityUser < ApplicationRecord
   ## Privilege functions
 
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    unless internal_id == 'mod' || ignore_mod
-      return true if user.is_moderator # includes: privilege? 'mod'
+    # Calculation functions for privilege scores
+    # These are quite expensive, so we'll cache them for a while
+    ## Privilege functions
+    # includes: privilege? 'mod'
+    if (!internal_id == 'mod' || ignore_mod) && user.is_moderator
+      return true # includes: privilege? 'mod'
     end
 
     up = privilege(internal_id)

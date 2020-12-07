@@ -11,7 +11,7 @@ class WarningTemplate < ApplicationRecord
     chat_link = if SiteSetting['ChatLink'].nil?
                   'chat'
                 else
-                  '[chat](' + SiteSetting['ChatLink'] + ')'
+                  "[chat](#{SiteSetting['ChatLink']})"
                 end
     body_with_site_replacements = body_with_site_replacements.gsub '$ChatLink', chat_link
 

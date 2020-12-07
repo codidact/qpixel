@@ -28,11 +28,11 @@ class AnswersController < ApplicationController
                              'RL_NewUserSecondLevelPosts'
                            end]
 
-    post_limit_msg = if !current_user.privilege? 'unrestricted'
+    post_limit_msg = if current_user.privilege? 'unrestricted'
+                       "You may only post #{max_slps} answers per day."
+                     else
                        "You may only post #{max_slps} answers per day. " \
                        'Once you have some well-received posts, that limit will increase.'
-                     else
-                       "You may only post #{max_slps} answers per day."
                      end
 
     if recent_second_level_posts >= max_slps
@@ -99,7 +99,7 @@ class AnswersController < ApplicationController
       user: current_user,
       community: @answer.community,
       body: helpers.post_markdown(:answer, :body_markdown),
-      body_markdown: params[:answer][:body_markdown] != @answer.body_markdown ? params[:answer][:body_markdown] : nil,
+      body_markdown: params[:answer][:body_markdown] == @answer.body_markdown ? nil : params[:answer][:body_markdown],
       comment: params[:edit_comment],
       active: true, accepted: false,
       decided_at: nil, decided_by: nil,

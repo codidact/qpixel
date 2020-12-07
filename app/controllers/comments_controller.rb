@@ -19,22 +19,22 @@ class CommentsController < ApplicationController
                              .where.not(post: Post.where(user_id: current_user.id)).count
     max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
-    unless @post.user_id == current_user.id || @post&.parent&.user_id == current_user.id
-      if recent_comments >= max_comments_per_day
-        comment_limit_msg = 'You have used your daily comment limit of ' + recent_comments.to_s + ' comments.' \
-                            ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
-                            ' to own posts are exempt.'
+    # Provides mainly web actions for using and making comments.
+    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
+       && recent_comments >= max_comments_per_day
+      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \
+                          ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
+                          ' to own posts are exempt.'
 
-        if recent_comments.zero? && !current_user.privilege?('unrestricted')
-          comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
-        end
-
-        AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
-                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
-
-        render json: { status: 'failed', message: comment_limit_msg }, status: 403
-        return
+      if recent_comments.zero? && !current_user.privilege?('unrestricted')
+        comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
       end
+
+      AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
+                            comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
+
+      render json: { status: 'failed', message: comment_limit_msg }, status: 403
+      return
     end
 
     if @comment.save
