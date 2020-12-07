@@ -7,7 +7,9 @@ class CommunityUser < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: [:community_id] }
 
-  scope :for_context, -> { where(community_id: RequestContext.community_id) }
+  scope :for_context, -> do
+    where(community_id: RequestContext.community_id)
+  end
 
   after_create :prevent_ulysses_case
 
@@ -53,11 +55,7 @@ class CommunityUser < ApplicationRecord
   ## Privilege functions
 
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    # Calculation functions for privilege scores
-    # These are quite expensive, so we'll cache them for a while
-    ## Privilege functions
-    # includes: privilege? 'mod'
-    if (!internal_id == 'mod' || ignore_mod) && user.is_moderator
+    if (internal_id != 'mod' || ignore_mod) && user.is_moderator
       return true # includes: privilege? 'mod'
     end
 
