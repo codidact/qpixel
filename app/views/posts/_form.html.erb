@@ -11,6 +11,14 @@
     edit_comment  : optional, default false: include a field for an edit comment?
 %>
 
+<%
+  category ||= defined?(category) ? category : nil
+  parent ||= defined?(parent) ? parent : nil
+  inline_parent ||= defined?(inline_parent) ? inline_parent : true
+  type_summary ||= defined?(type_summary) ? type_summary : true
+  edit_comment ||= defined?(edit_comment) ? edit_comment : false
+%>
+
 <% content_for :head do %>
   <%= render 'posts/markdown_script' %>
 <% end %>
@@ -21,11 +29,11 @@
   <%= f.hidden_field :post_type_id, value: post.post_type_id || post_type.id %>
 
   <% if post_type.has_category? %>
-    <%= f.hidden_field :category_id, value: post.category_id || category.id %>
+    <%= f.hidden_field :category_id, value: post.category_id || category&.id || parent&.category_id %>
   <% end %>
 
   <% if post_type.has_parent? %>
-    <%= f.hidden_field :parent_id, value: post.parent_id || parent.id %>
+    <%= f.hidden_field :parent_id, value: post.parent_id || parent&.id %>
   <% end %>
 
   <% if !defined?(type_summary) || (defined?(type_summary) && type_summary) %>

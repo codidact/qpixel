@@ -1,14 +1,64 @@
 question:
   name: Question
+  description: ~
+  has_answers: true
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: true
+  is_top_level: true
 
 answer:
   name: Answer
+  description: ~
+  has_answers: false
+  has_votes: true
+  has_tags: false
+  has_parent: true
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: false
+  is_top_level: false
 
 article:
   name: Article
+  description: ~
+  has_answers: false
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: false
+  is_top_level: true
 
 policy_doc:
   name: PolicyDoc
+  description: ~
+  has_answers: false
+  has_votes: false
+  has_tags: false
+  has_parent: false
+  has_category: false
+  has_license: false
+  is_public_editable: false
+  is_closeable: false
+  is_top_level: false
 
 help_doc:
   name: HelpDoc
+  description: ~
+  has_answers: false
+  has_votes: false
+  has_tags: false
+  has_parent: false
+  has_category: false
+  has_license: false
+  is_public_editable: false
+  is_closeable: false
+  is_top_level: false

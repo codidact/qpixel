@@ -6,22 +6,13 @@ class PostsController < ApplicationController
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
 
-  # def new_old
-  #   @category = Category.find(params[:category_id])
-  #   @post = Post.new(category: @category, post_type_id: params[:post_type_id])
-  #   if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
-  #     flash[:danger] = "You don't have a high enough trust level to post in the #{@category.name} category."
-  #     redirect_back fallback_location: root_path
-  #   end
-  # end
-
   def new
     @post_type = PostType.find(params[:post_type])
     @category = params[:category].present? ? Category.find(params[:category]) : nil
     @parent = Post.where(id: params[:parent]).first
     @post = Post.new(category: @category, post_type: @post_type, parent: @parent)
 
-    if @post_type.has_category? && @category.nil?
+    if @post_type.has_category? && @category.nil? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
     end
@@ -34,12 +25,18 @@ class PostsController < ApplicationController
 
   def create
     @post_type = PostType.find(params[:post][:post_type_id])
-    @category = params[:post][:category_id].present? ? Category.find(params[:post][:category_id]) : nil
     @parent = Post.where(id: params[:parent]).first
+    @category = if @post_type.has_category
+                  if params[:post][:category_id].present?
+                    Category.find(params[:post][:category_id])
+                  elsif @parent.present?
+                    @parent.category
+                  end
+                end || nil
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
-    if @post_type.has_category? && @category.nil?
+    if @post_type.has_category? && @category.nil? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
     end
