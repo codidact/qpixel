@@ -50,6 +50,10 @@ jobs:
           command: |
             git rev-parse $(git rev-parse --abbrev-ref HEAD)
       - run:
+          name: Coveralls token
+          command: |
+            echo "repo_token: $COVERALLS_TOKEN" > .coveralls.yml
+      - run:
           name: Rubocop
           command: |
             bundle exec rubocop
