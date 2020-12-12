@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/ruby:2.6.5-node
+      - image: circleci/ruby:2.6.6-node
       - image: circleci/mysql:8.0.20
         command: [--default-authentication-plugin=mysql_native_password]
         environment:
@@ -62,7 +62,7 @@ jobs:
 
   rubocop:
     docker:
-      - image: circleci/ruby:2.6.5-node
+      - image: circleci/ruby:2.6.6-node
 
     working_directory: ~/qpixel
 
