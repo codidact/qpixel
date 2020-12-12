@@ -9,13 +9,13 @@ class CommentsController < ApplicationController
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: 403
+      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     end
 
     @comment = Comment.new comment_params.merge(user: current_user)
 
-    recent_comments = Comment.where(created_at: 24.hours.ago..Time.now, user: current_user).where \
+    recent_comments = Comment.where(created_at: 24.hours.ago..Time.zone.now, user: current_user).where \
                              .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
                              .where.not(post: Post.where(user_id: current_user.id)).count
     max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
@@ -34,7 +34,7 @@ class CommentsController < ApplicationController
       AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
                             comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
 
-      render json: { status: 'failed', message: comment_limit_msg }, status: 403
+      render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
       return
     end
 
@@ -54,7 +54,7 @@ class CommentsController < ApplicationController
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
-      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: 500
+      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: :internal_server_error
     end
   end
 
@@ -69,7 +69,7 @@ class CommentsController < ApplicationController
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
       render json: { status: 'failed',
-                     message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: 500
+                     message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: :internal_server_error
     end
   end
 
@@ -81,7 +81,7 @@ class CommentsController < ApplicationController
       end
       render json: { status: 'success' }
     else
-      render json: { status: 'failed' }, status: 500
+      render json: { status: 'failed' }, status: :internal_server_error
     end
   end
 
@@ -93,7 +93,7 @@ class CommentsController < ApplicationController
       end
       render json: { status: 'success' }
     else
-      render json: { status: 'failed' }, status: 500
+      render json: { status: 'failed' }, status: :internal_server_error
     end
   end
 
@@ -128,7 +128,7 @@ class CommentsController < ApplicationController
 
   def check_privilege
     unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
-      render template: 'errors/forbidden', status: 403
+      render template: 'errors/forbidden', status: :forbidden
     end
   end
 

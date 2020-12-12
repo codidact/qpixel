@@ -48,7 +48,7 @@ class PostsController < ApplicationController
 
     if @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
       @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', category: @category.name))
-      render :new, status: 403
+      render :new, status: :forbidden
       return
     end
 
@@ -58,7 +58,7 @@ class PostsController < ApplicationController
 
     level_name = @post_type.is_top_level? ? 'TopLevel' : 'SecondLevel'
     level_type_ids = @post_type.is_top_level? ? top_level_post_types : second_level_post_types
-    recent_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user)
+    recent_level_posts = Post.where(created_at: 24.hours.ago..Time.zone.now, user: current_user)
                              .where(post_type_id: level_type_ids).count
     setting_name = current_user.privilege?('unrestricted') ? "RL_#{level_name}Posts" : "RL_NewUser#{level_name}Posts"
     max_posts = SiteSetting[setting_name]
@@ -73,14 +73,14 @@ class PostsController < ApplicationController
       @post.errors.add :base, limit_msg
       AuditLog.rate_limit_log(event_type: "#{level_name.underscore}_post", related: @category, user: current_user,
                               comment: "limit: #{max_posts}\n\npost:\n#{@post.attributes_print}")
-      render :new, status: 403
+      render :new, status: :forbidden
       return
     end
 
     if @post.save
       redirect_to helpers.generic_show_link(@post)
     else
-      render :new, status: 400
+      render :new, status: :bad_request
     end
   end
 
@@ -128,7 +128,7 @@ class PostsController < ApplicationController
                                 before_title: before[:title], after_title: @post.title,
                                 before_tags: before[:tags], after_tags: after_tags)
       else
-        render :edit, status: 400
+        render :edit, status: :bad_request
       end
     else
       new_user = !current_user.privilege?('unrestricted')
@@ -138,7 +138,7 @@ class PostsController < ApplicationController
         key = new_user ? 'rate_limit.new_user_suggested_edits' : 'rate_limit.suggested_edits'
         msg = helpers.i18ns key, count: rate_limit
         @post.errors.add :base, msg
-        render :edit, status: 403
+        render :edit, status: :forbidden
       else
         data = {
           post: @post,
@@ -160,7 +160,7 @@ class PostsController < ApplicationController
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
-          render :edit, status: 400
+          render :edit, status: :bad_request
         end
       end
     end
@@ -184,7 +184,7 @@ class PostsController < ApplicationController
     content_types = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES
     extensions = content_types.map { |ct| ct.gsub('image/', '') }
     unless helpers.valid_image?(params[:file])
-      render json: { error: "Images must be one of #{extensions.join(', ')}" }, status: 400
+      render json: { error: "Images must be one of #{extensions.join(', ')}" }, status: :bad_request
       return
     end
     @blob = ActiveStorage::Blob.create_after_upload!(io: params[:file], filename: params[:file].original_filename,
@@ -207,19 +207,19 @@ class PostsController < ApplicationController
                  .where(Arel.sql("posts.help_category IS NULL OR posts.help_category != '$Disabled'"))
                  .order(:help_ordering, :title)
                  .group_by(&:post_type_id)
-                 .transform_values { |posts| posts.group_by { |p| p.help_category.present? ? p.help_category : nil } }
+                 .transform_values { |posts| posts.group_by { |p| p.help_category.presence } }
   end
 
   def change_category
     @target = Category.find params[:target_id]
     unless helpers.can_change_category(current_user, @target)
-      render json: { success: false, errors: ["You don't have permission to make that change."] }, status: 403
+      render json: { success: false, errors: ["You don't have permission to make that change."] }, status: :forbidden
       return
     end
 
     unless @target.post_type_ids.include? @post.post_type_id
       render json: { success: false, errors: ["This post type is not allowed in the #{@target.name} category."] },
-             status: 409
+             status: :conflict
       return
     end
 

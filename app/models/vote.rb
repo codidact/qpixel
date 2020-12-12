@@ -2,14 +2,14 @@
 # association), and to a user.
 class Vote < ApplicationRecord
   include PostRelated
-  belongs_to :user, required: true
-  belongs_to :recv_user, class_name: 'User', required: true
+  belongs_to :user, optional: false
+  belongs_to :recv_user, class_name: 'User', optional: false
 
   after_create :apply_rep_change
+  after_create :add_counter
   before_destroy :check_valid
   before_destroy :reverse_rep_change
 
-  after_create :add_counter
   after_destroy :remove_counter
 
   validates :vote_type, inclusion: [1, -1]

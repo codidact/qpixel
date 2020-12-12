@@ -129,12 +129,12 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.votes.count > 100
-      render(json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' }, status: 422)
+      render(json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' }, status: :unprocessable_entity)
       return
     end
 
     if @user.is_admin || @user.is_moderator
-      render(json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' }, status: 422)
+      render(json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' }, status: :unprocessable_entity)
       return
     end
 
@@ -150,13 +150,13 @@ class UsersController < ApplicationController
     else
       render json: { status: 'failed',
                      message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' },
-             status: 500
+             status: :internal_server_error
     end
   end
 
   def soft_delete
     if @user.is_admin || @user.is_moderator
-      render(json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' }, status: 422)
+      render(json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' }, status: :unprocessable_entity)
       return
     end
 
@@ -179,7 +179,7 @@ class UsersController < ApplicationController
 
     before = @user.attributes_print
     unless @user.destroy
-      render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: 500)
+      render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: :internal_server_error)
       return
     end
     AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
@@ -231,7 +231,7 @@ class UsersController < ApplicationController
     permission_map = { mod: :is_admin, admin: :is_global_admin, mod_global: :is_global_admin,
     admin_global: :is_global_admin, staff: :staff }
     unless role_map.keys.include?(params[:role].underscore.to_sym)
-      render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: 400
+      render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: :bad_request
     end
 
     key = params[:role].underscore.to_sym

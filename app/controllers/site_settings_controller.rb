@@ -27,7 +27,7 @@ class SiteSettingsController < ApplicationController
   end
 
   def update
-    if !params[:community_id].present? && !current_user.is_global_admin
+    if params[:community_id].blank? && !current_user.is_global_admin
       not_found
       return
     end

@@ -2,7 +2,7 @@
 class Flag < ApplicationRecord
   include PostRelated
   belongs_to :user
-  belongs_to :handled_by, class_name: 'User', required: false
+  belongs_to :handled_by, class_name: 'User', optional: true
   belongs_to :post_flag_type
 
   scope :handled, -> { where.not(status: nil) }

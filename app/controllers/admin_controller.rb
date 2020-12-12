@@ -35,7 +35,7 @@ class AdminController < ApplicationController
     @ability.update("#{type}_score_threshold" => params[:threshold])
     AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
                          comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
-    render json: { status: 'OK', privilege: @ability }, status: 202
+    render json: { status: 'OK', privilege: @ability }, status: :accepted
   end
 
   def admin_email; end

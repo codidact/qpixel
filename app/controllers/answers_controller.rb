@@ -19,7 +19,7 @@ class AnswersController < ApplicationController
                                              last_activity: DateTime.now, last_activity_by: current_user,
                                              category: @question.category))
 
-    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.now, user: current_user)
+    recent_second_level_posts = Post.where(created_at: 24.hours.ago..Time.zone.now, user: current_user)
                                     .where(post_type_id: second_level_post_types).count
 
     max_slps = SiteSetting[if current_user.privilege?('unrestricted')
@@ -39,7 +39,7 @@ class AnswersController < ApplicationController
       @answer.errors.add :base, post_limit_msg
       AuditLog.rate_limit_log(event_type: 'second_level_post', related: @question, user: current_user,
                               comment: "limit: #{max_slps}\n\npost:\n#{@answer.attributes_print}")
-      render :new, status: 400
+      render :new, status: :bad_request
       return
     end
 
@@ -55,7 +55,7 @@ class AnswersController < ApplicationController
       end
       redirect_to url_for(controller: :questions, action: :show, id: params[:id])
     else
-      render :new, status: 422
+      render :new, status: :unprocessable_entity
     end
   end
 

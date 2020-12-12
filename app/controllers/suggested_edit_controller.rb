@@ -7,14 +7,14 @@ class SuggestedEditController < ApplicationController
 
   def approve
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
       return
     end
 
     @post = @edit.post
     unless check_your_privilege('edit_posts', @post, false)
       render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: 400)
+             status: :bad_request)
 
       return
     end
@@ -33,13 +33,13 @@ class SuggestedEditController < ApplicationController
       AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
       render json: { status: 'success', redirect_url: post_path(@post) }
     else
-      render json: { status: 'error', message: @post.errors.full_messages.join(', ') }, status: 400
+      render json: { status: 'error', message: @post.errors.full_messages.join(', ') }, status: :bad_request
     end
   end
 
   def reject
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
       return
     end
 
@@ -47,7 +47,7 @@ class SuggestedEditController < ApplicationController
 
     unless check_your_privilege('edit_posts', @post, false)
       render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: 400)
+             status: :bad_request)
 
       return
     end
@@ -69,7 +69,7 @@ class SuggestedEditController < ApplicationController
           id: @post.id) })
       end
     else
-      render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
+      render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: :bad_request)
     end
   end
 

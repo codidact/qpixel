@@ -38,7 +38,7 @@ class ModWarningControllerTest < ActionController::TestCase
     @warning.update(active: true)
     post :approve, params: { approve_checkbox: true }
     @warning.reload
-    assert !@warning.active
+    assert_not @warning.active
   end
 
   test 'suspended user should not be able to accept pending suspension' do
@@ -56,6 +56,6 @@ class ModWarningControllerTest < ActionController::TestCase
     @warning.update(active: true)
     post :approve, params: { approve_checkbox: true }
     @warning.reload
-    assert !@warning.active
+    assert_not @warning.active
   end
 end

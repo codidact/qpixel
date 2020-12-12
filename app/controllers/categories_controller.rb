@@ -123,7 +123,7 @@ class CategoriesController < ApplicationController
   end
 
   def update_last_visit(category)
-    return unless current_user.present?
+    return if current_user.blank?
 
     key = "#{RequestContext.community_id}/#{current_user.id}/#{category.id}/last_visit"
     RequestContext.redis.set key, DateTime.now.to_s

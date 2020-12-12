@@ -21,7 +21,7 @@ class LicensesController < ApplicationController
                            comment: "<<License #{@license.attributes_print}>>")
       redirect_to licenses_path
     else
-      render :new, status: 400
+      render :new, status: :bad_request
     end
   end
 
@@ -37,7 +37,7 @@ class LicensesController < ApplicationController
                            comment: "from <<License #{before}>>\nto <<License #{@license.attributes_print}>>")
       redirect_to licenses_path
     else
-      render :edit, status: 400
+      render :edit, status: :bad_request
     end
   end
 
