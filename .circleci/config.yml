@@ -96,7 +96,3 @@ workflows:
     jobs:
       - test
       - rubocop
-      - done:
-          requires:
-            - test
-            - rubocop
