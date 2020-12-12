@@ -31,7 +31,8 @@ class SubscriptionsController < ApplicationController
         render json: { status: 'failed' }, status: :internal_server_error
       end
     else
-      render json: { status: 'failed', message: 'You do not have permission to update this subscription.' }, status: :forbidden
+      render json: { status: 'failed', message: 'You do not have permission to update this subscription.' },
+             status: :forbidden
     end
   end
 
@@ -44,7 +45,8 @@ class SubscriptionsController < ApplicationController
         render json: { status: 'failed' }, status: :internal_server_error
       end
     else
-      render json: { status: 'failed', message: 'You do not have permission to remove this subscription.' }, status: :forbidden
+      render json: { status: 'failed', message: 'You do not have permission to remove this subscription.' },
+             status: :forbidden
     end
   end
 

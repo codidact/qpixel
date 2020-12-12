@@ -48,7 +48,8 @@ class VotesController < ApplicationController
     post = vote.post
 
     if vote.user != current_user
-      render(json: { status: 'failed', message: 'You are not authorized to remove this vote.' }, status: :forbidden) && return
+      render json: { status: 'failed', message: 'You are not authorized to remove this vote.' }, status: :forbidden
+      return
     end
 
     if vote.destroy

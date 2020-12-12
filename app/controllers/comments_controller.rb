@@ -54,7 +54,8 @@ class CommentsController < ApplicationController
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
-      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') }, status: :internal_server_error
+      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') },
+             status: :internal_server_error
     end
   end
 
@@ -69,7 +70,8 @@ class CommentsController < ApplicationController
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
       render json: { status: 'failed',
-                     message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" }, status: :internal_server_error
+                     message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" },
+             status: :internal_server_error
     end
   end
 

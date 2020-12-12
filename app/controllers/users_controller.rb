@@ -129,12 +129,14 @@ class UsersController < ApplicationController
 
   def destroy
     if @user.votes.count > 100
-      render(json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' }, status: :unprocessable_entity)
+      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
+             status: :unprocessable_entity
       return
     end
 
     if @user.is_admin || @user.is_moderator
-      render(json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' }, status: :unprocessable_entity)
+      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
+             status: :unprocessable_entity
       return
     end
 
@@ -156,7 +158,8 @@ class UsersController < ApplicationController
 
   def soft_delete
     if @user.is_admin || @user.is_moderator
-      render(json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' }, status: :unprocessable_entity)
+      render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
+             status: :unprocessable_entity
       return
     end
 

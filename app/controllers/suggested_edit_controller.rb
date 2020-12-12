@@ -69,7 +69,8 @@ class SuggestedEditController < ApplicationController
           id: @post.id) })
       end
     else
-      render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: :bad_request)
+      render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
+             status: :bad_request
     end
   end
 
