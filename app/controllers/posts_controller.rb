@@ -239,15 +239,6 @@ class PostsController < ApplicationController
   def toggle_comments
     @post.comments_disabled = !@post.comments_disabled
     @post.save
-    # def new_old
-    #   @category = Category.find(params[:category_id])
-    #   @post = Post.new(category: @category, post_type_id: params[:post_type_id])
-    #   if @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
-    #     flash[:danger] = "You don't have a high enough trust level to post in the #{@category.name} category."
-    #     redirect_back fallback_location: root_path
-    #   end
-    # end
-    # TODO: delete, undelete, close, reopen
     if @post.comments_disabled && params[:delete_all_comments]
       @post.comments.undeleted.map do |c|
         c.deleted = true

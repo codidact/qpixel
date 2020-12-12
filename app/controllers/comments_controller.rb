@@ -5,6 +5,7 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
@@ -21,7 +22,7 @@ class CommentsController < ApplicationController
 
     # Provides mainly web actions for using and making comments.
     if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
-      && recent_comments >= max_comments_per_day
+       && recent_comments >= max_comments_per_day
       comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \
                           ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
                           ' to own posts are exempt.'
