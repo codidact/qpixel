@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
 
   def second_level_post_types
     Rails.cache.fetch 'second_level_post_types' do
-      PostType.where(is_top_level: false).select(:id).map(&:id)
+      PostType.where(is_top_level: false, has_parent: true).select(:id).map(&:id)
     end
   end
 

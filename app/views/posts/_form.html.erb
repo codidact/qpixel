@@ -12,6 +12,7 @@
 %>
 
 <%
+  # defaults
   category ||= defined?(category) ? category : nil
   parent ||= defined?(parent) ? parent : nil
   inline_parent ||= defined?(inline_parent) ? inline_parent : true
@@ -36,7 +37,7 @@
     <%= f.hidden_field :parent_id, value: post.parent_id || parent&.id %>
   <% end %>
 
-  <% if !defined?(type_summary) || (defined?(type_summary) && type_summary) %>
+  <% if type_summary %>
     <p>
       <span class="has-font-size-larger">
         You're writing a new <strong><%= post_type.name %></strong>
@@ -107,7 +108,31 @@
     </div>
   <% end %>
 
-  <% if defined?(edit_comment) && edit_comment %>
+  <% if [HelpDoc.post_type_id, PolicyDoc.post_type_id].include? post_type.id %>
+    <div class="form-group">
+      <%= f.label :help_category, 'Category', class: 'form-element' %>
+      <span class="form-caption">
+        Name a category under which to display this post in the help center.
+      </span>
+      <%= f.text_field :help_category, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :help_ordering, 'Order', class: 'form-element' %>
+      <span class="form-caption">
+        Control where this post appears in the list of help articles. Higher values appear later in the list.
+      </span>
+      <%= f.number_field :help_ordering, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :doc_slug, 'URL slug', class: 'form-element' %>
+      <span class="form-caption">In a URL of "https://yoursite.codidact.com/help/topic", the "topic" is the slug.</span>
+      <%= f.text_field :doc_slug, class: 'form-element' %>
+    </div>
+  <% end %>
+
+  <% if edit_comment %>
     <hr/>
     <div class="form-group">
       <%= label_tag :edit_comment, 'Edit comment', class: 'form-element' %>
@@ -128,7 +153,7 @@
   </div>
 <% end %>
 
-<% if (!defined?(inline_parent) || (defined?(inline_parent) && inline_parent)) && defined?(parent) && parent.present? %>
+<% if inline_parent && defined?(parent) && parent.present? %>
   <h2>Responding to:</h2>
 
   <%= render 'posts/expanded', post: parent  %>

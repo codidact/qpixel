@@ -5,7 +5,7 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
-  
+
   def create
     @post = Post.find(params[:comment][:post_id])
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin

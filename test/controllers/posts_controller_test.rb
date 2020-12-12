@@ -79,8 +79,8 @@ class PostsControllerTest < ActionController::TestCase
   test 'can create help post' do
     sign_in users(:moderator)
     post :create, params: { post_type: post_types(:help_doc).id,
-                            post: { post_type_id: post_types(:help_doc).id, title: sample.title,
-                                    body_markdown: sample.body_markdown } }
+                            post: { post_type_id: post_types(:help_doc).id, title: sample.title, doc_slug: 'topic',
+                                    body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99'  } }
     assert_response 302
     assert_not_nil assigns(:post).id
     assert_redirected_to help_path(assigns(:post).doc_slug)

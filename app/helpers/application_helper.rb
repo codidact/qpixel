@@ -103,7 +103,7 @@ module ApplicationHelper
   def generic_show_link(post)
     if top_level_post_types.include? post.post_type_id
       post_url(post)
-    elsif second_level_post_types.include?(post.post_type_id) && post.post_type.has_parent
+    elsif second_level_post_types.include?(post.post_type_id)
       post_url(post.parent, anchor: "answer-#{post.id}")
     else
       case post.post_type_id

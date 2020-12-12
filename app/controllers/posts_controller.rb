@@ -314,14 +314,18 @@ class PostsController < ApplicationController
 
   private
 
+  def permitted
+    [:post_type_id, :category_id, :title, :body_markdown, :license_id, :doc_slug, :help_category, :help_ordering]
+  end
+
   def post_params
-    p = params.require(:post).permit(:post_type_id, :category_id, :title, :body_markdown, :license_id, tags_cache: [])
+    p = params.require(:post).permit(*permitted, tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
 
   def edit_post_params
-    p = params.require(:post).permit(:post_type_id, :category_id, :title, :body_markdown, tags_cache: [])
+    p = params.require(:post).permit(*(permitted - [:license_id]), tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
