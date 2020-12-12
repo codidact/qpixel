@@ -90,3 +90,13 @@ jobs:
           name: Rubocop
           command: |
             bundle exec rubocop
+
+workflows:
+  test_lint:
+    jobs:
+      - test
+      - rubocop
+      - done:
+          requires:
+            - test
+            - rubocop
