@@ -55,13 +55,15 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'should get new' do
-    sign_in users(:standard_user)
+    sign_in users(:moderator)
     get :new, params: { post_type: post_types(:help_doc).id }
     assert_nil flash[:danger]
     assert_response 200
+
     get :new, params: { post_type: post_types(:answer).id, parent: posts(:question_one).id }
     assert_nil flash[:danger]
     assert_response 200
+
     get :new, params: { post_type: post_types(:question).id, category: categories(:main).id }
     assert_nil flash[:danger]
     assert_response 200
