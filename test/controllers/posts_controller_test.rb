@@ -180,4 +180,44 @@ class PostsControllerTest < ActionController::TestCase
     after = CommunityUser.where(user: user, community: communities(:sample)).count
     assert_equal before + 1, after, 'No CommunityUser record was created'
   end
+
+  test 'anonymous user can get show' do
+    get :show, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:children)
+    assert_not assigns(:children).any? { |c| c.deleted }, 'Anonymous user can see deleted answers'
+  end
+
+  test 'standard user can get show' do
+    sign_in users(:standard_user)
+    get :show, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:children)
+    assert_not assigns(:children).any? { |c| c.deleted }, 'Anonymous user can see deleted answers'
+  end
+
+  test 'privileged user can see deleted post' do
+    sign_in users(:deleter)
+    get :show, params: { id: posts(:deleted).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:children)
+  end
+
+  test 'privileged user can see deleted answers' do
+    sign_in users(:deleter)
+    get :show, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:children)
+    assert assigns(:children).any? { |c| c.deleted }, 'Privileged user cannot see deleted answers'
+  end
+
+  test 'show redirects parented to parent post' do
+    get :show, params: { id: posts(:answer_one).id }
+    assert_response 302
+    assert_redirected_to post_path(posts(:answer_one).parent_id)
+  end
 end

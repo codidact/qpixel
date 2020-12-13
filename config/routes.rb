@@ -86,6 +86,10 @@ Rails.application.routes.draw do
     get    ':id/edit',                     to: 'posts#edit', as: :edit_post
     patch  ':id/edit',                     to: 'posts#update', as: :update_post
 
+    post   ':id/close',                    to: 'posts#close', as: :close_post
+    post   ':id/reopen',                   to: 'posts#reopen', as: :reopen_post
+    post   ':id/delete',                   to: 'posts#delete', as: :delete_post
+    post   ':id/restore',                  to: 'posts#restore', as: :restore_post
 
     post   ':id/category',                 to: 'posts#change_category', as: :change_category
     post   ':id/toggle_comments',          to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
