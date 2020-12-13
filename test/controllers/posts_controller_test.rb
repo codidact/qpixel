@@ -220,4 +220,17 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 302
     assert_redirected_to post_path(posts(:answer_one).parent_id)
   end
+
+  test 'can get edit' do
+    sign_in users(:standard_user)
+    get :edit, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+  end
+
+  test 'edit requires authentication' do
+    get :edit, params: { id: posts(:question_one).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
 end
