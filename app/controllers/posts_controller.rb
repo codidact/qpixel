@@ -2,7 +2,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :share_q, :share_a, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
-  before_action :set_scoped_post, only: [:change_category, :show, :edit, :update]
+  before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
 
@@ -170,6 +170,46 @@ class PostsController < ApplicationController
           render :edit, status: :bad_request
         end
       end
+    end
+  end
+
+  def close
+    unless check_your_privilege('flag_close', nil, false)
+      render json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this post') },
+             status: :forbidden
+      return
+    end
+
+    if @post.closed
+      render json: { status: 'failed', message: 'Cannot close a closed post.' }, status: :bad_request
+      return
+    end
+
+    reason = CloseReason.find_by id: params[:reason_id]
+    if reason.nil?
+      render json: { status: 'failed', message: 'Close reason not found.' }, status: :not_found
+      return
+    end
+
+    if reason.requires_other_post
+      other = Post.find_by(id: params[:other_post])
+      if other.nil? || !top_level_post_types.include?(other.post_type_id)
+        render json: { status: 'failed', message: 'Invalid input for other post.' }, status: :bad_request
+        return
+      end
+
+      duplicate_of = Question.find(params[:other_post])
+    else
+      duplicate_of = nil
+    end
+
+    if @post.update(closed: true, closed_by: current_user, closed_at: DateTime.now, last_activity: DateTime.now,
+                    last_activity_by: current_user, close_reason: reason, duplicate_post: duplicate_of)
+      PostHistory.question_closed(@post, current_user)
+      render json: { status: 'success' }
+    else
+      render json: { status: 'failed', message: "Can't close this question right now. Try again later.",
+                     errors: @post.errors.full_messages }
     end
   end
 

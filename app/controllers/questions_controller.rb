@@ -82,45 +82,6 @@ class QuestionsController < ApplicationController
     end
   end
 
-  def close
-    unless check_your_privilege('flag_close', nil, false)
-      render(json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this question') },
-             status: :forbidden)
-      return
-    end
-
-    if @question.closed
-      render(json: { status: 'failed', message: 'Cannot close a closed question.' }, status: :bad_request)
-      return
-    end
-
-    reason = CloseReason.find_by id: params[:reason_id]
-    if reason.nil?
-      render(json: { status: 'failed', message: 'Close reason not found.' }, status: :not_found)
-      return
-    end
-
-    if reason.requires_other_post
-      unless Question.exists? params[:other_post]
-        render(json: { status: 'failed', message: 'Invalid input for other post.' }, status: :bad_request)
-        return
-      end
-
-      duplicate_of = Question.find(params[:other_post])
-    else
-      duplicate_of = nil
-    end
-
-    if @question.update(closed: true, closed_by: current_user, closed_at: DateTime.now, last_activity: DateTime.now,
-                        last_activity_by: current_user, close_reason: reason, duplicate_post: duplicate_of)
-      PostHistory.question_closed(@question, current_user)
-      render json: { status: 'success' }
-    else
-      render json: { status: 'failed', message: "Can't close this question right now. Try again later.",
-                     errors: @question.errors.full_messages }
-    end
-  end
-
   def reopen
     unless check_your_privilege('flag_close', nil, false)
       flash[:danger] = helpers.ability_err_msg(:flag_close, 'reopen this question')

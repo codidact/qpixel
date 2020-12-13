@@ -11,6 +11,8 @@ class Post < ApplicationRecord
   belongs_to :last_edited_by, class_name: 'User', optional: true
   belongs_to :category, optional: true
   belongs_to :license, optional: true
+  belongs_to :close_reason, optional: true
+  belongs_to :duplicate_post, class_name: 'Question', optional: true
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy

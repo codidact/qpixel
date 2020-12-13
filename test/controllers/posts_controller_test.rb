@@ -302,4 +302,18 @@ class PostsControllerTest < ActionController::TestCase
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on no-change update'
   end
+
+  test 'can close question' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:question_one)).count
+    post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
+    after_history = PostHistory.where(post: posts(:question_one)).count
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_equal before_history + 1, after_history, 'PostHistory event not created on closure'
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'success', JSON.parse(response.body)['status']
+  end
 end
