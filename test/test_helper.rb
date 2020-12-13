@@ -46,7 +46,7 @@ class ActiveSupport::TestCase
         title: 'This is another sample title',
         body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
         body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
-        tags_cache: ['discussion', 'posts', 'tags', 'edits'],
+        tags_cache: ['discussion', 'posts', 'tags', 'edits']
       )
     )
   end
