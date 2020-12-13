@@ -27,13 +27,15 @@
 <%= render 'posts/image_upload' %>
 
 <%= form_for post, url: submit_path, html: { class: 'has-margin-top-4' } do |f| %>
-  <%= f.hidden_field :post_type_id, value: post.post_type_id || post_type.id %>
+  <% if post.id.nil? %>
+    <%= f.hidden_field :post_type_id, value: post.post_type_id || post_type.id %>
+  <% end %>
 
-  <% if post_type.has_category? %>
+  <% if post_type.has_category? && post.id.nil? %>
     <%= f.hidden_field :category_id, value: post.category_id || category&.id || parent&.category_id %>
   <% end %>
 
-  <% if post_type.has_parent? %>
+  <% if post_type.has_parent? && post.id.nil? %>
     <%= f.hidden_field :parent_id, value: post.parent_id || parent&.id %>
   <% end %>
 

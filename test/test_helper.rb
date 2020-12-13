@@ -41,7 +41,13 @@ class ActiveSupport::TestCase
       title: 'This is a sample title',
       body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
       body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
-      tags_cache: ['discussion', 'posts', 'tags']
+      tags_cache: ['discussion', 'posts', 'tags'],
+      edit: OpenStruct.new(
+        title: 'This is another sample title',
+        body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
+        body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
+        tags_cache: ['discussion', 'posts', 'tags', 'edits'],
+      )
     )
   end
 end

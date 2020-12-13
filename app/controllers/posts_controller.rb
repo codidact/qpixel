@@ -117,15 +117,15 @@ class PostsController < ApplicationController
     after_tags = if @post_type.has_category?
                    Tag.where(tag_set_id: @post.category.tag_set_id, name: params[:post][:tags_cache])
                  end
-    body_rendered = helpers.post_markdown(:post, :body)
-    new_tags_cache = params[:question][:tags_cache]&.reject(&:empty?)
+    body_rendered = helpers.post_markdown(:post, :body_markdown)
+    new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
-    if edit_post_params.all? { |k, v| @post.send(k) == v }
+    if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
       flash[:danger] = "No changes were saved because you didn't edit the post."
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts')
+    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user
       if @post.update(edit_post_params.merge(body: body_rendered,
                                              last_edited_at: DateTime.now, last_edited_by: current_user,
                                              last_activity: DateTime.now, last_activity_by: current_user))
@@ -133,6 +133,7 @@ class PostsController < ApplicationController
                                 after: @post.body_markdown, comment: params[:edit_comment],
                                 before_title: before[:title], after_title: @post.title,
                                 before_tags: before[:tags], after_tags: after_tags)
+        redirect_to post_path(@post)
       else
         render :edit, status: :bad_request
       end
@@ -321,7 +322,8 @@ class PostsController < ApplicationController
   private
 
   def permitted
-    [:post_type_id, :category_id, :title, :body_markdown, :license_id, :doc_slug, :help_category, :help_ordering]
+    [:post_type_id, :category_id, :parent_id, :title, :body_markdown, :license_id,
+     :doc_slug, :help_category, :help_ordering]
   end
 
   def post_params
@@ -331,7 +333,8 @@ class PostsController < ApplicationController
   end
 
   def edit_post_params
-    p = params.require(:post).permit(*(permitted - [:license_id]), tags_cache: [])
+    p = params.require(:post).permit(*(permitted - [:license_id, :post_type_id, :category_id, :parent_id]),
+                                     tags_cache: [])
     p[:tags_cache] = p[:tags_cache]&.reject { |t| t.empty? }
     p
   end
