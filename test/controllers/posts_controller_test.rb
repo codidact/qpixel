@@ -186,7 +186,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
-    assert_not assigns(:children).any? { |c| c.deleted }, 'Anonymous user can see deleted answers'
+    assert_not assigns(:children).any?(&:deleted), 'Anonymous user can see deleted answers'
   end
 
   test 'standard user can get show' do
@@ -195,7 +195,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
-    assert_not assigns(:children).any? { |c| c.deleted }, 'Anonymous user can see deleted answers'
+    assert_not assigns(:children).any?(&:deleted), 'Anonymous user can see deleted answers'
   end
 
   test 'privileged user can see deleted post' do
@@ -212,7 +212,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 200
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
-    assert assigns(:children).any? { |c| c.deleted }, 'Privileged user cannot see deleted answers'
+    assert assigns(:children).any?(&:deleted), 'Privileged user cannot see deleted answers'
   end
 
   test 'show redirects parented to parent post' do
