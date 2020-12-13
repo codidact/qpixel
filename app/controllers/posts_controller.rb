@@ -21,6 +21,10 @@ class PostsController < ApplicationController
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
     end
+
+    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name)
+      check_permissions # || return if you add more code after this
+    end
   end
 
   def create
@@ -39,11 +43,13 @@ class PostsController < ApplicationController
     if @post_type.has_category? && @category.nil? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
+      return
     end
 
     if @post_type.has_parent? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
+      return
     end
 
     if @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
@@ -52,8 +58,8 @@ class PostsController < ApplicationController
       return
     end
 
-    if ['HelpDoc', 'PolicyDoc'].include? @post_type.name
-      check_permissions || return
+    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && !check_permissions
+      return
     end
 
     level_name = @post_type.is_top_level? ? 'TopLevel' : 'SecondLevel'
@@ -345,9 +351,7 @@ class PostsController < ApplicationController
       verify_admin
     else
       not_found
-      return false
     end
-    true
   end
 
   def edit_checks

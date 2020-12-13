@@ -75,3 +75,12 @@ global_admin:
   is_global_admin: true
   is_global_moderator: false
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+no_community_user:
+  email: no_community_user@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  sign_in_count: 1337
+  username: no_community_user
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z

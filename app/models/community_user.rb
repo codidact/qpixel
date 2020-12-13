@@ -96,6 +96,7 @@ class CommunityUser < ApplicationRecord
 
     # If not sandbox mode, create new privilege entry
     grant_privilege(internal_id) unless sandbox
+    recalc_trust_level unless sandbox
     true
   end
 
@@ -111,5 +112,25 @@ class CommunityUser < ApplicationRecord
   # Polyphemus is very grateful for this.
   def prevent_ulysses_case
     recalc_privileges
+  end
+
+  def trust_level
+    attributes['trust_level'] || recalc_trust_level
+  end
+
+  def recalc_trust_level
+    trust = if user.staff?
+              5
+            elsif is_moderator || user.is_global_moderator || is_admin || user.is_global_admin
+              4
+            elsif privilege?('flag_close') || privilege?('edit_posts')
+              3
+            elsif privilege?('unrestricted')
+              2
+            else
+              1
+            end
+    update(trust_level: trust)
+    trust
   end
 end

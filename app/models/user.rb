@@ -31,7 +31,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, :trust_level, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -83,29 +83,8 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
-  def trust_level
-    attributes['trust_level'] || recalc_trust_level
-  end
-
   def rtl_safe_username
     "#{username}\u202D"
-  end
-
-  def recalc_trust_level
-    # Temporary hack until we have some things to actually calculate based on.
-    trust = if staff?
-              5
-            elsif is_moderator || is_global_moderator || is_admin || is_global_admin
-              4
-            elsif privilege?('flag_close') || privilege?('edit_posts')
-              3
-            elsif privilege?('unrestricted')
-              2
-            else
-              1
-            end
-    update(trust_level: trust)
-    trust
   end
 
   def username_not_fake_admin
