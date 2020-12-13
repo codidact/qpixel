@@ -127,3 +127,10 @@
   body: $FILE posts/voting.html
   doc_slug: voting
   help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Why are posts deleted?
+  body_markdown: $FILE posts/deleted.html
+  body: $FILE posts/deleted.html
+  doc_slug: deleted
+  help_category: Site Information
