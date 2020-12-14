@@ -64,7 +64,6 @@ Rails.application.routes.draw do
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
   get    'questions/feed',                 to: 'questions#feed', as: :question_feed
-  get    'questions/tagged/:tag_set/:tag', to: 'questions#tagged', as: :questions_tagged
   get    'questions/:id',                  to: 'posts#redirect', as: :question
 
   scope 'posts' do

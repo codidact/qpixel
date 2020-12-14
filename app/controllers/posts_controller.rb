@@ -13,13 +13,13 @@ class PostsController < ApplicationController
     @parent = Post.where(id: params[:parent]).first
     @post = Post.new(category: @category, post_type: @post_type, parent: @parent)
 
-    if @post_type.has_category? && @category.nil? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
+    if @post_type.has_parent? && @parent.nil?
+      flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
     end
 
-    if @post_type.has_parent? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
+    if @post_type.has_category? && @category.nil? && @parent.nil?
+      flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
     end
 
@@ -41,14 +41,14 @@ class PostsController < ApplicationController
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
-    if @post_type.has_category? && @category.nil? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
+    if @post_type.has_parent? && @parent.nil?
+      flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
       return
     end
 
-    if @post_type.has_parent? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
+    if @post_type.has_category? && @category.nil? && @parent.nil?
+      flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
       return
     end

@@ -80,6 +80,22 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path
   end
 
+  test 'new rejects category post type without category' do
+    sign_in users(:standard_user)
+    get :new, params: { post_type: post_types(:question).id }
+    assert_response 302
+    assert_redirected_to root_path
+    assert_not_nil flash[:danger]
+  end
+
+  test 'new rejects parented post type without parent' do
+    sign_in users(:standard_user)
+    get :new, params: { post_type: post_types(:answer).id }
+    assert_response 302
+    assert_redirected_to root_path
+    assert_not_nil flash[:danger]
+  end
+
   # Create
 
   test 'can create help post' do
