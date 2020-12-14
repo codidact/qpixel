@@ -82,27 +82,6 @@ class QuestionsController < ApplicationController
     end
   end
 
-  def reopen
-    unless check_your_privilege('flag_close', nil, false)
-      flash[:danger] = helpers.ability_err_msg(:flag_close, 'reopen this question')
-      redirect_to(question_path(@question)) && return
-    end
-
-    unless @question.closed
-      flash[:danger] = 'Cannot reopen an open question.'
-      redirect_to(question_path(@question)) && return
-    end
-
-    if @question.update(closed: false, closed_by: current_user, closed_at: Time.zone.now,
-                        last_activity: DateTime.now, last_activity_by: current_user,
-                        close_reason: nil, duplicate_post: nil)
-      PostHistory.question_reopened(@question, current_user)
-    else
-      flash[:danger] = "Can't reopen this question right now. Try again later."
-    end
-    redirect_to question_path(@question)
-  end
-
   private
 
   def question_params

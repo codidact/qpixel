@@ -213,7 +213,30 @@ class PostsController < ApplicationController
     end
   end
 
-  # TODO: delete, undelete, close, reopen
+  def reopen
+    unless check_your_privilege('flag_close', nil, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_close, 'reopen this post')
+      redirect_to post_path(@post)
+      return
+    end
+
+    unless @post.closed
+      flash[:danger] = 'Cannot reopen an open post.'
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.update(closed: false, closed_by: current_user, closed_at: Time.zone.now,
+                    last_activity: DateTime.now, last_activity_by: current_user,
+                    close_reason: nil, duplicate_post: nil)
+      PostHistory.question_reopened(@post, current_user)
+    else
+      flash[:danger] = "Can't reopen this post right now. Try again later."
+    end
+    redirect_to post_path(@post)
+  end
+
+  # TODO: delete, undelete
 
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first

@@ -54,6 +54,8 @@ class PostsControllerTest < ActionController::TestCase
                  JSON.parse(response.body)['errors']
   end
 
+  # New
+
   test 'should get new' do
     sign_in users(:moderator)
     get :new, params: { post_type: post_types(:help_doc).id }
@@ -77,6 +79,8 @@ class PostsControllerTest < ActionController::TestCase
     get :new, params: { post_type: post_types(:question).id, category: categories(:main).id }
     assert_redirected_to new_user_session_path
   end
+
+  # Create
 
   test 'can create help post' do
     sign_in users(:moderator)
@@ -181,6 +185,8 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal before + 1, after, 'No CommunityUser record was created'
   end
 
+  # Show
+
   test 'anonymous user can get show' do
     get :show, params: { id: posts(:question_one).id }
     assert_response 200
@@ -221,6 +227,8 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to post_path(posts(:answer_one).parent_id)
   end
 
+  # Edit
+
   test 'can get edit' do
     sign_in users(:standard_user)
     get :edit, params: { id: posts(:question_one).id }
@@ -233,6 +241,8 @@ class PostsControllerTest < ActionController::TestCase
     assert_response 302
     assert_redirected_to new_user_session_path
   end
+
+  # Update
 
   test 'can update post' do
     sign_in users(:standard_user)
@@ -302,6 +312,8 @@ class PostsControllerTest < ActionController::TestCase
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on no-change update'
   end
+
+  # Close
 
   test 'can close question' do
     sign_in users(:closer)
@@ -377,5 +389,46 @@ class PostsControllerTest < ActionController::TestCase
       JSON.parse(response.body)
     end
     assert_equal 'failed', JSON.parse(response.body)['status']
+  end
+
+  # Reopen
+
+  test 'can reopen question' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:closed)).count
+    post :reopen, params: { id: posts(:closed).id }
+    after_history = PostHistory.where(post: posts(:closed)).count
+    assert_response 302
+    assert_redirected_to post_path(posts(:closed))
+    assert_nil flash[:danger]
+    assert_equal before_history + 1, after_history, 'PostHistory event not created on reopen'
+  end
+
+  test 'reopen requires authentication' do
+    post :reopen, params: { id: posts(:closed).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'unprivileged user cannot reopen' do
+    sign_in users(:standard_user)
+    before_history = PostHistory.where(post: posts(:closed)).count
+    post :reopen, params: { id: posts(:closed).id }
+    after_history = PostHistory.where(post: posts(:closed)).count
+    assert_response 302
+    assert_redirected_to post_path(posts(:closed))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on reopen'
+  end
+
+  test 'cannot reopen an open post' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:question_one)).count
+    post :reopen, params: { id: posts(:question_one).id }
+    after_history = PostHistory.where(post: posts(:question_one)).count
+    assert_response 302
+    assert_redirected_to post_path(posts(:question_one))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on reopen'
   end
 end
