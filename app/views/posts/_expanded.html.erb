@@ -230,6 +230,8 @@
                   <% end %>
                 <% end %>
               <% end %>
+            <% end %>
+            <% if check_your_privilege('flag_curate') %>
               <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>" class="tools--item">
                 <i class="fa fa-wrench"></i>
                 Tools
