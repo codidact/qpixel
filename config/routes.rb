@@ -64,7 +64,6 @@ Rails.application.routes.draw do
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
   get    'questions/feed',                 to: 'questions#feed', as: :question_feed
-  get    'questions/:id',                  to: 'posts#redirect', as: :question
 
   scope 'posts' do
     get    'new/:post_type',               to: 'posts#new', as: :new_post
@@ -156,10 +155,6 @@ Rails.application.routes.draw do
   post   'comments/:id/edit',              to: 'comments#update', as: :update_comment
   delete 'comments/:id/delete',            to: 'comments#destroy', as: :delete_comment
   patch  'comments/:id/delete',            to: 'comments#undelete', as: :undelete_comment
-
-  get    'q/:id',                          to: 'posts#share_q', as: :share_question
-  get    'a/:qid/:id',                     to: 'posts#share_a', as: :share_answer
-  get    'ar/:id',                         to: 'articles#share', as: :share_article
 
   get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
