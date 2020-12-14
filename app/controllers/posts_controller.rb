@@ -16,15 +16,18 @@ class PostsController < ApplicationController
     if @post_type.has_parent? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
+      return
     end
 
     if @post_type.has_category? && @category.nil? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
       redirect_back fallback_location: root_path
+      return
     end
 
     if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name)
-      check_permissions # || return if you add more code after this
+      check_permissions
+      # return # uncomment if you add more code after this
     end
   end
 
