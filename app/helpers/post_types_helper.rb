@@ -5,8 +5,7 @@ module PostTypesHelper
       'Article' => 'fas fa-newspaper'
     }[type]
     tag.span class: 'badge is-tag is-filled is-muted' do
-      tag.i(class: icon_class) + " " +
-      tag.span(type)
+      tag.i(class: icon_class) + ' ' + tag.span(type) # rubocop:disable Style/StringConcatenation
     end
   end
 end
