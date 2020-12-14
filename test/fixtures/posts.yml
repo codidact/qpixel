@@ -64,6 +64,30 @@ deleted:
   upvote_count: 0
   downvote_count: 0
 
+deleted_mod:
+  post_type: question
+  title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: moderator
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 closed:
   post_type: question
   title: Q4C ABCDEF GHIJKL MNOPQR STUVWX YZ
@@ -81,6 +105,30 @@ closed:
   closed: true
   closed_by: closer
   closed_at: 2019-01-01T00:00:00.000000Z
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+locked:
+  post_type: question
+  title: Q4C ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  locked: true
+  locked_by: moderator
+  locked_at: 2019-01-01T00:00:00.000000Z
   user: standard_user
   community: sample
   category: main

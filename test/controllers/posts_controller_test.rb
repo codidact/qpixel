@@ -242,6 +242,12 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path
   end
 
+  test 'cannot edit locked post' do
+    sign_in users(:standard_user)
+    get :edit, params: { id: posts(:locked).id }
+    assert_response 401
+  end
+
   # Update
 
   test 'can update post' do
@@ -311,6 +317,17 @@ class PostsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:post)
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on no-change update'
+  end
+
+  test 'cannot update locked post' do
+    sign_in users(:standard_user)
+    before_history = PostHistory.where(post: posts(:locked)).count
+    patch :update, params: { id: posts(:locked).id,
+                             post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
+                                     tags_cache: sample.edit.tags_cache } }
+    after_history = PostHistory.where(post: posts(:locked)).count
+    assert_response 401
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on update'
   end
 
   # Close
@@ -391,6 +408,15 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'failed', JSON.parse(response.body)['status']
   end
 
+  test 'cannot close a locked post' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:locked)).count
+    post :close, params: { id: posts(:locked).id, reason_id: close_reasons(:not_good).id }
+    after_history = PostHistory.where(post: posts(:locked)).count
+    assert_response 401
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on close'
+  end
+
   # Reopen
 
   test 'can reopen question' do
@@ -430,5 +456,136 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on reopen'
+  end
+
+  test 'cannot reopen a locked post' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:locked)).count
+    post :reopen, params: { id: posts(:locked).id }
+    after_history = PostHistory.where(post: posts(:locked)).count
+    assert_response 401
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on reopen'
+  end
+
+  # Delete
+
+  test 'can delete post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:question_two)).count
+    post :delete, params: { id: posts(:question_two).id }
+    after_history = PostHistory.where(post: posts(:question_two)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_nil flash[:danger]
+    assert_equal before_history + 1, after_history, 'PostHistory event not created on deletion'
+  end
+
+  test 'delete requires authentication' do
+    post :delete, params: { id: posts(:question_one).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'unprivileged user cannot delete' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:question_one)).count
+    post :delete, params: { id: posts(:question_one).id }
+    after_history = PostHistory.where(post: posts(:question_one)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot delete a post with responses' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:question_one)).count
+    post :delete, params: { id: posts(:question_one).id }
+    after_history = PostHistory.where(post: posts(:question_one)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot delete a deleted post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:deleted)).count
+    post :delete, params: { id: posts(:deleted).id }
+    after_history = PostHistory.where(post: posts(:deleted)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot delete a locked post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:locked)).count
+    post :delete, params: { id: posts(:locked).id }
+    after_history = PostHistory.where(post: posts(:locked)).count
+    assert_response 401
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  # Restore
+
+  test 'can restore post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:deleted)).count
+    post :restore, params: { id: posts(:deleted).id }
+    after_history = PostHistory.where(post: posts(:deleted)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_nil flash[:danger]
+    assert_equal before_history + 1, after_history, 'PostHistory event not created on deletion'
+  end
+
+  test 'restore requires authentication' do
+    post :restore, params: { id: posts(:deleted).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'unprivileged user cannot restore' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:deleted)).count
+    post :restore, params: { id: posts(:deleted).id }
+    after_history = PostHistory.where(post: posts(:deleted)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot restore a post deleted by a moderator' do
+    sign_in users(:closer)
+    before_history = PostHistory.where(post: posts(:deleted_mod)).count
+    post :restore, params: { id: posts(:deleted_mod).id }
+    after_history = PostHistory.where(post: posts(:deleted_mod)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot restore a restored post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:question_one)).count
+    post :restore, params: { id: posts(:question_one).id }
+    after_history = PostHistory.where(post: posts(:question_one)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'cannot restore a locked post' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post: posts(:locked)).count
+    post :restore, params: { id: posts(:locked).id }
+    after_history = PostHistory.where(post: posts(:locked)).count
+    assert_response 401
+    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
   end
 end

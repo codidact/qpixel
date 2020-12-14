@@ -5,15 +5,6 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:destroy, :undelete, :close, :reopen]
   before_action :check_if_question_locked, only: [:destroy, :undelete, :close, :reopen]
 
-  def tagged
-    @tag = Tag.find_by name: params[:tag], tag_set_id: params[:tag_set]
-    if @tag.nil?
-      not_found
-      return
-    end
-    @questions = @tag.posts.list_includes.undeleted.order('updated_at DESC').paginate(page: params[:page], per_page: 50)
-  end
-
   def lottery
     ids = Rails.cache.fetch 'lottery_questions', expires_in: 24.hours do
       # noinspection RailsParamDefResolve
@@ -22,55 +13,6 @@ class QuestionsController < ApplicationController
               .limit(25).select(:id).pluck(:id).to_a
     end
     @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
-  end
-
-  def destroy
-    unless check_your_privilege('flag_curate', @question, false)
-      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this question')
-      redirect_to(question_path(@question)) && return
-    end
-
-    if @question.answer_count.positive? && @question.answers.any? { |a| a.score >= 0.5 }
-      flash[:danger] = 'This question cannot be deleted because it has answers.'
-      redirect_to(question_path(@question)) && return
-    end
-    if @question.deleted
-      flash[:danger] = "Can't delete a deleted question."
-      redirect_to(question_path(@question)) && return
-    end
-
-    if @question.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
-                        last_activity: DateTime.now, last_activity_by: current_user)
-      PostHistory.post_deleted(@question, current_user)
-    else
-      flash[:danger] = "Can't delete this question right now. Try again later."
-    end
-    redirect_to url_for(controller: :questions, action: :show, id: @question.id)
-  end
-
-  def undelete
-    unless check_your_privilege('flag_curate', @question, false)
-      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'undelete this question')
-      redirect_to(question_path(@question)) && return
-    end
-
-    unless @question.deleted
-      flash[:danger] = "Can't undelete an undeleted question."
-      redirect_to(question_path(@question)) && return
-    end
-
-    if @question.deleted_by.is_moderator && !current_user.is_moderator
-      flash[:danger] = 'You cannot undelete this post deleted by a moderator.'
-      redirect_to(question_path(@question)) && return
-    end
-
-    if @question.update(deleted: false, deleted_at: nil, deleted_by: nil,
-                        last_activity: DateTime.now, last_activity_by: current_user)
-      PostHistory.post_undeleted(@question, current_user)
-    else
-      flash[:danger] = "Can't undelete this question right now. Try again later."
-    end
-    redirect_to url_for(controller: :questions, action: :show, id: @question.id)
   end
 
   def feed

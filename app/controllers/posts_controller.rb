@@ -5,6 +5,7 @@ class PostsController < ApplicationController
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
+  before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
 
   def new
     @post_type = PostType.find(params[:post_type])
@@ -236,7 +237,63 @@ class PostsController < ApplicationController
     redirect_to post_path(@post)
   end
 
-  # TODO: delete, undelete
+  def delete
+    unless check_your_privilege('flag_curate', @post, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.children.any? { |a| a.score >= 0.5 }
+      flash[:danger] = 'This post cannot be deleted because it has responses.'
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.deleted
+      flash[:danger] = "Can't delete a deleted post."
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
+                    last_activity: DateTime.now, last_activity_by: current_user)
+      PostHistory.post_deleted(@post, current_user)
+    else
+      flash[:danger] = "Can't delete this post right now. Try again later."
+    end
+
+    redirect_to post_path(@post)
+  end
+
+  def restore
+    unless check_your_privilege('flag_curate', @post, false)
+      flash[:danger] = helpers.ability_err_msg(:flag_curate, 'restore this post')
+      redirect_to post_path(@post)
+      return
+    end
+
+    unless @post.deleted
+      flash[:danger] = "Can't restore an undeleted post."
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.deleted_by.is_moderator && !current_user.is_moderator
+      flash[:danger] = 'You cannot restore this post deleted by a moderator.'
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
+                    last_activity: DateTime.now, last_activity_by: current_user)
+      PostHistory.post_undeleted(@post, current_user)
+    else
+      flash[:danger] = "Can't restore this post right now. Try again later."
+    end
+
+    redirect_to post_path(@post)
+  end
 
   def document
     @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
@@ -434,6 +491,10 @@ class PostsController < ApplicationController
       flash[:danger] = helpers.i18ns('posts.not_public_editable')
       redirect_back fallback_location: root_path
     end
+  end
+
+  def unless_locked
+    check_if_locked(@post)
   end
 end
 # rubocop:enable Metrics/ClassLength
