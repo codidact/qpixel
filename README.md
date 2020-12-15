@@ -75,7 +75,12 @@ Set up the database:
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
 
- 
+ You'll need to create a Community record before you can seed the database. In a Rails console (`rails c`), run:
+
+```ruby
+Community.create(name: 'Dev Community', host: 'localhost:3000')
+```
+Then seed the database:
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -85,12 +90,6 @@ Run the server!
 
     rails s
 
-You'll need to create a Community record before the server will display any
-content. In a Rails console (`rails c`), run:
-
-```ruby
-Community.create(name: 'Dev Community', host: 'localhost:3000')
-```
 
 If it keeps not showing content, `Rails.cache.clear` from your Rails console as
 necessary.
