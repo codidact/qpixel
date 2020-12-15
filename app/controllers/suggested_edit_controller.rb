@@ -58,16 +58,7 @@ class SuggestedEditController < ApplicationController
                                                     decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
-      if @post.question?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
-                                                                id: @post.id) })
-      elsif @post.answer?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                        qid: @post.parent.id, id: @post.id) })
-      elsif @post.article?
-        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
-          id: @post.id) })
-      end
+      render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }
     else
       render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
              status: :bad_request

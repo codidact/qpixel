@@ -68,7 +68,7 @@
             <p>
               <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
               <% if post.close_reason.requires_other_post %>
-                See: <%= link_to post.duplicate_post.title, question_path(post.duplicate_post), class: "has-font-size-larger" %>
+                See: <%= link_to post.duplicate_post.title, post_path(post.duplicate_post), class: "has-font-size-larger" %>
               <% end %>
             </p>
           <% end %>
@@ -216,7 +216,7 @@
                     Close
                   </a>
                 <% elsif post.closed %>
-                  <%= link_to reopen_question_path(post), method: :post, class: 'reopen-question tools--item' do %>
+                  <%= link_to reopen_post_path(post), method: :post, class: 'reopen-question tools--item' do %>
                     <i class="fa fa-unlock"></i>
                     Reopen
                   <% end %>

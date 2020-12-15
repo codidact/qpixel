@@ -75,29 +75,15 @@ module ApplicationHelper
   end
 
   def generic_share_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      share_question_url(post)
-    when Answer.post_type_id
-      share_answer_url(qid: post.parent_id, id: post.id)
-    when Article.post_type_id
-      share_article_url(post)
+    if second_level_post_types.include?(post.post_type_id)
+      post_url(post, anchor: "answer-#{post.id}")
     else
-      '#'
+      post_url(post)
     end
   end
 
   def generic_edit_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      edit_question_url(post)
-    when Answer.post_type_id
-      edit_answer_url(post)
-    when Article.post_type_id
-      edit_article_url(post)
-    else
-      '#'
-    end
+    edit_post_url(post)
   end
 
   def generic_show_link(post)
