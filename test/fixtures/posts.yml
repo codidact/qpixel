@@ -312,3 +312,22 @@ disabled_help_article:
   help_category: $Disabled
   help_ordering: 99
   doc_slug: sample-disable
+
+blog_post:
+  post_type: blog_post
+  title: B1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  user: closer
+  community: sample
+  category: main
+  license: cc_by_sa
+

@@ -62,3 +62,16 @@ help_doc:
   is_public_editable: false
   is_closeable: false
   is_top_level: false
+
+blog_post:
+  name: BlogPost
+  description: ~
+  has_answers: false
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: false
+  is_closeable: false
+  is_top_level: true
