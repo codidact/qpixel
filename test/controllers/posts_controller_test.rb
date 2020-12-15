@@ -600,7 +600,7 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'cannot restore a post deleted by a moderator' do
-    sign_in users(:closer)
+    sign_in users(:deleter)
     before_history = PostHistory.where(post: posts(:deleted_mod)).count
     post :restore, params: { id: posts(:deleted_mod).id }
     after_history = PostHistory.where(post: posts(:deleted_mod)).count
@@ -800,5 +800,54 @@ class PostsControllerTest < ActionController::TestCase
     end
     assert_equal 'failed', JSON.parse(response.body)['status']
     assert_equal ['locked_by_mod'], JSON.parse(response.body)['errors']
+  end
+
+  # Feature
+
+  test 'can feature post' do
+    sign_in users(:moderator)
+    before_audits = AuditLog.count
+    post :feature, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:link).id
+    assert_equal before_audits + 1, AuditLog.count, 'AuditLog not created on post feature'
+  end
+
+  test 'feature requires authentication' do
+    post :feature, params: { id: posts(:question_one).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'regular user cannot feature' do
+    sign_in users(:deleter)
+    post :feature, params: { id: posts(:question_one).id, format: :json }
+    assert_response 404
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal ['no_privilege'], JSON.parse(response.body)['errors']
+  end
+
+  # Save draft
+
+  test 'can save draft' do
+    sign_in users(:standard_user)
+    post :save_draft, params: { path: 'test', post: 'test' }
+    assert_response 200
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal "saved_post.#{users(:standard_user).id}.test", JSON.parse(response.body)['key']
+    assert_equal 'test', RequestContext.redis.get(JSON.parse(response.body)['key'])
+  end
+
+  # Delete draft
+
+  test 'can delete draft' do
+    sign_in users(:standard_user)
+    post :delete_draft, params: { path: 'test' }
+    assert_response 200
   end
 end

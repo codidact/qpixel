@@ -400,6 +400,8 @@ class PostsController < ApplicationController
   end
 
   def feature
+    return not_found(errors: ['no_privilege']) unless current_user.is_moderator
+
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
       link: helpers.generic_show_link(@post),
