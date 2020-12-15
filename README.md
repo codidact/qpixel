@@ -75,10 +75,11 @@ Set up the database:
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
 
- You'll need to create a Community record before you can seed the database. In a Rails console (`rails c`), run:
+ You'll need to create a Community record and purge the Rails cache before you can seed the database. In a Rails console (`rails c`), run:
 
 ```ruby
 Community.create(name: 'Dev Community', host: 'localhost:3000')
+Rails.cache.clear
 ```
 Then seed the database:
 
@@ -90,9 +91,6 @@ Run the server!
 
     rails s
 
-
-If it keeps not showing content, `Rails.cache.clear` from your Rails console as
-necessary.
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
 to an admin account, run `rails c` for a console, followed by:
