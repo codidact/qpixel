@@ -648,7 +648,6 @@ class PostsControllerTest < ActionController::TestCase
     post :toggle_comments, params: { id: posts(:question_one).id }
     assert_response 302
     assert_redirected_to new_user_session_path
-    assert_not assigns(:post).comments_disabled
   end
 
   test 'regular users cannot toggle comments' do
