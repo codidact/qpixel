@@ -127,8 +127,34 @@ locked:
     - bug
   score: 0.5
   locked: true
+  locked_by: deleter
+  locked_at: 2019-01-01T00:00:00.000000Z
+  locked_until: 2020-01-01T00:00:00.000000Z
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+locked_mod:
+  post_type: question
+  title: LM ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  locked: true
   locked_by: moderator
   locked_at: 2019-01-01T00:00:00.000000Z
+  locked_until: 2020-01-01T00:00:00.000000Z
   user: standard_user
   community: sample
   category: main

@@ -30,13 +30,13 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:username, :profile, :website, :twitter])
   end
 
-  def not_found
+  def not_found(**add)
     respond_to do |format|
       format.html do
         render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       end
       format.json do
-        render json: { status: 'failed', errors: ['not_found'] }, status: :not_found
+        render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
       end
     end
     false
@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
         end
         format.json do
-          render json: { status: 'failed', errors: ['not_found'] }, status: :not_found
+          render json: { status: 'failed', success: false, errors: ['not_found'] }, status: :not_found
         end
       end
 

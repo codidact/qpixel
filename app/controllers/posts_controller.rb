@@ -384,17 +384,19 @@ class PostsController < ApplicationController
 
     @post.update locked: true, locked_by: current_user,
                  locked_at: DateTime.now, locked_until: end_date
-    render json: { success: true }
+    render json: { status: 'success', success: true }
   end
 
   def unlock
-    return not_found unless current_user.privilege? 'flag_curate'
-    return not_found unless @post.locked?
-    return not_found if @post.locked_until.nil? && !current_user.is_moderator
+    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found(errors: ['not_locked']) unless @post.locked?
+    if @post.locked_by.is_moderator && !current_user.is_moderator
+      return not_found(errors: ['locked_by_mod'])
+    end
 
     @post.update locked: false, locked_by: nil,
                  locked_at: nil, locked_until: nil
-    render json: { success: true }
+    render json: { status: 'success', success: true }
   end
 
   def feature
@@ -408,9 +410,9 @@ class PostsController < ApplicationController
 
     attr = @link.attributes_print
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                            comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
+                             comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
     flash[:success] = 'Post has been featured. Due to caching, it may take some time until the changes apply.'
-    render json: { success: true }
+    render json: { status: 'success', success: true }
   end
 
   def save_draft
@@ -420,14 +422,14 @@ class PostsController < ApplicationController
     RequestContext.redis.set saved_at, DateTime.now.iso8601
     RequestContext.redis.expire key, 86_400 * 7
     RequestContext.redis.expire saved_at, 86_400 * 7
-    render json: { success: true, key: key }
+    render json: { status: 'success', success: true, key: key }
   end
 
   def delete_draft
     key = "saved_post.#{current_user.id}.#{params[:path]}"
     saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
     RequestContext.redis.del key, saved_at
-    render json: { success: true }
+    render json: { status: 'success', success: true }
   end
 
   private
