@@ -322,14 +322,6 @@ class PostsController < ApplicationController
     render json: { link: uploaded_url(@blob.key) }
   end
 
-  def share_q
-    redirect_to question_path(id: params[:id])
-  end
-
-  def share_a
-    redirect_to question_path(id: params[:qid], anchor: "answer-#{params[:id]}")
-  end
-
   def help_center
     @posts = Post.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id])
                  .or(Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
@@ -367,15 +359,11 @@ class PostsController < ApplicationController
   end
 
   def toggle_comments
-    @post.comments_disabled = !@post.comments_disabled
-    @post.save
+    @post.update(comments_disabled: !@post.comments_disabled)
     if @post.comments_disabled && params[:delete_all_comments]
-      @post.comments.undeleted.map do |c|
-        c.deleted = true
-        c.save
-      end
+      @post.comments.update_all(deleted: true)
     end
-    render json: { success: true }
+    render json: { status: 'success', success: true }
   end
 
   def lock

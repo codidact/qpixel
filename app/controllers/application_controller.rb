@@ -31,13 +31,28 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+    respond_to do |format|
+      format.html do
+        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      end
+      format.json do
+        render json: { status: 'failed', errors: ['not_found'] }, status: :not_found
+      end
+    end
     false
   end
 
   def verify_moderator
     if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      respond_to do |format|
+        format.html do
+          render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        end
+        format.json do
+          render json: { status: 'failed', errors: ['not_found'] }, status: :not_found
+        end
+      end
+
       return false
     end
     true

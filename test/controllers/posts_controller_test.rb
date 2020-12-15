@@ -3,23 +3,48 @@ require 'test_helper'
 class PostsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test 'should successfully get help center' do
+  # Help
+
+  test 'can get help center' do
     get :help_center
     assert_response 200
     assert_not_nil assigns(:posts)
   end
 
-  test 'question permalink should correctly redirect' do
-    get :share_q, params: { id: posts(:question_one).id }
-    assert_response 302
-    assert_redirected_to question_path(posts(:question_one))
+  test 'can get help article' do
+    get :document, params: { slug: posts(:help_article).doc_slug }
+    assert_response 200
+    assert_not_nil assigns(:post)
   end
 
-  test 'answer permalink should correctly redirect' do
-    get :share_a, params: { qid: posts(:question_one).id, id: posts(:answer_one).id }
-    assert_response 302
-    assert_redirected_to question_path(id: posts(:question_one).id, anchor: "answer-#{posts(:answer_one).id}")
+  test 'moderator can get mod help article' do
+    sign_in users(:moderator)
+    get :document, params: { slug: posts(:mod_help_article).doc_slug }
+    assert_response 200
+    assert_not_nil assigns(:post)
   end
+
+  test 'moderator help requires authentication' do
+    get :document, params: { slug: posts(:mod_help_article).doc_slug }
+    assert_response 404
+    assert_not_nil assigns(:post)
+  end
+
+  test 'regular user cannot get mod help' do
+    sign_in users(:standard_user)
+    get :document, params: { slug: posts(:mod_help_article).doc_slug }
+    assert_response 404
+    assert_not_nil assigns(:post)
+  end
+
+  test 'cannot get disabled help article' do
+    sign_in users(:moderator)
+    get :document, params: { slug: posts(:disabled_help_article).doc_slug }
+    assert_response 404
+    assert_not_nil assigns(:post)
+  end
+
+  # Change category
 
   test 'should change category' do
     sign_in users(:deleter)
@@ -603,5 +628,47 @@ class PostsControllerTest < ActionController::TestCase
     after_history = PostHistory.where(post: posts(:locked)).count
     assert_response 401
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  # Toggle comments
+
+  test 'can toggle comments' do
+    sign_in users(:moderator)
+    post :toggle_comments, params: { id: posts(:question_one).id }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert assigns(:post).comments_disabled
+  end
+
+  test 'toggle comments requires authentication' do
+    post :toggle_comments, params: { id: posts(:question_one).id }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+    assert_not assigns(:post).comments_disabled
+  end
+
+  test 'regular users cannot toggle comments' do
+    sign_in users(:standard_user)
+    post :toggle_comments, params: { id: posts(:question_one).id }
+    assert_response 404
+    assert_not_nil assigns(:post)
+    assert_not assigns(:post).comments_disabled
+  end
+
+  test 'specifying delete all results in comments being deleted' do
+    sign_in users(:moderator)
+    post :toggle_comments, params: { id: posts(:question_one).id, delete_all_comments: true }
+    assert_response 200
+    assert_not_nil assigns(:post)
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert assigns(:post).comments_disabled
+    assert assigns(:post).comments.all?(&:deleted?)
   end
 end
