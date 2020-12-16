@@ -406,7 +406,8 @@ class PostsController < ApplicationController
       label: @post.parent.nil? ? @post.title : @post.parent.title,
       link: helpers.generic_show_link(@post),
       post: @post,
-      active: true
+      active: true,
+      community: RequestContext.community
     }
     @link = PinnedLink.create data
 
