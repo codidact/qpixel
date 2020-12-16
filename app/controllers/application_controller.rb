@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :check_if_warning_or_suspension_pending
+  before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
   helper_method :top_level_post_types, :second_level_post_types
@@ -142,6 +143,15 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def distinguish_fake_community
+    if @community.is_fake
+      return redirect_to :fc_communities if request.fullpath == '/'
+      return not_found unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
+    else
+      return not_found if ['fake_community'].include?(controller_name)
+    end
+  end
 
   def stop_the_awful_troll
     # There shouldn't be any trolls in the test environment... :D

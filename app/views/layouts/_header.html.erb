@@ -20,21 +20,26 @@
       <% end %>
     </div>
     <nav class="header--menu">
-      <%= link_to 'Categories', categories_path, class: 'header--item' %>
-      <%= link_to 'Users', users_path, class: 'header--item' %>
-      <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
+    <% unless @community.is_fake %>
+        <%= link_to 'Categories', categories_path, class: 'header--item' %>
+        <%= link_to 'Users', users_path, class: 'header--item' %>
+        <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
 
-      <div class='header--separator'></div>
+        <div class='header--separator'></div>
 
-      <%= link_to 'Help', help_center_path, class: 'header--item' %>
-
+        <%= link_to 'Help', help_center_path, class: 'header--item' %>
+      <% else %>
+        <div class='header--separator'></div>
+      <% end %>
       <% if user_signed_in? %>
-        <% if current_user.is_moderator %>
-          <%= link_to flag_queue_path, class: 'header--item' do %>
-            <% if @open_flags > 0 %>
-              <span class="header--alert"><%= @open_flags %></span>
+        <% unless @community.is_fake %>
+          <% if current_user.is_moderator %>
+            <%= link_to flag_queue_path, class: 'header--item' do %>
+              <% if @open_flags > 0 %>
+                <span class="header--alert"><%= @open_flags %></span>
+              <% end %>
+              Flags
             <% end %>
-            Flags
           <% end %>
         <% end %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
@@ -58,6 +63,7 @@
           <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
         </div>
       <% end %>
+      <% unless @community.is_fake %>
       <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
           <span class="header--menu-bars">
             <span></span>
@@ -65,6 +71,7 @@
             <span></span>
           </span>
       </a>
+      <% end %>
     </nav>
   </div>
 </header>
@@ -112,6 +119,7 @@
     <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
   </div>
 </div>
+<% unless @community.is_fake %>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
     <%= link_to 'Categories', categories_path, class: 'menu--item' %>
@@ -135,7 +143,10 @@
     <% end %>
   </div>
 </div>
+<% end %>
 
+
+<% unless @community.is_fake %>
 <% if expandable? %>
   <% current_cat = current_category %>
   <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
@@ -173,6 +184,8 @@
     </div>
   <% end %>
 </header>
+
+<% end %>
 
 <% if Rails.env.development? %>
   <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
