@@ -258,3 +258,24 @@ table.is-striped tr:nth-of-type(2n+1) td {
 table.is-with-hover tr:hover td {
   background-color: #eee
 }
+
+.community-header-list {
+  display: flex;
+  flex-direction: column;
+
+  .community-header-list-entry a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    img {
+      max-height: 1.5rem;
+    }
+    .img {
+      width: 100px;
+    }
+    .label {
+      flex-grow: 1;
+    }
+  }
+}

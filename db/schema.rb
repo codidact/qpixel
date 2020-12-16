@@ -348,7 +348,7 @@ ActiveRecord::Schema.define(version: 2020_12_12_235514) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked", default: false, null: false
+    t.boolean "locked"
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"

@@ -1,7 +1,7 @@
 <% logo_path = SiteSetting['SiteLogoPath'] %>
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 
-<header class="header has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
+<header class="header is-small has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
   <div class="container header--container">
     <div class="header--brand">
       <% if mobile_logo_path.present? %>
@@ -48,13 +48,15 @@
           <i class="fas fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
-          <span class="has-font-size-larger <%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
+          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">
         <% end %>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header--item' %>
-      <% else %>
-        <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
-        <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
+      <% end %>
+      <a href="#" class="header--item" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-caret-square-down"></i></a>
+      <% unless user_signed_in? %>
+        <div class="header--item">
+          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
+          <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
+        </div>
       <% end %>
       <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
           <span class="header--menu-bars">
@@ -66,6 +68,29 @@
     </nav>
   </div>
 </header>
+
+<div class="header-slide" id="communities-slide">
+  <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+  <h3 class="h-m-t-1">Communities</h3>
+  <div class="community-header-list">
+  <% Community.all.each do |c| %>
+    <div class="community-header-list-entry">
+      <% settings = SiteSetting.for_community_id(c.id) %>
+      <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+      <%= link_to "//" + c.host do %>
+        <% if !logo_setting.nil? %>
+          <div class="img">
+            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+          </div>
+        <% end %>
+        <div class="label">
+          <%= c.name %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  </div>
+</div>
 
 <div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
