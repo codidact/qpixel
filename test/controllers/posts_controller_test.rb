@@ -591,6 +591,19 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
   end
 
+  test 'delete ensures all children are deleted' do
+    sign_in users(:deleter)
+    before_history = PostHistory.where(post_id: posts(:bad_answers).children.map(&:id)).count
+    post :delete, params: { id: posts(:bad_answers).id }
+    after_history = PostHistory.where(post_id: posts(:bad_answers).children.map(&:id)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_nil flash[:danger]
+    assert assigns(:post).children.all?(&:deleted), 'Answers not deleted with question'
+    assert_equal before_history + posts(:bad_answers).children.count, after_history,
+                 'Answer PostHistory events not created on question deletion'
+  end
+
   # Restore
 
   test 'can restore post' do
@@ -650,6 +663,21 @@ class PostsControllerTest < ActionController::TestCase
     after_history = PostHistory.where(post: posts(:locked)).count
     assert_response 401
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+  end
+
+  test 'restore brings back all answers deleted after question' do
+    sign_in users(:deleter)
+    deleted_at = posts(:deleted).deleted_at
+    children = posts(:deleted).children.where('deleted_at >= ?', deleted_at)
+    children_count = children.count
+    before_history = PostHistory.where(post_id: children.where('deleted_at >= ?', deleted_at)).count
+    post :restore, params: { id: posts(:deleted).id }
+    after_history = PostHistory.where(post_id: children.where('deleted_at >= ?', deleted_at)).count
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_nil flash[:danger]
+    assert_equal before_history + children_count, after_history,
+                 'Answer PostHistory events not created on question restore'
   end
 
   # Toggle comments

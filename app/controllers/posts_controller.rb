@@ -262,6 +262,15 @@ class PostsController < ApplicationController
     if @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
                     last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_deleted(@post, current_user)
+      if @post.children.any?
+        @post.children.update_all(deleted: true, deleted_at: DateTime.now, deleted_by_id: current_user.id,
+                                  last_activity: DateTime.now, last_activity_by_id: current_user.id)
+        histories = @post.children.map do |c|
+          { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
+            community: RequestContext.community }
+        end
+        PostHistory.create(histories)
+      end
     else
       flash[:danger] = "Can't delete this post right now. Try again later."
     end
@@ -288,9 +297,18 @@ class PostsController < ApplicationController
       return
     end
 
+    deleted_at = @post.deleted_at
     if @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
                     last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@post, current_user)
+      restore_children = @post.children.where('deleted_at >= ?', deleted_at)
+      restore_children.update_all(deleted: true, deleted_at: DateTime.now, deleted_by_id: current_user.id,
+                                 last_activity: DateTime.now, last_activity_by_id: current_user.id)
+      histories = restore_children.map do |c|
+        { post_history_type: PostHistoryType.find_by(name: 'post_undeleted'), user: current_user, post: c,
+          community: RequestContext.community }
+      end
+      PostHistory.create(histories)
     else
       flash[:danger] = "Can't restore this post right now. Try again later."
     end

@@ -40,6 +40,27 @@ question_two:
   upvote_count: 0
   downvote_count: 0
 
+bad_answers:
+  post_type: question
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 deleted:
   post_type: question
   title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
@@ -187,6 +208,19 @@ answer_two:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
+
+bad_answer:
+  post_type: answer
+  body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  score: 0.4
+  parent: question_one
+  user: editor
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 1
 
 really_old_answer:
   post_type: answer
