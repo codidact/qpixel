@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_12_235514) do
+ActiveRecord::Schema.define(version: 2020_12_16_202459) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 2020_12_12_235514) do
     t.string "host", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_fake", default: false
     t.index ["host"], name: "index_communities_on_host"
   end
 
