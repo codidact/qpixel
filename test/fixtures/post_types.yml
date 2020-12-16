@@ -10,6 +10,7 @@ question:
   is_public_editable: true
   is_closeable: true
   is_top_level: true
+  is_freely_editable: false
 
 answer:
   name: Answer
@@ -23,6 +24,7 @@ answer:
   is_public_editable: true
   is_closeable: false
   is_top_level: false
+  is_freely_editable: false
 
 article:
   name: Article
@@ -36,6 +38,7 @@ article:
   is_public_editable: true
   is_closeable: false
   is_top_level: true
+  is_freely_editable: false
 
 policy_doc:
   name: PolicyDoc
@@ -49,6 +52,7 @@ policy_doc:
   is_public_editable: false
   is_closeable: false
   is_top_level: false
+  is_freely_editable: false
 
 help_doc:
   name: HelpDoc
@@ -62,6 +66,7 @@ help_doc:
   is_public_editable: false
   is_closeable: false
   is_top_level: false
+  is_freely_editable: false
 
 blog_post:
   name: BlogPost
@@ -75,3 +80,18 @@ blog_post:
   is_public_editable: false
   is_closeable: false
   is_top_level: true
+  is_freely_editable: false
+
+free_edit:
+  name: FreeEdit
+  description: ~
+  has_answers: true
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: true
+  is_top_level: true
+  is_freely_editable: true

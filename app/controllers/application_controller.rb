@@ -103,15 +103,11 @@ class ApplicationController < ActionController::Base
   end
 
   def top_level_post_types
-    Rails.cache.fetch 'top_level_post_types' do
-      PostType.where(is_top_level: true).select(:id).map(&:id)
-    end
+    helpers.post_type_ids(is_top_level: true)
   end
 
   def second_level_post_types
-    Rails.cache.fetch 'second_level_post_types' do
-      PostType.where(is_top_level: false, has_parent: true).select(:id).map(&:id)
-    end
+    helpers.post_type_ids(is_top_level: false, has_parent: true)
   end
 
   def check_edits_limit!(post)

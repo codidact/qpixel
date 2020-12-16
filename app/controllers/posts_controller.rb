@@ -129,7 +129,8 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user
+    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
+       (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
       if @post.update(edit_post_params.merge(body: body_rendered,
                                              last_edited_at: DateTime.now, last_edited_by: current_user,
                                              last_activity: DateTime.now, last_activity_by: current_user))

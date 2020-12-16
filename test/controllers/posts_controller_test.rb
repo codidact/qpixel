@@ -393,6 +393,20 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on update'
   end
 
+  test 'anyone with unrestricted can update free-edit post' do
+    sign_in users(:standard_user)
+    before_history = PostHistory.where(post: posts(:free_edit)).count
+    patch :update, params: { id: posts(:free_edit).id,
+                             post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
+                                     tags_cache: sample.edit.tags_cache } }
+    after_history = PostHistory.where(post: posts(:free_edit)).count
+    assert_response 302
+    assert_redirected_to post_path(posts(:free_edit))
+    assert_not_nil assigns(:post)
+    assert_equal sample.edit.body_markdown, assigns(:post).body_markdown
+    assert_equal before_history + 1, after_history, 'No PostHistory event created on free-edit update'
+  end
+
   # Close
 
   test 'can close question' do
