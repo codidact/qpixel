@@ -2,9 +2,9 @@ require 'rmagick'
 require 'open-uri'
 
 # Necessary due to rmagick
-# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/ClassLength
 # noinspection RubyResolve, DuplicatedCode, RubyArgCount
 class AdvertisementController < ApplicationController
   include Magick
@@ -197,7 +197,7 @@ class AdvertisementController < ApplicationController
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
-    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
+    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.zone.now)
         .where(post_type_id: Question.post_type_id)
         .where(category: category)
         .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
@@ -370,5 +370,5 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/ClassLength

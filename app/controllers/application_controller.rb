@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   before_action :check_if_warning_or_suspension_pending
   before_action :stop_the_awful_troll
 
+  helper_method :top_level_post_types, :second_level_post_types
+
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
   end
@@ -28,13 +30,29 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:username, :profile, :website, :twitter])
   end
 
-  def not_found
-    render 'errors/not_found', layout: 'without_sidebar', status: 404
+  def not_found(**add)
+    respond_to do |format|
+      format.html do
+        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      end
+      format.json do
+        render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
+      end
+    end
+    false
   end
 
   def verify_moderator
     if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
-      render 'errors/not_found', layout: 'without_sidebar', status: 404
+      respond_to do |format|
+        format.html do
+          render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        end
+        format.json do
+          render json: { status: 'failed', success: false, errors: ['not_found'] }, status: :not_found
+        end
+      end
+
       return false
     end
     true
@@ -42,7 +60,7 @@ class ApplicationController < ActionController::Base
 
   def verify_admin
     if !user_signed_in? || !current_user.is_admin
-      render 'errors/not_found', layout: 'without_sidebar', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
     true
@@ -50,7 +68,7 @@ class ApplicationController < ActionController::Base
 
   def verify_global_admin
     if !user_signed_in? || !current_user.is_global_admin
-      render 'errors/not_found', layout: 'without_sidebar', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
     true
@@ -58,7 +76,7 @@ class ApplicationController < ActionController::Base
 
   def verify_global_moderator
     if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
-      render 'errors/not_found', layout: 'without_sidebar', status: 404
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
     true
@@ -67,7 +85,7 @@ class ApplicationController < ActionController::Base
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Ability.find_by(name: name)
-      render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: 403 if render_error
+      render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: :forbidden if render_error
       return false
     end
     true
@@ -78,22 +96,26 @@ class ApplicationController < ActionController::Base
 
     if post.locked?
       respond_to do |format|
-        format.html { render 'errors/locked', layout: 'without_sidebar', status: 401 }
-        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: 401 }
+        format.html { render 'errors/locked', layout: 'without_sidebar', status: :unauthorized }
+        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: :unauthorized }
       end
     end
   end
 
   def top_level_post_types
-    [Question.post_type_id, Article.post_type_id]
+    Rails.cache.fetch 'top_level_post_types' do
+      PostType.where(is_top_level: true).select(:id).map(&:id)
+    end
   end
 
   def second_level_post_types
-    [Answer.post_type_id]
+    Rails.cache.fetch 'second_level_post_types' do
+      PostType.where(is_top_level: false, has_parent: true).select(:id).map(&:id)
+    end
   end
 
   def check_edits_limit!(post)
-    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..Time.now, user: current_user) \
+    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..Time.zone.now, user: current_user) \
                                 .where('active = TRUE OR accepted = FALSE').count
 
     max_edits = SiteSetting[if current_user.privilege?('unrestricted')
@@ -113,7 +135,7 @@ class ApplicationController < ActionController::Base
       post.errors.add :base, edit_limit_msg
       AuditLog.rate_limit_log(event_type: 'suggested_edits', related: post, user: current_user,
                               comment: "limit: #{max_edits}")
-      render :edit, status: 400
+      render :edit, status: :bad_request
       return true
     end
     false
@@ -184,8 +206,8 @@ class ApplicationController < ActionController::Base
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
                       "(#{RequestContext.community&.name})"
-    unless RequestContext.community.present?
-      render status: 422, plain: "No community record matching Host='#{host_name}'"
+    if RequestContext.community.blank?
+      render status: :unprocessable_entity, plain: "No community record matching Host='#{host_name}'"
       return false
     end
 
@@ -210,7 +232,7 @@ class ApplicationController < ActionController::Base
     end
     @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
+        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.zone.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])

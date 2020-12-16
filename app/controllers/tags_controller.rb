@@ -66,7 +66,7 @@ class TagsController < ApplicationController
     if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil))
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
-      render :edit, status: 400
+      render :edit, status: :bad_request
     end
   end
 

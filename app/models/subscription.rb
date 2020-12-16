@@ -37,11 +37,11 @@ class Subscription < ApplicationRecord
   def qualifier_presence
     return unless ['tag', 'user', 'category'].include? type
 
-    if type == 'tag' && (!qualifier.present? || Tag.find_by(name: qualifier).nil?)
+    if type == 'tag' && (qualifier.blank? || Tag.find_by(name: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid tag name for tag subscriptions')
-    elsif type == 'user' && (!qualifier.present? || User.find_by(id: qualifier).nil?)
+    elsif type == 'user' && (qualifier.blank? || User.find_by(id: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid user ID for user subscriptions')
-    elsif type == 'category' && (!qualifier.present? || Category.find_by(id: qualifier).nil?)
+    elsif type == 'category' && (qualifier.blank? || Category.find_by(id: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid category ID for category subscriptions')
     end
   end

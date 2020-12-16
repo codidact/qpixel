@@ -9,7 +9,7 @@ class FlagsController < ApplicationController
              PostFlagType.find params[:flag_type]
            end
 
-    recent_flags = Flag.where(created_at: 24.hours.ago..Time.now, user: current_user).count
+    recent_flags = Flag.where(created_at: 24.hours.ago..Time.zone.now, user: current_user).count
     max_flags_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Flags' : 'RL_NewUserFlags']
 
     if recent_flags >= max_flags_per_day
@@ -20,15 +20,15 @@ class FlagsController < ApplicationController
       AuditLog.rate_limit_log(event_type: 'flag', related: Post.find(params[:post_id]), user: current_user,
                         comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")
 
-      render json: { status: 'failed', message: flag_limit_msg }, status: 403
+      render json: { status: 'failed', message: flag_limit_msg }, status: :forbidden
       return
     end
 
     @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id], user: current_user)
     if @flag.save
-      render json: { status: 'success' }, status: 201
+      render json: { status: 'success' }, status: :created
     else
-      render json: { status: 'failed', message: 'Flag failed to save.' }, status: 500
+      render json: { status: 'failed', message: 'Flag failed to save.' }, status: :internal_server_error
     end
   end
 
@@ -57,7 +57,7 @@ class FlagsController < ApplicationController
       AbilityQueue.add(@flag.user, "Flag Handled ##{@flag.id}")
       render json: { status: 'success' }
     else
-      render json: { status: 'failed', message: 'Failed to save new status.' }, status: 500
+      render json: { status: 'failed', message: 'Failed to save new status.' }, status: :internal_server_error
     end
   end
 

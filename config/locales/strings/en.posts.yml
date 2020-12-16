@@ -1,0 +1,10 @@
+en:
+  posts:
+    category_low_trust_level: >
+      You don't have a high enough trust level to post in the :name category.
+    type_requires_category: >
+      You can't create a :type without a category.
+    type_requires_parent: >
+      You can't create a :type without a parent post.
+    not_public_editable: >
+      This type of post can only be edited by its author and the site moderators.

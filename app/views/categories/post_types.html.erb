@@ -1,0 +1,10 @@
+<h1>What kind of post?</h1>
+<p class="has-font-size-larger has-color-tertiary-500">
+  This category has more than one type of post available. Pick a post type to get started.
+</p>
+
+<% @post_types.each do |pt| %>
+  <h3><%= link_to pt.name.underscore.humanize, new_category_post_path(post_type: pt, category: @category) %></h3>
+  <p class="has-color-tertiary-500"><%= pt.description %></p>
+  <hr/>
+<% end %>

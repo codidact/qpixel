@@ -3,14 +3,16 @@ class Post < ApplicationRecord
 
   belongs_to :user
   belongs_to :post_type
-  belongs_to :parent, class_name: 'Post', required: false
-  belongs_to :closed_by, class_name: 'User', required: false
-  belongs_to :deleted_by, class_name: 'User', required: false
-  belongs_to :last_activity_by, class_name: 'User', required: false
-  belongs_to :locked_by, class_name: 'User', required: false
-  belongs_to :last_edited_by, class_name: 'User', required: false
-  belongs_to :category, required: false
-  belongs_to :license, required: false
+  belongs_to :parent, class_name: 'Post', optional: true
+  belongs_to :closed_by, class_name: 'User', optional: true
+  belongs_to :deleted_by, class_name: 'User', optional: true
+  belongs_to :last_activity_by, class_name: 'User', optional: true
+  belongs_to :locked_by, class_name: 'User', optional: true
+  belongs_to :last_edited_by, class_name: 'User', optional: true
+  belongs_to :category, optional: true
+  belongs_to :license, optional: true
+  belongs_to :close_reason, optional: true
+  belongs_to :duplicate_post, class_name: 'Question', optional: true
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -41,14 +43,14 @@ class Post < ApplicationRecord
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
 
+  before_validation :update_tag_associations, if: -> { question? || article? }
+  after_create :create_initial_revision
+  after_create :add_license_if_nil
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
   after_save :update_category_activity, if: -> { question? || article? }
-  before_validation :update_tag_associations, if: -> { question? || article? }
-  after_create :create_initial_revision
-  after_create :add_license_if_nil
   after_save :recalc_score
 
   def self.search(term)
@@ -63,7 +65,7 @@ class Post < ApplicationRecord
     end
   end
 
-  PostType.all.each do |pt|
+  PostType.all.find_each do |pt|
     define_method "#{pt.name.underscore}?" do
       post_type_id == pt.id
     end

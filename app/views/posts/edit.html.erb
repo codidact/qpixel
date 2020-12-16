@@ -1,12 +1,11 @@
-<h1 class="has-margin-bottom-2">
-  New Post
+<h1>
+  Edit <%= @post_type.name.underscore.humanize.titleize %>
   <% if @category.present? %>
     in <%= @category.name %>
   <% end %>
 </h1>
-<% if @category.present? %>
-  <p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
 
+<% if @category.present? %>
   <div class="notice is-info">
     <p><strong>Posting Tips</strong></p>
     <div class="has-font-size-caption">
@@ -27,4 +26,5 @@
   </div>
 <% end %>
 
-<%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>
+<%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path,
+           edit_comment: true, parent: @post.parent, type_summary: false %>

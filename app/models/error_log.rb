@@ -1,4 +1,4 @@
 class ErrorLog < ApplicationRecord
-  belongs_to :community, required: false
-  belongs_to :user, required: false
+  belongs_to :community, optional: true
+  belongs_to :user, optional: true
 end

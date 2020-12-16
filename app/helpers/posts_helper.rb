@@ -1,10 +1,6 @@
 module PostsHelper
   def post_markdown(scope, field_name)
-    if params['__html'].present?
-      params['__html']
-    else
-      render_markdown(params[scope][field_name])
-    end
+    params['__html'].presence || render_markdown(params[scope][field_name])
   end
 
   class PostScrubber < Rails::Html::PermitScrubber

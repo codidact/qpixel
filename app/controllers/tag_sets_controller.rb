@@ -29,7 +29,7 @@ class TagSetsController < ApplicationController
       AuditLog.admin_audit(event_type: 'tag_set_update', related: @tag_set, user: current_user,
                            comment: "from <<TagSet #{before}>>\nto <<TagSet #{@tag_set.attributes_print}>>")
     else
-      render json: { tag_set: @tag_set, status: 'failed' }, status: 500
+      render json: { tag_set: @tag_set, status: 'failed' }, status: :internal_server_error
     end
   end
 
