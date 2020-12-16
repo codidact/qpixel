@@ -72,11 +72,11 @@ Rails.application.routes.draw do
     post   'new/:post_type',               to: 'posts#create', as: :create_post
     post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
+    get    'search',                       to: 'search#search', as: :search
 
     get    ':id',                          to: 'posts#show', as: :post
 
     get    ':id/history',                  to: 'post_history#post', as: :post_history
-    get    'search',                       to: 'search#search', as: :search
     post   'upload',                       to: 'posts#upload', as: :upload
     post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
     post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
