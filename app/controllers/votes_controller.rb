@@ -10,7 +10,7 @@ class VotesController < ApplicationController
       render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: :forbidden) && return
     end
 
-    recent_votes = Vote.where(created_at: 24.hours.ago..Time.zone.now, user: current_user) \
+    recent_votes = Vote.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
                        .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
     max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes']
 

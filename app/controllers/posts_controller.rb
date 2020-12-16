@@ -68,7 +68,7 @@ class PostsController < ApplicationController
 
     level_name = @post_type.is_top_level? ? 'TopLevel' : 'SecondLevel'
     level_type_ids = @post_type.is_top_level? ? top_level_post_types : second_level_post_types
-    recent_level_posts = Post.where(created_at: 24.hours.ago..Time.zone.now, user: current_user)
+    recent_level_posts = Post.where(created_at: 24.hours.ago..DateTime.now, user: current_user)
                              .where(post_type_id: level_type_ids).count
     setting_name = current_user.privilege?('unrestricted') ? "RL_#{level_name}Posts" : "RL_NewUser#{level_name}Posts"
     max_posts = SiteSetting[setting_name]
@@ -230,7 +230,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.update(closed: false, closed_by: current_user, closed_at: Time.zone.now,
+    if @post.update(closed: false, closed_by: current_user, closed_at: DateTime.now,
                     last_activity: DateTime.now, last_activity_by: current_user,
                     close_reason: nil, duplicate_post: nil)
       PostHistory.question_reopened(@post, current_user)

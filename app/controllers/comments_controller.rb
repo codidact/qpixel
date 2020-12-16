@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
 
     @comment = Comment.new comment_params.merge(user: current_user)
 
-    recent_comments = Comment.where(created_at: 24.hours.ago..Time.zone.now, user: current_user).where \
+    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
                              .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
                              .where.not(post: Post.where(user_id: current_user.id)).count
     max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']

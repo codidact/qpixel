@@ -9,7 +9,7 @@ class FlagsController < ApplicationController
              PostFlagType.find params[:flag_type]
            end
 
-    recent_flags = Flag.where(created_at: 24.hours.ago..Time.zone.now, user: current_user).count
+    recent_flags = Flag.where(created_at: 24.hours.ago..DateTime.now, user: current_user).count
     max_flags_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Flags' : 'RL_NewUserFlags']
 
     if recent_flags >= max_flags_per_day

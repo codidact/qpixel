@@ -115,7 +115,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_edits_limit!(post)
-    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..Time.zone.now, user: current_user) \
+    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
                                 .where('active = TRUE OR accepted = FALSE').count
 
     max_edits = SiteSetting[if current_user.privilege?('unrestricted')
@@ -232,7 +232,7 @@ class ApplicationController < ActionController::Base
     end
     @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.zone.now)
+        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])

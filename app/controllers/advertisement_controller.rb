@@ -197,7 +197,7 @@ class AdvertisementController < ApplicationController
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
-    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.zone.now)
+    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
         .where(post_type_id: Question.post_type_id)
         .where(category: category)
         .where('score > ?', SiteSetting['HotPostsScoreThreshold'])

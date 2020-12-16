@@ -15,7 +15,7 @@ class SuspiciousVotesController < ApplicationController
   def investigated
     @sv = SuspiciousVote.find params[:id]
     @sv.was_investigated = true
-    @sv.investigated_at = Time.zone.now
+    @sv.investigated_at = DateTime.now
     @sv.investigated_by = current_user.id
     if @sv.save
       render json: { status: 'success' }
