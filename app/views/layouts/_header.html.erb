@@ -145,3 +145,11 @@
     </div>
   </div>
 <% end %>
+
+<% if RequestContext.redis.exists? 'banner_text' %>
+  <div class="notice is-filled <%= RequestContext.redis.get('banner_class') || 'is-warning' %> has-padding-2 is-banner">
+    <div class="container">
+      <%= RequestContext.redis.get 'banner_text' %>
+    </div>
+  </div>
+<% end %>
