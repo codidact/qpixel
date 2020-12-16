@@ -72,7 +72,6 @@ Rails.application.routes.draw do
     post   'new/:post_type',               to: 'posts#create', as: :create_post
     post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
-
     get    'search',                       to: 'search#search', as: :search
 
     get    ':id',                          to: 'posts#show', as: :post
