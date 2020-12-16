@@ -1,6 +1,6 @@
 class SuspiciousVote < ApplicationRecord
-  belongs_to :from_user, foreign_key: 'from_user_id', class_name: 'User'
-  belongs_to :to_user, foreign_key: 'to_user_id', class_name: 'User'
+  belongs_to :from_user, class_name: 'User'
+  belongs_to :to_user, class_name: 'User'
 
   validates :from_user, uniqueness: { scope: [:to_user] }
 
@@ -9,7 +9,7 @@ class SuspiciousVote < ApplicationRecord
   end
 
   def self.check_for_vote_fraud
-    User.all.each do |u|
+    User.all.find_each do |u|
       votes = u.votes.group(:recv_user_id).count(:recv_user_id)
       total = u.votes.count
       votes.each do |recv_id, cnt|

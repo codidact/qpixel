@@ -20,7 +20,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
 
-h1 {
+.post h1 {
   font-size: 1.7em;
 }
 
@@ -59,6 +59,11 @@ a.header--site-name {
 
 .notice a {
   word-break: break-word;
+}
+
+.notice.is-filled a {
+  color: white !important;
+  font-weight: bold !important;
 }
 
 .item-list--item {
@@ -208,6 +213,11 @@ pre .hljs {
   padding: 0;
   background: inherit;
   overflow-x: unset !important;
+}
+
+.audit-log--body {
+  white-space: pre-wrap;
+  vertical-align: text-top;
 }
 
 table {

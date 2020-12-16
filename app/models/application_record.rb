@@ -94,7 +94,7 @@ module UserSortable
     default = term_opts[:default] || :created_at
     requested = term_opts[:term]
     direction = term_opts[:direction] || :desc
-    if requested.nil? || !field_mappings.include?(requested.to_sym)
+    if requested.nil? || field_mappings.exclude?(requested.to_sym)
       $active_search_param = default
       default.is_a?(Symbol) ? order(default => direction) : order(default)
     else

@@ -1,4 +1,4 @@
-# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Test coverage](https://coveralls.io/repos/github/ArtOfCode-/qpixel/badge.svg?branch=master)](https://coveralls.io/github/ArtOfCode-/qpixel?branch=master) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
+# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Coverage Status](https://coveralls.io/repos/github/codidact/qpixel/badge.svg)](https://coveralls.io/github/codidact/qpixel) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
 Rails-based version of our core software. Currently under active development towards MVP.
 
 ## Installation
@@ -75,7 +75,13 @@ Set up the database:
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
 
- 
+ You'll need to create a Community record and purge the Rails cache before you can seed the database. In a Rails console (`rails c`), run:
+
+```ruby
+Community.create(name: 'Dev Community', host: 'localhost:3000')
+Rails.cache.clear
+```
+Then seed the database:
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -85,15 +91,6 @@ Run the server!
 
     rails s
 
-You'll need to create a Community record before the server will display any
-content. In a Rails console (`rails c`), run:
-
-```ruby
-Community.create(name: 'Dev Community', host: 'localhost:3000')
-```
-
-If it keeps not showing content, `Rails.cache.clear` from your Rails console as
-necessary.
 
 You can create the first user account in the application, which should be running at http://localhost:3000/. To upgrade the user account
 to an admin account, run `rails c` for a console, followed by:

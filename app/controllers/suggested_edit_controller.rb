@@ -7,21 +7,20 @@ class SuggestedEditController < ApplicationController
 
   def approve
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
       return
     end
 
     @post = @edit.post
-    unless check_your_privilege('Edit', @post, false)
-      render(json: { status: 'error', message: 'You need the Edit privilege to approve edits' }, status: 400)
+    unless check_your_privilege('edit_posts', @post, false)
+      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :bad_request)
 
       return
     end
 
-    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: params[:edit_comment] }
-    if @post.question? || @post.article?
-      opts.merge(before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags)
-    end
+    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: params[:edit_comment],
+             before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags }
 
     before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
                before_tags: @post.tags.to_a, before_title: @post.title }
@@ -31,33 +30,24 @@ class SuggestedEditController < ApplicationController
                                 decided_by: current_user, updated_at: DateTime.now))
       PostHistory.post_edited(@post, @edit.user, **opts)
       flash[:success] = 'Edit approved successfully.'
-      if @post.question?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q, id: @post.id) })
-
-      elsif @post.answer?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                        qid: @post.parent.id, id: @post.id) })
-      elsif @post.article?
-        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share, id: @post.id) })
-      else
-        render(json: { status: 'error', message: 'Could not approve suggested edit.' }, status: 400)
-      end
+      AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
+      render json: { status: 'success', redirect_url: post_path(@post) }
     else
-      render json: { status: 'error',
-                     message: @post.errors.full_messages.join(', ') }, status: 400
+      render json: { status: 'error', message: @post.errors.full_messages.join(', ') }, status: :bad_request
     end
   end
 
   def reject
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: 409
+      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
       return
     end
 
     @post = @edit.post
 
-    unless check_your_privilege('Edit', @post, false)
-      render(json: { status: 'error', redirect_url: 'You need the Edit privilege to reject edits' }, status: 400)
+    unless check_your_privilege('edit_posts', @post, false)
+      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :bad_request)
 
       return
     end
@@ -67,18 +57,11 @@ class SuggestedEditController < ApplicationController
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
                                                     decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
-      if @post.question?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_q,
-                                                                id: @post.id) })
-      elsif @post.answer?
-        render(json: { status: 'success', redirect_url: url_for(controller: :posts, action: :share_a,
-                                                        qid: @post.parent.id, id: @post.id) })
-      elsif @post.article?
-        render(json: { status: 'success', redirect_url: url_for(controller: :articles, action: :share,
-          id: @post.id) })
-      end
+      AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
+      render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }
     else
-      render(json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' }, status: 400)
+      render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
+             status: :bad_request
     end
   end
 
@@ -89,26 +72,15 @@ class SuggestedEditController < ApplicationController
   end
 
   def applied_details
-    if @post.question? || @post.article?
-      {
-        title: @edit.title,
-        tags_cache: @edit.tags_cache&.reject(&:empty?),
-        body: @edit.body,
-        body_markdown: @edit.body_markdown,
-        last_activity: DateTime.now,
-        last_activity_by: @edit.user,
-        last_edited_at: DateTime.now,
-        last_edited_by_id: @edit.user
-      }.compact
-    elsif @post.answer?
-      {
-        body: @edit.body,
-        body_markdown: @edit.body_markdown,
-        last_activity: DateTime.now,
-        last_activity_by: @edit.user,
-        last_edited_at: DateTime.now,
-        last_edited_by_id: @edit.user
-      }.compact
-    end
+    {
+      title: @edit.title,
+      tags_cache: @edit.tags_cache&.reject(&:empty?),
+      body: @edit.body,
+      body_markdown: @edit.body_markdown,
+      last_activity: DateTime.now,
+      last_activity_by: @edit.user,
+      last_edited_at: DateTime.now,
+      last_edited_by_id: @edit.user
+    }.compact
   end
 end

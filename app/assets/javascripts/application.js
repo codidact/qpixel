@@ -24,12 +24,22 @@ $(document).on('ready', function() {
   $("button.flag-link").bind("click", (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
+    
+    const active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
+    const reason = parseInt(active_radio.val()) || null;
+
+    if (reason === null) {
+      QPixel.createNotification('danger', "Please choose a reason.");
+      return;
+    }
+
     const data = {
+      'flag_type': (reason != -1) ? reason : null,
       'post_id': self.data("post-id"),
       'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
     };
 
-    if (data['reason'].length < 10) {
+    if ((reason === -1 && data['reason'].length < 10) || (reason !== -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
       QPixel.createNotification('danger', "Please enter at least 10 characters.");
       return;
     }
@@ -50,37 +60,43 @@ $(document).on('ready', function() {
       }
       self.parents(".js-flag-box").removeClass("is-active");
     })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
-      console.log(jqXHR.responseText);
-      self.parents(".js-flag-box").removeClass("is-active");
+      .fail((jqXHR, textStatus, errorThrown) => {
+        let message = jqXHR.status;
+        try {
+          message = JSON.parse(jqXHR.responseText)['message'];
+        }
+        finally {
+          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
+        }
+        self.parents(".js-flag-box").removeClass("is-active");
     });
   });
 
-  $("a.close-dialog-link").on("click", (ev) => {
+  $('.close-dialog-link').on('click', (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
     console.log(self.parents(".post--body").find(".js-close-box").toggleClass("is-active"));
   });
-  $("button.close-question").on("click", (ev) => {
+
+  $('.js-close-question').on('click', (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
-    active_radio = self.parents(".js-close-box").find("input[type='radio'][name='close-reason']:checked");
+    const active_radio = self.parents('.js-close-box').find("input[type='radio'][name='close-reason']:checked");
     const data = {
       'reason_id': active_radio.val(),
-      'other_post': active_radio.parents(".widget--body").find(".js-close-other-post").val()
+      'other_post': active_radio.parents('.widget--body').find('.js-close-other-post').val()
       // option will be silently discarded if no input element
     };
 
-    if (data["other_post"]) {
-      if (data["other_post"].match(/\/[0-9]+$/)) {
-        data["other_post"] = data["other_post"].replace(/.*\/([0-9]+)$/, "$1");
+    if (data['other_post']) {
+      if (data['other_post'].match(/\/[0-9]+$/)) {
+        data['other_post'] = data['other_post'].replace(/.*\/([0-9]+)$/, "$1");
       }
     }
 
     $.ajax({
       'type': 'POST',
-      'url': '/questions/' + self.data("post-id") + '/close',
+      'url': '/posts/' + self.data('post-id') + '/close',
       'data': data,
       'target': self
     })

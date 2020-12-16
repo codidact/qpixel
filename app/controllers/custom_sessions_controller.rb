@@ -3,20 +3,17 @@ class CustomSessionsController < Devise::SessionsController
 
   @@first_factor = []
 
-  def new
-    super
-  end
-
   def create
     super do |user|
       if user.present? && user.enabled_2fa
         sign_out user
-        if user.two_factor_method == 'app'
+        case user.two_factor_method
+        when 'app'
           id = user.id
           @@first_factor << id
           redirect_to login_verify_2fa_path(uid: id)
           return
-        elsif user.two_factor_method == 'email'
+        when 'email'
           TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
           flash[:notice] = nil
           flash[:info] = 'Please check your email inbox for a link to sign in.'
@@ -25,10 +22,6 @@ class CustomSessionsController < Devise::SessionsController
         end
       end
     end
-  end
-
-  def destroy
-    super
   end
 
   def verify_2fa; end

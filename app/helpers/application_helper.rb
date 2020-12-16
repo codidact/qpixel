@@ -13,7 +13,7 @@ module ApplicationHelper
   end
 
   def check_your_privilege(privilege)
-    current_user&.has_privilege?(privilege)
+    current_user&.privilege?(privilege)
   end
 
   def query_url(base_url = nil, **params)
@@ -71,50 +71,40 @@ module ApplicationHelper
     markdown = markdown.gsub(/[*_~]+/, '')
 
     # Remove links and inline images but replace them with their text/alt text.
-    markdown = markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
-
-    markdown
+    markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
   end
 
   def generic_share_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      share_question_url(post)
-    when Answer.post_type_id
-      share_answer_url(qid: post.parent_id, id: post.id)
-    when Article.post_type_id
-      share_article_url(post)
+    if second_level_post_types.include?(post.post_type_id)
+      post_url(post, anchor: "answer-#{post.id}")
     else
-      '#'
+      post_url(post)
     end
   end
 
   def generic_edit_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      edit_question_url(post)
-    when Answer.post_type_id
-      edit_answer_url(post)
-    when Article.post_type_id
-      edit_article_url(post)
-    else
-      '#'
-    end
+    edit_post_url(post)
   end
 
   def generic_show_link(post)
-    case post.post_type_id
-    when Question.post_type_id
-      question_url(post)
-    when Article.post_type_id
-      article_url(post)
+    if top_level_post_types.include? post.post_type_id
+      post_url(post)
+    elsif second_level_post_types.include?(post.post_type_id)
+      post_url(post.parent, anchor: "answer-#{post.id}")
     else
-      '#'
+      case post.post_type_id
+      when HelpDoc.post_type_id
+        help_path(post.doc_slug)
+      when PolicyDoc.post_type_id
+        policy_path(post.doc_slug)
+      else
+        '#'
+      end
     end
   end
 
   def split_words_max_length(text, max_length)
-    words = text.split ' '
+    words = text.split
     splat = [[]]
     words.each do |word|
       # Unless the current last element has enough space to take the extra word, create a new one.
@@ -128,14 +118,18 @@ module ApplicationHelper
 
   def deleted_item?(item)
     case item.class.to_s
-    when 'Post'
+    when 'Post', 'Comment'
       item.deleted
-    when 'Comment'
-      item.deleted
-    when 'PostHistory'
-      false
     else
       false
     end
+  end
+
+  def i18ns(key, **subs)
+    s = I18n.t key
+    subs.each do |f, r|
+      s = s.gsub ":#{f}", r.to_s
+    end
+    s
   end
 end

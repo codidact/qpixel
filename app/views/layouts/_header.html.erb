@@ -29,7 +29,7 @@
       <%= link_to 'Help', help_center_path, class: 'header--item' %>
 
       <% if user_signed_in? %>
-        <% if current_user.is_admin || current_user.is_moderator %>
+        <% if current_user.is_moderator %>
           <%= link_to flag_queue_path, class: 'header--item' do %>
             <% if @open_flags > 0 %>
               <span class="header--alert"><%= @open_flags %></span>
@@ -40,7 +40,7 @@
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
-            <span class="header--alert"><%= unread %></span>
+            <span class="header--alert inbox-count"><%= unread %></span>
           <% end %>
           <i class='fas fa-inbox' title='Notifications'></i>
         </a>
@@ -70,6 +70,9 @@
 <div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
   <div class="inbox--container h-p-2"></div>
+  <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
+    <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
+  </div>
 </div>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
@@ -123,10 +126,8 @@
                     class: "category-header--nav-item #{active?(current_cat) && controller_name != 'tags' ? 'is-active' : ''}" %>
         <%= link_to 'Tags', category_tags_path(current_cat),
                     class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
-        <%# There will eventually be a Tags link here too, once we have a page that lists tags per-tag set. %>
         <div class="category-header--nav-separator"></div>
-        <% ptid = current_cat.display_post_types.reject { |e| e.to_s.empty? }.first || Question.post_type_id %>
-        <%= link_to create_post_path(category_id: current_cat.id, post_type_id: ptid),
+        <%= link_to category_post_types_path(current_cat.id),
                     class: 'category-header--nav-item is-button' do %>
           <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
         <% end %>
@@ -139,6 +140,14 @@
   <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
     <div class="container">
       <p>This site is in development mode!</p>
+    </div>
+  </div>
+<% end %>
+
+<% if RequestContext.redis.exists? 'banner_text' %>
+  <div class="notice is-filled <%= RequestContext.redis.get('banner_class') || 'is-warning' %> has-padding-2 is-banner">
+    <div class="container">
+      <%= RequestContext.redis.get 'banner_text' %>
     </div>
   </div>
 <% end %>

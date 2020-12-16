@@ -313,3 +313,110 @@
   category: AdvancedSettings
   description: >
     The minimum score a question must have to qualify for selection for the Hot Posts sidebar and for being selected as random advertisement.
+
+- name: NewSiteMode
+  value: true
+  value_type: boolean
+  category: ReputationAndVoting
+  description: >
+    New site mode will grant some abilities more easily.
+
+- name: RL_NewUserVotes
+  value: 5
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of votes on questions, articles and answers to non-own questions new users may cast within 24h.
+
+- name: RL_Votes
+  value: 30
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of votes on questions, articles and answers to non-own questions users with the unrestricted ability may cast within 24h.
+
+- name: RL_NewUserTopLevelPosts
+  value: 3
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of questions and articles new users may post within 24h.
+
+- name: RL_TopLevelPosts
+  value: 20
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of questions and articles users with the unrestricted ability may post within 24h.
+
+- name: RL_NewUserSecondLevelPosts
+  value: 10
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of answers new users may post within 24h.
+
+- name: RL_SecondLevelPosts
+  value: 30
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of answers users with the unrestricted ability may post within 24h.
+
+- name: RL_NewUserFlags
+  value: 10
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of flags new users may raise within 24h.
+
+- name: RL_Flags
+  value: 30
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of flags users with the unrestricted ability may raise within 24h.
+
+- name: RL_NewUserSuggestedEdits
+  value: 3
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of edits new users may suggest within 24h.
+
+- name: RL_SuggestedEdits
+  value: 20
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of edits users with the unrestricted ability may suggest within 24h.
+
+- name: RL_NewUserComments
+  value: 0
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of comments new users may add on other people's posts within 24h.
+
+- name: RL_Comments
+  value: 50
+  value_type: integer
+  category: RateLimits
+  description: >
+    The amount of comments users with the unrestricted ability may add on other people's posts within 24h.
+
+- name: TableOfContentsThreshold
+  value: 5
+  value_type: integer
+  category: Display
+  description: >
+    The minimum number of child posts before the table of contents is shown. If the number of child posts is less than
+    this threshold, the TOC is not shown.
+
+- name: TableOfContentsExcerptLength
+  value: 120
+  value_type: integer
+  category: Display
+  description: >
+    The number of characters to show in the answer excerpt in the TOC. The TOC strips most formatting, so beware of large
+    values -- the TOC might become hard to read.

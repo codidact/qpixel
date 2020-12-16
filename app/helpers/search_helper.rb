@@ -26,33 +26,33 @@ module SearchHelper
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["score #{operator.present? ? operator : '='} ?", val.to_f]
+        ["score #{operator.presence || '='} ?", val.to_f]
       when 'created'
         next unless value.match?(valid_value[:date])
 
         operator, val, timeframe = date_value_sql value
-        ["created_at #{operator.present? ? operator : '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})",
+        ["created_at #{operator.presence || '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})",
          val.to_i]
       when 'user'
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["user_id #{operator.present? ? operator : '='} ?", val.to_i]
+        ["user_id #{operator.presence || '='} ?", val.to_i]
       when 'upvotes'
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["upvotes #{operator.present? ? operator : '='} ?", val.to_i]
+        ["upvotes #{operator.presence || '='} ?", val.to_i]
       when 'downvotes'
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["downvotes #{operator.present? ? operator : '='} ?", val.to_i]
+        ["downvotes #{operator.presence || '='} ?", val.to_i]
       when 'votes'
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
-        ["(upvotes - downvotes) #{operator.present? ? operator : '='}", val.to_i]
+        ["(upvotes - downvotes) #{operator.presence || '='}", val.to_i]
       end
     end.compact
 

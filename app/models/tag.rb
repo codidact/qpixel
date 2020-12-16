@@ -38,7 +38,7 @@ class Tag < ApplicationRecord
   private
 
   def parent_not_self
-    return unless parent_id.present?
+    return if parent_id.blank?
 
     if parent_id == id
       errors.add(:base, 'A tag cannot be its own parent.')
@@ -46,7 +46,7 @@ class Tag < ApplicationRecord
   end
 
   def parent_not_own_child
-    return unless parent_id.present?
+    return if parent_id.blank?
 
     if all_children.include? parent_id
       errors.add(:base, "The #{parent.name} tag is already a child of this tag.")

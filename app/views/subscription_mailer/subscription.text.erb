@@ -3,7 +3,7 @@
 
 <% @questions.each do |question| %>
 score <%= " +-"[question.score <=> 0] + question.score.to_s %>: <%= question.title %>
-<%= question_url(question, host: @subscription.community.host) %>
+<%= post_url(question, host: @subscription.community.host) %>
 
 <%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %><%= question.body.length > 150 ? '...' : '' %>
 — "<%= question.user.rtl_safe_username %>" (<%= user_url(question.user, host: @subscription.community.host) %>),

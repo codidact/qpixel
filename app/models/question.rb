@@ -4,9 +4,6 @@ class Question < Post
   scope :meta, -> { joins(:category).where(categories: { name: 'Meta' }) }
   scope :main, -> { joins(:category).where(categories: { name: 'Main' }) }
 
-  belongs_to :close_reason, optional: true
-  belongs_to :duplicate_post, class_name: 'Question', optional: true
-
   def self.post_type_id
     PostType.mapping['Question']
   end

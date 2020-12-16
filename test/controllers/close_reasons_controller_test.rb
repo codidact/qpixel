@@ -47,6 +47,9 @@ class CloseReasonsControllerTest < ActionController::TestCase
   test 'should deny admins access to non-admin community' do
     RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
     request.env['HTTP_HOST'] = 'other.qpixel.com'
+
+    copy_abilities(RequestContext.community_id)
+
     sign_in users(:admin)
     PARAM_LESS_ACTIONS.each do |path|
       get path
@@ -54,9 +57,12 @@ class CloseReasonsControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should grant global admims access to non admin community' do
+  test 'should grant global admis access to non admin community' do
     RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
     request.env['HTTP_HOST'] = 'other.qpixel.com'
+
+    copy_abilities(RequestContext.community_id)
+
     sign_in users(:global_admin)
     PARAM_LESS_ACTIONS.each do |path|
       get path

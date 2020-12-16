@@ -12,7 +12,7 @@
       <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
       <%
         # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
-        value = [[post.created_at || Date.new(2000, 1, 1), {}], [post.updated_at || Date.new(2000, 1, 1), {}],
+        value = [[post&.created_at || Date.new(2000, 1, 1), {}], [post&.updated_at || Date.new(2000, 1, 1), {}],
                  [saved_at || Date.new(2001, 1, 1), { value: RequestContext.redis.get(key),
                                                       class: classes + ' js-draft-loaded' }]].max_by do |x|
           x[0]

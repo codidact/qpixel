@@ -1,5 +1,30 @@
-<h1 class="has-margin-bottom-2">New Post in <%= @category.name %></h1>
-<p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
+<h1 class="has-margin-bottom-2">
+  New Post
+  <% if @category.present? %>
+    in <%= @category.name %>
+  <% end %>
+</h1>
+<% if @category.present? %>
+  <p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
 
-<%= render 'form', with_post_type: @category.display_post_types.reject { |e| e.to_s.empty? }.size > 1,
-           submit_path: create_post_path(@category.id) %>
+  <div class="notice is-info">
+    <p><strong>Posting Tips</strong></p>
+    <div class="has-font-size-caption">
+      <% guidance = @category.asking_guidance_override %>
+      <%= raw(sanitize(render_markdown(guidance.present? ? guidance : SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+    </div>
+  </div>
+<% end %>
+
+<% if @post.errors.any? %>
+  <div class="notice is-danger is-filled">
+    <p>The following errors prevented your post being saved:</p>
+    <ul>
+      <% @post.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>

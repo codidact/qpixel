@@ -1,0 +1,21 @@
+<%= link_to generic_share_link(answer), class: "toc--entry #{answer.deleted? ? 'deleted-content' : ''}" do %> 
+  <div class="toc--badge">
+    <span class="badge is-tag is-green">+<%= answer.upvote_count %></span>
+  </div>
+  <div class="toc--badge">
+    <span class="badge is-tag is-red">&minus;<%= answer.downvote_count %></span>
+  </div>
+  <div class="toc--full">
+    <% sanitised = strip_markdown(answer.body_markdown) %>
+    <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
+      <p>
+        <%= sanitised[ 0 ... max_length ] %>
+        <% if sanitised.length > max_length %>
+            &hellip;
+        <% end %>
+      </p>
+    <p class="has-font-size-small">
+      <%= time_ago_in_words(answer.last_edited_at || answer.created_at, locale: :en_abbrev) %> ago
+    </p>
+  </div>
+<% end %>

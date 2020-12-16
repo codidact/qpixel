@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
   get    'mod/comments',                   to: 'moderator#recent_comments', as: :recent_comments
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
+  get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
   patch  'mod/votes/investigated/:id',     to: 'suspicious_votes#investigated', as: :investigated_suspicious_vote
@@ -61,52 +62,43 @@ Rails.application.routes.draw do
     patch ':id/edit',                      to: 'pinned_links#update', as: :update_pinned_link
   end
 
-  get    'questions',                      to: 'questions#index', as: :questions
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
-  get    'meta',                           to: 'questions#meta', as: :meta
   get    'questions/feed',                 to: 'questions#feed', as: :question_feed
-  get    'questions/ask',                  to: 'questions#new', as: :new_question
-  get    'meta/ask',                       to: 'questions#new_meta', as: :new_meta_question
-  post   'questions/ask',                  to: 'questions#create', as: :create_question
-  get    'questions/tagged/:tag_set/:tag', to: 'questions#tagged', as: :questions_tagged
-  get    'questions/:id',                  to: 'questions#show', as: :question
-  get    'questions/:id/edit',             to: 'questions#edit', as: :edit_question
-  patch  'questions/:id/edit',             to: 'questions#update', as: :update_question
-  delete 'questions/:id/delete',           to: 'questions#destroy', as: :delete_question
-  post   'questions/:id/undelete',         to: 'questions#undelete', as: :undelete_question
-  post   'questions/:id/close',            to: 'questions#close', as: :close_question
-  post   'questions/:id/reopen',           to: 'questions#reopen', as: :reopen_question
 
-  scope 'articles' do
-    get    ':id',                          to: 'articles#show', as: :article
-    get    ':id/edit',                     to: 'articles#edit', as: :edit_article
-    patch  ':id/edit',                     to: 'articles#update', as: :update_article
-    delete ':id/delete',                   to: 'articles#destroy', as: :destroy_article
-    post   ':id/undelete',                 to: 'articles#undelete', as: :undelete_article
+  scope 'posts' do
+    get    'new/:post_type',               to: 'posts#new', as: :new_post
+    get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
+    get    'new/:post_type/:category',     to: 'posts#new', as: :new_category_post
+    post   'new/:post_type',               to: 'posts#create', as: :create_post
+    post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
+    post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
+    get    'search',                       to: 'search#search', as: :search
+
+    get    ':id',                          to: 'posts#show', as: :post
+
+    get    ':id/history',                  to: 'post_history#post', as: :post_history
+    post   'upload',                       to: 'posts#upload', as: :upload
+    post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
+    post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
+
+    get    ':id/edit',                     to: 'posts#edit', as: :edit_post
+    patch  ':id/edit',                     to: 'posts#update', as: :update_post
+
+    post   ':id/close',                    to: 'posts#close', as: :close_post
+    post   ':id/reopen',                   to: 'posts#reopen', as: :reopen_post
+    post   ':id/delete',                   to: 'posts#delete', as: :delete_post
+    post   ':id/restore',                  to: 'posts#restore', as: :restore_post
+
+    post   ':id/category',                 to: 'posts#change_category', as: :change_category
+    post   ':id/toggle_comments',          to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
+    post   ':id/lock',                     to: 'posts#lock', as: :post_lock
+    post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
+    post   ':id/feature',                  to: 'posts#feature', as: :post_feature
+
+    get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
+    post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
+    post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
   end
-
-  get    'posts/:id/history',              to: 'post_history#post', as: :post_history
-  get    'posts/search',                   to: 'search#search', as: :search
-  post   'posts/upload',                   to: 'posts#upload', as: :upload
-  post   'posts/save-draft',               to: 'posts#save_draft', as: :save_draft
-  post   'posts/delete-draft',             to: 'posts#delete_draft', as: :delete_draft
-
-  get    'posts/:id/edit',                 to: 'posts#edit', as: :edit_post
-  patch  'posts/:id/edit',                 to: 'posts#update', as: :update_post
-
-  get    'posts/new-help',                 to: 'posts#new_help', as: :new_help_post
-  post   'posts/new-help',                 to: 'posts#create_help', as: :create_help_post
-  get    'posts/:id/edit-help',            to: 'posts#edit_help', as: :edit_help_post
-  patch  'posts/:id/edit-help',            to: 'posts#update_help', as: :update_help_post
-
-  post   'posts/:id/category',             to: 'posts#change_category', as: :change_category
-  post   'posts/:id/toggle_comments',      to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
-  post   'posts/:id/feature',              to: 'posts#feature', as: :post_feature
-
-
-  get  'posts/suggested-edit/:id',         to: 'suggested_edit#show', as: :suggested_edit
-  post 'posts/suggested-edit/:id/approve', to: 'suggested_edit#approve', as: :suggested_edit_approve
-  post 'posts/suggested-edit/:id/reject',  to: 'suggested_edit#reject', as: :suggested_edit_reject
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
   get    'help/:slug',                     to: 'posts#document', as: :help
@@ -139,6 +131,8 @@ Rails.application.routes.draw do
   get    'users/:id/activity',             to: 'users#activity', as: :user_activity
   get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
   get    'users/:id/posts',                to: 'users#posts', as: :user_posts
+  get    'users/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
+  post   'users/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
   post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
   get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
   post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
@@ -151,12 +145,6 @@ Rails.application.routes.draw do
   post   'votes/new',                      to: 'votes#create', as: :create_vote
   delete 'votes/:id',                      to: 'votes#destroy', as: :destroy_vote
 
-  get    'questions/:id/answer',           to: 'answers#new', as: :new_answer
-  post   'questions/:id/answer',           to: 'answers#create', as: :create_answer
-  get    'answers/:id/edit',               to: 'answers#edit', as: :edit_answer
-  patch  'answers/:id/edit',               to: 'answers#update', as: :update_answer
-  delete 'answers/:id/delete',             to: 'answers#destroy', as: :delete_answer
-  post   'answers/:id/delete',             to: 'answers#undelete', as: :undelete_answer
   post   'answers/:id/convert',            to: 'answers#convert_to_comment', as: :convert_to_comment
 
   post   'flags/new',                      to: 'flags#new', as: :new_flag
@@ -167,10 +155,6 @@ Rails.application.routes.draw do
   post   'comments/:id/edit',              to: 'comments#update', as: :update_comment
   delete 'comments/:id/delete',            to: 'comments#destroy', as: :delete_comment
   patch  'comments/:id/delete',            to: 'comments#undelete', as: :undelete_comment
-
-  get    'q/:id',                          to: 'posts#share_q', as: :share_question
-  get    'a/:qid/:id',                     to: 'posts#share_a', as: :share_answer
-  get    'ar/:id',                         to: 'articles#share', as: :share_article
 
   get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
@@ -187,24 +171,23 @@ Rails.application.routes.draw do
   get    'help',                           to: 'posts#help_center', as: :help_center
 
   scope 'categories' do
-    root                                           to: 'categories#index', as: :categories
-    get    'new',                                  to: 'categories#new', as: :new_category
-    post   'new',                                  to: 'categories#create', as: :create_category
-    get    ':category_id/posts/new/:post_type_id', to: 'posts#new', as: :new_post
-    post   ':category_id/posts/new/:post_type_id', to: 'posts#create', as: :create_post
-    get    ':id',                                  to: 'categories#show', as: :category
-    get    ':id/edit',                             to: 'categories#edit', as: :edit_category
-    post   ':id/edit',                             to: 'categories#update', as: :update_category
-    delete ':id',                                  to: 'categories#destroy', as: :destroy_category
-    get    ':id/feed',                             to: 'categories#rss_feed', as: :category_feed
-    get    ':id/tags',                             to: 'tags#category', as: :category_tags
-    get    ':id/tags/:tag_id',                     to: 'tags#show', as: :tag
-    get    ':id/tags/:tag_id/children',            to: 'tags#children', as: :tag_children
-    get    ':id/tags/:tag_id/edit',                to: 'tags#edit', as: :edit_tag
-    patch  ':id/tags/:tag_id/edit',                to: 'tags#update', as: :update_tag
-    post   ':id/tags/:tag_id/rename',              to: 'tags#rename', as: :rename_tag
-    get    ':id/tags/:tag_id/merge',               to: 'tags#select_merge', as: :select_tag_merge
-    post   ':id/tags/:tag_id/merge',               to: 'tags#merge', as: :merge_tag
+    root                                   to: 'categories#index', as: :categories
+    get    'new',                          to: 'categories#new', as: :new_category
+    post   'new',                          to: 'categories#create', as: :create_category
+    get    ':id',                          to: 'categories#show', as: :category
+    get    ':id/edit',                     to: 'categories#edit', as: :edit_category
+    post   ':id/edit',                     to: 'categories#update', as: :update_category
+    delete ':id',                          to: 'categories#destroy', as: :destroy_category
+    get    ':id/types',                    to: 'categories#post_types', as: :category_post_types
+    get    ':id/feed',                     to: 'categories#rss_feed', as: :category_feed
+    get    ':id/tags',                     to: 'tags#category', as: :category_tags
+    get    ':id/tags/:tag_id',             to: 'tags#show', as: :tag
+    get    ':id/tags/:tag_id/children',    to: 'tags#children', as: :tag_children
+    get    ':id/tags/:tag_id/edit',        to: 'tags#edit', as: :edit_tag
+    patch  ':id/tags/:tag_id/edit',        to: 'tags#update', as: :update_tag
+    post   ':id/tags/:tag_id/rename',      to: 'tags#rename', as: :rename_tag
+    get    ':id/tags/:tag_id/merge',       to: 'tags#select_merge', as: :select_tag_merge
+    post   ':id/tags/:tag_id/merge',       to: 'tags#merge', as: :merge_tag
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
@@ -241,6 +224,12 @@ Rails.application.routes.draw do
     get 'qa',                              to: 'tour#question3', as: :tour_q3
     get 'more',                            to: 'tour#more', as: :tour_more
     get 'end',                             to: 'tour#end', as: :tour_end
+  end
+
+  scope 'abilities' do
+    root                                   to: 'abilities#index', as: :abilities
+    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get ':id',                             to: 'abilities#show', as: :ability
   end
 
   scope 'birthday' do

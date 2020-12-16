@@ -87,8 +87,8 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`<span class="has-color-green-600">Draft saved</span>`);
-      $field.parents('.widget').after($el);
+      const $el = $(`&middot; <span class="has-color-green-600">Draft saved</span>`);
+      $field.parents('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
@@ -218,5 +218,18 @@ $(() => {
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You've edited this post before but didn't save it. We loaded your edits here for you.
     </div>`);
+  });
+
+  $('.js-permalink > .js-text').text('Copy Link');
+  $('.js-permalink').on('click', ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
+    const link = $tgt.attr('href');
+    navigator.clipboard.writeText(link);
+    $tgt.find('.js-text').text('Copied!');
+    setTimeout(() => {
+      $tgt.find('.js-text').text('Copy Link');
+    }, 1000);
   });
 });

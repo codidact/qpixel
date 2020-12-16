@@ -20,8 +20,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
     get :index
     assert_response 200
     assert_not_nil assigns(:subscriptions)
-    assert !assigns(:subscriptions).empty?,
-           '@subscriptions instance variable expected size > 0, got <= 0'
+    assert_not assigns(:subscriptions).empty?,
+               '@subscriptions instance variable expected size > 0, got <= 0'
   end
 
   test 'should get new when logged in' do

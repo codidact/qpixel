@@ -1,0 +1,10 @@
+rate_limit:
+  new_user_posts: >
+    You may only post :count :level posts per day. Once you have some well-received posts, your limit will increase.
+  posts: >
+    You may only post :count :level posts per day.
+  new_user_suggested_edits: >
+    You may only suggest :count edits per day. Once you have some well-received contributions, your limit will increase.
+  suggested_edits: >
+    You may only suggest :count edits per day. Once you have enough well-received suggestions, you will earn the ability
+    to edit without review.

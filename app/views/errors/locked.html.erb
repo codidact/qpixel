@@ -1,0 +1,11 @@
+<% content_for :title, 'Locked' %>
+
+<h1 class="error-code has-color-red-500">401</h1>
+<h2 class="error-name has-color-red-400">locked</h2>
+
+<p class="is-lead">The post has been locked and cannot be edited, commented or voted on.</p>
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>
