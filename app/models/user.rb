@@ -61,7 +61,7 @@ class User < ApplicationRecord
       case key
       when 'p'
         Post.qa_only.undeleted.where(user: self).count
-      when '1' or '2'
+      when '1', '2'
         Post.undeleted.where(post_type: post_types).count
       when 's'
         Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: 1).count - \

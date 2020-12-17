@@ -422,7 +422,7 @@
     values -- the TOC might become hard to read.
 
 - name: UserCardDetails
-  value: r.12s
+  value: r.12sE
   value_type: string
   category: Display
   description: >

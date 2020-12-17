@@ -98,7 +98,11 @@
       }
       .user-card--detail {
         margin-top: 0.125rem;
-        margin-right: 0.5rem;
+        margin-right: 0.35rem;
+
+        .fa-fw {
+          font-size: 0.8em;
+        }
       }
     }
   }
