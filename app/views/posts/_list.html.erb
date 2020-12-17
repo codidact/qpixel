@@ -31,7 +31,7 @@
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
-      <% if post.post_type.has_children %>
+      <% if post.children.any? %>
         <span class="answer-count <%= post.answer_count == 0 ? 'badge is-tag is-red is-small' : 'h-c-green-700' %>">
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;
@@ -42,22 +42,20 @@
       <% end %>
     </p>
     <div class="has-padding-top-2">
+      <% category = defined?(@category) ? @category : post.category %>
+      <% if @show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+        <%= post_type_badge(post.post_type.name) %>
+      <% end %>
       <% if post.post_type.has_tags %>
-        <% category = defined?(@category) ? @category : post.category %>
-        <% if @show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
-          <%= post_type_badge(post.post_type.name) %>
-        <% end %>
-        <% if is_question %>
-          <% required_ids = post.category&.required_tag_ids %>
-          <% moderator_ids = post.category&.moderator_tag_ids %>
-          <% topic_ids = post.category&.topic_tag_ids %>
-          <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-            <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-            <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-            <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-            <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                        class: "badge is-tag #{required} #{topic} #{moderator}" %>
-          <% end %>
+        <% required_ids = post.category&.required_tag_ids %>
+        <% moderator_ids = post.category&.moderator_tag_ids %>
+        <% topic_ids = post.category&.topic_tag_ids %>
+        <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+          <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+          <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+          <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+          <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                      class: "badge is-tag #{required} #{topic} #{moderator}" %>
         <% end %>
       <% end %>
       <% if post.att_source.present? || post.created_at < RequestContext.community.created_at %>
