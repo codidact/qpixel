@@ -144,15 +144,8 @@
                 <% end %>
               </div>
             <% end %>
-            <% if (post_type.has_license && post.license.present?) || been_edited %>
+            <% if been_edited %>
               <div class="post--licensing--edited has-margin-left-2">
-                <% if post.license.present? %>
-                  <i class="fas fa-balance-scale" title="License"></i>
-                  <%= link_to post.license.name, post.license.url %>
-                <% end %>
-                <% if post.license.present? && been_edited %>
-                  &nbsp;
-                <% end %>
                 <% if been_edited %>
                   <i class="fa fa-pencil-alt" title="Edited"></i>
                   <span class="has-color-tertiary">

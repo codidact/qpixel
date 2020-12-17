@@ -1,5 +1,14 @@
 <div class="post--author">
   <div class="post--author-label" title="<%= post.created_at.iso8601 %>">posted <%= time_ago_in_words(post.created_at) %> ago</div>
+  
+
+  <% if post.license.present? %>
+    <div class="post--author-license">
+      <i class="fas fa-balance-scale" title="License"></i>
+      <%= link_to post.license.name, post.license.url %>
+    </div>
+  <% end %>
+  
   <div class="user-card">
     <div class="user-card--avatar">
       <img alt="user card" src="<%= avatar_url(post.user, 48) %>" height="48" width="48" class="has-float-left" />
