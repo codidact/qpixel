@@ -88,6 +88,11 @@ class PostsController < ApplicationController
     end
 
     if @post.save
+      if @post_type.has_parent?
+        @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
+                                              helpers.generic_show_link(@post))
+      end
+
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request

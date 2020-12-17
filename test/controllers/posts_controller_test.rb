@@ -146,11 +146,14 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'can create answer' do
     sign_in users(:standard_user)
+    before_notifs = posts(:question_one).user.notifications.count
     post :create, params: { post_type: post_types(:answer).id, parent: posts(:question_one).id,
                             post: { post_type_id: post_types(:answer).id, title: sample.title,
                                     body_markdown: sample.body_markdown, parent_id: posts(:question_one).id } }
+    after_notifs = posts(:question_one).user.notifications.count
     assert_response 302
     assert_not_nil assigns(:post).id
+    assert_equal before_notifs + 1, after_notifs, 'Notification not created on answer create'
     assert_redirected_to post_path(posts(:question_one).id, anchor: "answer-#{assigns(:post).id}")
   end
 
