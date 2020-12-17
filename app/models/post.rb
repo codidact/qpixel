@@ -33,7 +33,7 @@ class Post < ApplicationRecord
   validate :maximum_tag_length, if: -> { post_type.has_tags }
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
-  validate :category_allows_post_type, if: -> { post_type.has_category }
+  validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_available, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
   validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
