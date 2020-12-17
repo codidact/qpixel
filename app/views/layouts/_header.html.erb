@@ -34,11 +34,11 @@
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
-            <%= link_to flag_queue_path, class: 'header--item' do %>
+            <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
+              Mod
               <% if @open_flags > 0 %>
                 <span class="header--alert"><%= @open_flags %></span>
               <% end %>
-              Flags
             <% end %>
           <% end %>
         <% end %>
@@ -134,11 +134,11 @@
 
     <% if user_signed_in? %>
       <% if current_user.is_admin || current_user.is_moderator %>
-        <%= link_to flag_queue_path, class: 'menu--item' do %>
+        <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
+          Mod
           <% if @open_flags > 0 %>
             <span class="badge is-status"><%= @open_flags %></span>
           <% end %>
-          Flags
         <% end %>
       <% end %>
       <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
