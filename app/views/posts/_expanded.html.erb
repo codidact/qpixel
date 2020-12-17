@@ -18,7 +18,7 @@
         <%= post_type.is_closeable && post.closed ? "[closed]" : "" %>
       </span>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
-        <%= post_type_badge(post_type.name) %>
+        <%= post_type_badge(post_type) %>
       <% end %>
     </h1>
   <% end %>

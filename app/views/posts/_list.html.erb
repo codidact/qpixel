@@ -44,7 +44,7 @@
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
       <% if @show_type_tag || category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
-        <%= post_type_badge(post.post_type.name) %>
+        <%= post_type_badge(post.post_type) %>
       <% end %>
       <% if post.post_type.has_tags %>
         <% required_ids = post.category&.required_tag_ids %>
