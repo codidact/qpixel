@@ -54,6 +54,30 @@ class User < ApplicationRecord
     end
   end
 
+  # post_types must be the list of applicable post types
+  # passed only for '1' and '2'
+  def metric(key, post_types=[])
+    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 20.minutes) do
+      case key
+      when 'p'
+        Post.qa_only.undeleted.where(user: self).count
+      when '1'
+        Post.undeleted.where(post_type: post_types).count
+      when '2'
+        Post.undeleted.where(post_type: post_types).count
+      when 's'
+        Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: 1).count - \
+          Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: -1).count
+      when 'v'
+        Vote.where(post: Post.qa_only.undeleted.where(user: self)).count
+      when 'V'
+        votes.count
+      when 'E'
+        PostHistory.where(user: self, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
+      end
+    end
+  end
+
   def create_notification(content, link)
     notification = Notification.create(content: content, link: link)
     notifications << notification

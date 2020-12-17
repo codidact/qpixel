@@ -103,6 +103,9 @@ class PostsController < ApplicationController
       return not_found
     end
 
+    @top_level_post_types = top_level_post_types
+    @second_level_post_types = second_level_post_types
+
     @children = if current_user&.privilege?('flag_curate')
                   Post.where(parent_id: @post.id)
                 else

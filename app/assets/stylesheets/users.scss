@@ -67,3 +67,45 @@
   border-radius: 2px !important;
   font-weight: 700 !important;
 }
+
+
+.user-card {
+  display: flex;
+
+  .user-card--avatar {
+    align-self: flex-start;
+    padding: 0.5rem;
+    padding-left: 0;
+    flex-grow: 0;
+  }
+  .user-card--content {
+    padding: 0.25rem;
+    padding-bottom: 0;
+    
+    .user-card--link {
+      margin-bottom: 0.75rem;
+    }
+
+    .user-card--meta {
+      font-size: 0.85em;
+      color: #666;
+      display: flex;
+      flex-wrap: wrap;
+
+      .user-card--break {
+        flex-grow: 1;
+        width: 100%;
+      }
+      .user-card--detail {
+        margin-top: 0.125rem;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+}

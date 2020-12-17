@@ -118,11 +118,14 @@ h1 .badge.is-tag.is-master-tag {
     display: flex;
     flex-direction: column;
     align-self: flex-end;
+    width: 225px;
+    padding: 0.5rem;
+    background-color: #eee;
+    border-radius: 5px;
 
-    img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
+    .post--author-label {
+      color: #888;
+      font-size: 0.95em;
     }
   }
 
