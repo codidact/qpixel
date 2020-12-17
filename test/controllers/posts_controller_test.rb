@@ -268,6 +268,12 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to post_path(posts(:answer_one).parent_id)
   end
 
+  test 'unprivileged user cannot see post in high trust level category' do
+    sign_in users(:standard_user)
+    get :show, params: { id: posts(:high_trust).id }
+    assert_response 404
+  end
+
   # Edit
 
   test 'can get edit' do
