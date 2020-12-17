@@ -20,7 +20,7 @@
       <% end %>
     </div>
     <nav class="header--menu">
-    <% unless @community.is_fake %>
+      <% unless @community.is_fake %>
         <%= link_to 'Categories', categories_path, class: 'header--item' %>
         <%= link_to 'Users', users_path, class: 'header--item' %>
         <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
@@ -64,20 +64,22 @@
         </div>
       <% end %>
       <% unless @community.is_fake %>
-      <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
-          <span class="header--menu-bars">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-      </a>
+        <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
+            <span class="header--menu-bars">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+        </a>
       <% end %>
     </nav>
   </div>
 </header>
 
 <div class="header-slide" id="communities-slide">
-  <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+  <% if user_signed_in? %>
+    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+  <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
   <% Community.all.each do |c| %>

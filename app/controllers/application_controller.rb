@@ -145,7 +145,7 @@ class ApplicationController < ActionController::Base
   private
 
   def distinguish_fake_community
-    if @community.is_fake
+    if RequestContext.community.is_fake
       return redirect_to :fc_communities if request.fullpath == '/'
       return not_found unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
     else

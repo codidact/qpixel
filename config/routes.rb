@@ -244,7 +244,7 @@ Rails.application.routes.draw do
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '500',                             to: 'errors#internal_server_error'
 
-  scope 'net' do
+  scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
 end
