@@ -21,7 +21,6 @@
     </div>
     <nav class="header--menu">
       <% unless @community.is_fake %>
-        <%= link_to 'Categories', categories_path, class: 'header--item' %>
         <%= link_to 'Users', users_path, class: 'header--item' %>
         <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
 
@@ -47,16 +46,16 @@
           <% if unread > 0 %>
             <span class="header--alert inbox-count"><%= unread %></span>
           <% end %>
-          <i class='fas fa-inbox' title='Notifications'></i>
+          <i class='fas fa-fw fa-inbox' title='Notifications'></i>
         </a>
         <%= link_to qr_login_code_path, class: 'header--item' do %>
-          <i class="fas fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
+          <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
           <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">
         <% end %>
       <% end %>
-      <a href="#" class="header--item" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-caret-square-down"></i></a>
+      <a href="#" class="header--item" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
       <% unless user_signed_in? %>
         <div class="header--item">
           <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
@@ -124,7 +123,6 @@
 <% unless @community.is_fake %>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
-    <%= link_to 'Categories', categories_path, class: 'menu--item' %>
     <%= link_to 'Users', users_path, class: 'menu--item' %>
     <%= link_to 'Search', search_path, class: 'menu--item' %>
 
