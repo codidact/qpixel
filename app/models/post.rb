@@ -27,30 +27,30 @@ class Post < ApplicationRecord
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
-  validates :title, :body, :tags_cache, presence: true, if: -> { question? || article? }
-  validate :tags_in_tag_set, if: -> { question? || article? }
-  validate :maximum_tags, if: -> { question? || article? }
-  validate :maximum_tag_length, if: -> { question? || article? }
-  validate :no_spaces_in_tags, if: -> { question? || article? }
-  validate :stripped_minimum, if: -> { question? || article? }
-  validate :category_allows_post_type
-  validate :license_available
-  validate :required_tags?, if: -> { question? || article? }
-  validate :moderator_tags, if: -> { question? || article? }
+  validates :title, :body, :tags_cache, presence: true, if: -> { post_type.has_tags }
+  validate :tags_in_tag_set, if: -> { post_type.has_tags }
+  validate :maximum_tags, if: -> { post_type.has_tags }
+  validate :maximum_tag_length, if: -> { post_type.has_tags }
+  validate :no_spaces_in_tags, if: -> { post_type.has_tags }
+  validate :stripped_minimum, if: -> { post_type.has_tags }
+  validate :category_allows_post_type, if: -> { category_id.present? }
+  validate :license_available, if: -> { post_type.has_license }
+  validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
+  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
-  scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
+  scope :list_includes, -> { includes(:user, :tags, :post_type, :category, user: :avatar_attachment) }
 
-  before_validation :update_tag_associations, if: -> { question? || article? }
+  before_validation :update_tag_associations, if: -> { post_type.has_tags }
   after_create :create_initial_revision
   after_create :add_license_if_nil
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_category_activity, if: -> { question? || article? }
+  after_save :update_category_activity, if: -> { post_type.has_category }
   after_save :recalc_score
 
   def self.search(term)

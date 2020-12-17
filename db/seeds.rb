@@ -16,6 +16,7 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
     data = YAML.load(processed)
     created = 0
     skipped = 0
+    updated = 0
     data.each do |seed|
       seed.each do |attr, value|
         if value.is_a?(String) && value.start_with?("$FILE ")
@@ -23,18 +24,40 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
         end
       end
 
-      seeds = if type.column_names.include?('community_id') && !seed.include?('community_id')
-                # if model includes a community_id, create the seed for every community
-                Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
-              else
-                # otherwise, no need to worry, just create it
-                [seed]
-              end
-      objs = type.create seeds
-      skipped += objs.select { |o| o.errors.any? }.size
-      created += objs.select { |o| !o.errors.any? }.size
+      if type == Post
+        seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
+        Community.all.each do |c|
+          RequestContext.community = c
+          post = Post.find_by doc_slug: seed['doc_slug']
+          if post.present? && PostHistory.where(post: post).count <= 1
+            # post exists, still original version: update post
+            post.update(seed.merge('community_id' => c.id))
+            updated += 1
+          elsif post.nil?
+            # post doesn't exist: create post
+            Post.create seed.merge('community_id' => c.id)
+            created += 1
+          else
+            # post exists, versions diverged: skip
+            skipped += 1
+          end
+        end
+      else
+        seeds = if type.column_names.include?('community_id') && !seed.include?('community_id')
+                 # if model includes a community_id, create the seed for every community
+                 Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
+               else
+                 # otherwise, no need to worry, just create it
+                 [seed]
+               end
+        objs = type.create seeds
+        skipped += objs.select { |o| o.errors.any? }.size
+        created += objs.select { |o| !o.errors.any? }.size
+      end
     end
-    puts "#{type}: Created #{created}, skipped #{skipped}" unless Rails.env.test?
+    unless Rails.env.test?
+      puts "#{type}: Created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
+    end
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."
   end

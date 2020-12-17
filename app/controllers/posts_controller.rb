@@ -88,6 +88,11 @@ class PostsController < ApplicationController
     end
 
     if @post.save
+      if @post_type.has_parent?
+        @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
+                                              helpers.generic_show_link(@post))
+      end
+
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request
@@ -105,6 +110,11 @@ class PostsController < ApplicationController
 
     @top_level_post_types = top_level_post_types
     @second_level_post_types = second_level_post_types
+
+    if @post.category_id.present? && @post.category.min_view_trust_level.present? && \
+       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level)
+      return not_found
+    end
 
     @children = if current_user&.privilege?('flag_curate')
                   Post.where(parent_id: @post.id)
@@ -132,7 +142,8 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user
+    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
+       (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
       if @post.update(edit_post_params.merge(body: body_rendered,
                                              last_edited_at: DateTime.now, last_edited_by: current_user,
                                              last_activity: DateTime.now, last_activity_by: current_user))

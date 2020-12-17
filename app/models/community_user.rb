@@ -25,8 +25,9 @@ class CommunityUser < ApplicationRecord
   # These are quite expensive, so we'll cache them for a while
   def post_score
     Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 3.hours) do
-      good_posts = Post.where(user: user).where('score > 0.5').count
-      bad_posts = Post.where(user: user).where('score < 0.5').count
+      exclude_types = ApplicationController.helpers.post_type_ids(is_freely_editable: true)
+      good_posts = Post.where(user: user).where('score > 0.5').where.not(post_type_id: exclude_types).count
+      bad_posts = Post.where(user: user).where('score < 0.5').where.not(post_type_id: exclude_types).count
 
       (good_posts + 2.0) / (good_posts + bad_posts + 4.0)
     end

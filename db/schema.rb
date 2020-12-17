@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_16_202459) do
+ActiveRecord::Schema.define(version: 2020_12_17_025220) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -310,6 +310,8 @@ ActiveRecord::Schema.define(version: 2020_12_16_202459) do
     t.boolean "is_public_editable", default: false, null: false
     t.boolean "is_closeable", default: false, null: false
     t.boolean "is_top_level", default: false, null: false
+    t.boolean "is_freely_editable", default: false, null: false
+    t.string "icon_name"
     t.index ["name"], name: "index_post_types_on_name"
   end
 
@@ -546,6 +548,7 @@ ActiveRecord::Schema.define(version: 2020_12_16_202459) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.integer "trust_level"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

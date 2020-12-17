@@ -11,6 +11,7 @@ main:
     - question
     - answer
     - article
+    - free_edit
   tag_set: main
   license: cc_by_sa
 

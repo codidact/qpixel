@@ -70,11 +70,11 @@
       </div>
 
       <h2 class="user-profile-heading">Posts</h2>
-      <% if @user.posts.size == 0 %>
+      <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</p>
       <% else %>
         <div class="item-list user-profile-post-list">
-          <% @user.posts.undeleted.order(score: :desc).first(15).each do |a| %>
+          <% @posts.each do |a| %>
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
           <% end %>
         </div>

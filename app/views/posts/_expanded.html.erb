@@ -18,7 +18,7 @@
         <%= post_type.is_closeable && post.closed ? "[closed]" : "" %>
       </span>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
-        <%= post_type_badge(post_type.name) %>
+        <%= post_type_badge(post_type) %>
       <% end %>
     </h1>
   <% end %>
@@ -178,7 +178,7 @@
               <i class="fa fa-history"></i>
               History
             <% end %>
-            <% unless post.locked? || !post_type.is_public_editable %>
+            <% if (post_type.is_public_editable && !post.locked?) || current_user&.is_moderator %>
               <% if check_your_post_privilege(post, 'edit_post') %>
                 <% if post.pending_suggested_edit? %>
                   <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
