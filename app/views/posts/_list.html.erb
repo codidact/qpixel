@@ -19,6 +19,10 @@
         <span class="js-downvote-count has-font-size-subheading">&minus;<%= post.downvote_count %></span>
       </span>
     </div>
+  <% else %>
+    <div class="item-list--number-value post--no-votes">
+      <i class="far fa-dot-circle" title="This post type does not support voting."></i>
+    </div>
   <% end %>
   <div class="item-list--text-value is-primary">
     <div class="post-list--title">
