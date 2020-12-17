@@ -19,7 +19,7 @@ class SuggestedEditController < ApplicationController
       return
     end
 
-    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: params[:edit_comment],
+    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: @edit.comment,
              before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags }
 
     before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
