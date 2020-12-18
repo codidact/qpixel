@@ -1,0 +1,29 @@
+<h1>Suggested Edits</h1>
+<p class="is-lead">This is a list of all (pending) suggested edits on posts in this category.</p>
+
+<div class="button-list is-gutterless">
+  <a href="?show_decided=0" class="button is-muted is-outlined <%= params[:show_decided] != '1' ? 'is-active' : '' %>">Only pending</a>
+  <a href="?show_decided=1" class="button is-muted is-outlined <%= params[:show_decided] == '1' ? 'is-active' : '' %>">Only decided</a>
+</div>
+
+<% if @edits.any? %>
+  <div class="widget">
+    <% @edits.each do |edit| %>
+      <div class="widget--body h-p-b-0">
+        <div>
+          <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger' do %>
+            <%= edit.post.post_type.name %>: <strong><%= edit.post.post_type.is_top_level ? edit.post.title : edit.post.parent.title %></strong>
+          <% end %>
+        </div>
+        <div class="form-caption h-m-t-2">
+          <strong class="<%= edit.active ? '' : (edit.approved? ? 'h-c-green-700' : 'h-c-red-600' ) %>"
+          ><%= edit.active ? 'Pending' : (edit.approved? ? 'Approved' : 'Rejected' ) %></strong> suggested edit
+          by <%= link_to edit.user.rtl_safe_username, user_path(edit.user), dir: 'ltr' %>,
+          <span title="<%= edit.created_at.iso8601 %>"><%= time_ago_in_words(edit.created_at) %> ago</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+<p>There's no suggested edit in this category.</p>
+<% end %>

@@ -173,9 +173,11 @@
       <div class="category-header--name"><%= current_cat.name %></div>
       <div class="category-header--nav">
         <%= link_to 'Posts', category_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && controller_name != 'tags' ? 'is-active' : ''}" %>
+                    class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
         <%= link_to 'Tags', category_tags_path(current_cat),
                     class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
+        <%= link_to 'Suggested Edits', suggested_edits_queue_path(current_cat),
+                    class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" %>
         <div class="category-header--nav-separator"></div>
         <%= link_to category_post_types_path(current_cat.id),
                     class: 'category-header--nav-item is-button' do %>

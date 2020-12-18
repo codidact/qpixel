@@ -1,6 +1,17 @@
 class SuggestedEditController < ApplicationController
   before_action :set_suggested_edit, only: [:show, :approve, :reject]
 
+  def category_index
+    @category = params[:category].present? ? Category.find(params[:category]) : nil
+    @edits = if params[:show_decided].present? && params[:show_decided] == '1'
+               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false) \
+                            .order('created_at DESC').all
+             else
+               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
+                            .order('created_at ASC').all
+             end
+  end
+
   def show
     render layout: 'without_sidebar'
   end
