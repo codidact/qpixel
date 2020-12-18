@@ -9,9 +9,9 @@
 <% if @edits.any? %>
   <div class="widget">
     <% @edits.each do |edit| %>
-      <div class="widget--body h-p-b-0">
+      <div class="widget--body h-p-b-0" data-ckb-list-item data-ckb-item-type="link">
         <div>
-          <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger' do %>
+          <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger', data: {'ckb-item-link' => ''} do %>
             <%= edit.post.post_type.name %>: <strong><%= edit.post.post_type.is_top_level ? edit.post.title : edit.post.parent.title %></strong>
           <% end %>
         </div>
