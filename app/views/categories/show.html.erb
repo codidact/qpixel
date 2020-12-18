@@ -37,7 +37,7 @@
                   class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}" %>
     <% end %>
     <% if @category.name == 'Q&A' %>
-      <%= link_to 'Lottery', query_url(sort: 'lottery'),
+      <%= link_to 'Random', query_url(sort: 'lottery'),
                   class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}" %>
     <% end %>
   </div>

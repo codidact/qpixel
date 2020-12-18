@@ -4,7 +4,7 @@
                                       'is-active' : ''}" %>
   <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
   <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
-  <%= link_to 'Lottery', questions_lottery_path, class: "button is-muted is-outlined #{current_page?(questions_lottery_path) ? 'is-active' : ''}" %>
+  <%= link_to 'Random', questions_lottery_path, class: "button is-muted is-outlined #{current_page?(questions_lottery_path) ? 'is-active' : ''}" %>
 </div>
 <div class="has-clear-clear">&nbsp;</div>
 
