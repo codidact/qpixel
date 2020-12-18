@@ -23,13 +23,9 @@
       <% unless @community.is_fake %>
         <%= link_to 'Users', users_path, class: 'header--item' %>
         <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
-
-        <div class='header--separator'></div>
-
-        <%= link_to 'Help', help_center_path, class: 'header--item' %>
       <% else %>
-        <div class='header--separator'></div>
       <% end %>
+        <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
@@ -41,6 +37,11 @@
             <% end %>
           <% end %>
         <% end %>
+      <% end %>
+      <% unless @community.is_fake %>
+        <%= link_to 'Help', help_center_path, class: 'header--item' %>
+      <% end %>
+      <% if user_signed_in? %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
