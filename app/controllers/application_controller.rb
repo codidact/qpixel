@@ -96,8 +96,8 @@ class ApplicationController < ActionController::Base
 
     if post.locked?
       respond_to do |format|
-        format.html { render 'errors/locked', layout: 'without_sidebar', status: :unauthorized }
-        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: :unauthorized }
+        format.html { render 'errors/locked', layout: 'without_sidebar', status: :forbidden }
+        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: :forbidden }
       end
     end
   end
