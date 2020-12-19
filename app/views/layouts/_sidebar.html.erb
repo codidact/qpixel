@@ -61,12 +61,14 @@
   <% end %>
 
   <% if Rails.env.development? || rand(100) <= 10 %>
-    <div class="has-margin-4">
-      <% post_id = promoted_posts.keys.shuffle.first %>
-      <%= link_to post_path(post_id) do %>
-        <%= image_tag specific_question_ads_path(post_id) %>
-      <% end %>
-    </div>
+    <% post_id = promoted_posts.keys.shuffle.first %>
+    <% if post_id %>
+      <div class="has-margin-4">
+        <%= link_to post_path(post_id) do %>
+          <%= image_tag specific_question_ads_path(post_id) %>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 
   <% if moderator? || admin? %>
