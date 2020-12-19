@@ -41,8 +41,10 @@ class Post < ApplicationRecord
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
-  scope :list_includes, -> { includes(:user, :tags, :post_type, :category, :last_activity_by,
-                                      user: :avatar_attachment) }
+  scope :list_includes, lambda {
+                          includes(:user, :tags, :post_type, :category, :last_activity_by,
+                                   user: :avatar_attachment)
+                        }
 
   before_validation :update_tag_associations, if: -> { post_type.has_tags }
   after_create :create_initial_revision
