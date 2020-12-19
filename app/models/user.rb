@@ -62,7 +62,7 @@ class User < ApplicationRecord
       when 'p'
         Post.qa_only.undeleted.where(user: self).count
       when '1', '2'
-        Post.undeleted.where(post_type: post_types).count
+        Post.undeleted.where(post_type: post_types, user: self).count
       when 's'
         Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: 1).count - \
           Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: -1).count
