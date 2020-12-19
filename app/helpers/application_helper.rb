@@ -135,5 +135,6 @@ module ApplicationHelper
 
   def promoted_posts
     JSON.parse(RequestContext.redis.get('network/promoted_posts') || '{}')
+        .select { |_k, v| DateTime.now.to_i - v <= 3600 * 24 * 28 }
   end
 end

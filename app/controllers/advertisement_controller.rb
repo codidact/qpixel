@@ -139,12 +139,10 @@ class AdvertisementController < ApplicationController
 
   def specific_question
     @post = Post.find(params[:id])
-    if @post.question?
-      question_ad(@post)
-    elsif @post.article?
+    if @post.article?
       article_ad(@post)
     else
-      not_found
+      question_ad(@post)
     end
   end
 
