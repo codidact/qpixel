@@ -9,54 +9,5 @@
     </div>
   <% end %>
   
-  <div class="user-card">
-    <div class="user-card--avatar">
-      <img alt="user card" src="<%= avatar_url(post.user, 48) %>" height="48" width="48" class="has-float-left" />
-    </div>
-    <div class="user-card--content">
-      <%= link_to user_path(post.user), dir: 'ltr', class: 'user-card--link' do %>
-        <%= post.user.rtl_safe_username %>
-      <% end %>
-      <div class="user-card--meta">
-        <% SiteSetting['UserCardDetails'].each_char do |detail| %>
-          <% case detail %>
-          <% when '.' %>
-            <span class="user-card--break"></span>
-          <% when 'r' %>
-            <span class="user-card--detail">
-              <%= post.user.reputation %> <span title="reputation">rep.</span>
-            </span>
-          <% when 'p' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-comments" title="number of posts"></i> <%= post.user.metric 'p' %>
-            </span>
-          <% when '1' %>
-            <span class="user-card--detail">
-              <i class="far fa-fw fa-comment-alt" title="number of top-level posts"></i> <%= post.user.metric '1', @top_level_post_types %>
-            </span>
-          <% when '2' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-reply-all" title="number of answers"></i> <%= post.user.metric '2', @second_level_post_types %>
-            </span>
-          <% when 's' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-star-half-alt" title="sum of received votes (up minus down)"></i> <%= post.user.metric 's' %>
-            </span>
-          <% when 'v' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-poll" title="total number of votes received"></i> <%= post.user.metric 'v' %>
-            </span>
-          <% when 'V' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-chevron-up" title="total number of votes cast"></i> <%= post.user.metric 'V' %>
-            </span>
-          <% when 'E' %>
-            <span class="user-card--detail">
-              <i class="fas fa-fw fa-pen" title="number of edits made"></i> <%= post.user.metric 'E' %>
-            </span>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  </div>
+  <%= render 'users/common_card', user: post.user, ckb: false %>
 </div>
