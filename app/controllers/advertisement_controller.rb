@@ -182,14 +182,12 @@ class AdvertisementController < ApplicationController
 
   def promoted_post
     promoted = helpers.promoted_posts
-    if promoted.size == 0
+    if promoted.empty?
       return community
     end
 
-    @post = Post.unscoped.find(promoted.keys.shuffle.first)
-    if @post.question?
-      question_ad(@post)
-    elsif @post.article?
+    @post = Post.unscoped.find(promoted.keys.sample)
+    if @post.article?
       article_ad(@post)
     else
       question_ad(@post)
