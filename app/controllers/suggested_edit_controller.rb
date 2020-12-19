@@ -5,10 +5,10 @@ class SuggestedEditController < ApplicationController
     @category = params[:category].present? ? Category.find(params[:category]) : nil
     @edits = if params[:show_decided].present? && params[:show_decided] == '1'
                SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false) \
-                            .order('created_at DESC').all
+                            .order('created_at DESC')
              else
                SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
-                            .order('created_at ASC').all
+                            .order('created_at ASC')
              end
   end
 

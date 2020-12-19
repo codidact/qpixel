@@ -57,7 +57,7 @@ class User < ApplicationRecord
   # post_types must be the list of applicable post types
   # passed only for '1' and '2'
   def metric(key, post_types = [])
-    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 20.minutes) do
+    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 2.hours) do
       case key
       when 'p'
         Post.qa_only.undeleted.where(user: self).count

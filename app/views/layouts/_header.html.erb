@@ -86,8 +86,8 @@
     <div class="community-header-list-entry">
       <% settings = SiteSetting.for_community_id(c.id) %>
       <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
-      <%= link_to "//" + c.host do %>
-        <% if !logo_setting.nil? %>
+      <%= link_to "//#{c.host}" do %>
+        <% unless logo_setting.nil? %>
           <div class="img">
             <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
           </div>
@@ -148,46 +148,45 @@
 
 
 <% unless @community.is_fake %>
-<% if expandable? %>
-  <% current_cat = current_category %>
-  <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
-<% else %>
-  <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
-<% end %>
-<header class="category-header is-<%= header_class %>">
-  <div class="category-header--tabs">
-    <div class="container category-header--tabs-container">
-      <% @header_categories.each do |cat| %>
-        <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
-        <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
-          <%= cat.name %>
-          <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-            <span class="badge is-status" title="new posts for you"></span>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
-  </div>
   <% if expandable? %>
-    <div class="container category-header--container">
-      <div class="category-header--name"><%= current_cat.name %></div>
-      <div class="category-header--nav">
-        <%= link_to 'Posts', category_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
-        <%= link_to 'Tags', category_tags_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
-        <%= link_to 'Suggested Edits', suggested_edits_queue_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" %>
-        <div class="category-header--nav-separator"></div>
-        <%= link_to category_post_types_path(current_cat.id),
-                    class: 'category-header--nav-item is-button' do %>
-          <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+    <% current_cat = current_category %>
+    <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+  <% else %>
+    <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+  <% end %>
+  <header class="category-header is-<%= header_class %>">
+    <div class="category-header--tabs">
+      <div class="container category-header--tabs-container">
+        <% @header_categories.each do |cat| %>
+          <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
+          <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
+            <%= cat.name %>
+            <% if user_signed_in? && cat.new_posts_for?(current_user) %>
+              <span class="badge is-status" title="new posts for you"></span>
+            <% end %>
+          <% end %>
         <% end %>
       </div>
     </div>
-  <% end %>
-</header>
-
+    <% if expandable? %>
+      <div class="container category-header--container">
+        <div class="category-header--name"><%= current_cat.name %></div>
+        <div class="category-header--nav">
+          <%= link_to 'Posts', category_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
+          <%= link_to 'Tags', category_tags_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
+          <%= link_to 'Suggested Edits', suggested_edits_queue_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" %>
+          <div class="category-header--nav-separator"></div>
+          <%= link_to category_post_types_path(current_cat.id),
+                      class: 'category-header--nav-item is-button' do %>
+            <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </header>
 <% end %>
 
 <% if Rails.env.development? %>
