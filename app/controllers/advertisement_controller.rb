@@ -228,7 +228,6 @@ class AdvertisementController < ApplicationController
 
   def question_ad(question)
     ad = Rails.cache.fetch "posts/#{question.id}/ad", expires_in: 60.minutes do
-      puts 'start cache'
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
