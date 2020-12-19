@@ -138,7 +138,7 @@ class AdvertisementController < ApplicationController
   end
 
   def specific_question
-    @post = Post.find(params[:id])
+    @post = Post.unscoped.find(params[:id])
     if @post.article?
       article_ad(@post)
     else
@@ -147,7 +147,7 @@ class AdvertisementController < ApplicationController
   end
 
   def specific_category
-    @category = Category.find(params[:id])
+    @category = Category.unscoped.find(params[:id])
     @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}",
                               expires_in: 5.minutes do
       select_random_post(@category)
@@ -247,7 +247,7 @@ class AdvertisementController < ApplicationController
         self.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
+      icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
       if icon_path.present?
         icon = community_icon(icon_path)
         icon.resize_to_fit!(175, 75)
@@ -324,7 +324,7 @@ class AdvertisementController < ApplicationController
         self.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
+      icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
       if icon_path.present?
         icon = community_icon(icon_path)
         icon.resize_to_fit!(120, 50)
