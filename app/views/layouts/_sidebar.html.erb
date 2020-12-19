@@ -57,6 +57,12 @@
     </div>
   <% end %>
 
+  <% if Rails.env.development? || rand(100) <= 10 %>
+    <div class="has-margin-4">
+      <%= image_tag promoted_post_ads_path %>
+    </div>
+  <% end %>
+
   <% if moderator? || admin? %>
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Moderator Tools</h4>

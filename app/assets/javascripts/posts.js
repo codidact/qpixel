@@ -232,4 +232,26 @@ $(() => {
       $tgt.find('.js-text').text('Copy Link');
     }, 1000);
   });
+
+  $('.js-nominate-promotion').on('click', async ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post-id');
+    const resp = await fetch(`/posts/${postId}/promote`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': QPixel.csrfToken()
+      }
+    });
+    const data = await resp.json();
+    if (data.success) {
+      QPixel.createNotification('success', 'Added post to promotion list.');
+    }
+    else {
+      QPixel.createNotification('danger', `Couldn't add post to promotion list. (${resp.status})`);
+    }
+    $('.js-mod-tools').removeClass('is-active');
+  });
 });

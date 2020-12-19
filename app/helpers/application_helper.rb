@@ -132,4 +132,8 @@ module ApplicationHelper
     end
     s
   end
+
+  def promoted_posts
+    JSON.parse(RequestContext.redis.get('network/promoted_posts') || '{}')
+  end
 end

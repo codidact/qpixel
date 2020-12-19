@@ -94,6 +94,7 @@ Rails.application.routes.draw do
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
     post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
+    post   ':id/promote',                  to: 'posts#nominate_promotion', as: :promote_post
 
     get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
     post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
@@ -213,6 +214,7 @@ Rails.application.routes.draw do
     get 'codidact.png',                    to: 'advertisement#codidact', as: :codidact_ads
     get 'community.png',                   to: 'advertisement#community', as: :community_ads
     get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
+    get 'posts/promoted.png',              to: 'advertisement#promoted_post', as: :promoted_post_ads
     get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
     get 'category/:id.png',                to: 'advertisement#specific_category', as: :specific_category_ads
   end
