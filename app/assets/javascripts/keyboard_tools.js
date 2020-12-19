@@ -72,6 +72,9 @@ $(() => {
         else if (_CodidactKeyboard.state === 'goto/category-tags') {
             categoryTagsMenu(e);
         }
+        else if (_CodidactKeyboard.state === 'goto/category-edits') {
+            categorySuggestedEditsMenu(e);
+        }
         else if (_CodidactKeyboard.state === 'tools') {
             toolsMenu(e);
         }
@@ -113,7 +116,8 @@ $(() => {
                 'h  Help\n' +
                 'p  Your profile page\n' +
                 'c  Category ...\n' +
-                't  Tags of category ...' +
+                't  Tags of category ...\n' +
+                'e  Suggested Edits of category ...' +
                 (_CodidactKeyboard.is_mod ? '\nf  Flags (mod only)' : '')
             );
             _CodidactKeyboard.state = 'goto';
@@ -198,6 +202,22 @@ $(() => {
             // FIXME what's happened here? tlink isn't defined
             window.location.href = tlink;
         }
+        else if (e.key === "e") {
+            const data = Object.entries(_CodidactKeyboard.categories());
+            let string_response = "";
+            for (let i = 0; i < data.length; i++) {
+                const entry = data[i];
+                string_response += (i + 1) + "  " + entry[0] + "\n"
+            }
+            _CodidactKeyboard.dialog('Go to suggested edits of category ...\n' +
+                '==================\n' +
+                string_response.trim()
+            );
+            _CodidactKeyboard.state = 'goto/category-edits';
+
+            // FIXME what's happened here? tlink isn't defined
+            window.location.href = tlink;
+        }
         else if (e.key === 'c') {
             const data = Object.entries(_CodidactKeyboard.categories());
             let string_response = "";
@@ -207,7 +227,6 @@ $(() => {
             }
             _CodidactKeyboard.dialog('Go to category ...\n' +
                 '==================\n' +
-                "c  Category List\n" +
                 string_response.trim()
             );
             _CodidactKeyboard.state = 'goto/category';
@@ -216,18 +235,13 @@ $(() => {
     }
 
     function categoryMenu(e) {
-        if (e.key === "c") {
-            window.location.href = "/categories";
-        }
-        else {
-            const number = parseInt(e.key);
-            if (!isNaN(number)) {
-                data = _CodidactKeyboard.categories();
-                const data = Object.entries(data);
-            
-                const category = data[number - 1];
-                window.location.href = category[1];
-            }
+        const number = parseInt(e.key);
+        if (!isNaN(number)) {
+            const data = _CodidactKeyboard.categories();
+            const data_entries = Object.entries(data);
+        
+            const category = data_entries[number - 1];
+            window.location.href = category[1];
         }
     }
 
@@ -238,6 +252,16 @@ $(() => {
         
             const category = data[number - 1];
             window.location.href = category[1] + "/tags";
+        }
+    }
+
+    function categorySuggestedEditsMenu(e) {
+        const number = parseInt(e.key);
+        if (!isNaN(number)) {
+            const data = Object.entries(_CodidactKeyboard.categories());
+        
+            const category = data[number - 1];
+            window.location.href = category[1] + "/suggested-edits";
         }
     }
 

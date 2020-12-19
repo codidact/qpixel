@@ -1,13 +1,13 @@
-<div class="post--author has-color-tertiary">
-  <div title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at) %> ago</div>
-  <div>
-    <img alt="user avatar" src="<%= avatar_url(post.user, 32) %>" height="32" width="32" class="has-float-left" />
-    <div class="has-padding-1 has-float-left">
-      <%= link_to user_path(post.user), dir: 'ltr' do %>
-        <%= post.user.rtl_safe_username %>
-      <% end %>
-      <span class="badge is-user-trust-level is-muted"><%= post.user.reputation %></span>
+<div class="post--author">
+  <div class="post--author-label" title="<%= post.created_at.iso8601 %>">posted <%= time_ago_in_words(post.created_at) %> ago</div>
+  
+
+  <% if post.license.present? %>
+    <div class="post--author-license">
+      <i class="fas fa-balance-scale" title="license of this post"></i>
+      <%= link_to post.license.name, post.license.url %>
     </div>
-    <div class="has-clear-clear"></div>
-  </div>
+  <% end %>
+  
+  <%= render 'users/common_card', user: post.user, ckb: false %>
 </div>

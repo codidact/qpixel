@@ -1,5 +1,11 @@
 <% content_for :title, "Moderator Dashboard" %>
 
+<% if current_user.is_admin %>
+  <%= link_to admin_path, class: "has-font-size-small" do %>
+    Switch to Admin Tools
+  <% end %>
+<% end %>
+
 <h1>Moderator Dashboard</h1>
 <p>This page serves as a repository of links to the various tools you have access to as a moderator. While
   you use these, remember that the data in them is usually moderator-only, and should likely not be shared

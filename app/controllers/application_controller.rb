@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :check_if_warning_or_suspension_pending
+  before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
   helper_method :top_level_post_types, :second_level_post_types
@@ -139,6 +140,18 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def distinguish_fake_community
+    if RequestContext.community.is_fake
+      return redirect_to :fc_communities if request.fullpath == '/'
+
+      unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
+        not_found
+      end
+    else
+      return not_found if ['fake_community'].include?(controller_name)
+    end
+  end
+
   def stop_the_awful_troll
     # There shouldn't be any trolls in the test environment... :D
     return true if Rails.env.test?
@@ -197,7 +210,7 @@ class ApplicationController < ActionController::Base
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
     RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
-      Community.find_by(host: host_name)
+      Community.unscoped.find_by(host: host_name)
     end
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \

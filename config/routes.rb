@@ -189,6 +189,7 @@ Rails.application.routes.draw do
     post   ':id/tags/:tag_id/rename',      to: 'tags#rename', as: :rename_tag
     get    ':id/tags/:tag_id/merge',       to: 'tags#select_merge', as: :select_tag_merge
     post   ':id/tags/:tag_id/merge',       to: 'tags#merge', as: :merge_tag
+    get    ':category/suggested-edits',    to: 'suggested_edit#category_index', as: :suggested_edits_queue
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
@@ -245,4 +246,8 @@ Rails.application.routes.draw do
   get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '500',                             to: 'errors#internal_server_error'
+
+  scope 'network' do
+    root                                   to: 'fake_community#communities', as: :fc_communities
+  end
 end

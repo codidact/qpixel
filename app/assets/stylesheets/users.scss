@@ -16,7 +16,7 @@
   padding: 0.5em;
 
   &:hover {
-    background: lighten($primary, 50%);
+    background: #eeeeee;
   }
 
   .username {
@@ -66,4 +66,54 @@
   padding: 3px 6px !important;
   border-radius: 2px !important;
   font-weight: 700 !important;
+}
+
+
+.user-card {
+  display: flex;
+
+  .user-card--avatar {
+    align-self: flex-start;
+    padding: 0 0.5rem;
+    padding-left: 0;
+    flex-grow: 0;
+  }
+  .user-card--content {
+    padding: 0 0.25rem;
+    
+    .user-card--link {
+      margin-bottom: 0.75rem;
+    }
+
+    .user-card--meta {
+      font-size: 0.85em;
+      color: #666;
+      display: flex;
+      flex-wrap: wrap;
+
+      .user-card--break {
+        flex-grow: 1;
+        width: 100%;
+      }
+      .user-card--detail {
+        margin-top: 0.125rem;
+        margin-right: 0.35rem;
+
+        .fa-fw {
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+
+  img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+}
+.post--author .user-card {
+  border-top: 1px solid #ddd;
+  padding-top: 0.25rem;
+  margin-top: 0.25rem;
 }
