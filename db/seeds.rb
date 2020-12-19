@@ -25,6 +25,8 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
       end
 
       if type == Post && ENV['UPDATE_POSTS'] == 'true'
+        puts "Running full Posts update..."
+
         seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
         Community.all.each do |c|
           RequestContext.community = c
@@ -62,3 +64,5 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
     puts "Got error #{e}. Continuing..."
   end
 end
+
+Post.where(community_id: nil).destroy_all
