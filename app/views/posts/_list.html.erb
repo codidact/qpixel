@@ -35,7 +35,7 @@
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
-      <% if post.children.any? %>
+      <% if post.post_type.has_answers? %>
         <span class="answer-count <%= post.answer_count == 0 ? 'badge is-tag is-red is-small' : 'h-c-green-700' %>">
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;
