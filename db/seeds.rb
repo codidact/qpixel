@@ -24,7 +24,7 @@ Dir.glob(Rails.root.join(find_glob)).each do |f|
         end
       end
 
-      if type == Post
+      if type == Post && ENV['UPDATE_POSTS'] == 'true'
         seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
         Community.all.each do |c|
           RequestContext.community = c
