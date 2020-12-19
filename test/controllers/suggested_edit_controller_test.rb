@@ -17,7 +17,6 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_not_nil assigns(:edits)
   end
 
-
   test 'should get pending suggested edit page' do
     get :show, params: { id: suggested_edits(:pending_suggested_edit).id }
     assert_not_nil assigns(:edit)
