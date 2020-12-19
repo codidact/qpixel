@@ -280,3 +280,8 @@ table.is-with-hover tr:hover td {
     }
   }
 }
+
+#communities-slide {
+  max-height: 400px;
+  overflow-y: auto;
+}
