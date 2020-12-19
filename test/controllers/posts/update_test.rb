@@ -79,7 +79,7 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:locked)).count
-    assert_response 401
+    assert_response 403
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on update'
   end
 

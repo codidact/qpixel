@@ -19,7 +19,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'cannot edit locked post' do
     sign_in users(:standard_user)
     get :edit, params: { id: posts(:locked).id }
-    assert_response 401
+    assert_response 403
   end
 
   test 'cannot edit non-public post without permissions' do

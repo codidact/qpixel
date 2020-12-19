@@ -47,7 +47,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:locked)).count
     post :reopen, params: { id: posts(:locked).id }
     after_history = PostHistory.where(post: posts(:locked)).count
-    assert_response 401
+    assert_response 403
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on reopen'
   end
 end
