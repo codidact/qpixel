@@ -53,7 +53,8 @@
           <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">
+          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
+          <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
       <a href="#" class="header--item" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
