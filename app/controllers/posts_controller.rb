@@ -92,6 +92,7 @@ class PostsController < ApplicationController
       if @post_type.has_parent?
         @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
                                               helpers.generic_show_link(@post))
+        @post.parent.update(last_activity: DateTime.now, last_activity_by: current_user)
       end
 
       redirect_to helpers.generic_show_link(@post)
