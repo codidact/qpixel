@@ -61,11 +61,11 @@
   <% end %>
 
   <% if Rails.env.development? || rand(100) <= 10 %>
-    <% post_id = promoted_posts.keys.shuffle.first %>
-    <% if post_id %>
+    <% post = Post.unscoped.find_by id: promoted_posts.keys.shuffle.first %>
+    <% if post.present? %>
       <div class="has-margin-4">
-        <%= link_to post_path(post_id) do %>
-          <%= image_tag specific_question_ads_path(post_id) %>
+        <%= link_to post_path(post) do %>
+          <%= image_tag specific_question_ads_url(post, host: post.community.host) %>
         <% end %>
       </div>
     <% end %>
