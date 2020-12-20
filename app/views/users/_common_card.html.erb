@@ -10,6 +10,14 @@
     %>
     <%= link_to user_path(user), dir: 'ltr', class: 'user-card--link', data: data do %>
       <%= user.rtl_safe_username %>
+       <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
+        <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
+       <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
+        <span class="badge is-user-role" title="Moderator"><%= SiteSetting['ModBadgeCharacter'] %></span>
+       <% end %>
+       <% if user.staff? %>
+        <span class="badge is-tag is-filled is-green staff-badge">staff</span>
+       <% end %> 
     <% end %>
     <div class="user-card--meta">
       <% SiteSetting['UserCardDetails'].each_char do |detail| %>
