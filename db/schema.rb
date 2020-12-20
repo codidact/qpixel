@@ -351,7 +351,7 @@ ActiveRecord::Schema.define(version: 2020_12_17_025220) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked"
+    t.boolean "locked", default: false, null: false
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
@@ -548,6 +548,7 @@ ActiveRecord::Schema.define(version: 2020_12_17_025220) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.integer "trust_level"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

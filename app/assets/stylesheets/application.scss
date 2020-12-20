@@ -145,7 +145,7 @@ hr {
 }
 
 div.post-preview .footnote-ref a::before {
-    content: '';
+  content: '';
 }
 
 .footnote-ref a::after {
@@ -153,7 +153,7 @@ div.post-preview .footnote-ref a::before {
 }
 
 div.post-preview .footnote-ref a::after {
-    content: '';
+  content: '';
 }
 
 .footnotes-sep + .footnotes {
@@ -257,31 +257,4 @@ table.is-striped tr:nth-of-type(2n+1) td {
 
 table.is-with-hover tr:hover td {
   background-color: #eee
-}
-
-.community-header-list {
-  display: flex;
-  flex-direction: column;
-
-  .community-header-list-entry a {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    img {
-      max-height: 1.5rem;
-    }
-    .img {
-      width: 100px;
-      padding: 10px;
-    }
-    .label {
-      flex-grow: 1;
-    }
-  }
-}
-
-#communities-slide {
-  max-height: 400px;
-  overflow-y: auto;
 }
