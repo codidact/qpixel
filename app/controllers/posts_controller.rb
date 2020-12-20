@@ -113,7 +113,8 @@ class PostsController < ApplicationController
     @second_level_post_types = second_level_post_types
 
     if @post.category_id.present? && @post.category.min_view_trust_level.present? && \
-       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level)
+       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level) && \
+       @post.category.min_view_trust_level > 0
       return not_found
     end
 
