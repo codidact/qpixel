@@ -1,6 +1,7 @@
 <div class="post--author">
-  <div class="post--author-label" title="<%= post.created_at.iso8601 %>">posted <%= time_ago_in_words(post.created_at) %> ago</div>
-  
+  <div class="post--author-label" title="<%= post.created_at.iso8601 %>">
+    posted <%= time_ago_in_words(post.created_at) %> ago
+  </div>
 
   <% if post.license.present? %>
     <div class="post--author-license">
