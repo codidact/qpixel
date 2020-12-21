@@ -64,7 +64,7 @@
     <% post = Post.unscoped.find_by id: promoted_posts.keys.shuffle.first %>
     <% if post.present? %>
       <div class="has-margin-4">
-        <%= link_to post_path(post) do %>
+        <%= link_to post_url(post, host: post.community.host) do %>
           <%= image_tag specific_question_ads_url(post, host: post.community.host) %>
         <% end %>
       </div>
