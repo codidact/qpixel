@@ -87,7 +87,7 @@ class CommunityUser < ApplicationRecord
     # Do not recalculate privileges which are only manually given
     return false if priv.manual?
 
-    # Grant :unrestricted automatically on new sites
+    # Grant :unrestricted automatically on new communities
     unless SiteSetting['NewSiteMode'] && internal_id.to_s == 'unrestricted'
       # Abort if any of the checks fails
       return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold
