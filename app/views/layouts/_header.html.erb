@@ -57,7 +57,7 @@
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
-      <a href="#" class="header--item" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
+      <a href="#" class="header--item is-visible-on-mobile" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
       <% unless user_signed_in? %>
         <div class="header--item">
           <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
