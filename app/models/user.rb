@@ -31,7 +31,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, :trust_level, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -41,6 +41,14 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "#{sanitize_sql_like(term)}%")
+  end
+
+  def inspect
+    "#<User #{attributes.compact.map { |k, v| "#{k}: #{v}" }.join(', ')}>"
+  end
+
+  def trust_level
+    community_user.trust_level
   end
 
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
