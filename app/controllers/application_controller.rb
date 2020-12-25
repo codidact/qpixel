@@ -275,8 +275,8 @@ class ApplicationController < ActionController::Base
   if current_user &&
     !current_user.enabled_2fa? &&
     Rails.env.production? &&
-    # Users can set env var QPIXEL_DISABLE_MANDATORY_2FA to '1' to disable mandatory staff 2fa
-    ENV['QPIXEL_DISABLE_MANDATORY_2FA'] != "1" &&
+    # Don't enforce 2fa auth unless the setting is enabled
+    SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
     # Enable users to log out even if 2fa is enforced
     !request.fullpath.end_with?("/users/sign_out") &&
     (current_user.is_global_admin ||
