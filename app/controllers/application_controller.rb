@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :check_if_warning_or_suspension_pending
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
+  before_action :enforce_2fa
 
   helper_method :top_level_post_types, :second_level_post_types
 
@@ -269,4 +270,22 @@ class ApplicationController < ActionController::Base
 
     redirect_to(current_mod_warning_path)
   end
+
+ def enforce_2fa
+  if current_user &&
+    !current_user.enabled_2fa? &&
+    Rails.env.production? &&
+    # Users can set env var QPIXEL_DISABLE_MANDATORY_2FA to '1' to disable mandatory staff 2fa
+    ENV['QPIXEL_DISABLE_MANDATORY_2FA'] != "1" &&
+    # Enable users to log out even if 2fa is enforced
+    !request.fullpath.end_with?("/users/sign_out") &&
+    (current_user.is_global_admin ||
+      current_user.is_global_moderator)
+    redirect_path = "/users/two-factor"
+    if !request.fullpath.end_with?(redirect_path)
+      flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue using this site. Please do so below'
+      redirect_to (redirect_path)
+    end
+  end
+ end
 end
