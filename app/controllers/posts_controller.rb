@@ -184,7 +184,7 @@ class PostsController < ApplicationController
           if @post_type.has_parent
             message += " on '#{@post.parent.title}'"
           end
-          @post.user.create_notification message, suggested_edit_path(edit)
+          @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
