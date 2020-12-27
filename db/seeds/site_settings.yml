@@ -429,3 +429,10 @@
     Which details are to be shown on the user card. "." means new line, "r" reputation, "p" number of posts,
     "1" top-level posts, "2" second-level posts (answers), "s" score of votes received (up - down),
     "v" number of votes received, "V" number of votes cast, "E" number of edits made on posts.
+
+- name: EnableMandatoryGlobalAdminMod2FA
+  value: false
+  value_type: boolean
+  category: AdvancedSettings
+  description: >
+    Whether two-factor authentication should be enforced for all global admins and global moderators.
