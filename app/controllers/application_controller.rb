@@ -271,21 +271,21 @@ class ApplicationController < ActionController::Base
     redirect_to(current_mod_warning_path)
   end
 
- def enforce_2fa
-  if current_user &&
-    !current_user.enabled_2fa? &&
-    Rails.env.production? &&
-    # Don't enforce 2fa auth unless the setting is enabled
-    SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
-    # Enable users to log out even if 2fa is enforced
-    !request.fullpath.end_with?("/users/sign_out") &&
-    (current_user.is_global_admin ||
-      current_user.is_global_moderator)
-    redirect_path = "/users/two-factor"
-    if !request.fullpath.end_with?(redirect_path)
-      flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue using this site. Please do so below'
-      redirect_to (redirect_path)
+  def enforce_2fa
+    if current_user &&
+       !current_user.enabled_2fa? &&
+       Rails.env.production? &&
+       # Don't enforce 2fa auth unless the setting is enabled
+       SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
+       # Enable users to log out even if 2fa is enforced
+       !request.fullpath.end_with?('/users/sign_out') &&
+       (current_user.is_global_admin ||
+         current_user.is_global_moderator)
+      redirect_path = '/users/two-factor'
+      unless request.fullpath.end_with?(redirect_path)
+        flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue using this site. Please do so below'
+        redirect_to(redirect_path)
+      end
     end
   end
- end
 end
