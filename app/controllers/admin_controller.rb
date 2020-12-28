@@ -1,7 +1,8 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
   before_action :verify_admin
-  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup, :setup_save, :hellban]
+  before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
+                                             :setup_save, :hellban]
 
   def index; end
 
@@ -94,47 +95,32 @@ class AdminController < ApplicationController
     default_settings = SiteSetting.for_community_id(Community.first.id)
 
     # Set settings from config page
-    settings.find_by(name: 'SiteCategoryHeaderDefaultColor').update(value: params[:primary_color])
-    settings.find_by(name: 'SiteLogoPath').update(value: params[:logo_url])
-    settings.find_by(name: 'SiteAdSlogan').update(value: params[:ad_slogan])
-    settings.find_by(name: 'MathJaxEnabled').update(value: params[:mathjax])
-    settings.find_by(name: 'SyntaxHighlightingEnabled').update(value: params[:syntax_highlighting])
-    settings.find_by(name: 'ChatLink').update(value: params[:chat_link])
-    settings.find_by(name: 'AnalyticsURL').update(value: params[:analytics_url])
-    settings.find_by(name: 'AnalyticsSiteId').update(value: params[:analytics_id])
-    settings.find_by(name: 'AllowContentTransfer').update(value: params[:content_transfer])
+    { primary_color: 'SiteCategoryHeaderDefaultColor', logo_url: 'SiteLogoPath', ad_slogan: 'SiteAdSlogan',
+      mathjax: 'MathJaxEnabled', syntax_highlighting: 'SyntaxHighlightingEnabled', chat_link: 'ChatLink',
+      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' } \
+      .each do |key, setting|
+      settings.find_by(name: setting).update(value: params[key])
+    end
 
     # Auto-load settings
-    settings.find_by(name: 'AdminBadgeCharacter')
-            .update(value: default_settings.find_by(name: 'AdminBadgeCharacter').value)
-    settings.find_by(name: 'ModBadgeCharacter')
-            .update(value: default_settings.find_by(name: 'ModBadgeCharacter').value)
-    settings.find_by(name: 'SEApiClientId')
-            .update(value: default_settings.find_by(name: 'SEApiClientId').value)
-    settings.find_by(name: 'SEApiClientSecret')
-            .update(value: default_settings.find_by(name: 'SEApiClientSecret').value)
-    settings.find_by(name: 'SEApiKey')
-            .update(value: default_settings.find_by(name: 'SEApiKey').value)
-    settings.find_by(name: 'AdministratorContactEmail')
-            .update(value: default_settings.find_by(name: 'AdministratorContactEmail').value)
+    ['AdminBadgeCharacter', 'ModBadgeCharacter', 'SEApiClientId', 'SEApiClientSecret', 'SEApiKey',
+     'AdministratorContactEmail'].each do |setting|
+      settings.find_by(name: setting)
+              .update(value: default_settings.find_by(name: setting).value)
+    end
 
     # Generate meta tags
-    tags = [
-      'discussion', 'support', 'feature-request', 'bug',
-      'status-completed', 'status-declined', 'status-review', 'status-planned', 'status-deferred'
-    ]
+    required_tags = ['discussion', 'support', 'feature-request', 'bug']
+    status_tags = ['status-completed', 'status-declined', 'status-review', 'status-planned', 'status-deferred']
+    tags = required_tags + status_tags
     Tag.create(tags.map { |t| { name: t, community_id: @community.id, tag_set: TagSet.meta } })
 
     # Set Meta tags as required/mod-only
     meta_category = Category.where(name: 'Meta').last
-    meta_category.required_tags << Tag.where(name: ['discussion', 'support', 'feature-request', 'bug'])
-    meta_category.moderator_tags << Tag.where(name: ['status-completed', 'status-declined', 'status-review',
-                                                     'status-planned', 'status-deferred'])
+    meta_category.required_tags << Tag.unscoped.where(community: @community, name: required_tags)
+    meta_category.moderator_tags << Tag.unscoped.where(community: @community, name: status_tags)
 
-    # Clear cache
     Rails.cache.clear
-
-    # Audit Log
     AuditLog.admin_audit(event_type: 'setup_site', related: @new_community, user: current_user,
                          comment: 'Site Settings updated via /admin/setup')
 

@@ -283,7 +283,8 @@ class ApplicationController < ActionController::Base
          current_user.is_global_moderator)
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)
-        flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue using this site. Please do so below'
+        flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue' \
+                         'using this site. Please do so below'
         redirect_to(redirect_path)
       end
     end
