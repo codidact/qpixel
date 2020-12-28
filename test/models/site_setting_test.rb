@@ -34,18 +34,18 @@ class SiteSettingTest < ActiveSupport::TestCase
 
   test 'community settings are in the default scope' do
     SiteSetting.create(community_id: RequestContext.community, name: 'test', value: 'true', value_type: 'string')
-    assert SiteSetting.where(name: 'test').exists?
+    assert SiteSetting.exists?(name: 'test')
   end
 
   test 'global settings are in the default scope' do
     SiteSetting.create(community_id: nil, name: 'test', value: 'true', value_type: 'string')
-    assert SiteSetting.where(name: 'test').exists?
+    assert SiteSetting.exists?(name: 'test')
   end
 
   test 'external community settings are not in the default scope' do
     other_community = Community.create(host: 'other', name: 'other')
     SiteSetting.create(community_id: other_community, name: 'test', value: 'true', value_type: 'string')
-    assert SiteSetting.where(name: 'test').exists?
+    assert SiteSetting.exists?(name: 'test')
   end
 
   test 'community setting takes precedence over global setting' do

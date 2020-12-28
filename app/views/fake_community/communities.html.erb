@@ -1,0 +1,28 @@
+<%= content_for :title, 'Communities' %>
+
+<h1>Our Communities</h1>
+<div class="grid community-list">
+  <% @communities.each do |c| %>
+    <% categories = Category.unscoped.where(community: c).order(sequence: :asc, id: :asc) %>
+    <% settings = SiteSetting.for_community_id(c.id) %>
+    <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+    <div class="grid--cell is-4 is-6-md is-12-sm">
+      <div class="widget">
+        <div class="widget--header is-complex">
+          <div class="has-text-align-center has-font-weight-bold has-font-size-display">
+            <%= link_to "//#{c.host}", class: "dashboard-full-center" do %>
+              <% unless logo_setting.nil? %>
+                <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>">
+              <% else %>
+                <%= c.name %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <div class="widget--footer">
+          <p class="h-fs-small h-m-0">founded <%= c.created_at.year %>-<%= c.created_at.month %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

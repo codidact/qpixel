@@ -29,7 +29,8 @@ $(() => {
       bullet: ['\n * ', null],
       numbered: ['\n 1. ', null],
       heading: ['\n# ', null],
-      hr: ['\n\n-----\n\n', null]
+      hr: ['\n\n-----\n\n', null],
+      table: ['\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n', null]
     };
 
     if (Object.keys(actions).indexOf(action) !== -1) {
@@ -41,8 +42,16 @@ $(() => {
     }
   });
 
+  $('#markdown-link-name, #markdown-link-url').on('keydown', ev => {
+    if (ev.keyCode === 13) {
+      // don't submit post form on enter in link modal
+      ev.stopPropagation();
+    }
+  });
+
   $(document).on('click', '.js-markdown-insert-link', ev => {
     ev.preventDefault();
+
     const $tgt = $(ev.target);
     const $name = $('#markdown-link-name');
     const text = $name.val();
@@ -50,12 +59,15 @@ $(() => {
     const url = $url.val();
     const markdown = `[${text}](${url})`;
     const $field = $('.js-post-field');
+
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
       replaceSelection($field, markdown);
     }
     else {
       insertIntoField($field, markdown);
     }
+
+    $field.trigger('markdown');
     $tgt.parents('.modal').removeClass('is-active');
     $name.val('');
     $url.val('');

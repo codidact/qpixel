@@ -26,9 +26,9 @@ module AdvertisementHelper
 
       if new_mode != current_mode
         output_buffer += if current_mode == :rtl
-                           scan_buffer.join('').reverse
+                           scan_buffer.join.reverse
                          else
-                           scan_buffer.join('')
+                           scan_buffer.join
                          end
         scan_buffer = []
       end
@@ -37,9 +37,9 @@ module AdvertisementHelper
     end
 
     output_buffer += if current_mode == :rtl
-                       scan_buffer.join('').reverse
+                       scan_buffer.join.reverse
                      else
-                       scan_buffer.join('')
+                       scan_buffer.join
                      end
   end
 

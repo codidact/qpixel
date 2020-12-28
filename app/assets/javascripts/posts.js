@@ -87,8 +87,8 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`<span class="has-color-green-600">Draft saved</span>`);
-      $field.parents('.widget').after($el);
+      const $el = $(`&middot; <span class="has-color-green-600">Draft saved</span>`);
+      $field.parents('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
@@ -99,6 +99,8 @@ $(() => {
   const postFields = $('.post-field');
 
   postFields.on('focus keyup markdown', evt => {
+    const $tgt = $(evt.target);
+
     if (!window.converter) {
       window.converter = window.markdownit({
         html: true,
@@ -111,7 +113,8 @@ $(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
       const html = converter.render(text);
-      $(evt.target).parents('.form-group').siblings('.post-preview').html(html);
+      $tgt.parents('.form-group').siblings('.post-preview').html(html);
+      $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
 
     if (mathjaxTimeout) {
@@ -215,5 +218,40 @@ $(() => {
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You've edited this post before but didn't save it. We loaded your edits here for you.
     </div>`);
+  });
+
+  $('.js-permalink > .js-text').text('Copy Link');
+  $('.js-permalink').on('click', ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
+    const link = $tgt.attr('href');
+    navigator.clipboard.writeText(link);
+    $tgt.find('.js-text').text('Copied!');
+    setTimeout(() => {
+      $tgt.find('.js-text').text('Copy Link');
+    }, 1000);
+  });
+
+  $('.js-nominate-promotion').on('click', async ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post-id');
+    const resp = await fetch(`/posts/${postId}/promote`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': QPixel.csrfToken()
+      }
+    });
+    const data = await resp.json();
+    if (data.success) {
+      QPixel.createNotification('success', 'Added post to promotion list.');
+    }
+    else {
+      QPixel.createNotification('danger', `Couldn't add post to promotion list. (${resp.status})`);
+    }
+    $('.js-mod-tools').removeClass('is-active');
   });
 });

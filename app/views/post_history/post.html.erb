@@ -1,9 +1,7 @@
 <h1>Post History</h1>
 
 <div class="item-list">
-  <% if [Question.post_type_id, Answer.post_type_id].include? @post.post_type_id %>
-    <%= render 'posts/list', post: @post %>
-  <% end %>
+  <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
 
 <% @history.each do |event| %>
@@ -11,7 +9,7 @@
     <summary>
       <strong><%= event.post_history_type.name.humanize %></strong>
       <span class="text-muted">
-        by
+        &nbsp;by
         <% if event.user.nil? %>
           <span class="text-muted">(deleted user)</span>
         <% else %>

@@ -1,10 +1,9 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.6.6'
 
-# Essential gems: servers, adapters, Rails + Rails requirements, Devise
+# Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 4.2.2'
 gem 'counter_culture', '~> 2.0'
-gem 'devise', '~> 4.7'
 gem 'fastimage', '~> 2.1'
 gem 'image_processing', '~> 1.11'
 gem 'jquery-rails', '~> 4.3.5'
@@ -17,6 +16,10 @@ gem 'rotp', '~> 6.0'
 gem 'sass-rails', '~> 5.0'
 gem 'tzinfo-data', '~> 1.2019.3'
 gem 'uglifier', '>= 1.3.0'
+
+# Sign in
+gem 'devise', '~> 4.7'
+gem 'omniauth', '~> 1.9'
 
 # Markdown support in both directions.
 gem 'commonmarker', '~> 0.21'
@@ -43,7 +46,8 @@ gem 'whenever', '~> 1.0', require: false
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.8'
 gem 'coveralls', '~> 0.8', require: false
-gem 'rubocop', '= 0.84'
+gem 'rubocop', '~> 1'
+gem 'rubocop-rails', '~> 2.9'
 
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
 gem 'flamegraph', '~> 0.9'
@@ -61,6 +65,9 @@ gem 'ruby-progressbar', '~> 1.10'
 
 # Image generation
 gem 'rmagick'
+
+# EeeMAILS!
+gem 'premailer-rails', '~> 1.11'
 
 group :test do
   gem 'minitest', '~> 5.10.3'

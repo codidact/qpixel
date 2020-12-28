@@ -4,11 +4,11 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable,
+         :lockable, :omniauthable
 
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :nullify
-  has_and_belongs_to_many :privileges, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
@@ -19,11 +19,11 @@ class User < ApplicationRecord
   has_many :suggested_edits, dependent: :nullify
   has_many :suggested_edits_decided, class_name: 'SuggestedEdit', foreign_key: 'decided_by_id', dependent: :nullify
   has_many :audit_logs, dependent: :nullify
-  has_many :audit_logs_related, class_name: 'AuditLog', foreign_key: 'related_id', dependent: :nullify, as: :related
+  has_many :audit_logs_related, class_name: 'AuditLog', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
-  validates :login_token, uniqueness: { allow_nil: true, allow_blank: true }
+  validates :login_token, uniqueness: { allow_blank: true }
   validate :no_links_in_username
   validate :username_not_fake_admin
   validate :no_blank_unicode_in_username
@@ -31,7 +31,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -43,27 +43,44 @@ class User < ApplicationRecord
     where('username LIKE ?', "#{sanitize_sql_like(term)}%")
   end
 
+  def inspect
+    "#<User #{attributes.compact.map { |k, v| "#{k}: #{v}" }.join(', ')}>"
+  end
+
+  def trust_level
+    community_user.trust_level
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
-
-  def has_privilege?(name)
-    privilege = Privilege.where(name: name).first
-    if privileges.include?(privilege) || is_admin || is_moderator
-      true
-    elsif privilege && reputation >= privilege.threshold
-      privileges << privilege
-      true
-    else
-      false
-    end
-  end
-
   def has_post_privilege?(name, post)
     if post.user == self
       true
     else
-      has_privilege?(name)
+      privilege?(name)
+    end
+  end
+
+  # post_types must be the list of applicable post types
+  # passed only for '1' and '2'
+  def metric(key, post_types = [])
+    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 2.hours) do
+      case key
+      when 'p'
+        Post.qa_only.undeleted.where(user: self).count
+      when '1', '2'
+        Post.undeleted.where(post_type: post_types, user: self).count
+      when 's'
+        Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: 1).count - \
+          Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: -1).count
+      when 'v'
+        Vote.where(post: Post.qa_only.undeleted.where(user: self)).count
+      when 'V'
+        votes.count
+      when 'E'
+        PostHistory.where(user: self, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
+      end
     end
   end
 
@@ -89,32 +106,15 @@ class User < ApplicationRecord
   end
 
   def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || false
+    is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
   end
 
   def is_admin
     is_global_admin || community_user&.is_admin || false
   end
 
-  def trust_level
-    attributes['trust_level'] || recalc_trust_level
-  end
-
   def rtl_safe_username
-    "\u202D#{username}\u202D"
-  end
-
-  def recalc_trust_level
-    # Temporary hack until we have some things to actually calculate based on.
-    trust = if is_admin || is_global_admin
-              6
-            elsif is_moderator || is_global_moderator
-              5
-            else
-              1
-            end
-    update(trust_level: trust)
-    trust
+    "#{username}\u202D"
   end
 
   def username_not_fake_admin
@@ -204,7 +204,7 @@ class User < ApplicationRecord
   def send_welcome_tour_message
     return if id == -1 || RequestContext.community.nil?
 
-    create_notification('👋 Welcome to ' + (SiteSetting['SiteName'] || 'Codidact') + '! Take our tour to find out ' \
+    create_notification("👋 Welcome to #{SiteSetting['SiteName'] || 'Codidact'}! Take our tour to find out " \
                         'how this site works.', '/tour')
   end
 

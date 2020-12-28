@@ -16,10 +16,10 @@ class SearchController < ApplicationController
                end
              end
     @count = begin
-               @posts&.count
-             rescue
-               @posts = nil
-               flash[:danger] = 'Your search syntax is incorrect.'
-             end
+      @posts&.count
+    rescue
+      @posts = nil
+      flash[:danger] = 'Your search syntax is incorrect.'
+    end
   end
 end

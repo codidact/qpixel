@@ -1,8 +1,16 @@
 <% content_for :title, "Moderator Flag Queue" %>
+<%= link_to moderator_path, class: 'has-font-size-small' do %>
+  &laquo; Return to mod tools
+<% end %>
 
 <h1>Moderator Flag Queue</h1>
 <p>Below is a list of posts that users have flagged. Users are asked to provide a reason when flagging posts for
   moderator attention; use that to help you determine what needs to be done.</p>
+
+<div class="button-list is-gutterless">
+  <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined is-active' %>
+  <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined' %>
+</div>
 
 <% @flags.each do |flag| %>
   <div class="widget">
@@ -10,7 +18,7 @@
       <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
     </div>
     <div class="widget--body">
-      <p><strong>Flag reason:</strong> <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+      <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
     </div>
     <div class="widget--footer">
       <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">

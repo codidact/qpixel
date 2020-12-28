@@ -56,17 +56,17 @@ class TagsController < ApplicationController
   end
 
   def edit
-    check_your_privilege('EditTag', nil, true)
+    check_your_privilege('edit_tags', nil, true)
   end
 
   def update
-    return unless check_your_privilege('EditTag', nil, true)
+    return unless check_your_privilege('edit_tags', nil, true)
 
     wiki_md = params[:tag][:wiki_markdown]
     if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil))
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
-      render :edit, status: 400
+      render :edit, status: :bad_request
     end
   end
 

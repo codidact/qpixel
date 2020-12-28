@@ -2,9 +2,9 @@ require 'rmagick'
 require 'open-uri'
 
 # Necessary due to rmagick
-# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/ClassLength
 # noinspection RubyResolve, DuplicatedCode, RubyArgCount
 class AdvertisementController < ApplicationController
   include Magick
@@ -89,7 +89,11 @@ class AdvertisementController < ApplicationController
       end
 
       icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(400, 200)
+        ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
+      else
         name = @community.name
         community_name = Draw.new
         community_name.font_family = 'Roboto'
@@ -100,10 +104,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 600, 250, 0, 0, name do
           self.fill = 'black'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(400, 200)
-        ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
       end
 
       on_codidact = Draw.new
@@ -138,18 +138,16 @@ class AdvertisementController < ApplicationController
   end
 
   def specific_question
-    @post = Post.find(params[:id])
-    if @post.question?
-      question_ad(@post)
-    elsif @post.article?
+    @post = Post.unscoped.find(params[:id])
+    if @post.article?
       article_ad(@post)
     else
-      not_found
+      question_ad(@post)
     end
   end
 
   def specific_category
-    @category = Category.find(params[:id])
+    @category = Category.unscoped.find(params[:id])
     @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}",
                               expires_in: 5.minutes do
       select_random_post(@category)
@@ -180,14 +178,28 @@ class AdvertisementController < ApplicationController
     end
   end
 
+  def promoted_post
+    promoted = helpers.promoted_posts
+    if promoted.empty?
+      return community
+    end
+
+    @post = Post.unscoped.find(promoted.keys.sample)
+    if @post.article?
+      article_ad(@post)
+    else
+      question_ad(@post)
+    end
+  end
+
   private
 
   def community_icon(icon_path)
     if icon_path.start_with? '/assets/'
-      icon = Magick::ImageList.new('./app/assets/images/' + File.basename(icon_path))
+      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(icon_path)}")
     else
       icon = Magick::ImageList.new
-      icon_path_content = URI.open(icon_path).read
+      icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
       icon.from_blob(icon_path_content)
     end
     icon
@@ -197,7 +209,7 @@ class AdvertisementController < ApplicationController
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
-    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..Time.now)
+    Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
         .where(post_type_id: Question.post_type_id)
         .where(category: category)
         .where('score > ?', SiteSetting['HotPostsScoreThreshold'])
@@ -205,7 +217,7 @@ class AdvertisementController < ApplicationController
   end
 
   def wrap_text(text, width, font_size)
-    columns = (width * 2.0 / font_size).to_i
+    columns = (width * 3.0 / font_size).to_i
     # Source: http://viseztrance.com/2011/03/texts-over-multiple-lines-with-rmagick.html
     text.split("\n").collect do |line|
       line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
@@ -235,8 +247,12 @@ class AdvertisementController < ApplicationController
         self.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(175, 75)
+        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+      else
         community_name = Draw.new
         community_name.font_family = 'Roboto'
         community_name.font_weight = 700
@@ -246,10 +262,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 0, 0, 20, 20, question.community.name do
           self.fill = '#4B68FF'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(175, 75)
-        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end
 
       community_url = Draw.new
@@ -312,8 +324,12 @@ class AdvertisementController < ApplicationController
         self.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
-      if !icon_path.present?
+      icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
+      if icon_path.present?
+        icon = community_icon(icon_path)
+        icon.resize_to_fit!(120, 50)
+        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
+      else
         community_name = Draw.new
         community_name.font_family = 'Roboto'
         community_name.font_weight = 700
@@ -323,10 +339,6 @@ class AdvertisementController < ApplicationController
         community_name.annotate ad, 0, 0, 20, 20, article.community.name do
           self.fill = '#4B68FF'
         end
-      else
-        icon = community_icon(icon_path)
-        icon.resize_to_fit!(120, 50)
-        ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       end
 
       community_url = Draw.new
@@ -370,5 +382,5 @@ class AdvertisementController < ApplicationController
   end
 end
 # rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/ClassLength
 # rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/ClassLength

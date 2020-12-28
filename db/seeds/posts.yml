@@ -23,7 +23,7 @@
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Guidelines for promotional content in posts on Codidact sites
+  title: Guidelines for promotional content in posts on Codidact communities
   body_markdown: $FILE posts/spam.html
   body: $FILE posts/spam.html
   doc_slug: spam
@@ -80,14 +80,14 @@
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidelines for referencing and quoting on Codidact sites
+  title: Guidelines for referencing and quoting on Codidact communities
   body_markdown: $FILE posts/referencing.html
   body: $FILE posts/referencing.html
   doc_slug: referencing
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidance on available licenses on Codidact sites
+  title: Guidance on available licenses on Codidact communities
   body_markdown: $FILE posts/licenses.html
   body: $FILE posts/licenses.html
   doc_slug: licenses
@@ -105,4 +105,32 @@
   body_markdown: $FILE posts/scoring.html
   body: $FILE posts/scoring.html
   doc_slug: scoring
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: About category access and write permissions
+  body_markdown: $FILE posts/category-permissions.html
+  body: $FILE posts/category-permissions.html
+  doc_slug: category-permissions
+  help_category: $Moderator
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: User Abilities
+  body_markdown: $FILE posts/abilities.html
+  body: $FILE posts/abilities.html
+  doc_slug: abilities
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Voting
+  body_markdown: $FILE posts/voting.html
+  body: $FILE posts/voting.html
+  doc_slug: voting
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Why are posts deleted?
+  body_markdown: $FILE posts/deleted.html
+  body: $FILE posts/deleted.html
+  doc_slug: deleted
   help_category: Site Information

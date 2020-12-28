@@ -1,0 +1,170 @@
+<% content_for :title, "Moderator Tools: #{@user.username}" %>
+
+<h1>Privileges of <%= link_to @user.username, user_path(@user) %></h1>
+
+<div class="widget">
+    <div class="widget--header">
+        <a href="<%= abilities_url(for: @user.id) %>" class="widget--header-link has-float-right" target="_blank">ability page</a>
+        Abilities
+    </div>
+    <% @abilities.each do |a| %>
+    <% next if a.internal_id == 'mod' %>
+    <% ua = @user.privilege a.internal_id%>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fas fa-<%= a.icon %> fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    <%= a.name %>
+                </h4>
+                <p class="h-m-0 form-caption"><%= a.summary %></p>
+                <% unless ua.nil? %>
+                <p class="h-m-0 h-m-t-1 has-font-size-small"><a href="#" class="is-red js-ability-delete-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">Delete</a></p>
+                <% end %>
+            </div>
+            <div class="grid--cell">
+                <% if ua.nil? %>
+                    <button class="button js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">grant</button>
+                <% elsif ua.suspended? %>
+                    <button class="button is-danger is-filled js-ability-grant-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">unsuspend</button>
+                <% else %>
+                    <button class="button is-danger is-outlined" data-drop="#suspend-ability-<%= a.internal_id %>" data-drop-force-dir="down" data-drop-self-class-toggle="is-active">suspend</button>
+                    <div class="droppanel is-large" id="suspend-ability-<%= a.internal_id %>">
+                        <div class="droppanel--header">suspend ability to <strong><%= a.name %></strong></div>
+                        <label class="form-element" for="suspend-ability-<%= a.internal_id %>-duration">Duration:</label>
+                        <div class="form-caption">in days; leave blank for permanent</div>
+                        <input id="suspend-ability-<%= a.internal_id %>-duration" class="form-element" type="number" placeholder="permanent">
+
+                        <label class="form-element" for="suspend-ability-<%= a.internal_id %>-message">Message:</label>
+                        <div class="form-caption">will be privately shown to user</div>
+                        <textarea id="suspend-ability-<%= a.internal_id %>-message" class="form-element is-small"></textarea>
+
+                        <button class="button is-danger is-filled js-ability-suspend-btn" data-ability="<%= a.internal_id %>" data-user="<%= @user.id %>">Suspend</button>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <% end%>
+    <div class="widget--footer">
+        <p>You can recalculate the abilities of this user. This will check for all unearned abilities, whether the user is eligible for them and if so, it will grant the ability.</p>
+        <a href="<%= abilities_recalc_url(for: @user.id) %>" class="button is-filled">Recalc Abilities</a>
+    </div>
+</div>
+    <% if @current_user.is_admin %>
+<div class="widget">
+    <div class="widget--header">
+        Roles
+    </div>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fas fa-star fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    Moderator
+                </h4>
+                <p class="h-m-0 form-caption">Moderators can unilaterally close and delete posts, can feature and lock posts and may impose restrictions on user accounts.</p>
+            </div>
+            <div class="grid--cell">
+                <% if @user.is_moderator %>
+                    <button class="button is-filled js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">revoke</button>
+                <% else %>
+                    <button class="button is-outlined js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">grant</button>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <% end %>
+    <% if @current_user.is_global_admin %>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fas fa-cog fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    Administrator
+                </h4>
+                <p class="h-m-0 form-caption">Administrators can edit site settings and user roles.</p>
+            </div>
+            <div class="grid--cell">
+                <% if @user.is_global_moderator %>
+                    <button class="button is-filled js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">revoke</button>
+                <% else %>
+                    <button class="button is-outlined js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">grant</button>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fas fa-globe fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    Network-wide Moderator
+                </h4>
+                <p class="h-m-0 form-caption">This user will have moderator status on every site in this network.</p>
+            </div>
+            <div class="grid--cell">
+                <% if @user.is_global_moderator %>
+                    <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">revoke</button>
+                <% else %>
+                    <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">grant</button>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fas fa-cogs fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    Network-wide Admin
+                </h4>
+                <p class="h-m-0 form-caption">This user will have admin status on every site in this network.</p>
+            </div>
+            <div class="grid--cell">
+                <% if @user.is_global_admin %>
+                    <% if @user.id == @current_user.id %>
+                    <button class="button is-muted is-filled" disabled title="Nope. You cannot revoke your own network-wide admin status. 😉">granted</button>
+                    <% else %>
+                    <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">revoke</button>
+                    <% end %>
+                <% else %>
+                    <button class="button is-outlined js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">grant</button>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <% end %>
+    <% if @current_user.is_global_admin && @current_user.staff? %>
+    <div class="widget--body">
+        <div class="grid">
+            <div class="grid--cell">
+                <i class="fa fa-users-cog fa-fw"></i>
+            </div>
+            <div class="grid--cell is-flexible" style="width: 0;">
+                <h4 class="h-m-0">
+                    Staff
+                </h4>
+                <p class="h-m-0 form-caption">The staff role doesn't carry any privileges, but designates the staff running this site.</p>
+            </div>
+            <div class="grid--cell">
+                <% if @user.staff? %>
+                    <button class="button is-filled js-role-grant-btn" data-role="staff" data-user="<%= @user.id %>">revoke</button>
+                <% else %>
+                    <button class="button is-outlined js-role-grant-btn" data-role="staff" data-user="<%= @user.id %>">grant</button>
+                <% end %>
+            </div>
+        </div>
+    </div>
+    <% end %>
+</div>

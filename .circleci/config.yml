@@ -1,8 +1,8 @@
 version: 2.1
 jobs:
-  build:
+  test:
     docker:
-      - image: circleci/ruby:2.6.5-node
+      - image: circleci/ruby:2.6.6-node
       - image: circleci/mysql:8.0.20
         command: [--default-authentication-plugin=mysql_native_password]
         environment:
@@ -50,12 +50,49 @@ jobs:
           command: |
             git rev-parse $(git rev-parse --abbrev-ref HEAD)
       - run:
-          name: Rubocop
+          name: Coveralls token
           command: |
-            bundle exec rubocop
+            echo "repo_token: $COVERALLS_REPO_TOKEN" > .coveralls.yml
       - run:
           name: Test
           command: |
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
+
+  rubocop:
+    docker:
+      - image: circleci/ruby:2.6.6-node
+
+    working_directory: ~/qpixel
+
+    steps:
+      - run:
+          name: Install packages
+          command: |
+            sudo apt-get -qq update
+            sudo apt-get -y install git libmariadb-dev libmagickwand-dev
+      - checkout
+      - restore_cache:
+          keys:
+            - qpixel-{{ checksum "Gemfile" }}
+            - qpixel-
+      - run:
+          name: Install Bundler & gems
+          command: |
+            gem install bundler
+            bundle install --path=~/gems
+      - save_cache:
+          key: qpixel-{{ checksum "Gemfile" }}
+          paths:
+            - ~/gems
+      - run:
+          name: Rubocop
+          command: |
+            bundle exec rubocop
+
+workflows:
+  test_lint:
+    jobs:
+      - test
+      - rubocop

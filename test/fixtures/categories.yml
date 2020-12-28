@@ -11,6 +11,7 @@ main:
     - question
     - answer
     - article
+    - free_edit
   tag_set: main
   license: cc_by_sa
 
@@ -36,7 +37,7 @@ high_trust:
     - question
     - answer
   tag_set: main
-  min_trust_level: 6
+  min_trust_level: 3
   license: cc_by_sa
 
 admin_only:

@@ -3,13 +3,16 @@ class Post < ApplicationRecord
 
   belongs_to :user
   belongs_to :post_type
-  belongs_to :parent, class_name: 'Post', required: false
-  belongs_to :closed_by, class_name: 'User', required: false
-  belongs_to :deleted_by, class_name: 'User', required: false
-  belongs_to :last_activity_by, class_name: 'User', required: false
-  belongs_to :last_edited_by, class_name: 'User', required: false
-  belongs_to :category, required: false
-  belongs_to :license, required: false
+  belongs_to :parent, class_name: 'Post', optional: true
+  belongs_to :closed_by, class_name: 'User', optional: true
+  belongs_to :deleted_by, class_name: 'User', optional: true
+  belongs_to :last_activity_by, class_name: 'User', optional: true
+  belongs_to :locked_by, class_name: 'User', optional: true
+  belongs_to :last_edited_by, class_name: 'User', optional: true
+  belongs_to :category, optional: true
+  belongs_to :license, optional: true
+  belongs_to :close_reason, optional: true
+  belongs_to :duplicate_post, class_name: 'Question', optional: true
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -18,36 +21,39 @@ class Post < ApplicationRecord
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
 
-  counter_culture :parent, column_name: proc { |model| !model.deleted? ? 'answer_count' : nil }
+  counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
 
   serialize :tags_cache, Array
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
-  validates :title, :body, :tags_cache, presence: true, if: -> { question? || article? }
-  validate :tags_in_tag_set, if: -> { question? || article? }
-  validate :maximum_tags, if: -> { question? || article? }
-  validate :maximum_tag_length, if: -> { question? || article? }
-  validate :no_spaces_in_tags, if: -> { question? || article? }
-  validate :stripped_minimum, if: -> { question? || article? }
-  validate :category_allows_post_type
-  validate :license_available
-  validate :required_tags?, if: -> { question? || article? }
-  validate :moderator_tags, if: -> { question? || article? }
+  validates :title, :body, :tags_cache, presence: true, if: -> { post_type.has_tags }
+  validate :tags_in_tag_set, if: -> { post_type.has_tags }
+  validate :maximum_tags, if: -> { post_type.has_tags }
+  validate :maximum_tag_length, if: -> { post_type.has_tags }
+  validate :no_spaces_in_tags, if: -> { post_type.has_tags }
+  validate :stripped_minimum, if: -> { post_type.has_tags }
+  validate :category_allows_post_type, if: -> { category_id.present? }
+  validate :license_available, if: -> { post_type.has_license }
+  validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
+  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
-  scope :list_includes, -> { includes(:user, :tags, user: :avatar_attachment) }
+  scope :list_includes, lambda {
+                          includes(:user, :tags, :post_type, :category, :last_activity_by,
+                                   user: :avatar_attachment)
+                        }
 
+  before_validation :update_tag_associations, if: -> { post_type.has_tags }
+  after_create :create_initial_revision
+  after_create :add_license_if_nil
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_category_activity, if: -> { question? || article? }
-  before_validation :update_tag_associations, if: -> { question? || article? }
-  after_create :create_initial_revision
-  after_create :add_license_if_nil
+  after_save :update_category_activity, if: -> { post_type.has_category }
   after_save :recalc_score
 
   def self.search(term)
@@ -62,7 +68,7 @@ class Post < ApplicationRecord
     end
   end
 
-  PostType.all.each do |pt|
+  PostType.all.find_each do |pt|
     define_method "#{pt.name.underscore}?" do
       post_type_id == pt.id
     end
@@ -121,6 +127,15 @@ class Post < ApplicationRecord
     ActiveRecord::Base.connection.execute sanitized
   end
 
+  def locked?
+    return true if locked && locked_until.nil? # permanent lock
+    return true if locked && !locked_until.past?
+
+    if locked
+      update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
+    end
+  end
+
   private
 
   def update_tag_associations
@@ -161,10 +176,9 @@ class Post < ApplicationRecord
 
   def copy_last_activity_to_parent
     sc = saved_changes
-    if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id'))
-      unless parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
-        Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
-      end
+    if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id')) \
+       && !parent.update(last_activity: last_activity, last_activity_by: last_activity_by)
+      Rails.logger.error "Parent failed copy_last_activity update (#{parent.errors.full_messages.join(';')})"
     end
   end
 

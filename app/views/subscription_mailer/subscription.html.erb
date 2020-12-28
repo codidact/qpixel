@@ -8,7 +8,7 @@
 <% @questions.each do |question| %>
   <h3 class="question-title">
     score <%= " +-"[question.score <=> 0] + question.score.to_s %>:
-    <%= link_to question.title, question_url(question, host: @subscription.community.host) %>
+    <%= link_to question.title, post_url(question, host: @subscription.community.host) %>
   </h3>
   <p>
     <%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %>

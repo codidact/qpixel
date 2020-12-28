@@ -12,49 +12,63 @@
     <% end %>
   <% end %>
 
-  <% if Rails.env.development? || @hot_questions.to_a.size > 0 || @pinned_links.to_a.size > 0 %>
-    <div class="widget has-margin-4 is-tertiary">
-      <% if Rails.env.development? || @pinned_links.to_a.size > 0 %>
-        <div class="widget--header">Featured</div>
-        <% @pinned_links.each do |pl| %>
-          <div class="widget--body">
-            <% pl_link = pl.post.nil? ? pl.link : generic_share_link(pl.post) %>
-            <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
-            <%= link_to pl_link, class: 'h-fw-bold' do %>
-              <%= pl_label %>
-            <% end %>
-            <% unless pl.shown_before.nil? %>
-              <div>
-                &mdash;
-                <% if !pl.shown_after.nil? %>
-                  <% if pl.shown_after < DateTime.now %>
-                    ends in  <%= time_ago_in_words(pl.shown_before) %>
+
+  <% unless @community.is_fake %>
+    <% if Rails.env.development? || @hot_questions.to_a.size > 0 || @pinned_links.to_a.size > 0 %>
+      <div class="widget has-margin-4 is-tertiary">
+        <% if Rails.env.development? || @pinned_links.to_a.size > 0 %>
+          <div class="widget--header">Featured</div>
+          <% @pinned_links.each do |pl| %>
+            <div class="widget--body">
+              <% pl_link = pl.post.nil? ? pl.link : generic_share_link(pl.post) %>
+              <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
+              <%= link_to pl_link, class: 'h-fw-bold' do %>
+                <%= pl_label %>
+              <% end %>
+              <% unless pl.shown_before.nil? %>
+                <div>
+                  &mdash;
+                  <% if !pl.shown_after.nil? %>
+                    <% if pl.shown_after < DateTime.now %>
+                      ends in  <%= time_ago_in_words(pl.shown_before) %>
+                    <% else %>
+                      starts in <%= time_ago_in_words(pl.shown_after) %>
+                    <% end %>
                   <% else %>
-                    starts in <%= time_ago_in_words(pl.shown_after) %>
+                    in <%= time_ago_in_words(pl.shown_before) %>
                   <% end %>
-                <% else %>
-                  in <%= time_ago_in_words(pl.shown_before) %>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
-      <% end %>
-      <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
-        <div class="widget--header">Hot Posts</div>
-        <% @hot_questions.each do |hq| %>
-          <div class="widget--body">
-            <% unless hq.category.nil? %>
-              <%= hq.category.name %>
-              &mdash;
-            <% end %>
-            <%= link_to generic_share_link(hq) do %>
-              <%= hq.title %>
-            <% end %>
-          </div>
+        <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
+          <div class="widget--header">Hot Posts</div>
+          <% @hot_questions.each do |hq| %>
+            <div class="widget--body">
+              <% unless hq.category.nil? %>
+                <%= hq.category.name %>
+                &mdash;
+              <% end %>
+              <%= link_to generic_share_link(hq) do %>
+                <%= hq.title %>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if Rails.env.development? || rand(100) <= 10 %>
+    <% post = Post.unscoped.find_by id: promoted_posts.keys.shuffle.first %>
+    <% if post.present? %>
+      <div class="has-margin-4">
+        <%= link_to post_url(post, host: post.community.host) do %>
+          <%= image_tag specific_question_ads_url(post, host: post.community.host) %>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 
   <% if moderator? || admin? %>
@@ -73,19 +87,21 @@
     </div>
   <% end %>
 
-  <% if user_signed_in? %>
-    <div class="widget has-margin-4">
-      <div class="widget--header">
-        <%= link_to 'edit', subscriptions_path, class: 'widget--header-link' %>
-        Subscribe to Questions
+  <% unless @community.is_fake %>
+    <% if user_signed_in? %>
+      <div class="widget has-margin-4">
+        <div class="widget--header">
+          <%= link_to 'edit', subscriptions_path, class: 'widget--header-link' %>
+          Subscribe to Questions
+        </div>
+        <div class="widget--body">
+          <p>You can subscribe to
+            <%= link_to 'all new questions', new_subscription_path(type: 'all', return_to: request.path) %>
+            (from all categories) or to
+            <%= link_to 'interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>.</p>
+        </div>
       </div>
-      <div class="widget--body">
-        <p>You can subscribe to
-          <%= link_to 'all new questions', new_subscription_path(type: 'all', return_to: request.path) %>
-          (from all categories) or to
-          <%= link_to 'interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>.</p>
-      </div>
-    </div>
+    <% end %>
   <% end %>
 
   <div class="widget has-margin-4">
@@ -95,17 +111,19 @@
     <div class="widget--body">
       <% chat = SiteSetting['ChatLink'] %>
       <p>
-        This site is part of the <a href="https://codidact.com">Codidact network</a>.
-        We have other sites too &mdash; take a look!
+        This community is part of the <a href="https://codidact.com">Codidact network</a>.
+        We have other communities too &mdash; take a look!
       </p>
       <% if chat.present? %>
         <p>
           You can also <%= link_to 'join us in chat', chat %>!
         </p>
       <% end %>
-      <p>
-        Want to advertise this site? <%= link_to 'Use our templates!', ads_path %>
-      </p>
+      <% unless @community.is_fake %>
+        <p>
+          Want to advertise this community? <%= link_to 'Use our templates!', ads_path %>
+        </p>
+      <% end %>
     </div>
   </div>
 </div>

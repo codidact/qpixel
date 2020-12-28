@@ -7,7 +7,8 @@
     'Article' => 'posts/article_list'
   }
 %>
-<% show_type_tag ||= false %>
-<% show_category_tag ||= false %>
-<%= render post_types_views[post.post_type.name], post: post, show_type_tag: show_type_tag,
-           show_category_tag: show_category_tag %>
+<% @show_type_tag = !!defined?(show_type_tag) ? show_type_tag : false %>
+<% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
+<% @last_activity = !!defined?(last_activity) ? last_activity : true %>
+<%= render post_types_views[post.post_type.name] || 'posts/list', post: post, show_type_tag: @show_type_tag,
+           show_category_tag: @show_category_tag, last_activity: @last_activity %>

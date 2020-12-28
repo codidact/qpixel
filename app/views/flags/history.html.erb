@@ -10,23 +10,7 @@
 <h4><%= @statuses.map { |s, c| "#{c} #{s.present? ? s : 'pending'}" }.join(', ') %></h4>
 
 <% @flags.each do |flag| %>
-  <div class="widget">
-    <div class="item-list">
-      <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
-    </div>
-    <div class="widget--body">
-      <p>
-        <% status_colors = { helpful: 'is-green', declined: 'is-red', pending: 'is-muted' } %>
-        <span class="badge is-tag <%= status_colors[(flag.status || 'pending').to_sym] %> is-filled">
-          <%= flag.status || 'pending' %>
-        </span>
-        <%= flag.reason %>
-        <% if flag.message.present? %>
-          &mdash; response: <em><%= flag.message %></em>
-        <% end %>
-      </p>
-    </div>
-  </div>
+  <%= render 'handled', flag: flag %>
 <% end %>
 
 <%= will_paginate @flags, renderer: BootstrapPagination::Rails %>

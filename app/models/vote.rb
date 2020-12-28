@@ -2,14 +2,14 @@
 # association), and to a user.
 class Vote < ApplicationRecord
   include PostRelated
-  belongs_to :user, required: true
-  belongs_to :recv_user, class_name: 'User', required: true
+  belongs_to :user, optional: false
+  belongs_to :recv_user, class_name: 'User', optional: false
 
   after_create :apply_rep_change
+  after_create :add_counter
   before_destroy :check_valid
   before_destroy :reverse_rep_change
 
-  after_create :add_counter
   after_destroy :remove_counter
 
   validates :vote_type, inclusion: [1, -1]
@@ -66,18 +66,20 @@ class Vote < ApplicationRecord
   end
 
   def add_counter
-    if vote_type == 1
+    case vote_type
+    when 1
       post.update(upvote_count: post.upvote_count + 1)
-    elsif vote_type == -1
+    when -1
       post.update(downvote_count: post.downvote_count + 1)
     end
     post.recalc_score
   end
 
   def remove_counter
-    if vote_type == 1
+    case vote_type
+    when 1
       post.update(upvote_count: [post.upvote_count - 1, 0].max)
-    elsif vote_type == -1
+    when -1
       post.update(downvote_count: [post.downvote_count - 1, 0].max)
     end
     post.recalc_score

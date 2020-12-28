@@ -1,0 +1,2 @@
+module FakeCommunityHelper
+end

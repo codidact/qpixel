@@ -4,7 +4,7 @@ $(() => {
         <div class="widget--body h-p-2">
             <div class="h-c-tertiary-600 h-fs-caption">
                 ${notification.community_name} &middot;
-                ${notification.is_read ? 'read' : `<strong>unread</strong>`} &middot;
+                <span class="js-notif-state">${notification.is_read ? 'read' : `<strong>unread</strong>`}</span> &middot;
                 <span data-livestamp="${notification.created_at}">${notification.created_at}</span>
             </div>
             <p><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></p>
@@ -44,15 +44,23 @@ $(() => {
       });
   
       $inboxContainer.append(`<a href="/users/me/notifications" class="button is-muted is-small">See all your notifications &raquo;</a>`);
-   } else {
-      await fetch(`/notifications/read_all`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
-      });
-      const $inboxCount = $('.inbox-count');
-      $inboxCount.text('');
     }
+  });
+
+  $('.js-read-all-notifs').on('click', async ev => {
+    ev.preventDefault();
+
+    await fetch(`/notifications/read_all`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+    });
+
+    $('.inbox-count').remove();
+
+    $('.js-notification').removeClass('is-teal').addClass('read');
+    $('.js-notif-state').text('read');
+    $('.js-notification-toggle').html(`<i class="fas fa-envelope"></i> mark unread`);
   });
 
   $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async evt => {

@@ -1,21 +1,20 @@
-<h1><%= t('admin.tools.privileges') %></h1>
-<p><%= t('admin.privileges_blurb') %></p>
-
-<div class="button-list is-gutterless">
-  <%= link_to t('g.reputation').capitalize, query_url(sort: 'rep'), class: "button is-outlined is-muted " + (active_search?('threshold') ? "is-active" : "") %>
-  <%= link_to t('g.name').capitalize, query_url(sort: 'name'), class: "button is-outlined is-muted " + (active_search?('name') ? "is-active" : "") %>
-</div>
+<h1>Abilities</h1>
+<p>Here you can define the thresholds required to gain each available ability. Click on a value to edit it.</p>
 
 <table class="table has-margin-top-4">
   <thead>
-    <th><%= t('g.privilege').capitalize %></th>
-    <th><%= t('g.threshold').capitalize %></th>
+    <th>Privilege</th>
+    <th>Post Score Threshold</th>
+    <th>Edit Score Threshold</th>
+    <th>Flag Score Threshold</th>
   </thead>
   <tbody>
-    <% @privileges.each do |priv| %>
+    <% @abilities.each do |a| %>
       <tr>
-        <td><strong><%= priv.name %></strong></td>
-        <td class="js-privilege-threshold" data-name="<%= priv.name %>"><%= priv.threshold %></td>
+        <td><strong><%= a.name %></strong></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="post"><%= a.post_score_threshold || '-' %></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="edit"><%= a.edit_score_threshold || '-' %></td>
+        <td class="js-privilege-threshold" data-name="<%= a.internal_id %>" data-type="flag"><%= a.flag_score_threshold || '-' %></td>
       </tr>
     <% end %>
   </tbody>

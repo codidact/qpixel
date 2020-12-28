@@ -1,45 +1,77 @@
-<div class="modal is-with-backdrop" id="mod-tools-<%= post.id %>">
+<div class="modal is-with-backdrop js-mod-tools" id="mod-tools-<%= post.id %>">
   <div class="modal--container">
     <div class="modal--header">
       <button class="button is-close-button modal--header-button" data-modal="#mod-tools-<%= post.id %>">&times;</button>
       Moderator Tools
     </div>
     <div class="modal--body">
-      <% if post.answer? %>
-        <details>
-          <summary>Convert to comment</summary>
-          <p>
-            Converts this answer to a comment (or series of comments, if it's too long for one) on the post you specify.
-          </p>
-          <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
-            <div class="form-group">
-              <%= label_tag :post_id, 'Post ID', class: 'form-element', for: "post_id_#{post.id}" %>
-              <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
-              <%= number_field_tag :post_id, nil, class: 'form-element', id: "post_id_#{post.id}" %>
-            </div>
+      <% unless post.locked? && !moderator? %>
+        <% if post.answer? %>
+          <details>
+            <summary>Convert to comment</summary>
+            <p>
+              Converts this answer to a comment (or series of comments, if it's too long for one) on the post you specify.
+            </p>
+            <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
+              <div class="form-group">
+                <%= label_tag :post_id, 'Post ID', class: 'form-element', for: "post_id_#{post.id}" %>
+                <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
+                <%= number_field_tag :post_id, nil, class: 'form-element', id: "post_id_#{post.id}" %>
+              </div>
 
-            <%= submit_tag 'Convert', class: 'button is-filled'  %>
-          <% end %>
-        </details>
+              <%= submit_tag 'Convert', class: 'button is-filled'  %>
+            <% end %>
+          </details>
+        <% end %>
+        <% if current_user&.privilege?('flag_curate') && (post.question? || post.article?) %>
+          <details>
+            <summary>Change category</summary>
+            <p>
+              Moves this post into another category that you specify. You must have permission to create posts there, and
+              this post type must be allowed in the target category.
+            </p>
+            <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
+              <div class="form-group">
+                <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
+                <span class="form-caption">Choose a category to move this post to.</span>
+                <%= select_tag :target_id, options_for_select([]), include_blank: true,
+                               class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
+              </div>
+
+              <%= submit_tag 'Move', class: 'button is-filled' %>
+            <% end %>
+          </details>
+        <% end %>
       <% end %>
-      <% if current_user&.has_privilege?('ChangeCategory') && (post.question? || post.article?) %>
+      <% if current_user&.privilege?('flag_curate') %>
+        <% if !post.locked? %>
         <details>
-          <summary>Change category</summary>
+          <summary>Lock post</summary>
           <p>
-            Moves this post into another category that you specify. You must have permission to create posts there, and
-            this post type must be allowed in the target category.
+            Locking a post disallows edits, comments and votes. Use post closure to disallow answers, too. You should do that before locking the post, because the interface will be hidden afterwards. <% if moderator? %>If you just want to disable comments to shut down a heated discussion, use that tool.<% end %>
           </p>
-          <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
-            <div class="form-group">
-              <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
-              <span class="form-caption">Choose a category to move this post to.</span>
-              <%= select_tag :target_id, options_for_select([]), include_blank: true,
-                             class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
-            </div>
-
-            <%= submit_tag 'Move', class: 'button is-filled' %>
+          <%= form_tag post_lock_path(post), remote: true, class: 'js-lock' do %>
+            <%= label_tag :length, 'Locked until', class: 'form-element', for: "purge_comments_id_#{post.id}" %>
+            <% if current_user.is_moderator %>
+              <div class="form-caption">You can set an number of days, after which the post will automatically unlock.</div>
+            <% else %>
+              <div class="form-caption">You have to set an number of days, after which the post will automatically unlock. Will default to 7 if none chosen. Maximum value: 30 days</div>
+            <% end %>
+              <%= number_field_tag :length, nil, class: 'form-element' %>
+            <%= submit_tag 'Lock', class: 'button is-filled' %>
           <% end %>
         </details>
+      <% elsif !post.locked_until.nil? || moderator? || post.locked_by.id == current_user.id %>
+        <details>
+          <summary>Unlock post</summary>
+          <p>
+            Unlocking the post allows edits, comments and votes again.
+          </p>
+          <%= form_tag post_unlock_path(post), remote: true, class: 'js-lock' do %>
+            <%= submit_tag 'Unlock', class: 'button is-filled' %>
+          <% end %>
+        </details>
+        <% end %>
       <% end %>
       <% if moderator? && !post.comments_disabled %>
         <details>
@@ -77,6 +109,24 @@
           </p>
           <%= form_tag post_feature_url(post), remote: true, class: 'js-feature-post' do %>
             <%= submit_tag 'Feature post', class: 'button is-filled'  %>
+          <% end %>
+        </details>
+      <% end %>
+      <% if current_user&.privilege?('flag_curate') && top_level_post_types.include?(post.post_type_id) %>
+        <details>
+          <summary>Nominate for promotion</summary>
+          <p>Nominate this question as an example of a good post on your site, to be promoted across the network.</p>
+          <% promoted = promoted_posts %>
+          <% if promoted.include?(post.id.to_s) && DateTime.now.to_i - promoted[post.id.to_s] <= 3600 * 24 * 28 %>
+            <p class="has-font-size-caption has-color-tertiary-500">
+              This question was already nominated for promotion
+              <%= ((DateTime.now.to_i - promoted[post.id.to_s]) / 86400.0).round %> days ago.
+              You cannot nominate it again until it has expired (28 days from when it was nominated).
+            </p>
+          <% else %>
+            <a href="javascript:void(0)" class="js-nominate-promotion button is-filled" data-post-id="<%= post.id %>">
+              Nominate
+            </a>
           <% end %>
         </details>
       <% end %>

@@ -40,6 +40,27 @@ question_two:
   upvote_count: 0
   downvote_count: 0
 
+bad_answers:
+  post_type: question
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 deleted:
   post_type: question
   title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
@@ -58,6 +79,30 @@ deleted:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: deleter
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+deleted_mod:
+  post_type: question
+  title: Q3D ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: moderator
   community: sample
   category: main
   license: cc_by_sa
@@ -88,6 +133,98 @@ closed:
   upvote_count: 0
   downvote_count: 0
 
+locked:
+  post_type: question
+  title: Q4C ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  locked: true
+  locked_by: deleter
+  locked_at: 2019-01-01T00:00:00.000000Z
+  locked_until: 2020-01-01T00:00:00.000000Z
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+locked_mod:
+  post_type: question
+  title: LM ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  locked: true
+  locked_by: moderator
+  locked_at: 2019-01-01T00:00:00.000000Z
+  locked_until: 2020-01-01T00:00:00.000000Z
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+free_edit:
+  post_type: free_edit
+  title: FE ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: moderator
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+high_trust:
+  post_type: question
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: moderator
+  community: sample
+  category: admin_only
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 answer_one:
   post_type: answer
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
@@ -113,6 +250,19 @@ answer_two:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
+
+bad_answer:
+  post_type: answer
+  body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  score: 0.4
+  parent: question_one
+  user: editor
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 1
 
 really_old_answer:
   post_type: answer
@@ -208,3 +358,52 @@ deleted_article:
   deleted_by: deleter
   upvote_count: 0
   downvote_count: 0
+
+help_article:
+  post_type: help_doc
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  user: system
+  community: sample
+  help_category: Site Information
+  help_ordering: 99
+  doc_slug: sample
+
+mod_help_article:
+  post_type: help_doc
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  user: system
+  community: sample
+  help_category: $Moderator
+  help_ordering: 99
+  doc_slug: sample-mod
+
+disabled_help_article:
+  post_type: help_doc
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  user: system
+  community: sample
+  help_category: $Disabled
+  help_ordering: 99
+  doc_slug: sample-disable
+
+blog_post:
+  post_type: blog_post
+  title: B1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  user: closer
+  community: sample
+  category: main
+  license: cc_by_sa
+

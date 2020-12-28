@@ -20,7 +20,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
 
-h1 {
+.post h1 {
   font-size: 1.7em;
 }
 
@@ -59,6 +59,11 @@ a.header--site-name {
 
 .notice a {
   word-break: break-word;
+}
+
+.notice.is-filled a {
+  color: white !important;
+  font-weight: bold !important;
 }
 
 .item-list--item {
@@ -140,7 +145,7 @@ hr {
 }
 
 div.post-preview .footnote-ref a::before {
-    content: '';
+  content: '';
 }
 
 .footnote-ref a::after {
@@ -148,7 +153,7 @@ div.post-preview .footnote-ref a::before {
 }
 
 div.post-preview .footnote-ref a::after {
-    content: '';
+  content: '';
 }
 
 .footnotes-sep + .footnotes {
@@ -208,4 +213,48 @@ pre .hljs {
   padding: 0;
   background: inherit;
   overflow-x: unset !important;
+}
+
+.audit-log--body {
+  white-space: pre-wrap;
+  vertical-align: text-top;
+}
+
+table {
+  border-collapse: collapse;
+  padding: 4px;
+  max-width: 100%
+}
+
+table.is-full-width {
+  width: 100%
+}
+
+table th {
+  border-bottom: 3px solid #ccc;
+  padding: 6px 10px;
+  font-weight: 600;
+  text-align: left
+}
+
+table td {
+  border-bottom: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left
+}
+
+table th:not(:last-child), table td:not(:last-child) {
+  border-right: 1px solid #ccc
+}
+
+table.is-compact th, table.is-compact td {
+  padding: 2px 6px
+}
+
+table.is-striped tr:nth-of-type(2n+1) td {
+  background-color: #f6f6f6
+}
+
+table.is-with-hover tr:hover td {
+  background-color: #eee
 }
