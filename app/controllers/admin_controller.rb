@@ -115,6 +115,9 @@ class AdminController < ApplicationController
     tags = required_tags + status_tags
     Tag.create(tags.map { |t| { name: t, community_id: @community.id, tag_set: TagSet.meta } })
 
+    Category.where(name: 'Q&A').last.update tag_set: TagSet.main
+    Category.where(name: 'Meta').last.update tag_set: TagSet.meta
+
     # Set Meta tags as required/mod-only
     meta_category = Category.where(name: 'Meta').last
     meta_category.required_tags << Tag.unscoped.where(community: @community, name: required_tags)
