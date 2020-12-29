@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
   post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
   get    'admin/audits',                   to: 'admin#audit_log', as: :audit_log
+  get    'admin/new-site',                 to: 'admin#new_site', as: :new_site
+  post   'admin/new-site',                 to: 'admin#create_site', as: :create_site
+  get    'admin/setup',                    to: 'admin#setup', as: :setup
+  post   'admin/setup',                    to: 'admin#setup_save', as: :setup_save
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason

@@ -99,7 +99,6 @@
       </div>
     </div>
   </div>
-
   <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
     <div class="widget">
       <div class="widget--body">
@@ -108,4 +107,14 @@
       </div>
     </div>
   </div>
+  <% if current_user.is_global_admin %>
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
+      <div class="widget">
+        <div class="widget--body">
+          <i class="fas fa-user-plus"></i>
+          <%= link_to 'New Site', new_site_path, 'data-ckb-item-link' => '' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

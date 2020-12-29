@@ -1,0 +1,19 @@
+<h1>Create New Site</h1>
+
+<h2>Proxy Configuration</h2>
+
+<p>Your new site <strong><%= @new_community.name %></strong> has been successfully created.</p>
+<p>Now, you'll need to set up the proxy configuration. Most likely, you'll need to </p>
+<ol>
+    <li>edit the reverse proxy (ex. nginx) configuration,</li>
+    <li>add the records for the new site (host: <%= @new_community.host %>) to your DNS server,</li>
+    <li>generate HTTPS certificates for the new site, and</li>
+    <li>restart your reverse proxy.</li>
+</ol>
+<p>Other steps may be neccessary depending on your hosting set up.</p>
+
+<hr>
+
+<p>Once you are ready, click on the following button:</p>
+
+<a href="//<%= @new_community.host %>/admin/setup" class="button is-filled is-very-large">To new site</a>

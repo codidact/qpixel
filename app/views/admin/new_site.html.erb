@@ -1,0 +1,24 @@
+<h1>Create New Site</h1>
+
+<div class="notice is-danger">
+    <p><strong>Attention!</strong> You are about to create a new site in this network. You will not be able to undo this later. You'll need access to the server configuration to complete this process.</p>
+</div>
+
+<h2>Site Configuration</h2>
+
+<%= form_for @new_community, url: create_site_path do |f| %>
+
+    <div class="form-group">
+        <%= f.label :name, 'Community name', class: 'form-element' %>
+        <%= f.text_field :name, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+        <%= f.label :host, 'Primary community host', class: 'form-element' %>
+        <div class="form-caption">This is likely something like X.codidact.com. Without / and https://. You can set up secondary community hosts (redirect) later in the server configuration.</div>
+        <%= f.text_field :host, class: 'form-element' %>
+    </div>
+
+    <%= f.submit "Create new site", class: 'button is-danger is-filled' %>
+
+<% end %>

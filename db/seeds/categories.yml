@@ -20,3 +20,4 @@
   tag_set_id: <%= TagSet.unscoped.where(name: 'Meta').first %>
   use_for_hot_posts: true
   use_for_advertisement: false
+  color_code: bluegray
