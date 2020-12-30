@@ -258,3 +258,7 @@ table.is-striped tr:nth-of-type(2n+1) td {
 table.is-with-hover tr:hover td {
   background-color: #eee
 }
+
+.header.is-small .header--brand .header--site-name {
+  font-size: 2rem;
+}
