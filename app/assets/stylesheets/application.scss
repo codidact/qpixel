@@ -259,6 +259,7 @@ table.is-with-hover tr:hover td {
   background-color: #eee
 }
 
+/* The default header size (2.5rem) is too big for small headers. */
 .header.is-small .header--brand .header--site-name {
   font-size: 2rem;
 }
