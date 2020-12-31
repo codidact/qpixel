@@ -1,0 +1,2 @@
+class CommentThread < ApplicationRecord
+end
