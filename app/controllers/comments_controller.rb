@@ -1,10 +1,49 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
+  include ActionView::Helpers::TextHelper
+
   before_action :authenticate_user!, except: [:post, :show]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+
+  def create_thread
+    @post = Post.find(params[:post_id])
+    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
+      return
+    end
+
+    title = params[:title]
+    if title.blank? || title.length == 0
+      title = truncate(params[:body], length: 100)
+    end
+
+    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false, deleted: false)
+    @comment = Comment.new(post: @post, content: params[:body], user: current_user, comment_thread: @comment_thread, has_reference: false)
+
+    return if comment_rate_limited
+    
+    if @comment_thread.save && @comment.save
+      unless @comment.post.user == current_user
+        @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
+      end
+
+      match = @comment.content.match(/@(?<name>\S+) /)
+      if match && match[:name]
+        user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
+        unless user&.id == @comment.post.user_id
+          user&.create_notification('You were mentioned in a comment', comment_link(@comment))
+        end
+      end
+
+      redirect_to helpers.generic_show_link(@post)
+    else
+      flash :error, 'Could not create comment thread:' + (@comment_thread.errors.full_messages + @comment.errors.full_messages).join(', ')
+      redirect_to helpers.generic_show_link(@post)
+    end
+  end
 
   def create
     @post = Post.find(params[:comment][:post_id])
@@ -148,5 +187,31 @@ class CommentsController < ApplicationController
 
   def check_if_target_post_locked
     check_if_locked(Post.find(params[:comment][:post_id]))
+  end
+
+  def comment_rate_limited
+    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
+                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
+                             .where.not(post: Post.where(user_id: current_user.id)).count
+    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+
+    # Provides mainly web actions for using and making comments.
+    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
+       && recent_comments >= max_comments_per_day
+      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \
+                          ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
+                          ' to own posts are exempt.'
+
+      if recent_comments.zero? && !current_user.privilege?('unrestricted')
+        comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
+      end
+
+      AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
+                            comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
+
+      render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
+      return true
+    end
+    return false
   end
 end

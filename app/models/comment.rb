@@ -6,6 +6,7 @@ class Comment < ApplicationRecord
   scope :undeleted, -> { where(deleted: false) }
 
   belongs_to :user
+  belongs_to :comment_thread
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
 
   validate :content_length
