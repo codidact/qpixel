@@ -24,3 +24,20 @@
 .post--comments {
   font-size: 0.9em;
 }
+
+.post--comments-thread.is-inline {
+  padding: 0.5rem 0.25rem;
+  display: flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  a {
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    width: 0;
+  }
+}
