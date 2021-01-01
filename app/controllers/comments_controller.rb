@@ -16,15 +16,17 @@ class CommentsController < ApplicationController
     end
 
     title = params[:title]
-    if title.blank? || title.length == 0
+    if title.blank? || title.length.zero?
       title = truncate(params[:body], length: 100)
     end
 
-    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false, deleted: false)
-    @comment = Comment.new(post: @post, content: params[:body], user: current_user, comment_thread: @comment_thread, has_reference: false)
+    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false,
+                                        deleted: false)
+    @comment = Comment.new(post: @post, content: params[:body], user: current_user, comment_thread: @comment_thread,
+                           has_reference: false)
 
     return if comment_rate_limited
-    
+
     if @comment_thread.save && @comment.save
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
@@ -37,12 +39,11 @@ class CommentsController < ApplicationController
           user&.create_notification('You were mentioned in a comment', comment_link(@comment))
         end
       end
-
-      redirect_to helpers.generic_show_link(@post)
     else
-      flash[:error] = 'Could not create comment thread:' + (@comment_thread.errors.full_messages + @comment.errors.full_messages).join(', ')
-      redirect_to helpers.generic_show_link(@post)
+      flash[:error] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
+                                                           + @comment.errors.full_messages).join(', ')}"
     end
+    redirect_to helpers.generic_show_link(@post)
   end
 
   def create
@@ -53,7 +54,8 @@ class CommentsController < ApplicationController
       return
     end
 
-    @comment = Comment.new(post: @post, content: params[:content], user: current_user, comment_thread: @comment_thread, has_reference: false)
+    @comment = Comment.new(post: @post, content: params[:content], user: current_user,
+                           comment_thread: @comment_thread, has_reference: false)
 
     return if comment_rate_limited
 
@@ -70,12 +72,10 @@ class CommentsController < ApplicationController
           user&.create_notification('You were mentioned in a comment', comment_link(@comment))
         end
       end
-
-      redirect_to comment_thread_path(@comment_thread.id)
     else
       flash[:error] = @comment.errors.full_messages.join(', ')
-      redirect_to comment_thread_path(@comment_thread.id)
     end
+    redirect_to comment_thread_path(@comment_thread.id)
   end
 
   def update
@@ -128,7 +128,7 @@ class CommentsController < ApplicationController
       format.json { render json: @comment }
     end
   end
-  
+
   def thread
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
@@ -144,10 +144,10 @@ class CommentsController < ApplicationController
 
   def post
     @comment_threads = if current_user&.is_moderator || current_user&.is_admin
-                  CommentThread
-                else
-                  CommentThread.undeleted
-                end.where(post_id: params[:post_id]).order(reply_count: :desc)
+                         CommentThread
+                       else
+                         CommentThread.undeleted
+                       end.where(post_id: params[:post_id]).order(reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
@@ -209,6 +209,6 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
       return true
     end
-    return false
+    false
   end
 end

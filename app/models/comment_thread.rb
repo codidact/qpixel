@@ -10,6 +10,6 @@ class CommentThread < ApplicationRecord
   scope :publicly_available, -> { where(deleted: false, archived: false) }
 
   def read_only?
-    locked || archived || deleted 
+    locked || archived || deleted
   end
 end
