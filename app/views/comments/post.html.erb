@@ -1,3 +1,6 @@
-<% @comments.each do |comment| %>
-  <%= render 'comment', comment: comment %>
+<% @comment_threads.each do |thread| %>
+  <div class="post--comments-thread is-inline">
+    <a href="<%= comment_thread_path(thread.id) %>" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
+    (<%= pluralize(thread.reply_count, 'reply') %>)
+  </div>
 <% end %>

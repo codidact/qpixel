@@ -143,14 +143,14 @@ class CommentsController < ApplicationController
   end
 
   def post
-    @comments = if current_user&.is_moderator || current_user&.is_admin
-                  Comment.all
+    @comment_threads = if current_user&.is_moderator || current_user&.is_admin
+                  CommentThread
                 else
-                  Comment.undeleted
-                end.where(post_id: params[:post_id])
+                  CommentThread.undeleted
+                end.where(post_id: params[:post_id]).order(reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
-      format.json { render json: @comments }
+      format.json { render json: @comment_threads }
     end
   end
 

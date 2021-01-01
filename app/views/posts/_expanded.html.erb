@@ -406,12 +406,9 @@
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if comment_threads.count > 5 %>
-              <a href="#" class="js-more-comments h-fw-bold" data-post-id="<%= post.id %>">
+              <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
                 Show all <%= comment_threads.count %> comment threads
               </a>
-              <% if user_signed_in? %>
-                |
-              <% end %>
             <% end %>
             <% if user_signed_in? %>
               <% if post.locked? && !moderator? && !admin? %>
@@ -426,7 +423,7 @@
                 <% elsif post.comments_disabled %>
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
-                <a href="#" class="h-fw-bold" data-modal=".js--<%= post.id %>-new-thread-modal">Start new comment thread</a>
+                <a href="#" class="button is-muted is-small" data-modal=".js--<%= post.id %>-new-thread-modal">Start new comment thread</a>
               <% end %>
             <% end %>
           </div>
