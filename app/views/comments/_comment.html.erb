@@ -1,6 +1,6 @@
 <% with_post_link ||= false %>
 
-<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
+<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
   <div class="comment-meta">
     <div class="comment--info">
       <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
@@ -8,7 +8,7 @@
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
     </div>
     <div class="comment--links">
-      <a href="#">link</a>
+      <a href="<%= comment_link(comment) %>">link</a>
       <% if with_post_link %>
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
@@ -23,6 +23,6 @@
     </div>
   </div>
   <div class="comment--body" dir="ltr">
-    <p><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></p>
+    <%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %>
   </div>
 </div>
