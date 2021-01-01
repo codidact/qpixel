@@ -80,9 +80,20 @@
   display: flex;
   flex-wrap: nowrap;
   max-width: 100%;
+  transition: all .3s ease;
 
   &:hover {
     background-color: #f0f0f0;
+  }
+
+  &.is-deleted {
+    background-color: #fdd;
+    opacity: 0.2;
+    &:hover { opacity: 0.5; }
+  }
+  &.is-archived {
+    opacity: 0.2;
+    &:hover { opacity: 0.5; }
   }
 
   a {

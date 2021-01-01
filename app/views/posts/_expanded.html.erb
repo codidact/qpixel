@@ -392,11 +392,12 @@
           <% end %>
         </div>
         <div class="post--comments has-padding-4">
+            <% comment_thread_count = post.comment_threads.undeleted.count %>
           <h4 class="has-margin-0">
-            <%= pluralize(post.comment_threads.publicly_available.size, 'comment threads') %>
+            <%= pluralize(comment_thread_count, 'comment threads') %>
           </h4>
           <div class="post--comments-container">
-            <% comment_threads = current_user&.privilege?('flag_curate') ? post.comment_threads : post.comment_threads.publicly_available %>
+            <% comment_threads = post.comment_threads.publicly_available %>
             <% comment_threads.order(reply_count: :desc).first(5).each do |thread| %>
               <div class="post--comments-thread is-inline">
                 <a href="<%= comment_thread_path(thread.id) %>" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
@@ -405,9 +406,9 @@
             <% end %>
           </div>
           <div class="post--comments-links has-margin-top-1">
-            <% if comment_threads.count > 5 %>
+            <% if comment_thread_count > 5 %>
               <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
-                Show all <%= comment_threads.count %> comment threads
+                Show all <%= comment_thread_count %> comment threads
               </a>
             <% end %>
             <% if user_signed_in? %>

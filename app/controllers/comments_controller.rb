@@ -130,7 +130,9 @@ class CommentsController < ApplicationController
     end
   end
 
-  def thread; end
+  def thread
+    return not_found if @comment_thread.deleted && !current_user&.privilege?('flag_curate')
+  end
 
   def thread_rename
     if @comment_thread.read_only? && !current_user.is_moderator
@@ -191,7 +193,7 @@ class CommentsController < ApplicationController
                          CommentThread
                        else
                          CommentThread.undeleted
-                       end.where(post_id: params[:post_id]).order(reply_count: :desc)
+                       end.where(post_id: params[:post_id]).order(deleted: :asc, archived: :asc, reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
