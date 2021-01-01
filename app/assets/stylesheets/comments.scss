@@ -41,6 +41,18 @@
   margin-bottom: 0.5rem;
   display: flex;
 
+  .comment--reference {
+    position: relative;
+    width: 1.5rem;
+
+    .comment--reference-button {
+      padding: 0.25rem;
+      position: absolute;
+      top: -0.35rem;
+      left: -0.55rem;
+    }
+  }
+
   .comment--links {
     flex-grow: 1;
     display: flex;

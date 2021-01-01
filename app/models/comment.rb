@@ -7,6 +7,7 @@ class Comment < ApplicationRecord
 
   belongs_to :user
   belongs_to :comment_thread
+  belongs_to :references_comment, class_name: 'Comment', optional: true
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
 
   validate :content_length

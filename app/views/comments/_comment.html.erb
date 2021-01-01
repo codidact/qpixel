@@ -2,6 +2,33 @@
 
 <div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
   <div class="comment-meta">
+    <% if comment.has_reference %>
+      <div class="comment--reference">
+        <button class="comment--reference-button button is-small is-button is-icon-only is-muted"
+                data-drop="#comment-<%= comment.id %>-ref" data-drop-self-class-toggle="is-active"
+                data-drop-force-dir="down">
+          <i class="fas fa-reply fa-fw"></i>
+        </button>
+      </div>
+      <div class="droppanel h-c-black is-large" id="comment-<%= comment.id %>-ref">
+        <% if comment.references_comment.nil? %>
+          <div class="h-fs-small h-m-b-2">
+            reference to
+            <a href="<%= generic_share_link(comment.post) %>">post</a>:
+          </div>
+        <% else %>
+          <div class="h-fs-small h-m-b-2">
+            reference to
+            <a href="<%= comment_link(comment.references_comment) %>">
+              comment by
+              <span dir="ltr"><%= comment.references_comment.user.rtl_safe_username %></span></a>:
+          </div>
+        <% end %>
+        <div class="h-p-2 has-border-left-width-4 has-border-left-style-solid has-border-color-tertiary-200">
+          <%= comment.reference_text %>
+        </div>
+      </div>
+    <% end %>
     <div class="comment--info">
       <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
       wrote
