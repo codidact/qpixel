@@ -7,7 +7,7 @@
   active: true
   requires_other_post: false
 - name: unclear
-  description: This question cannot be answered in its current form, because critical information are missing.
+  description: This question cannot be answered in its current form, because critical information is missing.
   active: true
   requires_other_post: false
 - name: too generic
