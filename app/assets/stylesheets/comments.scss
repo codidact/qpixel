@@ -1,6 +1,6 @@
 @import 'variables';
 
-.comment {
+/*.comment {
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid $muted-graphic;
@@ -23,6 +23,34 @@
 }
 .post--comments {
   font-size: 0.9em;
+}*/
+
+.comment {
+  margin-bottom: -0.5rem;
+}
+.comment .comment-meta {
+  font-size: 0.9em;
+  color: #666;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 0.75rem;
+  margin: -0.75rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+
+  .comment--links {
+    flex-grow: 1;
+    display: flex;
+    justify-content: right;
+
+    a {
+      margin: 0 0.25rem;
+    }
+  }
+}
+.deleted-comments {
+  margin: -0.75rem 0;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
 }
 
 .post--comments-thread.is-inline {

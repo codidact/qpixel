@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_31_130344) do
+ActiveRecord::Schema.define(version: 2020_12_31_192529) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -147,7 +147,6 @@ ActiveRecord::Schema.define(version: 2020_12_31_130344) do
     t.timestamp "locked_until"
     t.boolean "archived"
     t.bigint "archived_by_id"
-    t.timestamp "archived_until"
     t.boolean "ever_archived_before"
     t.boolean "deleted"
     t.bigint "deleted_by_id"

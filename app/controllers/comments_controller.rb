@@ -40,44 +40,25 @@ class CommentsController < ApplicationController
 
       redirect_to helpers.generic_show_link(@post)
     else
-      flash :error, 'Could not create comment thread:' + (@comment_thread.errors.full_messages + @comment.errors.full_messages).join(', ')
+      flash[:error] = 'Could not create comment thread:' + (@comment_thread.errors.full_messages + @comment.errors.full_messages).join(', ')
       redirect_to helpers.generic_show_link(@post)
     end
   end
 
   def create
-    @post = Post.find(params[:comment][:post_id])
+    @comment_thread = CommentThread.find(params[:id])
+    @post = @comment_thread.post
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     end
 
-    @comment = Comment.new comment_params.merge(user: current_user)
+    @comment = Comment.new(post: @post, content: params[:content], user: current_user, comment_thread: @comment_thread, has_reference: false)
 
-    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
-                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
-                             .where.not(post: Post.where(user_id: current_user.id)).count
-    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
-
-    # Provides mainly web actions for using and making comments.
-    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
-       && recent_comments >= max_comments_per_day
-      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \
-                          ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
-                          ' to own posts are exempt.'
-
-      if recent_comments.zero? && !current_user.privilege?('unrestricted')
-        comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
-      end
-
-      AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
-                            comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
-
-      render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
-      return
-    end
+    return if comment_rate_limited
 
     if @comment.save
+      @comment_thread.update(reply_count: @comment_thread.comments.size)
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
       end
@@ -90,11 +71,10 @@ class CommentsController < ApplicationController
         end
       end
 
-      render json: { status: 'success',
-                     comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+      redirect_to comment_thread_path(@comment_thread.id)
     else
-      render json: { status: 'failed', message: @comment.errors.full_messages.join(', ') },
-             status: :internal_server_error
+      flash[:error] = @comment.errors.full_messages.join(', ')
+      redirect_to comment_thread_path(@comment_thread.id)
     end
   end
 
@@ -144,6 +124,19 @@ class CommentsController < ApplicationController
       format.json { render json: @comment }
     end
   end
+  
+  def thread
+    @comment_thread = CommentThread.find(params[:id])
+    @post = @comment_thread.post
+  end
+
+  def thread_rename
+    @comment_thread = CommentThread.find(params[:id])
+    return forbidden if @comment_thread.read_only? && !current_user.is_moderator
+
+    @comment_thread.update title: params[:title]
+    redirect_to comment_thread_path(@comment_thread.id)
+  end
 
   def post
     @comments = if current_user&.is_moderator || current_user&.is_admin
@@ -186,7 +179,7 @@ class CommentsController < ApplicationController
   end
 
   def check_if_target_post_locked
-    check_if_locked(Post.find(params[:comment][:post_id]))
+    check_if_locked(Post.find(params[:post_id]))
   end
 
   def comment_rate_limited

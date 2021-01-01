@@ -1,0 +1,124 @@
+<h1>Comments on
+  <a href="<%= generic_show_link(@post) %>"><%= @post.title.blank? && @post.parent.exists? ? @post.parent.title : @post.title %></a>
+</h1>
+
+<!-- THREAD STARTS BELOW -->
+<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> h-p-4">
+
+<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>">
+  <div class="widget--header">
+    <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+    <%= @comment_thread.title %>
+  </div>
+  <% skipped_deleted = 0%>
+  <% @comment_thread.comments.each do |comment| %>
+    <% if comment.deleted && !(current_user.is_moderator && params[:show_deleted_comments] == "1") %>
+      <% skipped_deleted += 1%>
+      <% next %>
+    <% elsif skipped_deleted > 0 %>
+      <div class="widget--body">
+        <div class="deleted-comments">
+          <p>
+          <% if skipped_deleted == 1 %>
+            There is <%= skipped_deleted %> deleted comment.
+            <% if current_user.is_moderator %>
+              <a href="?show_deleted_comments=1">Show it.</a>
+            <% end %>
+          <% else %>
+            There are <%= skipped_deleted %> deleted comments.
+            <% if current_user.is_moderator %>
+              <a href="?show_deleted_comments=1">Show them.</a>
+            <% end %>
+          <% end %>
+          </p>
+        </div>
+      </div>
+      <% skipped_deleted = 0 %>
+    <% else %>
+      <% skipped_deleted = 0 %>
+    <% end %>
+    <div class="widget--body">
+      <div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
+        <div class="comment-meta">
+          <div class="comment--info">
+            <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
+            wrote
+            <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
+          </div>
+          <div class="comment--links">
+            <a href="#">link</a>
+            <a href="#">edit</a>
+            <a href="#" class="is-red js-comment-delete">delete</a>
+          </div>
+        </div>
+        <div class="comment-body" dir="ltr">
+          <p><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if skipped_deleted > 0 %>
+    <div class="widget--body">
+      <div class="deleted-comments">
+        <p>There are <%= skipped_deleted %> deleted comments.
+        <% if current_user.is_moderator %>
+          <a href="?show_deleted_comments=1">Show them.
+        <% end %>
+        </p>
+      </div>
+    </div>
+    <% skipped_deleted = 0 %>
+  <% end %>
+  <% unless current_user.nil? %>
+    <div class="widget--footer">
+      <% if !@comment_thread.read_only? %>
+        <h4>Reply to this thread</h4>
+        <%= form_tag create_comment_path(@comment_thread.id) do %>
+          <%= hidden_field_tag :post_id, @post.id %>
+          
+          <%= label_tag :content, 'Your message', class: 'form-element' %>
+          <%= text_area_tag :content, '', class: 'form-element' %>
+          
+          <%= submit_tag 'Add reply', class: 'button is-muted is-filled' %>
+        <% end %>
+      <% elsif @comment_thread.deleted %>
+        <p class="h-c-red-700"><i class="fas fa-trash fa-fw"></i> You cannot reply to this thread, because it has been deleted.</p>
+      <% elsif @comment_thread.locked %>
+        <p class="h-c-red-700"><i class="fas fa-lock fa-fw"></i> You cannot reply to this thread, because it has been locked.</p>
+      <% elsif @comment_thread.archived %>
+        <p class="h-c-tertiary-700"><i class="fas fa-archive fa-fw"></i> This thread has been archived and cannot be replied to.</p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+</div>
+
+<div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
+  <div class="droppanel--header">thread options</div>
+  <div class="droppanel--menu">
+    <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
+    <a href="#"><i class="fas fa-lock fa-fw"></i> lock</a>
+    <a href="#"><i class="fas fa-archive fa-fw"></i> archive</a>
+    <a href="#"><i class="fas fa-trash fa-fw"></i> delete</a>
+  </div>
+</div>
+
+<div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
+  <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
+    <div class="modal--header">
+      <button type="button" class="button is-close-button modal--header-button" data-modal=".js--rename-thread-<%= @comment_thread.id %>">&times;</button>
+      Rename...
+    </div>
+    <div class="modal--body">
+      <%= label_tag :title, 'Title', class: 'form-element' %>
+      <%= text_field_tag :title, @comment_thread.title, class: 'form-element' %>
+    </div>
+    <div class="modal--footer">
+      <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
+      <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= @comment_thread.id %>">Cancel</button>
+    </div>
+  <% end %>
+</div>
+
+<!-- THREAD ENDS ABOVE -->

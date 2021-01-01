@@ -155,8 +155,11 @@ Rails.application.routes.draw do
   post   'flags/new',                      to: 'flags#new', as: :new_flag
 
   post   'comments/new',                   to: 'comments#create_thread', as: :create_comment_thread
+  post   'comments/thread/:id/new',        to: 'comments#create', as: :create_comment
+  post   'comments/thread/:id/rename',     to: 'comments#thread_rename', as: :rename_comment_thread
   get    'comments/post/:post_id',         to: 'comments#post', as: :post_comments
   get    'comments/:id',                   to: 'comments#show', as: :comment
+  get    'comments/thread/:id',            to: 'comments#thread', as: :comment_thread
   post   'comments/:id/edit',              to: 'comments#update', as: :update_comment
   delete 'comments/:id/delete',            to: 'comments#destroy', as: :delete_comment
   patch  'comments/:id/delete',            to: 'comments#undelete', as: :undelete_comment

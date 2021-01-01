@@ -399,15 +399,15 @@
             <% comment_threads = current_user&.privilege?('flag_curate') ? post.comment_threads : post.comment_threads.publicly_available %>
             <% comment_threads.order(reply_count: :desc).first(5).each do |thread| %>
               <div class="post--comments-thread is-inline">
-                <a href="#" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
+                <a href="<%= comment_thread_path(thread.id) %>" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
                 (<%= pluralize(thread.reply_count, 'reply') %>)
               </div>
             <% end %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if comment_threads.count > 5 %>
-              <a href="#" class="js-more-comments" data-post-id="<%= post.id %>">
-                <strong>Show <%= comment_threads.count - 5 %> more comment threads</strong>
+              <a href="#" class="js-more-comments h-fw-bold" data-post-id="<%= post.id %>">
+                Show <%= comment_threads.count - 5 %> more comment threads
               </a>
               <% if user_signed_in? %>
                 |
@@ -426,7 +426,7 @@
                 <% elsif post.comments_disabled %>
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
-                <a href="#" data-modal=".js--<%= post.id %>-new-thread-modal">Start new comment thread</a>
+                <a href="#" class="h-fw-bold" data-modal=".js--<%= post.id %>-new-thread-modal">Start new comment thread</a>
               <% end %>
             <% end %>
           </div>
