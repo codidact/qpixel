@@ -79,6 +79,30 @@ $(() => {
     }
   });
 
+  $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async evt => {
+    evt.preventDefault();
+
+    const $tgt = $(evt.target);
+    const threadID = $tgt.data("thread")
+    const action = $tgt.data("action")
+    const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
+
+    const resp = await fetch(`/comments/thread/${threadID}/${route}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' },
+      body: 'type=' + action
+    });
+    const data = await resp.json();
+
+    if (data.status === 'success') {
+      window.location.reload();
+    }
+    else {
+      QPixel.createNotification('danger', data.message);
+    }
+  });
+
   $(document).on('click', '.comment-form input[type="submit"]', async evt => {
       // Comment posting has been clicked.
       $(evt.target).attr('data-disable-with', 'Posting...');

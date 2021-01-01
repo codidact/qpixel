@@ -4,6 +4,7 @@ class CommentsController < ApplicationController
 
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
+  before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
@@ -129,17 +130,60 @@ class CommentsController < ApplicationController
     end
   end
 
-  def thread
-    @comment_thread = CommentThread.find(params[:id])
-    @post = @comment_thread.post
-  end
+  def thread; end
 
   def thread_rename
-    @comment_thread = CommentThread.find(params[:id])
-    return forbidden if @comment_thread.read_only? && !current_user.is_moderator
+    if @comment_thread.read_only? && !current_user.is_moderator
+      flash[:error] = "This thread has been locked."
+      redirect_to comment_thread_path(@comment_thread.id)
+      return
+    end
 
     @comment_thread.update title: params[:title]
     redirect_to comment_thread_path(@comment_thread.id)
+  end
+
+  def thread_restrict
+    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found if @comment_thread.read_only?
+
+    if params[:type] == 'lock'
+      lu = nil
+      unless params[:duration].blank?
+        lu = params[:duration].to_i.days.from_now
+      end
+      @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
+
+      redirect_to comment_thread_path(@comment_thread.id)
+      return
+    elsif params[:type] == 'archive'
+      @comment_thread.update(archived: true, archived_by: current_user)
+    elsif params[:type] == 'delete'
+      @comment_thread.update(deleted: true, deleted_by: current_user)
+    end
+    
+    render json: { status: 'success' }
+  end
+
+  def thread_unrestrict
+    return not_found unless current_user.privilege? 'flag_curate'
+
+    if params[:type] == 'lock'
+      return not_found unless @comment_thread.locked?
+      @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
+    elsif params[:type] == 'archive'
+      return not_found unless @comment_thread.archived
+      @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
+    elsif params[:type] == 'delete'
+      return not_found unless @comment_thread.deleted
+      if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
+        render json: { status: 'error', message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
+        return
+      end
+      @comment_thread.update(deleted: false, deleted_by: nil)
+    end
+
+    render json: { status: 'success' }
   end
 
   def post
@@ -162,6 +206,11 @@ class CommentsController < ApplicationController
 
   def set_comment
     @comment = Comment.unscoped.find params[:id]
+  end
+
+  def set_thread
+    @comment_thread = CommentThread.find(params[:id])
+    @post = @comment_thread.post
   end
 
   def check_privilege

@@ -157,6 +157,8 @@ Rails.application.routes.draw do
   post   'comments/new',                   to: 'comments#create_thread', as: :create_comment_thread
   post   'comments/thread/:id/new',        to: 'comments#create', as: :create_comment
   post   'comments/thread/:id/rename',     to: 'comments#thread_rename', as: :rename_comment_thread
+  post   'comments/thread/:id/restrict',   to: 'comments#thread_restrict', as: :restrict_comment_thread
+  post   'comments/thread/:id/unrestrict', to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
   get    'comments/post/:post_id',         to: 'comments#post', as: :post_comments
   get    'comments/:id',                   to: 'comments#show', as: :comment
   get    'comments/thread/:id',            to: 'comments#thread', as: :comment_thread

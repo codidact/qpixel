@@ -42,7 +42,7 @@
       <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) %>
         <a href="#" class="js-comment-edit">edit</a>
         <% if comment.deleted %>
-          <a href="#" class="is-red js-comment-undelete h-fw-bold">undelete</a>
+          <a href="#" class="is-red js-comment-undelete">undelete</a>
         <% else %>
           <a href="#" class="is-red js-comment-delete">delete</a>
         <% end %>
