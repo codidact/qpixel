@@ -407,7 +407,7 @@
           <div class="post--comments-links has-margin-top-1">
             <% if comment_threads.count > 5 %>
               <a href="#" class="js-more-comments h-fw-bold" data-post-id="<%= post.id %>">
-                Show <%= comment_threads.count - 5 %> more comment threads
+                Show all <%= comment_threads.count %> comment threads
               </a>
               <% if user_signed_in? %>
                 |

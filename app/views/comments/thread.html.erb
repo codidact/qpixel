@@ -12,7 +12,7 @@
   </div>
   <% skipped_deleted = 0%>
   <% @comment_thread.comments.each do |comment| %>
-    <% if comment.deleted && !(current_user.is_moderator && params[:show_deleted_comments] == "1") %>
+    <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
       <% skipped_deleted += 1%>
       <% next %>
     <% elsif skipped_deleted > 0 %>
@@ -20,14 +20,14 @@
         <div class="deleted-comments">
           <p>
           <% if skipped_deleted == 1 %>
-            There is <%= skipped_deleted %> deleted comment.
-            <% if current_user.is_moderator %>
-              <a href="?show_deleted_comments=1">Show it.</a>
+            Skipping <%= skipped_deleted %> deleted comment.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show it anyway.</a>
             <% end %>
           <% else %>
-            There are <%= skipped_deleted %> deleted comments.
-            <% if current_user.is_moderator %>
-              <a href="?show_deleted_comments=1">Show them.</a>
+            Skipping <%= skipped_deleted %> deleted comments.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show them anyway.</a>
             <% end %>
           <% end %>
           </p>
@@ -48,7 +48,11 @@
           <div class="comment--links">
             <a href="#">link</a>
             <a href="#">edit</a>
-            <a href="#" class="is-red js-comment-delete">delete</a>
+            <% if comment.deleted %>
+              <a href="#" class="is-red js-comment-undelete h-fw-bold">undelete</a>
+            <% else %>
+              <a href="#" class="is-red js-comment-delete">delete</a>
+            <% end %>
           </div>
         </div>
         <div class="comment-body" dir="ltr">
@@ -60,11 +64,19 @@
   <% if skipped_deleted > 0 %>
     <div class="widget--body">
       <div class="deleted-comments">
-        <p>There are <%= skipped_deleted %> deleted comments.
-        <% if current_user.is_moderator %>
-          <a href="?show_deleted_comments=1">Show them.
-        <% end %>
-        </p>
+        <p>
+          <% if skipped_deleted == 1 %>
+            Skipping <%= skipped_deleted %> deleted comment.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show it anyway.</a>
+            <% end %>
+          <% else %>
+            Skipping <%= skipped_deleted %> deleted comments.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show them anyway.</a>
+            <% end %>
+          <% end %>
+          </p>
       </div>
     </div>
     <% skipped_deleted = 0 %>

@@ -2,7 +2,7 @@
 class CommentsController < ApplicationController
   include ActionView::Helpers::TextHelper
 
-  before_action :authenticate_user!, except: [:post, :show]
+  before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
@@ -58,7 +58,7 @@ class CommentsController < ApplicationController
     return if comment_rate_limited
 
     if @comment.save
-      @comment_thread.update(reply_count: @comment_thread.comments.size)
+      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
       end
@@ -96,6 +96,8 @@ class CommentsController < ApplicationController
 
   def destroy
     if @comment.update(deleted: true)
+      @comment_thread = @comment.comment_thread
+      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_delete', related: @comment, user: current_user,
                                  comment: "content <<#{@comment.content}>>")
@@ -108,6 +110,8 @@ class CommentsController < ApplicationController
 
   def undelete
     if @comment.update(deleted: false)
+      @comment_thread = @comment.comment_thread
+      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_undelete', related: @comment, user: current_user,
                                  comment: "content <<#{@comment.content}>>")
