@@ -7,7 +7,9 @@
 
 <div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>">
   <div class="widget--header">
-    <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+    <% if current_user&.privilege? 'flag_curate' %>
+      <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+    <% end %>
     <%= @comment_thread.title %>
   </div>
   <% skipped_deleted = 0%>
@@ -38,27 +40,7 @@
       <% skipped_deleted = 0 %>
     <% end %>
     <div class="widget--body">
-      <div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
-        <div class="comment-meta">
-          <div class="comment--info">
-            <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
-            wrote
-            <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
-          </div>
-          <div class="comment--links">
-            <a href="#">link</a>
-            <a href="#">edit</a>
-            <% if comment.deleted %>
-              <a href="#" class="is-red js-comment-undelete h-fw-bold">undelete</a>
-            <% else %>
-              <a href="#" class="is-red js-comment-delete">delete</a>
-            <% end %>
-          </div>
-        </div>
-        <div class="comment-body" dir="ltr">
-          <p><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></p>
-        </div>
-      </div>
+      <%= render 'comments/comment', comment: comment%>
     </div>
   <% end %>
   <% if skipped_deleted > 0 %>
@@ -106,31 +88,33 @@
 
 </div>
 
-<div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
-  <div class="droppanel--header">thread options</div>
-  <div class="droppanel--menu">
-    <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
-    <a href="#"><i class="fas fa-lock fa-fw"></i> lock</a>
-    <a href="#"><i class="fas fa-archive fa-fw"></i> archive</a>
-    <a href="#"><i class="fas fa-trash fa-fw"></i> delete</a>
+<% if current_user&.privilege? 'flag_curate' %>
+  <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
+    <div class="droppanel--header">thread options</div>
+    <div class="droppanel--menu">
+      <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
+      <a href="#"><i class="fas fa-lock fa-fw"></i> lock</a>
+      <a href="#"><i class="fas fa-archive fa-fw"></i> archive</a>
+      <a href="#"><i class="fas fa-trash fa-fw"></i> delete</a>
+    </div>
   </div>
-</div>
 
-<div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
-  <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
-    <div class="modal--header">
-      <button type="button" class="button is-close-button modal--header-button" data-modal=".js--rename-thread-<%= @comment_thread.id %>">&times;</button>
-      Rename...
-    </div>
-    <div class="modal--body">
-      <%= label_tag :title, 'Title', class: 'form-element' %>
-      <%= text_field_tag :title, @comment_thread.title, class: 'form-element' %>
-    </div>
-    <div class="modal--footer">
-      <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
-      <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= @comment_thread.id %>">Cancel</button>
-    </div>
-  <% end %>
-</div>
+  <div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
+    <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
+      <div class="modal--header">
+        <button type="button" class="button is-close-button modal--header-button" data-modal=".js--rename-thread-<%= @comment_thread.id %>">&times;</button>
+        Rename...
+      </div>
+      <div class="modal--body">
+        <%= label_tag :title, 'Title', class: 'form-element' %>
+        <%= text_field_tag :title, @comment_thread.title, class: 'form-element' %>
+      </div>
+      <div class="modal--footer">
+        <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
+        <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= @comment_thread.id %>">Cancel</button>
+      </div>
+    <% end %>
+  </div>
+<% end %>
 
 <!-- THREAD ENDS ABOVE -->

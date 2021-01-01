@@ -1,23 +1,28 @@
 <% with_post_link ||= false %>
 
-<div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
-  <p class="comment--content">
-    <span dir="ltr"><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></span>
-    <span class="comment--meta">
-      &mdash; <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr'%>
-      <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
-      <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
-        &middot; <a href="#" class="js-comment-edit">edit</a> &middot;
+<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>">
+  <div class="comment-meta">
+    <div class="comment--info">
+      <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
+      wrote
+      <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
+    </div>
+    <div class="comment--links">
+      <a href="#">link</a>
+      <% if with_post_link %>
+        <%= link_to 'post', generic_share_link(comment.post) %>
+      <% end %>
+      <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) %>
+        <a href="#" class="js-comment-edit">edit</a>
         <% if comment.deleted %>
-          <a href="#" class="js-comment-undelete is-red">undelete</a>
+          <a href="#" class="is-red js-comment-undelete h-fw-bold">undelete</a>
         <% else %>
-          <a href="#" class="js-comment-delete is-red">delete</a>
+          <a href="#" class="is-red js-comment-delete">delete</a>
         <% end %>
       <% end %>
-      <% if with_post_link %>
-        &middot;
-        <%= link_to 'go to post', generic_share_link(comment.post) %>
-      <% end %>
-    </span>
-  </p>
+    </div>
+  </div>
+  <div class="comment--body" dir="ltr">
+    <p><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></p>
+  </div>
 </div>

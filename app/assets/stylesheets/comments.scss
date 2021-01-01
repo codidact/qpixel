@@ -26,14 +26,18 @@
 }*/
 
 .comment {
-  margin-bottom: -0.5rem;
+  margin: 0.25rem;
+  border: 1px solid #ccc;
+}
+.widget .comment {
+  margin: -0.75rem;
+  border: none;
 }
 .comment .comment-meta {
   font-size: 0.9em;
   color: #666;
   background-color: rgba(0, 0, 0, 0.05);
   padding: 0.5rem 0.75rem;
-  margin: -0.75rem;
   margin-bottom: 0.5rem;
   display: flex;
 
@@ -47,11 +51,16 @@
     }
   }
 }
+.comment .comment--body {
+  padding: 0.5rem 0.75rem;
+  padding-top: 0.125rem;
+}
 .deleted-comments {
   margin: -0.75rem 0;
   padding: 0 0.25rem;
   font-size: 0.8rem;
   color: #666;
+  font-style: italic;
 }
 
 .post--comments-thread.is-inline {
