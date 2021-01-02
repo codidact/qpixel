@@ -145,11 +145,11 @@
   <div class="actions">
     <% if post_type.has_category && category.present? %>
       <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
-      <%= link_to 'Cancel', category_path(category), class: 'button is-muted is-outlined is-danger',
+      <%= link_to 'Cancel', category_path(category), class: 'button is-muted is-outlined is-danger js-cancel-edit',
                   data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
     <% else %>
       <%= f.submit 'Save Post', class: 'button is-filled' %>
-      <%= link_to 'Cancel', :back, class: 'button is-muted is-outlined is-danger',
+      <%= link_to 'Cancel', :back, class: 'button is-muted is-outlined is-danger js-cancel-edit',
                   data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
     <% end %>
   </div>

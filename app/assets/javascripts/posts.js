@@ -254,4 +254,19 @@ $(() => {
     }
     $('.js-mod-tools').removeClass('is-active');
   });
+
+  $('.js-cancel-edit').on('click', async ev => {
+    ev.preventDefault();
+
+    await fetch('/posts/delete-draft', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ path: location.pathname })
+    });
+    location.href = $(ev.target).attr('href');
+  });
 });
