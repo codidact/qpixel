@@ -110,6 +110,12 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post.parent_id)
     end
 
+    if @post.post_type_id == HelpDoc.post_type_id
+      redirect_to help_path(@post.doc_slug)
+    elsif @post.post_type_id == PolicyDoc.post_type_id
+      redirect_to policy_path(@post.doc_slug)
+    end
+
     if @post.deleted? && !current_user&.has_post_privilege?('flag_curate', @post)
       return not_found
     end
