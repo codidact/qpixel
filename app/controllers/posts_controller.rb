@@ -158,6 +158,7 @@ class PostsController < ApplicationController
                                 after: @post.body_markdown, comment: params[:edit_comment],
                                 before_title: before[:title], after_title: @post.title,
                                 before_tags: before[:tags], after_tags: after_tags)
+        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
         redirect_to post_path(@post)
       else
         render :edit, status: :bad_request
@@ -188,7 +189,6 @@ class PostsController < ApplicationController
           if @post_type.has_parent
             message += " on '#{@post.parent.title}'"
           end
-          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
           redirect_to post_path(@post)
         else
