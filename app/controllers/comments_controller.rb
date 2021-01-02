@@ -30,18 +30,12 @@ class CommentsController < ApplicationController
 
     if @comment_thread.save && @comment.save
       unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
+        @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}", comment_thread_path(@comment_thread.id))
       end
 
-      match = @comment.content.match(/@(?<name>\S+) /)
-      if match && match[:name]
-        user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
-        unless user&.id == @comment.post.user_id
-          user&.create_notification('You were mentioned in a comment', comment_link(@comment))
-        end
-      end
+      apply_pings
     else
-      flash[:error] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
+      flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
     end
     redirect_to helpers.generic_show_link(@post)
@@ -61,20 +55,9 @@ class CommentsController < ApplicationController
     return if comment_rate_limited
 
     if @comment.save
-      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
-      unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment on #{@comment.root.title}", comment_link(@comment))
-      end
-
-      match = @comment.content.match(/@(?<name>\S+) /)
-      if match && match[:name]
-        user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
-        unless user&.id == @comment.post.user_id
-          user&.create_notification('You were mentioned in a comment', comment_link(@comment))
-        end
-      end
+      apply_pings
     else
-      flash[:error] = @comment.errors.full_messages.join(', ')
+      flash[:danger] = @comment.errors.full_messages.join(', ')
     end
     redirect_to comment_thread_path(@comment_thread.id)
   end
@@ -136,7 +119,7 @@ class CommentsController < ApplicationController
 
   def thread_rename
     if @comment_thread.read_only? && !current_user.is_moderator
-      flash[:error] = "This thread has been locked."
+      flash[:danger] = "This thread has been locked."
       redirect_to comment_thread_path(@comment_thread.id)
       return
     end
@@ -235,6 +218,16 @@ class CommentsController < ApplicationController
 
   def check_if_target_post_locked
     check_if_locked(Post.find(params[:post_id]))
+  end
+
+  def apply_pings
+    match = message.match(/@(?<name>\S+) /)
+    if match && match[:name]
+      user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
+      unless user&.id == @comment.post.user_id
+        user&.create_notification('You were mentioned in a comment', comment_link(@comment))
+      end
+    end
   end
 
   def comment_rate_limited
