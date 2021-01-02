@@ -1,4 +1,5 @@
 # rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
@@ -95,6 +96,9 @@ class PostsController < ApplicationController
         @post.parent.update(last_activity: DateTime.now, last_activity_by: current_user)
       end
 
+      ['p', '1', '2'].each do |key|
+        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
+      end
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request
@@ -184,6 +188,7 @@ class PostsController < ApplicationController
           if @post_type.has_parent
             message += " on '#{@post.parent.title}'"
           end
+          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
           redirect_to post_path(@post)
         else
@@ -540,4 +545,5 @@ class PostsController < ApplicationController
     check_if_locked(@post)
   end
 end
+# rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/ClassLength

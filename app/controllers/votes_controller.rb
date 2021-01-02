@@ -34,6 +34,11 @@ class VotesController < ApplicationController
       return
     end
 
+    Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/V"
+    ['s', 'v'].each do |key|
+      Rails.cache.delete "community_user/#{post.user.community_user.id}/metric/#{key}"
+    end
+
     AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
 
     modified = !destroyed.empty?

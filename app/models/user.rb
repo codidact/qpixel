@@ -65,17 +65,17 @@ class User < ApplicationRecord
   # post_types must be the list of applicable post types
   # passed only for '1' and '2'
   def metric(key, post_types = [])
-    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 2.hours) do
+    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'
         Post.qa_only.undeleted.where(user: self).count
       when '1', '2'
         Post.undeleted.where(post_type: post_types, user: self).count
       when 's'
-        Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: 1).count - \
-          Vote.where(post: Post.qa_only.undeleted.where(user: self), vote_type: -1).count
+        Vote.where(recv_user_id: id, vote_type: 1).count - \
+          Vote.where(recv_user_id: id, vote_type: -1).count
       when 'v'
-        Vote.where(post: Post.qa_only.undeleted.where(user: self)).count
+        Vote.where(recv_user_id: id).count
       when 'V'
         votes.count
       when 'E'
