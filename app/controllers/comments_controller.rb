@@ -23,7 +23,7 @@ class CommentsController < ApplicationController
 
     @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false,
                                         deleted: false)
-    
+
     body = params[:body]
     body, pings = check_for_pings body
 
@@ -55,7 +55,7 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     end
-    
+
     body = params[:content]
     body, pings = check_for_pings body
 
@@ -251,17 +251,17 @@ class CommentsController < ApplicationController
     matches = content.scan(/@(\S+(?:\#[0-9]+)?)(?: |$)/)
     matches.each do |m|
       m = m[0]
-      if pingable.has_key? m
-        id = pingable[m]
-        puts id
-        unless pings.include? id
-          pings << id
-          content.gsub! "@#{m}", "[[PING #{id}]]"
-        end
+      next unless pingable.key? m
+
+      id = pingable[m]
+      puts id
+      unless pings.include? id
+        pings << id
+        content.gsub! "@#{m}", "[[PING #{id}]]"
       end
     end
 
-    return [content, pings]
+    [content, pings]
   end
 
   def apply_pings(pings)
