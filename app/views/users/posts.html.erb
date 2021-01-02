@@ -3,8 +3,8 @@
 <h1>Posts by <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr'%></h1>
 
 <div class="button-list is-gutterless">
-  <%= link_to 'Score', query_url(sort: 'score'), class: "button is-muted is-outlined " + (active_search?('score') ? "is-active" : "") %>
-  <%= link_to 'Age', query_url(sort: 'age'), class: "button is-muted is-outlined " + (active_search?('age') ? "is-active" : "") %>
+  <%= link_to 'Score', query_url(sort: 'score'), class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : '') %>
+  <%= link_to 'Age', query_url(sort: 'age'), class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : '') %>
 </div>
 
 <div class="item-list">
