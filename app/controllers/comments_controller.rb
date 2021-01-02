@@ -251,7 +251,7 @@ class CommentsController < ApplicationController
     matches = content.scan(/@(\S+(?:\#[0-9]+)?)(?: |$)/)
     matches.each do |m|
       m = m[0]
-      next unless pingable.key? m
+      next unless pingable.include? m
 
       id = pingable[m]
       puts id
