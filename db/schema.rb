@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_31_192529) do
+ActiveRecord::Schema.define(version: 2021_01_02_162706) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -527,6 +527,15 @@ ActiveRecord::Schema.define(version: 2020_12_31_192529) do
     t.index ["community_id"], name: "index_tags_on_community_id"
     t.index ["parent_id"], name: "index_tags_on_parent_id"
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
+  end
+
+  create_table "thread_followers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "comment_thread_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
+    t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
   create_table "user_abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|

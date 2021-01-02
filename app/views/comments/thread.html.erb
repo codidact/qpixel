@@ -10,6 +10,13 @@
     <% if current_user&.privilege? 'flag_curate' %>
       <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
     <% end %>
+    <% unless current_user.nil? %>
+      <% if @comment_thread.followed_by? current_user %>
+        <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow" data-thread="<%= @comment_thread.id %>"><i class="fa fa-minus fa-fw"></i>unfollow</a>
+      <% else %>
+        <a href="#" class="widget--header-link js--restrict-thread" data-action="follow" data-thread="<%= @comment_thread.id %>"><i class="fa fa-plus fa-fw"></i>follow</a>
+      <% end %>
+    <% end %>
     <% if @comment_thread.deleted %>
       <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
     <% elsif @comment_thread.archived %>

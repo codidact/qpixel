@@ -56,6 +56,10 @@ class CommentsController < ApplicationController
 
     if @comment.save
       apply_pings
+      @comment_thread.thread_follower.each do |follower|
+        next if follower.user.id == current_user.id
+        follower.user.create_notification("New comment in followed thread #{@comment_thread.title}", helpers.comment_link(@comment))
+      end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
     end
@@ -145,6 +149,8 @@ class CommentsController < ApplicationController
       @comment_thread.update(archived: true, archived_by: current_user)
     elsif params[:type] == 'delete'
       @comment_thread.update(deleted: true, deleted_by: current_user)
+    elsif params[:type] == 'follow'
+      ThreadFollower.create comment_thread: @comment_thread, user: current_user
     end
     
     render json: { status: 'success' }
@@ -166,6 +172,9 @@ class CommentsController < ApplicationController
         return
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
+    elsif params[:type] == 'follow'
+      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
+      tf.destroy
     end
 
     render json: { status: 'success' }
@@ -204,7 +213,7 @@ class CommentsController < ApplicationController
     end
   end
 
-  def comment_link(comment)
+  def helpers.comment_link(comment)
     if comment.post.parent_id.present?
       post_url(comment.post.parent_id, anchor: "comment-#{comment.id}")
     else
@@ -221,11 +230,11 @@ class CommentsController < ApplicationController
   end
 
   def apply_pings
-    match = message.match(/@(?<name>\S+) /)
+    match = @comment.content.match(/@(?<name>\S+) /)
     if match && match[:name]
       user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
       unless user&.id == @comment.post.user_id
-        user&.create_notification('You were mentioned in a comment', comment_link(@comment))
+        user&.create_notification("You were mentioned in a comment to #{@comment_thread.title}", helpers.comment_link(@comment))
       end
     end
   end
