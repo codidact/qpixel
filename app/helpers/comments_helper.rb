@@ -13,9 +13,9 @@ module CommentsHelper
       return id if u.nil?
 
       if u.id == current_user&.id
-        "<a href=\"#{u.id}\" class=\"ping me\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
+        "<a href=\"#{user_path(u.id)}\" class=\"ping me\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
       else
-        "<a href=\"#{u.id}\" class=\"ping\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
+        "<a href=\"#{user_path(u.id)}\" class=\"ping\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
       end
     end.html_safe
   end
