@@ -29,8 +29,11 @@ class CommentsController < ApplicationController
     return if comment_rate_limited
 
     if @comment_thread.save && @comment.save
+      ThreadFollower.create comment_thread: @comment_thread, user: current_user
+
       unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}", comment_thread_path(@comment_thread.id))
+        @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}",
+                                               comment_thread_path(@comment_thread.id))
       end
 
       apply_pings
@@ -58,7 +61,12 @@ class CommentsController < ApplicationController
       apply_pings
       @comment_thread.thread_follower.each do |follower|
         next if follower.user.id == current_user.id
-        follower.user.create_notification("New comment in followed thread #{@comment_thread.title}", helpers.comment_link(@comment))
+
+        follower.user.create_notification("New comment in followed thread #{@comment_thread.title}",
+                                          helpers.comment_link(@comment))
+      end
+      unless @comment_thread.followed_by? current_user
+        ThreadFollower.create comment_thread: @comment_thread, user: current_user
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -123,7 +131,7 @@ class CommentsController < ApplicationController
 
   def thread_rename
     if @comment_thread.read_only? && !current_user.is_moderator
-      flash[:danger] = "This thread has been locked."
+      flash[:danger] = 'This thread has been locked.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
     end
@@ -136,7 +144,8 @@ class CommentsController < ApplicationController
     return not_found unless current_user.privilege? 'flag_curate'
     return not_found if @comment_thread.read_only?
 
-    if params[:type] == 'lock'
+    case params[:type]
+    when 'lock'
       lu = nil
       unless params[:duration].blank?
         lu = params[:duration].to_i.days.from_now
@@ -145,34 +154,39 @@ class CommentsController < ApplicationController
 
       redirect_to comment_thread_path(@comment_thread.id)
       return
-    elsif params[:type] == 'archive'
+    when 'archive'
       @comment_thread.update(archived: true, archived_by: current_user)
-    elsif params[:type] == 'delete'
+    when 'delete'
       @comment_thread.update(deleted: true, deleted_by: current_user)
-    elsif params[:type] == 'follow'
+    when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
     end
-    
+
     render json: { status: 'success' }
   end
 
   def thread_unrestrict
     return not_found unless current_user.privilege? 'flag_curate'
 
-    if params[:type] == 'lock'
+    case params[:type]
+    when 'lock'
       return not_found unless @comment_thread.locked?
+
       @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
-    elsif params[:type] == 'archive'
+    when 'archive'
       return not_found unless @comment_thread.archived
+
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
-    elsif params[:type] == 'delete'
+    when 'delete'
       return not_found unless @comment_thread.deleted
+
       if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
-        render json: { status: 'error', message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
+        render json: { status: 'error',
+                       message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
         return
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
-    elsif params[:type] == 'follow'
+    when 'follow'
       tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
       tf.destroy
     end
@@ -213,14 +227,6 @@ class CommentsController < ApplicationController
     end
   end
 
-  def helpers.comment_link(comment)
-    if comment.post.parent_id.present?
-      post_url(comment.post.parent_id, anchor: "comment-#{comment.id}")
-    else
-      post_url(comment.post, anchor: "comment-#{comment.id}")
-    end
-  end
-
   def check_if_parent_post_locked
     check_if_locked(@comment.post)
   end
@@ -234,7 +240,8 @@ class CommentsController < ApplicationController
     if match && match[:name]
       user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
       unless user&.id == @comment.post.user_id
-        user&.create_notification("You were mentioned in a comment to #{@comment_thread.title}", helpers.comment_link(@comment))
+        user&.create_notification("You were mentioned in a comment to #{@comment_thread.title}",
+                                  helpers.comment_link(@comment))
       end
     end
   end
