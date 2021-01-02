@@ -50,6 +50,6 @@
     </div>
   </div>
   <div class="comment--body" dir="ltr">
-    <%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %>
+    <%= render_pings(raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new))) %>
   </div>
 </div>

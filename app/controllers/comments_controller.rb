@@ -23,7 +23,11 @@ class CommentsController < ApplicationController
 
     @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false,
                                         deleted: false)
-    @comment = Comment.new(post: @post, content: params[:body], user: current_user, comment_thread: @comment_thread,
+    
+    body = params[:body]
+    body, pings = check_for_pings body
+
+    @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread,
                            has_reference: false)
 
     return if comment_rate_limited
@@ -36,7 +40,7 @@ class CommentsController < ApplicationController
                                                comment_thread_path(@comment_thread.id))
       end
 
-      apply_pings
+      apply_pings pings
     else
       flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
@@ -51,16 +55,21 @@ class CommentsController < ApplicationController
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     end
+    
+    body = params[:content]
+    body, pings = check_for_pings body
 
-    @comment = Comment.new(post: @post, content: params[:content], user: current_user,
+    @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
 
     return if comment_rate_limited
 
     if @comment.save
-      apply_pings
+      apply_pings pings
+      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       @comment_thread.thread_follower.each do |follower|
         next if follower.user.id == current_user.id
+        next if pings.include? follower.user_id
 
         follower.user.create_notification("New comment in followed thread #{@comment_thread.title}",
                                           helpers.comment_link(@comment))
@@ -235,10 +244,31 @@ class CommentsController < ApplicationController
     check_if_locked(Post.find(params[:post_id]))
   end
 
-  def apply_pings
-    match = @comment.content.match(/@(?<name>\S+) /)
-    if match && match[:name]
-      user = User.where("LOWER(REPLACE(username, ' ', '')) = LOWER(?)", match[:name]).first
+  def check_for_pings(content)
+    pingable = helpers.get_pingable(@comment_thread)
+
+    pings = []
+    matches = content.scan(/@(\S+(?:\#[0-9]+)?)(?: |$)/)
+    matches.each do |m|
+      m = m[0]
+      if pingable.has_key? m
+        id = pingable[m]
+        puts id
+        unless pings.include? id
+          pings << id
+          content.gsub! "@#{m}", "[[PING #{id}]]"
+        end
+      end
+    end
+
+    return [content, pings]
+  end
+
+  def apply_pings(pings)
+    pings.each do |p|
+      user = User.where(id: p).first
+      next if user.nil?
+
       unless user&.id == @comment.post.user_id
         user&.create_notification("You were mentioned in a comment to #{@comment_thread.title}",
                                   helpers.comment_link(@comment))

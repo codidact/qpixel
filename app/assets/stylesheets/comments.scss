@@ -103,3 +103,25 @@
     margin-right: 0.5rem;
   }
 }
+
+a.ping {
+  color: #666;
+  background-color: #eee;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.85em;
+  font-weight: bold;
+
+  &:hover {
+    color: #666;
+  }
+
+  &.me {
+    background-color: #444;
+    color: white;
+
+    &:hover {
+      background-color: #222;
+    }
+  }
+}
