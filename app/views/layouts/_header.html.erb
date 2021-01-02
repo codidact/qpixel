@@ -83,22 +83,28 @@
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
-  <% Community.all.each do |c| %>
-    <div class="community-header-list-entry">
-      <% settings = SiteSetting.for_community_id(c.id) %>
-      <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
-      <%= link_to "//#{c.host}" do %>
-        <% unless logo_setting.nil? %>
-          <div class="img">
-            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+    <% Community.all.each do |c| %>
+      <div class="community-header-list-entry">
+        <% settings = SiteSetting.for_community_id(c.id) %>
+        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+        <%= link_to "//#{c.host}" do %>
+          <% unless logo_setting.nil? %>
+            <div class="img">
+              <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+            </div>
+          <% end %>
+          <div class="label">
+            <%= c.name %>
           </div>
         <% end %>
-        <div class="label">
-          <%= c.name %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+      </div>
+    <% end %>
+  </div>
+  <hr class="has-margin-top-2 has-margin-bottom-2" />
+  <div>
+    <%= link_to dashboard_path, class: 'button is-muted has-float-right' do %>
+      Dashboard
+    <% end %>
   </div>
 </div>
 
