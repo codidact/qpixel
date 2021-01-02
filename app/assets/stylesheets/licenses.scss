@@ -1,3 +1,7 @@
 // Place all the styles related to the Licenses controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.select2-results__option--highlighted .has-color-tertiary-600 {
+  color: #DDD !important;
+}

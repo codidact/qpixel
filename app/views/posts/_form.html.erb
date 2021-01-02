@@ -105,8 +105,9 @@
           </a>
         <% end %>
       </span>
-      <%= f.select :license_id, options_for_select(License.enabled.default_order(category).map { |l| [l.name, l.id] },
-                                                   selected: post.license_id), {}, class: 'form-element' %>
+      <%= f.select :license_id, options_for_select(License.enabled.default_order(category)
+                                                          .map { |l| [l.name, l.id, { 'data-title': l.description }] },
+                                                   selected: post.license_id), {}, class: 'form-element js-license-select' %>
     </div>
   <% end %>
 
