@@ -35,7 +35,8 @@ $(() => {
 
       // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when
       // reaching this line. The line below re-labels it back to `Post`.
-      $tgt.find('input[type="submit"]').attr('value', 'Post')
+      $tgt.find('input[type="submit"]').attr('value', 'Post');
+      $('.js-comment-form').hide();
     }
     else {
       QPixel.createNotification('danger', data.message);
