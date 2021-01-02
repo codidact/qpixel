@@ -91,7 +91,7 @@ class SuggestedEditController < ApplicationController
       last_activity: DateTime.now,
       last_activity_by: @edit.user,
       last_edited_at: DateTime.now,
-      last_edited_by_id: @edit.user
+      last_edited_by: @edit.user
     }.compact
   end
 end
