@@ -11,8 +11,11 @@ $(() => {
     $form.find('.js-comment-content').focus();
   });
 
-  $('.js-more-comments').on('click', async evt => {
-    evt.preventDefault();
+  const showAllComments = async evt => {
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    }
+
     const $tgt = $(evt.target);
     const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const postId = $anchor.attr('data-post-id');
@@ -22,15 +25,17 @@ $(() => {
     });
     const data = await resp.text();
     $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
-    $anchor.remove();
-  });
+    $tgt.parents('.post--comments').find('.js-more-comments').remove();
+  };
+
+  $('.js-more-comments').on('click', showAllComments);
 
   $('.comment-form').on('ajax:success', async (evt, data) => {
     // Comment posting is succeeded! ^_^
 
     const $tgt = $(evt.target);
     if (data.status === 'success') {
-      $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
+      await showAllComments({ target: $tgt.parent().find('.js-add-comment') });
       $tgt.find('.js-comment-content').val('');
 
       // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when
