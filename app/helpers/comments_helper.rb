@@ -52,6 +52,8 @@ module CommentsHelper
         f.user_id => f.user_id
                       })
     end
+    
+    pingable
   end
 end
 
