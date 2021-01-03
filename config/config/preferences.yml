@@ -1,0 +1,18 @@
+# All default values must be strings.
+# Schema:
+#
+# preference_name:
+#   type: boolean | string | integer | choice
+#   description: Free-form description
+#   choice:
+#     - only
+#     - used
+#     - if
+#     - type is choice
+#   default: string default value
+
+keyboard_tools:
+  type: boolean
+  description: >
+    Enable keyboard shortcuts. Press ? for a list of shortcuts.
+  default: 'true'

@@ -44,7 +44,7 @@ module QPixel
           @underlying.write namespaced, value
           value
         else
-          raise NotImplementedError, 'No cached value was available and no block was given'
+          raise NotImplementedError, 'No config value was available and no block was given'
         end
       else
         value

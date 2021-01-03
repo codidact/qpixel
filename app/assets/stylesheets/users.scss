@@ -117,3 +117,19 @@
   padding-top: 0.25rem;
   margin-top: 0.25rem;
 }
+
+.user-pref {
+  border: 1px solid $muted-graphic;
+  border-radius: 0.3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+
+  .user-pref--meta .desc {
+    color: $muted-text;
+    font-size: 0.8em;
+  }
+}

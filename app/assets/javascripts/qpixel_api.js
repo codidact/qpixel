@@ -25,14 +25,14 @@ window.QPixel = {
     let append_date = false;
     let message_with_date = message;
     if (type === 'danger') {
-      if (popped_modals_ct > 0 ) {
+      if (popped_modals_ct > 0) {
         /* At the time of writing, modals stack each one exactly on top of previous one, so repeating an errored action
          * over and over again is going to create multiple error modals in the same exact place. While this happens this
          * way, an user closing the error modal will not have an immediate visual action feedback if two or more error
-         * modals have been printed. A date is stamped in order to cope with that. Could be anything. Probablye a cycle
+         * modals have been printed. A date is stamped in order to cope with that. Could be anything. Probably a cycle
          * of different emoji characters would be cuter while having the purpose met. But if so make sure character in
          * step `i` is actually different than character in step `i + 1`. And then you could print an emoji just every
-         * time a modal is popped up, not just from the second one; removing `mesage_with_date`, using only `message`,
+         * time a modal is popped up, not just from the second one; removing `message_with_date`, using only `message`,
          * and removing `append_date` and the different situations guarded by it. */
         append_date = true;
       }
@@ -153,6 +153,11 @@ window.QPixel = {
   },
 
   _user: null,
+
+  /**
+   * Get the user object for the current user.
+   * @returns {Promise<Object>} a JSON object containing user details
+   */
   user: async () => {
     if (QPixel._user) return QPixel._user;
     const resp = await fetch('/users/me', {
@@ -163,5 +168,70 @@ window.QPixel = {
     });
     QPixel._user = await resp.json();
     return QPixel._user;
+  },
+
+  _preferences: null,
+
+  /**
+   * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
+   * localStorage, or Redis via AJAX.
+   * @returns {Promise<Object>} a JSON object containing user preferences
+   */
+  preferences: async () => {
+    if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
+      this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
+    }
+    else if (this._preferences == null) {
+      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
+      // loaded them for yet. Load from Redis via AJAX.
+      const resp = await fetch('/users/me/preferences', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await resp.json();
+      localStorage['qpixel.user_preferences'] = JSON.stringify(data);
+      this._preferences = data;
+    }
+    return this._preferences;
+  },
+
+  /**
+   * Get a single user preference by name.
+   * @param name the name of the requested preference
+   * @returns {Promise<*>} the value of the requested preference
+   */
+  preference: async name => {
+    const prefs = await QPixel.preferences();
+    return prefs[name];
+  },
+
+  /**
+   * Set a user preference by name to the value provided.
+   * @param name the name of the preference to set
+   * @param value the value to set to - must respond to toString() for localStorage and Redis
+   * @returns {Promise<void>}
+   */
+  setPreference: async (name, value) => {
+    const resp = await fetch('/users/me/preferences', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, value })
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Preference persist failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._preferences = data.preferences;
+      localStorage['qpixel.user_preferences'] = JSON.stringify(this._preferences);
+    }
   }
 };

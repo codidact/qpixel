@@ -128,6 +128,8 @@ Rails.application.routes.draw do
   get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
   get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
   get    'users/me',                       to: 'users#me', as: :users_me
+  get    'users/me/preferences',           to: 'users#preferences', as: :user_preferences
+  post   'users/me/preferences',           to: 'users#set_preference', as: :set_user_preference
   get    'users/me/notifications',         to: 'notifications#index', as: :notifications
   get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
@@ -211,8 +213,6 @@ Rails.application.routes.draw do
     get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
-  
-  get    'feature/keyboard-tools',           to: 'application#keyboard_tools', as: :keyboard_tools
 
   scope 'ca' do
     root                                   to: 'advertisement#index', as: :ads

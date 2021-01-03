@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me]
+                                            :qr_login_code, :me, :preferences, :set_preference]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -40,6 +40,31 @@ class UsersController < ApplicationController
                 :se_acct_id].map { |a| [a, @user.send(a)] }.to_h
         render json: data
       end
+    end
+  end
+
+  def preferences
+    respond_to do |format|
+      format.html do
+        @preferences = AppConfig.preferences.transform_values { |v| v['default'] }
+                                .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}"))
+      end
+      format.json do
+        render json: AppConfig.preferences.transform_values { |v| v['default'] }
+                              .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}"))
+      end
+    end
+  end
+
+  def set_preference
+    if !params[:name].nil? && !params[:value].nil?
+      render json: { status: 'success', success: true,
+                     count: RequestContext.redis.hset("prefs.#{current_user.id}", params[:name], params[:value]),
+                     preferences: AppConfig.preferences.transform_values { |v| v['default'] }
+                                           .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}")) }
+    else
+      render json: { status: 'failed', success: false, errors: ['Both name and value parameters are required'] },
+             status: 400
     end
   end
 

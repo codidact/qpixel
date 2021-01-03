@@ -12,8 +12,8 @@
     <%= link_to edit_user_profile_path, class: "tabs--item #{current_page?(edit_user_profile_path) ? 'is-active' : ''}" do %>
       Edit
     <% end %>
-    <%= link_to subscriptions_path, class: "tabs--item #{current_page?(subscriptions_path) ? 'is-active' : ''}" do %>
-      Subscriptions
+    <%= link_to user_preferences_path, class: "tabs--item #{current_page?(user_preferences_path) ? 'is-active' : ''}" do %>
+      Preferences
     <% end %>
   <% end %>
 </div>
