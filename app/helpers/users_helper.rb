@@ -31,6 +31,7 @@ module UsersHelper
 
   def user_preference(name)
     return nil if current_user.nil?
+
     AppConfig.preferences.transform_values { |v| v['default'] }
              .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}"))[name]
   end
