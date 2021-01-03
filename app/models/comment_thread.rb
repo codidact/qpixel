@@ -15,7 +15,7 @@ class CommentThread < ApplicationRecord
   end
 
   def locked?
-    locked && (locked_until.nil? || locked_until < DateTime.now)
+    locked && (locked_until.nil? || locked_until > DateTime.now)
   end
 
   def followed_by?(user)

@@ -394,7 +394,7 @@
         <div class="post--comments has-padding-4">
             <% comment_thread_count = post.comment_threads.undeleted.count %>
           <h4 class="has-margin-0">
-            <%= pluralize(comment_thread_count, 'comment threads') %>
+            <%= pluralize(comment_thread_count, 'comment thread') %>
           </h4>
           <div class="post--comments-container">
             <% comment_threads = post.comment_threads.publicly_available %>
@@ -406,9 +406,13 @@
             <% end %>
           </div>
           <div class="post--comments-links has-margin-top-1">
-            <% if comment_thread_count > 5 %>
+            <% if comment_thread_count > 5 || comment_thread_count != comment_threads.count %>
               <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
+                <% if comment_thread_count != 1 %>
                 Show all <%= comment_thread_count %> comment threads
+                <% else %>
+                Show the <%= comment_thread_count %> comment thread
+                <% end %>
               </a>
             <% end %>
             <% if user_signed_in? %>
