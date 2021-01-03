@@ -401,7 +401,7 @@
             <% comment_threads.order(reply_count: :desc).first(5).each do |thread| %>
               <div class="post--comments-thread is-inline">
                 <a href="<%= comment_thread_path(thread.id) %>" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
-                (<%= pluralize(thread.reply_count, 'reply') %>)
+                (<%= pluralize(thread.reply_count, 'comment') %>)
               </div>
             <% end %>
           </div>

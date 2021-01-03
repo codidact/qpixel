@@ -6,6 +6,6 @@
       <i class="fas fa-archive fa-fw"></i>
     <% end %>
     <a href="<%= comment_thread_path(thread.id) %>" class="js--comment-link" data-thread="<%= thread.id %>"><%= thread.title %></a>
-    (<%= pluralize(thread.reply_count, 'reply') %>)
+    (<%= pluralize(thread.reply_count, 'comment') %>)
   </div>
 <% end %>
