@@ -9,6 +9,9 @@
 <p><%= link_to 'Manage Email Subscriptions', subscriptions_path %></p>
 
 <% @preferences.each do |name, value| %>
+  <% puts name %>
+  <% puts value %>
+  <% puts AppConfig.preferences[name] %>
   <% pref_config = AppConfig.preferences[name] %>
   <div class="user-pref">
     <div class="user-pref--meta">
@@ -20,7 +23,7 @@
       <% when 'boolean' %>
         <input class="js-user-pref" type="checkbox" data-pref="<%= name %>" <%= 'checked' if value == 'true' %> />
       <% when 'choice' %>
-        <%= select_tag nil, options_for_select(pref_config['choice'].map { |c| [c.humanize, c] }, selected: value),
+        <%= select_tag nil, options_for_select(preference_choice(pref_config), selected: value),
                        include_blank: true, class: 'js-user-pref form-element', data: { pref: name } %>
       <% when 'integer' %>
         <input class="js-user-pref form-element" type="number" data-pref="<%= name %>" value="<%= value %>" />

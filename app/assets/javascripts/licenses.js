@@ -3,7 +3,14 @@ $(() => {
     const $tgt = $(ev.target);
     const $input = $tgt.parents('.form-group').find('select');
     const licenseId = $tgt.attr('data-license-id');
-    $input.val(licenseId).trigger('change');
+    const licenseName = $tgt.attr('data-license-name');
+    if (!!licenseId) {
+      $input.val(licenseId).trigger('change');
+    }
+    else {
+      const option = $input.find('option').toArray().filter(o => $(o).text() === licenseName)[0];
+      $input.val($(option).attr('value')).trigger('change');
+    }
   });
 
   $('.js-license-select').select2({
