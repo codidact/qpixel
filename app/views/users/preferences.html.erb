@@ -9,9 +9,6 @@
 <p><%= link_to 'Manage Email Subscriptions', subscriptions_path %></p>
 
 <% @preferences.each do |name, value| %>
-  <% puts name %>
-  <% puts value %>
-  <% puts AppConfig.preferences[name] %>
   <% pref_config = AppConfig.preferences[name] %>
   <div class="user-pref">
     <div class="user-pref--meta">
