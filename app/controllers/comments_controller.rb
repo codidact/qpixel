@@ -1,7 +1,5 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
-  include ActionView::Helpers::TextHelper
-
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict]
@@ -18,7 +16,7 @@ class CommentsController < ApplicationController
 
     title = params[:title]
     if title.blank? || title.length.zero?
-      title = truncate(params[:body], length: 100)
+      title = helpers.truncate(params[:body], length: 100)
     end
 
     @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false,
