@@ -12,4 +12,16 @@ $(() => {
     const community = $tgt.attr('data-community') === 'true';
     await QPixel.setPreference(prefName, value, community);
   });
+
+  $('.item-list--item').find('.badge.is-tag').each(async (i, e) => {
+    const prefValue = await QPixel.preference('favorite_tags', true);
+    if (!prefValue) {
+      return;
+    }
+
+    const tags = prefValue.split(/,(?: +)?/);
+    if (tags.indexOf($(e).text()) > -1) {
+      $(e).addClass('is-yellow');
+    }
+  });
 });

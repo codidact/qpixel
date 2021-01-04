@@ -44,3 +44,10 @@ default_license:
     - name: CC0
       value: CC0
   community: true
+
+favorite_tags:
+  type: string
+  description: >
+    Favorite tags will be highlighted in question list views. List tag names here, comma-separated.
+  default: ~
+  community: true
