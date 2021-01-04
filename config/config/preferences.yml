@@ -18,6 +18,15 @@ keyboard_tools:
     Enable keyboard shortcuts. Press ? for a list of shortcuts.
   default: 'true'
 
+autosave:
+  type: choice
+  choice:
+    - 'on'
+    - 'off'
+  description: >
+    Should autosave be enabled while composing posts?
+  default: 'on'
+
 default_license:
   type: choice
   description: >

@@ -74,6 +74,11 @@ $(() => {
   });
 
   const saveDraft = async (postText, $field) => {
+    const autosavePref = await QPixel.preference('autosave');
+    if (autosavePref !== 'on') {
+      return;
+    }
+
     const resp = await fetch('/posts/save-draft', {
       method: 'POST',
       credentials: 'include',
@@ -87,8 +92,8 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`&middot; <span class="has-color-green-600">Draft saved</span>`);
-      $field.parents('.js-post-field-footer').append($el);
+      const $el = $(`<span>&middot; <span class="has-color-green-600">Draft saved</span></span>`);
+      $field.parents('.widget').find('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
