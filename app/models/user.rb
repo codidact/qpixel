@@ -129,7 +129,7 @@ class User < ApplicationRecord
   end
 
   def no_blank_unicode_in_username
-    not_valid = !username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
+    not_valid = !username.scan(/[\u200B-\u200D\uFEFF]/).empty?
     if not_valid
       errors.add(:username, 'may not contain blank unicode characters')
     end
@@ -245,7 +245,7 @@ class User < ApplicationRecord
       saved = RequestContext.redis.hgetall(key)
       valid_prefs = prefs.keys
       deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
-      if deprecated.size > 0
+      unless deprecated.empty?
         RequestContext.redis.hdel key, *deprecated
       end
     end
