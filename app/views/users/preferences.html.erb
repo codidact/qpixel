@@ -2,32 +2,17 @@
 
 <h1>Preferences</h1>
 <p>
-  Manage your user preferences here. All preferences are network-wide. Changes are automatically saved once you move
-  away from the input field.
+  Manage your user preferences here. Changes are automatically saved once you move away from the input field.
 </p>
 
 <p><%= link_to 'Manage Email Subscriptions', subscriptions_path %></p>
 
-<% @preferences.each do |name, value| %>
-  <% pref_config = AppConfig.preferences[name] %>
-  <div class="user-pref">
-    <div class="user-pref--meta">
-      <strong><%= name.humanize %></strong><br/>
-      <span class="desc"><%= pref_config['description'] %></span>
-    </div>
-    <div class="user-pref--value">
-      <% case pref_config['type'] %>
-      <% when 'boolean' %>
-        <input class="js-user-pref" type="checkbox" data-pref="<%= name %>" <%= 'checked' if value == 'true' %> />
-      <% when 'choice' %>
-        <%= select_tag nil, options_for_select(preference_choice(pref_config), selected: value),
-                       include_blank: true, class: 'js-user-pref form-element', data: { pref: name } %>
-      <% when 'integer' %>
-        <input class="js-user-pref form-element" type="number" data-pref="<%= name %>" value="<%= value %>" />
-      <% when 'string' %>
-        <input class="js-user-pref form-element" type="text" data-pref="<%= name %>" value="<%= value %>" />
-      <% end %>
-    </div>
-  </div>
-<% end %>
+<h2>Network Preferences</h2>
+<p>These preferences apply network-wide.</p>
 
+<%= render 'prefs', prefs: @preferences, community: false %>
+
+<h2>Community Preferences</h2>
+<p>These preferences apply on this community only.</p>
+
+<%= render 'prefs', prefs: @community_prefs, community: true %>

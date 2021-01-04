@@ -3,7 +3,6 @@ $(() => {
     const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
     const preference = await QPixel.preference('keyboard_tools');
     const keyboardToolsAreEnabled = preference === 'true';
-    console.log(preference, keyboardToolsAreEnabled);
 
     $(".js-keyboard_tools-status").text(keyboardToolsAreEnabled ? "activated" : "inactive");
     $(".js-keyboard_tools-toggle").click(() => {

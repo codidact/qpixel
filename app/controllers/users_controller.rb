@@ -44,24 +44,28 @@ class UsersController < ApplicationController
   end
 
   def preferences
+    current_user.validate_prefs!
     respond_to do |format|
       format.html do
-        @preferences = AppConfig.preferences.transform_values { |v| v['default'] }
-                                .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}"))
+        prefs = current_user.preferences
+        @preferences = prefs[:global]
+        @community_prefs = prefs[:community]
       end
       format.json do
-        render json: AppConfig.preferences.transform_values { |v| v['default'] }
-                              .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}"))
+        render json: current_user.preferences
       end
     end
   end
 
   def set_preference
     if !params[:name].nil? && !params[:value].nil?
+      global_key = "prefs.#{current_user.id}"
+      community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
+      key = params[:community].present? && params[:community] ? community_key : global_key
+      current_user.validate_prefs!
       render json: { status: 'success', success: true,
-                     count: RequestContext.redis.hset("prefs.#{current_user.id}", params[:name], params[:value]),
-                     preferences: AppConfig.preferences.transform_values { |v| v['default'] }
-                                           .merge(RequestContext.redis.hgetall("prefs.#{current_user.id}")) }
+                     count: RequestContext.redis.hset(key, params[:name], params[:value]),
+                     preferences: current_user.preferences }
     else
       render json: { status: 'failed', success: false, errors: ['Both name and value parameters are required'] },
              status: 400

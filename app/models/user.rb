@@ -223,5 +223,32 @@ class User < ApplicationRecord
                          automatic: true, reason: "#{reason}: #" + @user.id.to_s)
     end
   end
+
+  def preferences
+    global_key = "prefs.#{id}"
+    community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
+    {
+      global: AppConfig.preferences.reject { |_, v| v['community'] }.transform_values { |v| v['default'] }
+                       .merge(RequestContext.redis.hgetall(global_key)),
+      community: AppConfig.preferences.select { |_, v| v['community'] }.transform_values { |v| v['default'] }
+                          .merge(RequestContext.redis.hgetall(community_key))
+    }
+  end
+
+  def validate_prefs!
+    global_key = "prefs.#{id}"
+    community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
+    {
+      global_key => AppConfig.preferences.reject { |_, v| v['community'] },
+      community_key => AppConfig.preferences.select { |_, v| v['community'] }
+    }.each do |key, prefs|
+      saved = RequestContext.redis.hgetall(key)
+      valid_prefs = prefs.keys
+      deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
+      if deprecated.size > 0
+        RequestContext.redis.hdel key, *deprecated
+      end
+    end
+  end
   # rubocop:enable Naming/PredicateName
 end

@@ -91,7 +91,7 @@
       <span class="form-caption">
         <% site_default = License.site_default %>
         <% category_default = category.license %>
-        <% user_default = user_preference('default_license') %>
+        <% user_default = user_preference('default_license', community: true) %>
         <% if site_default.present? %>
           site default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= site_default.id %>">
             <%= site_default.name %>

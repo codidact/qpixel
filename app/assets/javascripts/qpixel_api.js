@@ -180,6 +180,12 @@ window.QPixel = {
   preferences: async () => {
     if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
       this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
+
+      // If we don't have the global key, we're probably using an old preferences schema.
+      if (!this._preferences.global) {
+        delete localStorage['qpixel.user_preferences'];
+        this._preferences = null;
+      }
     }
     else if (this._preferences == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
@@ -200,20 +206,22 @@ window.QPixel = {
   /**
    * Get a single user preference by name.
    * @param name the name of the requested preference
+   * @param community is the requested preference community-local (true), or network-wide (false)?
    * @returns {Promise<*>} the value of the requested preference
    */
-  preference: async name => {
+  preference: async (name, community = false) => {
     const prefs = await QPixel.preferences();
-    return prefs[name];
+    return community ? prefs.community[name] : prefs.global[name];
   },
 
   /**
    * Set a user preference by name to the value provided.
    * @param name the name of the preference to set
    * @param value the value to set to - must respond to toString() for localStorage and Redis
+   * @param community is this preference community-local (true), or network-wide (false)?
    * @returns {Promise<void>}
    */
-  setPreference: async (name, value) => {
+  setPreference: async (name, value, community = false) => {
     const resp = await fetch('/users/me/preferences', {
       method: 'POST',
       credentials: 'include',
@@ -222,7 +230,7 @@ window.QPixel = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ name, value })
+      body: JSON.stringify({ name, value, community })
     });
     const data = await resp.json();
     if (data.status !== 'success') {

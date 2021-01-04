@@ -9,6 +9,7 @@ $(() => {
       value = $tgt.val();
     }
     const prefName = $tgt.attr('data-pref');
-    await QPixel.setPreference(prefName, value);
+    const community = $tgt.attr('data-community') === 'true';
+    await QPixel.setPreference(prefName, value, community);
   });
 });

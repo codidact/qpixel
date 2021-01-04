@@ -9,7 +9,8 @@
 #     - used
 #     - if
 #     - type is choice
-#   default: string default value
+#   default: string default value | ~
+#   community: true | false  # optional, default false (global)
 
 keyboard_tools:
   type: boolean
@@ -23,8 +24,14 @@ default_license:
     Your choice of default license. This will override site and category default licensing.
   default: ~
   choice:
-    - CC BY-SA 4.0
-    - CC BY 4.0
-    - CC BY-NC 4.0
-    - CC BY-NC-SA 4.0
-    - CC0
+    - name: CC BY-SA 4.0
+      value: CC BY-SA 4.0
+    - name: CC BY 4.0
+      value: CC BY 4.0
+    - name: CC BY-NC 4.0
+      value: CC BY-NC 4.0
+    - name: CC BY-NC-SA 4.0
+      value: CC BY-NC-SA 4.0
+    - name: CC0
+      value: CC0
+  community: true
