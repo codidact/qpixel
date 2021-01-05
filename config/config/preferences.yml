@@ -43,6 +43,8 @@ default_license:
       value: CC BY-NC-SA 4.0
     - name: CC0
       value: CC0
+    - name: No default (make me choose)
+      value: No default (make me choose)
   community: true
 
 favorite_tags:

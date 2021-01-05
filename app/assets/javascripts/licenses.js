@@ -16,10 +16,13 @@ $(() => {
   $('.js-license-select').select2({
     templateResult: option => {
       if (option.element) {
+        const title = $(option.element).attr('data-title');
+        const description = !!title ? title :
+          "You've opted to be required to choose a license explicitly for every post."
         return $(`<div>
                     ${option.text}<br/>
                     <span class="has-font-size-caption has-color-tertiary-600">
-                      ${$(option.element).attr('data-title')}
+                      ${description}
                     </span>
                   </div>`);
       }

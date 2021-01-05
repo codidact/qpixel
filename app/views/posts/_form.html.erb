@@ -116,7 +116,9 @@
       </span>
       <%= f.select :license_id, options_for_select(License.enabled.default_order(category, user_default)
                                                           .map { |l| [l.name, l.id, { 'data-title': l.description }] },
-                                                   selected: post.license_id), {}, class: 'form-element js-license-select' %>
+                                                   selected: post.license_id),
+                   { include_blank: user_default == 'No default (make me choose)' },
+                   class: 'form-element js-license-select' %>
     </div>
   <% end %>
 
