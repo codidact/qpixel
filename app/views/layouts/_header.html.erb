@@ -21,16 +21,19 @@
     </div>
     <nav class="header--menu">
       <% unless @community.is_fake %>
-        <%= link_to 'Users', users_path, class: 'header--item' %>
-        <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
-      <% else %>
+        <%= link_to users_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-users"></i> Users
+        <% end %>
+        <%= link_to search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } do %>
+          <i class="fas fa-fw fa-search"></i> Search
+        <% end %>
       <% end %>
-        <div class='header--separator'></div>
+      <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
-              Mod
+              <i class="fas fa-fw fa-wrench"></i> Mod
               <% if @open_flags > 0 %>
                 <span class="header--alert"><%= @open_flags %></span>
               <% end %>
@@ -39,7 +42,9 @@
         <% end %>
       <% end %>
       <% unless @community.is_fake %>
-        <%= link_to 'Help', help_center_path, class: 'header--item' %>
+        <%= link_to help_center_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-question-circle"></i> Help
+        <% end %>
       <% end %>
       <% if user_signed_in? %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
