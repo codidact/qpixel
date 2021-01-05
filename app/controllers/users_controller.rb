@@ -23,9 +23,13 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
-    @posts = @user.posts.list_includes.joins(:category)
-                  .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-                  .order(score: :desc).first(15)
+    @posts = if current_user&.privilege?('flag_curate')
+               @user.posts
+             else
+               @user.posts.undeleted
+             end.list_includes.joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+             .order(score: :desc).first(15)
     render layout: 'without_sidebar'
   end
 
@@ -73,11 +77,15 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = Post.undeleted.where(user: @user).list_includes.joins(:category)
-                 .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-                 .user_sort({ term: params[:sort], default: :score },
-                            age: :created_at, score: :score)
-                 .paginate(page: params[:page], per_page: 25)
+    @posts = if current_user&.privilege?('flag_curate')
+               Post.all
+             else
+               Post.undeleted
+             end.where(user: @user).list_includes.joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+             .user_sort({ term: params[:sort], default: :score },
+                        age: :created_at, score: :score)
+             .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
         render :posts
