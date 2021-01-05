@@ -220,7 +220,7 @@ class User < ApplicationRecord
                        automatic: true, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
-                         automatic: true, reason: "#{reason}: #" + @user.id.to_s)
+                         automatic: true, reason: "#{reason}: #" + id.to_s)
     end
   end
 

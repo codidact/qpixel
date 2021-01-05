@@ -177,7 +177,7 @@ class UsersController < ApplicationController
     before = @user.attributes_print
     @user.block('user destroyed')
 
-    if @user.destroy!
+    if @user.destroy
       Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                                         deleted: true, deleted_at: DateTime.now,
                                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
@@ -185,7 +185,7 @@ class UsersController < ApplicationController
       render json: { status: 'success' }
     else
       render json: { status: 'failed',
-                     message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' },
+                     message: 'Failed to destroy user; ask a dev.' },
              status: :internal_server_error
     end
   end
@@ -216,12 +216,12 @@ class UsersController < ApplicationController
 
     before = @user.attributes_print
     unless @user.destroy
-      render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: :internal_server_error)
+      render(json: { status: 'failed', message: 'Failed to destroy; ask a dev.' }, status: :internal_server_error)
       return
     end
     AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
 
-    render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
+    render json: { status: 'success' }
   end
 
   def edit_profile; end
