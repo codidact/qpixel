@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_02_143426) do
+ActiveRecord::Schema.define(version: 2021_01_06_230120) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -313,6 +313,8 @@ ActiveRecord::Schema.define(version: 2021_01_02_143426) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
+    t.integer "upvote_rep"
+    t.integer "downvote_rep"
     t.index ["name"], name: "index_post_types_on_name"
   end
 

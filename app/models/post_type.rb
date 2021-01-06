@@ -13,4 +13,10 @@ class PostType < ApplicationRecord
   def self.[](key)
     PostType.find_by(name: key)
   end
+
+  def self.rep_changes
+    Rails.cache.fetch 'network/post_types/rep_changes' do
+      all.map { |pt| [pt.id, { 1 => pt.upvote_rep, -1 => pt.downvote_rep }] }.to_h
+    end
+  end
 end
