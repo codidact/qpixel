@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
     get    'search',                       to: 'search#search', as: :search
+    get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
 
     get    ':id',                          to: 'posts#show', as: :post
 
@@ -98,7 +99,8 @@ Rails.application.routes.draw do
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
     post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
-    post   ':id/promote',                  to: 'posts#nominate_promotion', as: :promote_post
+    post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
+    delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
 
     get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
     post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve

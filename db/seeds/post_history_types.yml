@@ -9,3 +9,4 @@
 - name: attribution_notice_changed
 - name: imported_from_external_source
 - name: nominated_for_promotion
+- name: promotion_removed

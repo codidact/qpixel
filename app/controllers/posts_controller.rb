@@ -3,11 +3,10 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
-  before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore,
-                                         :nominate_promotion]
+  before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
-  before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore, :nominate_promotion]
+  before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
 
   def new
     @post_type = PostType.find(params[:post_type])
@@ -478,18 +477,6 @@ class PostsController < ApplicationController
     key = "saved_post.#{current_user.id}.#{params[:path]}"
     saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
     RequestContext.redis.del key, saved_at
-    render json: { status: 'success', success: true }
-  end
-
-  def nominate_promotion
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
-    return not_found(errors: ['unavailable_for_type']) unless top_level_post_types.include? @post.post_type_id
-
-    PostHistory.nominated_for_promotion(@post, current_user)
-    nominations = helpers.promoted_posts
-    nominations.merge!(@post.id => DateTime.now.to_i)
-    nominations.select! { |_k, v| DateTime.now.to_i - v <= 3600 * 24 * 28 }
-    RequestContext.redis.set 'network/promoted_posts', JSON.dump(nominations)
     render json: { status: 'success', success: true }
   end
 
