@@ -34,7 +34,7 @@ class Post < ApplicationRecord
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
   validate :category_allows_post_type, if: -> { category_id.present? }
-  validate :license, if: -> { post_type.has_license }
+  validate :license_valid, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
   validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
 
@@ -212,7 +212,7 @@ class Post < ApplicationRecord
     end
   end
 
-  def license
+  def license_valid
     # Don't validate license on edits
     return unless id.nil?
 
