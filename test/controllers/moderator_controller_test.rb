@@ -129,7 +129,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'cannot remove unpromoted post' do
     sign_in users(:deleter)
-    delete :remove_promotion, params: { id: posts(:question_one).id, format: :json }
+    delete :remove_promotion, params: { id: posts(:question_two).id, format: :json }
     assert_response 404
     assert_nothing_raised do
       JSON.parse(response.body)

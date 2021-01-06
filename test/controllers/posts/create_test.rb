@@ -18,7 +18,7 @@ class PostsControllerTest < ActionController::TestCase
     post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
                             post: { post_type_id: post_types(:question).id, title: sample.title,
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache } }
+                                    tags_cache: sample.tags_cache, license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_not_nil assigns(:post).id
     assert_redirected_to post_path(assigns(:post))
@@ -29,7 +29,8 @@ class PostsControllerTest < ActionController::TestCase
     before_notifs = posts(:question_one).user.notifications.count
     post :create, params: { post_type: post_types(:answer).id, parent: posts(:question_one).id,
                             post: { post_type_id: post_types(:answer).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, parent_id: posts(:question_one).id } }
+                                    body_markdown: sample.body_markdown, parent_id: posts(:question_one).id,
+                                    license_id: licenses(:cc_by_sa).id } }
     after_notifs = posts(:question_one).user.notifications.count
     assert_response 302
     assert_not_nil assigns(:post).id
