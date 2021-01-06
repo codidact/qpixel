@@ -34,7 +34,7 @@ class Post < ApplicationRecord
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
   validate :category_allows_post_type, if: -> { category_id.present? }
-  validate :license_available, if: -> { post_type.has_license }
+  validate :license, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
   validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
 
@@ -48,7 +48,6 @@ class Post < ApplicationRecord
 
   before_validation :update_tag_associations, if: -> { post_type.has_tags }
   after_create :create_initial_revision
-  after_create :add_license_if_nil
   after_save :check_attribution_notice
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
@@ -213,11 +212,15 @@ class Post < ApplicationRecord
     end
   end
 
-  def license_available
+  def license
     # Don't validate license on edits
     return unless id.nil?
 
-    unless license.nil? || license.enabled?
+    if license.nil?
+      errors.add(:license, 'must be chosen')
+    end
+
+    unless license.enabled?
       errors.add(:license, 'is not available for use')
     end
   end
@@ -260,12 +263,6 @@ class Post < ApplicationRecord
     tag_set = category.tag_set
     unless tags.all? { |t| t.tag_set_id == tag_set.id }
       errors.add(:base, "Not all of this question's tags are in the correct tag set.")
-    end
-  end
-
-  def add_license_if_nil
-    if license.nil?
-      update(license: License.site_default)
     end
   end
 
