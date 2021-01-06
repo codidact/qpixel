@@ -218,6 +218,7 @@ class Post < ApplicationRecord
 
     if license.nil?
       errors.add(:license, 'must be chosen')
+      return
     end
 
     unless license.enabled?
