@@ -5,7 +5,7 @@ class PostType < ApplicationRecord
   validates :name, uniqueness: true
 
   def self.mapping
-    Rails.cache.fetch 'network/post_types/post_type_ids' do
+    Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
       PostType.all.map { |pt| [pt.name, pt.id] }.to_h
     end
   end
@@ -15,7 +15,7 @@ class PostType < ApplicationRecord
   end
 
   def self.rep_changes
-    Rails.cache.fetch 'network/post_types/rep_changes' do
+    Rails.cache.fetch 'network/post_types/rep_changes', include_community: false do
       all.map { |pt| [pt.id, { 1 => pt.upvote_rep, -1 => pt.downvote_rep }] }.to_h
     end
   end

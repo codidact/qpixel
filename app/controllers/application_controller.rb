@@ -235,12 +235,12 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
     end
-    @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
@@ -252,7 +252,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch("#{RequestContext.community_id}/header_categories") do
+    @header_categories = Rails.cache.fetch('header_categories') do
       Category.all.order(sequence: :asc, id: :asc)
     end
   end

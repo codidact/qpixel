@@ -11,7 +11,7 @@ module PostTypesHelper
 
   def post_type_ids(**opts)
     key = post_type_criteria.map { |a| opts[a] ? '1' : '0' }.join
-    Rails.cache.fetch "post_type_ids/#{key}" do
+    Rails.cache.fetch "network/post_types/post_type_ids/#{key}", include_community: false do
       PostType.where(**opts).select(:id).map(&:id)
     end
   end

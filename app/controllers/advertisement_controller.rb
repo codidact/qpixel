@@ -14,7 +14,7 @@ class AdvertisementController < ApplicationController
   end
 
   def codidact
-    ad = Rails.cache.fetch 'codidact_ad', expires_in: 60.minutes do
+    ad = Rails.cache.fetch 'network/codidact_ad', expires_in: 60.minutes, include_community: false do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
@@ -69,7 +69,7 @@ class AdvertisementController < ApplicationController
   end
 
   def community
-    ad = Rails.cache.fetch "#{RequestContext.community_id}/community_ad", expires_in: 60.minutes do
+    ad = Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
@@ -148,7 +148,7 @@ class AdvertisementController < ApplicationController
 
   def specific_category
     @category = Category.unscoped.find(params[:id])
-    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_category_post/#{params[:id]}",
+    @post = Rails.cache.fetch "ca_random_category_post/#{params[:id]}",
                               expires_in: 5.minutes do
       select_random_post(@category)
     end
@@ -162,7 +162,7 @@ class AdvertisementController < ApplicationController
   end
 
   def random_question
-    @post = Rails.cache.fetch "community/#{RequestContext.community_id}/ca_random_hot_post", expires_in: 5.minutes do
+    @post = Rails.cache.fetch "ca_random_hot_post", expires_in: 5.minutes do
       select_random_post
     end
     if @post.nil?

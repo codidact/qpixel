@@ -1,1 +1,1 @@
-Rails.cache.clear
+Rails.cache.delete_matched 'network/*'
