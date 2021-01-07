@@ -7,23 +7,40 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
-  get    'admin',                          to: 'admin#index', as: :admin
-  get    'admin/errors',                   to: 'admin#error_reports', as: :admin_error_reports
-  get    'admin/settings',                 to: 'site_settings#index', as: :site_settings
-  get    'admin/settings/global',          to: 'site_settings#global', as: :global_settings
-  get    'admin/settings/:name',           to: 'site_settings#show', as: :site_setting
-  post   'admin/settings/:name',           to: 'site_settings#update', as: :update_site_setting
-  delete 'admin/users/delete/:id',         to: 'users#soft_delete', as: :soft_delete_user
-  get    'admin/privileges',               to: 'admin#privileges', as: :admin_privileges
-  get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
-  post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
-  get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
-  post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
-  get    'admin/audits',                   to: 'admin#audit_log', as: :audit_log
-  get    'admin/new-site',                 to: 'admin#new_site', as: :new_site
-  post   'admin/new-site',                 to: 'admin#create_site', as: :create_site
-  get    'admin/setup',                    to: 'admin#setup', as: :setup
-  post   'admin/setup',                    to: 'admin#setup_save', as: :setup_save
+  scope 'admin' do
+    root                                   to: 'admin#index', as: :admin
+    get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
+
+    get    'settings',                     to: 'site_settings#index', as: :site_settings
+    get    'settings/global',              to: 'site_settings#global', as: :global_settings
+    get    'settings/:name',               to: 'site_settings#show', as: :site_setting
+    post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
+
+    delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+
+    get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
+    get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege
+    post   'privileges/:name',             to: 'admin#update_privilege', as: :admin_update_privilege
+
+    get    'mod-email',                    to: 'admin#admin_email', as: :moderator_email
+    post   'mod-email',                    to: 'admin#send_admin_email', as: :send_moderator_email
+
+    get    'audits',                       to: 'admin#audit_log', as: :audit_log
+
+    get    'new-site',                     to: 'admin#new_site', as: :new_site
+    post   'new-site',                     to: 'admin#create_site', as: :create_site
+
+    get    'setup',                        to: 'admin#setup', as: :setup
+    post   'setup',                        to: 'admin#setup_save', as: :setup_save
+
+    scope 'post-types' do
+      root                                 to: 'post_types#index', as: :post_types
+      get    'new',                        to: 'post_types#new', as: :new_post_type
+      post   'new',                        to: 'post_types#create', as: :create_post_type
+      get    ':id/edit',                   to: 'post_types#edit', as: :edit_post_type
+      patch  ':id/edit',                   to: 'post_types#update', as: :update_post_type
+    end
+  end
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason

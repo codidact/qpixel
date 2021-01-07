@@ -1,0 +1,18 @@
+<div class="widget">
+  <div class="widget--body">
+    <h3>
+      <% if type.icon_name.present? %>
+        <i class="<%= type.icon_name %>"></i>
+      <% end %>
+      <%= type.name %>
+    </h3>
+    <% if type.description.present? %>
+      <p><%= type.description %></p>
+    <% end %>
+  </div>
+  <div class="widget--footer has-font-size-caption">
+    <%= link_to edit_post_type_path(type.id) do %>
+      <i class="fas fa-pencil-alt"></i> Edit
+    <% end %>
+  </div>
+</div>
