@@ -162,7 +162,7 @@ class AdvertisementController < ApplicationController
   end
 
   def random_question
-    @post = Rails.cache.fetch "ca_random_hot_post", expires_in: 5.minutes do
+    @post = Rails.cache.fetch 'ca_random_hot_post', expires_in: 5.minutes do
       select_random_post
     end
     if @post.nil?
