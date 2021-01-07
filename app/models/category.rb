@@ -14,7 +14,7 @@ class Category < ApplicationRecord
   validates :name, uniqueness: { scope: [:community_id] }
 
   def new_posts_for?(user)
-    key = "#{user.id}/#{id}/last_visit"
+    key = "#{community_id}/#{user.id}/#{id}/last_visit"
     Rails.cache.fetch key, expires_in: 5.minutes do
       Rack::MiniProfiler.step "Redis: category last visit (#{key})" do
         activity_key = "#{community_id}/#{id}/last_activity"
