@@ -252,10 +252,10 @@ class Post < ApplicationRecord
   end
 
   def stripped_minimum
-    if (body&.squeeze('  ')&.length || 0) < 30
+    if (body&.gsub(/[\s\t\u2000-\u200F]/, '')&.length || 0) < 30
       errors.add(:body, 'must be more than 30 non-whitespace characters long')
     end
-    if (title&.squeeze('  ')&.length || 0) < 15
+    if (title&.gsub(/[\s\t\u2000-\u200F]/, '')&.length || 0) < 15
       errors.add(:title, 'must be more than 15 non-whitespace characters long')
     end
   end
