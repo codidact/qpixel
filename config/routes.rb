@@ -33,6 +33,11 @@ Rails.application.routes.draw do
     get    'setup',                        to: 'admin#setup', as: :setup
     post   'setup',                        to: 'admin#setup_save', as: :setup_save
 
+    get    'impersonate/stop',             to: 'admin#change_back', as: :stop_impersonating
+    post   'impersonate/stop',             to: 'admin#verify_elevation', as: :verify_elevation
+    post   'impersonate/:id',              to: 'admin#change_users', as: :impersonate
+    get    'impersonate/:id',              to: 'admin#impersonate', as: :start_impersonating
+
     scope 'post-types' do
       root                                 to: 'post_types#index', as: :post_types
       get    'new',                        to: 'post_types#new', as: :new_post_type

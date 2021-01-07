@@ -41,6 +41,14 @@
   }
 }
 
+.ai-c {
+  align-items: center;
+}
+
+.ai-fe {
+  align-items: flex-end;
+}
+
 .jc-sb {
   justify-content: space-between;
 }
@@ -215,4 +223,8 @@ details {
 
 .item-list--item .item-list--number-value .meter {
   margin-top: 0.5em !important;
+}
+
+.button.is-warning.is-outlined {
+  border: 1px #b19002 !important;
 }

@@ -205,9 +205,20 @@
 <% end %>
 
 <% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode has-color-red-900">
     <div class="container">
       <p>This site is in development mode!</p>
+    </div>
+  </div>
+<% end %>
+
+<% if user_signed_in? && session[:impersonator_id].present? %>
+  <div class="notice is-info is-banner is-filled has-padding-2">
+    <div class="container">
+      <p class="has-font-size-caption">
+        You are impersonating <%= current_user.username %>.
+        <%= link_to 'Stop impersonating', stop_impersonating_path, class: 'is-underlined' %>
+      </p>
     </div>
   </div>
 <% end %>

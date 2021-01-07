@@ -1,8 +1,9 @@
 # Web controller. Provides authenticated actions for use by administrators.
 class AdminController < ApplicationController
-  before_action :verify_admin
+  before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
                                              :setup_save, :hellban]
+  before_action :verify_developer, only: [:change_users, :impersonate]
 
   def index; end
 
@@ -135,5 +136,48 @@ class AdminController < ApplicationController
     @user.block("user manually blocked by admin ##{current_user.id}")
     flash[:success] = t 'admin.user_fed_stat'
     redirect_back fallback_location: admin_path
+  end
+
+  def impersonate
+    @user = User.find params[:id]
+  end
+
+  def change_users
+    @user = User.find params[:id]
+
+    unless params[:comment].present?
+      flash[:danger] = 'Please explain why you are impersonating this user.'
+      render :impersonate
+      return
+    end
+
+    dev_id = current_user.id
+    AuditLog.admin_audit(event_type: 'impersonation_start', related: @user, user: current_user,
+                         comment: params[:comment])
+    sign_in @user
+    session[:impersonator_id] = dev_id
+    flash[:success] = "You are now impersonating #{@user.username}."
+    redirect_to root_path
+  end
+
+  def change_back
+    return not_found unless session[:impersonator_id].present?
+
+    @impersonator = User.find session[:impersonator_id]
+  end
+
+  def verify_elevation
+    return not_found unless session[:impersonator_id].present?
+
+    @impersonator = User.find session[:impersonator_id]
+    if @impersonator&.valid_password? params[:password]
+      session.delete :impersonator_id
+      AuditLog.admin_audit(event_type: 'impersonation_end', related: current_user, user: @impersonator)
+      sign_in @impersonator
+      redirect_to root_path
+    else
+      flash[:danger] = 'Incorrect password.'
+      render :change_back
+    end
   end
 end
