@@ -73,9 +73,9 @@ $(() => {
     tags: true
   });
 
-  const saveDraft = async (postText, $field) => {
+  const saveDraft = async (postText, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave');
-    if (autosavePref !== 'on') {
+    if (autosavePref !== 'on' && !manual) {
       return;
     }
 
@@ -92,11 +92,18 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`<span>&middot; <span class="has-color-green-600">Draft saved</span></span>`);
+      const $el = $(`<span>&middot; <span class="has-color-green-600">draft saved</span></span>`);
       $field.parents('.widget').find('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
+
+  $('.js-save-draft').on('click', async ev => {
+    const $tgt = $(ev.target);
+    const $field = $tgt.parents('.widget').find('.js-post-field');
+    const postText = $field.val();
+    await saveDraft(postText, $field, true);
+  });
 
   let mathjaxTimeout = null;
   let draftTimeout = null;
