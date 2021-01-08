@@ -261,8 +261,6 @@ class UsersController < ApplicationController
     profile_rendered = helpers.post_markdown(:user, :profile_markdown)
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
-      AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,
-                            comment: "from <<User #{before}>>\nto <<User #{@user.attributes_print}>>")
       redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."
