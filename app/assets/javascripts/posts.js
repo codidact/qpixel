@@ -74,7 +74,7 @@ $(() => {
   });
 
   const saveDraft = async (postText, $field, manual = false) => {
-    const autosavePref = await QPixel.preference('autosave');
+    const autosavePref = await QPixel.preference('autosave', true);
     if (autosavePref !== 'on' && !manual) {
       return;
     }

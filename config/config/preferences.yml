@@ -26,6 +26,7 @@ autosave:
   description: >
     Should autosave be enabled while composing posts?
   default: 'on'
+  community: true
 
 default_license:
   type: choice
