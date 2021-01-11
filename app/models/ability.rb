@@ -21,4 +21,8 @@ class Ability < ApplicationRecord
       5 => 'staff only'
     }
   end
+
+  def self.[](key)
+    find_by internal_id: key
+  end
 end

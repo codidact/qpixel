@@ -2,9 +2,18 @@
 <p class="is-lead">This is a list of suggested edits on posts in this category.</p>
 
 <div class="button-list is-gutterless">
-  <a href="?show_decided=0" class="button is-muted is-outlined <%= params[:show_decided] != '1' ? 'is-active' : '' %>">Only pending</a>
-  <a href="?show_decided=1" class="button is-muted is-outlined <%= params[:show_decided] == '1' ? 'is-active' : '' %>">Only decided</a>
+  <%= link_to 'Pending', query_url(show_decided: 0),
+              class: "button is-muted is-outlined #{params[:show_decided] != '1' ? 'is-active' : ''}" %>
+  <%= link_to 'Decided', query_url(show_decided: 1),
+              class: "button is-muted is-outlined #{params[:show_decided] == '1' ? 'is-active' : ''}" %>
 </div>
+
+<% if params[:show_decided] != '1' && !current_user&.privilege?('edit_posts') %>
+  <div class="notice is-info has-color-teal-800">
+    <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits because you haven't
+    yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
+  </div>
+<% end %>
 
 <% if @edits.any? %>
   <div class="widget">
