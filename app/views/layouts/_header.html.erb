@@ -212,6 +212,14 @@
   </div>
 <% end %>
 
+<% if read_only? %>
+  <div class="notice is-warning is-filled is-banner has-padding-2 has-color-yellow-900 has-font-size-caption">
+    <div class="container">
+      <p>This site is in read-only mode.</p>
+    </div>
+  </div>
+<% end %>
+
 <% if user_signed_in? && session[:impersonator_id].present? %>
   <div class="notice is-info is-banner is-filled has-padding-2">
     <div class="container">

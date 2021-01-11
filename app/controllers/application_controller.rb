@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
   before_action :enforce_2fa
+  before_action :block_write_request, if: :read_only_mode?
 
   helper_method :top_level_post_types, :second_level_post_types
 
@@ -296,5 +297,20 @@ class ApplicationController < ActionController::Base
         redirect_to(redirect_path)
       end
     end
+  end
+
+  def block_write_request(**add)
+    respond_to do |format|
+      format.html do
+        render 'errors/read_only', layout: 'without_sidebar', status: :not_found
+      end
+      format.json do
+        render json: { status: 'failed', success: false, errors: ['read_only'] }.merge(add), status: :locked
+      end
+    end
+  end
+
+  def read_only_mode?
+    helpers.read_only? && request.method.upcase == 'POST'
   end
 end
