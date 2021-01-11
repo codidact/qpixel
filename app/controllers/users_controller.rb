@@ -245,7 +245,6 @@ class UsersController < ApplicationController
     end
 
     @user = current_user
-    before = @user.attributes_print
 
     if params[:user][:avatar].present?
       if helpers.valid_image?(params[:user][:avatar])
