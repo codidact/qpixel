@@ -127,39 +127,48 @@
         <% been_edited = post.last_edited_by_id != nil %>
         <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
 
-        <div class="post--meta has-margin-bottom-4">
-          <%= render 'users/post_usercard', post: post %>
-          <div>
-            <% if post_type.has_tags %>
-              <div class="post--tags has-padding-2">
-                <% required_ids = post.category&.required_tag_ids %>
-                <% moderator_ids = post.category&.moderator_tag_ids %>
-                <% topic_ids = post.category&.topic_tag_ids %>
-                <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-                  <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-                  <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-                  <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-                  <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                              class: "badge is-tag #{required} #{topic} #{moderator}" %>
-                <% end %>
+        <% if post_type.has_tags %>
+          <div class="post--tags has-padding-2">
+            <% required_ids = post.category&.required_tag_ids %>
+            <% moderator_ids = post.category&.moderator_tag_ids %>
+            <% topic_ids = post.category&.topic_tag_ids %>
+            <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
+              <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
+              <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+              <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
+              <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                          class: "badge is-tag #{required} #{topic} #{moderator}" %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="post--meta flex-row jc-sb">
+          <div class="post-meta--post">
+            <div title="<%= post.created_at.iso8601 %>">
+              posted <%= time_ago_in_words(post.created_at) %> ago
+            </div>
+
+            <% if post.license.present? %>
+              <div>
+                <i class="fas fa-balance-scale" title="license" aria-label="license"></i>
+                <%= link_to post.license.name, post.license.url %>
               </div>
             <% end %>
+
             <% if been_edited %>
-              <div class="post--licensing--edited has-margin-left-2">
-                <% if been_edited %>
-                  <i class="fa fa-pencil-alt" title="Edited"></i>
-                  <span class="has-color-tertiary">
-                  <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
-                  <% unless last_edited_by_self %>
-                    by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
-                  <% end %>
-                  </span>
+              <div>
+                <i class="fa fa-pencil-alt" title="last edited" aria-label="last edited"></i>
+                <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
+                <% unless last_edited_by_self %>
+                  by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
                 <% end %>
               </div>
             <% end %>
           </div>
+          <div class="post-meta--user">
+            <%= render 'users/post_usercard', post: post %>
+          </div>
         </div>
-        <div class="has-clear-clear"></div>
 
         <div class="post--actions">
           <div class="tools">
