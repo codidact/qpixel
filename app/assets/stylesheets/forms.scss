@@ -56,3 +56,9 @@ select.form-element {
   width: 100% !important;
   z-index: 8999;
 }
+
+@for $i from 1 through 25 {
+  textarea.has-rows[rows="#{$i}"] {
+    min-height: (1.2em * $i) + 1.2em;
+  }
+}
