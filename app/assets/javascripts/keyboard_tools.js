@@ -179,9 +179,6 @@ $(() => {
           string_response.trim()
         );
         _CodidactKeyboard.state = 'goto/category-tags';
-
-        // FIXME what's happened here? tlink isn't defined
-        window.location.href = tlink;
       } else if (e.key === "e") {
         const data = Object.entries(_CodidactKeyboard.categories());
         let string_response = "";
@@ -194,9 +191,6 @@ $(() => {
           string_response.trim()
         );
         _CodidactKeyboard.state = 'goto/category-edits';
-
-        // FIXME what's happened here? tlink isn't defined
-        window.location.href = tlink;
       } else if (e.key === 'c') {
         const data = Object.entries(_CodidactKeyboard.categories());
         let string_response = "";
@@ -210,7 +204,6 @@ $(() => {
         );
         _CodidactKeyboard.state = 'goto/category';
       }
-
     }
 
     function categoryMenu(e) {
