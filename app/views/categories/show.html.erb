@@ -1,10 +1,12 @@
 <% content_for :title, @category.name %>
 
 <% if @category.short_wiki %>
-  <div class="is-lead">
-    <% cache [@category, 'description-rendered'] do %>
-      <%= raw(sanitize(render_markdown(@category.short_wiki), scrubber: scrubber)) %>
-    <% end %>
+  <div class="category--description open" data-category-id="<%= @category.id %>">
+    <div class="category--collapse">
+      <% cache [@category, 'description-rendered'] do %>
+        <%= raw(sanitize(render_markdown(@category.short_wiki), scrubber: scrubber)) %>
+      <% end %>
+    </div>
   </div>
 <% end %>
 
