@@ -28,45 +28,38 @@ class CloseReasonsControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should deny editors access' do
-    sign_in users(:editor)
-    PARAM_LESS_ACTIONS.each do |path|
-      get path
-      assert_response(404)
-    end
-  end
-
-  test 'should deny deleters access' do
-    sign_in users(:deleter)
-    PARAM_LESS_ACTIONS.each do |path|
-      get path
-      assert_response(404)
-    end
-  end
-
-  test 'should deny admins access to non-admin community' do
-    RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
-    request.env['HTTP_HOST'] = 'other.qpixel.com'
-
-    copy_abilities(RequestContext.community_id)
-
-    sign_in users(:admin)
-    PARAM_LESS_ACTIONS.each do |path|
-      get path
-      assert_response(404)
-    end
-  end
-
-  test 'should grant global admis access to non admin community' do
-    RequestContext.community = Community.create(host: 'other.qpixel.com', name: 'Other')
-    request.env['HTTP_HOST'] = 'other.qpixel.com'
-
-    copy_abilities(RequestContext.community_id)
-
+  test 'should get new' do
     sign_in users(:global_admin)
-    PARAM_LESS_ACTIONS.each do |path|
-      get path
-      assert_response(200)
-    end
+    get :new
+    assert_response :success
+    assert_not_nil assigns(:close_reason)
+  end
+
+  test 'should create close reason' do
+    sign_in users(:global_admin)
+    post :create, params: { close_reason: { name: 'test', description: 'test', requires_other_post: true,
+                                            active: true } }
+    assert_response 302
+    assert_redirected_to close_reasons_path
+    assert_not_nil assigns(:close_reason)
+    assert_not_nil assigns(:close_reason).id
+  end
+
+  test 'should get edit' do
+    sign_in users(:global_admin)
+    get :edit, params: { id: close_reasons(:duplicate).id }
+    assert_response 200
+    assert_not_nil assigns(:close_reason)
+  end
+
+  test 'should update close reason' do
+    sign_in users(:global_admin)
+    patch :update, params: { id: close_reasons(:duplicate).id, close_reason: { name: 'test', description: 'test',
+                                                                               requires_other_post: true,
+                                                                               active: false } }
+    assert_response 302
+    assert_redirected_to close_reasons_path
+    assert_not_nil assigns(:close_reason)
+    assert_equal false, assigns(:close_reason).active
   end
 end

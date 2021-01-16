@@ -2,6 +2,16 @@
 
 <h1>Edit close reason</h1>
 
+<div class="notice is-warning has-color-yellow-900 has-font-size-caption flex-row-always jc-sb ai-c">
+  <i class="fas fa-exclamation-triangle"></i>
+  <div>
+    If you edit the description for this close reason, the change will appear on all questions that are already closed
+    with this reason. <strong>Do</strong> use edits to clarify wording, but <strong>do not</strong> use them to replace
+    one close reason with another. You can add a new reason and deactivate this one if you no longer want it to be
+    available.
+  </div>
+</div>
+
 <% if @close_reason.errors.any? %>
   <div class="notice is-danger">
     These errors prevented this close reason being saved:
@@ -13,36 +23,4 @@
   </div>
 <% end %>
 
-<%= form_for @close_reason, url: update_close_reason_path(global: @close_reason.community.nil? ? 1 : 0) do |f| %>
-  <div class="form-group has-padding-2">
-    <%= f.label :name, "Name", class: "form-element" %>
-    <%= f.text_field :name, class: "form-element" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :description, "Description", class: "form-element" %>
-    <div class="form-caption">
-      You can use <code>$SiteName</code> for the current community.
-    </div>
-    <%= f.text_area :description, class: "form-element is-small" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :requires_other_post, "Require other post?", class: "form-element" %>
-    <div class="form-caption">
-      Check this box if the close reason shall require closers to select an other post. For example for "duplicate" reasons.
-    </div>
-    <%= f.check_box :requires_other_post, class: "form-checkbox-element" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :active, "Active?", class: "form-element" %>
-    <div class="form-caption">
-      Activate this reason to allow closers to use it. This doesn't affect prior uses.
-    </div>
-    <%= f.check_box :active, class: "form-checkbox-element" %>
-  </div>
-
-  <%= f.submit "Update", class: "button is-filled" %>
-  <%= link_to "Cancel", close_reasons_path(global: @close_reason.community.nil? ? 1 : 0), class: "button" %>
-<% end %>
+<%= render 'form', submit_url: update_close_reason_path(global: @close_reason.community.nil? ? 1 : 0) %>
