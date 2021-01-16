@@ -9,8 +9,15 @@
   <div class="notice is-info">
     <p><strong>Posting Tips</strong></p>
     <div class="has-font-size-caption">
-      <% guidance = @category.asking_guidance_override %>
-      <%= raw(sanitize(render_markdown(guidance.present? ? guidance : SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+      <% cache [@category, @post_type, 'guidance'] do %>
+        <% guidance = @post_type.is_top_level? ?
+                        @category.asking_guidance_override :
+                        @category.answering_guidance_override %>
+        <% setting = @post_type.is_top_level? ?
+                       SiteSetting['AskingGuidance'] :
+                       SiteSetting['AnsweringGuidance'] %>
+        <%= raw(sanitize(render_markdown(guidance.present? ? guidance : setting), scrubber: scrubber)) %>
+      <% end %>
     </div>
   </div>
 <% end %>
