@@ -229,7 +229,7 @@ class PostsController < ApplicationController
         return
       end
       
-      if other = @post
+      if other == @post
         render json: { status: 'failed', message: 'You can not close a post as a duplicate of itself' }, status: :bad_request
         return
       end
