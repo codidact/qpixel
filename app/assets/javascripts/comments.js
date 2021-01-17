@@ -86,14 +86,14 @@ $(() => {
         </div>
         <div class="actions">
           <input type="submit" class="button is-outlined" value="Post" />
-          <input type="button" name="js-discard-edit" id="js-discard-edit-${commentId}" value="Discard Edit" class="button is-danger is-outlined" />
+          <input type="button" name="js-discard-edit" value="Discard Edit" class="button is-danger is-outlined js-discard-edit-${commentId}" />
         </div>
       </div>
     </form>`;
 
     $comment.html(formTemplate);
 
-    $(`#js-discard-edit-${commentId}`).click(() => {
+    $(`.js-discard-edit-${commentId}`).click(() => {
       $comment.html(originalComment);
     });
   });
