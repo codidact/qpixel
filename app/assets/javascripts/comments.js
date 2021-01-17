@@ -69,6 +69,7 @@ $(() => {
     const $tgt = $(evt.target);
     const $comment = $tgt.parents('.comment');
     const commentId = $comment.attr('data-id');
+    const originalComment= $comment.find('p.comment--content').clone();
 
     const resp = await fetch(`/comments/${commentId}`, {
       credentials: 'include',
@@ -85,11 +86,16 @@ $(() => {
         </div>
         <div class="actions">
           <input type="submit" class="button is-outlined" value="Post" />
+          <input type="button" name="js-discard-edit" id="js-discard-edit-${commentId}" value="Discard Edit" class="button is-danger is-outlined" />
         </div>
       </div>
     </form>`;
 
     $comment.html(formTemplate);
+
+    $(`#js-discard-edit-${commentId}`).click(() => {
+      $comment.html(originalComment);
+    });
   });
 
   $(document).on('ajax:success', '.comment-edit-form', async (evt, data) => {
