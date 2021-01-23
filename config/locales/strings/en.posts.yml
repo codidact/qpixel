@@ -62,3 +62,5 @@ en:
       URL slug
     slug_caption: >
       In a URL of "https://yoursite.codidact.com/help/topic", the "topic" is the slug.
+    responding_to: >
+      Responding to:

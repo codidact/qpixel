@@ -42,7 +42,7 @@
   <% if type_summary %>
     <p>
       <span class="has-font-size-larger">
-          <%= i18ns('posts.unsaved_changes_confirmation') %>
+          <%= t('posts.unsaved_changes_confirmation') %>
         You're writing a new <strong><%= post_type.name %></strong>
         <% if post_type.has_category? && category.present? %>
           in <strong><%= category.name %></strong>
@@ -54,24 +54,24 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: i18ns('posts.body_label'), post: post %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post %>
 
   <div class="post-preview"></div>
 
   <% unless post_type.has_parent? %>
     <div class="form-group">
-      <%= f.label :title, i18ns('posts.post_title_label'), class: 'form-element' %>
+      <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title, class: 'form-element' %>
     </div>
   <% end %>
 
   <% if post_type.has_tags? && category.present? %>
     <div class="form-group">
-      <%= f.label :tags_cache, i18ns('posts.tags_label'), class: 'form-element' %>
+      <%= f.label :tags_cache, t('posts.tags_label'), class: 'form-element' %>
       <% required_tags = category.required_tags.to_a %>
       <% unless required_tags.empty? %>
         <span class="form-caption">
-          <%= i18ns('posts.required_tags_caption') %>
+          <%= t('posts.required_tags_caption') %>
           <% required_tags.each do |tag| %>
             <a class="badge is-tag is-filled js-add-required-tag" href="javascript:void(0)" data-tag-id="<%= tag.id %>"
                data-tag-name="<%= tag.name %>">
@@ -88,7 +88,7 @@
 
   <% if post_type.has_category? && category.present? && post_type.has_license? && !post.id.present? %>
     <div class="form-group">
-      <%= f.label :license_id, i18ns('posts.licence_label'), class: 'form-element' %>
+      <%= f.label :license_id, t('posts.licence_label'), class: 'form-element' %>
       <span class="form-caption">
         <% site_default = License.site_default %>
         <% category_default = category.license %>
@@ -125,24 +125,24 @@
 
   <% if [HelpDoc.post_type_id, PolicyDoc.post_type_id].include? post_type.id %>
     <div class="form-group">
-      <%= f.label :help_category, i18ns('posts.category_label'), class: 'form-element' %>
+      <%= f.label :help_category, t('posts.category_label'), class: 'form-element' %>
       <span class="form-caption">
-        <%= i18ns('posts.category_caption') %>
+        <%= t('posts.category_caption') %>
       </span>
       <%= f.text_field :help_category, class: 'form-element' %>
     </div>
 
     <div class="form-group">
-      <%= f.label :help_ordering, i18ns('posts.order_label'), class: 'form-element' %>
+      <%= f.label :help_ordering, t('posts.order_label'), class: 'form-element' %>
       <span class="form-caption">
-        <%= i18ns('posts.order_caption') %>
+        <%= t('posts.order_caption') %>
       </span>
       <%= f.number_field :help_ordering, class: 'form-element' %>
     </div>
 
     <div class="form-group">
-      <%= f.label :doc_slug, i18ns('posts.slug_label'), class: 'form-element' %>
-      <span class="form-caption"><%= i18ns('posts.slug_caption') %></span>
+      <%= f.label :doc_slug, t('posts.slug_label'), class: 'form-element' %>
+      <span class="form-caption"><%= t('posts.slug_caption') %></span>
       <%= f.text_field :doc_slug, class: 'form-element' %>
     </div>
   <% end %>
@@ -150,7 +150,7 @@
   <% if edit_comment %>
     <hr/>
     <div class="form-group">
-      <%= label_tag :edit_comment, i18ns('posts.edit_comment_label'), class: 'form-element' %>
+      <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
       <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
     </div>
   <% end %>
@@ -158,19 +158,19 @@
   <div class="actions">
     <% if post_type.has_category && category.present? %>
       <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
-      <%= link_to i18ns('g.cancel').titlecase, post.id.nil? ? category_path(category) : post_path(post),
+      <%= link_to t('g.cancel').titlecase, post.id.nil? ? category_path(category) : post_path(post),
                   class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: i18ns('posts.unsaved_changes_confirmation') } %>
+                  data: { confirm: t('posts.unsaved_changes_confirmation') } %>
     <% else %>
       <%= f.submit 'Save Post', class: 'button is-filled' %>
-      <%= link_to i18ns('g.cancel').titlecase, :back, class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: i18ns('posts.unsaved_changes_confirmation') } %>
+      <%= link_to t('g.cancel').titlecase, :back, class: 'button is-muted is-outlined is-danger js-cancel-edit',
+                  data: { confirm: t('posts.unsaved_changes_confirmation') } %>
     <% end %>
   </div>
 <% end %>
 
 <% if inline_parent && defined?(parent) && parent.present? %>
-  <h2>Responding to:</h2>
+  <h2><%= t('posts.responding_to')%></h2>
 
   <%= render 'posts/expanded', post: parent  %>
 <% end %>
