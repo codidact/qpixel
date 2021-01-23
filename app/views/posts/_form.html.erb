@@ -53,13 +53,13 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: 'Body', post: post %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: helpers.i18ns('posts.body_label'), post: post %>
 
   <div class="post-preview"></div>
 
   <% unless post_type.has_parent? %>
     <div class="form-group">
-      <%= f.label :title, 'Summarize your post with a title:', class: 'form-element' %>
+      <%= f.label :title, helpers.i18ns('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title, class: 'form-element' %>
     </div>
   <% end %>
@@ -87,7 +87,7 @@
 
   <% if post_type.has_category? && category.present? && post_type.has_license? && !post.id.present? %>
     <div class="form-group">
-      <%= f.label :license_id, 'License', class: 'form-element' %>
+      <%= f.label :license_id, helpers.i18ns('posts.licence_label'), class: 'form-element' %>
       <span class="form-caption">
         <% site_default = License.site_default %>
         <% category_default = category.license %>
@@ -149,7 +149,7 @@
   <% if edit_comment %>
     <hr/>
     <div class="form-group">
-      <%= label_tag :edit_comment, 'Edit comment', class: 'form-element' %>
+      <%= label_tag :edit_comment, helpers.i18ns('posts.edit_comment_label'), class: 'form-element' %>
       <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
     </div>
   <% end %>
@@ -159,11 +159,11 @@
       <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
       <%= link_to 'Cancel', post.id.nil? ? category_path(category) : post_path(post),
                   class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
+                  data: { confirm: helpers.i18ns('posts.unsaved_changes_confirmation') } %>
     <% else %>
       <%= f.submit 'Save Post', class: 'button is-filled' %>
       <%= link_to 'Cancel', :back, class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: 'Any unsaved changes will be lost. Are you sure?' } %>
+                  data: { confirm: helpers.i18ns('posts.unsaved_changes_confirmation') } %>
     <% end %>
   </div>
 <% end %>

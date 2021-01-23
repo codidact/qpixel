@@ -1,10 +1,36 @@
 en:
   posts:
+    #alert/notice
     category_low_trust_level: >
-      You don't have a high enough trust level to post in the :name category.
+      You don't have a high enough tr ust level to post in the :name category.
     type_requires_category: >
       You can't create a :type without a category.
     type_requires_parent: >
       You can't create a :type without a parent post.
     not_public_editable: >
       This type of post can only be edited by its author and the site moderators.
+    reopen_an_open_post: >
+      Cannot reopen an open post.
+    no_edit_changes: >
+      No changes were saved because you didn't edit the post.
+    post_has_been_featured: >
+      Post has been featured. Due to caching, it may take some time until the changes apply.
+    cant_restore_post: >
+      Can't restore this post right now. Try again later.
+    cant_change_category: >
+      You don't have permission to make that change.
+    type_not_included: >
+      This post type is not allowed in the :type category.
+    #_form.html.erb
+    body_label: >
+      Body
+    post_title_label: >
+      Summarize your post with a title:
+    tags_label: >
+      Tags (at least one):
+    edit_comment_label: >
+      Edit Comment
+    licence_label: >
+      License
+    unsaved_changes_confirmation: >
+      Any unsaved changes will be lost. Are you sure?

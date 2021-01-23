@@ -150,7 +150,7 @@ class PostsController < ApplicationController
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
     if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
-      flash[:danger] = "No changes were saved because you didn't edit the post."
+      flash[:danger] = helpers.i18ns('posts.no_edit_changes')
       return redirect_to post_path(@post)
     end
 
@@ -258,7 +258,7 @@ class PostsController < ApplicationController
     end
 
     unless @post.closed
-      flash[:danger] = 'Cannot reopen an open post.'
+      flash[:danger] = helpers.i18ns('posts.reopen_an_open_post')
       redirect_to post_path(@post)
       return
     end
@@ -325,7 +325,7 @@ class PostsController < ApplicationController
     end
 
     if @post.deleted_by.is_moderator && !current_user.is_moderator
-      flash[:danger] = 'You cannot restore this post deleted by a moderator.'
+      flash[:danger] = ''
       redirect_to post_path(@post)
       return
     end
@@ -343,7 +343,7 @@ class PostsController < ApplicationController
       end
       PostHistory.create(histories)
     else
-      flash[:danger] = "Can't restore this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_restore_post')
     end
 
     redirect_to post_path(@post)
@@ -386,12 +386,12 @@ class PostsController < ApplicationController
   def change_category
     @target = Category.find params[:target_id]
     unless helpers.can_change_category(current_user, @target)
-      render json: { success: false, errors: ["You don't have permission to make that change."] }, status: :forbidden
+      render json: { success: false, errors: [helpers.i18ns('posts.cant_change_category')] }, status: :forbidden
       return
     end
 
     unless @target.post_type_ids.include? @post.post_type_id
-      render json: { success: false, errors: ["This post type is not allowed in the #{@target.name} category."] },
+      render json: { success: false, errors: [helpers.i18ns('posts.type_not_included', type: @target.name)] },
              status: :conflict
       return
     end
@@ -465,7 +465,7 @@ class PostsController < ApplicationController
     attr = @link.attributes_print
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
                              comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
-    flash[:success] = 'Post has been featured. Due to caching, it may take some time until the changes apply.'
+    flash[:success] = helpers.i18ns('posts.post_has_been_featured')
     render json: { status: 'success', success: true }
   end
 
