@@ -245,7 +245,7 @@ class PostsController < ApplicationController
       PostHistory.question_closed(@post, current_user)
       render json: { status: 'success' }
     else
-      render json: { status: 'failed', message: "Can't close this question right now. Try again later.",
+      render json: { status: 'failed', message: helpers.i18ns('posts.cant_close_post'),
                      errors: @post.errors.full_messages }
     end
   end
@@ -258,7 +258,7 @@ class PostsController < ApplicationController
     end
 
     unless @post.closed
-      flash[:danger] = helpers.i18ns('posts.reopen_an_open_post')
+      flash[:danger] = helpers.i18ns('posts.already_opened')
       redirect_to post_path(@post)
       return
     end
@@ -268,7 +268,7 @@ class PostsController < ApplicationController
                     close_reason: nil, duplicate_post: nil)
       PostHistory.question_reopened(@post, current_user)
     else
-      flash[:danger] = "Can't reopen this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_reopen_post')
     end
     redirect_to post_path(@post)
   end
@@ -281,13 +281,13 @@ class PostsController < ApplicationController
     end
 
     if @post.children.any? { |a| a.score >= 0.5 }
-      flash[:danger] = 'This post cannot be deleted because it has responses.'
+      flash[:danger] = helpers.i18ns('posts.cant_delete_responded')
       redirect_to post_path(@post)
       return
     end
 
     if @post.deleted
-      flash[:danger] = "Can't delete a deleted post."
+      flash[:danger] = helpers.i18ns('posts.already_deleted')
       redirect_to post_path(@post)
       return
     end
@@ -305,7 +305,7 @@ class PostsController < ApplicationController
         PostHistory.create(histories)
       end
     else
-      flash[:danger] = "Can't delete this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_delete_post')
     end
 
     redirect_to post_path(@post)
@@ -319,13 +319,13 @@ class PostsController < ApplicationController
     end
 
     unless @post.deleted
-      flash[:danger] = "Can't restore an undeleted post."
+      flash[:danger] = helpers.i18ns('posts.cant_restore_undeleted')
       redirect_to post_path(@post)
       return
     end
 
     if @post.deleted_by.is_moderator && !current_user.is_moderator
-      flash[:danger] = ''
+      flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
       redirect_to post_path(@post)
       return
     end

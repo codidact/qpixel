@@ -2,21 +2,35 @@ en:
   posts:
     #alert/notice
     category_low_trust_level: >
-      You don't have a high enough trust level to post in the :name category.
+      You don't have a high enough tr ust level to post in the :name category.
     type_requires_category: >
       You can't create a :type without a category.
     type_requires_parent: >
       You can't create a :type without a parent post.
     not_public_editable: >
       This type of post can only be edited by its author and the site moderators.
-    reopen_an_open_post: >
+    cant_close_post: >
+      Can't close this question right now. Try again later.
+    already_opened: >
       Cannot reopen an open post.
+    cant_reopen_post: >
+      Can't reopen this post right now. Try again later.
     no_edit_changes: >
       No changes were saved because you didn't edit the post.
     post_has_been_featured: >
       Post has been featured. Due to caching, it may take some time until the changes apply.
+    cant_delete_post: >
+      Can't delete this post right now. Try again later.
+    already_deleted: >
+      Can't delete a deleted post.
+    cant_delete_responded: >
+      This post cannot be deleted because it has responses.
     cant_restore_post: >
       Can't restore this post right now. Try again later.
+    cant_restore_undeleted: >
+      Can't restore an undeleted post..
+    cant_restore_deleted_by_moderator: >
+      You cannot restore this post deleted by a moderator.
     cant_change_category: >
       You don't have permission to make that change.
     type_not_included: >
@@ -28,9 +42,23 @@ en:
       Summarize your post with a title:
     tags_label: >
       Tags (at least one):
+    required_tags_caption: >
+      Requires at least one of
     edit_comment_label: >
       Edit Comment
     licence_label: >
       License
     unsaved_changes_confirmation: >
       Any unsaved changes will be lost. Are you sure?
+    category_label: >
+      Category
+    category_caption: >
+      Name a category under which to display this post in the help center.
+    order_label: >
+      Order
+    order_caption: >
+      Control where this post appears in the list of help articles. Higher values appear later in the list.
+    slug_label: >
+      URL slug
+    slug_caption: >
+      In a URL of "https://yoursite.codidact.com/help/topic", the "topic" is the slug.

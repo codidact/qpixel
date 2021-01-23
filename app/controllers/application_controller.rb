@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   before_action :enforce_2fa
   before_action :block_write_request, if: :read_only_mode?
 
-  helper_method :top_level_post_types, :second_level_post_types, :helpers
+  helper_method :top_level_post_types, :second_level_post_types
 
   def upload
     redirect_to helpers.upload_remote_url(params[:key])
