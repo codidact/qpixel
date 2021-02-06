@@ -56,7 +56,7 @@ class Post < ApplicationRecord
   after_save :recalc_score
 
   def self.search(term)
-    match_search term, posts: :body_markdown
+    match_search term, posts: [:title, :body_markdown]
   end
 
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll

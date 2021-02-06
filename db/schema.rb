@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_12_225651) do
+ActiveRecord::Schema.define(version: 2021_01_23_211307) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -376,6 +376,7 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
     t.index ["score"], name: "index_posts_on_score"
     t.index ["tags_cache"], name: "index_posts_on_tags_cache"
+    t.index ["title"], name: "index_posts_on_title", type: :fulltext
     t.index ["upvote_count"], name: "index_posts_on_upvote_count"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
