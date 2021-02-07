@@ -8,12 +8,11 @@ class ApplicationRecord < ActiveRecord::Base
 
   def self.match_search(term, **cols)
     sanitized = sanitize_for_search term, **cols
-    relevancyMultiplier = 0
-    mappedCols = sanitized.map{ |val| "#{val} AS search_score_#{sanitized.find_index(val)}" }.join(", ")
-    whereStatement = sanitized.map{ |val| "#{val}" }.join(" OR")
-    Rails.logger.debug(cols.values[0])
-    byebug
-    select(Arel.sql("`#{table_name}`.*, #{mappedCols}")).where(whereStatement).order('search_score_0*5').order(' search_score_1 ')
+
+    mappedCols = sanitized.map { |val| "#{val} AS search_score_#{sanitized.find_index(val)}" }.join(', ')
+    whereClause = sanitized.map { |val| val.to_s }.join(' OR')
+
+    select(Arel.sql("`#{table_name}`.*, #{mappedCols}")).where(whereClause).order('search_score_0 * 2 + search_score_1 * 1 DESC')
   end
 
   def self.sanitize_name(name)
@@ -31,15 +30,16 @@ class ApplicationRecord < ActiveRecord::Base
   def self.sanitize_for_search(term, **cols)
     cols = cols.map do |k, v|
       if v.is_a?(Array)
-        #need to sanitize here
-        v.map { |vv| " MATCH #{sanitize_name k}.#{sanitize_name vv} AGAINST ('#{term}' IN BOOLEAN MODE)" }
+        v.map do |vv|
+          #prob can do this just once at end of map
+          ActiveRecord::Base.sanitize_sql([" MATCH #{sanitize_name k}.#{sanitize_name vv} AGAINST (? IN BOOLEAN MODE)", term])
+        end
       else
         "#{sanitize_name k}.#{sanitize_name v}"
       end
     end
 
-    return cols[0]
-    # ActiveRecord::Base.send(:sanitize_sql_array, cols)
+    cols[0]
   end
 
   def self.sanitize_sql_in(ary)
