@@ -8,7 +8,7 @@ class SearchController < ApplicationController
                        .paginate(page: params[:page], per_page: 25)
 
                if search_data[:search].present?
-                 posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
+                 posts.search(search_data[:search]).user_sort({ term: params[:sort] },
                                                               relevance: :search_score, score: :score, age: :created_at)
                else
                  posts.user_sort({ term: params[:sort], default: :score },
