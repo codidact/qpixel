@@ -82,15 +82,16 @@ $(() => {
         _CodidactKeyboard.dialog(
           'Codidact Keyboard Shortcuts\n' +
           '===========================\n' +
-          '?  Open this help\n' +
-          'n  New post\n' +
-          '   (in current category)\n' +
-          's  Search for something\n' +
-          'g  Go to a page...\n\n' +
-          'a  Go to answer field\n\n' +
+          '?   Open this help\n' +
+          'esc Close this help\n' +
+          'n   New post\n' +
+          '    (in current category)\n' +
+          's   Search for something\n' +
+          'g   Go to a page...\n\n' +
+          'a   Go to answer field\n\n' +
           'Selection shortcuts:\n\n' +
-          'j  Move one item down\n' +
-          'k  Move one item up\n' +
+          'j   Move one item down\n' +
+          'k   Move one item up\n' +
           't  Use a tool (on selection)\n\n' +
           '(Selection shortcuts will select\n' +
           'first post, if none selected)'
@@ -103,14 +104,14 @@ $(() => {
       } else if (e.key === 'g') {
         _CodidactKeyboard.dialog('Go to ...\n' +
           '=========\n' +
-          'm  Main page\n' +
-          'u  User list\n' +
-          'h  Help\n' +
-          'p  Your profile page\n' +
-          'c  Category ...\n' +
-          't  Tags of category ...\n' +
-          'e  Suggested Edits of category ...' +
-          (_CodidactKeyboard.is_mod ? '\nf  Flags (mod only)' : '')
+          'm   Main page\n' +
+          'u   User list\n' +
+          'h   Help\n' +
+          'p   Your profile page\n' +
+          'c   Category ...\n' +
+          't   Tags of category ...\n' +
+          'e   Suggested Edits of category ...' +
+          (_CodidactKeyboard.is_mod ? '\nf   Flags (mod only)' : '')
         );
         _CodidactKeyboard.state = 'goto';
       } else if (e.key === 'k') {
