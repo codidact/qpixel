@@ -205,7 +205,7 @@ class PostsController < ApplicationController
   end
 
   def close
-    unless check_your_privilege('flag_close', nil, false) || @post.user.id === current_user.id
+    unless check_your_privilege('flag_close', nil, false) || @post.user.id == current_user.id
       render json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this post') },
              status: :forbidden
       return
