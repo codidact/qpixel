@@ -211,7 +211,7 @@
               </a>
             <% end %>
             <% unless post.locked? || !post_type.is_closeable %>
-              <% if check_your_privilege('flag_close') %>
+              <% if check_your_privilege('flag_close') || (post.user.id === current_user&.id)%>
                 <% if !post.closed %>
                   <a href="#" class="close-dialog-link tools--item">
                     <i class="fa fa-lock"></i>
