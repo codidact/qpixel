@@ -19,9 +19,11 @@
     <h3><%= pluralize(@count, 'tag') %></h3>
     <div class="button-list is-gutterless has-margin-2">
       <%= link_to 'Usage', category_tags_path(@category),
-                  class: "button is-muted is-outlined #{params[:hierarchical].nil? ? 'is-active' : ''}" %>
+                  class: "button is-muted is-outlined #{request.query_parameters.size == 0 ? 'is-active' : ''}" %>
       <%= link_to 'Hierarchy', query_url(hierarchical: '1'),
                   class: "button is-muted is-outlined #{params[:hierarchical].present? ? 'is-active' : ''}" %>
+      <%= link_to 'Missing Excerpt', query_url(no_excerpt: '1'),
+                  class: "button is-muted is-outlined #{params[:no_excerpt].present? ? 'is-active' : ''}" %>
     </div>
   </div>
 <% end %>
