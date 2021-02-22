@@ -25,7 +25,7 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'can create answer' do
-    sign_in users(:standard_user)
+    sign_in users(:closer)
     before_notifs = posts(:question_one).user.notifications.count
     post :create, params: { post_type: post_types(:answer).id, parent: posts(:question_one).id,
                             post: { post_type_id: post_types(:answer).id, title: sample.title,
