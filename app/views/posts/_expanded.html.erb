@@ -329,7 +329,8 @@
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
-                      <input class="form-radio-element" type="radio" name="close-reason" value="<%= reason.id %>" id="close-reason-<%= reason.id %>">
+                      <input class="form-radio-element" type="radio" name="close-reason" value="<%= reason.id %>"
+                             id="close-reason-<%= reason.id %>" data-rop="<%= reason.requires_other_post %>">
                     </div>
                     <div class="grid--cell is-flexible">
                       <label class="form-element" for="close-reason-<%= reason.id %>">
@@ -339,7 +340,10 @@
                         </div>
                       </label>
                       <% if reason.requires_other_post %>
-                        <input class="form-element has-margin-top-8 js-close-other-post" id="close-reason-other-post-<%= reason.id %>" placeholder="Please enter the URL or ID of the other post." />
+                        <input required class="form-element has-margin-top-8 js-close-other-post"
+                               id="close-reason-other-post-<%= reason.id %>"
+                               placeholder="Please enter the URL or ID of the other post in this community."
+                               name="close-reason-other-post" />
                       <% end %>
                     </div>
                   </div>
