@@ -16,7 +16,7 @@ module SearchHelper
       numeric: /^[<>=]{0,2}\d+$/
     }
 
-    qualifiers.each do |qualifier|
+    qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
       splat = qualifier.split ':'
       parameter = splat[0]
       value = splat[1]
@@ -31,8 +31,9 @@ module SearchHelper
         next unless value.match?(valid_value[:date])
 
         operator, val, timeframe = date_value_sql value
-        query = query.where("created_at #{operator.presence || '='} DATE_SUB(CURRENT_TIMESTAMP, INTERVAL ? #{timeframe})",
-                    val.to_i)
+        query = query.where("created_at #{operator.presence || '='} DATE_SUB(CURRENT_TIMESTAMP, " \
+                            "INTERVAL ? #{timeframe})",
+                            val.to_i)
       when 'user'
         next unless value.match?(valid_value[:numeric])
 
