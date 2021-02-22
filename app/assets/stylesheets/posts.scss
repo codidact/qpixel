@@ -175,3 +175,9 @@ h1 .badge.is-tag.is-master-tag {
     max-width: calc(100% - 3em);
   }
 }
+
+.post--body p {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
