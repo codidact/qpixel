@@ -48,12 +48,11 @@ window.QPixel = {
     .html(button + '<p>' + message_with_date + '</p>')
     .css({
       'position': 'fixed',
-      'top': "50px",
-      'left': "50%",
-      'transform': "translateX(-50%)",
-      'z-index': 100,
+      'top': '50px',
+      'left': '50%',
+      'transform': 'translateX(-50%)',
       'width': '100%',
-      'max-width': "800px",
+      'max-width': '800px',
       'cursor': 'pointer'
     })
     .on('click', function(ev) {

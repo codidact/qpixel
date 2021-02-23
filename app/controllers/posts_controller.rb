@@ -406,7 +406,7 @@ class PostsController < ApplicationController
     success = @post.save
     AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
                           comment: "from <<#{before.id}: #{before.name}>>\nto <<#{@target.id}: #{@target.name}>>")
-    render json: { success: success, errors: success ? [] : @post.errors.full_messages }
+    render json: { success: success, errors: success ? [] : @post.errors.full_messages }, status: success ? 200 : 409
   end
 
   def toggle_comments
