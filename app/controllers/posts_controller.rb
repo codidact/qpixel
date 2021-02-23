@@ -403,10 +403,10 @@ class PostsController < ApplicationController
       existing.nil? ? Tag.create(tag_set: @target.tag_set, name: tag.name) : existing
     end
     @post.tags = new_tags
-    @post.save
+    success = @post.save
     AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
-                          comment: "from <<#{before.id}>>\nto <<#{@target.id}>>")
-    render json: { success: true }
+                          comment: "from <<#{before.id}: #{before.name}>>\nto <<#{@target.id}: #{@target.name}>>")
+    render json: { success: success, errors: success ? [] : @post.errors.full_messages }
   end
 
   def toggle_comments
