@@ -145,7 +145,7 @@ See the README.md in the [docker](docker) folder for complete instructions.
 
 ## Contributing
 Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md)
-document before you start and look at the [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list) for things to do.
+document before you start and look at the [TODO Trello board](https://trello.com/b/BK4uxLoP/codidact-todo) for things to do.
 
 
 [0]: https://imagemagick.org/script/download.php
