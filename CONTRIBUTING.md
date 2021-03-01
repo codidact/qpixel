@@ -3,7 +3,7 @@ Contributing to QPixel follows broadly the same process as any other Codidact pr
 
 ## What needs doing?
  - **Bugs** are reported here on GitHub. Have a look at the open issues tagged `type: bug` to find something that needs fixing.
- - Any other development work will be listed in the [TODO list in the wiki](https://github.com/codidact/qpixel/wiki/TODO-list).
+ - Any other development work will be listed in the [TODO board on Trello](https://trello.com/b/BK4uxLoP/codidact-todo).
    
 Once you've picked what you're going to work on, please **leave a comment** on the issue to indicate you're planning to work on
 it; this helps us reduce wasted effort. If there's not already an issue for the feature you want to work on, please create one.
@@ -11,7 +11,7 @@ If you need time to work on an issue, that's absolutely fine, but please **keep 
 don't hear from you for a few weeks, we may assume you've given up working on that issue and give it to someone else.
 
 ## What's the workflow?
- * First, **you need an issue to work under**. Look at the current [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list)
+ * First, **you need an issue to work under**. Look at the current [TODO board](https://trello.com/b/BK4uxLoP/codidact-todo)
    to find something to work on; follow the instructions there to see what's available, and create an issue once you know what you're
    going to work on.
  * Second, you can make your changes. If you have write access to the repository, create a topic branch (please use the format
