@@ -1,0 +1,66 @@
+es:
+  posts:
+    #alert/notice
+    category_low_trust_level: >
+      Usted no tiene el nivel de confianza lo suficientemente elevado como para publicar en la categoría :name.
+    type_requires_category: >
+      Usted no puede crear un/a :type sin una categoría.
+    type_requires_parent: >
+      Usted no puede crear un/a :type sin una publicación padre.
+    not_public_editable: >
+      Este tipo de publicación sólo puede ser editado por su autor y los moderadores del sitio.
+    cant_close_post: >
+      No se puede cerrar esta pregunta ahora mismo. Inténtelo de nuevo más tarde.
+    already_opened: >
+      No se puede reabrir una publicación abierta.
+    cant_reopen_post: >
+      No se puede reabrir esta publicación ahora mismo. Inténtelo de nuevo más tarde.
+    no_edit_changes: >
+      Ningún cambio ha sido salvado porque usted no ha editado la publicación.
+    post_has_been_featured: >
+      La publicación ha sido destacada. Debido a cacheo, podría llevar algo de tiempo hasta que los cambios estén aplicados.
+    cant_delete_post: >
+      No se puede eliminar esta publicación ahora mismo. Inténtelo de nuevo más tarde.
+    already_deleted: >
+      No se puede eliminar una publicación eliminada.
+    cant_delete_responded: >
+      Esta publicación no puede ser eliminada porque tiene respuestas.
+    cant_restore_post: >
+      No se puede restaurar esta publicación ahora mismo. Inténtelo de nuevo más tarde.
+    cant_restore_undeleted: >
+      No se puede restaurar una publicación des-eliminada.
+    cant_restore_deleted_by_moderator: >
+      No se puede restaurar esta publicación eliminada por un moderador.
+    cant_change_category: >
+      Usted no tiene permiso para hacer ese cambio.
+    type_not_included: >
+      Este tipo de publicación no está permitida en la categoría :type.
+    #_form.html.erb
+    body_label: >
+      Cuerpo
+    post_title_label: >
+      Resuma su publicación con un título:
+    tags_label: >
+      Etiquetas (al menos una):
+    required_tags_caption: >
+      Requiere al menos un/a de
+    edit_comment_label: >
+      Editar comentario
+    licence_label: >
+      Licencia
+    unsaved_changes_confirmation: >
+      Cualquier cambio no salvado se perderá. ¿Está usted seguro?
+    category_label: >
+      Categoría
+    category_caption: >
+      Nombre una categoría bajo la cual esta publicación será mostrada en el centro de ayuda.
+    order_label: >
+      Orden
+    order_caption: >
+      Controle dónde aparece esta publicación en la lista de artículos de ayuda. Valores más altos aparecen más adelante en la lista.
+    slug_label: >
+      Babosa de URL
+    slug_caption: >
+      En un/a URL de "https://susitio.codidact.com/ayuda/tema", el "tema" es la babosa.
+    responding_to: >
+      Respondiendo a:
