@@ -185,7 +185,12 @@
     </div>
     <% if expandable? %>
       <div class="container category-header--container">
-        <div class="category-header--name"><%= current_cat.name %></div>
+        <% if current_cat.min_view_trust_level > 0 %>
+          <i class="fas fa-lock-open h-m-r-2" title="The access to this category is restricted, but you are exempt."></i>
+        <% end %>
+        <div class="category-header--name">
+          <%= current_cat.name %>
+        </div>
         <div class="category-header--nav">
           <%= link_to 'Posts', category_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
