@@ -270,6 +270,13 @@ $(() => {
   $('.js-cancel-edit').on('click', async ev => {
     ev.preventDefault();
 
+    let $btn = $(ev.target);
+
+    if(!confirm($btn.attr("data-question-body"))) {
+      return;
+    }
+
+
     await fetch('/posts/delete-draft', {
       method: 'POST',
       credentials: 'include',
@@ -279,6 +286,6 @@ $(() => {
       },
       body: JSON.stringify({ path: location.pathname })
     });
-    location.href = $(ev.target).attr('href');
+    location.href = $btn.attr('href');
   });
 });

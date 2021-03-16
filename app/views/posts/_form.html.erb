@@ -158,14 +158,12 @@
   <div class="actions">
     <% if post_type.has_category && category.present? %>
       <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
-      <%= link_to t('g.cancel').titlecase, post.id.nil? ? category_path(category) : post_path(post),
-                  class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: t('posts.unsaved_changes_confirmation') } %>
     <% else %>
       <%= f.submit 'Save Post', class: 'button is-filled' %>
-      <%= link_to t('g.cancel').titlecase, :back, class: 'button is-muted is-outlined is-danger js-cancel-edit',
-                  data: { confirm: t('posts.unsaved_changes_confirmation') } %>
     <% end %>
+    <%= link_to t('g.cancel').titlecase, post.id.nil? ? (post_type.has_parent ? '' : category_path(category)) : post_path(post),
+                class: 'button is-muted is-outlined is-danger js-cancel-edit',
+                data: { question_body: t('posts.unsaved_changes_confirmation') } %>
   </div>
 <% end %>
 
