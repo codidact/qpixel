@@ -3,6 +3,7 @@ require 'rmagick'
 module Advertisements::CommunityHelper
   include Magick
 
+  # rubocop:disable Metrics/BlockLength
   def community_ad
     Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
       ad = Image.new(600, 500)
@@ -70,4 +71,5 @@ module Advertisements::CommunityHelper
       ad
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

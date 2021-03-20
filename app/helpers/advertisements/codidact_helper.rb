@@ -3,6 +3,7 @@ require 'rmagick'
 module Advertisements::CodidactHelper
   include Magick
 
+  # rubocop:disable Metrics/BlockLength
   def codidact_ad
     Rails.cache.fetch 'network/codidact_ad', expires_in: 60.minutes, include_community: false do
       ad = Image.new(600, 500)
@@ -56,4 +57,5 @@ module Advertisements::CodidactHelper
       ad
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end

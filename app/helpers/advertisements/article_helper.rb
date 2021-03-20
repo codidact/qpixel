@@ -3,6 +3,8 @@ require 'rmagick'
 module Advertisements::ArticleHelper
   include Magick
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/BlockLength
   def article_ad(article)
     Rails.cache.fetch "posts/#{article.id}/ad", expires_in: 60.minutes do
       ad = Image.new(600, 500)
@@ -78,4 +80,6 @@ module Advertisements::ArticleHelper
       ad.border!(2, 2, 'black')
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/BlockLength
 end

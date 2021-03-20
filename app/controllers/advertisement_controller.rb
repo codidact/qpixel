@@ -29,6 +29,7 @@ class AdvertisementController < ApplicationController
       send_resp helpers.article_ad(@post)
     else
       not_found
+      false
     end
   end
 
@@ -47,6 +48,7 @@ class AdvertisementController < ApplicationController
       send_resp helpers.article_ad(@post)
     else
       not_found
+      false
     end
   end
 
