@@ -48,4 +48,12 @@ module AdvertisementHelper
 
     char.ord >= RTL_BLOCK_START && char.ord <= RTL_BLOCK_END
   end
+
+  def wrap_text(text, width, font_size)
+    columns = (width * 2.5 / font_size).to_i
+    # Source: http://viseztrance.com/2011/03/texts-over-multiple-lines-with-rmagick.html
+    text.split("\n").collect do |line|
+      line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
+    end * "\n"
+  end
 end
