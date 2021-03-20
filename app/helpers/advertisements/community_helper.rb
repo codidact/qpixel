@@ -4,7 +4,7 @@ module Advertisements::CommunityHelper
   include Magick
 
   def community_ad
-    ad = Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
+    Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
@@ -69,6 +69,5 @@ module Advertisements::CommunityHelper
       ad.border!(2, 2, 'black')
       ad
     end
-    send_data ad.to_blob, type: 'image/png', disposition: 'inline'
   end
 end

@@ -56,4 +56,15 @@ module AdvertisementHelper
       line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
     end * "\n"
   end
+
+  def community_icon(icon_path)
+    if icon_path.start_with? '/assets/'
+      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(icon_path)}")
+    else
+      icon = Magick::ImageList.new
+      icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
+      icon.from_blob(icon_path_content)
+    end
+    icon
+  end
 end

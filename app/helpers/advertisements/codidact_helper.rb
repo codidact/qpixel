@@ -4,7 +4,7 @@ module Advertisements::CodidactHelper
   include Magick
 
   def codidact_ad
-    ad = Rails.cache.fetch 'network/codidact_ad', expires_in: 60.minutes, include_community: false do
+    Rails.cache.fetch 'network/codidact_ad', expires_in: 60.minutes, include_community: false do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
@@ -55,6 +55,5 @@ module Advertisements::CodidactHelper
       ad.border!(2, 2, 'black')
       ad
     end
-    send_data ad.to_blob, type: 'image/png', disposition: 'inline'
   end
 end

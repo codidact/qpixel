@@ -11,11 +11,11 @@ class AdvertisementController < ApplicationController
   end
 
   def codidact
-    helpers.codidact_ad
+    send_resp helpers.codidact_ad
   end
 
   def community
-    helpers.community_ad
+    send_resp helpers.community_ad
   end
 
   def specific_question
@@ -24,9 +24,9 @@ class AdvertisementController < ApplicationController
     if @post.nil?
       not_found
     elsif @post.question?
-      helpers.question_ad(@post)
+      send_resp helpers.question_ad(@post)
     elsif @post.article?
-      helpers.article_ad(@post)
+      send_resp helpers.article_ad(@post)
     else
       not_found
     end
@@ -42,9 +42,9 @@ class AdvertisementController < ApplicationController
     if @post.nil?
       not_found
     elsif @post.question?
-      helpers.question_ad(@post)
+      send_resp helpers.question_ad(@post)
     elsif @post.article?
-      helpers.article_ad(@post)
+      send_resp helpers.article_ad(@post)
     else
       not_found
     end
@@ -59,9 +59,9 @@ class AdvertisementController < ApplicationController
     end
 
     if @post.question?
-      helpers.question_ad(@post)
+      send_resp helpers.question_ad(@post)
     elsif @post.article?
-      helpers.article_ad(@post)
+      send_resp helpers.article_ad(@post)
     else
       not_found
     end
@@ -75,24 +75,13 @@ class AdvertisementController < ApplicationController
 
     @post = Post.unscoped.find(promoted.keys.sample)
     if @post.article?
-      helpers.article_ad(@post)
+      send_resp helpers.article_ad(@post)
     else
-      helpers.question_ad(@post)
+      send_resp helpers.question_ad(@post)
     end
   end
 
   private
-
-  def community_icon(icon_path)
-    if icon_path.start_with? '/assets/'
-      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(icon_path)}")
-    else
-      icon = Magick::ImageList.new
-      icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
-      icon.from_blob(icon_path_content)
-    end
-    icon
-  end
 
   def select_random_post(category = nil)
     if category.nil?
@@ -103,5 +92,9 @@ class AdvertisementController < ApplicationController
         .where(posts: { category: category })\
         .where('posts.score > ?', SiteSetting['HotPostsScoreThreshold'])\
         .order('posts.score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
+  end
+
+  def send_resp(data)
+    send_data data.to_blob, type: 'image/png', disposition: 'inline'
   end
 end

@@ -4,7 +4,7 @@ module Advertisements::ArticleHelper
   include Magick
 
   def article_ad(article)
-    ad = Rails.cache.fetch "posts/#{article.id}/ad", expires_in: 60.minutes do
+    Rails.cache.fetch "posts/#{article.id}/ad", expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
 
@@ -77,6 +77,5 @@ module Advertisements::ArticleHelper
       ad.format = 'PNG'
       ad.border!(2, 2, 'black')
     end
-    send_data ad.to_blob, type: 'image/png', disposition: 'inline'
   end
 end
