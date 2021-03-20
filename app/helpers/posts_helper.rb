@@ -3,6 +3,18 @@ module PostsHelper
     params['__html'].presence || render_markdown(params[scope][field_name])
   end
 
+  def cancel_redirect_path(post)
+    if post.id.present?
+      post_path(post)
+    elsif post.parent_id.present?
+      post_path(post.parent_id)
+    elsif post.category_id.present?
+      category_path(post.category_id)
+    else
+      root_path
+    end
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     def initialize
       super

@@ -272,10 +272,9 @@ $(() => {
 
     let $btn = $(ev.target);
 
-    if(!confirm($btn.attr("data-question-body"))) {
+    if (!confirm($btn.attr('data-question-body'))) {
       return;
     }
-
 
     await fetch('/posts/delete-draft', {
       method: 'POST',
@@ -286,6 +285,7 @@ $(() => {
       },
       body: JSON.stringify({ path: location.pathname })
     });
+
     location.href = $btn.attr('href');
   });
 });
