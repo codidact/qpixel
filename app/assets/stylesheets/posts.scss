@@ -164,7 +164,7 @@ h1 .badge.is-tag.is-master-tag {
 .post--no-votes {
   font-size: 2em;
   color: $muted-text;
-  font-weight: light;
+  font-weight: lighter;
 }
 
 .post--content {
@@ -180,4 +180,5 @@ h1 .badge.is-tag.is-master-tag {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  padding: 0 0 1px 0;
 }
