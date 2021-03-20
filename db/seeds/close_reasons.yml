@@ -1,5 +1,5 @@
 - name: duplicate
-  description: This question has been answered before.
+  description: This question has been addressed elsewhere.
   active: true
   requires_other_post: true
 - name: off topic
