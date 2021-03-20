@@ -208,7 +208,7 @@ class ApplicationController < ActionController::Base
       @open_flags = Flag.unhandled.count
     end
 
-    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true' ? true : false
+    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
     if current_user&.is_admin
       Rack::MiniProfiler.authorize_request
