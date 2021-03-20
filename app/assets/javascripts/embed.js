@@ -3,6 +3,10 @@ $(() => {
     const $tgt = $(e);
     const href = $tgt.attr('href');
 
+    if (!href) {
+      return;
+    }
+
     // Only embed raw YT links, i.e. not [text](link), only [link](link)
     if ((href.startsWith('https://youtube.com') || href.startsWith('https://www.youtube.com')) && $tgt.text() === href) {
       const videoId = /v=([^$&]+)/.exec(href);
