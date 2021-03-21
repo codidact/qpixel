@@ -142,10 +142,7 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags }
-    after_tags = if @post_type.has_category?
-                   Tag.where(tag_set_id: @post.category.tag_set_id, name: params[:post][:tags_cache])
-                 end
+    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
@@ -162,7 +159,7 @@ class PostsController < ApplicationController
         PostHistory.post_edited(@post, current_user, before: before[:body],
                                 after: @post.body_markdown, comment: params[:edit_comment],
                                 before_title: before[:title], after_title: @post.title,
-                                before_tags: before[:tags], after_tags: after_tags)
+                                before_tags: before[:tags], after_tags: @post.tags)
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
         redirect_to post_path(@post)
       else
