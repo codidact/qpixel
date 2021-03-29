@@ -54,3 +54,10 @@ favorite_tags:
     Favorite tags will be highlighted in question list views. List tag names here, comma-separated.
   default: ~
   community: true
+
+display_import_labels:
+  type: boolean
+  description: >
+    Add a Stack Exchange logo marker to imported posts to show that they're imported.
+  default: 'false'
+  community: true

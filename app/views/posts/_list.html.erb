@@ -62,7 +62,8 @@
                       class: "badge is-tag #{required} #{topic} #{moderator}" %>
         <% end %>
       <% end %>
-      <% if post.att_source.present? || post.created_at < RequestContext.community.created_at %>
+      <% display_label = user_preference('display_import_labels', community: true) == 'true' %>
+      <% if (post.att_source.present? || post.created_at < RequestContext.community.created_at) && display_label %>
         <%= link_to post.att_source, class: 'badge is-tag' do %>
           <i class="fab fa-stack-exchange" title="Imported <%= post.created_at.iso8601 %>"
              aria-label="Imported <%= post.created_at.iso8601 %>"></i>
