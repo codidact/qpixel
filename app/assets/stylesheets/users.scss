@@ -128,3 +128,12 @@
     font-size: 0.8em;
   }
 }
+
+$sizes: (16, 32, 40, 48, 64, 128, 256);
+
+@each $size in $sizes {
+  .avatar-#{$size} {
+    max-width: #{$size}px;
+    max-height: #{$size}px;
+  }
+}

@@ -16,7 +16,7 @@
 
 <%= form_for current_user, url: update_user_profile_path do |f| %>
   <div class="form-group has-padding-2">
-  <img alt="user avatar" class="has-float-right has-margin-2" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
+  <img alt="user avatar" class="has-float-right has-margin-2 avatar-64" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
     <%= f.label :avatar, class: "form-element" %>
     <div class="form-caption">
       An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.

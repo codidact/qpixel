@@ -14,7 +14,7 @@
           <% if event.user.nil? %>
             (deleted user)
           <% else %>
-            <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+            <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
             <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
           <% end %>
           &middot;
