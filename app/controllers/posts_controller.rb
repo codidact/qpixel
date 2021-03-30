@@ -277,7 +277,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.children.any? { |a| a.score >= 0.5 }
+    if @post.children.any? { |a| a.score >= 0.5 } && !current_user&.is_moderator
       flash[:danger] = helpers.i18ns('posts.cant_delete_responded')
       redirect_to post_path(@post)
       return
