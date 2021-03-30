@@ -8,19 +8,20 @@
   <details class="history-event">
     <summary>
       <strong><%= event.post_history_type.name.humanize %></strong>
-      <span class="text-muted">
-        &nbsp;by
-        <% if event.user.nil? %>
-          <span class="text-muted">(deleted user)</span>
-        <% else %>
-          <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-          <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
-        <% end %>
-        &middot;
-        <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+      <span class="has-color-tertiary-600 history-meta">
+        <span>
+          by
+          <% if event.user.nil? %>
+            (deleted user)
+          <% else %>
+            <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+            <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
+          <% end %>
+          &middot;
+          <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+        </span>
         <% if event.comment.present? %>
-          <br/>
-          <span class="text-muted"><em><%= event.comment %></em></span>
+          <br/><em><%= event.comment %></em>
         <% end %>
       </span>
     </summary>
