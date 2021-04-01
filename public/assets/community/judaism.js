@@ -522,3 +522,58 @@ $(() => {
     });
   });
 });
+
+
+/* Calender script, added 2021-04-01 by @luap42 */
+
+window.addEventListener("load", async() => {
+  container = document.createElement('div');
+  container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
+  container.classList.add('widget', 'has-margin-4');
+  
+  disclaimer_notice = document.querySelector('.widget.is-yellow:first-child');
+  disclaimer_notice.parentNode.insertBefore(container, disclaimer_notice.nextSibling);
+  
+  result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=now&month=4&d=on&o=on');
+  response = await result.json()
+  
+  parsed_data = {};
+  
+  for(i of response.items) {
+    if(parsed_data[i.date]) {
+      parsed_data[i.date].push(i);
+    } else {
+      parsed_data[i.date] = [i];
+    }
+  }
+  
+  now = new Date();
+  if (now.getHours() > 20)
+    now.setDate(now.getDate() + 1);
+  
+  now = (1900 + now.getYear()) + "-" + ("" + (1 + now.getMonth())).padStart(2, '0') + "-" + ("" + now.getDate()).padStart(2, '0');
+  
+  fields = parsed_data[now];
+  container.querySelector('._cal_val').innerHTML = "";
+  
+  for(field of fields) {
+    field_container = document.createElement('div');
+    field_container.classList.add('has-font-size-larger', 'h-fw-bold', 'h-m-t-2');
+    container.querySelector('._cal_val').appendChild(field_container);
+    
+    field_container.innerText = field.title;
+  }
+  
+  DAY_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
+  now = new Date();
+  today_day = DAY_LIST[now.getDay() - 1];
+  now.setDate(now.getDate() - 1);
+  yesterday_day = DAY_LIST[now.getDay() - 1];
+  
+  field_container = document.createElement('div');
+  field_container.classList.add('h-m-t-2', 'has-font-size-caption');
+  container.querySelector('._cal_val').appendChild(field_container);
+
+  field_container.innerText = yesterday_day + ' night (' + today_day + ')';
+});
