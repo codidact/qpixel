@@ -567,6 +567,8 @@ window.addEventListener("load", async() => {
   DAY_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
   now = new Date();
+  if (now.getHours() > 20)
+    now.setDate(now.getDate() + 1);
   today_day = DAY_LIST[now.getDay() - 1];
   now.setDate(now.getDate() - 1);
   yesterday_day = DAY_LIST[now.getDay() - 1];
