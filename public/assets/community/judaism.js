@@ -569,9 +569,9 @@ window.addEventListener("load", async() => {
   now = new Date();
   if (now.getHours() > 20)
     now.setDate(now.getDate() + 1);
-  today_day = DAY_LIST[now.getDay() - 1];
+  today_day = DAY_LIST[(now.getDay() + 6) % 7];
   now.setDate(now.getDate() - 1);
-  yesterday_day = DAY_LIST[now.getDay() - 1];
+  yesterday_day = DAY_LIST[(now.getDay() + 6) % 7];
   
   field_container = document.createElement('div');
   field_container.classList.add('h-m-t-2', 'has-font-size-caption');
