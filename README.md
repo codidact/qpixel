@@ -3,7 +3,7 @@ Rails-based version of our core software. Currently under active development tow
 
 ## Installation
 These instructions are assuming you already have a Unix environment available with Ruby and Bundler installed.
-WSL should work as well, but Windows is unlikely to.
+WSL should work as well, but (core) Windows is unlikely to.
 
 If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 [rbenv](https://github.com/rbenv/rbenv#installation) to install it before following these instructions.
