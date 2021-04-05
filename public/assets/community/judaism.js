@@ -533,13 +533,13 @@ window.addEventListener("load", async () => {
   container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
   container.classList.add('widget', 'has-margin-4');
   
-  const disclaimer_notice = document.querySelector('.widget.is-yellow:first-child');
-  disclaimer_notice.parentNode.insertBefore(container, disclaimer_notice.nextSibling);
+  const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
+  disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
   
   const result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=now&month=4&d=on&o=on');
   const response = await result.json()
   
-  const parsed_data = response.items.reduce((rv, x) => {
+  const parsedData = response.items.reduce((rv, x) => {
     (rv[x.date] = rv[x.date] || []).push(x);
     return rv;
   }, {});
@@ -551,15 +551,15 @@ window.addEventListener("load", async () => {
   
   now = now.toISOString().substr(0, 10);
   
-  const fields = parsed_data[now];
+  const fields = parsedData[now];
   container.querySelector('._cal_val').innerHTML = "";
   
   fields.forEach(field => {
-    const field_container = document.createElement('div');
-    field_container.classList.add('has-font-size-larger', 'h-fw-bold', 'h-m-t-2');
-    container.querySelector('._cal_val').appendChild(field_container);
+    const fieldContainer = document.createElement('div');
+    fieldContainer.classList.add('has-font-size-larger', 'h-fw-bold', 'h-m-t-2');
+    container.querySelector('._cal_val').appendChild(fieldContainer);
     
-    field_container.innerText = field.title;
+    fieldContainer.innerText = field.title;
   });
   
   const DAY_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -569,13 +569,13 @@ window.addEventListener("load", async () => {
     today.setDate(now.getDate() + 1);
   }
   
-  const today_day = DAY_LIST[(today.getDay() + 6) % 7];
+  const todayDay = DAY_LIST[(today.getDay() + 6) % 7];
   today.setDate(today.getDate() - 1);
-  const yesterday_day = DAY_LIST[(today.getDay() + 6) % 7];
+  const yesterdayDay = DAY_LIST[(today.getDay() + 6) % 7];
   
-  const field_container = document.createElement('div');
-  field_container.classList.add('h-m-t-2', 'has-font-size-caption');
-  container.querySelector('._cal_val').appendChild(field_container);
+  const fieldContainer = document.createElement('div');
+  fieldContainer.classList.add('h-m-t-2', 'has-font-size-caption');
+  container.querySelector('._cal_val').appendChild(fieldContainer);
 
-  field_container.innerText = yesterday_day + ' night (' + today_day + ')';
+  fieldContainer.innerText = yesterdayDay + ' night (' + todayDay + ')';
 });
