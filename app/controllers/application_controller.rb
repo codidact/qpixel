@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
   before_action :enforce_2fa
+  before_action :block_write_request, if: :read_only_mode?
 
   helper_method :top_level_post_types, :second_level_post_types
 
@@ -78,6 +79,14 @@ class ApplicationController < ActionController::Base
 
   def verify_global_moderator
     if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      return false
+    end
+    true
+  end
+
+  def verify_developer
+    if !user_signed_in? || !current_user.developer?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -199,7 +208,7 @@ class ApplicationController < ActionController::Base
       @open_flags = Flag.unhandled.count
     end
 
-    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true' ? true : false
+    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
     if current_user&.is_admin
       Rack::MiniProfiler.authorize_request
@@ -235,12 +244,12 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
     end
-    @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
@@ -252,7 +261,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch("#{RequestContext.community_id}/header_categories") do
+    @header_categories = Rails.cache.fetch('header_categories') do
       Category.all.order(sequence: :asc, id: :asc)
     end
   end
@@ -288,5 +297,20 @@ class ApplicationController < ActionController::Base
         redirect_to(redirect_path)
       end
     end
+  end
+
+  def block_write_request(**add)
+    respond_to do |format|
+      format.html do
+        render 'errors/read_only', layout: 'without_sidebar', status: :not_found
+      end
+      format.json do
+        render json: { status: 'failed', success: false, errors: ['read_only'] }.merge(add), status: :locked
+      end
+    end
+  end
+
+  def read_only_mode?
+    helpers.read_only? && request.method.upcase == 'POST'
   end
 end

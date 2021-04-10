@@ -1,0 +1,169 @@
+<%= form_for @type, url: submit_path do |f| %>
+  <div class="form-group">
+    <%= f.label :name, class: 'form-element' %>
+    <span class="form-caption">
+      A short, name for this post type. Will be shown to users all over the place, so make it clear and recognizable.
+    </span>
+    <%= f.text_field :name, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, class: 'form-element' %>
+    <span class="form-caption">
+      A longer explanation of what this post type is for. Shown to users when choosing a post type in categories with
+      multiple top-level post types allowed.
+    </span>
+    <%= f.text_area :description, rows: 3, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :icon_name, class: 'form-element' %>
+    <span class="form-caption">
+      A <a href="https://fontawesome.com/icons">FontAwesome</a> icon class to display an icon on the post type badge.
+      Include the <em>full</em> class, i.e. <code>fas fa-newspaper</code>
+    </span>
+    <%= f.text_field :icon_name, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :upvote_rep, 'Upvote reputation', class: 'form-element' %>
+    <span class="form-caption">
+      How much reputation should be awarded for upvotes on this post type? Enter 0 if this type should not grant rep or
+      if votes will be disabled.
+    </span>
+    <%= f.number_field :upvote_rep, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :downvote_rep, 'Downvote reputation', class: 'form-element' %>
+    <span class="form-caption">
+      How much reputation should be awarded for downvotes on this post type? Enter 0 if this type should not grant rep or
+      if votes will be disabled. Include the minus sign if this should take away rep!
+    </span>
+    <%= f.number_field :downvote_rep, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_answers, 'Answers?', class: 'form-element' %>
+        <span class="form-caption">Does this post type have answers?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_answers, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_votes, 'Votes?', class: 'form-element' %>
+        <span class="form-caption">Can this post type be voted on?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_votes, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_tags, 'Tags?', class: 'form-element' %>
+        <span class="form-caption">Does this post type have tags?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_tags, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_parent, 'Parented?', class: 'form-element' %>
+        <span class="form-caption">Does every post of this type have a parent post?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_parent, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_category, 'Category?', class: 'form-element' %>
+        <span class="form-caption">Are posts of this type associated with a category?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_category, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_license, 'License?', class: 'form-element' %>
+        <span class="form-caption">Must a license be chosen for posts of this type?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_license, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :is_public_editable, 'Editable?', class: 'form-element' %>
+        <span class="form-caption">Can posts of this type be edited by users with the Edit Posts ability?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :is_public_editable, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :is_freely_editable, 'Freely editable?', class: 'form-element' %>
+        <span class="form-caption">Can posts of this type be edited by anyone with the Participate Everywhere ability?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :is_freely_editable, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :is_closeable, 'Closeable?', class: 'form-element' %>
+        <span class="form-caption">Can posts of this type be closed?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :is_closeable, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :is_top_level, 'Top level?', class: 'form-element' %>
+        <span class="form-caption">Is this a top-level post type?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :is_top_level, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= f.submit 'Save Changes', class: 'button is-primary is-filled' %>
+  </div>
+<% end %>

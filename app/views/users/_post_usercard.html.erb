@@ -1,14 +1,3 @@
 <div class="post--author">
-  <div class="post--author-label" title="<%= post.created_at.iso8601 %>">
-    posted <%= time_ago_in_words(post.created_at) %> ago
-  </div>
-
-  <% if post.license.present? %>
-    <div class="post--author-license">
-      <i class="fas fa-balance-scale" title="license of this post"></i>
-      <%= link_to post.license.name, post.license.url %>
-    </div>
-  <% end %>
-  
   <%= render 'users/common_card', user: post.user, ckb: false %>
 </div>

@@ -6,9 +6,10 @@ module QPixel
     end
 
     # These methods need the cache key name updating before we pass it to the underlying cache.
-    [:decrement, :delete, :exist?, :fetch, :increment, :read, :write].each do |method|
+    [:decrement, :delete, :exist?, :fetch, :increment, :read, :write, :delete_matched].each do |method|
       define_method method do |name, *args, **opts, &block|
-        @underlying.send(method, construct_ns_key(name), *args, **opts, &block)
+        @underlying.send(method, construct_ns_key(name, include_community: opts.delete(:include_community) || true),
+                         *args, **opts, &block)
       end
     end
 
@@ -44,16 +45,11 @@ module QPixel
           @underlying.write namespaced, value
           value
         else
-          raise NotImplementedError, 'No cached value was available and no block was given'
+          raise NotImplementedError, 'No config value was available and no block was given'
         end
       else
         value
       end
-    end
-
-    # This can't easily be supported, matchers are hard to update for a new name.
-    def delete_matched
-      raise NotImplementedError, "#{self.class} does not support delete_matched"
     end
 
     private

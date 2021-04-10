@@ -105,37 +105,39 @@ h1 .badge.is-tag.is-master-tag {
   }
 }
 
+.post--tags {
+  padding: 0.2em 0;
+}
+
 .post--meta {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-between;
+  margin: 0.2em 0;
 
-  .post--tags, .post--author {
-    padding: 0.2em 0;
-  }
-
-  .post--author {
-    display: flex;
-    flex-direction: column;
-    align-self: flex-end;
-    width: 225px;
+  .post-meta--post, .post-meta--user {
     padding: 0.5rem;
-    background-color: #eee;
     border-radius: 5px;
+    color: $muted-text;
+    margin: 0.1em 0;
 
-    .post--author-label {
-      color: #888;
-      font-size: 0.95em;
-    }
-    .post--author-license {
-      color: #888;
-      font-size: 0.8em;
-      padding: 0.2em 0;
+    @media screen and (min-width: $screen-md) {
+      margin: 0;
     }
   }
 
-  @media screen and (min-width: $screen-md) {
-    flex-direction: row-reverse;
+  .post-meta--user {
+    background: #EEE;
+    align-self: flex-end;
+
+    @media screen and (min-width: $screen-md) {
+      align-self: flex-start;
+    }
+  }
+
+  .post-meta--post {
+    font-size: 0.9em;
+
+    & > * {
+      margin: 0.1em 0;
+    }
   }
 }
 
@@ -162,7 +164,7 @@ h1 .badge.is-tag.is-master-tag {
 .post--no-votes {
   font-size: 2em;
   color: $muted-text;
-  font-weight: light;
+  font-weight: lighter;
 }
 
 .post--content {
@@ -172,4 +174,11 @@ h1 .badge.is-tag.is-master-tag {
   @media screen and (min-width: $screen-sm) {
     max-width: calc(100% - 3em);
   }
+}
+
+.post--body p {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0 1px 0;
 }

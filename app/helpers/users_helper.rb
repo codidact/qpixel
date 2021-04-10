@@ -18,4 +18,25 @@ module UsersHelper
     user.privilege?('flag_curate') &&
       (user.is_moderator || user.is_admin || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
   end
+
+  def preference_choice(pref_config)
+    pref_config['choice'].map do |c|
+      if c.is_a? Hash
+        [c['name'], c['value']]
+      else
+        [c.humanize, c]
+      end
+    end
+  end
+
+  def user_preference(name, community: false)
+    return nil if current_user.nil?
+
+    global_key = "prefs.#{current_user.id}"
+    community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
+    key = community ? community_key : global_key
+    AppConfig.preferences.select { |_k, v| (v['community'] || false) == community }
+             .transform_values { |v| v['default'] }
+             .merge(RequestContext.redis.hgetall(key))[name]
+  end
 end

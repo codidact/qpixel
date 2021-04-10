@@ -10,8 +10,7 @@ class VoteTest < ActiveSupport::TestCase
   test 'creating a vote should correctly change user reputation' do
     [1, -1].each do |vote_type|
       previous_rep = posts(:question_two).user.reputation
-      setting_name = vote_type == 1 ? 'QuestionUpVoteRep' : 'QuestionDownVoteRep'
-      expected_change = SiteSetting[setting_name]
+      expected_change = PostType.rep_changes[post_types(:question).id][vote_type]
       posts(:question_two).votes.create(user: users(:deleter), recv_user: posts(:question_two).user, vote_type: vote_type)
       assert_equal posts(:question_two).user.reputation, previous_rep + expected_change
     end
@@ -22,8 +21,8 @@ class VoteTest < ActiveSupport::TestCase
     author = post.user
     previous_rep = author.reputation
 
-    rep_change_up = SiteSetting['QuestionUpVoteRep']
-    rep_change_down = SiteSetting['QuestionDownVoteRep']
+    rep_change_up = post_types(:question).upvote_rep
+    rep_change_down = post_types(:question).downvote_rep
     expected_rep_change = 3 * rep_change_up + 2 * rep_change_down
 
     post.votes.create([
@@ -42,8 +41,8 @@ class VoteTest < ActiveSupport::TestCase
 
   test 'Vote.total_rep_change should result in correct rep change for given votes' do
     post = posts(:answer_one)
-    rep_change_up = SiteSetting['AnswerUpVoteRep']
-    rep_change_down = SiteSetting['AnswerDownVoteRep']
+    rep_change_up = post_types(:answer).upvote_rep
+    rep_change_down = post_types(:answer).downvote_rep
     expected = 4 * rep_change_up + 1 * rep_change_down
     assert_equal expected, Vote.total_rep_change(post.votes)
   end

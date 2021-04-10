@@ -21,16 +21,19 @@
     </div>
     <nav class="header--menu">
       <% unless @community.is_fake %>
-        <%= link_to 'Users', users_path, class: 'header--item' %>
-        <%= link_to 'Search', search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } %>
-      <% else %>
+        <%= link_to users_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-users"></i> Users
+        <% end %>
+        <%= link_to search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } do %>
+          <i class="fas fa-fw fa-search"></i> Search
+        <% end %>
       <% end %>
-        <div class='header--separator'></div>
+      <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
-              Mod
+              <i class="fas fa-fw fa-wrench"></i> Mod
               <% if @open_flags > 0 %>
                 <span class="header--alert"><%= @open_flags %></span>
               <% end %>
@@ -39,7 +42,9 @@
         <% end %>
       <% end %>
       <% unless @community.is_fake %>
-        <%= link_to 'Help', help_center_path, class: 'header--item' %>
+        <%= link_to help_center_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-question-circle"></i> Help
+        <% end %>
       <% end %>
       <% if user_signed_in? %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
@@ -53,7 +58,7 @@
           <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
+          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
@@ -83,22 +88,28 @@
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
-  <% Community.all.each do |c| %>
-    <div class="community-header-list-entry">
-      <% settings = SiteSetting.for_community_id(c.id) %>
-      <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
-      <%= link_to "//#{c.host}" do %>
-        <% unless logo_setting.nil? %>
-          <div class="img">
-            <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+    <% Community.where(hidden: false).each do |c| %>
+      <div class="community-header-list-entry">
+        <% settings = SiteSetting.for_community_id(c.id) %>
+        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+        <%= link_to "//#{c.host}" do %>
+          <% unless logo_setting.nil? %>
+            <div class="img">
+              <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+            </div>
+          <% end %>
+          <div class="label">
+            <%= c.name %>
           </div>
         <% end %>
-        <div class="label">
-          <%= c.name %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+      </div>
+    <% end %>
+  </div>
+  <hr class="has-margin-top-2 has-margin-bottom-2" />
+  <div>
+    <%= link_to dashboard_path, class: 'button is-muted has-float-right' do %>
+      Dashboard
+    <% end %>
   </div>
 </div>
 
@@ -117,10 +128,10 @@
 
 <div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
-  <div class="inbox--container h-p-2"></div>
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
     <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
   </div>
+  <div class="inbox--container h-p-2"></div>
 </div>
 <% unless @community.is_fake %>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
@@ -174,7 +185,12 @@
     </div>
     <% if expandable? %>
       <div class="container category-header--container">
-        <div class="category-header--name"><%= current_cat.name %></div>
+        <% if (current_cat&.min_view_trust_level || -1) > 0 %>
+          <i class="fas fa-lock-open h-m-r-2" title="The access to this category is restricted, but you are exempt."></i>
+        <% end %>
+        <div class="category-header--name">
+          <%= current_cat.name %>
+        </div>
         <div class="category-header--nav">
           <%= link_to 'Posts', category_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
@@ -194,9 +210,28 @@
 <% end %>
 
 <% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode has-color-red-900">
     <div class="container">
       <p>This site is in development mode!</p>
+    </div>
+  </div>
+<% end %>
+
+<% if read_only? %>
+  <div class="notice is-warning is-filled is-banner has-padding-2 has-color-yellow-900 has-font-size-caption">
+    <div class="container">
+      <p>This site is in read-only mode.</p>
+    </div>
+  </div>
+<% end %>
+
+<% if user_signed_in? && session[:impersonator_id].present? %>
+  <div class="notice is-info is-banner is-filled has-padding-2">
+    <div class="container">
+      <p class="has-font-size-caption">
+        You are impersonating <%= current_user.username %>.
+        <%= link_to 'Stop impersonating', stop_impersonating_path, class: 'is-underlined' %>
+      </p>
     </div>
   </div>
 <% end %>

@@ -1,0 +1,63 @@
+# All default values must be strings.
+# Schema:
+#
+# preference_name:
+#   type: boolean | string | integer | choice
+#   description: Free-form description
+#   choice:
+#     - only
+#     - used
+#     - if
+#     - type is choice
+#   default: string default value | ~
+#   community: true | false  # optional, default false (global)
+
+keyboard_tools:
+  type: boolean
+  description: >
+    Enable keyboard shortcuts. Press ? for a list of shortcuts.
+  default: 'true'
+
+autosave:
+  type: choice
+  choice:
+    - 'on'
+    - 'off'
+  description: >
+    Should autosave be enabled while composing posts?
+  default: 'on'
+  community: true
+
+default_license:
+  type: choice
+  description: >
+    Your choice of default license. This will override site and category default licensing.
+  default: ~
+  choice:
+    - name: CC BY-SA 4.0
+      value: CC BY-SA 4.0
+    - name: CC BY 4.0
+      value: CC BY 4.0
+    - name: CC BY-NC 4.0
+      value: CC BY-NC 4.0
+    - name: CC BY-NC-SA 4.0
+      value: CC BY-NC-SA 4.0
+    - name: CC0
+      value: CC0
+    - name: No default (make me choose)
+      value: No default (make me choose)
+  community: true
+
+favorite_tags:
+  type: string
+  description: >
+    Favorite tags will be highlighted in question list views. List tag names here, comma-separated.
+  default: ~
+  community: true
+
+display_import_labels:
+  type: boolean
+  description: >
+    Add a Stack Exchange logo marker to imported posts to show that they're imported.
+  default: 'false'
+  community: true

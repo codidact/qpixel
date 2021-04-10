@@ -10,8 +10,10 @@ $(() => {
     });
     const data = await resp.text();
     $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
-    $anchor.remove();
-  });
+    $tgt.parents('.post--comments').find('.js-more-comments').remove();
+  };
+
+  $('.js-more-comments').on('click', showAllComments);
 
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();
@@ -19,6 +21,7 @@ $(() => {
     const $tgt = $(evt.target);
     const $comment = $tgt.parents('.comment');
     const commentId = $comment.attr('data-id');
+    const originalComment= $comment.find('p.comment--content').clone();
 
     const resp = await fetch(`/comments/${commentId}`, {
       credentials: 'include',
@@ -31,9 +34,14 @@ $(() => {
       <label for="comment-content" class="form-element">Comment body:</label>
       <textarea id="comment-content" rows="3" class="form-element is-small" name="comment[content]">${content}</textarea>
       <input type="submit" class="button is-muted is-filled" value="Update comment" />
+      <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
     </form>`;
 
     $comment.find(".comment--body").html(formTemplate);
+
+    $(`.js-discard-edit[data-comment-id="${commentId}"]`).click(() => {
+      $comment.html(originalComment);
+    });
   });
 
   $(document).on('ajax:success', '.comment-edit-form', async (evt, data) => {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_02_162706) do
+ActiveRecord::Schema.define(version: 2021_01_12_225651) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -185,6 +185,7 @@ ActiveRecord::Schema.define(version: 2021_01_02_162706) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_fake", default: false
+    t.boolean "hidden", default: false
     t.index ["host"], name: "index_communities_on_host"
   end
 
@@ -247,6 +248,7 @@ ActiveRecord::Schema.define(version: 2021_01_02_162706) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "enabled", default: true
+    t.text "description"
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
   end
@@ -340,6 +342,8 @@ ActiveRecord::Schema.define(version: 2021_01_02_162706) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
+    t.integer "upvote_rep"
+    t.integer "downvote_rep"
     t.index ["name"], name: "index_post_types_on_name"
   end
 
@@ -585,6 +589,7 @@ ActiveRecord::Schema.define(version: 2021_01_02_162706) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.boolean "developer"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

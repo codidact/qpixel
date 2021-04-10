@@ -2,23 +2,37 @@
   url: https://creativecommons.org/licenses/by-sa/4.0
   default: true
   enabled: true
+  description: >
+    Attribution-ShareAlike: anyone may use this post as long as they attribute the original and share any changes under
+    the same license.
 
 - name: CC BY 4.0
   url: https://creativecommons.org/licenses/by/4.0
   default: false
   enabled: true
+  description: >
+    Attribution: anyone may use this post as long as they attribute the original.
 
 - name: CC BY-NC 4.0
   url: https://creativecommons.org/licenses/by-nc/4.0
   default: false
   enabled: true
+  description: >
+    Attribution-NonCommercial: anyone may use this post for any non-commercial purpose as long as they attribute the
+    original.
 
 - name: CC BY-NC-SA 4.0
   url: https://creativecommons.org/licenses/by-nc-sa/4.0
   default: false
   enabled: true
+  description: >
+    Attribution-NonCommercial-ShareAlike: anyone may use this post for any non-commercial purpose as long as they
+    attribute the original and share any changes under the same license.
 
 - name: CC0
   url: https://creativecommons.org/publicdomain/zero/1.0/
   default: false
   enabled: true
+  description: >
+    No Rights Reserved: anyone may use this post, for any purpose, with or without credit or attribution. Roughly
+    equivalent to placing the work in the public domain.

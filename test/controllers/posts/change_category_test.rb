@@ -22,7 +22,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_nothing_raised do
       JSON.parse(response.body)
     end
-    assert_equal ["You don't have permission to make that change."], JSON.parse(response.body)['errors']
+    assert_equal ["You don't have permission to make that change.\n"], JSON.parse(response.body)['errors']
   end
 
   test 'should refuse to change category of wrong post type' do
@@ -32,7 +32,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_nothing_raised do
       JSON.parse(response.body)
     end
-    assert_equal ["This post type is not allowed in the #{categories(:articles_only).name} category."],
+    assert_equal ["This post type is not allowed in the #{categories(:articles_only).name} category.\n"],
                  JSON.parse(response.body)['errors']
   end
 end

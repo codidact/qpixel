@@ -33,48 +33,6 @@
   description: >
     Whether or not the site header has a dark color. The theme can be edited in `/public/assets/community/[Community Name].css`
 
-- name: QuestionUpVoteRep
-  value: 5
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when a question is upvoted.
-
-- name: QuestionDownVoteRep
-  value: -2
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when a question is downvoted.
-
-- name: AnswerUpVoteRep
-  value: 10
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when an answer is upvoted.
-
-- name: AnswerDownVoteRep
-  value: -2
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when an answer is downvoted.
-
-- name: ArticleUpVoteRep
-  value: 10
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when an article is upvoted.
-
-- name: ArticleDownVoteRep
-  value: -2
-  value_type: integer
-  category: ReputationAndVoting
-  description: >
-    The reputation change to the post's author when an article is downvoted.
-
 - name: AllowSelfVotes
   value: false
   value_type: boolean

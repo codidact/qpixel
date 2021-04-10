@@ -1,0 +1,15 @@
+<% content_for :title, 'Read Only' %>
+
+<h1 class="error-code has-color-red-500">423</h1>
+<h2 class="error-name has-color-red-400">locked</h2>
+
+<p class="is-lead">This resource is locked because the site is in read-only mode.</p>
+<p>
+  Any changes you were making have not been saved. Please retry this request once
+  the site has been taken out of read only mode.
+</p>
+
+<p>
+  <%= link_to 'Go back', :back, class: 'button is-outlined' %>
+  <%= link_to 'Go home', root_path, class: 'button is-outlined' %>
+</p>

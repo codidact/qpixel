@@ -1,0 +1,31 @@
+<h1>Impersonate <%= @user.username %></h1>
+<p>
+  As a developer, you have access to impersonate users to help in reproducing bug reports, among other things.
+</p>
+
+<div class="notice is-warning has-color-yellow-900">
+  <h3><i class="fas fa-exclamation-triangle"></i> Caution</h3>
+  <p>
+    Using this tool may give you access to a user's personally identifiable information (PII). You are reminded of your
+    obligations under data protection laws to protect this information and not to use or disclose it without permission
+    or reasonable justification. This impersonation will be logged.
+  </p>
+</div>
+
+<div class="user-list">
+  <div class="user-list--user">
+    <%= render 'users/common_card', user: @user, ckb: false %>
+  </div>
+</div>
+
+<%= form_tag impersonate_path(@user) do %>
+  <div class="flex-row ai-fe">
+    <div class="form-group primary">
+      <%= label_tag :comment, 'Why are you impersonating this user?', class: 'form-element' %>
+      <%= text_field_tag :comment, nil, class: 'form-element', required: true %>
+    </div>
+    <div class="actions">
+      <%= submit_tag 'Impersonate', class: 'button is-danger h-m-b-2' %>
+    </div>
+  </div>
+<% end %>
