@@ -13,6 +13,23 @@ $(() => {
     $tgt.parents('.post--comments').find('.js-more-comments').remove();
   });
 
+  $(document).on('click', '.post--comments-thread.is-inline a', async evt => {
+    if(evt.ctrlKey) { return; }
+
+    evt.preventDefault();
+    const $tgt = $(evt.target);
+
+    const resp = await fetch($tgt.attr("href") + '?inline=true', {
+      headers: { 'Accept': 'text/html' }
+    });
+    let data = await resp.text();
+
+    data = data.split("<!-- THREAD STARTS BELOW -->")[1];
+    data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
+
+    $tgt.parent()[0].outerHTML = data;
+  });
+
 
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();

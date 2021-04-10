@@ -3,24 +3,30 @@
 </h1>
 
 <!-- THREAD STARTS BELOW -->
-<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> h-p-4">
+<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> h-p-4 <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
 <div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>">
   <div class="widget--header">
-    <% if current_user&.privilege? 'flag_curate' %>
-      <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
-    <% end %>
-    <% unless current_user.nil? %>
-      <% if @comment_thread.followed_by? current_user %>
-        <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
-           data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time.">
-          <i class="fa fa-minus fa-fw"></i>unfollow
-        </a>
-      <% else %>
-        <a href="#" class="widget--header-link js--restrict-thread" data-action="follow"
-           data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response.">
-          <i class="fa fa-plus fa-fw"></i>follow
-        </a>
+    <% if params[:inline] == 'true' %>
+      <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
+        show thread
+      </a>
+    <% else %>
+      <% if current_user&.privilege? 'flag_curate' %>
+        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+      <% end %>
+      <% unless current_user.nil? %>
+        <% if @comment_thread.followed_by? current_user %>
+          <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
+            data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time.">
+            <i class="fa fa-minus fa-fw"></i>unfollow
+          </a>
+        <% else %>
+          <a href="#" class="widget--header-link js--restrict-thread" data-action="follow"
+            data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response.">
+            <i class="fa fa-plus fa-fw"></i>follow
+          </a>
+        <% end %>
       <% end %>
     <% end %>
     <% if @comment_thread.deleted %>
@@ -33,7 +39,11 @@
     <%= @comment_thread.title %>
   </div>
   <% skipped_deleted = 0%>
-  <% @comment_thread.comments.each do |comment| %>
+  <% comments = @comment_thread.comments %>
+  <% if params[:inline] == 'true' %>
+    <% comments = comments.where(deleted: false).take 5 %>
+  <% end %>
+  <% comments.each do |comment| %>
     <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
       <% skipped_deleted += 1%>
       <% next %>
@@ -83,7 +93,7 @@
     </div>
     <% skipped_deleted = 0 %>
   <% end %>
-  <% unless current_user.nil? %>
+  <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
         <% if @post.locked? && !moderator? && !admin? %>
@@ -115,6 +125,11 @@
       <% elsif @comment_thread.archived %>
         <p class="h-c-tertiary-700"><i class="fas fa-archive fa-fw"></i> This thread has been archived and cannot be replied to.</p>
       <% end %>
+    </div>
+  <% end %>
+  <% if params[:inline] == 'true' %>
+    <div class="widget--footer">
+      <p>This is just a preview; you can <a href="<%= comment_thread_path(@comment_thread.id) %>">see the whole thread</a>.</p>
     </div>
   <% end %>
 </div>
