@@ -33,6 +33,9 @@
   margin: -0.75rem;
   border: none;
 }
+.comment:target {
+  box-shadow: 0 0 0 5px rgba(255, 200, 0, 0.3);
+}
 .comment .comment-meta {
   font-size: 0.9em;
   color: #666;

@@ -13,7 +13,6 @@ $(() => {
     $tgt.parents('.post--comments').find('.js-more-comments').remove();
   });
 
-  $('.js-more-comments').on('click', showAllComments);
 
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();
