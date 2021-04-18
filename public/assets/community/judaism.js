@@ -566,7 +566,7 @@ window.addEventListener("load", async () => {
   
   let today = new Date();
   if (today.getHours() > 20) {
-    today.setDate(now.getDate() + 1);
+    today.setDate(today.getDate() + 1);
   }
   
   const todayDay = DAY_LIST[(today.getDay() + 6) % 7];
