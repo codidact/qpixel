@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_12_225651) do
+ActiveRecord::Schema.define(version: 2021_04_22_090732) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -194,7 +194,7 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
   end
 
   create_table "flags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "reason"
+    t.text "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
