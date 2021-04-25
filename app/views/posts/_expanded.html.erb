@@ -26,7 +26,7 @@
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
-        <div class="post--votes has-text-align-center" title="<%= post.score %>">
+        <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
           <% existing_vote = my_vote(post) %>
           <% unless post.locked? %>
             <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
