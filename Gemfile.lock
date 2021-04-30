@@ -61,7 +61,7 @@ GEM
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
-    aws-ses (0.7.1)
+    aws-ses-v4 (0.8.1)
       builder
       mail (> 2.2.5)
       mime-types
@@ -220,7 +220,7 @@ GEM
       railties (>= 5.0)
     reverse_markdown (2.0.0)
       nokogiri
-    rexml (3.2.4)
+    rexml (3.2.5)
     rmagick (4.2.2)
     rotp (6.2.0)
     rqrcode (1.2.0)
@@ -314,7 +314,7 @@ PLATFORMS
 DEPENDENCIES
   awesome_print (~> 1.8)
   aws-sdk-s3 (~> 1.61)
-  aws-ses (~> 0.6)
+  aws-ses-v4
   byebug (~> 11.1)
   chartkick (~> 3.4)
   coffee-rails (~> 4.2.2)
