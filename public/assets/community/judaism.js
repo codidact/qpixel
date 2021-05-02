@@ -536,7 +536,7 @@ window.addEventListener("load", async () => {
   const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
   disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
   
-  const result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=now&month=4&d=on&o=on');
+  const result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=now&month=now&d=on&o=on');
   const response = await result.json()
   
   const parsedData = response.items.reduce((rv, x) => {
