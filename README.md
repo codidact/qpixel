@@ -10,7 +10,7 @@ If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 
 ### Install prerequisites
 
-For Linux:
+For Debian-Based Linux:
 
 ```
 sudo apt update
@@ -19,6 +19,19 @@ sudo apt install make
 sudo apt install libmysqlclient-dev
 sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
 sudo apt install mysql-server
+```
+
+For Arch-Based Linux:
+
+```
+sudo pacman -Syyu
+sudo pacman -Sy gcc
+sudo pacman -Sy make
+sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc wxgtk
+sudo snap install mysql --beta Or, sudo pacman -S mysql
+
+Install following packages and unpack them
+https://aur.archlinux.org/packages/libmysqlclient/
 ```
 
 For Mac:
