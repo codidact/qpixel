@@ -18,7 +18,8 @@ class SiteSetting < ApplicationRecord
   end
 
   def self.exist?(name)
-    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}") || SiteSetting.where(name: name).count.positive?
+    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}") ||
+      SiteSetting.where(name: name).count.positive?
   end
 
   def typed
