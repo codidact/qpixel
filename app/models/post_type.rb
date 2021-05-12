@@ -19,4 +19,16 @@ class PostType < ApplicationRecord
       all.map { |pt| [pt.id, { 1 => pt.upvote_rep, -1 => pt.downvote_rep }] }.to_h
     end
   end
+
+  def self.top_level
+    Rails.cache.fetch 'network/post_types/top_level', include_community: false do
+      where(is_top_level: true)
+    end
+  end
+
+  def self.second_level
+    Rails.cache.fetch 'network/post_types/second_level', include_community: false do
+      where(is_top_level: false)
+    end
+  end
 end
