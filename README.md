@@ -29,10 +29,9 @@ sudo pacman -Sy gcc
 sudo pacman -Sy make
 sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc wxgtk
 sudo snap install mysql --beta Or, sudo pacman -S mysql
-
-Install following packages and unpack them
-https://aur.archlinux.org/packages/libmysqlclient/
 ```
+
+Install the following packages and unpack them: https://aur.archlinux.org/packages/libmysqlclient/
 
 For Mac:
 
