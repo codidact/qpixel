@@ -89,9 +89,11 @@ class PostsController < ApplicationController
     end
 
     if @post.save
-      if @post_type.has_parent? && @post.user_id != @post.parent.user_id
-        @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
-                                              helpers.generic_show_link(@post))
+      if @post_type.has_parent?
+        unless @post.user_id == @post.parent.user_id
+          @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
+                                                helpers.generic_show_link(@post))
+        end
         @post.parent.update(last_activity: DateTime.now, last_activity_by: current_user)
       end
 
