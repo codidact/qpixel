@@ -10,7 +10,7 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-   # Apply least privilege to token 
+   # Apply principle of least privilege to GITHUB_TOKEN 
     permissions:
       actions: read
       contents: read
@@ -25,22 +25,7 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: javascript
-
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
-
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
-
-    #- run: |
-    #   make bootstrap
-    #   make release
-
+    
+    # Actually perform an analysis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
