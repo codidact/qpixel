@@ -27,7 +27,8 @@ For Arch-Based Linux:
 sudo pacman -Syyu
 sudo pacman -Sy gcc
 sudo pacman -Sy make
-sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc wxgtk
+sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc
+sudo pacman -Sy openssl
 sudo snap install mysql --beta Or, sudo pacman -S mysql
 ```
 
