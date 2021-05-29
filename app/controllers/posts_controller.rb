@@ -263,8 +263,8 @@ class PostsController < ApplicationController
     if @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
                     last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_deleted(@post, current_user)
-      if @post.children.any?
-        @post.children.update_all(deleted: true, deleted_at: DateTime.now, deleted_by_id: current_user.id,
+      if @post.children.where(deleted: false).any?
+        @post.children.where(deleted: false).update_all(deleted: true, deleted_at: DateTime.now, deleted_by_id: current_user.id,
                                   last_activity: DateTime.now, last_activity_by_id: current_user.id)
         histories = @post.children.map do |c|
           { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
