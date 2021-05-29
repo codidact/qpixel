@@ -7,6 +7,14 @@
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
+  title: Privacy Policy
+  body_markdown: $FILE posts/privacy-policy.html
+  body: $FILE posts/privacy-policy.html
+  doc_slug: privacy-policy
+  help_category: Legal
+  community_id: ~
+
+- post_type_id: <%= PolicyDoc.post_type_id %>
   title: Code of Conduct
   body_markdown: $FILE posts/coc.html
   body: $FILE posts/coc.html
@@ -23,7 +31,7 @@
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Guidelines for promotional content in posts on Codidact sites
+  title: Guidelines for promotional content in posts on Codidact communities
   body_markdown: $FILE posts/spam.html
   body: $FILE posts/spam.html
   doc_slug: spam
@@ -80,14 +88,14 @@
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidelines for referencing and quoting on Codidact sites
+  title: Guidelines for referencing and quoting on Codidact communities
   body_markdown: $FILE posts/referencing.html
   body: $FILE posts/referencing.html
   doc_slug: referencing
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidance on available licenses on Codidact sites
+  title: Guidance on available licenses on Codidact communities
   body_markdown: $FILE posts/licenses.html
   body: $FILE posts/licenses.html
   doc_slug: licenses

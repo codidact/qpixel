@@ -1,0 +1,35 @@
+@import 'variables';
+
+.community-header-list {
+  display: flex;
+  flex-direction: column;
+
+  .community-header-list-entry a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    img {
+      max-height: 1.5rem;
+    }
+    .img {
+      width: 100px;
+      padding: 10px;
+    }
+    .label {
+      flex-grow: 1;
+    }
+  }
+}
+
+#communities-slide {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.header--site-name img {
+  @media screen and (max-width: $screen-md) {
+    max-height: 2.4em;
+    padding: 0.3em 0;
+  }
+}

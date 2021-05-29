@@ -70,11 +70,11 @@
       </div>
 
       <h2 class="user-profile-heading">Posts</h2>
-      <% if @user.posts.size == 0 %>
+      <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</p>
       <% else %>
         <div class="item-list user-profile-post-list">
-          <% @user.posts.undeleted.order(score: :desc).first(15).each do |a| %>
+          <% @posts.each do |a| %>
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
           <% end %>
         </div>
@@ -87,7 +87,7 @@
   <div class="grid--cell is-3-lg is-12">
     <div class="widget is-tertiary">
       <div class="widget--body user-profile--image">
-        <img alt="user avatar" src="<%= avatar_url(@user, 512) %>" />
+        <img alt="user avatar" src="<%= avatar_url(@user, 256) %>" class="avatar-256" />
       </div>
       <% if @user.staff? %>
       <div class="widget--body h-ta-center" title="This user is an official Staff member.">
@@ -112,6 +112,11 @@
             </a>
           </div>
         <% end %>
+        <div class="widget--footer">
+          <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
+            Abilities &raquo;
+          <% end %>
+        </div>
       </div>
     <% end %>
 

@@ -21,12 +21,12 @@
         </div>
         <div class="widget--body h-fw-bold h-bg-tertiary-050"><i class="fa fa-file-alt"></i> Posts</div>
         <% categories.each do |cat| %>
-          <% next unless (cat.min_view_trust_level || -1) < 0 %>
+          <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
           <div class="widget--body">
             <%= link_to "//" + c.host + category_path(cat) do %>
               <%= cat.name %>
               <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-                <span class="badge is-status" title="new posts for you"></span>
+                <span class="badge is-status" title="unread activity in category"></span>
               <% end %>
             <% end %>
           </div>

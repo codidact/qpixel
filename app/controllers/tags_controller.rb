@@ -26,6 +26,9 @@ class TagsController < ApplicationController
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
               @tag_set.tags_with_paths.order(:path)
+            elsif params[:no_excerpt].present?
+              @tag_set.tags.where(excerpt: '').or(@tag_set.tags.where(excerpt: nil))
+                      .order(Arel.sql('COUNT(posts.id) DESC'))
             else
               @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
             end

@@ -8,7 +8,10 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :check_if_warning_or_suspension_pending
+  before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
+  before_action :enforce_2fa
+  before_action :block_write_request, if: :read_only_mode?
 
   helper_method :top_level_post_types, :second_level_post_types
 
@@ -82,6 +85,14 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def verify_developer
+    if !user_signed_in? || !current_user.developer?
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      return false
+    end
+    true
+  end
+
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
       @privilege = Ability.find_by(name: name)
@@ -96,8 +107,8 @@ class ApplicationController < ActionController::Base
 
     if post.locked?
       respond_to do |format|
-        format.html { render 'errors/locked', layout: 'without_sidebar', status: :unauthorized }
-        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: :unauthorized }
+        format.html { render 'errors/locked', layout: 'without_sidebar', status: :forbidden }
+        format.json { render json: { status: 'failed', message: 'Post is locked.' }, status: :forbidden }
       end
     end
   end
@@ -138,6 +149,18 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def distinguish_fake_community
+    if RequestContext.community.is_fake
+      return redirect_to :fc_communities if request.fullpath == '/'
+
+      unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
+        not_found
+      end
+    else
+      return not_found if ['fake_community'].include?(controller_name)
+    end
+  end
 
   def stop_the_awful_troll
     # There shouldn't be any trolls in the test environment... :D
@@ -185,7 +208,7 @@ class ApplicationController < ActionController::Base
       @open_flags = Flag.unhandled.count
     end
 
-    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true' ? true : false
+    @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
     if current_user&.is_admin
       Rack::MiniProfiler.authorize_request
@@ -197,7 +220,7 @@ class ApplicationController < ActionController::Base
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
     RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
-      Community.find_by(host: host_name)
+      Community.unscoped.find_by(host: host_name)
     end
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
@@ -221,12 +244,12 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch("#{RequestContext.community_id}/pinned_links", expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
     end
-    @hot_questions = Rails.cache.fetch("#{RequestContext.community_id}/hot_questions", expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
@@ -238,7 +261,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch("#{RequestContext.community_id}/header_categories") do
+    @header_categories = Rails.cache.fetch('header_categories') do
       Category.all.order(sequence: :asc, id: :asc)
     end
   end
@@ -255,5 +278,39 @@ class ApplicationController < ActionController::Base
     flash.clear
 
     redirect_to(current_mod_warning_path)
+  end
+
+  def enforce_2fa
+    if current_user &&
+       !current_user.enabled_2fa? &&
+       Rails.env.production? &&
+       # Don't enforce 2fa auth unless the setting is enabled
+       SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
+       # Enable users to log out even if 2fa is enforced
+       !request.fullpath.end_with?('/users/sign_out') &&
+       (current_user.is_global_admin ||
+         current_user.is_global_moderator)
+      redirect_path = '/users/two-factor'
+      unless request.fullpath.end_with?(redirect_path)
+        flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue' \
+                         'using this site. Please do so below'
+        redirect_to(redirect_path)
+      end
+    end
+  end
+
+  def block_write_request(**add)
+    respond_to do |format|
+      format.html do
+        render 'errors/read_only', layout: 'without_sidebar', status: :not_found
+      end
+      format.json do
+        render json: { status: 'failed', success: false, errors: ['read_only'] }.merge(add), status: :locked
+      end
+    end
+  end
+
+  def read_only_mode?
+    helpers.read_only? && request.method.upcase == 'POST'
   end
 end

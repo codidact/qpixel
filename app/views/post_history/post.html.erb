@@ -4,31 +4,34 @@
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
 
-<% @history.each do |event| %>
+<% @history.each.with_index do |event,index| %>
   <details class="history-event">
     <summary>
-      <strong><%= event.post_history_type.name.humanize %></strong>
-      <span class="text-muted">
-        &nbsp;by
-        <% if event.user.nil? %>
-          <span class="text-muted">(deleted user)</span>
-        <% else %>
-          <img alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-          <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
-        <% end %>
-        &middot;
-        <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+      <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
+      <span class="has-color-tertiary-600 history-meta">
+        <span>
+          by
+          <% if event.user.nil? %>
+            (deleted user)
+          <% else %>
+            <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+            <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
+          <% end %>
+          &middot;
+          <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+        </span>
         <% if event.comment.present? %>
-          <br/>
-          <span class="text-muted"><em><%= event.comment %></em></span>
+          <br/><em><%= event.comment %></em>
         <% end %>
       </span>
     </summary>
-    <% if event.before_title.present? || event.after_title.present? %>
+    <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
       <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
     <% end %>
-    <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
-    <% if event.before_tags.present? || event.after_tags.present? %>
+    <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
+      <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
+    <% end %>
+    <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
       <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
     <% end %>
   </details>

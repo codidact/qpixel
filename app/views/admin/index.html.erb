@@ -1,5 +1,9 @@
 <% content_for :title, t('admin.dashboard.title') %>
 
+<%= link_to moderator_path, class: "has-font-size-small" do %>
+  Switch to Mod Tools
+<% end %>
+
 <h1><%= t('admin.dashboard.title') %></h1>
 <p><%= t('admin.dashboard.blurb') %></p>
 
@@ -28,6 +32,15 @@
         <div class="widget--body">
           <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-envelope"></i>
           <%= link_to t('admin.tools.email_moderators'), moderator_email_path, 'data-ckb-item-link' => '' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
+      <div class="widget">
+        <div class="widget--body">
+          <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-mail-bulk"></i>
+          <%= link_to t('admin.tools.post_types'), post_types_path, 'data-ckb-item-link' => '' %>
         </div>
       </div>
     </div>
@@ -95,4 +108,22 @@
       </div>
     </div>
   </div>
+  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
+    <div class="widget">
+      <div class="widget--body">
+        <i class="fas fa-folder-plus"></i>
+        <%= link_to 'Create Category', new_category_path, 'data-ckb-item-link' => '' %>
+      </div>
+    </div>
+  </div>
+  <% if current_user.is_global_admin %>
+    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
+      <div class="widget">
+        <div class="widget--body">
+          <i class="fas fa-user-plus"></i>
+          <%= link_to 'New Site', new_site_path, 'data-ckb-item-link' => '' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

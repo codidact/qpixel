@@ -78,42 +78,6 @@ $(document).on('ready', function() {
     console.log(self.parents(".post--body").find(".js-close-box").toggleClass("is-active"));
   });
 
-  $('.js-close-question').on('click', (ev) => {
-    ev.preventDefault();
-    const self = $(ev.target);
-    const active_radio = self.parents('.js-close-box').find("input[type='radio'][name='close-reason']:checked");
-    const data = {
-      'reason_id': active_radio.val(),
-      'other_post': active_radio.parents('.widget--body').find('.js-close-other-post').val()
-      // option will be silently discarded if no input element
-    };
-
-    if (data['other_post']) {
-      if (data['other_post'].match(/\/[0-9]+$/)) {
-        data['other_post'] = data['other_post'].replace(/.*\/([0-9]+)$/, "$1");
-      }
-    }
-
-    $.ajax({
-      'type': 'POST',
-      'url': '/posts/' + self.data('post-id') + '/close',
-      'data': data,
-      'target': self
-    })
-    .done((response) => {
-      if(response.status !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
-      }
-      else {
-        location.reload();
-      }
-    })
-    .fail((jqXHR, textStatus, errorThrown) => {
-      QPixel.createNotification('danger', '<strong>Failed:</strong> ' + jqXHR.status);
-      console.log(jqXHR.responseText);
-    });
-  });
-
   $("a.show-all-flags-dialog-link").bind("click", (ev) => {
     ev.preventDefault();
     const self = $(ev.target);

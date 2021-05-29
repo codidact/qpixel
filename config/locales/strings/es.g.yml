@@ -3,6 +3,7 @@ es:
     # Alphabetical order please!
     at: 'en/a'  # He's at home (en). / Leaving at 9:00 (a).
     body: 'cuerpo'
+    cancel: 'cancelar'
     codidact_network: 'red codidact'
     comment: 'comentario'
     community: 'comunidad'

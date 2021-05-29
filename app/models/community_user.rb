@@ -72,10 +72,7 @@ class CommunityUser < ApplicationRecord
 
   def grant_privilege(internal_id)
     priv = Ability.where(internal_id: internal_id).first
-    ua = UserAbility.create community_user_id: id, ability: priv
-    AuditLog.user_history(event_type: 'new_ability', related: privilege(internal_id), user: user,
-                            comment: internal_id)
-    ua
+    UserAbility.create community_user_id: id, ability: priv
   end
 
   def recalc_privilege(internal_id, sandbox: false)
@@ -87,7 +84,7 @@ class CommunityUser < ApplicationRecord
     # Do not recalculate privileges which are only manually given
     return false if priv.manual?
 
-    # Grant :unrestricted automatically on new sites
+    # Grant :unrestricted automatically on new communities
     unless SiteSetting['NewSiteMode'] && internal_id.to_s == 'unrestricted'
       # Abort if any of the checks fails
       return false if !priv.post_score_threshold.nil? && post_score < priv.post_score_threshold

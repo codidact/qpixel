@@ -204,6 +204,27 @@ free_edit:
   upvote_count: 0
   downvote_count: 0
 
+high_trust:
+  post_type: question
+  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: moderator
+  community: sample
+  category: admin_only
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 answer_one:
   post_type: answer
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ

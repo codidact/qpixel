@@ -60,7 +60,7 @@ class CloseReasonsController < ApplicationController
                                     active: params[:close_reason][:active],
                                     community: params[:global] == '1' ? nil : @community)
     if @close_reason.save
-      attr = @category.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+      attr = @close_reason.attributes_print
       AuditLog.moderator_audit(event_type: 'close_reason_create', related: @close_reason, user: current_user,
                                comment: "<<CloseReason #{attr}>>")
       if @close_reason.community.nil?

@@ -3,12 +3,12 @@
   Your account has two-factor authentication enabled. Enter a code from your authenticator app here.
 </p>
 
-<%= form_tag login_verify_code_path do %>
+<%= form_tag login_verify_code_path, autocomplete: 'off' do %>
   <%= hidden_field_tag 'uid', params[:uid] %>
 
   <div class="form-group">
     <%= label_tag 'code', 'Code', class: 'form-element' %>
-    <%= text_field_tag 'code', '', class: 'form-element' %>
+    <%= number_field_tag 'code', '', class: 'form-element', autocomplete: 'one-time-code' %>
   </div>
 
   <div class="actions">

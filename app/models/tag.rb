@@ -13,6 +13,7 @@ class Tag < ApplicationRecord
   validates :name, presence: true, format: { with: /[^ \t]+/, message: 'Tag names may not include spaces' }
   validate :parent_not_self
   validate :parent_not_own_child
+  validates :name, uniqueness: { scope: [:tag_set_id] }
 
   def self.search(term)
     where('name LIKE ?', "%#{sanitize_sql_like(term)}%")

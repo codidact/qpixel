@@ -1,6 +1,17 @@
 class SuggestedEditController < ApplicationController
   before_action :set_suggested_edit, only: [:show, :approve, :reject]
 
+  def category_index
+    @category = params[:category].present? ? Category.find(params[:category]) : nil
+    @edits = if params[:show_decided].present? && params[:show_decided] == '1'
+               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false) \
+                            .order('created_at DESC')
+             else
+               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
+                            .order('created_at ASC')
+             end
+  end
+
   def show
     render layout: 'without_sidebar'
   end
@@ -19,7 +30,7 @@ class SuggestedEditController < ApplicationController
       return
     end
 
-    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: params[:edit_comment],
+    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: @edit.comment,
              before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags }
 
     before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
@@ -80,7 +91,7 @@ class SuggestedEditController < ApplicationController
       last_activity: DateTime.now,
       last_activity_by: @edit.user,
       last_edited_at: DateTime.now,
-      last_edited_by_id: @edit.user
+      last_edited_by: @edit.user
     }.compact
   end
 end

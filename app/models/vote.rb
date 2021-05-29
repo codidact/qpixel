@@ -16,17 +16,9 @@ class Vote < ApplicationRecord
   validate :post_not_deleted
 
   def self.total_rep_change(col)
-    col = col.includes(:post)
-    settings = SiteSetting.where(name: ['QuestionUpVoteRep', 'QuestionDownVoteRep',
-                                        'AnswerUpVoteRep', 'AnswerDownVoteRep',
-                                        'ArticleUpVoteRep', 'ArticleDownVoteRep'])
-                          .map { |ss| [ss.name, ss.value] }.to_h
-    rep_changes = PostType.mapping.map do |k, v|
-      vote_types = { 1 => 'Up', -1 => 'Down' }
-      [v, vote_types.transform_values { |readable| settings["#{k}#{readable}VoteRep"].to_i }]
-    end.to_h
+    col = col.includes(:post, post: :post_type)
 
-    col.reduce(0) { |sum, vote| sum + rep_changes[vote.post.post_type_id][vote.vote_type] }
+    col.reduce(0) { |sum, vote| sum + (PostType.rep_changes[vote.post.post_type_id][vote.vote_type] || 0) }
   end
 
   private
@@ -40,19 +32,8 @@ class Vote < ApplicationRecord
   end
 
   def rep_change(direction)
-    post_type_ids = Rails.cache.fetch :post_type_ids do
-      PostType.mapping
-    end
-    setting_names = {
-      [post_type_ids['Question'], 1] => 'QuestionUpVoteRep',
-      [post_type_ids['Question'], -1] => 'QuestionDownVoteRep',
-      [post_type_ids['Answer'], 1] => 'AnswerUpVoteRep',
-      [post_type_ids['Answer'], -1] => 'AnswerDownVoteRep',
-      [post_type_ids['Article'], 1] => 'ArticleUpVoteRep',
-      [post_type_ids['Article'], -1] => 'ArticleDownVoteRep'
-    }
-    rep_change = SiteSetting[setting_names[[post.post_type_id, vote_type]]] || 0
-    recv_user.update!(reputation: recv_user.reputation + direction * rep_change)
+    change = PostType.rep_changes[post.post_type_id][vote_type] || 0
+    recv_user.update!(reputation: recv_user.reputation + direction * change)
   end
 
   def post_not_deleted

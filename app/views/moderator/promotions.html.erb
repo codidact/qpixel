@@ -1,0 +1,25 @@
+<% content_for :title, 'Promoted Posts' %>
+<h1>Promoted Posts</h1>
+<p>
+  These posts have all been nominated for network-wide promotion by users with the Curate ability.
+</p>
+
+<% @posts.sort_by { |p| @promotions[p] }.each do |post| %>
+  <div class="widget">
+    <div class="widget--body">
+      <div class="item-list">
+        <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
+      </div>
+    </div>
+    <div class="widget--footer">
+      Promoted for
+      <span title="<%= (Time.at(@promotions[post.id.to_s]) + 28.days).iso8601 %>">
+        <%= distance_of_time_in_words(DateTime.now, Time.at(@promotions[post.id.to_s]) + 28.days) %>
+      </span>
+      &middot;
+      <%= link_to remove_post_promotion_path(post), method: :delete, class: 'is-red js-remove-promotion', remote: true do %>
+        <i class="fas fa-times"></i> Remove
+      <% end %>
+    </div>
+  </div>
+<% end %>

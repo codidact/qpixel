@@ -1,7 +1,7 @@
 <% logo_path = SiteSetting['SiteLogoPath'] %>
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 
-<header class="header has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
+<header class="header is-small has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
   <div class="container header--container">
     <div class="header--brand">
       <% if mobile_logo_path.present? %>
@@ -20,63 +20,122 @@
       <% end %>
     </div>
     <nav class="header--menu">
-      <%= link_to 'Categories', categories_path, class: 'header--item' %>
-      <%= link_to 'Users', users_path, class: 'header--item' %>
-      <%= link_to 'Search', search_path, class: 'header--item' %>
-
+      <% unless @community.is_fake %>
+        <%= link_to users_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-users"></i> Users
+        <% end %>
+        <%= link_to search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } do %>
+          <i class="fas fa-fw fa-search"></i> Search
+        <% end %>
+      <% end %>
       <div class='header--separator'></div>
-
-      <%= link_to 'Help', help_center_path, class: 'header--item' %>
-
       <% if user_signed_in? %>
-        <% if current_user.is_moderator %>
-          <%= link_to flag_queue_path, class: 'header--item' do %>
-            <% if @open_flags > 0 %>
-              <span class="header--alert"><%= @open_flags %></span>
+        <% unless @community.is_fake %>
+          <% if current_user.is_moderator %>
+            <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
+              <i class="fas fa-fw fa-wrench"></i> Mod
+              <% if @open_flags > 0 %>
+                <span class="header--alert"><%= @open_flags %></span>
+              <% end %>
             <% end %>
-            Flags
           <% end %>
         <% end %>
+      <% end %>
+      <% unless @community.is_fake %>
+        <%= link_to help_center_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-question-circle"></i> Help
+        <% end %>
+      <% end %>
+      <% if user_signed_in? %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
             <span class="header--alert inbox-count"><%= unread %></span>
           <% end %>
-          <i class='fas fa-inbox' title='Notifications'></i>
+          <i class='fas fa-fw fa-inbox' title='Notifications'></i>
         </a>
         <%= link_to qr_login_code_path, class: 'header--item' do %>
-          <i class="fas fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
+          <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image">&nbsp;&nbsp;
-          <span class="has-font-size-larger <%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
+          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
+          <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'header--item' %>
-      <% else %>
-        <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
-        <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
       <% end %>
-      <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
-          <span class="header--menu-bars">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-      </a>
+      <a href="#" class="header--item is-visible-on-mobile" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
+      <% unless user_signed_in? %>
+        <div class="header--item">
+          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
+          <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
+        </div>
+      <% end %>
+      <% unless @community.is_fake %>
+        <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
+            <span class="header--menu-bars">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+        </a>
+      <% end %>
     </nav>
   </div>
 </header>
 
+<div class="header-slide" id="communities-slide">
+  <% if user_signed_in? %>
+    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+  <% end %>
+  <h3 class="h-m-t-1">Communities</h3>
+  <div class="community-header-list">
+    <% Community.where(hidden: false).each do |c| %>
+      <div class="community-header-list-entry">
+        <% settings = SiteSetting.for_community_id(c.id) %>
+        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+        <%= link_to "//#{c.host}" do %>
+          <% unless logo_setting.nil? %>
+            <div class="img">
+              <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+            </div>
+          <% end %>
+          <div class="label">
+            <%= c.name %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <hr class="has-margin-top-2 has-margin-bottom-2" />
+  <div>
+    <%= link_to dashboard_path, class: 'button is-muted has-float-right' do %>
+      Dashboard
+    <% end %>
+  </div>
+</div>
+
+<div class="header-slide is-large" id="search-slide">
+  <%= form_tag search_path, method: :get do %>
+    <div class="grid is-nowrap">
+        <%= text_field_tag :search, params[:search], class: 'form-element' %>
+        <div class="h-m-1">
+          <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
+            <i class="fa fa-search"></i>
+          <% end %>
+        </div>
+    </div>
+  <% end %>
+</div>
+
 <div class="header-slide inbox h-p-0" id="js-inbox">
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
-  <div class="inbox--container h-p-2"></div>
   <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
     <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
   </div>
+  <div class="inbox--container h-p-2"></div>
 </div>
+<% unless @community.is_fake %>
 <div class="header-slide mobile-menu" id="js-mobile-menu">
   <div class="menu">
-    <%= link_to 'Categories', categories_path, class: 'menu--item' %>
     <%= link_to 'Users', users_path, class: 'menu--item' %>
     <%= link_to 'Search', search_path, class: 'menu--item' %>
 
@@ -86,60 +145,93 @@
 
     <% if user_signed_in? %>
       <% if current_user.is_admin || current_user.is_moderator %>
-        <%= link_to flag_queue_path, class: 'menu--item' do %>
+        <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
+          Mod
           <% if @open_flags > 0 %>
             <span class="badge is-status"><%= @open_flags %></span>
           <% end %>
-          Flags
         <% end %>
       <% end %>
       <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+    <% else %>
+      <%= link_to 'Sign In', new_user_session_path, class: 'menu--item' %>
+      <%= link_to 'Sign Up', new_user_registration_path, class: 'menu--item' %>
     <% end %>
   </div>
 </div>
-
-<% if expandable? %>
-  <% current_cat = current_category %>
-  <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
-<% else %>
-  <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
 <% end %>
-<header class="category-header is-<%= header_class %>">
-  <div class="category-header--tabs">
-    <div class="container category-header--tabs-container">
-      <% @header_categories.each do |cat| %>
-        <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
-        <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
-          <%= cat.name %>
-          <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-            <span class="badge is-status" title="new posts for you"></span>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
-  </div>
+
+
+<% unless @community.is_fake %>
   <% if expandable? %>
-    <div class="container category-header--container">
-      <div class="category-header--name"><%= current_cat.name %></div>
-      <div class="category-header--nav">
-        <%= link_to 'Posts', category_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && controller_name != 'tags' ? 'is-active' : ''}" %>
-        <%= link_to 'Tags', category_tags_path(current_cat),
-                    class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
-        <div class="category-header--nav-separator"></div>
-        <%= link_to category_post_types_path(current_cat.id),
-                    class: 'category-header--nav-item is-button' do %>
-          <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+    <% current_cat = current_category %>
+    <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+  <% else %>
+    <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+  <% end %>
+  <header class="category-header is-<%= header_class %>">
+    <div class="category-header--tabs">
+      <div class="container category-header--tabs-container">
+        <% @header_categories.each do |cat| %>
+          <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
+          <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
+            <%= cat.name %>
+            <% if user_signed_in? && cat.new_posts_for?(current_user) %>
+              <span class="badge is-status" title="unread activity in category"></span>
+            <% end %>
+          <% end %>
         <% end %>
       </div>
     </div>
-  <% end %>
-</header>
+    <% if expandable? %>
+      <div class="container category-header--container">
+        <% if (current_cat&.min_view_trust_level || -1) > 0 %>
+          <i class="fas fa-lock-open h-m-r-2" title="The access to this category is restricted, but you are exempt."></i>
+        <% end %>
+        <div class="category-header--name">
+          <%= current_cat.name %>
+        </div>
+        <div class="category-header--nav">
+          <%= link_to 'Posts', category_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
+          <%= link_to 'Tags', category_tags_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
+          <%= link_to 'Edits', suggested_edits_queue_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" %>
+          <div class="category-header--nav-separator"></div>
+          <%= link_to category_post_types_path(current_cat.id),
+                      class: 'category-header--nav-item is-button' do %>
+            <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </header>
+<% end %>
 
 <% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode">
+  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode has-color-red-900">
     <div class="container">
       <p>This site is in development mode!</p>
+    </div>
+  </div>
+<% end %>
+
+<% if read_only? %>
+  <div class="notice is-warning is-filled is-banner has-padding-2 has-color-yellow-900 has-font-size-caption">
+    <div class="container">
+      <p>This site is in read-only mode.</p>
+    </div>
+  </div>
+<% end %>
+
+<% if user_signed_in? && session[:impersonator_id].present? %>
+  <div class="notice is-info is-banner is-filled has-padding-2">
+    <div class="container">
+      <p class="has-font-size-caption">
+        You are impersonating <%= current_user.username %>.
+        <%= link_to 'Stop impersonating', stop_impersonating_path, class: 'is-underlined' %>
+      </p>
     </div>
   </div>
 <% end %>

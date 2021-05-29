@@ -6,8 +6,15 @@ class License < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id] }
 
-  def self.default_order(category = nil)
-    if category.present?
+  def self.default_order(category = nil, user_default = nil)
+    if category.present? && user_default.present?
+      License.all.order(Arel.sql(sanitize_sql_array(['name = ? DESC', user_default])))
+             .order(Arel.sql(sanitize_sql_array(['id = ? DESC', category.license_id])))
+             .order(default: :desc)
+    elsif user_default.present?
+      License.all.order(Arel.sql(sanitize_sql_array(['name = ? DESC', user_default])))
+             .order(default: :desc)
+    elsif category.present?
       License.all.order(Arel.sql(sanitize_sql_array(['id = ? DESC', category.license_id])))
              .order(default: :desc)
     else

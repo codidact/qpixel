@@ -47,21 +47,36 @@
   </div>
 
   <div class="button-list is-gutterless">
-    <%= md_button action: 'bullet', label: 'Bullet list', class: 'is-icon-only' do %>
-      <i class="fas fa-fw fa-list-ul"></i>
-    <% end %>
-    <%= md_button action: 'numbered', label: 'Numbered list', class: 'is-icon-only' do %>
-      <i class="fas fa-fw fa-list-ol"></i>
-    <% end %>
-    <%= md_button action: 'heading', label: 'Heading', class: 'is-icon-only' do %>
-      <i class="fas fa-fw fa-heading"></i>
-    <% end %>
-    <%= md_button action: 'hr', label: 'Horizontal line', class: 'is-icon-only' do %>
-      <i class="fas fa-fw fa-level-down-alt"></i>
-    <% end %>
+    <a href="javascript:void(0)" class="button is-outlined is-muted is-icon-only" data-drop="#markdown-tools"
+       data-drop-self-class-toggle="is-active" aria-label="Tools" title="Tools">
+      <i class="fas fa-tools"></i>
+    </a>
 
-    <%= md_button action: 'table', label: 'Table', class: 'is-icon-only' do %>
-      <i class="fas fa-fw fa-table"></i>
-    <% end %>
+    <div class="droppanel" id="markdown-tools">
+      <div class="droppanel--menu has-font-size-base">
+        <%= md_list_item action: 'bullet', label: 'Bullet list' do %>
+          <i class="fas fa-fw fa-list-ul"></i> Bullet list
+        <% end %>
+        <%= md_list_item action: 'numbered', label: 'Numbered list' do %>
+          <i class="fas fa-fw fa-list-ol"></i> Numbered list
+        <% end %>
+        <%= md_list_item action: 'heading', label: 'Heading' do %>
+          <i class="fas fa-fw fa-heading"></i> Heading
+        <% end %>
+        <%= md_list_item action: 'hr', label: 'Horizontal line' do %>
+          <i class="fas fa-fw fa-level-down-alt"></i> Horizontal line
+        <% end %>
+        <%= md_list_item action: 'table', label: 'Table' do %>
+          <i class="fas fa-fw fa-table"></i> Table
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-list is-gutterless">
+    <a href="javascript:void(0)" class="button is-muted is-outlined is-icon-only js-save-draft" aria-label="Save draft"
+       title="Save draft">
+      <i class="fas fa-save"></i>
+    </a>
   </div>
 </div>

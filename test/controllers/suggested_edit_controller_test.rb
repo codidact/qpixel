@@ -3,6 +3,20 @@ require 'test_helper'
 class SuggestedEditControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  test 'should get page with all pending edits' do
+    get :category_index, params: { category: categories(:main).id }
+    assert_response 200
+    assert_not_nil assigns(:category)
+    assert_not_nil assigns(:edits)
+  end
+
+  test 'should get page with all decided edits' do
+    get :category_index, params: { category: categories(:main).id, show_decided: 1 }
+    assert_response 200
+    assert_not_nil assigns(:category)
+    assert_not_nil assigns(:edits)
+  end
+
   test 'should get pending suggested edit page' do
     get :show, params: { id: suggested_edits(:pending_suggested_edit).id }
     assert_not_nil assigns(:edit)

@@ -132,4 +132,13 @@ module ApplicationHelper
     end
     s
   end
+
+  def promoted_posts
+    JSON.parse(RequestContext.redis.get('network/promoted_posts') || '{}')
+        .select { |_k, v| DateTime.now.to_i - v <= 3600 * 24 * 28 }
+  end
+
+  def read_only?
+    RequestContext.redis.get('network/read_only') == 'true'
+  end
 end

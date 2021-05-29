@@ -1,5 +1,6 @@
 class TwoFactorController < ApplicationController
   before_action :authenticate_user!
+  skip_before_action :enforce_2fa
 
   def tf_status; end
 

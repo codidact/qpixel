@@ -58,7 +58,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test 'should destroy user' do
-    sign_in users(:moderator)
+    sign_in users(:global_admin)
     delete :destroy, params: { id: users(:standard_user).id }
     assert_not_nil assigns(:user)
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -80,7 +80,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test 'soft deleting a user should not lose content' do
-    sign_in users(:admin)
+    sign_in users(:global_admin)
     assert_nothing_raised do
       relations = User.reflections
       pre_counts = relations.reject { |_, ref| ref.options[:dependent] == :destroy }
