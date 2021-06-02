@@ -531,9 +531,7 @@ $(() => {
   // Use *local* time for ISO string (Date.toISOString() uses UTC).
   // We only need the date here, so punting on time.
   function toIsoDate(date) {
-  var tzo = -date.getTimezoneOffset(),
-      dif = tzo >= 0 ? '+' : '-',
-      pad = function(num) {
+  var pad = function(num) {
           var norm = Math.floor(Math.abs(num));
           return (norm < 10 ? '0' : '') + norm;
       };
