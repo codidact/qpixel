@@ -528,8 +528,9 @@ $(() => {
  * Calendar script, added 2021-04-01 by @luap42
  */
 
- // Use *local* time for ISO string (Date.toISOString() uses UTC).
-  function toIsoString(date) {
+  // Use *local* time for ISO string (Date.toISOString() uses UTC).
+  // We only need the date here, so punting on time.
+  function toIsoDate(date) {
   var tzo = -date.getTimezoneOffset(),
       dif = tzo >= 0 ? '+' : '-',
       pad = function(num) {
@@ -539,12 +540,7 @@ $(() => {
 
   return date.getFullYear() +
       '-' + pad(date.getMonth() + 1) +
-      '-' + pad(date.getDate()) +
-      'T' + pad(date.getHours()) +
-      ':' + pad(date.getMinutes()) +
-      ':' + pad(date.getSeconds()) +
-      dif + pad(tzo / 60) +
-      ':' + pad(tzo % 60);
+      '-' + pad(date.getDate());
 }
 
 
@@ -559,7 +555,7 @@ window.addEventListener("load", async () => {
   let todayDate = new Date();
 
   // Start new day at 8pm local time previous day (if it's 8 or later today is tomorrow).
-  // Day is zero-indexed, hence > 19 (not > 20).
+  // Hour is zero-indexed, hence > 19 (not > 20).
   if (todayDate.getHours() > 19) {
     todayDate.setDate(todayDate.getDate() + 1);
   }
@@ -574,7 +570,7 @@ window.addEventListener("load", async () => {
   }, {});
 
   // Do not use Date.toISOString(), which uses UTC not local time.
-  let now = toIsoString(todayDate).substr(0, 10);
+  let now = toIsoDate(todayDate);
 
   const fields = parsedData[now];
   container.querySelector('._cal_val').innerHTML = "";
