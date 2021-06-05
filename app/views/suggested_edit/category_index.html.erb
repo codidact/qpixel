@@ -1,0 +1,38 @@
+<h1>Suggested Edits</h1>
+<p class="is-lead">This is a list of suggested edits on posts in this category.</p>
+
+<div class="button-list is-gutterless">
+  <%= link_to 'Pending', query_url(show_decided: 0),
+              class: "button is-muted is-outlined #{params[:show_decided] != '1' ? 'is-active' : ''}" %>
+  <%= link_to 'Decided', query_url(show_decided: 1),
+              class: "button is-muted is-outlined #{params[:show_decided] == '1' ? 'is-active' : ''}" %>
+</div>
+
+<% if params[:show_decided] != '1' && !current_user&.privilege?('edit_posts') %>
+  <div class="notice is-info has-color-teal-800">
+    <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits because you haven't
+    yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
+  </div>
+<% end %>
+
+<% if @edits.any? %>
+  <div class="widget">
+    <% @edits.each do |edit| %>
+      <div class="widget--body h-p-b-0" data-ckb-list-item data-ckb-item-type="link">
+        <div>
+          <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger', data: {'ckb-item-link' => ''} do %>
+            <%= edit.post.post_type.name %>: <strong><%= edit.post.post_type.is_top_level ? edit.post.title : edit.post.parent.title %></strong>
+          <% end %>
+        </div>
+        <div class="form-caption h-m-t-2">
+          <strong class="<%= edit.active ? '' : (edit.approved? ? 'h-c-green-700' : 'h-c-red-600' ) %>"
+          ><%= edit.active ? 'Pending' : (edit.approved? ? 'Approved' : 'Rejected' ) %></strong> suggested edit
+          by <%= link_to edit.user.rtl_safe_username, user_path(edit.user), dir: 'ltr' %>,
+          <span title="<%= edit.created_at.iso8601 %>"><%= time_ago_in_words(edit.created_at) %> ago</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+<p>There are no suggested edits in this category.</p>
+<% end %>

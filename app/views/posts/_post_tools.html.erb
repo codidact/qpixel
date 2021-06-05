@@ -1,48 +1,48 @@
-<div class="modal is-with-backdrop" id="mod-tools-<%= post.id %>">
+<div class="modal is-with-backdrop js-mod-tools" id="mod-tools-<%= post.id %>">
   <div class="modal--container">
     <div class="modal--header">
       <button class="button is-close-button modal--header-button" data-modal="#mod-tools-<%= post.id %>">&times;</button>
       Moderator Tools
     </div>
     <div class="modal--body">
-    <% unless post.locked? && !moderator? %>
-      <% if post.answer? %>
-        <details>
-          <summary>Convert to comment</summary>
-          <p>
-            Converts this answer to a comment (or series of comments, if it's too long for one) on the post you specify.
-          </p>
-          <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
-            <div class="form-group">
-              <%= label_tag :post_id, 'Post ID', class: 'form-element', for: "post_id_#{post.id}" %>
-              <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
-              <%= number_field_tag :post_id, nil, class: 'form-element', id: "post_id_#{post.id}" %>
-            </div>
+      <% unless post.locked? && !moderator? %>
+        <% if post.answer? %>
+          <details>
+            <summary>Convert to comment</summary>
+            <p>
+              Converts this answer to a comment (or series of comments, if it's too long for one) on the post you specify.
+            </p>
+            <%= form_tag convert_to_comment_path(post), remote: true, class: 'js-convert-to-comment' do %>
+              <div class="form-group">
+                <%= label_tag :post_id, 'Post ID', class: 'form-element', for: "post_id_#{post.id}" %>
+                <span class="form-caption">Enter the ID of the post on which this answer should become a comment.</span>
+                <%= number_field_tag :post_id, nil, class: 'form-element', id: "post_id_#{post.id}" %>
+              </div>
 
-            <%= submit_tag 'Convert', class: 'button is-filled'  %>
-          <% end %>
-        </details>
-      <% end %>
-      <% if current_user&.privilege?('flag_curate') && (post.question? || post.article?) %>
-        <details>
-          <summary>Change category</summary>
-          <p>
-            Moves this post into another category that you specify. You must have permission to create posts there, and
-            this post type must be allowed in the target category.
-          </p>
-          <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
-            <div class="form-group">
-              <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
-              <span class="form-caption">Choose a category to move this post to.</span>
-              <%= select_tag :target_id, options_for_select([]), include_blank: true,
-                             class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
-            </div>
+              <%= submit_tag 'Convert', class: 'button is-filled'  %>
+            <% end %>
+          </details>
+        <% end %>
+        <% if current_user&.privilege?('flag_curate') && (post.question? || post.article?) %>
+          <details>
+            <summary>Change category</summary>
+            <p>
+              Moves this post into another category that you specify. You must have permission to create posts there, and
+              this post type must be allowed in the target category.
+            </p>
+            <%= form_tag change_category_path(post), remote: true, class: 'js-change-category' do %>
+              <div class="form-group">
+                <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
+                <span class="form-caption">Choose a category to move this post to.</span>
+                <%= select_tag :target_id, options_for_select([]), include_blank: true,
+                               class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
+              </div>
 
-            <%= submit_tag 'Move', class: 'button is-filled' %>
-          <% end %>
-        </details>
+              <%= submit_tag 'Move', class: 'button is-filled' %>
+            <% end %>
+          </details>
+        <% end %>
       <% end %>
-    <% end %>
       <% if current_user&.privilege?('flag_curate') %>
         <% if !post.locked? %>
         <details>
@@ -109,6 +109,24 @@
           </p>
           <%= form_tag post_feature_url(post), remote: true, class: 'js-feature-post' do %>
             <%= submit_tag 'Feature post', class: 'button is-filled'  %>
+          <% end %>
+        </details>
+      <% end %>
+      <% if current_user&.privilege?('flag_curate') && top_level_post_types.include?(post.post_type_id) %>
+        <details>
+          <summary>Nominate for promotion</summary>
+          <p>Nominate this question as an example of a good post on your site, to be promoted across the network.</p>
+          <% promoted = promoted_posts %>
+          <% if promoted.include?(post.id.to_s) && DateTime.now.to_i - promoted[post.id.to_s] <= 3600 * 24 * 28 %>
+            <p class="has-font-size-caption has-color-tertiary-500">
+              This question was already nominated for promotion
+              <%= ((DateTime.now.to_i - promoted[post.id.to_s]) / 86400.0).round %> days ago.
+              You cannot nominate it again until it has expired (28 days from when it was nominated).
+            </p>
+          <% else %>
+            <a href="javascript:void(0)" class="js-nominate-promotion button is-filled" data-post-id="<%= post.id %>">
+              Nominate
+            </a>
           <% end %>
         </details>
       <% end %>

@@ -72,7 +72,7 @@ class ApplicationRecord < ActiveRecord::Base
         'Please re-enable the encryption protocol.',
       'The server\'s headache has not improved in the last 24 hours. It needs to be rebooted.',
       'The primary LIFO data recipient is currently on a holiday and will not be back before next Thursday.',
-      'The operator is currently trying to solve their Rubics cube. We will come back to you, when the ' \
+      'The operator is currently trying to solve their Rubik\'s cube. We will come back to you when the ' \
         'second layer is completed.',
       'The encryption protocol offered by the client predates the invention of irregular logarithmic ' \
         'functions.',

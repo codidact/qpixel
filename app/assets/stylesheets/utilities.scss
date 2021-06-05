@@ -41,6 +41,14 @@
   }
 }
 
+.ai-c {
+  align-items: center;
+}
+
+.ai-fe {
+  align-items: flex-end;
+}
+
 .jc-sb {
   justify-content: space-between;
 }
@@ -215,4 +223,29 @@ details {
 
 .item-list--item .item-list--number-value .meter {
   margin-top: 0.5em !important;
+}
+
+.button.is-warning.is-outlined {
+  border: 1px #b19002 !important;
+}
+
+span.spoiler {
+  display: block;
+  margin: 4px 0;
+  padding: 8px 12px;
+  background-color: lighten($primary, 30%);
+  border: 2px solid lighten($primary, 15%);
+  border-radius: 12px 12px 12px 0;
+
+  span {
+    transition: color 0.2s ease;
+    visibility: hidden;
+    color: lighten($primary, 30%);
+  }
+
+  &:hover span, &:active span {
+    transition: all 0.2s ease;
+    visibility: visible;
+    color: $key;
+  }
 }

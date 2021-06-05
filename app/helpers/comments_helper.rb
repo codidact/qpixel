@@ -1,4 +1,11 @@
 module CommentsHelper
+  def comment_link(comment)
+    if comment.post.parent_id.present?
+      post_url(comment.post.parent_id, anchor: "comment-#{comment.id}")
+    else
+      post_url(comment.post, anchor: "comment-#{comment.id}")
+    end
+  end
 end
 
 class CommentScrubber < Rails::Html::PermitScrubber

@@ -1,4 +1,5 @@
 # rubocop:disable Metrics/ClassLength
+# rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
@@ -88,6 +89,15 @@ class PostsController < ApplicationController
     end
 
     if @post.save
+      if @post_type.has_parent? && @post.user_id != @post.parent.user_id
+        @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
+                                              helpers.generic_show_link(@post))
+        @post.parent.update(last_activity: DateTime.now, last_activity_by: current_user)
+      end
+
+      ['p', '1', '2'].each do |key|
+        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
+      end
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request
@@ -99,7 +109,22 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post.parent_id)
     end
 
+    if @post.post_type_id == HelpDoc.post_type_id
+      redirect_to help_path(@post.doc_slug)
+    elsif @post.post_type_id == PolicyDoc.post_type_id
+      redirect_to policy_path(@post.doc_slug)
+    end
+
     if @post.deleted? && !current_user&.has_post_privilege?('flag_curate', @post)
+      return not_found
+    end
+
+    @top_level_post_types = top_level_post_types
+    @second_level_post_types = second_level_post_types
+
+    if @post.category_id.present? && @post.category.min_view_trust_level.present? && \
+       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level) && \
+       @post.category.min_view_trust_level.positive?
       return not_found
     end
 
@@ -117,15 +142,12 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags }
-    after_tags = if @post_type.has_category?
-                   Tag.where(tag_set_id: @post.category.tag_set_id, name: params[:post][:tags_cache])
-                 end
+    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
     if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
-      flash[:danger] = "No changes were saved because you didn't edit the post."
+      flash[:danger] = helpers.i18ns('posts.no_edit_changes')
       return redirect_to post_path(@post)
     end
 
@@ -137,7 +159,8 @@ class PostsController < ApplicationController
         PostHistory.post_edited(@post, current_user, before: before[:body],
                                 after: @post.body_markdown, comment: params[:edit_comment],
                                 before_title: before[:title], after_title: @post.title,
-                                before_tags: before[:tags], after_tags: after_tags)
+                                before_tags: before[:tags], after_tags: @post.tags)
+        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
         redirect_to post_path(@post)
       else
         render :edit, status: :bad_request
@@ -168,7 +191,7 @@ class PostsController < ApplicationController
           if @post_type.has_parent
             message += " on '#{@post.parent.title}'"
           end
-          @post.user.create_notification message, suggested_edit_path(edit)
+          @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
@@ -179,7 +202,7 @@ class PostsController < ApplicationController
   end
 
   def close
-    unless check_your_privilege('flag_close', nil, false)
+    unless check_your_privilege('flag_close', nil, false) || @post.user.id == current_user.id
       render json: { status: 'failed', message: helpers.ability_err_msg(:flag_close, 'close this post') },
              status: :forbidden
       return
@@ -203,6 +226,12 @@ class PostsController < ApplicationController
         return
       end
 
+      if other == @post
+        render json: { status: 'failed', message: 'You can not close a post as a duplicate of itself' },
+               status: :bad_request
+        return
+      end
+
       duplicate_of = Question.find(params[:other_post])
     else
       duplicate_of = nil
@@ -213,7 +242,7 @@ class PostsController < ApplicationController
       PostHistory.question_closed(@post, current_user)
       render json: { status: 'success' }
     else
-      render json: { status: 'failed', message: "Can't close this question right now. Try again later.",
+      render json: { status: 'failed', message: helpers.i18ns('posts.cant_close_post'),
                      errors: @post.errors.full_messages }
     end
   end
@@ -226,7 +255,7 @@ class PostsController < ApplicationController
     end
 
     unless @post.closed
-      flash[:danger] = 'Cannot reopen an open post.'
+      flash[:danger] = helpers.i18ns('posts.already_opened')
       redirect_to post_path(@post)
       return
     end
@@ -236,7 +265,7 @@ class PostsController < ApplicationController
                     close_reason: nil, duplicate_post: nil)
       PostHistory.question_reopened(@post, current_user)
     else
-      flash[:danger] = "Can't reopen this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_reopen_post')
     end
     redirect_to post_path(@post)
   end
@@ -248,14 +277,14 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.children.any? { |a| a.score >= 0.5 }
-      flash[:danger] = 'This post cannot be deleted because it has responses.'
+    if @post.children.any? { |a| a.score >= 0.5 } && !current_user&.is_moderator
+      flash[:danger] = helpers.i18ns('posts.cant_delete_responded')
       redirect_to post_path(@post)
       return
     end
 
     if @post.deleted
-      flash[:danger] = "Can't delete a deleted post."
+      flash[:danger] = helpers.i18ns('posts.already_deleted')
       redirect_to post_path(@post)
       return
     end
@@ -273,7 +302,7 @@ class PostsController < ApplicationController
         PostHistory.create(histories)
       end
     else
-      flash[:danger] = "Can't delete this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_delete_post')
     end
 
     redirect_to post_path(@post)
@@ -287,13 +316,13 @@ class PostsController < ApplicationController
     end
 
     unless @post.deleted
-      flash[:danger] = "Can't restore an undeleted post."
+      flash[:danger] = helpers.i18ns('posts.cant_restore_undeleted')
       redirect_to post_path(@post)
       return
     end
 
     if @post.deleted_by.is_moderator && !current_user.is_moderator
-      flash[:danger] = 'You cannot restore this post deleted by a moderator.'
+      flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
       redirect_to post_path(@post)
       return
     end
@@ -311,7 +340,7 @@ class PostsController < ApplicationController
       end
       PostHistory.create(histories)
     else
-      flash[:danger] = "Can't restore this post right now. Try again later."
+      flash[:danger] = helpers.i18ns('posts.cant_restore_post')
     end
 
     redirect_to post_path(@post)
@@ -354,12 +383,12 @@ class PostsController < ApplicationController
   def change_category
     @target = Category.find params[:target_id]
     unless helpers.can_change_category(current_user, @target)
-      render json: { success: false, errors: ["You don't have permission to make that change."] }, status: :forbidden
+      render json: { success: false, errors: [helpers.i18ns('posts.cant_change_category')] }, status: :forbidden
       return
     end
 
     unless @target.post_type_ids.include? @post.post_type_id
-      render json: { success: false, errors: ["This post type is not allowed in the #{@target.name} category."] },
+      render json: { success: false, errors: [helpers.i18ns('posts.type_not_included', type: @target.name)] },
              status: :conflict
       return
     end
@@ -371,10 +400,10 @@ class PostsController < ApplicationController
       existing.nil? ? Tag.create(tag_set: @target.tag_set, name: tag.name) : existing
     end
     @post.tags = new_tags
-    @post.save
+    success = @post.save
     AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
-                          comment: "from <<#{before.id}>>\nto <<#{@target.id}>>")
-    render json: { success: true }
+                          comment: "from <<#{before.id}: #{before.name}>>\nto <<#{@target.id}: #{@target.name}>>")
+    render json: { success: success, errors: success ? [] : @post.errors.full_messages }, status: success ? 200 : 409
   end
 
   def toggle_comments
@@ -433,7 +462,7 @@ class PostsController < ApplicationController
     attr = @link.attributes_print
     AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
                              comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
-    flash[:success] = 'Post has been featured. Due to caching, it may take some time until the changes apply.'
+    flash[:success] = helpers.i18ns('posts.post_has_been_featured')
     render json: { status: 'success', success: true }
   end
 
@@ -512,4 +541,5 @@ class PostsController < ApplicationController
     check_if_locked(@post)
   end
 end
+# rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/ClassLength

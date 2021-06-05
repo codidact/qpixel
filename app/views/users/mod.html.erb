@@ -12,6 +12,7 @@
       <li><a href="/users/<%= @user.id %>/mod/privileges">privileges</a></li>
       <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a> <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %></li>
       <li><a href="/warning/new/<%= @user.id %>">warn or suspend user</a></li>
+      <li><%= link_to 'impersonate', start_impersonating_path(@user), class: 'is-yellow' %></li>
     </ul>
   </div>
 </div>
@@ -22,16 +23,13 @@
     <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
       after initiating an action.</p>
     <div class="delete-actions">
-      <%= link_to "Destroy User", url_for(controller: :users, action: :destroy, id: @user.id),
-                    method: :delete, remote: true, class: 'destroy-user button is-danger is-filled' %>
-        <% if admin? %>
-          <%= link_to "Soft-Delete", url_for(controller: :users, action: :soft_delete, id: @user.id,
-                                            transfer: SiteSetting['SoftDeleteTransferUser']),
-                      method: :delete, remote: true, class: 'soft-delete button is-danger is-filled' %>
-        <% end %>
-        <% if current_user.is_global_admin %>
-          <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
-        <% end %>
+      <%= link_to 'Destroy User', destroy_user_path(@user.id), remote: true,
+                  method: :delete, class: 'js-destroy-user button is-danger is-filled' %>
+      <%= link_to 'Soft Delete', soft_delete_user_path(@user.id, transfer: SiteSetting['SoftDeleteTransferUser']),
+                  remote: true, method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
+      <% if current_user.is_global_admin %>
+        <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
+      <% end %>
     </div>
   </div>
 </div>

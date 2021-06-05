@@ -145,7 +145,7 @@ hr {
 }
 
 div.post-preview .footnote-ref a::before {
-    content: '';
+  content: '';
 }
 
 .footnote-ref a::after {
@@ -153,7 +153,7 @@ div.post-preview .footnote-ref a::before {
 }
 
 div.post-preview .footnote-ref a::after {
-    content: '';
+  content: '';
 }
 
 .footnotes-sep + .footnotes {
@@ -257,4 +257,13 @@ table.is-striped tr:nth-of-type(2n+1) td {
 
 table.is-with-hover tr:hover td {
   background-color: #eee
+}
+
+/* The default header size (2.5rem) is too huge for small headers. */
+.header.is-small .header--brand .header--site-name {
+  font-size: 2rem;
+}
+
+.notice {
+  z-index: 9999;
 }

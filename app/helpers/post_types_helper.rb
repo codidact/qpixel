@@ -1,11 +1,7 @@
 module PostTypesHelper
   def post_type_badge(type)
-    icon_class = {
-      'Question' => 'fas fa-question',
-      'Article' => 'fas fa-newspaper'
-    }[type]
     tag.span class: 'badge is-tag is-filled is-muted' do
-      tag.i(class: icon_class) + ' ' + tag.span(type) # rubocop:disable Style/StringConcatenation
+      tag.i(class: type.icon_name) + ' ' + tag.span(type.name) # rubocop:disable Style/StringConcatenation
     end
   end
 
@@ -15,7 +11,7 @@ module PostTypesHelper
 
   def post_type_ids(**opts)
     key = post_type_criteria.map { |a| opts[a] ? '1' : '0' }.join
-    Rails.cache.fetch "post_type_ids/#{key}" do
+    Rails.cache.fetch "network/post_types/post_type_ids/#{key}", include_community: false do
       PostType.where(**opts).select(:id).map(&:id)
     end
   end

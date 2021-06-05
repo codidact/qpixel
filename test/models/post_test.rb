@@ -51,7 +51,7 @@ class PostTest < ActiveSupport::TestCase
     category = categories(:main)
     post_type = post_types(:question)
     post = Post.create(body_markdown: 'abcde fghij klmno pqrst uvwxyz', body: '<p>abcde fghij klmno pqrst uvwxyz</p>',
-                       title: 'abcd efgh ijkl mnop', tags_cache: ['discussion'],
+                       title: 'abcd efgh ijkl mnop', tags_cache: ['discussion'], license: licenses(:cc_by_sa),
                        score: 0, user: users(:standard_user), post_type: post_type, category: category)
     assert_equal false, post.errors.any?, 'Category-allowed post type had errors on save'
     assert_not_nil post.id

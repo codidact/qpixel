@@ -73,7 +73,12 @@ $(() => {
     tags: true
   });
 
-  const saveDraft = async (postText, $field) => {
+  const saveDraft = async (postText, $field, manual = false) => {
+    const autosavePref = await QPixel.preference('autosave', true);
+    if (autosavePref !== 'on' && !manual) {
+      return;
+    }
+
     const resp = await fetch('/posts/save-draft', {
       method: 'POST',
       credentials: 'include',
@@ -87,11 +92,18 @@ $(() => {
       })
     });
     if (resp.status === 200) {
-      const $el = $(`&middot; <span class="has-color-green-600">Draft saved</span>`);
-      $field.parents('.js-post-field-footer').append($el);
+      const $el = $(`<span>&middot; <span class="has-color-green-600">draft saved</span></span>`);
+      $field.parents('.widget').find('.js-post-field-footer').append($el);
       $el.fadeOut(1500, function () { $(this).remove() });
     }
   };
+
+  $('.js-save-draft').on('click', async ev => {
+    const $tgt = $(ev.target);
+    const $field = $tgt.parents('.widget').find('.js-post-field');
+    const postText = $field.val();
+    await saveDraft(postText, $field, true);
+  });
 
   let mathjaxTimeout = null;
   let draftTimeout = null;
@@ -231,5 +243,49 @@ $(() => {
     setTimeout(() => {
       $tgt.find('.js-text').text('Copy Link');
     }, 1000);
+  });
+
+  $('.js-nominate-promotion').on('click', async ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post-id');
+    const resp = await fetch(`/posts/${postId}/promote`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': QPixel.csrfToken()
+      }
+    });
+    const data = await resp.json();
+    if (data.success) {
+      QPixel.createNotification('success', 'Added post to promotion list.');
+    }
+    else {
+      QPixel.createNotification('danger', `Couldn't add post to promotion list. (${resp.status})`);
+    }
+    $('.js-mod-tools').removeClass('is-active');
+  });
+
+  $('.js-cancel-edit').on('click', async ev => {
+    ev.preventDefault();
+
+    let $btn = $(ev.target);
+
+    if (!confirm($btn.attr('data-question-body'))) {
+      return;
+    }
+
+    await fetch('/posts/delete-draft', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ path: location.pathname })
+    });
+
+    location.href = $btn.attr('href');
   });
 });

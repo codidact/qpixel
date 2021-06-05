@@ -26,4 +26,5 @@ es_abbrev:
       x_months:
         one: '1mes'
         other: '%{count}meses'
+      about_x_years: '~%{count}a'
       x_years: '%{count}a'

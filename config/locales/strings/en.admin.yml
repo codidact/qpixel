@@ -25,4 +25,5 @@ en:
       close_reasons: 'Close Reasons'
       licenses: 'Licenses'
       audit_log: 'Audit Log'
+      post_types: 'Post Types'
     user_fed_stat: 'User fed to STAT.'

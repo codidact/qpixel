@@ -1,0 +1,18 @@
+<h1>Post Types</h1>
+<p>
+  This is a list of all defined post types on this network. All post types are network-wide and available to add to
+  categories on every community (though they will not be available to users until added to a category's set of permitted
+  post types).
+</p>
+<div class="notice is-warning has-color-yellow-900">
+  You can add post types here, but to prevent data loss, <strong>you cannot delete post types</strong>. This must be
+  done directly in the database or console.
+</div>
+
+<%= link_to new_post_type_path, class: 'button is-primary is-filled' do %>
+  <i class="fas fa-plus"></i> Create post type
+<% end %>
+
+<% @types.each do |type| %>
+  <%= render 'type', type: type %>
+<% end %>

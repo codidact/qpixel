@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me]
+                                            :qr_login_code, :me, :preferences, :set_preference]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -23,6 +23,13 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
+    @posts = if current_user&.privilege?('flag_curate')
+               @user.posts
+             else
+               @user.posts.undeleted
+             end.list_includes.joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+             .order(score: :desc).first(15)
     render layout: 'without_sidebar'
   end
 
@@ -40,10 +47,45 @@ class UsersController < ApplicationController
     end
   end
 
+  def preferences
+    current_user.validate_prefs!
+    respond_to do |format|
+      format.html do
+        prefs = current_user.preferences
+        @preferences = prefs[:global]
+        @community_prefs = prefs[:community]
+      end
+      format.json do
+        render json: current_user.preferences
+      end
+    end
+  end
+
+  def set_preference
+    if !params[:name].nil? && !params[:value].nil?
+      global_key = "prefs.#{current_user.id}"
+      community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
+      key = params[:community].present? && params[:community] ? community_key : global_key
+      current_user.validate_prefs!
+      render json: { status: 'success', success: true,
+                     count: RequestContext.redis.hset(key, params[:name], params[:value]),
+                     preferences: current_user.preferences }
+    else
+      render json: { status: 'failed', success: false, errors: ['Both name and value parameters are required'] },
+             status: 400
+    end
+  end
+
   def posts
-    @posts = Post.undeleted.where(user: @user).user_sort({ term: params[:sort], default: :score },
-                                                         age: :created_at, score: :score)
-                 .paginate(page: params[:page], per_page: 25)
+    @posts = if current_user&.privilege?('flag_curate')
+               Post.all
+             else
+               Post.undeleted
+             end.where(user: @user).list_includes.joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+             .user_sort({ term: params[:sort], default: :score },
+                        age: :created_at, score: :score)
+             .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
         render :posts
@@ -143,7 +185,7 @@ class UsersController < ApplicationController
     before = @user.attributes_print
     @user.block('user destroyed')
 
-    if @user.destroy!
+    if @user.destroy
       Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                                         deleted: true, deleted_at: DateTime.now,
                                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
@@ -151,7 +193,7 @@ class UsersController < ApplicationController
       render json: { status: 'success' }
     else
       render json: { status: 'failed',
-                     message: 'Call to <code>@user.destroy!</code> failed; ask a DBA or dev to destroy.' },
+                     message: 'Failed to destroy user; ask a dev.' },
              status: :internal_server_error
     end
   end
@@ -182,12 +224,12 @@ class UsersController < ApplicationController
 
     before = @user.attributes_print
     unless @user.destroy
-      render(json: { status: 'failed', message: "Failed to destroy UID #{@user.id}" }, status: :internal_server_error)
+      render(json: { status: 'failed', message: 'Failed to destroy; ask a dev.' }, status: :internal_server_error)
       return
     end
     AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
 
-    render json: { status: 'success', message: 'Ask a database administrator to verify the deletion is complete.' }
+    render json: { status: 'success' }
   end
 
   def edit_profile; end
@@ -203,7 +245,6 @@ class UsersController < ApplicationController
     end
 
     @user = current_user
-    before = @user.attributes_print
 
     if params[:user][:avatar].present?
       if helpers.valid_image?(params[:user][:avatar])
@@ -219,8 +260,6 @@ class UsersController < ApplicationController
     profile_rendered = helpers.post_markdown(:user, :profile_markdown)
     if @user.update(profile_params.merge(profile: profile_rendered))
       flash[:success] = 'Your profile details were updated.'
-      AuditLog.user_history(event_type: 'profile_update', related: @user, user: current_user,
-                            comment: "from <<User #{before}>>\nto <<User #{@user.attributes_print}>>")
       redirect_to user_path(current_user)
     else
       flash[:danger] = "Couldn't update your profile."

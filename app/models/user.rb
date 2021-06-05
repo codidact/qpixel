@@ -31,7 +31,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, :trust_level, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   after_create :send_welcome_tour_message
 
@@ -43,6 +43,14 @@ class User < ApplicationRecord
     where('username LIKE ?', "#{sanitize_sql_like(term)}%")
   end
 
+  def inspect
+    "#<User #{attributes.compact.map { |k, v| "#{k}: #{v}" }.join(', ')}>"
+  end
+
+  def trust_level
+    community_user.trust_level
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
@@ -51,6 +59,28 @@ class User < ApplicationRecord
       true
     else
       privilege?(name)
+    end
+  end
+
+  # post_types must be the list of applicable post types
+  # passed only for '1' and '2'
+  def metric(key, post_types = [])
+    Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
+      case key
+      when 'p'
+        Post.qa_only.undeleted.where(user: self).count
+      when '1', '2'
+        Post.undeleted.where(post_type: post_types, user: self).count
+      when 's'
+        Vote.where(recv_user_id: id, vote_type: 1).count - \
+          Vote.where(recv_user_id: id, vote_type: -1).count
+      when 'v'
+        Vote.where(recv_user_id: id).count
+      when 'V'
+        votes.count
+      when 'E'
+        PostHistory.where(user: self, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
+      end
     end
   end
 
@@ -99,7 +129,7 @@ class User < ApplicationRecord
   end
 
   def no_blank_unicode_in_username
-    not_valid = !username.scan(/[\u200B-\u200C\u200D\uFEFF]/).empty?
+    not_valid = !username.scan(/[\u200B-\u200D\uFEFF]/).empty?
     if not_valid
       errors.add(:username, 'may not contain blank unicode characters')
     end
@@ -190,7 +220,34 @@ class User < ApplicationRecord
                        automatic: true, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
-                         automatic: true, reason: "#{reason}: #" + @user.id.to_s)
+                         automatic: true, reason: "#{reason}: #" + id.to_s)
+    end
+  end
+
+  def preferences
+    global_key = "prefs.#{id}"
+    community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
+    {
+      global: AppConfig.preferences.reject { |_, v| v['community'] }.transform_values { |v| v['default'] }
+                       .merge(RequestContext.redis.hgetall(global_key)),
+      community: AppConfig.preferences.select { |_, v| v['community'] }.transform_values { |v| v['default'] }
+                          .merge(RequestContext.redis.hgetall(community_key))
+    }
+  end
+
+  def validate_prefs!
+    global_key = "prefs.#{id}"
+    community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
+    {
+      global_key => AppConfig.preferences.reject { |_, v| v['community'] },
+      community_key => AppConfig.preferences.select { |_, v| v['community'] }
+    }.each do |key, prefs|
+      saved = RequestContext.redis.hgetall(key)
+      valid_prefs = prefs.keys
+      deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
+      unless deprecated.empty?
+        RequestContext.redis.hdel key, *deprecated
+      end
     end
   end
   # rubocop:enable Naming/PredicateName

@@ -16,6 +16,14 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:posts)
   end
 
+  test 'fake community should not get show' do
+    RequestContext.community = communities(:fake)
+    request.env['HTTP_HOST'] = 'fake.qpixel.com'
+
+    get :show, params: { id: categories(:main).id }
+    assert_response(404)
+  end
+
   test 'should require authentication to get new' do
     get :new
     assert_response 302

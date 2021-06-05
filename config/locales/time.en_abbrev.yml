@@ -10,4 +10,5 @@ en_abbrev:
       x_weeks: '%{count}w'
       about_x_months: '~%{count}mo'
       x_months: '%{count}mo'
+      about_x_years: '~%{count}y'
       x_years: '%{count}y'

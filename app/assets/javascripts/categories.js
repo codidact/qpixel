@@ -57,5 +57,8 @@ $(() => {
 
   $('.js-change-category').on('ajax:success', ev => {
     location.reload();
+  }).on('ajax:error', (ev, xhr) => {
+    const data = xhr.responseJSON;
+    QPixel.createNotification('danger', `Failed (${xhr.status}): ${data.errors.join(', ')}`);
   });
 });

@@ -17,3 +17,12 @@
     justify-content: space-between;
   }
 }
+
+.category-header--nav {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.category--description {
+  color: $muted-text;
+}

@@ -1,6 +1,6 @@
 # Docker Installation
 
-A [docker-compose.yml](docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
+A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
 
 ## 1. Build Containers
 
@@ -36,7 +36,7 @@ docker/local-setup.sh
 Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
 
 ## 3. Database File
-Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/dummy.env) file. The `config/database.yml` should already be gitignored.
+Ensure `config/database.yml` has the username and password as defined in [docker/env](dummy.env) file. The `config/database.yml` should already be gitignored.
 
 The `COMMUNITY_NAME` value defined in the `.env` file defines the initial community name on your local DB.
 
@@ -71,7 +71,7 @@ uwsgi_1  | Use Ctrl-C to stop
 You should then be able to open your browser to [http://localhost:3000](http://localhost:3000)
 and see the interface. 
 
-![img/interface.png](img/interface.png)
+![img/interface.png](../img/interface.png)
 
 Before you login, since we don't have email configured, you'll need to set a manual
 `confirmed_at` variable for your newly created user. You can do this easily with a single
@@ -89,24 +89,24 @@ start of the container. And you can of course do this same command for any futur
 
 Once you are logged in, you should see your icon in the top right:
 
-![img/logged-in.png](img/logged-in.png)
+![img/logged-in.png](../img/logged-in.png)
 
 ## 6. Configure Categories
 
-Before you try to create a post, we need to configure categories! Click on "categories"
-at the top
+Before you try to create a post we need to configure categories! 
+Go to `http://localhost:3000/categories/`
 
-![img/categories.png](img/categories.png)
+![img/categories.png](../img/categories.png)
 
- and then "edit" for each one. For each one, scroll down to see the "Tag Set" field,
-which will be empty.
+ Click "edit" for each category and scroll down to see the "Tag Set" field. This
+ will be empty on first setup.
 
-![img/tagset.png](img/tagset.png)
+![img/tagset.png](../img/tagset.png)
 
-You will need to select a tag set for each! For example, the Meta category can be
-associated with the "Meta" tag set, and the Q&A category can be assocated with "Main"
+You will need to select a tag set for each category! For example, the Meta category can be
+associated with the "Meta" tag set, and the Q&A category can be associated with "Main"
 
-![img/tagset-selected.png](img/tagset-selected.png)
+![img/tagset-selected.png](../img/tagset-selected.png)
 
 Make sure to click save for each one.
 
@@ -115,11 +115,11 @@ Make sure to click save for each one.
 You should then be able to create a post! There are character requirements for the
 body and title, and you are required at least one tag.
 
-![img/create-post.png](img/create-post.png)
+![img/create-post.png](../img/create-post.png)
 
 And then click to "Save Post in Q&A"
 
-![img/post.png](img/post.png)
+![img/post.png](../img/post.png)
 
 That's it!
 

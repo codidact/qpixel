@@ -8,6 +8,13 @@
     margin-top: 0.5em;
   }
 
+  & > summary {
+    border-bottom: 0;
+    display: unset;
+    font-weight: unset;
+    color: unset;
+  }
+
   &:last-of-type {
     border-bottom: 1px solid $muted-graphic;
   }

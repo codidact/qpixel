@@ -7,19 +7,45 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
-  get    'admin',                          to: 'admin#index', as: :admin
-  get    'admin/errors',                   to: 'admin#error_reports', as: :admin_error_reports
-  get    'admin/settings',                 to: 'site_settings#index', as: :site_settings
-  get    'admin/settings/global',          to: 'site_settings#global', as: :global_settings
-  get    'admin/settings/:name',           to: 'site_settings#show', as: :site_setting
-  post   'admin/settings/:name',           to: 'site_settings#update', as: :update_site_setting
-  delete 'admin/users/delete/:id',         to: 'users#soft_delete', as: :soft_delete_user
-  get    'admin/privileges',               to: 'admin#privileges', as: :admin_privileges
-  get    'admin/privileges/:name',         to: 'admin#show_privilege', as: :admin_privilege
-  post   'admin/privileges/:name',         to: 'admin#update_privilege', as: :admin_update_privilege
-  get    'admin/mod-email',                to: 'admin#admin_email', as: :moderator_email
-  post   'admin/mod-email',                to: 'admin#send_admin_email', as: :send_moderator_email
-  get    'admin/audits',                   to: 'admin#audit_log', as: :audit_log
+  scope 'admin' do
+    root                                   to: 'admin#index', as: :admin
+    get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
+
+    get    'settings',                     to: 'site_settings#index', as: :site_settings
+    get    'settings/global',              to: 'site_settings#global', as: :global_settings
+    get    'settings/:name',               to: 'site_settings#show', as: :site_setting
+    post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
+
+    delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+
+    get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
+    get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege
+    post   'privileges/:name',             to: 'admin#update_privilege', as: :admin_update_privilege
+
+    get    'mod-email',                    to: 'admin#admin_email', as: :moderator_email
+    post   'mod-email',                    to: 'admin#send_admin_email', as: :send_moderator_email
+
+    get    'audits',                       to: 'admin#audit_log', as: :audit_log
+
+    get    'new-site',                     to: 'admin#new_site', as: :new_site
+    post   'new-site',                     to: 'admin#create_site', as: :create_site
+
+    get    'setup',                        to: 'admin#setup', as: :setup
+    post   'setup',                        to: 'admin#setup_save', as: :setup_save
+
+    get    'impersonate/stop',             to: 'admin#change_back', as: :stop_impersonating
+    post   'impersonate/stop',             to: 'admin#verify_elevation', as: :verify_elevation
+    post   'impersonate/:id',              to: 'admin#change_users', as: :impersonate
+    get    'impersonate/:id',              to: 'admin#impersonate', as: :start_impersonating
+
+    scope 'post-types' do
+      root                                 to: 'post_types#index', as: :post_types
+      get    'new',                        to: 'post_types#new', as: :new_post_type
+      post   'new',                        to: 'post_types#create', as: :create_post_type
+      get    ':id/edit',                   to: 'post_types#edit', as: :edit_post_type
+      patch  ':id/edit',                   to: 'post_types#update', as: :update_post_type
+    end
+  end
 
   get    'close_reasons',                  to: 'close_reasons#index', as: :close_reasons
   get    'close_reasons/edit/:id',         to: 'close_reasons#edit', as: :close_reason
@@ -73,6 +99,7 @@ Rails.application.routes.draw do
     post   'new/:post_type/respond/:parent', to: 'posts#create', as: :create_response
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
     get    'search',                       to: 'search#search', as: :search
+    get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
 
     get    ':id',                          to: 'posts#show', as: :post
 
@@ -94,6 +121,8 @@ Rails.application.routes.draw do
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
     post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
+    post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
+    delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
 
     get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
     post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
@@ -123,6 +152,8 @@ Rails.application.routes.draw do
   get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
   get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
   get    'users/me',                       to: 'users#me', as: :users_me
+  get    'users/me/preferences',           to: 'users#preferences', as: :user_preferences
+  post   'users/me/preferences',           to: 'users#set_preference', as: :set_user_preference
   get    'users/me/notifications',         to: 'notifications#index', as: :notifications
   get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
   patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
@@ -188,6 +219,7 @@ Rails.application.routes.draw do
     post   ':id/tags/:tag_id/rename',      to: 'tags#rename', as: :rename_tag
     get    ':id/tags/:tag_id/merge',       to: 'tags#select_merge', as: :select_tag_merge
     post   ':id/tags/:tag_id/merge',       to: 'tags#merge', as: :merge_tag
+    get    ':category/suggested-edits',    to: 'suggested_edit#category_index', as: :suggested_edits_queue
   end
 
   get   'warning',                         to: 'mod_warning#current', as: :current_mod_warning
@@ -205,14 +237,13 @@ Rails.application.routes.draw do
     get 'reports/subscriptions',           to: 'reports#subs_global', as: :global_subs_report
     get 'reports/posts',                   to: 'reports#posts_global', as: :global_posts_report
   end
-  
-  get    'feature/keyboard-tools',           to: 'application#keyboard_tools', as: :keyboard_tools
 
   scope 'ca' do
     root                                   to: 'advertisement#index', as: :ads
     get 'codidact.png',                    to: 'advertisement#codidact', as: :codidact_ads
     get 'community.png',                   to: 'advertisement#community', as: :community_ads
     get 'posts/random.png',                to: 'advertisement#random_question', as: :random_question_ads
+    get 'posts/promoted.png',              to: 'advertisement#promoted_post', as: :promoted_post_ads
     get 'posts/:id.png',                   to: 'advertisement#specific_question', as: :specific_question_ads
     get 'category/:id.png',                to: 'advertisement#specific_category', as: :specific_category_ads
   end
@@ -249,5 +280,10 @@ Rails.application.routes.draw do
   get   '409',                             to: 'errors#conflict'
   get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
+  get   '423',                             to: 'errors#read_only'
   get   '500',                             to: 'errors#internal_server_error'
+
+  scope 'network' do
+    root                                   to: 'fake_community#communities', as: :fc_communities
+  end
 end

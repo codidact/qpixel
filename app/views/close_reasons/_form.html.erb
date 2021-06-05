@@ -1,0 +1,46 @@
+<%= form_for @close_reason, url: submit_url do |f| %>
+  <div class="form-group">
+    <%= f.label :name, "Name", class: "form-element" %>
+    <%= f.text_field :name, class: "form-element" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Description", class: "form-element" %>
+    <div class="form-caption">
+      You can use <code>$SiteName</code> for the current community.
+    </div>
+    <%= f.text_area :description, class: "form-element is-small" %>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :requires_other_post, 'Require other post?', class: 'form-element' %>
+        <span class="form-caption">
+          Check this box if the close reason requires users to select another post, like for "duplicate"
+          reasons.
+        </span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :requires_other_post, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :active, 'Active?', class: 'form-element' %>
+        <span class="form-caption">
+          Check this box to activate this reason and allow closers to use it. This doesn't affect prior uses.
+        </span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :active, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= link_to 'Cancel', close_reasons_path(global: @close_reason.community.nil? ? 1 : 0), class: 'button' %>
+<% end %>

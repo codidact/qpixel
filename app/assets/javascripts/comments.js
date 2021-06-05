@@ -11,8 +11,11 @@ $(() => {
     $form.find('.js-comment-content').focus();
   });
 
-  $('.js-more-comments').on('click', async evt => {
-    evt.preventDefault();
+  const showAllComments = async evt => {
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    }
+
     const $tgt = $(evt.target);
     const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const postId = $anchor.attr('data-post-id');
@@ -22,20 +25,23 @@ $(() => {
     });
     const data = await resp.text();
     $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
-    $anchor.remove();
-  });
+    $tgt.parents('.post--comments').find('.js-more-comments').remove();
+  };
+
+  $('.js-more-comments').on('click', showAllComments);
 
   $('.comment-form').on('ajax:success', async (evt, data) => {
     // Comment posting is succeeded! ^_^
 
     const $tgt = $(evt.target);
     if (data.status === 'success') {
-      $tgt.parents('.post--comments').find('.post--comments-container').append(data.comment);
+      await showAllComments({ target: $tgt.parent().find('.js-add-comment') });
       $tgt.find('.js-comment-content').val('');
 
       // On success, the `Post` button, which has been re-labeled as `Posted`, is not yet re-labeled `Post` when
       // reaching this line. The line below re-labels it back to `Post`.
-      $tgt.find('input[type="submit"]').attr('value', 'Post')
+      $tgt.find('input[type="submit"]').attr('value', 'Post');
+      $('.js-comment-form').hide();
     }
     else {
       QPixel.createNotification('danger', data.message);
@@ -63,6 +69,7 @@ $(() => {
     const $tgt = $(evt.target);
     const $comment = $tgt.parents('.comment');
     const commentId = $comment.attr('data-id');
+    const originalComment= $comment.find('p.comment--content').clone();
 
     const resp = await fetch(`/comments/${commentId}`, {
       credentials: 'include',
@@ -79,11 +86,16 @@ $(() => {
         </div>
         <div class="actions">
           <input type="submit" class="button is-outlined" value="Post" />
+          <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
         </div>
       </div>
     </form>`;
 
     $comment.html(formTemplate);
+
+    $(`.js-discard-edit[data-comment-id="${commentId}"]`).click(() => {
+      $comment.html(originalComment);
+    });
   });
 
   $(document).on('ajax:success', '.comment-edit-form', async (evt, data) => {

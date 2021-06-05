@@ -4,6 +4,7 @@ default: &default
   collation: utf8mb4_unicode_ci
   host: 127.0.0.1
   port: 3306
+  # Change these credentials to match your own environment
   username: root
   password: root
 

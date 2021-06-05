@@ -35,10 +35,4 @@ class SearchHelperTest < ActionView::TestCase
       assert_equal expect, date_value_sql(input)
     end
   end
-
-  test 'qualifiers_to_sql should return a correct SQL string' do
-    assert_equal 'score = 1.0 AND created_at <= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 2 WEEK)',
-                 qualifiers_to_sql(['score:1', 'created:>=2w'])
-    assert_equal '', qualifiers_to_sql([])
-  end
 end

@@ -1,0 +1,94 @@
+<h1>Create New Site</h1>
+
+<p class="is-lead">Welcome to your new <%= @community.name %> community!</p>
+
+<p>We are almost ready. We just need some more information to complete creation of the site.</p>
+
+<p>Don't worry. You will be able to change all these things in the site settings later.</p>
+
+<%= form_tag setup_save_url do %>
+
+  <div class="widget">
+    <div class="widget--body">
+
+      <h2>Site Details</h2>
+
+      <div class="form-group">
+        <%= label_tag :primary_color, 'Primary color', class: 'form-element' %>
+        <span class="form-caption">Select a primary color for this site. Will be used as default for all categories.</span>
+        <%= select_tag :primary_color, options_for_select(['turquoise', 'green', 'blue', 'darkblue', 'purple', 'gray', 'bluegray', 'yellow', 'orange', 'pink', 'red'],
+                                                          selected: SiteSetting['SiteCategoryHeaderDefaultColor']),
+                      class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :logo_url, 'Site logo URL', class: 'form-element' %>
+        <span class="form-caption">Choose a site logo for this site. Will be shown in the site header.</span>
+        <%= text_field_tag :logo_url, SiteSetting['SiteLogoPath'], class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :ad_slogan, 'Site Ad Slogan', class: 'form-element' %>
+        <span class="form-caption">A slogan that will be shown in automatic community ads. See <a href="/ca">/ca</a> for more info.</span>
+        <%= text_field_tag :ad_slogan, SiteSetting['SiteAdSlogan'], class: 'form-element' %>
+      </div>
+
+    </div>
+  </div>
+  <div class="widget">
+    <div class="widget--body">
+
+      <h2>Additional Features</h2>
+
+      <div class="form-group">
+        <%= label_tag :mathjax, 'Enable MathJax', class: 'form-element' %>
+        <span class="form-caption">MathJax is a library for rendering mathematic formulas. This will incur a small penalty in page loading time.</span>
+        <%= select_tag :mathjax, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['MathJaxEnabled']),
+                      class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :syntax_highlighting, 'Enable Syntax Highlighting', class: 'form-element' %>
+        <span class="form-caption">We support highlighting of code blocks using highlight.js. This will incur a small penalty in page loading time.</span>
+        <%= select_tag :syntax_highlighting, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['SyntaxHighlightingEnabled']),
+                      class: 'form-element' %>
+      </div>
+
+    </div>
+  </div>
+  <div class="widget">
+    <div class="widget--body">
+
+      <h2>Integrations</h2>
+
+      <div class="form-group">
+          <%= label_tag :chat_link, 'Community chat link', class: 'form-element' %>
+          <span class="form-caption">Link to a possible community chat. Can be kept empty if not needed.</span>
+          <%= text_field_tag :chat_link, SiteSetting['ChatLink'], class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+          <%= label_tag :analytics_url, 'Analytics URL', class: 'form-element' %>
+          <span class="form-caption">Full URL to a Matomo analytics instance, with leading protocol and trailing slash.</span>
+          <%= text_field_tag :analytics_url, SiteSetting['AnalyticsURL'], class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+          <%= label_tag :analytics_id, 'Analytics Site ID', class: 'form-element' %>
+          <span class="form-caption">Site ID for this community in your Matomo analytics instance.</span>
+          <%= text_field_tag :analytics_id, SiteSetting['AnalyticsSiteId'], class: 'form-element' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :content_transfer, 'Has content transfer?', class: 'form-element' %>
+        <span class="form-caption">Whether this site has transfered content from an other (ex. SE) site. Will allow users to claim their content in the profile.</span>
+        <%= select_tag :content_transfer, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['AllowContentTransfer']),
+                      class: 'form-element' %>
+      </div>
+      
+    </div>
+  </div>
+
+  <%= submit_tag 'Save and continue', class: 'button is-filled' %>
+
+<% end %>

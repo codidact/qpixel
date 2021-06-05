@@ -95,7 +95,7 @@ $(() => {
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
     const $inboxCount = $('.inbox-count');
     const currentCount = parseInt($inboxCount.text(), 10);
-    const newCount = data.notification.is_read ? currentCount - 1 : currentCount + 1;
-    $inboxCount.text(newCount);
+    const newCount = Math.max(0, data.notification.is_read ? currentCount - 1 : currentCount + 1);
+    $inboxCount.text(newCount === 0 ? '' : newCount);
   });
 });

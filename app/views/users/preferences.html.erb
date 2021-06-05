@@ -1,0 +1,18 @@
+<%= render 'tabs', user: current_user %>
+
+<h1>Preferences</h1>
+<p>
+  Manage your user preferences here. Changes are automatically saved once you move away from the input field.
+</p>
+
+<p><%= link_to 'Manage Email Subscriptions', subscriptions_path %></p>
+
+<h2>Network Preferences</h2>
+<p>These preferences apply network-wide.</p>
+
+<%= render 'prefs', prefs: @preferences, community: false %>
+
+<h2>Community Preferences</h2>
+<p>These preferences apply on this community only.</p>
+
+<%= render 'prefs', prefs: @community_prefs, community: true %>

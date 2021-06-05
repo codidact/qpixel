@@ -1,0 +1,10 @@
+rate_limit:
+  new_user_posts: >
+    Usted sólo debería publicar :count :level publicaciones por día. Cuando usted haya publicado varias publicaciones bien recibidas, su límite será incrementado.
+  posts: >
+    Usted sólo debería publicar :count :level publicaciones por día.
+  new_user_suggested_edits: >
+    Usted sólo debería sugerir :count ediciones por día. Cuando usted haya propuesto varias contribuciones bien recibidas, su límite será incrementado.
+  suggested_edits: >
+    Usted sólo debería sugerir :count ediciones por día. Cuando usted haya propuesto las suficientes sugerencias bien recibidas, usted conseguirá la habilidad
+    de editar sin ser revisado.

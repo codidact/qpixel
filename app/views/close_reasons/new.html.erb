@@ -13,36 +13,4 @@
   </div>
 <% end %>
 
-<%= form_for @close_reason, url: create_close_reason_path(global: params[:global]) do |f| %>
-  <div class="form-group has-padding-2">
-    <%= f.label :name, "Name", class: "form-element" %>
-    <%= f.text_field :name, class: "form-element" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :description, "Description", class: "form-element" %>
-    <div class="form-caption">
-      You can use <code>$SiteName</code> for the current community.
-    </div>
-    <%= f.text_area :description, class: "form-element is-small" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :requires_other_post, "Require other post?", class: "form-element" %>
-    <div class="form-caption">
-      Check this box if the close reason shall require closers to select an other post. For example for "duplicate" reasons.
-    </div>
-    <%= f.check_box :requires_other_post, class: "form-checkbox-element" %>
-  </div>
-
-  <div class="form-group has-padding-2">
-    <%= f.label :active, "Active?", class: "form-element" %>
-    <div class="form-caption">
-      Activate this reason to allow closers to use it. This doesn't affect prior uses.
-    </div>
-    <%= f.check_box :active, class: "form-checkbox-element" %>
-  </div>
-
-  <%= f.submit "Update", class: "button is-filled" %>
-  <%= link_to "Cancel", close_reasons_path(global: params[:global]), class: "button" %>
-<% end %>
+<%= render 'form', submit_url: create_close_reason_path(global: params[:global]) %>

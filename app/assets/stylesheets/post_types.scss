@@ -1,0 +1,21 @@
+@import 'variables';
+
+.checkbox-setting {
+  border: 1px solid $muted-graphic;
+  border-radius: 0.3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+
+  .checkbox-setting--desc label.form-element {
+    margin: 0.1em 0;
+  }
+
+  .checkbox-setting--desc .desc {
+    color: $muted-text;
+    font-size: 0.8em;
+  }
+}

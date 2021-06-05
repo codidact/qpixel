@@ -27,6 +27,7 @@
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
 <script src="https://unpkg.com/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
+<%= javascript_include_tag "/assets/fngm-hotfix.js", defer: true %>
 
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
   <link rel="stylesheet"
