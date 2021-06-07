@@ -394,3 +394,10 @@
   category: AdvancedSettings
   description: >
     Whether two-factor authentication should be enforced for all global admins and global moderators.
+
+- name: DonationsEnabled
+  value: true
+  value_type: boolean
+  category: Integrations
+  description: >
+    Enable accepting donations, and show a link to donate in the sidebar.

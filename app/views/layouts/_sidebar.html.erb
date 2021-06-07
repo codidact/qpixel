@@ -124,6 +124,11 @@
           Want to advertise this community? <%= link_to 'Use our templates!', ads_path %>
         </p>
       <% end %>
+      <% if SiteSetting['DonationsEnabled'] %>
+        <p>
+          Like what we're doing? Support us! <%= link_to 'Donate', donate_path, class: 'button is-green is-filled' %>
+        </p>
+      <% end %>
     </div>
   </div>
 </div>

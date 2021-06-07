@@ -4,6 +4,7 @@ class DonationsController < ApplicationController
   skip_before_action :set_globals, only: [:callback]
   skip_before_action :check_if_warning_or_suspension_pending, only: [:callback]
   skip_before_action :stop_the_awful_troll, only: [:callback]
+  skip_before_action :distinguish_fake_community, only: [:callback]
 
   def index; end
 
@@ -50,6 +51,7 @@ class DonationsController < ApplicationController
           render status: 400, plain: 'Check yo JSON syntax. Fam.'
         end
       end
+      return
     rescue Stripe::SignatureVerificationError
       respond_to do |format|
         format.json do
@@ -59,6 +61,19 @@ class DonationsController < ApplicationController
           render status: 400, plain: "You're not Stripe. Go away."
         end
       end
+      return
+    end
+
+    if event.nil?
+      respond_to do |format|
+        format.json do
+          render status: 500, json: { error: 'Webhook event not created. ???' }
+        end
+        format.any do
+          render status: 500, plain: 'Webhook event not created. ???'
+        end
+      end
+      return
     end
 
     object = event.data.object

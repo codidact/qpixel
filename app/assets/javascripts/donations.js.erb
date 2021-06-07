@@ -20,6 +20,13 @@ $(() => {
     }, 10);
   };
 
+  $('.js-dc-suggestion').on('click', ev => {
+    ev.preventDefault();
+    const $tgt = $(ev.target);
+    const amount = $tgt.attr('data-amount');
+    $('.js-dc-amount').val(amount);
+  });
+
   $('.js-dc-amount').on('change', ev => {
     const $tgt = $(ev.target);
     const amount = parseFloat($tgt.val() || '') || 1;

@@ -63,6 +63,29 @@
 
     label {
       font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .suggestions {
+      margin: 0.5em 0;
+      display: flex;
+      align-items: center;
+
+      .suggestion {
+        display: inline-block;
+        background: $brand;
+        color: white;
+        border-radius: 0.2em;
+        padding: 0.3em 0.6em;
+        margin: 0 1em 0 0;
+        font-size: 1.2em;
+        transition: all 0.2s ease;
+
+        &:hover {
+          text-decoration: none;
+          background: lighten($brand, 5%);
+        }
+      }
     }
 
     .dc-amount-field {

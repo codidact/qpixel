@@ -15,7 +15,7 @@
 <link rel="icon" href="<%= icon_path.present? ? icon_path : '/assets/favicon.ico' %>" />
 
 <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" %>
-<%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.12.0/dist/codidact.css" %>
+<%= stylesheet_link_tag "https://unpkg.com/@codidact/co-design@0.12.3/dist/codidact.css" %>
 <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
 <%= stylesheet_link_tag "/assets/community/#{@community.host.split('.')[0]}.css" %>
 <%= stylesheet_link_tag 'application', media: 'all' %>
@@ -26,7 +26,7 @@
 <%= javascript_include_tag "https://js.stripe.com/v3/" %>
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
-<script src="https://unpkg.com/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
+<script src="https://unpkg.com/@codidact/co-design@0.12.3/js/co-design.js" defer></script>
 <%= javascript_include_tag "/assets/fngm-hotfix.js", defer: true %>
 
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>

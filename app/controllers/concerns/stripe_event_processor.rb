@@ -15,17 +15,19 @@ class StripeEventProcessor
                    Stripe::Customer.retrieve(user.cid)
                  rescue Stripe::InvalidRequestError
                    Stripe::Customer.create({ name: billing_details[:name], email: billing_details[:email],
-                                             description: user.present? ? user.username : 'anonymous donor' },
+                                             description: user.present? ? user.username : 'anonymous donor',
+                                             metadata: { user_id: user&.id } },
                                            { idempotency_key: id_key })
                  end
                else
                  existing = Stripe::Customer.list({ email: billing_details[:email] })[:data]
-                 if !existing.empty?
-                   existing[0]
-                 else
+                 if existing.empty?
                    Stripe::Customer.create({ name: billing_details[:name], email: billing_details[:email],
-                                             description: user.present? ? user.username : 'anonymous donor' },
+                                             description: user.present? ? user.username : 'anonymous donor',
+                                             metadata: { user_id: user&.id } },
                                            { idempotency_key: id_key })
+                 else
+                   existing[0]
                  end
                end
 
