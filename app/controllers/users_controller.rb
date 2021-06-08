@@ -350,7 +350,7 @@ class UsersController < ApplicationController
                            comment: "#{ability.internal_id} ability removed")
 
       AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
-                           comment: ability.internal_id)
+                            comment: ability.internal_id)
     else
       return not_found
     end
