@@ -55,7 +55,7 @@ $(() => {
           return {
             results: data.map(t => ({
               id: useIds ? t.id : t.name,
-              text: t.name.replace('<', '&#x3C;').replace('>', '&#x3E;'),
+              text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
               desc: t.excerpt
             }))
           };
