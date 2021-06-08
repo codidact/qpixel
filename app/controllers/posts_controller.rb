@@ -334,8 +334,8 @@ class PostsController < ApplicationController
                     last_activity: DateTime.now, last_activity_by: current_user)
       PostHistory.post_undeleted(@post, current_user)
       restore_children = @post.children.where('deleted_at >= ?', deleted_at)
-      restore_children.update_all(deleted: true, deleted_at: DateTime.now, deleted_by_id: current_user.id,
-                                 last_activity: DateTime.now, last_activity_by_id: current_user.id)
+                              .where('deleted_at <= ?', deleted_at + 5.seconds)
+      restore_children.update_all(deleted: false, last_activity: DateTime.now, last_activity_by_id: current_user.id)
       histories = restore_children.map do |c|
         { post_history_type: PostHistoryType.find_by(name: 'post_undeleted'), user: current_user, post: c,
           community: RequestContext.community }
