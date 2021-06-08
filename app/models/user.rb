@@ -8,12 +8,12 @@ class User < ApplicationRecord
          :lockable, :omniauthable
 
   has_many :posts, dependent: :nullify
-  has_many :votes, dependent: :nullify
+  has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
   has_many :flags, dependent: :nullify
-  has_many :error_logs, dependent: :nullify
+  has_many :error_logs, dependent: :destroy
   has_one :community_user, -> { for_context }, autosave: true, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
   has_many :suggested_edits, dependent: :nullify
