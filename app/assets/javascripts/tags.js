@@ -33,7 +33,7 @@ $(() => {
         data: function (params) {
           $this = $(this);
           // (for the tour)
-          if ($this.data('tag-set') == "-1") {
+          if ($this.data('tag-set') === '-1') {
             return Object.assign(params, { tag_set: "1" });
           }
           return Object.assign(params, { tag_set: $this.data('tag-set') });
@@ -42,17 +42,23 @@ $(() => {
         delay: 100,
         processResults: data => {
           // (for the tour)
-          if ($this.data('tag-set') == "-1") {
+          if ($this.data('tag-set') === '-1') {
             return {
               results: [
-                { id: 1, text: "hot-red-firebreather", desc: "Very cute dragon" },
-                { id: 2, text: "training", desc: "How to train a dragon" },
-                { id: 3, text: "behavior", desc: "How a dragon behaves" },
-                { id: 4, text: "sapphire-blue-waterspouter", desc: "Other cute dragon" }
+                { id: 1, text: 'hot-red-firebreather', desc: 'Very cute dragon' },
+                { id: 2, text: 'training', desc: 'How to train a dragon' },
+                { id: 3, text: 'behavior', desc: 'How a dragon behaves' },
+                { id: 4, text: 'sapphire-blue-waterspouter', desc: 'Other cute dragon' }
               ]
             }
           }
-          return {results: data.map(t => ({id: useIds ? t.id : t.name, text: t.name, desc: t.excerpt}))};
+          return {
+            results: data.map(t => ({
+              id: useIds ? t.id : t.name,
+              text: t.name.replace('<', '&#x3C;').replace('>', '&#x3E;'),
+              desc: t.excerpt
+            }))
+          };
         },
       },
       templateResult: template
