@@ -19,9 +19,9 @@ class SiteSettingsController < ApplicationController
 
   def show
     @setting = if params[:community_id].present?
-                 SiteSetting.find_by(name: params[:name])
+                 SiteSetting.applied_setting(name)
                else
-                 SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
+                 SiteSetting.global.where(name: params[:name]).priority_order.first
                end
     render json: @setting&.as_json&.merge(typed: @setting.typed)
   end
