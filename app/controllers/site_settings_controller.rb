@@ -19,7 +19,7 @@ class SiteSettingsController < ApplicationController
 
   def show
     @setting = if params[:community_id].present?
-                 SiteSetting.applied_setting(name)
+                 SiteSetting.applied_setting(params[:name])
                else
                  SiteSetting.global.where(name: params[:name]).priority_order.first
                end

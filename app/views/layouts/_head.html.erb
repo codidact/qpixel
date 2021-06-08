@@ -30,10 +30,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
 
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
-  <link rel="stylesheet"
-        href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/default.min.css">
-  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
-  <script defer>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+  <script defer>hljs.highlightAll();</script>
 <% end %>
 
 <% if SiteSetting['MathJaxEnabled'] %>
