@@ -35,3 +35,8 @@
 
 <%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path,
            edit_comment: true, parent: @post.parent, type_summary: false %>
+
+<% if @post.parent.present? %>
+  <h2 class="h-m-t-8">Responding to:</h2>
+  <%= render 'posts/expanded', post: @post.parent %>
+<% end %>
