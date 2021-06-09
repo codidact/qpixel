@@ -3,14 +3,14 @@ Rails-based version of our core software. Currently under active development tow
 
 ## Installation
 These instructions are assuming you already have a Unix environment available with Ruby and Bundler installed.
-WSL should work as well, but Windows is unlikely to.
+WSL should work as well, but (core) Windows is unlikely to.
 
 If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 [rbenv](https://github.com/rbenv/rbenv#installation) to install it before following these instructions.
 
 ### Install prerequisites
 
-For Linux:
+For Debian-Based Linux:
 
 ```
 sudo apt update
@@ -20,6 +20,19 @@ sudo apt install libmysqlclient-dev
 sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
 sudo apt install mysql-server
 ```
+
+For Arch-Based Linux:
+
+```
+sudo pacman -Syyu
+sudo pacman -Sy gcc
+sudo pacman -Sy make
+sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc
+sudo pacman -Sy openssl
+sudo snap install mysql --beta Or, sudo pacman -S mysql
+```
+
+Install the following packages and unpack them: https://aur.archlinux.org/packages/libmysqlclient/
 
 For Mac:
 

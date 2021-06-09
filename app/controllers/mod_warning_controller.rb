@@ -48,7 +48,7 @@ class ModWarningController < ApplicationController
     if @warning.save
       if is_suspension
         @user.community_user.update(is_suspended: is_suspension, suspension_end: suspension_end,
-                     suspension_public_comment: params[:mod_warning][:suspension_public_notice])
+                                    suspension_public_comment: params[:mod_warning][:suspension_public_notice])
       end
 
       redirect_to user_path(@user)

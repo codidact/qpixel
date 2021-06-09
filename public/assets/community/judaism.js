@@ -528,54 +528,70 @@ $(() => {
  * Calendar script, added 2021-04-01 by @luap42
  */
 
+  // Use *local* time for ISO string (Date.toISOString() uses UTC).
+  // We only need the date here, so punting on time.
+  function toIsoDate(date) {
+  var pad = function(num) {
+          var norm = Math.floor(Math.abs(num));
+          return (norm < 10 ? '0' : '') + norm;
+      };
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate());
+}
+
+
 window.addEventListener("load", async () => {
   const container = document.createElement('div');
   container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
   container.classList.add('widget', 'has-margin-4');
-  
+
   const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
   disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
-  
-  const result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=now&month=4&d=on&o=on');
+
+  let todayDate = new Date();
+
+  // Start new day at 8pm local time previous day (if it's 8 or later today is tomorrow).
+  // Hour is zero-indexed, hence > 19 (not > 20).
+  if (todayDate.getHours() > 19) {
+    todayDate.setDate(todayDate.getDate() + 1);
+  }
+
+  // Use actual year and month (rather than now) in URL to dodge caching.
+  const result = await fetch('https://www.hebcal.com/hebcal?v=1&cfg=json&year=' + todayDate.getFullYear() + '&month=' + (todayDate.getMonth()+1) + '&d=on&o=on');
   const response = await result.json()
-  
+
   const parsedData = response.items.reduce((rv, x) => {
     (rv[x.date] = rv[x.date] || []).push(x);
     return rv;
   }, {});
-  
-  let now = new Date();
-  if (now.getHours() > 20) {
-    now.setDate(now.getDate() + 1);
-  }
-  
-  now = now.toISOString().substr(0, 10);
-  
+
+  // Do not use Date.toISOString(), which uses UTC not local time.
+  let now = toIsoDate(todayDate);
+
   const fields = parsedData[now];
   container.querySelector('._cal_val').innerHTML = "";
-  
+
   fields.forEach(field => {
     const fieldContainer = document.createElement('div');
     fieldContainer.classList.add('has-font-size-larger', 'h-fw-bold', 'h-m-t-2');
     container.querySelector('._cal_val').appendChild(fieldContainer);
-    
+
     fieldContainer.innerText = field.title;
   });
-  
+
   const DAY_LIST = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  
-  let today = new Date();
-  if (today.getHours() > 20) {
-    today.setDate(now.getDate() + 1);
-  }
-  
-  const todayDay = DAY_LIST[(today.getDay() + 6) % 7];
-  today.setDate(today.getDate() - 1);
-  const yesterdayDay = DAY_LIST[(today.getDay() + 6) % 7];
-  
+
+  const todayDay = DAY_LIST[(todayDate.getDay() + 6) % 7];
+  const yesterdayDay = DAY_LIST[(todayDate.getDay() + 5) % 7];
+
+
   const fieldContainer = document.createElement('div');
   fieldContainer.classList.add('h-m-t-2', 'has-font-size-caption');
   container.querySelector('._cal_val').appendChild(fieldContainer);
 
   fieldContainer.innerText = yesterdayDay + ' night (' + todayDay + ')';
 });
+
+

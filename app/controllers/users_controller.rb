@@ -189,6 +189,10 @@ class UsersController < ApplicationController
       Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                                         deleted: true, deleted_at: DateTime.now,
                                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
+      Comment.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                           deleted: true)
+      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      SuggestedEdit.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
@@ -346,7 +350,7 @@ class UsersController < ApplicationController
                            comment: "#{ability.internal_id} ability removed")
 
       AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
-                           comment: ability.internal_id)
+                            comment: ability.internal_id)
     else
       return not_found
     end

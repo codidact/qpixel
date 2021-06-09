@@ -18,7 +18,7 @@ class FlagsController < ApplicationController
                        ' flags. Please come back tomorrow to continue flagging.'
 
       AuditLog.rate_limit_log(event_type: 'flag', related: Post.find(params[:post_id]), user: current_user,
-                        comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")
+                              comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")
 
       render json: { status: 'failed', message: flag_limit_msg }, status: :forbidden
       return

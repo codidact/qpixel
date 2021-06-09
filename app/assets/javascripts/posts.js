@@ -105,7 +105,7 @@ $(() => {
     await saveDraft(postText, $field, true);
   });
 
-  let mathjaxTimeout = null;
+  let featureTimeout = null;
   let draftTimeout = null;
 
   const postFields = $('.post-field');
@@ -129,13 +129,16 @@ $(() => {
       $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
 
-    if (mathjaxTimeout) {
-      clearTimeout(mathjaxTimeout);
+    if (featureTimeout) {
+      clearTimeout(featureTimeout);
     }
 
-    mathjaxTimeout = setTimeout(() => {
+    featureTimeout = setTimeout(() => {
       if (window['MathJax']) {
         MathJax.typeset();
+      }
+      if (window['hljs']) {
+        hljs.highlightAll();
       }
     }, 1000);
   }).on('keyup', ev => {

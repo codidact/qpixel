@@ -42,7 +42,7 @@
   <div class="form-group">
     <%= f.label :current_password, class: "form-element" %>
     <div class="form-caption">We need your current password to confirm your changes.</div>
-    <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password" %>
+    <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password", required: true %>
   </div>
 
   <%= f.submit "Update", class: 'button is-filled is-very-large' %>

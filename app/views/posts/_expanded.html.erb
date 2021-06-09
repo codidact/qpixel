@@ -4,8 +4,8 @@
     post : the Post instance to display
 %>
 
-<% category ||= defined?(@category) ? @category : post.category %>
-<% post_type ||= defined?(@post_type) ? @post_type : post.post_type %>
+<% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
+<% post_type ||= defined?(@post_type) && @post_type.id == post.post_type_id ? @post_type : post.post_type %>
 
 <% is_question = post.post_type_id == Question.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
@@ -26,7 +26,7 @@
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
-        <div class="post--votes has-text-align-center" title="<%= post.score %>">
+        <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
           <% existing_vote = my_vote(post) %>
           <% unless post.locked? %>
             <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"

@@ -34,11 +34,11 @@
           </span>
         <% when '1' %>
           <span class="user-card--detail">
-            <i class="far fa-fw fa-comment-alt" title="number of top-level posts"></i> <%= user.metric '1', @top_level_post_types %>
+            <i class="far fa-fw fa-comment-alt" title="number of top-level posts"></i> <%= user.metric '1' %>
           </span>
         <% when '2' %>
           <span class="user-card--detail">
-            <i class="fas fa-fw fa-reply-all" title="number of answers"></i> <%= user.metric '2', @second_level_post_types %>
+            <i class="fas fa-fw fa-reply-all" title="number of answers"></i> <%= user.metric '2' %>
           </span>
         <% when 's' %>
           <span class="user-card--detail">

@@ -10,7 +10,7 @@ class SiteSetting < ApplicationRecord
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
   def self.[](name)
-    cached = Rails.cache.fetch "SiteSettings/#{name}" do
+    cached = Rails.cache.fetch "SiteSettings/#{RequestContext.community_id}/#{name}" do
       SiteSetting.applied_setting(name)&.typed
     end
     # applied_setting call is doubled to avoid cache fetch returning nil from cache
@@ -18,7 +18,8 @@ class SiteSetting < ApplicationRecord
   end
 
   def self.exist?(name)
-    Rails.cache.exist?("SiteSettings/#{name}") || SiteSetting.where(name: name).count.positive?
+    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}") ||
+      SiteSetting.where(name: name).count.positive?
   end
 
   def typed
