@@ -119,9 +119,9 @@
           <% end %>
         <% end %>
       <% elsif @comment_thread.deleted %>
-        <p class="h-c-red-700"><i class="fas fa-trash fa-fw"></i> You cannot reply to this thread, because it has been deleted.</p>
+        <p class="h-c-red-700"><i class="fas fa-trash fa-fw"></i> You cannot reply to this thread because it has been deleted.</p>
       <% elsif @comment_thread.locked? %>
-        <p class="h-c-red-700"><i class="fas fa-lock fa-fw"></i> You cannot reply to this thread, because it has been locked.</p>
+        <p class="h-c-red-700"><i class="fas fa-lock fa-fw"></i> You cannot reply to this thread because it has been locked.</p>
       <% elsif @comment_thread.archived %>
         <p class="h-c-tertiary-700"><i class="fas fa-archive fa-fw"></i> This thread has been archived and cannot be replied to.</p>
       <% end %>
