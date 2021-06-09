@@ -277,7 +277,7 @@ class CommentsController < ApplicationController
       end
 
       AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
-                            comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
+                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
 
       render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
       return true
