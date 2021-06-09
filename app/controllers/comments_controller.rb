@@ -23,7 +23,7 @@ class CommentsController < ApplicationController
                                         deleted: false)
 
     body = params[:body]
-    body, pings = check_for_pings body
+    pings = check_for_pings body
 
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread,
                            has_reference: false)
@@ -55,7 +55,7 @@ class CommentsController < ApplicationController
     end
 
     body = params[:content]
-    body, pings = check_for_pings body
+    pings = check_for_pings body
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
@@ -66,7 +66,7 @@ class CommentsController < ApplicationController
       apply_pings pings
       @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       @comment_thread.thread_follower.each do |follower|
-        next if follower.user.id == current_user.id
+        next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
 
         follower.user.create_notification("New comment in followed thread #{@comment_thread.title}",
@@ -244,22 +244,8 @@ class CommentsController < ApplicationController
 
   def check_for_pings(content)
     pingable = helpers.get_pingable(@comment_thread)
-
-    pings = []
-    matches = content.scan(/@(\S+(?:\#[0-9]+)?)(?: |$)/)
-    matches.each do |m|
-      m = m[0]
-      next unless pingable.include? m
-
-      id = pingable[m]
-      puts id
-      unless pings.include? id
-        pings << id
-        content.gsub! "@#{m}", "[[PING #{id}]]"
-      end
-    end
-
-    [content, pings]
+    matches = content.scan(/@#(\d+)/)
+    matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
   def apply_pings(pings)
@@ -267,9 +253,9 @@ class CommentsController < ApplicationController
       user = User.where(id: p).first
       next if user.nil?
 
-      unless user&.id == @comment.post.user_id
-        user&.create_notification("You were mentioned in a comment to #{@comment_thread.title}",
-                                  helpers.comment_link(@comment))
+      unless user.id == @comment.post.user_id
+        user.create_notification("You were mentioned in a comment to #{@comment_thread.title}",
+                                 helpers.comment_link(@comment))
       end
     end
   end
@@ -280,7 +266,6 @@ class CommentsController < ApplicationController
                              .where.not(post: Post.where(user_id: current_user.id)).count
     max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
-    # Provides mainly web actions for using and making comments.
     if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
        && recent_comments >= max_comments_per_day
       comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \

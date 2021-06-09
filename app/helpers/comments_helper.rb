@@ -8,14 +8,17 @@ module CommentsHelper
   end
 
   def render_pings(comment)
-    comment.gsub(/\[\[PING [0-9]+\]\]/) do |id|
-      u = User.where(id: id[7...-2].to_i).first
-      return id if u.nil?
-
-      if u.id == current_user&.id
-        "<a href=\"#{user_path(u.id)}\" class=\"ping me\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
+    comment.gsub(/@#\d+/) do |id|
+      u = User.where(id: id[2..-1].to_i).first
+      if u.nil?
+        id
       else
-        "<a href=\"#{user_path(u.id)}\" class=\"ping\" dir=\"ltr\">@#{u.rtl_safe_username}</a>"
+        safe_username = sanitize(u.rtl_safe_username.gsub('<', '&#x3C;').gsub('>', '&#x3E;'))
+        if u.id == current_user&.id
+          "<a href=\"#{user_path(u.id)}\" class=\"ping me\" dir=\"ltr\">@#{safe_username}</a>"
+        else
+          "<a href=\"#{user_path(u.id)}\" class=\"ping\" dir=\"ltr\">@#{safe_username}</a>"
+        end
       end
     end.html_safe
   end
@@ -23,37 +26,25 @@ module CommentsHelper
   def get_pingable(thread)
     post = thread.post
 
-    pingable = {
-      post.user.username => post.user_id,
-      "#{post.user.username}##{post.user_id}" => post.user_id,
-      post.user_id => post.user_id
-    }
+    # post author +
+    # answer authors +
+    # last 500 history event users +
+    # last 500 comment authors +
+    # all thread followers
 
-    post.post_histories.last(500).each do |h|
-      pingable.merge!({
-                        h.user.username => h.user_id,
-        "#{h.user.username}##{h.user_id}" => h.user_id,
-        h.user_id => h.user_id
-                      })
-    end
+    query = <<~END_SQL
+      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{thread.id || '-1'}
+    END_SQL
 
-    thread.comments.last(500).each do |c|
-      pingable.merge!({
-                        c.user.username => c.user_id,
-        "#{c.user.username}##{c.user_id}" => c.user_id,
-        c.user_id => c.user_id
-                      })
-    end
-
-    thread.thread_follower.each do |f|
-      pingable.merge!({
-                        f.user.username => f.user_id,
-        "#{f.user.username}##{f.user_id}" => f.user_id,
-        f.user_id => f.user_id
-                      })
-    end
-
-    pingable
+    ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 end
 

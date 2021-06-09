@@ -3,7 +3,7 @@
 </h1>
 
 <!-- THREAD STARTS BELOW -->
-<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> h-p-4 <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
+<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
 <div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>">
   <div class="widget--header">
@@ -38,7 +38,7 @@
     <% end %>
     <%= @comment_thread.title %>
   </div>
-  <% skipped_deleted = 0%>
+  <% skipped_deleted = 0 %>
   <% comments = @comment_thread.comments %>
   <% if params[:inline] == 'true' %>
     <% comments = comments.where(deleted: false).take 5 %>
@@ -129,7 +129,9 @@
   <% end %>
   <% if params[:inline] == 'true' %>
     <div class="widget--footer">
-      <p>This is just a preview; you can <a href="<%= comment_thread_path(@comment_thread.id) %>">see the whole thread</a>.</p>
+      <p class="h-m-0">
+        This is just a preview; you can <a href="<%= comment_thread_path(@comment_thread.id) %>">see the whole thread</a>.
+      </p>
     </div>
   <% end %>
 </div>
