@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>Codidact</ShortName>
+  <Description>Search all posts on <%= RequestContext.community.name %>, a community on the Codidact network.</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/x-icon">https://meta.codidact.com/assets/square.ico</Image>
+  <Url type="text/html" template="<%= search_url %>">
+    <Param name="search" value="{searchTerms}"/>
+    <Param name="utf8" value="✓"/>
+  </Url>
+  <moz:SearchForm><%= search_url %></moz:SearchForm>
+</OpenSearchDescription>
