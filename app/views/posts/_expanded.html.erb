@@ -277,7 +277,8 @@
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
-                      <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>" id="flag-reason-<%= reason.id %>_<%= post.id  %>">
+                      <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>"
+                             id="flag-reason-<%= reason.id %>_<%= post.id  %>" data-requires-details="<%= reason.requires_details %>" />
                     </div>
                     <div class="grid--cell is-flexible">
                       <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>_<%= post.id  %>">
@@ -285,6 +286,15 @@
                         <div class="form-caption">
                           <%= raw render_markdown(reason.description.gsub "$SiteName", SiteSetting['SiteName']) %>
                         </div>
+                        <% if reason.name == "needs author's attention" %>
+                          <div class="form-caption">
+                            <em>This flag will be added as a comment to this post's feedback thread.</em>
+                          </div>
+                        <% elsif reason.name == 'is a duplicate' %>
+                          <div class="form-caption">
+                            <em>Please enter the URL of the proposed duplicate in the details field below.</em>
+                          </div>
+                        <% end %>
                       </label>
                     </div>
                   </div>
@@ -294,7 +304,8 @@
               <div class="widget--body">
                 <div class="grid">
                   <div class="grid--cell">
-                    <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>">
+                    <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>"
+                           data-requires-details="true" />
                   </div>
                   <div class="grid--cell is-flexible">
                     <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">

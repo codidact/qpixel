@@ -24,6 +24,12 @@ class FlagsController < ApplicationController
       return
     end
 
+    if type&.name == "needs author's attention"
+      create_as_feedback_comment Post.find(params[:post_id]), current_user, params[:reason]
+      render json: { status: 'success' }, status: :created
+      return
+    end
+
     @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id], user: current_user)
     if @flag.save
       render json: { status: 'success' }, status: :created
@@ -73,5 +79,14 @@ class FlagsController < ApplicationController
       return not_found if type.nil? || type.confidential
       return not_found if current_user.id == @flag.user.id
     end
+  end
+
+  def create_as_feedback_comment(post, user, comment)
+    thread = post.comment_threads.find_or_create_by(title: 'Post Feedback')
+    comment = thread.comments.create(user: user, post: post, comment_thread: thread, content: comment)
+    thread.update(reply_count: thread.reply_count + 1)
+    post.user.create_notification("New feedback on #{comment.root.title}",
+                                  comment_thread_path(thread, anchor: "comment-#{comment.id}"))
+    comment
   end
 end

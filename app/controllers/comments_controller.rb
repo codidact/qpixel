@@ -19,19 +19,18 @@ class CommentsController < ApplicationController
       title = helpers.truncate(params[:body], length: 100)
     end
 
-    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1, locked: false, archived: false,
-                                        deleted: false)
+    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1)
 
     body = params[:body]
     pings = check_for_pings body
 
-    @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread,
-                           has_reference: false)
+    @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     return if comment_rate_limited
 
     if @comment_thread.save && @comment.save
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
+      ThreadFollower.create comment_thread: @comment_thread, user: @post.user
 
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}",
