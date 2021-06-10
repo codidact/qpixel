@@ -180,17 +180,20 @@ Rails.application.routes.draw do
 
   post   'flags/new',                      to: 'flags#new', as: :new_flag
 
-  post   'comments/new',                   to: 'comments#create_thread', as: :create_comment_thread
-  post   'comments/thread/:id/new',        to: 'comments#create', as: :create_comment
-  post   'comments/thread/:id/rename',     to: 'comments#thread_rename', as: :rename_comment_thread
-  post   'comments/thread/:id/restrict',   to: 'comments#thread_restrict', as: :restrict_comment_thread
-  post   'comments/thread/:id/unrestrict', to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
-  get    'comments/post/:post_id',         to: 'comments#post', as: :post_comments
-  get    'comments/:id',                   to: 'comments#show', as: :comment
-  get    'comments/thread/:id',            to: 'comments#thread', as: :comment_thread
-  post   'comments/:id/edit',              to: 'comments#update', as: :update_comment
-  delete 'comments/:id/delete',            to: 'comments#destroy', as: :delete_comment
-  patch  'comments/:id/delete',            to: 'comments#undelete', as: :undelete_comment
+  scope 'comments' do
+    post   'new',                          to: 'comments#create_thread', as: :create_comment_thread
+    get    'thread/:id/pingable',          to: 'comments#pingable', as: :thread_pingable
+    post   'thread/:id/new',               to: 'comments#create', as: :create_comment
+    post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
+    post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
+    post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
+    get    'post/:post_id',                to: 'comments#post', as: :post_comments
+    get    ':id',                          to: 'comments#show', as: :comment
+    get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
+    post   ':id/edit',                     to: 'comments#update', as: :update_comment
+    delete ':id/delete',                   to: 'comments#destroy', as: :delete_comment
+    patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
+  end
 
   get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription

@@ -16,7 +16,10 @@
         
         <%= label_tag :body, 'Your comment', class: 'form-element' %>
         <div class="form-caption">Start the thread with a comment.</div>
-        <%= text_area_tag :body, '', class: 'form-element', required: true %>
+        <%= text_area_tag :body, '', class: 'form-element js-comment-field', data: { post: post.id, thread: '-1' },
+                          required: true %>
+        <span class="has-float-right has-font-size-caption js-character-count"
+              data-target=".js-comment-field" data-max="500">0 / 500</span>
 
         <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
         <div class="form-caption">You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will be shown.</div>

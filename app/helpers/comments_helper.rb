@@ -7,18 +7,16 @@ module CommentsHelper
     end
   end
 
-  def render_pings(comment)
+  def render_pings(comment, pingable: nil)
     comment.gsub(/@#\d+/) do |id|
       u = User.where(id: id[2..-1].to_i).first
       if u.nil?
         id
       else
-        safe_username = sanitize(u.rtl_safe_username.gsub('<', '&#x3C;').gsub('>', '&#x3E;'))
-        if u.id == current_user&.id
-          "<a href=\"#{user_path(u.id)}\" class=\"ping me\" dir=\"ltr\">@#{safe_username}</a>"
-        else
-          "<a href=\"#{user_path(u.id)}\" class=\"ping\" dir=\"ltr\">@#{safe_username}</a>"
-        end
+        was_pung = pingable.present? && pingable.include?(u.id)
+        classes = "ping #{u.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
+        tag.a "@#{u.rtl_safe_username}", href: user_path(u), class: classes, dir: 'ltr',
+              title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
       end
     end.html_safe
   end

@@ -112,7 +112,7 @@
   background-color: #fafafa;
 }
 
-a.ping {
+.ping {
   color: #666;
   background-color: #eee;
   padding: 0.125rem 0.25rem;
@@ -122,6 +122,7 @@ a.ping {
 
   &:hover {
     color: #666;
+    text-decoration: none !important;
   }
 
   &.me {
@@ -130,6 +131,17 @@ a.ping {
 
     &:hover {
       background-color: #222;
+      color: white;
+    }
+  }
+
+  &.unpingable {
+    background: #fdeded;
+    color: #991212;
+
+    &:hover {
+      background: #f9cbcb;
+      color: #991212;
     }
   }
 }

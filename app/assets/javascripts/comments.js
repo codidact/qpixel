@@ -131,4 +131,55 @@ $(() => {
       // Comment posting has been clicked.
       $(evt.target).attr('data-disable-with', 'Posting...');
   });
+
+  const currentCaretSequence = (splat, posIdx) => {
+    let searchIdx = 0;
+    let splatIdx = 0;
+    let posInSeq;
+    let currentSequence;
+    do {
+      currentSequence = splat[splatIdx];
+      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
+      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
+      splatIdx += 1;
+    } while (searchIdx < posIdx);
+    return [currentSequence, posInSeq];
+  };
+
+  $(document).on('keyup', '.js-comment-field', async ev => {
+    const $tgt = $(ev.target);
+    const content = $tgt.val();
+    const splat = content.split(' ');
+    const caretPos = $tgt[0].selectionStart;
+    const [currentWord, posInWord] = currentCaretSequence(splat, caretPos);
+
+    const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
+    const callback = ev => {
+      const $item = $(ev.target);
+      const id = $item.data('user-id');
+      $tgt[0].selectionStart = caretPos - posInWord;
+      $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
+      QPixel.replaceSelection($tgt, `@#${id}`);
+      $('.ta-popup').remove();
+    };
+
+    // If the word the caret is currently in starts with an @, and has at least 3 characters after that, assume it's
+    // an attempt to ping another user with a username, and kick off suggestions -- unless it starts with @#, in which
+    // case it's likely an already-selected ping.
+    if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && currentWord.length >= 4) {
+      const threadId = $tgt.data('thread');
+      const postId = $tgt.data('post');
+      const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
+      const data = await resp.json();
+      const items = Object.entries(data).filter(e => {
+        return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
+      }).map(e => {
+        const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
+        const id = e[1];
+        return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
+                           .attr('data-user-id', id);
+      });
+      QPixel.createTextareaPopup(items, $tgt[0], callback);
+    }
+  });
 });

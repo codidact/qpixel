@@ -212,6 +212,13 @@ class CommentsController < ApplicationController
     end
   end
 
+  def pingable
+    thread = params[:id] == '-1' ? CommentThread.new(post_id: params[:post]) : CommentThread.find(params[:id])
+    ids = helpers.get_pingable(thread)
+    users = User.where(id: ids)
+    render json: users.map { |u| [u.username, u.id] }.to_h
+  end
+
   private
 
   def comment_params

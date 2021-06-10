@@ -1,3 +1,5 @@
+<% pingable = get_pingable(@comment_thread) %>
+
 <h1>Comments on
   <a href="<%= generic_show_link(@post) %>"><%= @post.title.blank? && @post.parent.exists? ? @post.parent.title : @post.title %></a>
 </h1>
@@ -70,7 +72,7 @@
       <% skipped_deleted = 0 %>
     <% end %>
     <div class="widget--body">
-      <%= render 'comments/comment', comment: comment%>
+      <%= render 'comments/comment', comment: comment, pingable: pingable %>
     </div>
   <% end %>
   <% if skipped_deleted > 0 %>
@@ -113,7 +115,10 @@
             <%= hidden_field_tag :post_id, @post.id %>
             
             <%= label_tag :content, 'Your message', class: 'form-element' %>
-            <%= text_area_tag :content, '', class: 'form-element' %>
+            <%= text_area_tag :content, '', class: 'form-element js-comment-field',
+                              data: { thread: @comment_thread.id, post: @comment_thread.post_id } %>
+            <span class="has-float-right has-font-size-caption js-character-count"
+                  data-target=".js-comment-field" data-max="500">0 / 500</span>
             
             <%= submit_tag 'Add reply', class: 'button is-muted is-filled' %>
           <% end %>

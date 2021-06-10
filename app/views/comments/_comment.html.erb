@@ -1,4 +1,5 @@
 <% with_post_link ||= false %>
+<% pingable ||= nil %>
 
 <div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
   <div class="comment-meta">
@@ -50,6 +51,7 @@
     </div>
   </div>
   <div class="comment--body" dir="ltr">
-    <%= render_pings(raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new))) %>
+    <%= render_pings(raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)),
+                     pingable: pingable) %>
   </div>
 </div>
