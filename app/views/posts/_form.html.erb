@@ -54,6 +54,14 @@
     </p>
   <% end %>
 
+
+
+  <% if inline_parent && defined?(parent) && parent.present? %>
+    <h2><%= t('posts.responding_to')%></h2>
+
+    <%= render 'posts/expanded', post: parent  %>
+  <% end %>
+
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post %>
 
   <div class="post-preview"></div>
@@ -165,10 +173,4 @@
                 class: 'button is-muted is-outlined is-danger js-cancel-edit',
                 data: { question_body: t('posts.unsaved_changes_confirmation') } %>
   </div>
-<% end %>
-
-<% if inline_parent && defined?(parent) && parent.present? %>
-  <h2><%= t('posts.responding_to')%></h2>
-
-  <%= render 'posts/expanded', post: parent  %>
 <% end %>
