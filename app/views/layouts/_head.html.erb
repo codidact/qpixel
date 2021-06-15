@@ -13,8 +13,10 @@
 
 <% icon_path = SiteSetting['IconPath'] %>
 <link rel="icon" href="<%= icon_path.present? ? icon_path : '/assets/favicon.ico' %>" />
-
+<link rel="search" type="application/opensearchdescription+xml"
+      title="Codidact <%= RequestContext.community.name %> search" href="<%= osd_url(format: :xml) %>" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
 <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" %>
 <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.0/dist/codidact.css" %>
@@ -25,6 +27,7 @@
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/jquery@2.2.2/dist/jquery.min.js" %>
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/moment@2.13.0/min/moment.min.js" %>
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" %>
+<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/dompurify@2.2.9/dist/purify.min.js" %>
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
 <script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
