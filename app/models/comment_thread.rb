@@ -8,7 +8,7 @@ class CommentThread < ApplicationRecord
   belongs_to :deleted_by, class_name: 'User', optional: true
 
   scope :undeleted, -> { where(deleted: false) }
-  scope :publicly_available, -> { where(deleted: false, archived: false) }
+  scope :publicly_available, -> { where(deleted: false, archived: false).where('reply_count > 0') }
 
   def read_only?
     locked? || archived || deleted
