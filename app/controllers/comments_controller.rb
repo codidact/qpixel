@@ -19,16 +19,19 @@ class CommentsController < ApplicationController
       title = helpers.truncate(params[:body], length: 100)
     end
 
-    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1)
-
     body = params[:body]
     pings = check_for_pings body
 
+    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     return if comment_rate_limited
 
-    if @comment_thread.save && @comment.save
+    success = ActiveRecord::Base.transaction do
+      @comment_thread.save && @comment.save
+    end
+
+    if success
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
       ThreadFollower.create comment_thread: @comment_thread, user: @post.user
 
