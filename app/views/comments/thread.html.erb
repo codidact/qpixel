@@ -135,7 +135,8 @@
   <% if params[:inline] == 'true' %>
     <div class="widget--footer">
       <p class="h-m-0">
-        This is just a preview; you can <a href="<%= comment_thread_path(@comment_thread.id) %>">see the whole thread</a>.
+        Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
+        <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
       </p>
     </div>
   <% end %>
