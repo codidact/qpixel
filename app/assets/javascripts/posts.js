@@ -124,7 +124,8 @@ $(() => {
     window.setTimeout(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
-      const html = converter.render(text);
+      const unsafe_html = converter.render(text);
+      const html = DOMPurify.sanitize( unsafe_html , {USE_PROFILES: {html: true}} );
       $tgt.parents('.form-group').siblings('.post-preview').html(html);
       $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
