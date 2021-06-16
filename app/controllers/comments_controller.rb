@@ -12,6 +12,8 @@ class CommentsController < ApplicationController
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
+    elsif !@post.can_access?(current_user)
+      return not_found
     end
 
     title = params[:title]
@@ -54,6 +56,8 @@ class CommentsController < ApplicationController
     if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
+    elsif !@post.can_access?(current_user)
+      return not_found
     end
 
     body = params[:content]
@@ -139,7 +143,7 @@ class CommentsController < ApplicationController
   end
 
   def thread
-    return not_found if @comment_thread.deleted && !current_user&.privilege?('flag_curate')
+    not_found unless @comment_thread.can_access?(current_user)
   end
 
   def thread_rename

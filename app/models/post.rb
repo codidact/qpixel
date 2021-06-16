@@ -136,6 +136,12 @@ class Post < ApplicationRecord
     end
   end
 
+  def can_access?(user)
+    (!deleted? || user&.has_post_privilege?('flag_curate', @post)) &&
+      (!category.present? || !category.min_view_trust_level.present? ||
+        category.min_view_trust_level <= user&.trust_level)
+  end
+
   private
 
   def update_tag_associations
