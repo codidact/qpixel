@@ -158,11 +158,10 @@ class CommentsController < ApplicationController
   end
 
   def thread_restrict
-    return not_found unless current_user.privilege? 'flag_curate'
-    return not_found if @comment_thread.read_only?
-
     case params[:type]
     when 'lock'
+      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.locked?
+
       lu = nil
       unless params[:duration].blank?
         lu = params[:duration].to_i.days.from_now
@@ -172,30 +171,34 @@ class CommentsController < ApplicationController
       redirect_to comment_thread_path(@comment_thread.id)
       return
     when 'archive'
+      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.archived?
+
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'
+      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.deleted?
+
       @comment_thread.update(deleted: true, deleted_by: current_user)
     when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
+    else
+      return not_found
     end
 
     render json: { status: 'success' }
   end
 
   def thread_unrestrict
-    return not_found unless current_user.privilege? 'flag_curate'
-
     case params[:type]
     when 'lock'
-      return not_found unless @comment_thread.locked?
+      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.locked?
 
       @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
     when 'archive'
-      return not_found unless @comment_thread.archived
+      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.archived?
 
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
     when 'delete'
-      return not_found unless @comment_thread.deleted
+      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
 
       if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
         render json: { status: 'error',
@@ -205,7 +208,9 @@ class CommentsController < ApplicationController
       @comment_thread.update(deleted: false, deleted_by: nil)
     when 'follow'
       tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf.destroy
+      tf&.destroy
+    else
+      return not_found
     end
 
     render json: { status: 'success' }

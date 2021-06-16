@@ -11,7 +11,7 @@ class CommentThread < ApplicationRecord
   scope :publicly_available, -> { where(deleted: false, archived: false).where('reply_count > 0') }
 
   def read_only?
-    locked? || archived || deleted
+    locked? || archived? || deleted?
   end
 
   def locked?
