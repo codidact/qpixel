@@ -75,7 +75,7 @@ class CommentsController < ApplicationController
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
 
-        existing_notification = follower.notifications.where(is_read: false)
+        existing_notification = follower.user.notifications.where(is_read: false)
                                         .where('link LIKE ?', "#{comment_thread_path(@comment.comment_thread_id)}%")
         unless existing_notification.exists?
           follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}'",
