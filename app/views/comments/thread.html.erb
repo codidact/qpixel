@@ -144,7 +144,7 @@
 
 </div>
 
-<% if current_user&.privilege? 'flag_curate' %>
+<% if current_user&.privilege?('flag_curate') && params[:inline] != 'true' %>
   <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
     <div class="droppanel--header">thread options</div>
     <div class="droppanel--menu">
@@ -174,6 +174,13 @@
         <% else %>
           <a href="#" class="js--restrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> delete</a>
         <% end %>
+      <% end %>
+
+      <% if current_user&.is_moderator || current_user&.is_admin %>
+        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>"
+           data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>">
+          <i class="fas fa-users"></i> followers
+        </a>
       <% end %>
     </div>
   </div>
@@ -213,6 +220,20 @@
       </div>
     <% end %>
   </div>
+
+  <% if current_user&.is_moderator || current_user&.is_admin %>
+    <div class="modal is-with-backdrop is-small" id="js-followers-<%= @comment_thread.id %>">
+      <div class="modal--container">
+        <div class="modal--header">
+          <button type="button" class="button is-close-button modal--header-button" data-modal="#js-followers-<%= @comment_thread.id %>">&times;</button>
+          Thread Followers
+        </div>
+        <div class="modal--body js-follower-display">
+          Loading...
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>
 
 <!-- THREAD ENDS ABOVE -->

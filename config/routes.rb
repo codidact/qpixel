@@ -187,6 +187,7 @@ Rails.application.routes.draw do
     post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
     post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
+    get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread

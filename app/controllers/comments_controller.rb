@@ -2,7 +2,7 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict]
+  before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
@@ -144,6 +144,22 @@ class CommentsController < ApplicationController
 
   def thread
     not_found unless @comment_thread.can_access?(current_user)
+  end
+
+  def thread_followers
+    not_found unless @comment_thread.can_access?(current_user)
+    not_found unless current_user.is_moderator || current_user.is_admin
+
+    @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
+                               .includes(:user, user: [:community_user, :avatar_attachment])
+    respond_to do |format|
+      format.json do
+        render json: @followers
+      end
+      format.html do
+        render layout: false
+      end
+    end
   end
 
   def thread_rename

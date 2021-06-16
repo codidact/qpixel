@@ -103,6 +103,22 @@ $(() => {
     }
   });
 
+  $(document).on('click', '.js--show-followers', async evt => {
+    evt.preventDefault();
+
+    const $tgt = $(evt.target);
+    const threadId = $tgt.data('thread');
+    const $modal = $($tgt.data('modal'));
+
+    const resp = await fetch(`/comments/thread/${threadId}/followers`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Accept': 'text/html' }
+    });
+    const data = await resp.text();
+    $modal.find('.js-follower-display').html(data);
+  });
+
   $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async evt => {
     evt.preventDefault();
 
@@ -114,8 +130,8 @@ $(() => {
     const resp = await fetch(`/comments/thread/${threadID}/${route}`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' },
-      body: 'type=' + action
+      headers: { 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: action })
     });
     const data = await resp.json();
 
