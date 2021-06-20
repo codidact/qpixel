@@ -16,7 +16,19 @@
   </a>
 </p>
 
-Rails-based version of our core software. Currently under active development towards MVP.
+Rails-based version of our core software, powering [codidact.com](https://codidact.com). Currently under active development towards MVP.
+
+## Table of Contents
+- [Community](#community)
+- [Contributing](#contributing)
+- [Installation](#installation)
+
+## Community
+To discuss features and voice ideas, please ask a new question on [Codidact Meta](https://meta.codidact.com). For technical discussions about the QPixel software itself, please ask on [Codidact Collab](https://collab.codidact.org) instead.
+
+## Contributing
+Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md)
+document before you start and look at the [GitHub issues](https://github.com/codidact/qpixel/issues) for things to do.
 
 ## Installation
 These instructions are assuming you already have a Unix environment available with Ruby and Bundler installed.
@@ -172,10 +184,5 @@ See the README.md in the [docker](docker) folder for complete instructions.
 
 ## License
 [AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
-
-## Contributing
-Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md)
-document before you start and look at the [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list) for things to do.
-
 
 [0]: https://imagemagick.org/script/download.php
