@@ -1,4 +1,21 @@
-# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Coverage Status](https://coveralls.io/repos/github/codidact/qpixel/badge.svg)](https://coveralls.io/github/codidact/qpixel) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
+<div align="center">
+  <br>
+  <h1>QPixel</h1>
+  <strong>Q&A by the community, for the community</strong>
+</div>
+<br>
+<p align="center">
+  <a href="https://circleci.com/gh/codidact/qpixel">
+    <img src="https://circleci.com/gh/codidact/qpixel.svg?style=svg" alt="CircleCI Build Status">
+  </a>
+  <a href="https://coveralls.io/github/codidact/qpixel">
+    <img src="https://coveralls.io/repos/github/codidact/qpixel/badge.svg" alt="Coverage Status">
+  </a>
+  <a href="https://zenodo.org/badge/latestdoi/237078806">
+    <img src="https://zenodo.org/badge/237078806.svg" alt="DOI">
+  </a>
+</p>
+
 Rails-based version of our core software. Currently under active development towards MVP.
 
 ## Installation
