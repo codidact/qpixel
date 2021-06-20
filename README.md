@@ -81,7 +81,7 @@ If you haven't already got it, [download and install Redis](https://redis.io/dow
 ## 3. Install Imagemagick
 
 If you haven't already installed Imagemagick, you'll need to [install it for
-your system][0].
+your system](https://imagemagick.org/script/download.php).
 
 ## 4. Download QPixel
 Clone the repository and `cd` into the directory:
@@ -185,4 +185,6 @@ See the README.md in the [docker](docker) folder for complete instructions.
 ## License
 [AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
 
-[0]: https://imagemagick.org/script/download.php
+<br>
+
+![⬆ Back to Top](#table-of-contents)
