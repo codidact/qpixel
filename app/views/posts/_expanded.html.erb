@@ -455,7 +455,7 @@
   </div>
 </div>
 
-<% if moderator? %>
+<% if moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
 
