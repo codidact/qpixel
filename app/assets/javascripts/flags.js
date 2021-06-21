@@ -23,6 +23,8 @@ $(() => {
       return;
     }
 
+    const responseType = activeRadio.data('response-type');
+
     $.ajax({
       'type': 'POST',
       'url': '/flags/new',
@@ -34,7 +36,11 @@ $(() => {
           QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
         }
         else {
-          QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.');
+          const messages = {
+            comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
+          };
+          const defaultMessage = `<strong>Thanks!</strong> A moderator will review your flag.`;
+          QPixel.createNotification('success', messages[responseType] || defaultMessage);
           self.parents(".js-flag-box").find(".js-flag-comment").val("");
         }
         self.parents(".js-flag-box").removeClass("is-active");

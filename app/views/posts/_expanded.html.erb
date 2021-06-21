@@ -278,7 +278,8 @@
                   <div class="grid">
                     <div class="grid--cell">
                       <input class="form-radio-element" type="radio" name="flag-reason" value="<%= reason.id %>"
-                             id="flag-reason-<%= reason.id %>_<%= post.id  %>" data-requires-details="<%= reason.requires_details %>" />
+                             id="flag-reason-<%= reason.id %>_<%= post.id  %>" data-requires-details="<%= reason.requires_details %>"
+                             data-response-type="<%= reason.name == "needs author's attention" ? 'comment' : nil %>" />
                     </div>
                     <div class="grid--cell is-flexible">
                       <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>_<%= post.id  %>">
