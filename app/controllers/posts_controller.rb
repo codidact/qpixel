@@ -413,6 +413,7 @@ class PostsController < ApplicationController
     @post.update(comments_disabled: !@post.comments_disabled)
     if @post.comments_disabled && params[:delete_all_comments]
       @post.comments.update_all(deleted: true)
+      @post.comment_threads.update_all(deleted: true)
     end
     render json: { status: 'success', success: true }
   end
