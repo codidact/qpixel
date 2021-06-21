@@ -21,11 +21,11 @@ class CommentsController < ApplicationController
       title = helpers.truncate(params[:body], length: 100)
     end
 
-    body = params[:body]
-    pings = check_for_pings body
-
     @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
+
+    body = params[:body]
+    pings = check_for_pings @comment_thread, body
 
     return if comment_rate_limited
 
@@ -61,7 +61,7 @@ class CommentsController < ApplicationController
     end
 
     body = params[:content]
-    pings = check_for_pings body
+    pings = check_for_pings @comment_thread, body
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
@@ -280,8 +280,8 @@ class CommentsController < ApplicationController
     check_if_locked(Post.find(params[:post_id]))
   end
 
-  def check_for_pings(content)
-    pingable = helpers.get_pingable(@comment_thread)
+  def check_for_pings(thread, content)
+    pingable = helpers.get_pingable(thread)
     matches = content.scan(/@#(\d+)/)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
