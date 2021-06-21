@@ -31,9 +31,9 @@ class CommentThread < ApplicationRecord
   private
 
   # Comment author and post author are automatically followed to the thread. Question author is NOT
-  # automatically followed on new answer comment threads.
+  # automatically followed on new answer comment threads. Comment author follower creation is done
+  # on the Comment model.
   def create_followers
-    ThreadFollower.create comment_thread: self, user: user
     ThreadFollower.create comment_thread: self, user: post.user
   end
 end
