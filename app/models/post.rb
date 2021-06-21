@@ -139,7 +139,7 @@ class Post < ApplicationRecord
   def can_access?(user)
     (!deleted? || user&.has_post_privilege?('flag_curate', @post)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
-        category.min_view_trust_level <= user&.trust_level)
+        category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
   private
