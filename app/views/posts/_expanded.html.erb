@@ -427,9 +427,9 @@
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if comment_thread_count > 5 || comment_thread_count != comment_threads.count ||
-               (moderator? && comment_thread_count > post.comment_threads.count) %>
+               (moderator? && comment_threads.count < post.comment_threads.count) %>
               <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
-                Show <%= comment_thread_count %> comment <%= 'thread'.pluralize(comment_thread_count) %>
+                Show all <%= comment_thread_count %> comment <%= 'thread'.pluralize(comment_thread_count) %>
               </a>
             <% end %>
             <% if user_signed_in? %>

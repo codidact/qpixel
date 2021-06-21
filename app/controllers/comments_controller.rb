@@ -17,8 +17,12 @@ class CommentsController < ApplicationController
     end
 
     title = params[:title]
-    if title.blank? || title.length.zero?
-      title = helpers.truncate(params[:body], length: 100)
+    unless title.present?
+      title = if params[:body].length > 100
+                "#{params[:body][0..100]}..."
+              else
+                params[:body]
+              end
     end
 
     body = params[:body]
