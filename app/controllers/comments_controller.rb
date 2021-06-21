@@ -21,10 +21,11 @@ class CommentsController < ApplicationController
       title = helpers.truncate(params[:body], length: 100)
     end
 
+    body = params[:body]
+
     @comment_thread = CommentThread.new(title: title, post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
-    body = params[:body]
     pings = check_for_pings @comment_thread, body
 
     return if comment_rate_limited
