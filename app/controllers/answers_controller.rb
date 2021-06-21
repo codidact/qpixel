@@ -3,10 +3,11 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!, only: [:convert_to_comment]
   before_action :set_answer, only: [:convert_to_comment]
-  before_action :verify_moderator, only: [:convert_to_comment]
   before_action :check_if_answer_locked, only: [:convert_to_comment]
 
   def convert_to_comment
+    return not_found unless current_user.has_post_privilege?('flag_curate', @answer)
+
     text = @answer.body_markdown
     comments = helpers.split_words_max_length(text, 500)
     post = Post.find(params[:post_id])
