@@ -21,7 +21,7 @@ class CommentsController < ApplicationController
       title = helpers.truncate(params[:body], length: 100)
     end
 
-    @comment_thread = CommentThread.new(title: title, post: @post, reply_count: 1)
+    @comment_thread = CommentThread.new(title: title, post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     body = params[:body]
@@ -71,7 +71,6 @@ class CommentsController < ApplicationController
 
     if @comment.save
       apply_pings pings
-      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       @comment_thread.thread_follower.each do |follower|
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
@@ -111,7 +110,6 @@ class CommentsController < ApplicationController
   def destroy
     if @comment.update(deleted: true)
       @comment_thread = @comment.comment_thread
-      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_delete', related: @comment, user: current_user,
                                  comment: "content <<#{@comment.content}>>")
@@ -125,7 +123,6 @@ class CommentsController < ApplicationController
   def undelete
     if @comment.update(deleted: false)
       @comment_thread = @comment.comment_thread
-      @comment_thread.update(reply_count: @comment_thread.comments.undeleted.size)
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_undelete', related: @comment, user: current_user,
                                  comment: "content <<#{@comment.content}>>")

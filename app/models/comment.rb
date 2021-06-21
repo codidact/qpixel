@@ -10,6 +10,8 @@ class Comment < ApplicationRecord
   belongs_to :references_comment, class_name: 'Comment', optional: true
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
 
+  counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }
+
   validate :content_length
 
   def root
