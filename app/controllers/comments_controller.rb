@@ -35,9 +35,6 @@ class CommentsController < ApplicationController
     end
 
     if success
-      ThreadFollower.create comment_thread: @comment_thread, user: current_user
-      ThreadFollower.create comment_thread: @comment_thread, user: @post.user
-
       unless @comment.post.user == current_user
         @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}",
                                                comment_thread_path(@comment_thread.id))

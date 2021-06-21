@@ -10,6 +10,8 @@ class CommentThread < ApplicationRecord
   scope :undeleted, -> { where(deleted: false) }
   scope :publicly_available, -> { where(deleted: false, archived: false).where('reply_count > 0') }
 
+  after_create :create_followers
+
   def read_only?
     locked? || archived? || deleted?
   end
@@ -24,5 +26,14 @@ class CommentThread < ApplicationRecord
 
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate')) && post.can_access?(user)
+  end
+
+  private
+
+  # Comment author and post author are automatically followed to the thread. Question author is NOT
+  # automatically followed on new answer comment threads.
+  def create_followers
+    ThreadFollower.create comment_thread: self, user: user
+    ThreadFollower.create comment_thread: self, user: post.user
   end
 end
