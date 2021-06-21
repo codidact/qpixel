@@ -82,11 +82,13 @@ class FlagsController < ApplicationController
   end
 
   def create_as_feedback_comment(post, user, comment)
-    thread = post.comment_threads.find_or_create_by(title: 'Post Feedback')
-    comment = thread.comments.create(user: user, post: post, comment_thread: thread, content: comment)
-    thread.update(reply_count: thread.reply_count + 1)
-    post.user.create_notification("New feedback on #{comment.root.title}",
-                                  comment_thread_path(thread, anchor: "comment-#{comment.id}"))
+    thread = post.comment_threads.find_or_create_by(title: 'Post Feedback', deleted: false)
+    ActiveRecord::Base.transaction do
+      comment = thread.comments.create!(user: user, post: post, comment_thread: thread, content: comment)
+      thread.update!(reply_count: thread.reply_count + 1)
+      post.user.create_notification("New feedback on #{comment.root.title}",
+                                    comment_thread_path(thread, anchor: "comment-#{comment.id}"))
+    end
     comment
   end
 end

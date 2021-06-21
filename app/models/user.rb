@@ -85,7 +85,7 @@ class User < ApplicationRecord
   end
 
   def create_notification(content, link)
-    notification = Notification.create(content: content, link: link)
+    notification = Notification.create!(content: content, link: link)
     notifications << notification
   end
 

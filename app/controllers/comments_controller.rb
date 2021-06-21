@@ -30,7 +30,8 @@ class CommentsController < ApplicationController
     return if comment_rate_limited
 
     success = ActiveRecord::Base.transaction do
-      @comment_thread.save && @comment.save
+      @comment_thread.save!
+      @comment.save!
     end
 
     if success
