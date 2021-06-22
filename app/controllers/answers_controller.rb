@@ -15,7 +15,8 @@ class AnswersController < ApplicationController
     created = nil
     ActiveRecord::Base.transaction do
       created = comments.map do |c|
-        Comment.create!(user: @answer.user, post: post, comment_thread: thread, community: @answer.community, content: c)
+        Comment.create!(user: @answer.user, post: post, comment_thread: thread, community: @answer.community,
+                        content: c)
       end
       @answer.update!(deleted: true, deleted_at: DateTime.now, deleted_by: current_user)
       AuditLog.moderator_audit(event_type: 'convert_to_comment', related: @answer, user: current_user,
