@@ -1,11 +1,47 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+normal:
+  title: sample
+  reply_count: 0
+  post: question_one
+  community: sample
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+normal_two:
+  title: sample
+  reply_count: 0
+  post: question_two
+  community: sample
+
+locked:
+  title: locked
+  reply_count: 0
+  post: question_one
+  community: sample
+  locked: true
+  locked_by: admin
+
+deleted:
+  title: deleted
+  reply_count: 0
+  post: question_one
+  community: sample
+  deleted: true
+  deleted_by: admin
+
+archived:
+  title: archived
+  reply_count: 0
+  post: question_one
+  community: sample
+  archived: true
+  archived_by: admin
+
+comments_disabled:
+  title: disabled
+  reply_count: 0
+  post: comments_disabled
+  community: sample
+
+high_trust:
+  title: high trust
+  reply_count: 0
+  post: high_trust
+  community: sample

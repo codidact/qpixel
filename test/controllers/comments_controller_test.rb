@@ -3,185 +3,87 @@ require 'test_helper'
 class CommentsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test 'should create new comment' do
-    sign_in users(:standard_user)
-    post :create, params: { comment: { post_id: posts(:answer_two).id, content: 'ABCDEF GHIJKL MNOPQR STUVWX YZ' } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_response(200)
-  end
-
-  test 'should update existing comment' do
-    sign_in users(:standard_user)
-    patch :update, params: { id: comments(:one).id, comment: { content: 'ABCDEF GHIJKL MNOPQR STUVWX YZ' } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_response(200)
-  end
-
-  test 'should mark comment deleted' do
-    sign_in users(:moderator)
-    delete :destroy, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_equal true, assigns(:comment).deleted
-    assert_response(200)
-  end
-
-  test 'should mark comment undeleted' do
-    sign_in users(:moderator)
-    delete :undelete, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_equal false, assigns(:comment).deleted
-    assert_response(200)
-  end
-
-  test 'should mark question comment deleted' do
-    sign_in users(:moderator)
-    delete :destroy, params: { id: comments(:two).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_equal true, assigns(:comment).deleted
-    assert_response(200)
-  end
-
-  test 'should mark question comment undeleted' do
-    sign_in users(:moderator)
-    delete :undelete, params: { id: comments(:two).id }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_equal false, assigns(:comment).deleted
-    assert_response(200)
-  end
-
-  test 'should require authentication to post comment' do
-    sign_out :user
-    post :create
-    assert_response(302)
-  end
-
-  test 'should prevent users from editing comments from another' do
-    sign_in users(:editor) # Editor only applies to main posts, not comments.
-    patch :update, params: { id: comments(:one).id }
-    assert_response(403)
-  end
-
-  test 'should prevent users from deleting comments from another' do
+  test 'should create new thread' do
     sign_in users(:editor)
-    delete :destroy, params: { id: comments(:one).id }
-    assert_response(403)
+    before_author_notifs = users(:standard_user).notifications.count
+    before_uninvolved_notifs = users(:moderator).notifications.count
+    post :create_thread, params: { post_id: posts(:question_one).id, title: 'sample thread title',
+                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 302
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:comment)&.id
+    assert_not_nil assigns(:comment_thread)&.id
+    assert_nil flash[:danger]
+    assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
+                 'Author notification not created when it should have been'
+    assert_equal before_uninvolved_notifs, users(:moderator).notifications.count,
+                 'Uninvolved notification created when it should not have been'
+    assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for thread author'
   end
 
-  test 'should prevent users from undeleting comments from another' do
+  test 'should require auth to create thread' do
+    post :create_thread, params: { post_id: posts(:question_one).id, title: 'sample thread title',
+                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should not create thread if comments disabled' do
     sign_in users(:editor)
-    delete :undelete, params: { id: comments(:one).id }
-    assert_response(403)
+    post :create_thread, params: { post_id: posts(:comments_disabled).id, title: 'sample thread title',
+                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 403
+    assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
-  test 'should allow moderators to update comment' do
-    sign_in users(:moderator)
-    patch :update, params: { id: comments(:one).id, comment: { content: 'ABCDEF GHIJKL MNOPQR STUVWX YZ' } }
-    assert_not_nil assigns(:comment)
-    assert_not_nil assigns(:comment).post
-    assert_response(200)
+  test 'should not create thread on inaccessible post' do
+    sign_in users(:editor)
+    post :create_thread, params: { post_id: posts(:high_trust).id, title: 'sample thread title',
+                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 404
   end
 
-  test 'should allow author to delete comment' do
-    sign_in users(:standard_user)
-    delete :destroy, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_equal true, assigns(:comment).deleted
-    assert_response(200)
+  test 'should add comment to existing thread' do
+    sign_in users(:editor)
+    before_author_notifs = users(:standard_user).notifications.count
+    before_follow_notifs = users(:deleter).notifications.count
+    before_uninvolved_notifs = users(:moderator).notifications.count
+    post :create, params: { id: comment_threads(:normal).id, post_id: posts(:question_one).id,
+                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 302
+    assert_redirected_to comment_thread_path(assigns(:comment_thread))
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:comment_thread)
+    assert_not_nil assigns(:comment)&.id
+    assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
+                 'Post author notification not created when it should have been'
+    assert_equal before_follow_notifs + 1, users(:deleter).notifications.count,
+                 'Thread follower notification not created when it should have been'
+    assert_equal before_uninvolved_notifs, users(:moderator).notifications.count,
+                 'Uninvolved notification created when it should not have been'
+    assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for comment author'
   end
 
-  test 'should allow author to undelete comment' do
-    sign_in users(:standard_user)
-    delete :undelete, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_equal false, assigns(:comment).deleted
-    assert_response(200)
+  test 'should require auth to add comment' do
+    post :create, params: { id: comment_threads(:normal).id, post_id: posts(:question_one).id,
+                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 302
+    assert_redirected_to new_user_session_path
   end
 
-  test 'should create notification for mentioned user' do
-    sign_in users(:standard_user)
-    post :create, params: { comment: { post_id: posts(:question_one).id, content: '@admin ABCDEF GHIJKL MNOPQR STUVWX YZ' } }
-    assert_not_nil assigns(:comment)
-    assert_equal 1, users(:admin).notifications.count
-    assert_response(200)
+  test 'should not add comment if comments disabled' do
+    sign_in users(:editor)
+    post :create, params: { id: comment_threads(:comments_disabled).id, post_id: posts(:comments_disabled).id,
+                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 403
+    assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
-  test 'should prevent short comments' do
-    sign_in users(:standard_user)
-    post :create, params: { comment: { post_id: posts(:question_one).id, content: 'a' } }
-    assert_not_nil assigns(:comment)
-    assert_response(500)
-  end
-
-  test 'should prevent long comments' do
-    sign_in users(:standard_user)
-    post :create, params: { comment: { post_id: posts(:answer_one).id, content: 'a' * 501 } }
-    assert_not_nil assigns(:comment)
-    assert_response(500)
-  end
-
-  test 'should prevent updating to short comment' do
-    sign_in users(:standard_user)
-    post :update, params: { id: comments(:one).id, comment: { post_id: posts(:answer_one).id, content: 'a' } }
-    assert_not_nil assigns(:comment)
-    assert_response(500)
-  end
-
-  test 'should prevent updating to long comment' do
-    sign_in users(:standard_user)
-    post :update, params: { id: comments(:two).id, comment: { post_id: posts(:question_one).id, content: 'a' * 501 } }
-    assert_not_nil assigns(:comment)
-    assert_response(500)
-  end
-
-  test 'should get comment as HTML' do
-    sign_in users(:standard_user)
-    get :show, params: { id: comments(:one).id }
-    assert_not_nil assigns(:comment)
-    assert_response 200
-  end
-
-  test 'should get comment as JSON' do
-    sign_in users(:standard_user)
-    get :show, params: { id: comments(:one).id, format: 'json' }
-    assert_not_nil assigns(:comment)
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-    assert_response 200
-  end
-
-  test 'should get post comments as HTML' do
-    get :post, params: { post_id: posts(:question_one).id }
-    assert_response 200
-    assert_not_nil assigns(:comments)
-  end
-
-  test 'should get post comments as JSON' do
-    get :post, params: { post_id: posts(:question_one).id, format: :json }
-    assert_response 200
-    assert_not_nil assigns(:comments)
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-    assert JSON.parse(response.body).all? { |comment| comment['deleted'] == false },
-           'Unauthenticated comment request contains deleted comment'
-  end
-
-  test 'should get comments including deleted as admin' do
-    sign_in users(:moderator)
-    get :post, params: { post_id: posts(:question_one).id, format: :json }
-    assert_response 200
-    assert_not_nil assigns(:comments)
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-    assert JSON.parse(response.body).any? { |comment| comment['deleted'] == true },
-           'Authenticated comment request contains no deleted comments'
+  test 'should not add comment on inaccessible post' do
+    sign_in users(:editor)
+    post :create, params: { id: comment_threads(:high_trust).id, post_id: posts(:high_trust).id,
+                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    assert_response 404
   end
 end
