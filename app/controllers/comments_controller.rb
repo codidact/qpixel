@@ -233,11 +233,12 @@ class CommentsController < ApplicationController
   end
 
   def post
-    @comment_threads = if current_user&.is_moderator || current_user&.is_admin
+    @post = Post.find(params[:post_id])
+    @comment_threads = if helpers.moderator? || current_user&.has_post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
-                       end.where(post_id: params[:post_id]).order(deleted: :asc, archived: :asc, reply_count: :desc)
+                       end.where(post: @post).order(deleted: :asc, archived: :asc, reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
