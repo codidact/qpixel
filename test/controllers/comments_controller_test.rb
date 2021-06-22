@@ -86,4 +86,14 @@ class CommentsControllerTest < ActionController::TestCase
                             content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
     assert_response 404
   end
+
+  test 'should edit comment' do
+    sign_in users(:standard_user)
+    post :update, params: { id: comments(:one).id, comment: { content: 'Edited comment content' } }
+    assert_response 200
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'success', JSON.parse(response.body)['status']
+  end
 end
