@@ -26,6 +26,12 @@ deleted:
   deleted: true
   deleted_by: admin
 
+on_deleted_post:
+  title: on deleted post
+  reply_count: 0
+  post: deleted_answer
+  community: sample
+
 archived:
   title: archived
   reply_count: 0
