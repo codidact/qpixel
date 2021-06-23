@@ -12,7 +12,7 @@ class Comment < ApplicationRecord
 
   after_create :create_follower
 
-  counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }
+  counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
   validate :content_length
 
