@@ -89,7 +89,6 @@ Rails.application.routes.draw do
   end
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
-  get    'questions/feed',                 to: 'questions#feed', as: :question_feed
 
   scope 'posts' do
     get    'new/:post_type',               to: 'posts#new', as: :new_post

@@ -11,13 +11,4 @@ class QuestionsController < ApplicationController
     end
     @questions = Question.list_includes.where(id: ids).paginate(page: params[:page], per_page: 25)
   end
-
-  def feed
-    @questions = Rails.cache.fetch('questions_rss', expires_in: 5.minutes) do
-      Question.all.order(created_at: :desc).limit(25)
-    end
-    respond_to do |format|
-      format.rss { render layout: false }
-    end
-  end
 end
