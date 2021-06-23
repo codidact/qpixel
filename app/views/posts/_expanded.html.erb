@@ -393,7 +393,7 @@
           </div>
         <% end %>
 
-        <% if is_question && post.children.length >= SiteSetting["TableOfContentsThreshold"] && SiteSetting["TableOfContentsThreshold"] != -1 %>
+        <% if is_top_level && post.children.length >= SiteSetting["TableOfContentsThreshold"] && SiteSetting["TableOfContentsThreshold"] != -1 %>
           <div class="toc has-margin-left-4" id="toc-toggle">
             <button class="toc--header" data-toggle="#toc-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
             <% sorted_answers = post.children.sort_by { |answer| answer.score }.reverse! %>
