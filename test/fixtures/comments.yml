@@ -40,3 +40,10 @@ archived_thread:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: archived
+
+on_answer:
+  user: standard_user
+  post: answer_one
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: on_answer

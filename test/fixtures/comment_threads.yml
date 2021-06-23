@@ -51,3 +51,9 @@ high_trust:
   reply_count: 0
   post: high_trust
   community: sample
+
+on_answer:
+  title: on answer
+  reply_count: 0
+  post: answer_one
+  community: sample
