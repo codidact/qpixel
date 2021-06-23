@@ -287,7 +287,12 @@ window.QPixel = {
     }).appendTo('body');
 
     const bodyClickHandler = () => { $popup.remove(); };
-    const bodyEscHandler = ev => { if (ev.keyCode === 27) { $popup.remove(); } };
+    const bodyEscHandler = ev => {
+      if (ev.keyCode === 27 && $('.ta-popup').length > 0) {
+        ev.stopPropagation();
+        $popup.remove();
+      }
+    };
 
     $('body').on('click', () => {
       bodyClickHandler();
@@ -296,5 +301,12 @@ window.QPixel = {
       bodyEscHandler(ev);
       $('body').off('keydown', bodyEscHandler);
     });
+  },
+
+  /**
+   * Remove all currently active textarea popups, as created by createTextareaPopup.
+   */
+  removeTextareaPopups: () => {
+    $('.ta-popup').remove();
   }
 };

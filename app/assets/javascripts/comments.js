@@ -190,7 +190,10 @@ $(() => {
     return [currentSequence, posInSeq];
   };
 
+  const pingable = {};
   $(document).on('keyup', '.js-comment-field', async ev => {
+    if (ev.keyCode === 27) { return; }
+
     const $tgt = $(ev.target);
     const content = $tgt.val();
     const splat = content.split(' ');
@@ -199,23 +202,29 @@ $(() => {
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
     const callback = ev => {
-      const $item = $(ev.target);
+      const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
       QPixel.replaceSelection($tgt, `@#${id}`);
       $('.ta-popup').remove();
+      $tgt.focus();
     };
 
     // If the word the caret is currently in starts with an @, and has at least 3 characters after that, assume it's
     // an attempt to ping another user with a username, and kick off suggestions -- unless it starts with @#, in which
     // case it's likely an already-selected ping.
     if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && currentWord.length >= 4) {
+      QPixel.removeTextareaPopups();
       const threadId = $tgt.data('thread');
       const postId = $tgt.data('post');
-      const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
-      const data = await resp.json();
-      const items = Object.entries(data).filter(e => {
+
+      if (!pingable[`${threadId}-${postId}`] || Object.keys(pingable[`${threadId}-${postId}`]).length === 0) {
+        const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
+        pingable[`${threadId}-${postId}`] = await resp.json();
+      }
+
+      const items = Object.entries(pingable[`${threadId}-${postId}`]).filter(e => {
         return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
       }).map(e => {
         const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
@@ -224,6 +233,9 @@ $(() => {
                            .attr('data-user-id', id);
       });
       QPixel.createTextareaPopup(items, $tgt[0], callback);
+    }
+    else {
+      QPixel.removeTextareaPopups();
     }
   });
 });
