@@ -417,21 +417,20 @@
           <% end %>
         </div>
         <div class="post--comments has-padding-4">
-          <% public_threads = post.comment_threads.publicly_available.order(updated_at: :desc) %>
-          <% visible_count = current_user&.has_post_privilege?('flag_curate', post) ? post.comment_threads.count : public_threads.count %>
-          <% public_count = public_threads.count %>
+          <% comment_threads = post.comment_threads.initially_visible.order(updated_at: :desc) %>
+          <% public_count = comment_threads.count %>
+          <% available_count = current_user&.has_post_privilege?('flag_curate', post) ?
+                                 post.comment_threads.count : post.comment_threads.publicly_available.count %>
           <h4 class="has-margin-0">
-            <%= pluralize(visible_count, 'comment thread') %>
+            <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <div class="post--comments-container">
-            <% comment_threads = public_threads.first(5) %>
-            <%= render 'comments/post', comment_threads: comment_threads %>
+            <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
           </div>
           <div class="post--comments-links has-margin-top-1">
-            <% if public_count > 5 || public_count != comment_threads.count || post.comment_threads.archived.count > 0
-               (current_user&.has_post_privilege?('flag_curate', post) && comment_threads.count < visible_count) %>
+            <% if available_count > [comment_threads.count, 5].min %>
               <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
-                Show all <%= visible_count %> comment <%= 'thread'.pluralize(visible_count) %>
+                Show more
               </a>
             <% end %>
             <% if user_signed_in? %>

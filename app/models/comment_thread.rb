@@ -9,7 +9,8 @@ class CommentThread < ApplicationRecord
 
   scope :deleted, -> { where(deleted: true) }
   scope :undeleted, -> { where(deleted: false) }
-  scope :publicly_available, -> { where(deleted: false, archived: false).where('reply_count > 0') }
+  scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
+  scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   after_create :create_followers
