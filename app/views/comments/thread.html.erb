@@ -7,11 +7,16 @@
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
-<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>">
+<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
+     data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
+     data-comments="<%= @comment_thread.reply_count %>">
   <div class="widget--header">
     <% if params[:inline] == 'true' %>
       <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
         show thread
+      </a>
+      <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">
+        collapse
       </a>
     <% else %>
       <% if current_user&.privilege? 'flag_curate' %>
@@ -38,7 +43,7 @@
     <% elsif @comment_thread.locked? %>
       <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
     <% end %>
-    <%= @comment_thread.title %>
+    <span class="js-thread-title"><%= @comment_thread.title %></span>
   </div>
   <% skipped_deleted = 0 %>
   <% comments = @comment_thread.comments %>

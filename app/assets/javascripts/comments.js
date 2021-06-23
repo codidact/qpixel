@@ -14,7 +14,7 @@ $(() => {
   });
 
   $(document).on('click', '.post--comments-thread.is-inline a', async evt => {
-    if(evt.ctrlKey) { return; }
+    if (evt.ctrlKey) { return; }
 
     evt.preventDefault();
     const $tgt = $(evt.target);
@@ -30,6 +30,33 @@ $(() => {
     $tgt.parent()[0].outerHTML = data;
   });
 
+  $(document).on('click', '.js-collapse-thread', async ev => {
+    const $tgt = $(ev.target);
+    const $widget = $tgt.parents('.widget');
+    const $embed = $tgt.parents('.post--comments-thread');
+
+    const threadId = $widget.data('thread');
+    const isDeleted = $widget.data('deleted');
+    const isArchived = $widget.data('archived');
+    const threadTitle = $widget.find('.js-thread-title').text();
+    const replyCount = $widget.data('comments');
+
+    const $container = $(`<div class="post--comments-thread is-inline"></div>`);
+    const $link = $(`<a href="/comments/thread/${threadId}" class="js--comment-link" data-thread=${threadId}></a>`);
+    $link.text(threadTitle);
+
+    if (isDeleted) {
+      $container.append(`<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`);
+      $container.addClass('is-deleted');
+    }
+    if (isArchived) {
+      $container.append(`<i class="fas fa-archive fa-fw" title="Archived thread" aria-label="Archived thread"></i>`);
+      $container.addClass('is-archived');
+    }
+    $container.append($link);
+    $container.append(`(${replyCount} comment${replyCount !== 1 ? 's' : ''})`);
+    $embed[0].outerHTML = $container[0].outerHTML;
+  });
 
   $(document).on('click', '.js-comment-edit', async evt => {
     evt.preventDefault();
