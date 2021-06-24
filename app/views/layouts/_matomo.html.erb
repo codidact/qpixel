@@ -1,4 +1,4 @@
-<% unless SiteSetting['AnalyticsURL'].nil? || SiteSetting['AnalyticsSiteId'].nil? %>
+<% unless SiteSetting['AnalyticsURL'].blank? || SiteSetting['AnalyticsSiteId'].blank? %>
   <% cache [RequestContext.community, SiteSetting['AnalyticsURL'], SiteSetting['AnalyticsSiteId']] do %>
     <script async defer type="text/javascript">
       (async () => {

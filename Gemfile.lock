@@ -48,8 +48,8 @@ GEM
     ast (2.4.2)
     awesome_print (1.9.2)
     aws-eventstream (1.1.1)
-    aws-partitions (1.465.0)
-    aws-sdk-core (3.114.1)
+    aws-partitions (1.466.0)
+    aws-sdk-core (3.114.2)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -110,7 +110,6 @@ GEM
     execjs (2.8.1)
     fastimage (2.2.4)
     ffi (1.15.1)
-    ffi (1.15.1-x64-mingw32)
     flamegraph (0.9.5)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -149,14 +148,9 @@ GEM
     minitest-ci (3.4.0)
       minitest (>= 5.0.6)
     mysql2 (0.5.3)
-    mysql2 (0.5.3-x64-mingw32)
     nio4r (2.5.7)
     nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
-      racc (~> 1.4)
-    nokogiri (1.11.7-x64-mingw32)
-      racc (~> 1.4)
-    nokogiri (1.11.7-x86_64-darwin)
       racc (~> 1.4)
     omniauth (1.9.1)
       hashie (>= 3.4.6)
@@ -228,7 +222,7 @@ GEM
       chunky_png (~> 1.0)
       rqrcode_core (~> 0.2)
     rqrcode_core (0.2.0)
-    rubocop (1.16.0)
+    rubocop (1.16.1)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -366,4 +360,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.16
+   2.2.19

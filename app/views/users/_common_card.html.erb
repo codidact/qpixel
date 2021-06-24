@@ -1,3 +1,12 @@
+<%#
+    Main usercard view.
+    Variables:
+      user : the User instance to display
+    ? ckb  : enable keyboard navigation on this usercard? Default false.
+%>
+
+<% ckb ||= false %>
+
 <div class="user-card">
   <div class="user-card--avatar">
     <img alt="user card" src="<%= avatar_url(user, 48) %>" height="48" width="48" class="has-float-left" />

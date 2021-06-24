@@ -3,18 +3,14 @@ one:
   post: question_one
   content: ABCDEF GHIJKL MNOPQR
   community: sample
+  comment_thread: normal
 
 two:
   user: standard_user
   post: question_two
   content: ABCDEF GHIJKL MNOPQR
   community: sample
-
-on_answer:
-  user: standard_user
-  post: answer_one
-  content: ABCDEF GHIJKL MNOPQR
-  community: sample
+  comment_thread: normal_two
 
 deleted:
   user: standard_user
@@ -22,3 +18,32 @@ deleted:
   content: ABCDEF GHIJKL MNOPQR
   deleted: true
   community: sample
+  comment_thread: normal
+
+deleted_thread:
+  user: standard_user
+  post: question_one
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: deleted
+
+locked_thread:
+  user: standard_user
+  post: question_one
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: locked
+
+archived_thread:
+  user: standard_user
+  post: question_one
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: archived
+
+on_answer:
+  user: standard_user
+  post: answer_one
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: on_answer

@@ -1,23 +1,57 @@
 <% with_post_link ||= false %>
+<% pingable ||= nil %>
 
-<div class="comment <%= comment.deleted? ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
-  <p class="comment--content">
-    <span dir="ltr"><%= raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)) %></span>
-    <span class="comment--meta">
-      &mdash; <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr'%>
-      <span class="text-muted" title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
-      <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator || current_user.is_admin) %>
-        &middot; <a href="#" class="js-comment-edit">edit</a> &middot;
-        <% if comment.deleted %>
-          <a href="#" class="js-comment-undelete is-red">undelete</a>
+<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
+  <div class="comment-meta">
+    <% if comment.has_reference %>
+      <div class="comment--reference">
+        <button class="comment--reference-button button is-small is-button is-icon-only is-muted"
+                data-drop="#comment-<%= comment.id %>-ref" data-drop-self-class-toggle="is-active"
+                data-drop-force-dir="down">
+          <i class="fas fa-reply fa-fw"></i>
+        </button>
+      </div>
+      <div class="droppanel h-c-black is-large" id="comment-<%= comment.id %>-ref">
+        <% if comment.references_comment.nil? %>
+          <div class="h-fs-small h-m-b-2">
+            reference to
+            <a href="<%= generic_share_link(comment.post) %>">post</a>:
+          </div>
         <% else %>
-          <a href="#" class="js-comment-delete is-red">delete</a>
+          <div class="h-fs-small h-m-b-2">
+            reference to
+            <a href="<%= comment_link(comment.references_comment) %>">
+              comment by
+              <span dir="ltr"><%= comment.references_comment.user.rtl_safe_username %></span></a>:
+          </div>
+        <% end %>
+        <div class="h-p-2 has-border-left-width-4 has-border-left-style-solid has-border-color-tertiary-200">
+          <%= comment.reference_text %>
+        </div>
+      </div>
+    <% end %>
+    <div class="comment--info">
+      <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
+      wrote
+      <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
+    </div>
+    <div class="comment--links">
+      <a href="<%= comment_link(comment) %>">link</a>
+      <% if with_post_link %>
+        <%= link_to 'post', generic_share_link(comment.post) %>
+      <% end %>
+      <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
+        <a href="#" class="js-comment-edit">edit</a>
+        <% if comment.deleted %>
+          <a href="#" class="is-red js-comment-undelete">undelete</a>
+        <% else %>
+          <a href="#" class="is-red js-comment-delete">delete</a>
         <% end %>
       <% end %>
-      <% if with_post_link %>
-        &middot;
-        <%= link_to 'go to post', generic_share_link(comment.post) %>
-      <% end %>
-    </span>
-  </p>
+    </div>
+  </div>
+  <div class="comment--body" dir="ltr">
+    <%= render_pings(raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)),
+                     pingable: pingable) %>
+  </div>
 </div>

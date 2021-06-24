@@ -1,0 +1,32 @@
+<div class="modal js--<%= post.id %>-new-thread-modal is-with-backdrop">
+  <div class="modal--container">
+    <div class="modal--header">
+      <button class="button is-close-button modal--header-button" data-modal=".js--<%= post.id %>-new-thread-modal">&times;</button>
+      Start new comment thread
+    </div>
+    <div class="modal--body">
+      <% if post.comment_threads.size > 0 %>
+        <p>You can create a new comment thread. Please check first whether an existing comment thread covers already what you need.</p>
+      <% else %>
+        <p>Be the first to create a new comment thread.</p>
+      <% end %>
+
+      <%= form_tag create_comment_thread_path do %>
+        <%= hidden_field_tag :post_id, post.id %>
+        
+        <%= label_tag :body, 'Your comment', class: 'form-element' %>
+        <div class="form-caption">Start the thread with a comment.</div>
+        <%= text_area_tag :body, '', class: 'form-element js-comment-field', data: { post: post.id, thread: '-1' },
+                          required: true %>
+        <span class="has-float-right has-font-size-caption js-character-count"
+              data-target=".js-comment-field" data-max="500">0 / 500</span>
+
+        <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
+        <div class="form-caption">You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will be shown.</div>
+        <%= text_field_tag :title, '', class: 'form-element' %>
+
+        <%= submit_tag 'Create thread', class: 'button is-filled' %>
+      <% end %>
+    </div>
+  </div>
+</div>

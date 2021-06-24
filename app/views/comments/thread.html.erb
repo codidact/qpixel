@@ -1,0 +1,244 @@
+<% pingable = get_pingable(@comment_thread) %>
+
+<h1>Comments on
+  <a href="<%= generic_show_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
+</h1>
+
+<!-- THREAD STARTS BELOW -->
+<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
+
+<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
+     data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
+     data-comments="<%= @comment_thread.reply_count %>">
+  <div class="widget--header">
+    <% if params[:inline] == 'true' %>
+      <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
+        show thread
+      </a>
+      <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">
+        collapse
+      </a>
+    <% else %>
+      <% if current_user&.privilege? 'flag_curate' %>
+        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+      <% end %>
+      <% unless current_user.nil? %>
+        <% if @comment_thread.followed_by? current_user %>
+          <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
+            data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time.">
+            <i class="fa fa-minus fa-fw"></i>unfollow
+          </a>
+        <% else %>
+          <a href="#" class="widget--header-link js--restrict-thread" data-action="follow"
+            data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response.">
+            <i class="fa fa-plus fa-fw"></i>follow
+          </a>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @comment_thread.deleted %>
+      <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
+    <% elsif @comment_thread.archived %>
+      <i class="fas fa-archive fa-fw" title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
+    <% elsif @comment_thread.locked? %>
+      <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
+    <% end %>
+    <span class="js-thread-title"><%= @comment_thread.title %></span>
+  </div>
+  <% skipped_deleted = 0 %>
+  <% comments = @comment_thread.comments %>
+  <% if params[:inline] == 'true' %>
+    <% comments = comments.where(deleted: false).take 5 %>
+  <% end %>
+  <% comments.each do |comment| %>
+    <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
+      <% skipped_deleted += 1%>
+      <% next %>
+    <% elsif skipped_deleted > 0 %>
+      <div class="widget--body">
+        <div class="deleted-comments">
+          <p>
+          <% if skipped_deleted == 1 %>
+            Skipping <%= skipped_deleted %> deleted comment.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show it anyway.</a>
+            <% end %>
+          <% else %>
+            Skipping <%= skipped_deleted %> deleted comments.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show them anyway.</a>
+            <% end %>
+          <% end %>
+          </p>
+        </div>
+      </div>
+      <% skipped_deleted = 0 %>
+    <% else %>
+      <% skipped_deleted = 0 %>
+    <% end %>
+    <div class="widget--body">
+      <%= render 'comments/comment', comment: comment, pingable: pingable %>
+    </div>
+  <% end %>
+  <% if skipped_deleted > 0 %>
+    <div class="widget--body">
+      <div class="deleted-comments">
+        <p>
+          <% if skipped_deleted == 1 %>
+            Skipping <%= skipped_deleted %> deleted comment.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show it anyway.</a>
+            <% end %>
+          <% else %>
+            Skipping <%= skipped_deleted %> deleted comments.
+            <% if current_user&.is_moderator %>
+              <a href="?show_deleted_comments=1">Show them anyway.</a>
+            <% end %>
+          <% end %>
+          </p>
+      </div>
+    </div>
+    <% skipped_deleted = 0 %>
+  <% end %>
+  <% unless current_user.nil? || params[:inline] == 'true' %>
+    <div class="widget--footer">
+      <% if !@comment_thread.read_only? %>
+        <% if @post.locked? && !moderator? && !admin? %>
+          <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
+        <% elsif @post.deleted %>
+          <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
+        <% elsif @post.comments_disabled && !moderator? && !admin? %>
+          <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on the parent post.</p>
+        <% else %>
+          <% if @post.locked? %>
+            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
+          <% elsif @post.comments_disabled %>
+            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
+          <% end %>
+          <h4>Reply to this thread</h4>
+          <%= form_tag create_comment_path(@comment_thread.id) do %>
+            <%= hidden_field_tag :post_id, @post.id %>
+            
+            <%= label_tag :content, 'Your message', class: 'form-element' %>
+            <%= text_area_tag :content, '', class: 'form-element js-comment-field',
+                              data: { thread: @comment_thread.id, post: @comment_thread.post_id } %>
+            <span class="has-float-right has-font-size-caption js-character-count"
+                  data-target=".js-comment-field" data-max="500">0 / 500</span>
+            
+            <%= submit_tag 'Add reply', class: 'button is-muted is-filled' %>
+          <% end %>
+        <% end %>
+      <% elsif @comment_thread.deleted %>
+        <p class="h-c-red-700"><i class="fas fa-trash fa-fw"></i> You cannot reply to this thread because it has been deleted.</p>
+      <% elsif @comment_thread.locked? %>
+        <p class="h-c-red-700"><i class="fas fa-lock fa-fw"></i> You cannot reply to this thread because it has been locked.</p>
+      <% elsif @comment_thread.archived %>
+        <p class="h-c-tertiary-700"><i class="fas fa-archive fa-fw"></i> This thread has been archived and cannot be replied to.</p>
+      <% end %>
+    </div>
+  <% end %>
+  <% if params[:inline] == 'true' %>
+    <div class="widget--footer">
+      <p class="h-m-0">
+        Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
+        <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
+      </p>
+    </div>
+  <% end %>
+</div>
+
+</div>
+
+<% if current_user&.privilege?('flag_curate') && params[:inline] != 'true' %>
+  <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
+    <div class="droppanel--header">thread options</div>
+    <div class="droppanel--menu">
+      <% if current_user.is_moderator || !@comment_thread.read_only? %>
+        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
+      <% end %>
+
+      <% unless @comment_thread.archived || @comment_thread.deleted %>
+        <% if @comment_thread.locked? %>
+          <a href="#" class="js--unrestrict-thread" data-action="lock" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> unlock</a>
+        <% else %>
+          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> lock</a>
+        <% end %>
+      <% end %>
+      
+      <% unless @comment_thread.locked? || @comment_thread.deleted %>
+        <% if @comment_thread.archived %>
+          <a href="#" class="js--unrestrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> restore</a>
+        <% else %>
+          <a href="#" class="js--restrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> archive</a>
+        <% end %>
+      <% end %>
+
+      <% unless @comment_thread.locked? || @comment_thread.archived %>
+        <% if @comment_thread.deleted %>
+          <a href="#" class="js--unrestrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> undelete</a>
+        <% else %>
+          <a href="#" class="js--restrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> delete</a>
+        <% end %>
+      <% end %>
+
+      <% if current_user&.is_moderator || current_user&.is_admin %>
+        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>"
+           data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>">
+          <i class="fas fa-users"></i> followers
+        </a>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
+    <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
+      <div class="modal--header">
+        <button type="button" class="button is-close-button modal--header-button" data-modal=".js--rename-thread-<%= @comment_thread.id %>">&times;</button>
+        Rename...
+      </div>
+      <div class="modal--body">
+        <%= label_tag :title, 'Title', class: 'form-element' %>
+        <%= text_field_tag :title, @comment_thread.title, class: 'form-element' %>
+      </div>
+      <div class="modal--footer">
+        <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
+        <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= @comment_thread.id %>">Cancel</button>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="modal is-with-backdrop is-small js--lock-thread-<%= @comment_thread.id %>">
+    <%= form_tag restrict_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
+      <%= hidden_field_tag :type, 'lock' %>
+      <div class="modal--header">
+        <button type="button" class="button is-close-button modal--header-button" data-modal=".js--lock-thread-<%= @comment_thread.id %>">&times;</button>
+        Lock...
+      </div>
+      <div class="modal--body">
+        <%= label_tag :duration, 'Duration in days (optional)', class: 'form-element' %>
+        <div class="form-caption">You may enter a lock duration in days. If you leave this blank, the thread will need to be unlocked manually.</div>
+        <%= number_field_tag :duration, nil, class: 'form-element' %>
+      </div>
+      <div class="modal--footer">
+        <%= submit_tag 'Lock thread', class: 'button is-muted is-filled' %>
+        <button type="button" class="button is-muted" data-modal=".js--lock-thread-<%= @comment_thread.id %>">Cancel</button>
+      </div>
+    <% end %>
+  </div>
+
+  <% if current_user&.is_moderator || current_user&.is_admin %>
+    <div class="modal is-with-backdrop is-small" id="js-followers-<%= @comment_thread.id %>">
+      <div class="modal--container">
+        <div class="modal--header">
+          <button type="button" class="button is-close-button modal--header-button" data-modal="#js-followers-<%= @comment_thread.id %>">&times;</button>
+          Thread Followers
+        </div>
+        <div class="modal--body js-follower-display">
+          Loading...
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<!-- THREAD ENDS ABOVE -->

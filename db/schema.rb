@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_22_090732) do
+ActiveRecord::Schema.define(version: 2021_06_09_235441) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -138,6 +138,28 @@ ActiveRecord::Schema.define(version: 2021_04_22_090732) do
     t.index ["community_id"], name: "index_close_reasons_on_community_id"
   end
 
+  create_table "comment_threads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "title"
+    t.integer "reply_count", default: 0, null: false
+    t.bigint "post_id"
+    t.boolean "locked", default: false, null: false
+    t.bigint "locked_by_id"
+    t.timestamp "locked_until"
+    t.boolean "archived", default: false, null: false
+    t.bigint "archived_by_id"
+    t.boolean "ever_archived_before"
+    t.boolean "deleted", default: false, null: false
+    t.bigint "deleted_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "community_id", null: false
+    t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
+    t.index ["community_id"], name: "index_comment_threads_on_community_id"
+    t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
+    t.index ["locked_by_id"], name: "index_comment_threads_on_locked_by_id"
+    t.index ["post_id"], name: "index_comment_threads_on_post_id"
+  end
+
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -146,8 +168,14 @@ ActiveRecord::Schema.define(version: 2021_04_22_090732) do
     t.boolean "deleted", default: false
     t.integer "user_id"
     t.bigint "community_id", null: false
+    t.bigint "comment_thread_id"
+    t.boolean "has_reference", default: false, null: false
+    t.text "reference_text"
+    t.bigint "references_comment_id"
+    t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
     t.index ["community_id"], name: "index_comments_on_community_id"
     t.index ["post_id"], name: "index_comments_on_post_type_and_post_id"
+    t.index ["references_comment_id"], name: "index_comments_on_references_comment_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
@@ -260,6 +288,7 @@ ActiveRecord::Schema.define(version: 2021_04_22_090732) do
     t.bigint "post_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "requires_details", default: false, null: false
     t.index ["community_id"], name: "index_post_flag_types_on_community_id"
     t.index ["post_type_id"], name: "index_post_flag_types_on_post_type_id"
   end
@@ -505,6 +534,15 @@ ActiveRecord::Schema.define(version: 2021_04_22_090732) do
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
+  create_table "thread_followers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "comment_thread_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
+    t.index ["user_id"], name: "index_thread_followers_on_user_id"
+  end
+
   create_table "user_abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.bigint "ability_id"
@@ -604,6 +642,10 @@ ActiveRecord::Schema.define(version: 2021_04_22_090732) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
+  add_foreign_key "comment_threads", "users", column: "archived_by_id"
+  add_foreign_key "comment_threads", "users", column: "deleted_by_id"
+  add_foreign_key "comment_threads", "users", column: "locked_by_id"
+  add_foreign_key "comments", "comments", column: "references_comment_id"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"

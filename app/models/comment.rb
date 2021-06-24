@@ -6,7 +6,13 @@ class Comment < ApplicationRecord
   scope :undeleted, -> { where(deleted: false) }
 
   belongs_to :user
+  belongs_to :comment_thread
+  belongs_to :references_comment, class_name: 'Comment', optional: true
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
+
+  after_create :create_follower
+
+  counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
   validate :content_length
 
@@ -22,5 +28,11 @@ class Comment < ApplicationRecord
     elsif stripped.size > 500
       errors.add(:content, 'is too long (maximum is 500 characters)')
     end
+  end
+
+  private
+
+  def create_follower
+    ThreadFollower.find_or_create_by(comment_thread: comment_thread, user: user)
   end
 end

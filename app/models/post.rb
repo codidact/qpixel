@@ -16,6 +16,7 @@ class Post < ApplicationRecord
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :comment_threads, dependent: :destroy
   has_many :post_histories, dependent: :destroy
   has_many :flags, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
@@ -133,6 +134,12 @@ class Post < ApplicationRecord
     if locked
       update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
     end
+  end
+
+  def can_access?(user)
+    (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
+      (!category.present? || !category.min_view_trust_level.present? ||
+        category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
   private

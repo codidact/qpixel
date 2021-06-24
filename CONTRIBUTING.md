@@ -2,8 +2,8 @@
 Contributing to QPixel follows broadly the same process as any other Codidact project.
 
 ## What needs doing?
- - **Bugs** are reported here on GitHub. Have a look at the open issues tagged `type: bug` to find something that needs fixing.
- - Any other development work will be listed in the [TODO list in the wiki](https://github.com/codidact/qpixel/wiki/TODO-list).
+ - Most bugs and change requests are here on GitHub. Have a look at the open issues to find something that needs doing.
+ - There are a few other items in the [TODO list in the wiki](https://github.com/codidact/qpixel/wiki/TODO-list).
    
 Once you've picked what you're going to work on, please **leave a comment** on the issue to indicate you're planning to work on
 it; this helps us reduce wasted effort. If there's not already an issue for the feature you want to work on, please create one.
@@ -11,9 +11,8 @@ If you need time to work on an issue, that's absolutely fine, but please **keep 
 don't hear from you for a few weeks, we may assume you've given up working on that issue and give it to someone else.
 
 ## What's the workflow?
- * First, **you need an issue to work under**. Look at the current [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list)
-   to find something to work on; follow the instructions there to see what's available, and create an issue once you know what you're
-   going to work on.
+ * First, **you need an issue to work under**. Either pick an existing issue or create a new one, and leave a comment on it
+   to indicate that you're working on it.
  * Second, you can make your changes. If you have write access to the repository, create a topic branch (please use the format
    `art/40/add-bells-and-whistles`, i.e. `username/issue-number/brief-description`) and make your changes there; if not, fork
    the repository and work in your fork.
@@ -21,8 +20,7 @@ don't hear from you for a few weeks, we may assume you've given up working on th
 
 Keep in mind that **status checks are required to pass** and **at least one approving review** is required from the team before
 any pull request can be merged. If status checks don't pass, we won't be able to merge - there are no exceptions, so please fix
-the failures and commit again. You can always mark your pull request as [WIP] (for "Work In Progress") while you're still
-trying to make it work.
+the failures and commit again. You can always mark your pull request as a draft while you're still trying to make it work.
 
 ## What standards are there?
 We have code style and standards documents for each applicable language. Please make sure you follow these if possible; if

@@ -1,0 +1,5 @@
+<h3><%= pluralize(@followers.count, 'follower') %></h3>
+
+<% @followers.each do |tf| %>
+  <%= render 'users/common_card', user: tf.user %>
+<% end %>

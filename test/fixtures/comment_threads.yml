@@ -1,0 +1,59 @@
+normal:
+  title: sample
+  reply_count: 0
+  post: question_one
+  community: sample
+
+normal_two:
+  title: sample
+  reply_count: 0
+  post: question_two
+  community: sample
+
+locked:
+  title: locked
+  reply_count: 0
+  post: question_one
+  community: sample
+  locked: true
+  locked_by: admin
+
+deleted:
+  title: deleted
+  reply_count: 0
+  post: question_one
+  community: sample
+  deleted: true
+  deleted_by: admin
+
+on_deleted_post:
+  title: on deleted post
+  reply_count: 0
+  post: deleted_answer
+  community: sample
+
+archived:
+  title: archived
+  reply_count: 0
+  post: question_one
+  community: sample
+  archived: true
+  archived_by: admin
+
+comments_disabled:
+  title: disabled
+  reply_count: 0
+  post: comments_disabled
+  community: sample
+
+high_trust:
+  title: high trust
+  reply_count: 0
+  post: high_trust
+  community: sample
+
+on_answer:
+  title: on answer
+  reply_count: 0
+  post: answer_one
+  community: sample
