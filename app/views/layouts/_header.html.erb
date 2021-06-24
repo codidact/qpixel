@@ -88,7 +88,7 @@
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
-    <% Community.where(hidden: false).each do |c| %>
+    <% Community.where(hidden: false).includes(:site_settings).each do |c| %>
       <div class="community-header-list-entry">
         <% settings = SiteSetting.for_community_id(c.id) %>
         <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
