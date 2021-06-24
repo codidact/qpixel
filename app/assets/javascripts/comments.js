@@ -28,6 +28,7 @@ $(() => {
     data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
 
     $tgt.parent()[0].outerHTML = data;
+    window.MathJax && MathJax.typeset();
   });
 
   $(document).on('click', '.js-collapse-thread', async ev => {
