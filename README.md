@@ -1,5 +1,34 @@
-# QPixel [![CircleCI Build Status](https://circleci.com/gh/codidact/qpixel.svg?style=svg)](https://circleci.com/gh/codidact/qpixel) [![Coverage Status](https://coveralls.io/repos/github/codidact/qpixel/badge.svg)](https://coveralls.io/github/codidact/qpixel) [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
-Rails-based version of our core software. Currently under active development towards MVP.
+<div align="center">
+  <br>
+  <h1>QPixel</h1>
+  <strong>Q&A by the community, for the community</strong>
+</div>
+<br>
+<p align="center">
+  <a href="https://circleci.com/gh/codidact/qpixel">
+    <img src="https://circleci.com/gh/codidact/qpixel.svg?style=svg" alt="CircleCI Build Status">
+  </a>
+  <a href="https://coveralls.io/github/codidact/qpixel">
+    <img src="https://coveralls.io/repos/github/codidact/qpixel/badge.svg" alt="Coverage Status">
+  </a>
+  <a href="https://zenodo.org/badge/latestdoi/237078806">
+    <img src="https://zenodo.org/badge/237078806.svg" alt="DOI">
+  </a>
+</p>
+
+Rails-based version of our core software, powering [codidact.com](https://codidact.com). Currently under active development towards MVP.
+
+## Table of Contents
+- [Community](#community)
+- [Contributing](#contributing)
+- [Installation](#installation)
+
+## Community
+To discuss features and voice ideas, please ask a new question on [Codidact Meta](https://meta.codidact.com). For technical discussions about the QPixel software itself, please ask on [Codidact Collab](https://collab.codidact.org) instead.
+
+## Contributing
+Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md)
+document before you start and look at the [GitHub issues](https://github.com/codidact/qpixel/issues) for things to do.
 
 ## Installation
 These instructions are assuming you already have a Unix environment available with Ruby and Bundler installed.
@@ -42,25 +71,25 @@ brew install mysql bison openssl mysql-client
 bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
 ```
 
-## 1. Install JS runtime
+### 1. Install JS runtime
 If you already have Node.JS installed, you can skip this step. If not,
 [download and install it](https://nodejs.org/en/download/).
 
-## 2. Install Redis
+### 2. Install Redis
 If you haven't already got it, [download and install Redis](https://redis.io/download).
 
-## 3. Install Imagemagick
+### 3. Install Imagemagick
 
 If you haven't already installed Imagemagick, you'll need to [install it for
-your system][0].
+your system](https://imagemagick.org/script/download.php).
 
-## 4. Download QPixel
+### 4. Download QPixel
 Clone the repository and `cd` into the directory:
 
     git clone https://github.com/codidact/qpixel
     cd qpixel
 
-## 5. Configure database connection
+### 5. Configure database connection
 If you weren't asked to set the root MySQL user password during `mysql-server` installation, the installation is
 likely to be using Unix authentication instead. You'll need to sign into the MySQL server with `sudo mysql -u root`
 and create a new database user for QPixel:
@@ -79,7 +108,7 @@ is `localhost` or `127.0.0.1`.
 You'll also need to fill in details for the Redis connection. If you've followed these instructions, the sample file
 should already contain the correct values for you, but if you've customised your setup you'll need to correct them.
 
-## 6. Set up QPixel
+### 6. Set up QPixel
 Install gems:
 
     bundle install
@@ -99,7 +128,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-## 7. Seed the database:
+### 7. Seed the database:
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -109,7 +138,7 @@ Run the server!
 
     rails s
 
-## 8. Configure Categories
+### 8. Configure Categories
 
 Before you try to create a post we need to configure categories! 
 Go to `http://localhost:3000/categories/`
@@ -129,7 +158,7 @@ associated with the "Meta" tag set, and the Q&A category can be associated with 
 Make sure to click save for each one.<br> 
 <em>Note:</em> You may need to run `rails db:seed` again.
 
-## 8. Create a Post
+### 8. Create a Post
 
 You should then be able to create a post! There are character requirements for the
 body and title, and you are required at least one tag.
@@ -149,16 +178,13 @@ to an admin account, run `rails c` for a console, followed by:
 User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
 ```
 
-## Install with Docker
+### Install with Docker
 
 See the README.md in the [docker](docker) folder for complete instructions.
 
 ## License
 [AGPL licensed](https://github.com/codidact/qpixel/blob/master/LICENSE).
 
-## Contributing
-Contributions are welcome - please read the [CONTRIBUTING](https://github.com/codidact/qpixel/blob/develop/CONTRIBUTING.md)
-document before you start and look at the [TODO list](https://github.com/codidact/qpixel/wiki/TODO-list) for things to do.
+<br>
 
-
-[0]: https://imagemagick.org/script/download.php
+![⬆ Back to Top](#table-of-contents)
