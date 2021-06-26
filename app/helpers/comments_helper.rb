@@ -1,9 +1,10 @@
 module CommentsHelper
   def comment_link(comment)
     if comment.deleted
-      comment_thread_path(comment.comment_thread_id) + "?show_deleted_comments=1#comment-#{comment.id}"
+      comment_thread_url(comment.comment_thread_id, show_deleted_comments: 1, anchor: "comment-#{comment.id}",
+                         host: comment.community.host)
     else
-      comment_thread_path(comment.comment_thread_id) + "#comment-#{comment.id}"
+      comment_thread_url(comment.comment_thread_id, anchor: "comment-#{comment.id}", host: comment.community.host)
     end
   end
 
