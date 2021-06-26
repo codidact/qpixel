@@ -250,5 +250,9 @@ class User < ApplicationRecord
       end
     end
   end
+
+  def preference(name, community: false)
+    preferences[community ? :community : :global][name]
+  end
   # rubocop:enable Naming/PredicateName
 end

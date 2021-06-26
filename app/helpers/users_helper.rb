@@ -32,11 +32,6 @@ module UsersHelper
   def user_preference(name, community: false)
     return nil if current_user.nil?
 
-    global_key = "prefs.#{current_user.id}"
-    community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
-    key = community ? community_key : global_key
-    AppConfig.preferences.select { |_k, v| (v['community'] || false) == community }
-             .transform_values { |v| v['default'] }
-             .merge(RequestContext.redis.hgetall(key))[name]
+    current_user.preference(name, community: community)
   end
 end

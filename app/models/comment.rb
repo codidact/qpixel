@@ -33,6 +33,8 @@ class Comment < ApplicationRecord
   private
 
   def create_follower
-    ThreadFollower.find_or_create_by(comment_thread: comment_thread, user: user)
+    if user.preference('auto_follow_comment_threads') == 'true'
+      ThreadFollower.find_or_create_by(comment_thread: comment_thread, user: user)
+    end
   end
 end

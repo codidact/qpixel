@@ -84,9 +84,6 @@ class CommentsController < ApplicationController
                                             helpers.comment_link(@comment))
         end
       end
-      unless @comment_thread.followed_by? current_user
-        ThreadFollower.create comment_thread: @comment_thread, user: current_user
-      end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
     end
