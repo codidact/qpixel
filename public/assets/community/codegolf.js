@@ -66,7 +66,7 @@
   };
 
   async function getLeaderboard(id) {
-    let response = await fetch(`https://codegolf.codidact.com/posts/${id}`);
+    let response = await fetch(`${location.origin}/posts/${id}`);
     let text = await response.text();
 
     let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
@@ -76,7 +76,7 @@
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
-      pagePromises.push(fetch(`https://codegolf.codidact.com/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
+      pagePromises.push(fetch(`${location.origin}/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
     }
 
     const leaderboard = [];
