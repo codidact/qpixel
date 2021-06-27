@@ -47,10 +47,10 @@ class SiteSetting < ApplicationRecord
     keys = (communities.map { |c| [c.id, "SiteSetting/#{c.id}/#{name}"] } + [[nil, "SiteSetting//#{name}"]]).to_h
     cached = Rails.cache.read_multi(*keys.values)
     missing = keys.reject { |_k, v| cached.include?(v) }.map { |k, _v| k }
-    settings = if missing.size > 0
-                 SiteSetting.where(name: name, community_id: missing).map { |s| [s.community_id, s] }.to_h
-               else
+    settings = if missing.empty?
                  {}
+               else
+                 SiteSetting.where(name: name, community_id: missing).map { |s| [s.community_id, s] }.to_h
                end
     Rails.cache.write_multi missing.map { |cid| [keys[cid], settings[cid]&.typed] }.to_h
     communities.map do |c|

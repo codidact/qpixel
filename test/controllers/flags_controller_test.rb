@@ -3,9 +3,18 @@ require 'test_helper'
 class FlagsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test 'should create new flag' do
+  test 'should create new post flag' do
     sign_in users(:standard_user)
-    post :new, params: { reason: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', post_id: posts(:answer_two).id, post_type: 'Answer' }
+    post :new, params: { reason: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', post_id: posts(:answer_two).id, post_type: 'Post' }
+    assert_not_nil assigns(:flag)
+    assert_not_nil assigns(:flag).post
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert_response(201)
+  end
+
+  test 'should create new comment flag' do
+    sign_in users(:standard_user)
+    post :new, params: { reason: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', post_id: comments(:one).id, post_type: 'Comment' }
     assert_not_nil assigns(:flag)
     assert_not_nil assigns(:flag).post
     assert_equal 'success', JSON.parse(response.body)['status']

@@ -93,9 +93,9 @@
       <div class="community-header-list-entry">
         <% logo_setting = logo_paths[c.id] %>
         <%= link_to "//#{c.host}" do %>
-          <% unless logo_setting.nil? %>
+          <% if logo_setting.present? %>
             <div class="img">
-              <img src="<%= logo_setting.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+              <img src="<%= logo_setting %>" alt="<%= c.name %>" class="community-header-list-image">
             </div>
           <% end %>
           <div class="label">

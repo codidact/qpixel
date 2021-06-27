@@ -9,6 +9,7 @@ class Comment < ApplicationRecord
   belongs_to :comment_thread
   belongs_to :references_comment, class_name: 'Comment', optional: true
   has_one :parent_question, through: :post, source: :parent, class_name: 'Question'
+  has_many :flags, as: :post, dependent: :destroy
 
   after_create :create_follower
 

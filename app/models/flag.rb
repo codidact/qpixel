@@ -1,9 +1,10 @@
 # Represents a flag. Flags are attached to both a user and a post, and have a single status.
 class Flag < ApplicationRecord
-  include PostRelated
+  include CommunityRelated
+  belongs_to :post, polymorphic: true
   belongs_to :user
   belongs_to :handled_by, class_name: 'User', optional: true
-  belongs_to :post_flag_type
+  belongs_to :post_flag_type, optional: true
 
   scope :handled, -> { where.not(status: nil) }
   scope :unhandled, -> { where(status: nil) }

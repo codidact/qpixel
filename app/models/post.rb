@@ -18,7 +18,7 @@ class Post < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :comment_threads, dependent: :destroy
   has_many :post_histories, dependent: :destroy
-  has_many :flags, dependent: :destroy
+  has_many :flags, as: :post, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
 

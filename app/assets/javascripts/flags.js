@@ -1,29 +1,40 @@
 $(() => {
-  $('.flag-link').on('click', ev => {
+  $(document).on('click', '.flag-link', ev => {
     ev.preventDefault();
     const self = $(ev.target);
+    const isCommentFlag = self.hasClass('js-comment-flag');
 
-    const activeRadio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
-    const reason = parseInt(activeRadio.val(), 10) || null;
+    let activeRadio, requiresDetails;
+    let reason = -1;
+    if (!isCommentFlag) {
+      activeRadio = self.parents('.js-flag-box').find("input[type='radio'][name='flag-reason']:checked");
+      reason = parseInt(activeRadio.val(), 10) || null;
+      requiresDetails = activeRadio.attr('data-requires-details') === 'true';
 
-    if (reason === null) {
-      QPixel.createNotification('danger', "Please choose a reason.");
-      return;
+      if (reason === null) {
+        QPixel.createNotification('danger', 'Please choose a reason.');
+        return;
+      }
+    }
+    else {
+      requiresDetails = self.attr('data-requires-details') === 'true';
     }
 
+    const postId = self.data('post-id');
     const data = {
       'flag_type': (reason !== -1) ? reason : null,
-      'post_id': self.data("post-id"),
-      'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
+      'post_id': postId,
+      'post_type': isCommentFlag ? 'Comment' : 'Post',
+      'reason': $(`#flag-post-${postId}`).val()
     };
 
-    if (activeRadio.attr('data-requires-details') === 'true' && data['reason'].length < 15) {
+    if (requiresDetails && data['reason'].length < 15) {
       QPixel.createNotification('danger',
                                 'Details are required for this flag type - please enter at least 15 characters.');
       return;
     }
 
-    const responseType = activeRadio.data('response-type');
+    const responseType = isCommentFlag ? null : activeRadio.data('response-type');
 
     $.ajax({
       'type': 'POST',
@@ -41,9 +52,11 @@ $(() => {
           };
           const defaultMessage = `<strong>Thanks!</strong> A moderator will review your flag.`;
           QPixel.createNotification('success', messages[responseType] || defaultMessage);
-          self.parents(".js-flag-box").find(".js-flag-comment").val("");
+          $(`#flag-post-${postId}`).val('');
         }
-        self.parents(".js-flag-box").removeClass("is-active");
+        self.parents('.js-flag-box').removeClass('is-active');
+        $(`#flag-comment-${postId}`).removeClass('is-active');
+
       })
       .fail((jqXHR, textStatus, errorThrown) => {
         let message = jqXHR.status;
@@ -53,7 +66,8 @@ $(() => {
         finally {
           QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
         }
-        self.parents(".js-flag-box").removeClass("is-active");
+        self.parents('.js-flag-box').removeClass('is-active');
+        $(`#flag-comment-${postId}`).removeClass('is-active');
       });
   });
 });

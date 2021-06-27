@@ -30,7 +30,8 @@ class FlagsController < ApplicationController
       return
     end
 
-    @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id], user: current_user)
+    @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id],
+                     post_type: params[:post_type], user: current_user)
     if @flag.save
       render json: { status: 'success' }, status: :created
     else

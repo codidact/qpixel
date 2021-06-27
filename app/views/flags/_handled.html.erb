@@ -1,7 +1,11 @@
-<div class="widget">
-  <div class="item-list">
-    <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
-  </div>
+<div class="widget flag-widget">
+  <% if flag.post_type == 'Post' %>
+    <div class="item-list">
+      <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
+    </div>
+  <% elsif flag.post_type == 'Comment' %>
+    <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
+  <% end %>
   <div class="widget--body">
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %>: </strong><%= flag.reason %> &mdash;
