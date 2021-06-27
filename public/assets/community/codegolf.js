@@ -66,7 +66,7 @@
   };
 
   async function getLeaderboard(id) {
-    let response = await fetch(`${location.origin}/posts/${id}`);
+    let response = await fetch(`/posts/${id}`);
     let text = await response.text();
 
     let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
@@ -76,7 +76,7 @@
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
-      pagePromises.push(fetch(`${location.origin}/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
+      pagePromises.push(fetch(`/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
     }
 
     const leaderboard = [];
@@ -213,7 +213,7 @@
   function createRow(answer) {
     let row = document.createElement('a');
     row.classList.add('toc--entry');
-    row.href = `https://codegolf.codidact.com/posts/${CHALLENGE_ID}?sort=age&page=${answer.page}#${answer.answerID}`;
+    row.href = `/posts/${CHALLENGE_ID}?sort=age&page=${answer.page}#${answer.answerID}`;
 
     row.innerHTML = `
     <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
