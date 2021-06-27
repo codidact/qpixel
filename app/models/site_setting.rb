@@ -26,8 +26,18 @@ class SiteSetting < ApplicationRecord
     SettingConverter.new(value).send("as_#{value_type.downcase}")
   end
 
+  def self.typed(setting)
+    SettingConverter.new(setting.value).send("as_#{setting.value_type.downcase}")
+  end
+
   def self.applied_setting(name)
     SiteSetting.for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
+  end
+
+  def self.all_communities(name)
+    settings = SiteSetting.where(name: name).map { |s| [s.community_id, s] }.to_h
+    communities = Community.all
+    communities.map { |c| [c.id, (settings.include?(c.id) ? settings[c.id] : settings[nil]) || nil] }.to_h
   end
 end
 

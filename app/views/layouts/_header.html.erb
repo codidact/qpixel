@@ -88,14 +88,14 @@
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
-    <% Community.where(hidden: false).includes(:site_settings).each do |c| %>
+    <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
+    <% Community.where(hidden: false).each do |c| %>
       <div class="community-header-list-entry">
-        <% settings = SiteSetting.for_community_id(c.id) %>
-        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+        <% logo_setting = logo_paths[c.id] %>
         <%= link_to "//#{c.host}" do %>
           <% unless logo_setting.nil? %>
             <div class="img">
-              <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+              <img src="<%= logo_setting.typed %>" alt="<%= c.name %>" class="community-header-list-image">
             </div>
           <% end %>
           <div class="label">
