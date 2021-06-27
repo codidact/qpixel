@@ -85,8 +85,9 @@
       let text = await pagePromises[i];
       let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
       let [question, ...page_answers] = doc.querySelectorAll('.post');
+      let non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
 
-      for (let answerPost of page_answers) {
+      for (let answerPost of non_deleted_answers) {
 
         let header = answerPost.querySelector('h1, h2, h3');
         let code = header.parentElement.querySelector(':scope > pre > code, :scope > p > code');
