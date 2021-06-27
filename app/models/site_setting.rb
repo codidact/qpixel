@@ -10,11 +10,19 @@ class SiteSetting < ApplicationRecord
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
   def self.[](name)
-    cached = Rails.cache.fetch "SiteSettings/#{RequestContext.community_id}/#{name}" do
+    key = "SiteSettings/#{RequestContext.community_id}/#{name}"
+    cached = Rails.cache.fetch key do
       SiteSetting.applied_setting(name)&.typed
     end
-    # applied_setting call is doubled to avoid cache fetch returning nil from cache
-    cached.nil? ? SiteSetting.applied_setting(name)&.typed : cached
+
+    if cached.nil?
+      Rails.cache.delete key
+      value = SiteSetting.applied_setting(name)&.typed
+      Rails.cache.write key, value
+      value
+    else
+      cached
+    end
   end
 
   def self.exist?(name)
@@ -35,9 +43,30 @@ class SiteSetting < ApplicationRecord
   end
 
   def self.all_communities(name)
-    settings = SiteSetting.where(name: name).map { |s| [s.community_id, s] }.to_h
     communities = Community.all
-    communities.map { |c| [c.id, (settings.include?(c.id) ? settings[c.id] : settings[nil]) || nil] }.to_h
+    keys = (communities.map { |c| [c.id, "SiteSetting/#{c.id}/#{name}"] } + [[nil, "SiteSetting//#{name}"]]).to_h
+    cached = Rails.cache.read_multi(*keys.values)
+    missing = keys.reject { |_k, v| cached.include?(v) }.map { |k, _v| k }
+    settings = if missing.size > 0
+                 SiteSetting.where(name: name, community_id: missing).map { |s| [s.community_id, s] }.to_h
+               else
+                 {}
+               end
+    Rails.cache.write_multi missing.map { |cid| [keys[cid], settings[cid]&.typed] }.to_h
+    communities.map do |c|
+      [
+        c.id,
+        if cached.include?(keys[c.id])
+          cached[keys[c.id]]
+        elsif settings.include?(c.id)
+          settings[c.id]&.typed
+        elsif cached.include?(keys[nil])
+          cached[keys[nil]]
+        elsif settings.include?(nil)
+          settings[nil]&.typed
+        end
+      ]
+    end.to_h
   end
 end
 
