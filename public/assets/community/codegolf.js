@@ -253,15 +253,11 @@
     }
   }
 
-  (function () {
-    'use strict';
-    window.addEventListener('DOMContentLoaded', _ => {
-      if (document.querySelector('.category-header--name').innerText === 'Challenges') {
-        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+  window.addEventListener('DOMContentLoaded', _ => {
+    if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
+      document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
 
-        refreshBoard();
-      }
-    });
-  })();
-
+      refreshBoard();
+    }
+  });
 })();
