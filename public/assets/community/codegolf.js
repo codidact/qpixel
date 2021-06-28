@@ -66,7 +66,7 @@
   };
 
   async function getLeaderboard(id) {
-    let response = await fetch(`https://codegolf.codidact.com/posts/${id}`);
+    let response = await fetch(`/posts/${id}`);
     let text = await response.text();
 
     let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
@@ -76,7 +76,7 @@
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
-      pagePromises.push(fetch(`https://codegolf.codidact.com/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
+      pagePromises.push(fetch(`/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
     }
 
     const leaderboard = [];
@@ -85,8 +85,9 @@
       let text = await pagePromises[i];
       let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
       let [question, ...page_answers] = doc.querySelectorAll('.post');
+      let non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
 
-      for (let answerPost of page_answers) {
+      for (let answerPost of non_deleted_answers) {
 
         let header = answerPost.querySelector('h1, h2, h3');
         let code = header.parentElement.querySelector(':scope > pre > code, :scope > p > code');
@@ -212,7 +213,7 @@
   function createRow(answer) {
     let row = document.createElement('a');
     row.classList.add('toc--entry');
-    row.href = `https://codegolf.codidact.com/posts/${CHALLENGE_ID}?sort=age&page=${answer.page}#${answer.answerID}`;
+    row.href = `/posts/${CHALLENGE_ID}?sort=age&page=${answer.page}#${answer.answerID}`;
 
     row.innerHTML = `
     <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
@@ -252,15 +253,11 @@
     }
   }
 
-  (function () {
-    'use strict';
-    window.addEventListener('DOMContentLoaded', _ => {
-      if (document.querySelector('.category-header--name').innerText === 'Challenges') {
-        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+  window.addEventListener('DOMContentLoaded', _ => {
+    if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
+      document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
 
-        refreshBoard();
-      }
-    });
-  })();
-
+      refreshBoard();
+    }
+  });
 })();
