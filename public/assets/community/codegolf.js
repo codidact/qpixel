@@ -266,9 +266,12 @@
 
   window.addEventListener('DOMContentLoaded', _ => {
     if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
-
-      refreshBoard();
+      let question_tags = document.querySelector('.post--tags').childNodes;
+      
+      if ([...question_tags].find(tag => tag.innerText === 'code-golf')) {
+        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+        refreshBoard();
+      }
     }
   });
 })();
