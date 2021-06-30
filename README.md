@@ -187,4 +187,4 @@ See the README.md in the [docker](docker) folder for complete instructions.
 
 <br>
 
-![⬆ Back to Top](#table-of-contents)
+[⬆ Back to Top](#table-of-contents)
