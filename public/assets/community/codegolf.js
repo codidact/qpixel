@@ -140,7 +140,7 @@
   embed.innerHTML = `
 <div class="toc cg-leaderboard">
   <div class="cgl-container">
-    <div class="toc--header has-margin-2">Leaderboards by language</div>
+    <button class="toc--header has-margin-2" id="leaderboards-header">Leaderboards by language</button>
     <div class="has-padding-2 cgl-option">
       <label>
         Group by language
@@ -157,12 +157,23 @@
       <label>
         Show placements
         <input id="show-placement" type="checkbox" ${settings.showPlacements ? 'checked' : ''}>
-      </label
+      </label>
     </div>
   </div>
+
+  <div id="toc-rows"></div>
 </div>`;
 
-  const leaderboardsTable = embed.querySelector('.toc');
+  const leaderboardsTable = embed.querySelector('#toc-rows');
+  const toggle = embed.querySelector('#leaderboards-header');
+  toggle.addEventListener('click', _ => { 
+    if (leaderboardsTable.style.display === 'none') {
+      refreshBoard();
+      leaderboardsTable.style.display = 'block';
+    } else {
+      leaderboardsTable.style.display = 'none';
+    }
+  });
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
   const mergeVariantsInput = embed.querySelector('#merge-variants');
   const showPlacementsInput = embed.querySelector('#show-placement');
