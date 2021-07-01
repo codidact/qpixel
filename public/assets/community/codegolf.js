@@ -13,6 +13,7 @@
 
   let CHALLENGE_ID = match[0];
   let leaderboard;
+  let sort;
 
   console.log(`CG Leaderboard active, challenge ID ${CHALLENGE_ID}`);
 
@@ -244,7 +245,7 @@
     let languageLeaderboards = createGroups(leaderboard, entry => settings.mergeVariants ? entry.language : entry.language + entry.variant);
 
     for (let language in languageLeaderboards) {
-      augmentLeaderboardWithPlacements(languageLeaderboards[language], (x, y) => x.score - y.score);
+      augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
 
       for (let answer of languageLeaderboards[language]) {
         let row = createRow(answer);
@@ -255,7 +256,7 @@
 
   async function renderLeaderboardsByByteCount() {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    augmentLeaderboardWithPlacements(leaderboard, (x, y) => x.score - y.score);
+    augmentLeaderboardWithPlacements(leaderboard, sort);
 
     for (let answer of leaderboard) {
       let row = createRow(answer);
@@ -265,9 +266,14 @@
 
   window.addEventListener('DOMContentLoaded', _ => {
     if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      let question_tags = document.querySelector('.post--tags').childNodes;
+      let question_tags = [...document.querySelector('.post--tags').children].map(el => el.innerText);
       
-      if ([...question_tags].find(tag => tag.innerText === 'code-golf')) {
+      if (question_tags.includes('code-golf') || question_tags.includes('lowest-score')) {
+        sort = (x, y) => x.score - y.score;
+        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+        refreshBoard();
+      } else if (question_tags.includes('code-bowling') || question_tags.includes('highest-score')) {
+        sort = (x, y) => y.score - x.score;
         document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
         refreshBoard();
       }
