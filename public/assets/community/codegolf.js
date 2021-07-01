@@ -92,16 +92,15 @@
         let header = answerPost.querySelector('h1, h2, h3');
         let code = header.parentElement.querySelector(':scope > pre > code, :scope > p > code');
         let full_language = header ? header.innerText.split(',')[0].trim() : undefined
-        let {
-          language,
-          variant
-        } = (full_language?.match(/(?<language>.+) \((?<variant>.+)\)/) ?? full_language?.match(/(?<language>.+)/))?.groups
+        let variant = full_language?.match(/\((.+)\)/)[1];
+        let language = full_language.split('(' + variant + ')').join('');
 
         let entry = {
           answerID: answerPost.id,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
           username: answerPost.querySelector('.user-card--link').firstChild.data.trim(),
           userid: answerPost.querySelector('.user-card--link').href.match(/\d+/)[0],
+          full_language, full_language,
           language: language,
           variant: variant,
           code: code?.innerText,
@@ -234,7 +233,7 @@
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? `${answer.language} (${answer.variant})` : answer.language;
+    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? answer.full_language : answer.language;
     row.querySelector('code').innerText = answer.code ? answer.code.split('\n')[0].substring(0, 200) : undefined
 
     return row;
