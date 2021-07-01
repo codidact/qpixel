@@ -92,8 +92,8 @@
         let header = answerPost.querySelector('h1, h2, h3');
         let code = header.parentElement.querySelector(':scope > pre > code, :scope > p > code');
         let full_language = header ? header.innerText.split(',')[0].trim() : undefined
-        let variant = full_language?.match(/\((.+)\)/)[1];
-        let language = full_language.split('(' + variant + ')').join('');
+        let variant = full_language?.match(/\((.+)\)/)?.[1];
+        let language = full_language.split('(' + variant + ')').join('').trim();
 
         let entry = {
           answerID: answerPost.id,
