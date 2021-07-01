@@ -105,7 +105,7 @@
           language: language,
           variant: variant,
           code: code?.innerText,
-          score: header ? header.innerText.match(/\d+(?= [bB]ytes?)/)?.[0] : undefined
+          score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
         };
 
         leaderboard.push(entry);
