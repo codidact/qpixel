@@ -13,6 +13,7 @@
 
   let CHALLENGE_ID = match[0];
   let leaderboard;
+  let sort;
 
   console.log(`CG Leaderboard active, challenge ID ${CHALLENGE_ID}`);
 
@@ -92,20 +93,19 @@
         let header = answerPost.querySelector('h1, h2, h3');
         let code = header.parentElement.querySelector(':scope > pre > code, :scope > p > code');
         let full_language = header ? header.innerText.split(',')[0].trim() : undefined
-        let {
-          language,
-          variant
-        } = (full_language?.match(/(?<language>.+) \((?<variant>.+)\)/) ?? full_language?.match(/(?<language>.+)/))?.groups
+        let variant = full_language?.match(/\((.+)\)/)?.[1];
+        let language = full_language.split('(' + variant + ')').join('').trim();
 
         let entry = {
           answerID: answerPost.id,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
           username: answerPost.querySelector('.user-card--link').firstChild.data.trim(),
           userid: answerPost.querySelector('.user-card--link').href.match(/\d+/)[0],
+          full_language, full_language,
           language: language,
           variant: variant,
           code: code?.innerText,
-          score: header ? header.innerText.match(/\d+(?= [bB]ytes?)/)?.[0] : undefined
+          score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
         };
 
         leaderboard.push(entry);
@@ -140,7 +140,7 @@
   embed.innerHTML = `
 <div class="toc cg-leaderboard">
   <div class="cgl-container">
-    <div class="toc--header has-margin-2">Leaderboards by language</div>
+    <button class="toc--header has-margin-2" id="leaderboards-header">Leaderboards by language</button>
     <div class="has-padding-2 cgl-option">
       <label>
         Group by language
@@ -157,12 +157,23 @@
       <label>
         Show placements
         <input id="show-placement" type="checkbox" ${settings.showPlacements ? 'checked' : ''}>
-      </label
+      </label>
     </div>
   </div>
+
+  <div id="toc-rows"></div>
 </div>`;
 
-  const leaderboardsTable = embed.querySelector('.toc');
+  const leaderboardsTable = embed.querySelector('#toc-rows');
+  const toggle = embed.querySelector('#leaderboards-header');
+  toggle.addEventListener('click', _ => { 
+    if (leaderboardsTable.style.display === 'none') {
+      refreshBoard();
+      leaderboardsTable.style.display = 'block';
+    } else {
+      leaderboardsTable.style.display = 'none';
+    }
+  });
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
   const mergeVariantsInput = embed.querySelector('#merge-variants');
   const showPlacementsInput = embed.querySelector('#show-placement');
@@ -223,7 +234,7 @@
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? `${answer.language} (${answer.variant})` : answer.language;
+    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? answer.full_language : answer.language;
     row.querySelector('code').innerText = answer.code ? answer.code.split('\n')[0].substring(0, 200) : undefined
 
     return row;
@@ -234,7 +245,7 @@
     let languageLeaderboards = createGroups(leaderboard, entry => settings.mergeVariants ? entry.language : entry.language + entry.variant);
 
     for (let language in languageLeaderboards) {
-      augmentLeaderboardWithPlacements(languageLeaderboards[language], (x, y) => x.score - y.score);
+      augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
 
       for (let answer of languageLeaderboards[language]) {
         let row = createRow(answer);
@@ -245,7 +256,7 @@
 
   async function renderLeaderboardsByByteCount() {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    augmentLeaderboardWithPlacements(leaderboard, (x, y) => x.score - y.score);
+    augmentLeaderboardWithPlacements(leaderboard, sort);
 
     for (let answer of leaderboard) {
       let row = createRow(answer);
@@ -255,9 +266,17 @@
 
   window.addEventListener('DOMContentLoaded', _ => {
     if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
-
-      refreshBoard();
+      let question_tags = [...document.querySelector('.post--tags').children].map(el => el.innerText);
+      
+      if (question_tags.includes('code-golf') || question_tags.includes('lowest-score')) {
+        sort = (x, y) => x.score - y.score;
+        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+        refreshBoard();
+      } else if (question_tags.includes('code-bowling') || question_tags.includes('highest-score')) {
+        sort = (x, y) => y.score - x.score;
+        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+        refreshBoard();
+      }
     }
   });
 })();

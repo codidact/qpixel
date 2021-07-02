@@ -7,7 +7,12 @@
     margin-left: auto;
 }
 
-.cgl-container .row-summary {
+.cg-leaderboard .toc--full {
+    display: flex;
+    align-items: center;
+}
+
+.cg-leaderboard .row-summary {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
