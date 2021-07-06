@@ -1,8 +1,13 @@
 <% pingable = get_pingable(@comment_thread) %>
 
-<h1>Comments on
-  <a href="<%= generic_show_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
-</h1>
+<% def form_tag(i)
+     # code here
+   end
+   unless current_user.nil? || params[:inline] == 'true' %>
+  <%= render 'posts/expanded', post: @post %>
+<%end %>
+
+<h1>A thread comment</h1>
 
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
