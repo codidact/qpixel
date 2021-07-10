@@ -56,12 +56,10 @@ For Arch-Based Linux:
 sudo pacman -Syyu
 sudo pacman -Sy gcc
 sudo pacman -Sy make
-sudo pacman -Sy ruby autoconf bison base-devel ruby unixodbc
+sudo pacman -Sy ruby autoconf bison base-devel unixodbc
 sudo pacman -Sy openssl
-sudo snap install mysql --beta Or, sudo pacman -S mysql
+sudo pacman -S mariadb mysqld nodejs
 ```
-
-Install the following packages and unpack them: https://aur.archlinux.org/packages/libmysqlclient/
 
 For Mac:
 
@@ -187,4 +185,4 @@ See the README.md in the [docker](docker) folder for complete instructions.
 
 <br>
 
-![⬆ Back to Top](#table-of-contents)
+[⬆ Back to Top](#table-of-contents)
