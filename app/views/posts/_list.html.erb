@@ -31,7 +31,8 @@
           <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
         <% end %>
         <%= post.post_type.is_top_level ? post.title : post.parent.title %>
-        <%= post.post_type.is_closeable && post.closed ? "[closed]" : "" %>
+        <%= post.post_type.is_closeable && post.closed && ! post.duplicate_post  ? "[closed]" : "" %>
+      <%= post.duplicate_post && post.post_type.is_closeable && post.closed ? "[duplicate]" : "" %>
       <% end %>
     </div>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">

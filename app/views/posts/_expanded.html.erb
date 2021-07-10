@@ -15,7 +15,8 @@
     <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
       <span class="post--title-text">
         <%= post.title %>
-        <%= post_type.is_closeable && post.closed ? "[closed]" : "" %>
+        <%= post_type.is_closeable && post.closed && ! post.duplicate_post ? "[closed]" : "" %>
+        <%= post.duplicate_post && post_type.is_closeable && post.closed ? "[duplicate]" : "" %>
       </span>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post_type) %>
