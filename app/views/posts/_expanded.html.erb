@@ -56,6 +56,7 @@
     <% end %>
 
     <div class="post--content has-padding-2">
+      <%= render('posts/reactions', post: post) if post.reactions %>
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">

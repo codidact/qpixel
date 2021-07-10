@@ -1,0 +1,13 @@
+// Place all the styles related to the reactions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.badge.is-reaction {
+    padding: 0.35rem 0.7rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    a {
+        color: inherit;
+        text-decoration: underline;
+    }
+}

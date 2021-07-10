@@ -1,0 +1,9 @@
+<div class="h-d-flex">
+    <% post.reactions.each do |rr| %>
+        <span class="badge is-tag is-reaction <%= rr.reaction_type.color %>">
+            <i class="<%= rr.reaction_type.icon %> fa-fw"></i>
+            <%= rr.reaction_type.on_post_label %>
+            <%= link_to rr.user.rtl_safe_username, user_path(rr.user), dir: 'ltr'%>
+        </span>
+    <% end %>
+</div>
