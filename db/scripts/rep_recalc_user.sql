@@ -1,4 +1,4 @@
-SET @uid = 8045;
+SET @uid = 54114;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (

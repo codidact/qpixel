@@ -1,12 +1,9 @@
 <% pingable = get_pingable(@comment_thread) %>
 
 <details>
-    <summary>Question/Answer</summary>
+  <summary>Post</summary>
   <%= render 'posts/expanded', post: @post %>
 </details>
-
-
-
 
 <h1>Comments on
   <a href="<%= generic_show_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
