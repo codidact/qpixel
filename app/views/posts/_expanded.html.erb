@@ -182,7 +182,7 @@
               History
             <% end %>
             <% if (post_type.is_public_editable && !post.locked?) || current_user&.is_moderator || post.user == current_user %>
-              <% if check_your_post_privilege(post, 'edit_post') %>
+              <% if check_your_post_privilege(post, 'edit_posts') %>
                 <% if post.pending_suggested_edit? %>
                   <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
                     <i class="fa fa-spell-check"></i>
