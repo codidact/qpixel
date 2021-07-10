@@ -1,4 +1,4 @@
-SET @cid = 3;
+SET @uid = 8045;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (
@@ -14,12 +14,11 @@ INNER JOIN ( SELECT * FROM (
         FROM votes v
         INNER JOIN posts p ON v.post_id = p.id
         INNER JOIN post_types pt ON p.post_type_id = pt.id
-        WHERE v.community_id = @cid
-          AND p.deleted = 0
-    ) vq ON vq.community_id = cu.community_id AND cu.user_id = vq.recv_user_id
-    WHERE cu.community_id = @cid
+        WHERE p.deleted = 0
+    ) vq ON cu.user_id = vq.recv_user_id
+    WHERE cu.user_id = @uid
+      AND vq.community_id = cu.community_id
     GROUP BY cu.id
 ) q ) x ON x.id = community_users.id
 SET community_users.reputation = IFNULL(x.total_rep, 1)
-WHERE community_users.community_id = @cid
-  AND (community_users.reputation > 1 OR community_users.reputation IS NULL);
+WHERE (community_users.reputation > 1 OR community_users.reputation IS NULL);
