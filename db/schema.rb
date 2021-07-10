@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_27_152246) do
+ActiveRecord::Schema.define(version: 2021_07_10_203801) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -385,7 +385,7 @@ ActiveRecord::Schema.define(version: 2021_06_27_152246) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked", default: false, null: false
+    t.boolean "locked"
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
@@ -433,6 +433,33 @@ ActiveRecord::Schema.define(version: 2021_06_27_152246) do
     t.integer "user_id", null: false
     t.index ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id"
     t.index ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id"
+  end
+
+  create_table "reaction_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "on_post_label"
+    t.string "icon"
+    t.string "color"
+    t.boolean "requires_comment"
+    t.bigint "community_id"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_reaction_types_on_community_id"
+  end
+
+  create_table "reactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "users_id"
+    t.bigint "reaction_types_id"
+    t.bigint "posts_id"
+    t.bigint "comments_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comments_id"], name: "index_reactions_on_comments_id"
+    t.index ["posts_id"], name: "index_reactions_on_posts_id"
+    t.index ["reaction_types_id"], name: "index_reactions_on_reaction_types_id"
+    t.index ["users_id"], name: "index_reactions_on_users_id"
   end
 
   create_table "site_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -591,9 +618,7 @@ ActiveRecord::Schema.define(version: 2021_06_27_152246) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.integer "trust_level"
     t.boolean "developer"
-    t.string "cid"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

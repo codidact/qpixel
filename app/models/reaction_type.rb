@@ -1,0 +1,2 @@
+class ReactionType < ApplicationRecord
+end
