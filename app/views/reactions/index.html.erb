@@ -29,7 +29,6 @@
         <td>
             <div class="h-d-flex">
                 <%= link_to "edit", edit_reaction_path(rt.id), class: "button is-outlined" %>
-                <%= link_to "delete", '', class: "button is-danger is-outlined" %>
             </div>
         </td>
     </tr>
@@ -44,7 +43,7 @@
         Do not add reasons to circumvent votes.
     </p>
     <p>
-        Once a reaction has been created, it can only be deleted by site administrators.
+        Once a reaction has been created, it can only be deactivated, not deleted.
     </p>
-    <%= link_to "add reaction", '', class: "button is-outlined" %>
+    <%= link_to "add reaction", new_reaction_path, class: "button is-outlined" %>
 </div>

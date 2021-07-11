@@ -1,4 +1,4 @@
-<%= form_for @reaction_type, url: submit_url, method: :patch do |f| %>
+<%= form_for @reaction_type, url: submit_url, method: method do |f| %>
   <div class="form-group">
     <%= f.label :name, "Name", class: "form-element" %>
     <%= f.text_field :name, class: "form-element" %>

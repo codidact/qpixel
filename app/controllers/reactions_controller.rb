@@ -71,11 +71,19 @@ class ReactionsController < ApplicationController
     render :edit
   end
 
-  def new; end
+  def new
+    @reaction_type = ReactionType.new
+  end
 
-  def create; end
-
-  def delete; end
+  def create
+    ReactionType.create name: params[:reaction_type][:name],
+                        description: params[:reaction_type][:description], 
+                        on_post_label: params[:reaction_type][:on_post_label],
+                        color: params[:reaction_type][:color],
+                        icon: params[:reaction_type][:icon],
+                        requires_comment: params[:reaction_type][:requires_comment]
+    redirect_to reactions_path
+  end
 
   protected
 

@@ -19,4 +19,4 @@
   </div>
 <% end %>
 
-<%= render 'form', submit_url: update_reaction_path(@reaction_type.id) %>
+<%= render 'form', submit_url: update_reaction_path(@reaction_type.id), method: :patch %>
