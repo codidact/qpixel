@@ -7,6 +7,7 @@
         <th>description</th>
         <th>label on post</th>
         <th>requires comment?</th>
+        <th>active?</th>
         <th>actions</th>
     </tr>
     <% ReactionType.all.each do |rt| %>
@@ -25,6 +26,9 @@
         </td>
         <td>
             <%= rt.requires_comment ? 'yes' : 'no' %>
+        </td>
+        <td>
+            <%= rt.active ? 'yes' : 'no' %>
         </td>
         <td>
             <div class="h-d-flex">

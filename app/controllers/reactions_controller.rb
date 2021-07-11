@@ -67,7 +67,9 @@ class ReactionsController < ApplicationController
                           on_post_label: params[:reaction_type][:on_post_label],
                           color: params[:reaction_type][:color],
                           icon: params[:reaction_type][:icon],
-                          requires_comment: params[:reaction_type][:requires_comment]
+                          requires_comment: params[:reaction_type][:requires_comment],
+                          active: params[:reaction_type][:active],
+                          position: params[:reaction_type][:position]
     render :edit
   end
 
@@ -81,7 +83,9 @@ class ReactionsController < ApplicationController
                         on_post_label: params[:reaction_type][:on_post_label],
                         color: params[:reaction_type][:color],
                         icon: params[:reaction_type][:icon],
-                        requires_comment: params[:reaction_type][:requires_comment]
+                        requires_comment: params[:reaction_type][:requires_comment],
+                        active: params[:reaction_type][:active],
+                        position: params[:reaction_type][:position]
     redirect_to reactions_path
   end
 

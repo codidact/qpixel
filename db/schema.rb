@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_10_204812) do
+ActiveRecord::Schema.define(version: 2021_07_11_210342) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -447,6 +447,7 @@ ActiveRecord::Schema.define(version: 2021_07_10_204812) do
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "active"
     t.index ["community_id"], name: "index_reaction_types_on_community_id"
   end
 

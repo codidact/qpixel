@@ -53,6 +53,28 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :active, 'Active?', class: 'form-element' %>
+        <span class="form-caption">
+          Check this box if the reaction is active and can be added to posts by anyone.
+        </span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :active, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :position, "Position", class: "form-element" %>
+    <div class="form-caption">
+      The order in which the reactions are to be shown in the add reaction dialog; lower positions go first
+    </div>
+    <%= f.number_field :position, class: "form-element" %>
+  </div>
+
   <%= f.submit 'Save', class: 'button is-filled' %>
   <%= link_to 'Cancel', reactions_path, class: 'button' %>
 <% end %>
