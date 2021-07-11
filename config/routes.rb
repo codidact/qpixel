@@ -90,6 +90,13 @@ Rails.application.routes.draw do
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
 
+  scope 'posts/reactions' do
+    root                                 to: 'reactions#index', as: :reactions
+    post 'add',                          to: 'reactions#add', as: :add_reaction
+    post 'retract',                      to: 'reactions#retract', as: :retract_reaction
+
+  end
+
   scope 'posts' do
     get    'new/:post_type',               to: 'posts#new', as: :new_post
     get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
@@ -126,11 +133,6 @@ Rails.application.routes.draw do
     get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
     post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
     post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
-
-    scope 'reactions' do
-      post 'add',                          to: 'reactions#add', as: :add_reaction
-      post 'retract',                      to: 'reactions#retract', as: :retract_reaction
-    end
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
