@@ -63,7 +63,7 @@ class ReactionsController < ApplicationController
 
   def update
     @reaction_type.update name: params[:reaction_type][:name],
-                          description: params[:reaction_type][:description], 
+                          description: params[:reaction_type][:description],
                           on_post_label: params[:reaction_type][:on_post_label],
                           color: params[:reaction_type][:color],
                           icon: params[:reaction_type][:icon],
@@ -79,7 +79,7 @@ class ReactionsController < ApplicationController
 
   def create
     ReactionType.create name: params[:reaction_type][:name],
-                        description: params[:reaction_type][:description], 
+                        description: params[:reaction_type][:description],
                         on_post_label: params[:reaction_type][:on_post_label],
                         color: params[:reaction_type][:color],
                         icon: params[:reaction_type][:icon],
