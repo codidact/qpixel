@@ -1,0 +1,53 @@
+<h1>Reactions</h1>
+<p class="is-lead">Reactions can be used to give feedback to post authors and to give hints to readers regarding the usefulness, safety, ... of an post. Use them sparely and only when necessary</p>
+
+<table>
+    <tr>
+        <th>reaction</th>
+        <th>description</th>
+        <th>label on post</th>
+        <th>requires comment?</th>
+        <th>active?</th>
+        <th>actions</th>
+    </tr>
+    <% ReactionType.all.each do |rt| %>
+    <tr>
+        <td>
+            <span class="badge is-tag is-reaction <%= rt.color %>">
+                <i class="<%= rt.icon %> fa-fw"></i>
+                <%= rt.name %>
+            </span>
+        </td>
+        <td>
+            <%= rt.description %>
+        </td>
+        <td>
+            <%= rt.on_post_label %> <em>user(s)</em>
+        </td>
+        <td>
+            <%= rt.requires_comment ? 'yes' : 'no' %>
+        </td>
+        <td>
+            <%= rt.active ? 'yes' : 'no' %>
+        </td>
+        <td>
+            <div class="h-d-flex">
+                <%= link_to "edit", edit_reaction_path(rt.id), class: "button is-outlined" %>
+            </div>
+        </td>
+    </tr>
+    <% end %>
+</table>
+
+<div class="notice has-margin-top-4">
+    <p>
+        You can add further reactions.
+        Please try to keep the number low, as many reasons quickly become overwhelming.
+        Do not add reasons where you're not sure that your community needs or wants them.
+        Do not add reasons to circumvent votes.
+    </p>
+    <p>
+        Once a reaction has been created, it can only be deactivated, not deleted.
+    </p>
+    <%= link_to "add reaction", new_reaction_path, class: "button is-outlined" %>
+</div>

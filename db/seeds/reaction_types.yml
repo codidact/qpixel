@@ -1,0 +1,23 @@
+- name: Works for me
+  description: You have tried the proposed solution and it has been effective.
+  on_post_label: Worked for
+  icon: fas fa-check-circle
+  color: is-green is-filled
+  requires_comment: false
+  position: 1
+
+- name: Outdated
+  description: The proposed solution is outdated, deprecated or no longer good practice.
+  on_post_label: Marked outdated by
+  icon: fas fa-clock
+  color: is-yellow
+  requires_comment: false
+  position: 2
+
+- name: Dangerous
+  description: The proposed solution is dangerous or harmful.
+  on_post_label: Found dangerous by
+  icon: fas fa-exclamation-triangle
+  color: is-red is-filled
+  requires_comment: true
+  position: 3

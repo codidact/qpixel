@@ -10,6 +10,7 @@
   is_closeable: true
   is_top_level: true
   is_freely_editable: false
+  has_reactions: false
 
 - name: Answer
   description: ~
@@ -23,6 +24,7 @@
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
+  has_reactions: true
 
 - name: PolicyDoc
   description: ~
@@ -36,6 +38,7 @@
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
+  has_reactions: false
 
 - name: HelpDoc
   description: ~
@@ -49,6 +52,7 @@
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
+  has_reactions: false
 
 - name: Article
   description: ~
@@ -62,3 +66,4 @@
   is_closeable: false
   is_top_level: true
   is_freely_editable: false
+  has_reactions: false
