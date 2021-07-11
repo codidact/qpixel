@@ -145,7 +145,7 @@ class Post < ApplicationRecord
 
   def reaction_list
     reactions.group_by(&:reaction_types_id) \
-             .map { |k,v| [v.first.reaction_type, v] }.to_h
+             .map { |_k, v| [v.first.reaction_type, v] }.to_h
   end
 
   private

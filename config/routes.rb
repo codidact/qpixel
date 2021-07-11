@@ -126,6 +126,10 @@ Rails.application.routes.draw do
     get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
     post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
     post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
+
+    scope 'reactions' do
+      post 'add',                          to: 'reactions#add', as: :add_reaction
+    end
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy

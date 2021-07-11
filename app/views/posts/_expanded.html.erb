@@ -484,7 +484,8 @@
   <% ReactionType.all.each do |rt| %>
   <div class="grid">
     <div class="grid--cell">
-      <input class="form-radio-element" type="radio" name="reaction-type" value="<%= rt.id %>"
+      <input class="form-radio-element reaction-type" type="radio" name="reaction-type"
+              value="<%= rt.id %>"
               id="reaction-type-input-<%= post.id %>-<%= rt.id %>"
               <%= rt.requires_comment ? 'data-reaction-require-comment' : '' %>>
     </div>
@@ -507,7 +508,7 @@
   <label for="reaction-type-comment-<%= post.id %>">Explain in comment?</label>
   <textarea class="form-element reaction-comment-field is-small"
             id="reaction-type-comment-<%= post.id %>"></textarea>
-  <button type="button" class="button is-filled reaction-submit">
+  <button type="button" class="button is-filled reaction-submit" data-post-id="<%= post.id %>">
     Add reaction
   </button>
 </div>
