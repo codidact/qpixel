@@ -68,7 +68,7 @@
     <% end %>
 
     <div class="post--content has-padding-2">
-      <%= render('posts/reactions', post: post) if post.reactions %>
+      <%= render('reactions/list', post: post) if post.reactions %>
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
@@ -476,40 +476,6 @@
 
 <%= render 'comments/new_thread_modal', post: post %>
 
-<% unless post.locked? %>
-<div class="droppanel is-large droppanel-for-reactions" id="post-<%= post.id %>-reactions-panel">
-  <div class="droppanel--header">
-    Mark this <%= post.post_type.name.downcase %> as ...
-  </div>
-  <% ReactionType.all.each do |rt| %>
-  <div class="grid">
-    <div class="grid--cell">
-      <input class="form-radio-element reaction-type" type="radio" name="reaction-type"
-              value="<%= rt.id %>"
-              id="reaction-type-input-<%= post.id %>-<%= rt.id %>"
-              <%= rt.requires_comment ? 'data-reaction-require-comment' : '' %>>
-    </div>
-    <div class="grid--cell is-flexible">
-      <label class="form-element" for="reaction-type-input-<%= post.id %>-<%= rt.id %>">
-        <span class="badge is-tag <%= rt.color %>">
-          <i class="<%= rt.icon %> fa-fw"></i>
-          <%= rt.name %>
-        </span>
-        <% if rt.requires_comment %>
-        (requires comment)
-        <% end %>
-        <div class="form-caption">
-          <%= raw render_markdown(rt.description) %>
-        </div>
-      </label>
-    </div>
-  </div>
-  <% end %>
-  <label for="reaction-type-comment-<%= post.id %>">Explain in comment?</label>
-  <textarea class="form-element reaction-comment-field is-small"
-            id="reaction-type-comment-<%= post.id %>"></textarea>
-  <button type="button" class="button is-filled reaction-submit" data-post-id="<%= post.id %>">
-    Add reaction
-  </button>
-</div>
+<% if post.post_type.has_reactions && !post.locked? && user_signed_in? %>
+<%= render 'reactions/dialog', post: post %>
 <% end %>
