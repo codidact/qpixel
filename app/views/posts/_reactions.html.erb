@@ -1,5 +1,5 @@
 <% reaction_shown_count = 3 %>
-<div class="h-d-flex">
+<div class="h-d-flex reactions-list">
     <% post.reaction_list.each do |rt, rr| %>
         <a href="#x" class="badge is-tag is-reaction <%= rt.color %>"
            data-modal="#reaction-info-<%= post.id %>-<%= rt.id %>">
