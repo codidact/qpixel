@@ -129,6 +129,7 @@ Rails.application.routes.draw do
 
     scope 'reactions' do
       post 'add',                          to: 'reactions#add', as: :add_reaction
+      post 'retract',                      to: 'reactions#retract', as: :retract_reaction
     end
   end
 

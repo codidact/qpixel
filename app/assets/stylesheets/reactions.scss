@@ -33,6 +33,12 @@
         label {
             margin: 0;
 
+            &.disabled .badge,
+            &.disabled .form-caption {
+                opacity: 0.35;
+                pointer-events: none;
+            }
+
             .form-caption, p {
                 margin-bottom: 0;
             }

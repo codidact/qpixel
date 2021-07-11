@@ -1,6 +1,6 @@
 class ReactionsController < ApplicationController
   before_action :authenticate_user!, except: []
-  before_action :set_post, only: [:add]
+  before_action :set_post, only: [:add, :retract]
 
   def add
     reaction_type = ReactionType.find(params[:reaction_id])
@@ -38,6 +38,20 @@ class ReactionsController < ApplicationController
       reaction.save!
     end
 
+    render json: { status: 'success' }
+  end
+
+  def retract
+    reaction_type = ReactionType.find(params[:reaction_id])
+
+    reaction = Reaction.where(user: current_user, post: @post, reaction_type: reaction_type)
+    if !reaction.any?
+      render json: { status: 'failed', message: 'You do not have any reactions of this type on this post.' },
+             status: :forbidden
+      return
+    end
+
+    reaction.first.destroy
     render json: { status: 'success' }
   end
 
