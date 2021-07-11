@@ -70,7 +70,7 @@ class ReactionsController < ApplicationController
                           requires_comment: params[:reaction_type][:requires_comment],
                           active: params[:reaction_type][:active],
                           position: params[:reaction_type][:position]
-    render :edit
+    redirect_to reactions_path
   end
 
   def new
