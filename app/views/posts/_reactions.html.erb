@@ -1,9 +1,74 @@
+<% reaction_shown_count = 3 %>
 <div class="h-d-flex">
-    <% post.reactions.each do |rr| %>
-        <span class="badge is-tag is-reaction <%= rr.reaction_type.color %>">
-            <i class="<%= rr.reaction_type.icon %> fa-fw"></i>
-            <%= rr.reaction_type.on_post_label %>
-            <%= link_to rr.user.rtl_safe_username, user_path(rr.user), dir: 'ltr'%>
-        </span>
+    <% post.reaction_list.each do |rt, rr| %>
+        <a href="#x" class="badge is-tag is-reaction <%= rt.color %>"
+           data-modal="#reaction-info-<%= post.id %>-<%= rt.id %>">
+            <i class="<%= rt.icon %> fa-fw"></i>
+            <%= rt.on_post_label %>
+            <% rr.each_with_index do |r, i| %>
+                <% next if i >= reaction_shown_count %>
+                <span dir="ltr"><%=
+                    r.user.rtl_safe_username
+                %></span><%=
+                    ((i < rr.size - 1 && i + 1 != reaction_shown_count) ? ', ' : '')
+                %>
+            <% end %>
+            <% if rr.size > reaction_shown_count %>
+                and <%=
+                    rr.size - reaction_shown_count
+                %> other<%=
+                    (rr.size - reaction_shown_count) == 1 ? '' : 's'
+                %>
+            <% end %>
+        </a>
     <% end %>
 </div>
+
+<% post.reaction_list.each do |rt, rr| %>
+    <div class="modal is-with-backdrop"
+         id="reaction-info-<%= post.id %>-<%= rt.id %>">
+        <div class="modal--container">
+            <div class="modal--header">
+                <button class="button is-close-button modal--header-button"
+                        data-modal="#reaction-info-<%= post.id %>-<%= rt.id %>">
+                    &times;
+                </button>
+                <%= rt.name %>
+            </div>
+            <div class="modal--body">
+                <p>The following users marked this post as <em><%= rt.name %></em>:</p>
+                <table class="table">
+                    <tr>
+                        <th>User</th>
+                        <th>Comment</th>
+                        <th>Date</th>
+                    </tr>
+                    <% rr.each do |r| %>
+                    <tr>
+                        <td>
+                            <%= link_to r.user.rtl_safe_username, user_path(r.user), dir: 'ltr'%>
+                        </td>
+                        <td>
+                            <% if r.comment %>
+                                <div class="muted-p">
+                                    <p class="h-fw-bold">
+                                        Thread:
+                                        <%= link_to r.comment.comment_thread.title, comment_link(r.comment) %>
+                                    </p>
+                                    <%= raw(sanitize(render_markdown(r.comment.content),
+                                                    scrubber: CommentScrubber.new)) %>
+                                </div>
+                            <% else %>
+                            no
+                            <% end %>
+                        </td>
+                        <td class="h-fs-caption">
+                            <%= r.created_at.strftime('%b %e, %Y at %H:%M') %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </table>
+            </div>
+        </div>
+    </div>
+<% end %>

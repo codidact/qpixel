@@ -143,6 +143,11 @@ class Post < ApplicationRecord
         category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
+  def reaction_list
+    reactions.group_by(&:reaction_types_id) \
+             .map { |k,v| [v.first.reaction_type, v] }.to_h
+  end
+
   private
 
   def update_tag_associations
