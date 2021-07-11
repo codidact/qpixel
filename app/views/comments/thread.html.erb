@@ -80,7 +80,7 @@
       <%= render 'comments/comment', comment: comment, pingable: pingable %>
     </div>
   <% end %>
-  <% if skipped_deleted > 0 && current_user&.is_moderator%>
+  <% if skipped_deleted > 0 && (current_user&.is_moderator || current_user&.privilege?('flag_curate'))%>
     <div class="widget--body">
       <div class="deleted-comments">
         <p>
