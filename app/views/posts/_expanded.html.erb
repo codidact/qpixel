@@ -44,7 +44,7 @@
             &minus;<%= post.downvote_count %>
           </div>
           <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>" <%= (post.locked?) ? 'disabled' : '' %>
+            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
                     data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
                 <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                   <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
@@ -52,6 +52,18 @@
             </button>
           <% end %>
         </div>
+        <% if post.post_type.has_reactions %>
+        <div class="post--react has-text-align-center">
+          <% unless post.locked? %>
+            <button class="react-button button is-muted is-icon-only-button h-fw-bold"
+                    id="post-<%= post.id %>-react" aria-label="Add Reaction"
+                    data-drop="#post-<%= post.id %>-reactions-panel"
+                    data-drop-self-class-toggle="is-active">
+                react
+            </button>
+          <% end %>
+        </div>
+        <% end %>
       </div>
     <% end %>
 
@@ -463,3 +475,40 @@
 <% end %>
 
 <%= render 'comments/new_thread_modal', post: post %>
+
+<% unless post.locked? %>
+<div class="droppanel is-large droppanel-for-reactions" id="post-<%= post.id %>-reactions-panel">
+  <div class="droppanel--header">
+    Mark this <%= post.post_type.name.downcase %> as ...
+  </div>
+  <% ReactionType.all.each do |rt| %>
+  <div class="grid">
+    <div class="grid--cell">
+      <input class="form-radio-element" type="radio" name="reaction-type" value="<%= rt.id %>"
+              id="reaction-type-input-<%= post.id %>-<%= rt.id %>"
+              <%= rt.requires_comment ? 'data-reaction-require-comment' : '' %>>
+    </div>
+    <div class="grid--cell is-flexible">
+      <label class="form-element" for="reaction-type-input-<%= post.id %>-<%= rt.id %>">
+        <span class="badge is-tag <%= rt.color %>">
+          <i class="<%= rt.icon %> fa-fw"></i>
+          <%= rt.name %>
+        </span>
+        <% if rt.requires_comment %>
+        (requires comment)
+        <% end %>
+        <div class="form-caption">
+          <%= raw render_markdown(rt.description) %>
+        </div>
+      </label>
+    </div>
+  </div>
+  <% end %>
+  <label for="reaction-type-comment-<%= post.id %>">Explain in comment?</label>
+  <textarea class="form-element reaction-comment-field is-small"
+            id="reaction-type-comment-<%= post.id %>"></textarea>
+  <button type="button" class="button is-filled reaction-submit">
+    Add reaction
+  </button>
+</div>
+<% end %>

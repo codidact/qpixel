@@ -14,3 +14,30 @@
 .muted-p p {
     margin: 0;
 }
+
+.droppanel.droppanel-for-reactions {
+    .droppanel--header {
+        font-weight: bold;
+    }
+
+    .grid .grid--cell.is-flexible {
+        width: 0;
+
+        label {
+            margin: 0;
+
+            .form-caption, p {
+                margin-bottom: 0;
+            }
+        }
+
+        .badge { margin: 0; }
+    }
+}
+@media all and (max-width: 640px) {
+    .droppanel.droppanel-for-reactions {
+        left: 0 !important;
+        right: 0 !important;
+        max-width: none;
+    }
+}
