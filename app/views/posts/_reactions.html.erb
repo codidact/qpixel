@@ -25,7 +25,7 @@
 </div>
 
 <% post.reaction_list.each do |rt, rr| %>
-    <div class="modal is-with-backdrop"
+    <div class="modal is-with-backdrop reaction-info-modal"
          id="reaction-info-<%= post.id %>-<%= rt.id %>">
         <div class="modal--container">
             <div class="modal--header">
@@ -40,7 +40,7 @@
                 <table class="table">
                     <tr>
                         <th>User</th>
-                        <th>Comment</th>
+                        <th class="comment-col">Comment</th>
                         <th>Date</th>
                     </tr>
                     <% rr.each do |r| %>
@@ -48,15 +48,20 @@
                         <td>
                             <%= link_to r.user.rtl_safe_username, user_path(r.user), dir: 'ltr'%>
                         </td>
-                        <td>
+                        <td class="comment-col">
                             <% if r.comment %>
                                 <div class="muted-p">
                                     <p class="h-fw-bold">
                                         Thread:
                                         <%= link_to r.comment.comment_thread.title, comment_link(r.comment) %>
                                     </p>
+                                    <% if r.comment.content.size < 150 %>
                                     <%= raw(sanitize(render_markdown(r.comment.content),
                                                     scrubber: CommentScrubber.new)) %>
+                                    <% else %>
+                                    <%= raw(sanitize(render_markdown(r.comment.content[0..150] + "..."),
+                                                    scrubber: CommentScrubber.new)) %>
+                                    <% end %>
                                 </div>
                             <% else %>
                             no
