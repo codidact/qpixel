@@ -2,6 +2,7 @@ class ReactionsController < ApplicationController
   before_action :authenticate_user!
   before_action :verify_moderator, except: [:add, :retract]
   before_action :set_post, only: [:add, :retract]
+  before_action :set_reaction_type, only: [:edit, :update]
 
   def add
     reaction_type = ReactionType.find(params[:reaction_id])
@@ -58,12 +59,34 @@ class ReactionsController < ApplicationController
 
   def index; end
 
+  def edit; end
+
+  def update
+    @reaction_type.update name: params[:reaction_type][:name],
+                          description: params[:reaction_type][:description], 
+                          on_post_label: params[:reaction_type][:on_post_label],
+                          color: params[:reaction_type][:color],
+                          icon: params[:reaction_type][:icon],
+                          requires_comment: params[:reaction_type][:requires_comment]
+    render :edit
+  end
+
+  def new; end
+
+  def create; end
+
+  def delete; end
+
   protected
 
   def set_post
-    @post = Post.unscoped.find(params[:post_id])
+    @post = Post.find(params[:post_id])
     unless @post.can_access?(current_user)
       not_found
     end
+  end
+
+  def set_reaction_type
+    @reaction_type = ReactionType.find(params[:id])
   end
 end

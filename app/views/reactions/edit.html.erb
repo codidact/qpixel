@@ -1,0 +1,22 @@
+<h1>Edit reaction</h1>
+
+<div class="notice is-warning has-color-yellow-900 has-font-size-caption flex-row-always jc-sb ai-c">
+  <i class="fas fa-exclamation-triangle"></i>
+  <div>
+    If you edit the details for this reaction, the change will appear on all questions that are already
+    marked with this reason.
+  </div>
+</div>
+
+<% if @reaction_type.errors.any? %>
+  <div class="notice is-danger">
+    These errors prevented this close reason being saved:
+    <ul>
+      <% @reaction_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= render 'form', submit_url: update_reaction_path(@reaction_type.id) %>
