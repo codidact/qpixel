@@ -26,24 +26,6 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :upvote_rep, 'Upvote reputation', class: 'form-element' %>
-    <span class="form-caption">
-      How much reputation should be awarded for upvotes on this post type? Enter 0 if this type should not grant rep or
-      if votes will be disabled.
-    </span>
-    <%= f.number_field :upvote_rep, class: 'form-element' %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :downvote_rep, 'Downvote reputation', class: 'form-element' %>
-    <span class="form-caption">
-      How much reputation should be awarded for downvotes on this post type? Enter 0 if this type should not grant rep or
-      if votes will be disabled. Include the minus sign if this should take away rep!
-    </span>
-    <%= f.number_field :downvote_rep, class: 'form-element' %>
-  </div>
-
-  <div class="form-group">
     <div class="checkbox-setting">
       <div class="checkbox-setting--desc">
         <%= f.label :has_answers, 'Answers?', class: 'form-element' %>

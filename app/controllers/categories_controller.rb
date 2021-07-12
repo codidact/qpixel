@@ -69,6 +69,45 @@ class CategoriesController < ApplicationController
     end
   end
 
+  def category_post_types
+    @category_post_types = CategoryPostType.where(category: @category).includes(:category, :post_type)
+  end
+
+  def update_cat_post_type
+    @post_type = PostType.find_by(id: params[:post_type])
+    if @post_type.nil?
+      render json: { status: 'failed', message: 'Post type not found.' }, status: :not_found
+      return
+    end
+
+    @category_post_type = CategoryPostType.find_by(category: @category, post_type: @post_type)
+    if @category_post_type.nil?
+      @category_post_type = @category.category_post_types.create(post_type: @post_type, upvote_rep: params[:upvote_rep],
+                                                                 downvote_rep: params[:downvote_rep])
+      status = :created
+    else
+      @category_post_type.update(upvote_rep: params[:upvote_rep], downvote_rep: params[:downvote_rep])
+      status = :ok
+    end
+
+    # Break rep awards cache either way and regenerate.
+    cache_key = 'network/category_post_types/rep_changes'
+    Rails.cache.delete cache_key, include_community: false
+    Rails.cache.write(cache_key, CategoryPostType.all.map do |cpt|
+      [[cpt.category_id, cpt.post_type_id], { 1 => cpt.upvote_rep, -1 => cpt.downvote_rep }]
+    end.to_h, include_community: false)
+
+    view_name = 'categories/_category_post_type_edit'
+    render json: { status: 'success', cpt: @category_post_type,
+                   html: render_to_string(view_name, layout: false, locals: { cpt: @category_post_type }) },
+           status: status
+  end
+
+  def delete_cat_post_type
+    CategoryPostType.where(category: @category, post_type_id: params[:post_type]).delete_all
+    render json: { status: 'success' }
+  end
+
   def destroy
     before = @category.attributes_print
     unless @category.destroy

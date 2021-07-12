@@ -1,6 +1,7 @@
 class PostType < ApplicationRecord
   has_many :posts
-  has_and_belongs_to_many :categories
+  has_many :category_post_types
+  has_many :categories, through: :category_post_types
 
   validates :name, uniqueness: true
 
@@ -12,12 +13,6 @@ class PostType < ApplicationRecord
 
   def self.[](key)
     PostType.find_by(name: key)
-  end
-
-  def self.rep_changes
-    Rails.cache.fetch 'network/post_types/rep_changes', include_community: false do
-      all.map { |pt| [pt.id, { 1 => pt.upvote_rep, -1 => pt.downvote_rep }] }.to_h
-    end
   end
 
   def self.top_level

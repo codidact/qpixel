@@ -10,7 +10,7 @@ class VoteTest < ActiveSupport::TestCase
   test 'creating a vote should correctly change user reputation' do
     [1, -1].each do |vote_type|
       previous_rep = posts(:question_two).user.reputation
-      expected_change = PostType.rep_changes[post_types(:question).id][vote_type]
+      expected_change = CategoryPostType.rep_changes[[posts(:question_two).category_id, post_types(:question).id]][vote_type]
       posts(:question_two).votes.create(user: users(:deleter), recv_user: posts(:question_two).user, vote_type: vote_type)
       assert_equal posts(:question_two).user.reputation, previous_rep + expected_change
     end

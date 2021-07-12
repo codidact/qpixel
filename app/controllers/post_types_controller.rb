@@ -43,6 +43,6 @@ class PostTypesController < ApplicationController
   def post_type_params
     params.require(:post_type).permit(:name, :description, :has_answers, :has_votes, :has_tags, :has_parent,
                                       :has_category, :has_license, :is_public_editable, :is_closeable,
-                                      :is_top_level, :is_freely_editable, :icon_name, :upvote_rep, :downvote_rep)
+                                      :is_top_level, :is_freely_editable, :icon_name)
   end
 end

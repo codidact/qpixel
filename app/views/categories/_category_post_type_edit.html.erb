@@ -1,0 +1,27 @@
+<div class="widget">
+  <div class="grid has-padding-2 ai-c">
+    <div class="grid--cell is-6 is-12-sm">
+      <%= hidden_field_tag "post-type-#{cpt.category_id}-#{cpt.post_type_id}", cpt.post_type_id,
+                           class: 'js-cpt-post-type' %>
+      <i class="<%= cpt.post_type.icon_name %>"></i> <%= cpt.post_type.name %> &middot;
+      <a href="javascript:void(0)" class="js-delete-cpt is-red has-font-size-caption" data-post-type="<%= cpt.post_type_id %>"
+         data-category="<%= cpt.category_id %>">remove</a>
+      <p class="has-color-tertiary-600 has-font-size-caption"><%= cpt.post_type.description %></p>
+    </div>
+    <div class="grid--cell is-2 is-6-sm">
+      <%= label_tag "upvote-rep-#{cpt.category_id}-#{cpt.post_type_id}", 'Upvote rep', class: 'form-element' %>
+      <%= number_field_tag "upvote-rep-#{cpt.category_id}-#{cpt.post_type_id}", cpt.upvote_rep || 0,
+                           class: 'form-element  js-cpt-upvote-rep' %>
+    </div>
+    <div class="grid--cell is-2 is-6-sm">
+      <%= label_tag "downvote-rep-#{cpt.category_id}-#{cpt.post_type_id}", 'Downvote rep', class: 'form-element' %>
+      <%= number_field_tag "downvote-rep-#{cpt.category_id}-#{cpt.post_type_id}", cpt.downvote_rep || 0,
+                           class: 'form-element js-cpt-downvote-rep' %>
+    </div>
+    <div class="grid--cell is-2 is-12-sm">
+      <button type="button" class="update-cpt js-update-cpt button is-filled" data-category="<%= cpt.category_id %>">
+        Update
+      </button>
+    </div>
+  </div>
+</div>

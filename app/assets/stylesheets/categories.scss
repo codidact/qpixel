@@ -26,3 +26,15 @@
 .category--description {
   color: $muted-text;
 }
+
+.update-cpt {
+  @media screen and (min-width: $screen-md) {
+    margin-top: 35px;
+  }
+}
+
+.add-cpt {
+  @media screen and (min-width: $screen-md) {
+    margin-top: 20px;
+  }
+}

@@ -216,6 +216,9 @@ Rails.application.routes.draw do
     get    ':id',                          to: 'categories#show', as: :category
     get    ':id/edit',                     to: 'categories#edit', as: :edit_category
     post   ':id/edit',                     to: 'categories#update', as: :update_category
+    get    ':id/edit/post-types',          to: 'categories#category_post_types', as: :edit_category_post_types
+    post   ':id/edit/post-types',          to: 'categories#update_cat_post_type', as: :update_category_post_types
+    delete ':id/edit/post-types',          to: 'categories#delete_cat_post_type', as: :destroy_category_post_type
     delete ':id',                          to: 'categories#destroy', as: :destroy_category
     get    ':id/types',                    to: 'categories#post_types', as: :category_post_types
     get    ':id/feed',                     to: 'categories#rss_feed', as: :category_feed

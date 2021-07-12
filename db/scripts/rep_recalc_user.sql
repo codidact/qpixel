@@ -20,5 +20,4 @@ INNER JOIN ( SELECT * FROM (
       AND vq.community_id = cu.community_id
     GROUP BY cu.id
 ) q ) x ON x.id = community_users.id
-SET community_users.reputation = IFNULL(x.total_rep, 1)
-WHERE (community_users.reputation > 1 OR community_users.reputation IS NULL);
+SET community_users.reputation = IFNULL(x.total_rep, 1);

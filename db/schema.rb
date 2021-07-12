@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_27_152246) do
+ActiveRecord::Schema.define(version: 2021_07_12_144301) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -114,9 +114,12 @@ ActiveRecord::Schema.define(version: 2021_06_27_152246) do
     t.bigint "tag_id"
   end
 
-  create_table "categories_post_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id", null: false
     t.bigint "post_type_id", null: false
+    t.integer "upvote_rep", default: 0, null: false
+    t.integer "downvote_rep", default: 0, null: false
+    t.index ["category_id", "post_type_id"], name: "index_categories_post_types_on_category_id_and_post_type_id", unique: true
   end
 
   create_table "categories_required_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -344,8 +347,6 @@ ActiveRecord::Schema.define(version: 2021_06_27_152246) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.integer "upvote_rep"
-    t.integer "downvote_rep"
     t.index ["name"], name: "index_post_types_on_name"
   end
 

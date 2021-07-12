@@ -16,9 +16,11 @@ class Vote < ApplicationRecord
   validate :post_not_deleted
 
   def self.total_rep_change(col)
-    col = col.includes(:post, post: :post_type)
+    col = col.includes(:post, post: [:category, :post_type])
 
-    col.reduce(0) { |sum, vote| sum + (PostType.rep_changes[vote.post.post_type_id][vote.vote_type] || 0) }
+    col.reduce(0) do |sum, vote|
+      sum + (CategoryPostType.rep_changes[[vote.post.category_id, vote.post.post_type_id]][vote.vote_type] || 0)
+    end
   end
 
   private
@@ -32,7 +34,7 @@ class Vote < ApplicationRecord
   end
 
   def rep_change(direction)
-    change = PostType.rep_changes[post.post_type_id][vote_type] || 0
+    change = CategoryPostType.rep_changes[[post.category_id, post.post_type_id]][vote_type] || 0
     recv_user.update!(reputation: recv_user.reputation + direction * change)
   end
 
