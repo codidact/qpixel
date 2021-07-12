@@ -11,8 +11,6 @@ question:
   is_closeable: true
   is_top_level: true
   is_freely_editable: false
-  upvote_rep: 5
-  downvote_rep: -2
 
 answer:
   name: Answer
@@ -27,8 +25,6 @@ answer:
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
-  upvote_rep: 10
-  downvote_rep: -2
 
 article:
   name: Article
@@ -43,8 +39,6 @@ article:
   is_closeable: false
   is_top_level: true
   is_freely_editable: false
-  upvote_rep: 10
-  downvote_rep: -2
 
 policy_doc:
   name: PolicyDoc
@@ -59,8 +53,6 @@ policy_doc:
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
-  upvote_rep: 0
-  downvote_rep: 0
 
 help_doc:
   name: HelpDoc
@@ -75,8 +67,6 @@ help_doc:
   is_closeable: false
   is_top_level: false
   is_freely_editable: false
-  upvote_rep: 0
-  downvote_rep: 0
 
 blog_post:
   name: BlogPost
@@ -91,8 +81,6 @@ blog_post:
   is_closeable: false
   is_top_level: true
   is_freely_editable: false
-  upvote_rep: 10
-  downvote_rep: -2
 
 free_edit:
   name: FreeEdit
@@ -107,5 +95,3 @@ free_edit:
   is_closeable: true
   is_top_level: true
   is_freely_editable: true
-  upvote_rep: 0
-  downvote_rep: 0
