@@ -100,11 +100,12 @@
       <% end %>
     </div>
 
- <table class="table is-full-width">
+
+    <table class="table is-full-width">
       <tr>
       </tr>
       <tr>
-        <td colspan="2">&emsp;&nbsp; Reputation</td>
+        <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i>&nbsp; Reputation</td>
         <td><%= @user.reputation %></td>
       </tr>
       <tr>
@@ -124,6 +125,7 @@
         <td><%= @user.metric 'E' %></td>
       </tr>
     </table>
+
 
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>
