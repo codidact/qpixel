@@ -5,6 +5,9 @@
       Start new comment thread
     </div>
     <div class="modal--body">
+      <div class="notice is-danger" id="danger_notice" style="display: none;">
+        Content is too short (minimum is 15 characters)
+      </div>
       <% if post.comment_threads.size > 0 %>
         <p>You can create a new comment thread. Please check first whether an existing comment thread covers already what you need.</p>
       <% else %>
@@ -17,9 +20,10 @@
         <%= label_tag :body, 'Your comment', class: 'form-element' %>
         <div class="form-caption">Start the thread with a comment.</div>
         <%= text_area_tag :body, '', class: 'form-element js-comment-field', data: { post: post.id, thread: '-1' },
-                          required: true %>
-        <span class="has-float-right has-font-size-caption js-character-count"
+                          required: true , minlength:"15" %>
+        <span class="has-float-right has-font-size-caption js-character-count" id="character_count"
               data-target=".js-comment-field" data-max="500">0 / 500</span>
+
 
         <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
         <div class="form-caption">You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will be shown.</div>
