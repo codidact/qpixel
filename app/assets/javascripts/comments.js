@@ -200,6 +200,16 @@ $(() => {
     const splat = content.split(' ');
     const caretPos = $tgt[0].selectionStart;
     const [currentWord, posInWord] = currentCaretSequence(splat, caretPos);
+    const character_count = document.getElementById("character_count");
+
+    if (caretPos<15 || caretPos>500){
+        character_count.style.color = "#ff0000";
+    }else if(caretPos>375){
+        character_count.style.color = "#d7af02";
+    }else{
+        character_count.style.color = "#000000";
+    }
+
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
     const callback = ev => {
