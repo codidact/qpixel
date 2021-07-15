@@ -200,6 +200,19 @@ $(() => {
     const splat = content.split(' ');
     const caretPos = $tgt[0].selectionStart;
     const [currentWord, posInWord] = currentCaretSequence(splat, caretPos);
+    const postId = $tgt.data('post');
+    const characterCount = document.getElementById("character_count_"+postId);
+    const createThreadButton = document.getElementById("create_thread_button_"+postId);
+
+    if (caretPos<15 || caretPos>500){
+        characterCount.style.color = "#ff0000";
+        createThreadButton.disabled = true;
+    }else if(caretPos>375){
+        characterCount.style.color = "#d7af02";
+    }else{
+        characterCount.style.color = "#000000";
+        createThreadButton.disabled = false;
+    }
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
     const callback = ev => {
