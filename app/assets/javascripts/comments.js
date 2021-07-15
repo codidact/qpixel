@@ -240,3 +240,14 @@ $(() => {
     }
   });
 });
+
+
+window.new_thread = function (post_id){
+    const thread = document.getElementById("new_thread_modal_"+post_id);
+
+    if (thread.style.display=="none"){
+        thread.style.display = "block";
+    }else{
+        thread.style.display = "none";
+    }
+}
