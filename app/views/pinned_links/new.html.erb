@@ -2,7 +2,7 @@
 
 <% if @link.errors.any? %>
   <div class="notice is-danger">
-    These errors prevented this link being saved:
+    These errors prevented this link from being saved:
     <ul>
       <% @link.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>

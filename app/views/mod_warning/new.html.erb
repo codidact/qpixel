@@ -18,7 +18,7 @@
             <p class="is-lead">Choose a template, which explains, why you are contacting the user. If none is applicable, choose to send a custom message.</p>
             <label class="form-element" for="template">Template</label>
             <select id="template" class="form-element js--warning-template-selection">
-                <option value="">Send custom message</option>
+                <option value="">Send a custom message</option>
                 <% @templates.each do |t| %>
                     <option value="<%= t.body_as_b64 %>"><%= t.name %></option>
                 <% end %>
