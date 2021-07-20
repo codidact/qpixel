@@ -155,17 +155,35 @@ class PostsController < ApplicationController
 
     if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
-      if @post.update(edit_post_params.merge(body: body_rendered,
-                                             last_edited_at: DateTime.now, last_edited_by: current_user,
-                                             last_activity: DateTime.now, last_activity_by: current_user))
-        PostHistory.post_edited(@post, current_user, before: before[:body],
-                                after: @post.body_markdown, comment: params[:edit_comment],
-                                before_title: before[:title], after_title: @post.title,
-                                before_tags: before[:tags], after_tags: @post.tags)
-        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-        redirect_to post_path(@post)
+      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && current_user.is_global_moderator || \
+         current_user.is_global_admin
+        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id], slug: @post.slug,
+                                    body: @post.body)
+        update_params = edit_post_params.merge(body: body_rendered, last_edited_at: DateTime.now,
+                                               last_edited_by_id: current_user.id, last_activity: DateTime.now,
+                                               last_activity_by_id: current_user.id)
+        posts.update_all(update_params)
+        posts.each do |post|
+          PostHistory.post_edited(post, current_user, before: before[:body],
+                                  after: @post.body_markdown, comment: params[:edit_comment],
+                                  before_title: before[:title], after_title: @post.title,
+                                  before_tags: before[:tags], after_tags: @post.tags)
+        end
+        flash[:success] = "#{helpers.pluralize(posts.size, 'post')} updated."
+        redirect_to help_path(slug: @post.slug)
       else
-        render :edit, status: :bad_request
+        if @post.update(edit_post_params.merge(body: body_rendered,
+                                               last_edited_at: DateTime.now, last_edited_by: current_user,
+                                               last_activity: DateTime.now, last_activity_by: current_user))
+          PostHistory.post_edited(@post, current_user, before: before[:body],
+                                  after: @post.body_markdown, comment: params[:edit_comment],
+                                  before_title: before[:title], after_title: @post.title,
+                                  before_tags: before[:tags], after_tags: @post.tags)
+          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
+          redirect_to post_path(@post)
+        else
+          render :edit, status: :bad_request
+        end
       end
     else
       new_user = !current_user.privilege?('unrestricted')

@@ -145,6 +145,20 @@
       <span class="form-caption"><%= t('posts.slug_caption') %></span>
       <%= f.text_field :doc_slug, class: 'form-element' %>
     </div>
+
+    <% if edit_comment %>
+      <div class="form-group">
+        <div class="checkbox-setting">
+          <div class="checkbox-setting--desc">
+            <%= label_tag :network_push, 'Push to network', class: 'form-element' %>
+            <span class="form-caption">Copy this edit to all communities (where the post has not been edited)?</span>
+          </div>
+          <div class="checkbox-setting--value">
+            <%= check_box_tag :network_push, nil, class: 'form-checkbox-element' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 
   <% if edit_comment %>
