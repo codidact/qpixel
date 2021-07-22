@@ -255,7 +255,7 @@ $(() => {
 });
 
 
-window.new_thread = function (post_id){
+const newThread = (postId) => {
     const thread = document.getElementById("new_thread_modal_"+post_id);
 
     if (thread.style.display=="none"){
