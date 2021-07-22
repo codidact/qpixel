@@ -204,7 +204,7 @@ $(() => {
     const characterCount = document.getElementById("character_count_"+postId);
     const createThreadButton = document.getElementById("create_thread_button_"+postId);
 
-    if (caretPos<15 || caretPos>500){
+    if (caretPos < 15 || caretPos > 500) {
         characterCount.style.color = "#ff0000";
         createThreadButton.disabled = true;
     }
