@@ -207,7 +207,8 @@ $(() => {
     if (caretPos<15 || caretPos>500){
         characterCount.style.color = "#ff0000";
         createThreadButton.disabled = true;
-    }else if(caretPos>375){
+    }
+    else if (caretPos > 375) {
         characterCount.style.color = "#d7af02";
     }else{
         characterCount.style.color = "#000000";
