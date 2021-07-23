@@ -58,7 +58,7 @@ class PostsController < ApplicationController
     end
 
     if @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
-      @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', category: @category.name))
+      @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', name: @category.name))
       render :new, status: :forbidden
       return
     end
