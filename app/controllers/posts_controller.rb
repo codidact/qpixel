@@ -33,8 +33,12 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post_type = PostType.find(params[:post][:post_type_id])
     @parent = Post.where(id: params[:parent]).first
+    @post_type = if @parent.present? && @parent.post_type.answer_type.present?
+                   @parent.post_type.answer_type
+                 else
+                   PostType.find(params[:post][:post_type_id])
+                 end
     @category = if @post_type.has_category
                   if params[:post][:category_id].present?
                     Category.find(params[:post][:category_id])
@@ -64,6 +68,7 @@ class PostsController < ApplicationController
     end
 
     if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && !check_permissions
+      render :new, status: :forbidden
       return
     end
 

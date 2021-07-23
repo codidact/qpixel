@@ -26,6 +26,15 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :answer_type_id, 'Answer type', class: 'form-element' %>
+    <span class="form-caption">
+      Required if this post type has answers. Specify the post type that answers to this post type will be created as.
+    </span>
+    <%= f.select :answer_type_id, options_for_select(PostType.mapping.to_a, selected: @type.answer_type_id),
+                 { include_blank: true },  class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
     <div class="checkbox-setting">
       <div class="checkbox-setting--desc">
         <%= f.label :has_answers, 'Answers?', class: 'form-element' %>

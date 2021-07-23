@@ -2,8 +2,10 @@ class PostType < ApplicationRecord
   has_many :posts
   has_many :category_post_types
   has_many :categories, through: :category_post_types
+  has_one :answer_type, required: false, class_name: 'PostType'
 
   validates :name, uniqueness: true
+  validates :answer_type_id, presence: true, if: :has_answers?
 
   def self.mapping
     Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
