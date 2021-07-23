@@ -157,12 +157,12 @@ class PostsController < ApplicationController
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
       if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && current_user.is_global_moderator || \
          current_user.is_global_admin
-        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id], slug: @post.slug,
-                                    body: @post.body)
-        update_params = edit_post_params.merge(body: body_rendered, last_edited_at: DateTime.now,
-                                               last_edited_by_id: current_user.id, last_activity: DateTime.now,
-                                               last_activity_by_id: current_user.id)
-        posts.update_all(update_params)
+        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                    doc_slug: @post.doc_slug, body: @post.body)
+        update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
+                                                    last_edited_by_id: current_user.id, last_activity: DateTime.now,
+                                                    last_activity_by_id: current_user.id)
+        posts.update_all(**update_params.symbolize_keys)
         posts.each do |post|
           PostHistory.post_edited(post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
@@ -170,7 +170,7 @@ class PostsController < ApplicationController
                                   before_tags: before[:tags], after_tags: @post.tags)
         end
         flash[:success] = "#{helpers.pluralize(posts.size, 'post')} updated."
-        redirect_to help_path(slug: @post.slug)
+        redirect_to help_path(slug: @post.doc_slug)
       else
         if @post.update(edit_post_params.merge(body: body_rendered,
                                                last_edited_at: DateTime.now, last_edited_by: current_user,

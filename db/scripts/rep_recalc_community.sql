@@ -1,4 +1,4 @@
-SET @cid = 3;
+SET @cid = 16;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (
