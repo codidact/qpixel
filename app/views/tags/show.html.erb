@@ -42,7 +42,16 @@
     <% end %>
   </div>
   <div class="widget--body">
-    <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+    <% if@tag.wiki.present? %>
+      <% if @tag.wiki.length < 600 %>
+      <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+      <% else %>
+      <details>
+        <summary>Tag Wiki</summary>
+        <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+      </details>
+      <% end %>
+    <% end %>
     <% unless @tag.wiki.present? %>
       <p class="has-font-size-caption has-margin-0">
         <em>
