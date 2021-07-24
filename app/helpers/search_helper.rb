@@ -12,8 +12,8 @@ module SearchHelper
 
   def qualifiers_to_sql(qualifiers, query)
     valid_value = {
-      date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
-      numeric: /^[<>=]{0,2}\d+$/
+      date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
+      numeric: /^[<>=]{0,2}[\d.]+$/
     }
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength

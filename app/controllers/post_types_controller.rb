@@ -7,6 +7,15 @@ class PostTypesController < ApplicationController
     @types = PostType.all
   end
 
+  def list
+    @types = PostType.all
+    respond_to do |format|
+      format.json do
+        render json: @types
+      end
+    end
+  end
+
   def new
     @type = PostType.new
   end

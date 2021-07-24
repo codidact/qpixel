@@ -99,6 +99,7 @@ Rails.application.routes.draw do
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
     get    'search',                       to: 'search#search', as: :search
     get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
+    get    'types',                        to: 'post_types#list', as: :post_types_list
 
     get    ':id',                          to: 'posts#show', as: :post
 
