@@ -68,7 +68,6 @@ class PostsController < ApplicationController
     end
 
     if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && !check_permissions
-      render :new, status: :forbidden
       return
     end
 

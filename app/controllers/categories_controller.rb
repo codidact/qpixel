@@ -45,7 +45,7 @@ class CategoriesController < ApplicationController
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
-      render :new
+      render :new, status: 400
     end
   end
 
