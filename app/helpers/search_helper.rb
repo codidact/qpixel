@@ -59,6 +59,16 @@ module SearchHelper
       when '-tag'
         query = query.where.not(posts: { id: PostsTag.where(tag_id: Tag.where(name: value).select(:id))
                                                      .select(:post_id) })
+      when 'category'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        query = query.where("category_id #{operator.presence || '='} ?", val.to_i)
+      when 'post_type'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        query = query.where("post_type_id #{operator.presence || '='} ?", val.to_i)
       end
     end
 
