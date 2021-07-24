@@ -259,7 +259,7 @@ $(() => {
 const newThread = (postId) => {
     const thread = document.getElementById("new_thread_modal_"+post_id);
 
-    if (thread.style.display=="none"){
+    if (thread.style.display == "none"){
         thread.style.display = "block";
     }else{
         thread.style.display = "none";
