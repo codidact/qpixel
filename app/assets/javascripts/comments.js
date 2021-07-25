@@ -210,7 +210,8 @@ $(() => {
     }
     else if (caretPos > 375) {
         characterCount.style.color = "#d7af02";
-    }else{
+    }
+    else{
         characterCount.style.color = "#000000";
         createThreadButton.disabled = false;
     }
@@ -259,9 +260,10 @@ $(() => {
 const newThread = (postId) => {
     const thread = document.getElementById("new_thread_modal_"+post_id);
 
-    if (thread.style.display == "none"){
+    if (thread.style.display === "none"){
         thread.style.display = "block";
-    }else{
+    }
+    else{
         thread.style.display = "none";
     }
 }
