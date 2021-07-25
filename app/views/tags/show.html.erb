@@ -42,7 +42,7 @@
     <% end %>
   </div>
   <div class="widget--body">
-    <% if@tag.wiki.present? %>
+    <% if @tag.wiki.present? %>
       <% if @tag.wiki.length < 600 %>
       <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
       <% else %>
