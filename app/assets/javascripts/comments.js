@@ -262,7 +262,8 @@ $(() => {
 
     if (thread.style.display === "none") {
         thread.style.display = "block";
-    } else {
+    } 
+    else {
         thread.style.display = "none";
     }
   })
