@@ -228,14 +228,16 @@
 
     row.innerHTML = `
     <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
-    <div class="toc--full"><p class="row-summary"><span class='username'></span> <code></code></p></div>
+    <div class="toc--full"><p class="row-summary"><span class='username'></span></p></div>
     ${answer.placement === 1 ? '<div class="toc--badge"><span class="badge is-tag is-yellow"><i class="fas fa-trophy"></i></span></div>'
       : (settings.showPlacements ? `<div class="toc--badge"><span class="badge is-tag">#${answer.placement}</span></div>` : '')}
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
     row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? answer.full_language : answer.language;
-    row.querySelector('code').innerText = answer.code ? answer.code.split('\n')[0].substring(0, 200) : undefined
+    row.querySelector('.username').insertAdjacentHTML('afterend', answer.code
+      ? `<code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
+      : ' <em>Invalid entry format</em>');
 
     return row;
   }
