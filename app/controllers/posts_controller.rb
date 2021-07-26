@@ -159,8 +159,8 @@ class PostsController < ApplicationController
 
     if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
-      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && current_user.is_global_moderator || \
-         current_user.is_global_admin
+      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
+         current_user.is_global_admin)
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                     doc_slug: @post.doc_slug, body: @post.body)
         update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
