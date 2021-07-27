@@ -34,4 +34,13 @@ module UsersHelper
 
     current_user.preference(name, community: community)
   end
+
+  def redis_registration_community(user)
+    redis = RequestContext.redis
+    cid = redis.multi do
+      redis.hget 'network/community_registrations', user.email
+      redis.hdel 'network/community_registrations', user.email
+    end[0]
+    Community.find(cid)
+  end
 end

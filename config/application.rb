@@ -28,5 +28,9 @@ module Qpixel
 
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', 'strings', '*.yml')]
     config.i18n.default_locale = :en
+
+    config.to_prepare do
+      Devise::Mailer.helper :users
+    end
   end
 end
