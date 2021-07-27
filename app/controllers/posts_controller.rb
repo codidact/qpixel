@@ -104,6 +104,9 @@ class PostsController < ApplicationController
       ['p', '1', '2'].each do |key|
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
+
+      do_draft_delete(URI(request.referer).path)
+
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request
@@ -184,6 +187,7 @@ class PostsController < ApplicationController
                                   before_title: before[:title], after_title: @post.title,
                                   before_tags: before[:tags], after_tags: @post.tags)
           Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
+          do_draft_delete(URI(request.referer).path)
           redirect_to post_path(@post)
         else
           render :edit, status: :bad_request
@@ -216,6 +220,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
+          do_draft_delete(URI(request.referer).path)
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
@@ -503,9 +508,7 @@ class PostsController < ApplicationController
   end
 
   def delete_draft
-    key = "saved_post.#{current_user.id}.#{params[:path]}"
-    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.del key, saved_at
+    do_draft_delete(params[:path])
     render json: { status: 'success', success: true }
   end
 
@@ -565,6 +568,12 @@ class PostsController < ApplicationController
 
   def unless_locked
     check_if_locked(@post)
+  end
+
+  def do_draft_delete(path)
+    key = "saved_post.#{current_user.id}.#{path}"
+    saved_at = "saved_post_at.#{current_user.id}.#{path}"
+    RequestContext.redis.del key, saved_at
   end
 end
 # rubocop:enable Metrics/MethodLength
