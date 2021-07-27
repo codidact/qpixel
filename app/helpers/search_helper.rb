@@ -10,6 +10,7 @@ module SearchHelper
     { qualifiers: qualifiers, search: search }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def qualifiers_to_sql(qualifiers, query)
     valid_value = {
       date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
@@ -79,6 +80,7 @@ module SearchHelper
 
     query
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def numeric_value_sql(value)
     operator = ''
