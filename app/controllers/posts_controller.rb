@@ -105,7 +105,7 @@ class PostsController < ApplicationController
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
 
-      do_draft_delete(URI(request.referer).path)
+      do_draft_delete(URI(request.referer || '').path)
 
       redirect_to helpers.generic_show_link(@post)
     else
@@ -187,7 +187,7 @@ class PostsController < ApplicationController
                                   before_title: before[:title], after_title: @post.title,
                                   before_tags: before[:tags], after_tags: @post.tags)
           Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-          do_draft_delete(URI(request.referer).path)
+          do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           render :edit, status: :bad_request
@@ -220,7 +220,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
-          do_draft_delete(URI(request.referer).path)
+          do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
