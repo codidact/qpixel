@@ -247,6 +247,7 @@ class UsersControllerTest < ActionController::TestCase
 
   def create_other_user
     other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
+    RequestContext.redis.hset 'network/community_registrations', 'other@example.com', other_community.id
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
