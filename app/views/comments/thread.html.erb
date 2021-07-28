@@ -134,7 +134,7 @@
               <span class="js-character-count__count">0 / 500</span>
             </span>
             
-            <%= submit_tag 'Add reply', class: 'button is-muted is-filled' %>
+            <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
           <% end %>
         <% end %>
       <% elsif @comment_thread.deleted %>
