@@ -79,11 +79,11 @@ class CommentsController < ApplicationController
 
         existing_notification = follower.user.notifications.where(is_read: false)
                                         .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
-        unless existing_notification.exists?
-          follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                            "on the post '#{@post.title}'",
-                                            helpers.comment_link(@comment))
-        end
+        next if existing_notification.exists?
+
+        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                          "on the post '#{@post.title}'",
+                                          helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -290,11 +290,11 @@ class CommentsController < ApplicationController
       user = User.where(id: p).first
       next if user.nil?
 
-      unless user.id == @comment.post.user_id
-        user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                                 "on the post '#{@post.title}'",
-                                 helpers.comment_link(@comment))
-      end
+      next if user.id == @comment.post.user_id
+
+      user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+                               "on the post '#{@post.title}'",
+                               helpers.comment_link(@comment))
     end
   end
 
