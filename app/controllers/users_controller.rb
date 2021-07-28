@@ -224,8 +224,11 @@ class UsersController < ApplicationController
 
       AuditLog.moderator_audit(event_type: 'user_delete', related: @user, user: current_user,
                                comment: @user.attributes_print(join: "\n"))
-      @user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now, username: "user#{@user.id}",
-                   email: "#{@user.id}@deleted.localhost", password: SecureRandom.hex(32))
+      @user.assign_attributes(deleted: true, deleted_by_id: current_user.id, deleted_at: DateTime.now,
+                              username: "user#{@user.id}", email: "#{@user.id}@deleted.localhost",
+                              password: SecureRandom.hex(32))
+      @user.skip_reconfirmation!
+      @user.save
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
