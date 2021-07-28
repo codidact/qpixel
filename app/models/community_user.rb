@@ -9,6 +9,8 @@ class CommunityUser < ApplicationRecord
   validates :user_id, uniqueness: { scope: [:community_id] }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
+  scope :active, -> { where(deleted: false) }
+  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
 

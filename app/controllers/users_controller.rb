@@ -448,7 +448,7 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    User.joins(:community_user).includes(:community_user, :avatar_attachment)
+    User.active.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted
