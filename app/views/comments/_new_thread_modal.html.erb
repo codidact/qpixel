@@ -1,29 +1,35 @@
-<div class="modal--container" id="new_thread_modal_<%= post.id %>" style="box-shadow: 0 3px 5px -2px #eee; border: 1px solid #d0d9dd; margin-top:10px; padding:2%; display: none;">
-    <div class="modal--header">
-      <b>Start new comment thread</b>
-    </div>
-    <div class="modal--body">
-      <% if post.comment_threads.size > 0 %>
-        <p>You can create a new comment thread. Please check first whether an existing comment thread covers already what you need.</p>
-      <% else %>
-        <p>Be the first to create a new comment thread.</p>
-      <% end %>
+<div class="modal--container new-thread-modal" id="new-thread-modal-<%= post.id %>">
+  <div class="modal--header">
+    <b>Start new comment thread</b>
+  </div>
+  <div class="modal--body">
+    <% if post.comment_threads.size > 0 %>
+      <p>You can create a new comment thread. Please check first whether an existing comment thread covers already what you need.</p>
+    <% else %>
+      <p>Be the first to create a new comment thread.</p>
+    <% end %>
 
-      <%= form_tag create_comment_thread_path do %>
-        <%= hidden_field_tag :post_id, post.id %>
-        
-        <%= label_tag :body, 'Your comment', class: 'form-element' %>
-        <div class="form-caption">Start the thread with a comment.</div>
-        <%= text_area_tag :body, '', class: 'form-element js-comment-field', data: { post: post.id, thread: '-1' },
-                          required: true %>
-        <span class="has-float-right has-font-size-caption js-character-count" id="character_count_<%= post.id %>"
-              data-target=".js-comment-field" data-max="500">0 / 500</span>
+    <%= form_tag create_comment_thread_path do %>
+      <%= hidden_field_tag :post_id, post.id %>
 
-        <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
-        <div class="form-caption">You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will be shown.</div>
-        <%= text_field_tag :title, '', class: 'form-element' %>
+      <%= label_tag :body, 'Your comment', class: 'form-element' %>
+      <div class="form-caption">Start the thread with a comment.</div>
+      <%= text_area_tag :body, '', class: 'form-element js-comment-field', required: true,
+                        data: { post: post.id, thread: '-1', character_count: ".js-character-count-#{post.id}" } %>
+      <span class="has-float-right has-font-size-caption js-character-count-<%= post.id %>"
+            data-max="500" data-min="15">
+        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
+        <span class="js-character-count__count">0 / 500</span>
+      </span>
 
-        <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
-      <% end %>
-    </div>
+      <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
+      <span class="form-caption">
+        You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will
+        be shown.
+      </span>
+      <%= text_field_tag :title, '', class: 'form-element' %>
+
+      <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
+    <% end %>
+  </div>
 </div>

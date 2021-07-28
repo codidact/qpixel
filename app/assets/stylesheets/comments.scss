@@ -1,30 +1,5 @@
 @import 'variables';
 
-/*.comment {
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid $muted-graphic;
-  padding: 0.5em;
-  align-items: stretch;
-  max-width: 100%;
-  overflow: auto;
-
-  .comment--content {
-    margin-bottom: 0;
-  }
-
-  .comment--meta {
-    margin-left: auto;
-  }
-}
-
-.comment-form {
-  margin-top: 0.5em;
-}
-.post--comments {
-  font-size: 0.9em;
-}*/
-
 .comment {
   margin: 0.25rem;
   border: 1px solid #ccc;
@@ -159,4 +134,12 @@
 
 .comment-content {
   resize: vertical !important;
+}
+
+.new-thread-modal {
+  box-shadow: 0 3px 5px -2px #eee;
+  border: 1px solid #d0d9dd;
+  margin-top: 10px;
+  padding: 0.7em;
+  display: none;
 }
