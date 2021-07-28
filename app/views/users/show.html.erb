@@ -70,13 +70,11 @@
             </div>
           </div>
         <% end %>
-        <div class="mobile-sign-in">
-          <% if current_user&.id == @user.id %>
-            <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
-              <i class="fas fa-mobile-alt"></i> Mobile Sign In
-            <% end %>
+        <% if current_user&.id == @user.id %>
+          <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
+            <i class="fas fa-mobile-alt"></i> Mobile Sign In
           <% end %>
-        </div>
+        <% end %>
       </div>
 
       <h2 class="user-profile-heading">Posts</h2>
