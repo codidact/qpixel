@@ -1,53 +1,55 @@
 $(() => {
-  $('.js-character-count').each((i, el) => {
-    const $el = $(el);
-    const $target = $el.siblings($el.attr('data-target'));
-    const max = $el.attr('data-max');
+  const setIcon = (el, icon) => {
+    const icons = ['fa-ellipsis-h', 'fa-check', 'fa-exclamation-circle', 'fa-times'];
+    el.removeClass(icons.join(' ')).addClass(icon);
+  };
 
-    $target.on('keyup cc-reset', (ev) => {
-      character_count(ev);
-    });
+  $(document).on('keyup change', '[data-character-count]', ev => {
+    const $tgt = $(ev.target);
+    const $counter = $($tgt.attr('data-character-count'));
+    const $button = $counter.parents('form').find('input[type="submit"]');
+    const $count = $counter.find('.js-character-count__count');
+    const $icon = $counter.find('.js-character-count__icon');
 
-    function character_count(ev) {
-      const $tgt = $(ev.target);
-      const count = $tgt.val().length;
-      const text = `${count} / ${max}`;
-      if (count > max) {
-        $el.removeClass('has-color-yellow-700').addClass('has-color-red-500');
-        const $button = $el.parents('form').find('input[type="submit"]');
-        if ($button) {
-          $button.attr('disabled', true).addClass('is-muted');
-        }
+    const max = parseInt($counter.attr('data-max'), 10);
+    const min = parseInt($counter.attr('data-min'), 10);
+    const count = $tgt.val().length;
+    const text = `${count} / ${max}`;
+
+    if (count > max) {
+      $counter.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
+      setIcon($icon, 'fa-times');
+      if ($button) {
+        $button.attr('disabled', true).addClass('is-muted');
       }
-      else if (count > 0.75 * max) {
-        $el.removeClass('has-color-red-500').addClass('has-color-yellow-700');
-        const $button = $el.parents('form').find('input[type="submit"]');
-        if ($button) {
-          $button.attr('disabled', false).removeClass('is-muted');
-        }
+    }
+    else if (count > 0.75 * max) {
+      $counter.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
+      setIcon($icon, 'fa-exclamation-circle');
+      if ($button) {
+        $button.attr('disabled', false).removeClass('is-muted');
       }
-      else {
-        $el.removeClass('has-color-red-500 has-color-yellow-700');
-        const $button = $el.parents('form').find('input[type="submit"]');
-        if ($button) {
-          $button.attr('disabled', false).removeClass('is-muted');
-        }
+    }
+    else if (min && count < min) {
+      $counter.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
+      setIcon($icon, 'fa-ellipsis-h');
+      if ($button) {
+        $button.attr('disabled', true).addClass('is-muted');
       }
-      $el.text(text);
+    }
+    else {
+      $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
+      setIcon($icon, 'fa-check');
+      if ($button) {
+        $button.attr('disabled', false).removeClass('is-muted');
+      }
     }
 
-    $target.on('cut paste', function(e) {
-      //   This `millis` constant is not optimal, I just picked a number which is small enough for me to almost not
-      // notice the timed wait (without which this change stops working!), while getting the work done. I guess this
-      // hardwired timed wait might potentially not be slow enough for a browser running in a very CPU-busy client!!!
-      // Here would use a media query on "system load" and choose a `millis` value safe enough so that the code in
-      // `character_count` never gets run ahead of when it's supposed to.
-      const millis = 100;
-      setTimeout(function() { character_count(e); }, millis);
-    });
+    $count.text(text);
+  });
 
-    $target.parents('form').on('ajax:success', ev => {
-      $target.val('').trigger('cc-reset');
-    });
+  $(document).on('ajax:success', 'form', ev => {
+    const $tgt = $(ev.target);
+    $tgt.find('[data-character-count]').val('').trigger('change');
   });
 });

@@ -1,10 +1,19 @@
 class PostTypesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :verify_global_admin
+  before_action :authenticate_user!, except: [:list]
+  before_action :verify_global_admin, except: [:list]
   before_action :set_post_type, only: [:edit, :update]
 
   def index
     @types = PostType.all
+  end
+
+  def list
+    @types = PostType.all
+    respond_to do |format|
+      format.json do
+        render json: @types
+      end
+    end
   end
 
   def new
@@ -43,6 +52,6 @@ class PostTypesController < ApplicationController
   def post_type_params
     params.require(:post_type).permit(:name, :description, :has_answers, :has_votes, :has_tags, :has_parent,
                                       :has_category, :has_license, :is_public_editable, :is_closeable,
-                                      :is_top_level, :is_freely_editable, :icon_name)
+                                      :is_top_level, :is_freely_editable, :icon_name, :answer_type_id)
   end
 end

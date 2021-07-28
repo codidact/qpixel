@@ -236,10 +236,12 @@ class UsersController < ApplicationController
     render json: { status: 'success' }
   end
 
-  def edit_profile; end
+  def edit_profile
+    render layout: 'without_sidebar'
+  end
 
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
+    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
     profile_params[:twitter] = profile_params[:twitter].delete('@')
 
     if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)

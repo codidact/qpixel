@@ -2,6 +2,7 @@ question:
   name: Question
   description: ~
   has_answers: true
+  answer_type: answer
   has_votes: true
   has_tags: true
   has_parent: false

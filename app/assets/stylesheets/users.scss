@@ -51,8 +51,12 @@
   margin-bottom: 0;
 }
 
-.user-profile--image img {
-  width: 100%;
+.user-profile--image {
+  text-align: center;
+
+  img {
+    width: 100%;
+  }
 }
 
 @media all and (max-width: 64em) {
@@ -82,7 +86,7 @@
   }
   .user-card--content {
     padding: 0 0.25rem;
-    
+
     .user-card--link {
       margin-bottom: 0.75rem;
     }

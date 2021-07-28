@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: 'custom_sessions' }
+  devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
   devise_scope :user do
     get  'users/2fa/login',                to: 'custom_sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'custom_sessions#verify_code', as: :login_verify_code
@@ -99,6 +99,7 @@ Rails.application.routes.draw do
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
     get    'search',                       to: 'search#search', as: :search
     get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
+    get    'types',                        to: 'post_types#list', as: :post_types_list
 
     get    ':id',                          to: 'posts#show', as: :post
 
@@ -272,11 +273,6 @@ Rails.application.routes.draw do
     root                                   to: 'abilities#index', as: :abilities
     get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
     get ':id',                             to: 'abilities#show', as: :ability
-  end
-
-  scope 'birthday' do
-    root                                   to: 'birthday#index', as: :birthday
-    get 'ranking',                         to: 'birthday#ranking', as: :birthday_ranking
   end
 
   get   '403',                             to: 'errors#forbidden'

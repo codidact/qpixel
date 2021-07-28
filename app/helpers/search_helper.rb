@@ -10,10 +10,11 @@ module SearchHelper
     { qualifiers: qualifiers, search: search }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def qualifiers_to_sql(qualifiers, query)
     valid_value = {
-      date: /^[<>=]{0,2}\d+(?:s|m|h|d|w|mo|y)?$/,
-      numeric: /^[<>=]{0,2}\d+$/
+      date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
+      numeric: /^[<>=]{0,2}[\d.]+$/
     }
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
@@ -59,11 +60,27 @@ module SearchHelper
       when '-tag'
         query = query.where.not(posts: { id: PostsTag.where(tag_id: Tag.where(name: value).select(:id))
                                                      .select(:post_id) })
+      when 'category'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        query = query.where("category_id #{operator.presence || '='} ?", val.to_i)
+      when 'post_type'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        query = query.where("post_type_id #{operator.presence || '='} ?", val.to_i)
+      when 'answers'
+        next unless value.match?(valid_value[:numeric])
+
+        operator, val = numeric_value_sql value
+        query = query.where("answer_count #{operator.presence || '='} ?", val.to_i)
       end
     end
 
     query
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def numeric_value_sql(value)
     operator = ''

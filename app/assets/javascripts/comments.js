@@ -177,20 +177,6 @@ $(() => {
       $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
-  const currentCaretSequence = (splat, posIdx) => {
-    let searchIdx = 0;
-    let splatIdx = 0;
-    let posInSeq;
-    let currentSequence;
-    do {
-      currentSequence = splat[splatIdx];
-      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
-      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
-      splatIdx += 1;
-    } while (searchIdx < posIdx);
-    return [currentSequence, posInSeq];
-  };
-
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', async ev => {
     if (ev.keyCode === 27) { return; }
@@ -199,7 +185,7 @@ $(() => {
     const content = $tgt.val();
     const splat = content.split(' ');
     const caretPos = $tgt[0].selectionStart;
-    const [currentWord, posInWord] = currentCaretSequence(splat, caretPos);
+    const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
     const callback = ev => {
@@ -237,6 +223,20 @@ $(() => {
     }
     else {
       QPixel.removeTextareaPopups();
+    }
+  });
+  
+  $('.js-new-thread-link').on('click', async ev => {
+    ev.preventDefault();
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post');
+    const $thread = $(`#new-thread-modal-${postId}`);
+
+    if ($thread.is(':hidden')) {
+      $thread.show();
+    } 
+    else {
+      $thread.hide();
     }
   });
 });

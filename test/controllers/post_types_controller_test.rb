@@ -44,7 +44,8 @@ class PostTypesControllerTest < ActionController::TestCase
   test 'can create post type' do
     sign_in users(:global_admin)
     post :create, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                         has_answers: 'true', has_license: 'true', has_category: 'true' } }
+                                         has_answers: 'true', has_license: 'true', has_category: 'true',
+                                         answer_type_id: Answer.post_type_id } }
     assert_response 302
     assert_redirected_to post_types_path
   end
@@ -85,7 +86,8 @@ class PostTypesControllerTest < ActionController::TestCase
   test 'can update post type' do
     sign_in users(:global_admin)
     patch :update, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                          has_answers: 'true', has_license: 'true', has_category: 'true' },
+                                          has_answers: 'true', has_license: 'true', has_category: 'true',
+                                          answer_type_id: Answer.post_type_id },
                              id: post_types(:question).id }
     assert_response 302
     assert_redirected_to post_types_path
