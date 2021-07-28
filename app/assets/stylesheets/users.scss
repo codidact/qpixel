@@ -139,3 +139,8 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
     max-height: #{$size}px;
   }
 }
+.mobile-sign-in{
+  @media screen and (max-width: $screen-md) {
+    display:none;
+  }
+}
