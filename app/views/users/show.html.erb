@@ -1,5 +1,9 @@
 <% content_for :title, "User #{@user.rtl_safe_username}" %>
 
+<% if moderator? && deleted_user?(@user) %>
+  <%= render 'deleted', user: @user %>
+<% end %>
+
 <h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
 
 <% if @user.community_user.suspended? %>
@@ -16,7 +20,7 @@
 
 <%= render 'tabs', user: @user %>
 
-<div class="grid">
+<div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-6 h-p-t-2">
       <div class="profile-text">

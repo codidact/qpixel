@@ -1,5 +1,9 @@
 <%= render 'tabs', user: @user %>
 
+<% if moderator? && deleted_user?(@user) %>
+  <%= render 'deleted', user: @user %>
+<% end %>
+
 <h1>Activity for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr' %></h1>
 
 <div class="button-list is-gutterless h-m-v-4">

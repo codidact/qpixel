@@ -10,6 +10,7 @@ class UsersController < ApplicationController
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action]
+  before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -209,31 +210,27 @@ class UsersController < ApplicationController
       return
     end
 
-    relations = User.reflections
-    transfer_id = SiteSetting['SoftDeleteTransferUser']
-    relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
-      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
-        @user.send(name).destroy_all
-      else
-        @user.send(name).destroy
+    case params[:type]
+    when 'profile'
+      AuditLog.moderator_audit(event_type: 'profile_delete', related: @user.community_user, user: current_user,
+                               comment: @user.community_user.attributes_print(join: "\n"))
+      @user.community_user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now)
+    when 'user'
+      unless current_user.is_global_moderator || current_user.is_global_admin
+        render json: { status: 'failed', message: 'Non-global moderator cannot perform global deletion.' },
+               status: 403
+        return
       end
-    end
-    relations.reject { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
-      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
-        @user.send(name)&.update_all(ref.foreign_key => transfer_id)
-      else
-        @user.send(name)&.update(ref.foreign_key => transfer_id)
-      end
+
+      AuditLog.moderator_audit(event_type: 'user_delete', related: @user, user: current_user,
+                               comment: @user.attributes_print(join: "\n"))
+      @user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now,
+                   email: "#{@user.id}@deleted.localhost", password: SecureRandom.hex(32))
+    else
+      render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
     end
 
-    before = @user.attributes_print
-    unless @user.destroy
-      render(json: { status: 'failed', message: 'Failed to destroy; ask a dev.' }, status: :internal_server_error)
-      return
-    end
-    AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
-
-    render json: { status: 'success' }
+    render json: { status: 'success', user: @user.id }
   end
 
   def edit_profile
@@ -452,6 +449,12 @@ class UsersController < ApplicationController
 
   def user_scope
     User.joins(:community_user).includes(:community_user, :avatar_attachment)
+  end
+
+  def check_deleted
+    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
+      render :deleted_user, layout: 'without_sidebar'
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

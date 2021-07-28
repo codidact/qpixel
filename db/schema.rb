@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_24_224957) do
+ActiveRecord::Schema.define(version: 2021_07_28_161257) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -204,7 +204,11 @@ ActiveRecord::Schema.define(version: 2021_07_24_224957) do
     t.datetime "suspension_end"
     t.string "suspension_public_comment"
     t.integer "trust_level"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
+    t.bigint "deleted_by_id"
     t.index ["community_id"], name: "index_community_users_on_community_id"
+    t.index ["deleted_by_id"], name: "index_community_users_on_deleted_by_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
 
@@ -598,7 +602,11 @@ ActiveRecord::Schema.define(version: 2021_07_24_224957) do
     t.boolean "developer"
     t.string "cid"
     t.string "discord"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
+    t.bigint "deleted_by_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"
@@ -654,6 +662,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_224957) do
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
+  add_foreign_key "community_users", "users", column: "deleted_by_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
@@ -681,6 +690,7 @@ ActiveRecord::Schema.define(version: 2021_07_24_224957) do
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
+  add_foreign_key "users", "users", column: "deleted_by_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"
   add_foreign_key "warnings", "community_users"

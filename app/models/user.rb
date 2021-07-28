@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :audit_logs, dependent: :nullify
   has_many :audit_logs_related, class_name: 'AuditLog', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
+  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_blank: true }

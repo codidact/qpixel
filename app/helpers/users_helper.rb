@@ -43,4 +43,8 @@ module UsersHelper
     end[0]
     Community.find(cid)
   end
+
+  def deleted_user?(user)
+    user.deleted? || user.community_user.deleted?
+  end
 end

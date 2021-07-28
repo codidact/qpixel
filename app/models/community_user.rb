@@ -4,6 +4,7 @@ class CommunityUser < ApplicationRecord
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
+  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: [:community_id] }
 

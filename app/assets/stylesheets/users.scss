@@ -143,3 +143,10 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
     max-height: #{$size}px;
   }
 }
+
+.deleted-user-icons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}

@@ -25,10 +25,14 @@
     <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
       after initiating an action.</p>
     <div class="delete-actions">
-      <%= link_to 'Destroy User', destroy_user_path(@user.id), remote: true,
+      <%= link_to 'Destroy user', destroy_user_path(@user.id), remote: true,
                   method: :delete, class: 'js-destroy-user button is-danger is-filled' %>
-      <%= link_to 'Soft Delete', soft_delete_user_path(@user.id, transfer: SiteSetting['SoftDeleteTransferUser']),
-                  remote: true, method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
+      <%= link_to 'Delete community profile', soft_delete_user_path(@user.id, type: 'profile'), remote: true,
+                  method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
+      <% if current_user.is_global_moderator || current_user.is_global_admin %>
+        <%= link_to 'Delete user network-wide', soft_delete_user_path(@user.id, type: 'user'), remote: true,
+                    method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
+      <% end %>
       <% if current_user.is_global_admin %>
         <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
       <% end %>
