@@ -64,7 +64,10 @@ module SearchHelper
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
+        trust_level = current_user&.trust_level || 0
+        allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
         query = query.where("category_id #{operator.presence || '='} ?", val.to_i)
+                     .where(category_id: allowed_categories)
       when 'post_type'
         next unless value.match?(valid_value[:numeric])
 
