@@ -228,6 +228,7 @@ class UsersController < ApplicationController
                    email: "#{@user.id}@deleted.localhost", password: SecureRandom.hex(32))
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
+      return
     end
 
     render json: { status: 'success', user: @user.id }

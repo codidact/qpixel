@@ -79,38 +79,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(404)
   end
 
-  test 'soft deleting a user should not lose content' do
+  test 'should soft-delete user' do
     sign_in users(:global_admin)
-    assert_nothing_raised do
-      relations = User.reflections
-      pre_counts = relations.reject { |_, ref| ref.options[:dependent] == :destroy }
-                            .map { |_, ref| [ref.klass, ref.klass.count] }.to_h
-
-      id = users(:standard_user).id
-      delete :soft_delete, params: { id: id, transfer: users(:editor).id }
-
-      assert_response 200
-      assert_not_nil assigns(:user)
-      assert_equal 'success', JSON.parse(response.body)['status']
-
-      # Make sure the record has actually been deleted.
-      assert_raises ActiveRecord::RecordNotFound do
-        User.find(id)
-      end
-
-      pre_counts.each do |model, count|
-        # No content should have been lost to deleting the user, just re-assigned.
-        # There should be one more AuditLog than before the operation, because deleting the user
-        # should create one.
-        if model.name == 'AuditLog'
-          assert_equal count + 1, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
-                                               "got #{model.count}"
-        else
-          assert_equal count, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
-                                           "got #{model.count}"
-        end
-      end
-    end
+    delete :soft_delete, params: { id: users(:standard_user).id, type: 'user' }
+    assert_response 200
+    assert_not_nil assigns(:user)
+    assert_equal true, assigns(:user).deleted
   end
 
   test 'should require authentication to soft-delete user' do
