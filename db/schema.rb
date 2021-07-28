@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_12_144301) do
+ActiveRecord::Schema.define(version: 2021_07_24_224957) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -347,6 +347,8 @@ ActiveRecord::Schema.define(version: 2021_07_12_144301) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
+    t.bigint "answer_type_id"
+    t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
   end
 
@@ -595,6 +597,7 @@ ActiveRecord::Schema.define(version: 2021_07_12_144301) do
     t.integer "trust_level"
     t.boolean "developer"
     t.string "cid"
+    t.string "discord"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -660,6 +663,7 @@ ActiveRecord::Schema.define(version: 2021_07_12_144301) do
   add_foreign_key "post_histories", "communities"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"
+  add_foreign_key "post_types", "post_types", column: "answer_type_id"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "licenses"

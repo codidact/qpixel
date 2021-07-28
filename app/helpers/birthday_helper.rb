@@ -1,2 +1,0 @@
-module BirthdayHelper
-end

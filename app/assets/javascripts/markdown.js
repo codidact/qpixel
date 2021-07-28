@@ -50,7 +50,7 @@ $(() => {
   });
 
   $('.js-post-field').on('keydown', ev => {
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
       switch (ev.keyCode) {
         case 66:
           $('[data-action="bold"]').click();

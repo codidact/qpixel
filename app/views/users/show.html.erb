@@ -23,11 +23,19 @@
       <% if @user.website.present? || @user.twitter.present? %>
       <p>
         <% if @user.website.present? %>
-          <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
-          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="h-m-r-4">
+            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
+          </span>
         <% end %>
         <% if @user.twitter.present? %>
-          <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+          <span class="h-m-r-4">
+            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+          </span>
+        <% end %>
+        <% if @user.discord.present? %>
+          <span class="h-m-r-4">
+            <i class="fab fa-discord h-m-r-1"></i> <%= @user.discord %>
+          </span>
         <% end %>
       </p>
       <% end %>

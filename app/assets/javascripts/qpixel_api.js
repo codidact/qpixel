@@ -308,5 +308,25 @@ window.QPixel = {
    */
   removeTextareaPopups: () => {
     $('.ta-popup').remove();
+  },
+
+  /**
+   * Get the word in a string that the given position is in, and the position within that word.
+   * @param splat an array, containing the string already split by however you define a "word"
+   * @param posIdx the index to search for
+   * @returns {[string, number]} the word the given position is in, and the position within that word
+   */
+  currentCaretSequence: (splat, posIdx) => {
+    let searchIdx = 0;
+    let splatIdx = 0;
+    let posInSeq;
+    let currentSequence;
+    do {
+      currentSequence = splat[splatIdx];
+      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
+      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
+      splatIdx += 1;
+    } while (searchIdx < posIdx);
+    return [currentSequence, posInSeq];
   }
 };

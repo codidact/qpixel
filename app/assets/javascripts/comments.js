@@ -177,20 +177,6 @@ $(() => {
       $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
-  const currentCaretSequence = (splat, posIdx) => {
-    let searchIdx = 0;
-    let splatIdx = 0;
-    let posInSeq;
-    let currentSequence;
-    do {
-      currentSequence = splat[splatIdx];
-      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
-      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
-      splatIdx += 1;
-    } while (searchIdx < posIdx);
-    return [currentSequence, posInSeq];
-  };
-
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', async ev => {
     if (ev.keyCode === 27) { return; }
@@ -211,7 +197,7 @@ $(() => {
     else if (caretPos > 375) {
         characterCount.style.color = "#d7af02";
     }
-    else{
+    else {
         characterCount.style.color = "#000000";
         createThreadButton.disabled = false;
     }

@@ -12,7 +12,9 @@
       <li><a href="/users/<%= @user.id %>/mod/privileges">privileges</a></li>
       <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a> <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %></li>
       <li><a href="/warning/new/<%= @user.id %>">warn or suspend user</a></li>
-      <li><%= link_to 'impersonate', start_impersonating_path(@user), class: 'is-yellow' %></li>
+      <% if current_user.developer %>
+       <li><%= link_to 'impersonate', start_impersonating_path(@user), class: 'is-yellow' %></li>
+      <% end %>
     </ul>
   </div>
 </div>
