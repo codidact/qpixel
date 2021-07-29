@@ -1,5 +1,7 @@
 # Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
+  include Warden::Test::Helpers
+
   def moderator?
     user_signed_in? && (current_user.is_moderator || current_user.is_admin)
   end
@@ -140,5 +142,20 @@ module ApplicationHelper
 
   def read_only?
     RequestContext.redis.get('network/read_only') == 'true'
+  end
+
+  # Redefine Devise helpers so that we can additionally check for deleted profiles/users.
+  def current_user
+    @current_user ||= warden.authenticate(scope: :user)
+    if @current_user&.deleted? || @current_user&.community_user&.deleted?
+      scope = Devise::Mapping.find_scope!(:user)
+      logout scope
+      @current_user = nil
+    end
+    @current_user
+  end
+
+  def user_signed_in?
+    !!current_user && !current_user.deleted? && !current_user.community_user.deleted?
   end
 end
