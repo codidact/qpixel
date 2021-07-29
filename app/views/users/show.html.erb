@@ -24,7 +24,6 @@
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-6 h-p-t-2">
       <div class="profile-text">
-      <% if @user.website.present? || @user.twitter.present? %>
       <p>
         <% if @user.website.present? %>
           <span class="h-m-r-4">
@@ -42,7 +41,6 @@
           </span>
         <% end %>
       </p>
-      <% end %>
 
       <% if @user.profile.nil? || @user.profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.</p>
