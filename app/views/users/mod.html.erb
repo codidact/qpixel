@@ -7,7 +7,6 @@
   <div class="widget--body">
     <ul>
       <li><a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a></li>
-      <li><a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a></li>
       <li><%= link_to 'annotations on user', user_annotations_path(@user) %></li>
       <li><a href="/users/<%= @user.id %>/mod/privileges">privileges</a></li>
       <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a> <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %></li>

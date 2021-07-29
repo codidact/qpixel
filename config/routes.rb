@@ -75,9 +75,6 @@ Rails.application.routes.draw do
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
-  get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
-  patch  'mod/votes/investigated/:id',     to: 'suspicious_votes#investigated', as: :investigated_suspicious_vote
-  get    'mod/votes/user/:id',             to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
 
   scope 'mod/featured' do

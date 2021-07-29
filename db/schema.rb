@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_28_161257) do
+ActiveRecord::Schema.define(version: 2021_07_29_174224) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -505,18 +505,6 @@ ActiveRecord::Schema.define(version: 2021_07_28_161257) do
   create_table "suggested_edits_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "suggested_edit_id", null: false
     t.bigint "tag_id", null: false
-  end
-
-  create_table "suspicious_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "from_user_id"
-    t.integer "to_user_id"
-    t.boolean "was_investigated", default: false
-    t.integer "investigated_by"
-    t.datetime "investigated_at"
-    t.integer "suspicious_count"
-    t.integer "total_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "tag_sets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
