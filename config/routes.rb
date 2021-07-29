@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
   devise_scope :user do
-    get  'users/2fa/login',                to: 'custom_sessions#verify_2fa', as: :login_verify_2fa
-    post 'users/2fa/login',                to: 'custom_sessions#verify_code', as: :login_verify_code
+    get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
+    post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
   end
 
   root                                     to: 'categories#homepage'
