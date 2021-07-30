@@ -81,9 +81,15 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
         next if existing_notification.exists?
 
-        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{@post.title}'",
-                                          helpers.comment_link(@comment))
+        if @post.title.nil?
+            follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                              "on the post '#{@post.parent.title}'",
+                                              helpers.comment_link(@comment))
+        else
+            follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                              "on the post '#{@post.title}'",
+                                              helpers.comment_link(@comment))
+        end
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -292,9 +298,15 @@ class CommentsController < ApplicationController
 
       next if user.id == @comment.post.user_id
 
-      user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                               "on the post '#{@post.title}'",
-                               helpers.comment_link(@comment))
+      if @post.title.nil?
+          user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+                                 "on the post '#{@post.parent.title}'",
+                                 helpers.comment_link(@comment))
+      else
+          user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+                                 "on the post '#{@post.title}'",
+                                   helpers.comment_link(@comment))
+      end
     end
   end
 
