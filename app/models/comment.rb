@@ -26,8 +26,8 @@ class Comment < ApplicationRecord
     stripped = content.strip.tr "\r", ''
     if stripped.size < 15
       errors.add(:content, 'is too short (minimum is 15 characters)')
-    elsif stripped.size > 500
-      errors.add(:content, 'is too long (maximum is 500 characters)')
+    elsif stripped.size > 1000
+      errors.add(:content, 'is too long (maximum is 1000 characters)')
     end
   end
 
