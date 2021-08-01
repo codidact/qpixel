@@ -81,8 +81,9 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
         next if existing_notification.exists?
 
+        title = @post.parent.nil? ? @post.title : @post.parent.title
         follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{@post.title}'",
+                                          "on the post '#{title}'",
                                           helpers.comment_link(@comment))
       end
     else
@@ -292,6 +293,7 @@ class CommentsController < ApplicationController
 
       next if user.id == @comment.post.user_id
 
+      title = @post.parent.nil? ? @post.title : @post.parent.title
       user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
                                "on the post '#{@post.title}'",
                                helpers.comment_link(@comment))
