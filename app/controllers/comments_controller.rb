@@ -77,8 +77,9 @@ class CommentsController < ApplicationController
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
 
+        thread_url = comment_thread_url(@comment_thread, host: @comment_thread.community.host)
         existing_notification = follower.user.notifications.where(is_read: false)
-                                        .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
+                                        .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
         title = @post.parent.nil? ? @post.title : @post.parent.title
