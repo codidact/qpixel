@@ -80,15 +80,10 @@ class CommentsController < ApplicationController
         existing_notification = follower.user.notifications.where(is_read: false)
                                         .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
         next if existing_notification.exists?
-
-        if @post.title.nil?
-            follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                              "on the post '#{@post.parent.title}'",
-                                              helpers.comment_link(@comment))
-        else
-            follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                              "on the post '#{@post.title}'",
-                                              helpers.comment_link(@comment))
+          title = @post.parent.nil? ? @post.title : @post.parent.title
+          follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                            "on the post '#{title}'",
+                                            helpers.comment_link(@comment))
         end
       end
     else
@@ -297,15 +292,10 @@ class CommentsController < ApplicationController
       next if user.nil?
 
       next if user.id == @comment.post.user_id
-
-      if @post.title.nil?
-          user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                                 "on the post '#{@post.parent.title}'",
+        title = @post.parent.nil? ? @post.title : @post.parent.title
+        user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+                                 "on the post '#{title}'",
                                  helpers.comment_link(@comment))
-      else
-          user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                                 "on the post '#{@post.title}'",
-                                   helpers.comment_link(@comment))
       end
     end
   end
