@@ -139,7 +139,7 @@
               <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
               <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
                           class: "badge is-tag #{required} #{topic} #{moderator}",
-                          title: "Tag Wiki : #{tag.excerpt}" %>
+                          title: tag.excerpt %>
             <% end %>
           </div>
         <% end %>
