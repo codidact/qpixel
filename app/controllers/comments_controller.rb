@@ -295,7 +295,7 @@ class CommentsController < ApplicationController
 
       title = @post.parent.nil? ? @post.title : @post.parent.title
       user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                               "on the post '#{@post.title}'",
+                               "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
   end
