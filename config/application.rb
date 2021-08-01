@@ -31,6 +31,7 @@ module Qpixel
 
     config.to_prepare do
       Devise::Mailer.helper :users
+      Devise::Mailer.layout 'devise_mailer'
     end
   end
 end
