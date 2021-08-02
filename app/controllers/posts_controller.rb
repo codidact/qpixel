@@ -115,7 +115,7 @@ class PostsController < ApplicationController
 
   def show
     if @post.parent_id.present?
-      return redirect_to post_path(@post.parent_id)
+      return redirect_to post_path(@post.parent_id, answer: @post.id, anchor: "answer-#{@post.id}")
     end
 
     if @post.post_type_id == HelpDoc.post_type_id
@@ -143,6 +143,7 @@ class PostsController < ApplicationController
                   Post.where(parent_id: @post.id).undeleted
                       .or(Post.where(parent_id: @post.id, user_id: current_user&.id))
                 end.includes(:votes, :user, :comments, :license, :post_type)
+                .order(Post.arel_table[:id].not_eq(params[:answer]))
                 .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
                            score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
                 .paginate(page: params[:page], per_page: 20)
