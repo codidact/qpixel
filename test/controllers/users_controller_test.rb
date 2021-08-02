@@ -2,6 +2,7 @@ require 'test_helper'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
+  include ApplicationHelper
 
   test 'should get index' do
     get :index
@@ -171,7 +172,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:token)
     assert_not_nil assigns(:qr_code)
     assert_equal 1, User.where(login_token: assigns(:token)).count
-    assert @controller.current_user.login_token_expires_at <= 5.minutes.from_now,
+    assert current_user.login_token_expires_at <= 5.minutes.from_now,
            'Login token expiry too long'
   end
 
@@ -179,9 +180,9 @@ class UsersControllerTest < ActionController::TestCase
     get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz01' }
     assert_response 302
     assert_equal 'You are now signed in.', flash[:success]
-    assert_equal users(:closer).id, @controller.current_user.id
-    assert_nil @controller.current_user.login_token
-    assert_nil @controller.current_user.login_token_expires_at
+    assert_equal users(:closer).id, current_user.id
+    assert_nil current_user.login_token
+    assert_nil current_user.login_token_expires_at
   end
 
   test 'should refuse to sign in user using expired token' do
@@ -189,7 +190,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 404
     assert_not_nil flash[:danger]
     assert_equal true, flash[:danger].start_with?("That login link isn't valid.")
-    assert_nil @controller.current_user&.id
+    assert_nil current_user&.id
   end
 
   test 'should deny anonymous users access to annotations' do
