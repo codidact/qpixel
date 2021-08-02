@@ -321,4 +321,11 @@ class ApplicationController < ActionController::Base
   def user_signed_in?
     helpers.user_signed_in?
   end
+
+  def authenticate_user!
+    unless user_signed_in?
+      flash[:error] = 'You must sign in or sign up to continue.'
+      redirect_to new_user_session_path
+    end
+  end
 end

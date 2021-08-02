@@ -94,3 +94,20 @@ system:
   is_global_admin: true
   is_global_moderator: true
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+deleted_account:
+  email: deleted@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  sign_in_count: 1337
+  username: deleted_account
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+  deleted: true
+  deleted_at: 2021-01-02T00:00:00.000000Z
+  deleted_by: global_admin
+
+deleted_profile:
+  email: deleted_profile@qpixel-test.net
+  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  sign_in_count: 1337
+  username: deleted_profile
+  confirmed_at: 2020-01-01T00:00:00.000000Z

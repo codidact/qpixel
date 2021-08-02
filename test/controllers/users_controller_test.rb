@@ -217,6 +217,31 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to user_annotations_path(users(:standard_user))
   end
 
+  test 'should deny access to deleted account' do
+    get :show, params: { id: users(:deleted_account).id }
+    assert_response 404
+  end
+
+  test 'should deny access to deleted profile' do
+    get :show, params: { id: users(:deleted_profile).id }
+    assert_response 404
+    assert_not_nil assigns(:user)
+  end
+
+  test 'should allow moderator access to deleted account' do
+    sign_in users(:moderator)
+    get :show, params: { id: users(:deleted_account).id }
+    assert_response 200
+    assert_not_nil assigns(:user)
+  end
+
+  test 'should allow moderator access to deleted profile' do
+    sign_in users(:moderator)
+    get :show, params: { id: users(:deleted_profile).id }
+    assert_response 200
+    assert_not_nil assigns(:user)
+  end
+
   private
 
   def create_other_user

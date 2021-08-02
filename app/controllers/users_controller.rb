@@ -452,12 +452,16 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    User.active.joins(:community_user).includes(:community_user, :avatar_attachment)
+    if helpers.moderator?
+      User.all
+    else
+      User.active
+    end.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted
     if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
-      render :deleted_user, layout: 'without_sidebar'
+      render :deleted_user, layout: 'without_sidebar', status: 404
     end
   end
 end

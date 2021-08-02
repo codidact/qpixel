@@ -53,3 +53,20 @@ sample_global_admin:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_deleted_account:
+  user: deleted_account
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_deleted_profile:
+  user: deleted_profile
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+  deleted: true
+  deleted_at: 2020-01-02T00:00:00.000000Z
+  deleted_by: global_admin
