@@ -313,4 +313,12 @@ class ApplicationController < ActionController::Base
   def read_only_mode?
     helpers.read_only? && request.method.upcase == 'POST'
   end
+
+  def current_user
+    helpers.current_user
+  end
+
+  def user_signed_in?
+    helpers.user_signed_in?
+  end
 end
