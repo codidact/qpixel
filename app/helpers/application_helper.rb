@@ -77,11 +77,7 @@ module ApplicationHelper
   end
 
   def generic_share_link(post)
-    if second_level_post_types.include?(post.post_type_id)
-      post_url(post, anchor: "answer-#{post.id}")
-    else
       post_url(post)
-    end
   end
 
   def generic_edit_link(post)
