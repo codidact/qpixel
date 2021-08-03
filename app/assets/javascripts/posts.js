@@ -110,7 +110,7 @@ $(() => {
 
   const postFields = $('.post-field');
 
-  postFields.on('focus keyup markdown', evt => {
+  postFields.on('focus keyup paste change markdown', evt => {
     const $tgt = $(evt.target);
 
     if (!window.converter) {
