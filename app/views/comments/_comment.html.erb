@@ -40,10 +40,6 @@
         <i class="fa fa-link"></i>
         <span class="js-text">Copy Link</span>
       <% end %>
-      <a href="<%= comment_link(comment) %>">link</a>
-      <% if with_post_link %>
-        <%= link_to 'post', generic_share_link(comment.post) %>
-      <% end %>
       <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
         <a href="#" class="js-comment-edit">edit</a>
         <% if comment.deleted %>
