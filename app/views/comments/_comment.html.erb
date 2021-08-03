@@ -36,9 +36,16 @@
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
     </div>
     <div class="comment--links">
-      <%= link_to comment_link(comment), class: 'tools--item js-permalink' do %>
-        <i class="fa fa-link"></i>
-        <span class="js-text">Copy Link</span>
+      <% if params[:inline] != 'true' %>
+        <%= link_to comment_link(comment), class: 'tools--item js-permalink' do %>
+          <i class="fa fa-link"></i>
+          <span class="js-text">Permalink</span>
+        <% end %>
+      <% else %>
+        <a href="<%= comment_link(comment) %>">link</a>
+        <% if with_post_link %>
+          <%= link_to 'post', generic_share_link(comment.post) %>
+        <% end %>
       <% end %>
       <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
         <a href="#" class="js-comment-edit">edit</a>
