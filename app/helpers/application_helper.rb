@@ -78,7 +78,7 @@ module ApplicationHelper
 
   def generic_share_link(post)
     if second_level_post_types.include?(post.post_type_id)
-      post_url(post, anchor: "answer-#{post.id}")
+      answer_post_url(id: post.parent_id, answer: post.id, anchor: "answer-#{post.id}")
     else
       post_url(post)
     end
