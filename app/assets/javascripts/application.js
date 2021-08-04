@@ -70,4 +70,23 @@ $(document).on('ready', function() {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
     });
   };
+  const body = document.body;
+  const light = evt => {
+     body.setAttribute('data-theme', 'light');
+     localStorage.setItem("theme", "light");
+  }
+  const dark = evt => {
+     body.setAttribute('data-theme', 'dark');
+     localStorage.setItem("theme", "dark");
+  }
+  const light_radio_btn = document.getElementById("light");
+  const dark_radio_btn = document.getElementById("dark");
+  light_radio_btn.addEventListener('click',light);
+  dark_radio_btn.addEventListener('click',dark);
+
+  if(localStorage.getItem("theme") === "light"){
+      light_radio_btn.checked = true;
+  }else{
+      dark_radio_btn.checked = true;
+  }
 });

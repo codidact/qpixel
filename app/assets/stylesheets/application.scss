@@ -16,6 +16,64 @@
 
 @import 'variables';
 
+body[data-theme='dark'] {
+  --text-color: var(--light-grey);
+  --text-color-one: var(--close-to-white);
+  --text-color-opposite: var(--dark-grey);
+  --accent-color: var(--orange);
+  --page-background-color: var(--dark-grey);
+  --footer-background-color: var(--footer-dark);
+  --card-background-color: var(--dark-grey);
+  --border-color-one: var(--border-color-one-dark);
+  --border-color-two: var(--border-color-two-dark);
+  --icon-color: var(--icon-color-dark);
+  --hr-border: var(--hr-border-dark);
+  --code-formatting-background: var(--code-formatting-background-dark);
+  --code-text-color: var(--code-text-color-dark);
+  --deleted-content: var(--red-for-dark);
+  --user-card: var(--footer-dark);
+  --notice-background-color: var(--code-formatting-background-dark);
+  --two-factor-auth: var(--code-formatting-background-dark);
+  --notification-bar-background-top: var(--close-to-black);
+  --notification-bar-background: var(--dark-grey);
+  --user-list-user-hover: var(--close-to-black);
+  --widget-background: var(--footer-dark);
+  --notice-info-background: var(--footer-dark);
+  --button-background-color: var(--footer-dark);
+  --button-background-hover: var(--close-to-footer-dark);
+  --select-background: var(--code-formatting-background-dark);
+  --tr-hover: var(--close-to-dark-grey);
+}
+
+body[data-theme='light'] {
+  --text-color: var(--dark-grey);
+  --text-color-one: var(--dark-grey);
+  --text-color-opposite: var(--close-to-white);
+  --accent-color: var(--orange);
+  --page-background-color: var(--white);
+  --footer-background-color: var(--footer-background);
+  --card-background-color: var(--white);
+  --border-color-one: var(--border-color-one-light);
+  --border-color-two: var(--border-color-two-light);
+  --icon-color: var(--icon-color-light);
+  --hr-border: var(--whity-ddd);
+  --code-formatting-background: var(--whity-ddd);
+  --code-text-color: var(--whity-ddd);
+  --deleted-content: var(--red);
+  --user-card: var(--white);
+  --notice-background-color: var(--ash);
+  --two-factor-auth: var(--white);
+  --notification-bar-background-top: var(--ash);
+  --notification-bar-background: var(--close-to-white);
+  --user-list-user-hover: var(--ash);
+  --widget-background: var(--ash);
+  --notice-info-background: var(--sky-blue);
+  --button-background-color: var(--blue);
+  --button-background-hover: var(--close-to-blue);
+  --select-background: var(--white);
+  --tr-hover: var(--whity-eee);
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
@@ -256,7 +314,7 @@ table.is-striped tr:nth-of-type(2n+1) td {
 }
 
 table.is-with-hover tr:hover td {
-  background-color: #eee
+  background-color: var(--tr-hover) !important;
 }
 
 /* The default header size (2.5rem) is too huge for small headers. */
@@ -275,4 +333,155 @@ img.header--item-image {
 
 .widget--header-link {
   margin: 0 0 0 0.5em;
+}
+body{
+  background-color: var(--page-background-color);
+  color:var(--text-color);
+  transition: all 250ms linear;
+}
+i{
+  color: var(--icon-color);
+}
+.header--item-title{
+  color: var(--text-color);
+  background-color: var(--page-background-color);
+}
+.header{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+.has-background-color-tertiary-050, .h-bg-tertiary-050 {
+  background-color: var(--notification-bar-background-top);
+}
+.footer {
+  background-color: var(--footer-background-color) !important;
+  color:var(--text-color);
+  transition: all 250ms linear;
+}
+.header-slide{
+  background-color: var(--notification-bar-background) !important;
+  color:var(--text-color);
+}
+.button{
+  background-color: var(--button-background-color) !important;
+  color:var(--text-color-one) !important;
+}
+.button:hover{
+  background-color: var(--button-background-hover) !important;
+  transition: all 250ms linear;
+}
+.meter{
+  background-color: var(--footer-background-color) !important;
+}
+.item-list .item-list--item .item-list--number-value .item-list--number {
+  color:var(--text-color);
+}
+label{
+  color:var(--text-color);
+}
+pre{
+  background-color: var(--code-formatting-background);
+  color:var(--code-text-color);
+}
+.tabs .tabs--item{
+  color:var(--text-color);
+}
+.post-meta--user{
+  background-color: var(--user-card) !important;
+}
+.button.is-outlined{
+  background-color: var(--two-factor-auth) !important;
+}
+label{
+  color: var(--text-color) !important;
+}
+.user-list--user:hover {
+  background: var(--user-list-user-hover);
+}
+.widget--body{
+  //background-color:var(--page-background-color);
+}
+.widget--header .has-color-tertiary-900{
+  //background-color:var(--page-background-color);
+}
+.widget{
+  background-color: var(--page-background-color) !important;
+}
+.widget.is-teal .widget--header {
+  background-color: var(--page-background-color);
+  border-color: var(--border-color-one);
+}
+.widget.is-tertiary .widget--header {
+  background-color: var(--widget-background);
+  //border-color: var(--border-color-one);
+}
+.modal--body{
+  background-color: var(--page-background-color);
+}
+.modal--header{
+  background-color: var(--page-background-color);
+}
+.select2-selection__rendered{
+  background-color: var(--select-background);
+  color: var(--text-color) !important;
+}
+select{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+.select2-results{
+  background: var(--page-background-color) !important;
+}
+.error-trace {
+  background: var(--deleted-content);
+}
+.notice.is-info {
+  color: var(--text-color);
+  background-color: var(--notice-info-background);
+  border-color: var(--hr-border);
+}
+.notice.is-success {
+  color: var(--text-color-opposite);
+  //background-color: var(--notice-success-background);
+}
+.notice{
+  background-color: var(--notice-background-color);
+}
+.deleted-content{
+  background-color: var(--deleted-content);
+}
+input{
+  background-color: var(--page-background-color);
+  color: var(--text-color);
+}
+textarea{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+input[type="text"]{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+input[type="email"]{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+input[type="password"]{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+input[type="number"]{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+#tour-post-title{
+  background-color: var(--page-background-color) !important;
+  color: var(--text-color);
+}
+blockquote{
+  background-color: var(--footer-background-color);
+}
+.select2-selection__choice{
+  background-color: var(--footer-background-color) !important;
+  text-color: var(--text-color);
 }

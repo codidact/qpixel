@@ -22,10 +22,10 @@
     <nav class="header--menu">
       <% unless @community.is_fake %>
         <%= link_to users_path, class: 'header--item' do %>
-          <i class="fas fa-fw fa-users"></i> Users
+          <i class="fas fa-fw fa-users"></i> <p class="header--item-title">Users</p>
         <% end %>
         <%= link_to search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } do %>
-          <i class="fas fa-fw fa-search"></i> Search
+          <i class="fas fa-fw fa-search"></i> <p class="header--item-title">Search</p>
         <% end %>
       <% end %>
       <div class='header--separator'></div>
@@ -33,7 +33,7 @@
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
-              <i class="fas fa-fw fa-wrench"></i> Mod
+              <i class="fas fa-fw fa-wrench"></i> <p class="header--item-title">Mod</p>
               <% if @open_flags > 0 %>
                 <span class="header--alert"><%= @open_flags %></span>
               <% end %>
@@ -43,7 +43,7 @@
       <% end %>
       <% unless @community.is_fake %>
         <%= link_to help_center_path, class: 'header--item' do %>
-          <i class="fas fa-fw fa-question-circle"></i> Help
+          <i class="fas fa-fw fa-question-circle"></i> <p class="header--item-title">Help</p>
         <% end %>
       <% end %>
       <% if user_signed_in? %>

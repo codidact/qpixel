@@ -292,4 +292,14 @@ $(() => {
 
     location.href = $btn.attr('href');
   });
+  const body = document.body;
+  if (localStorage.getItem("theme") === null) {
+    localStorage.setItem("theme", "light");
+  }
+  if (localStorage.getItem("theme") === "dark") {
+    body.setAttribute('data-theme', 'dark');
+  }
+  else {
+    body.setAttribute('data-theme', 'light');
+  }
 });
