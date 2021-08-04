@@ -7,7 +7,7 @@
 
 <% ckb ||= false %>
 
-<div class="user-card">
+<div class="user-card <%= user.deleted? || user.community_user&.deleted? ? 'deleted-content' : '' %>">
   <div class="user-card--avatar">
     <img alt="user card" src="<%= avatar_url(user, 48) %>" height="48" width="48" class="has-float-left" />
   </div>

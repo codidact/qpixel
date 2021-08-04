@@ -50,8 +50,8 @@ end
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
-    self.tags = %w[a b i em strong strike del code p]
-    self.attributes = %w[href title]
+    self.tags = %w[a b i em strong s strike del pre code p blockquote span sup sub]
+    self.attributes = %w[href title lang dir id class]
   end
 
   def skip_node?(node)

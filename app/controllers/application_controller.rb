@@ -313,4 +313,26 @@ class ApplicationController < ActionController::Base
   def read_only_mode?
     helpers.read_only? && request.method.upcase == 'POST'
   end
+
+  def current_user
+    helpers.current_user
+  end
+
+  def user_signed_in?
+    helpers.user_signed_in?
+  end
+
+  def authenticate_user!(_f, **_opts)
+    unless user_signed_in?
+      respond_to do |format|
+        format.html do
+          flash[:error] = 'You need to sign in or sign up to continue.'
+          redirect_to new_user_session_path
+        end
+        format.json do
+          render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
+        end
+      end
+    end
+  end
 end

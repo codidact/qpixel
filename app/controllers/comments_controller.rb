@@ -77,12 +77,14 @@ class CommentsController < ApplicationController
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
 
+        thread_url = comment_thread_url(@comment_thread, host: @comment_thread.community.host)
         existing_notification = follower.user.notifications.where(is_read: false)
-                                        .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
+                                        .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
+        title = @post.parent.nil? ? @post.title : @post.parent.title
         follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{@post.title}'",
+                                          "on the post '#{title}'",
                                           helpers.comment_link(@comment))
       end
     else
@@ -292,8 +294,9 @@ class CommentsController < ApplicationController
 
       next if user.id == @comment.post.user_id
 
+      title = @post.parent.nil? ? @post.title : @post.parent.title
       user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
-                               "on the post '#{@post.title}'",
+                               "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
   end

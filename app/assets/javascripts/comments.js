@@ -239,15 +239,17 @@ $(() => {
       $thread.hide();
     }
   });
-  $('.js-permalink').on('click', ev => {
+
+  $('.js-comment-permalink > .js-text').text('copy link');
+  $(document).on('click', '.js-comment-permalink', ev => {
     ev.preventDefault();
 
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const link = $tgt.attr('href');
     navigator.clipboard.writeText(link);
-    $tgt.find('.js-text').text('Copied!');
+    $tgt.find('.js-text').text('copied!');
     setTimeout(() => {
-        $tgt.find('.js-text').text('Copy Link');
+      $tgt.find('.js-text').text('copy link');
     }, 1000);
   });
 });
