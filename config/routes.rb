@@ -101,6 +101,7 @@ Rails.application.routes.draw do
     get    ':id',                          to: 'posts#show', as: :post
 
     get    ':id/history',                  to: 'post_history#post', as: :post_history
+    get    ':id/:answer',                  to: 'posts#show', as: :answer_post
     post   'upload',                       to: 'posts#upload', as: :upload
     post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
     post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
