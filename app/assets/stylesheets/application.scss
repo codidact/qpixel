@@ -447,6 +447,9 @@ select{
 .notice{
   background-color: var(--notice-background-color);
 }
+.notice.is-danger{
+  text-color: var(--text-color);
+}
 .deleted-content{
   background-color: var(--deleted-content);
 }
