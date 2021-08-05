@@ -17,6 +17,8 @@
 @import 'variables';
 
 body[data-theme='dark'] {
+  --default-color-white-black: var(--black);
+  --default-color-white-black-vise-versa: var(--white);
   --text-color: var(--light-grey);
   --text-color-one: var(--close-to-white);
   --text-color-opposite: var(--dark-grey);
@@ -46,6 +48,8 @@ body[data-theme='dark'] {
 }
 
 body[data-theme='light'] {
+  --default-color-white-black: var(--white);
+  --default-color-white-black-vise-versa: var(--black);
   --text-color: var(--dark-grey);
   --text-color-one: var(--dark-grey);
   --text-color-opposite: var(--close-to-white);
@@ -386,6 +390,16 @@ i{
 }
 .button.is-outlined{
   background-color: var(--two-factor-auth) !important;
+}
+.vote-button:hover{
+  background-color: transparent !important;
+  svg{
+    color: var(--blue);
+  }
+}
+.button.is-muted.is-outlined:active, .button.is-muted.is-outlined.is-active, a.button:link.is-muted.is-outlined:active, a.button:link.is-muted.is-outlined.is-active, a.button:visited.is-muted.is-outlined:active, a.button:visited.is-muted.is-outlined.is-active {
+  background-color: #dfe5e8 !important;
+  border-color: #3f4e56;
 }
 .meter{
   background-color: var(--footer-background-color) !important;
