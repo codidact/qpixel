@@ -32,6 +32,7 @@ body[data-theme='dark'] {
   --hr-border: var(--hr-border-dark);
   --code-formatting-background: var(--code-formatting-background-dark);
   --code-text-color: var(--code-text-color-dark);
+  --code-text-color-one: var(--code-text-color-dark);
   --deleted-content: var(--red-for-dark);
   --user-card: var(--footer-dark);
   --notice-background-color: var(--code-formatting-background-dark);
@@ -43,6 +44,7 @@ body[data-theme='dark'] {
   --notice-info-background: var(--footer-dark);
   --button-background-color: var(--footer-dark);
   --button-background-hover: var(--close-to-footer-dark);
+  --button-background-one: var(--dark);
   --select-background: var(--code-formatting-background-dark);
   --tr-hover: var(--close-to-dark-grey);
 }
@@ -63,6 +65,7 @@ body[data-theme='light'] {
   --hr-border: var(--whity-ddd);
   --code-formatting-background: var(--whity-ddd);
   --code-text-color: var(--whity-ddd);
+  --code-text-color-one: var(--black);
   --deleted-content: var(--red);
   --user-card: var(--ash-one);
   --notice-background-color: var(--ash);
@@ -415,7 +418,7 @@ label{
 }
 pre{
   background-color: var(--code-formatting-background);
-  color:var(--code-text-color);
+  color:var(--code-text-color-one);
 }
 .tabs .tabs--item{
   color:var(--text-color);
@@ -519,4 +522,12 @@ blockquote{
 .select2-selection__choice{
   background-color: var(--footer-background-color) !important;
   text-color: var(--text-color);
+}
+.post--comments{
+  .button{
+    background-color: var(--button-background-one) !important;
+    &:hover {
+      background-color: var(--button-background-hover) !important;
+    }
+  }
 }
