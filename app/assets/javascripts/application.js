@@ -71,22 +71,22 @@ $(document).on('ready', function() {
     });
   };
   const body = document.body;
-  const light = evt => {
-     body.setAttribute('data-theme', 'light');
-     localStorage.setItem("theme", "light");
-  }
-  const dark = evt => {
-     body.setAttribute('data-theme', 'dark');
-     localStorage.setItem("theme", "dark");
-  }
-  const light_radio_btn = document.getElementById("light");
-  const dark_radio_btn = document.getElementById("dark");
-  light_radio_btn.addEventListener('click',light);
-  dark_radio_btn.addEventListener('click',dark);
+  const theme = document.getElementById("theme");
+  const dark = document.getElementById("dark");
+  const light = document.getElementById("light");
+  theme.addEventListener('click',function () {
+      if(dark.selected){
+          body.setAttribute('data-theme', 'dark');
+          localStorage.setItem("theme", "dark");
+      }else if(light.selected){
+          body.setAttribute('data-theme', 'light');
+          localStorage.setItem("theme", "light");
+      }
+  });
 
   if(localStorage.getItem("theme") === "light"){
-      light_radio_btn.checked = true;
+      light.selected = true;
   }else{
-      dark_radio_btn.checked = true;
+      dark.checked = true;
   }
 });
