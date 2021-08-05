@@ -401,6 +401,9 @@ i{
   background-color: #dfe5e8 !important;
   border-color: #3f4e56;
 }
+.button.is-outlined:hover, a.button:link.is-outlined:hover, a.button:visited.is-outlined:hover {
+  background-color: var(--code-text-color) !important;
+}
 .meter{
   background-color: var(--footer-background-color) !important;
 }
@@ -452,6 +455,7 @@ label{
 .select2-selection__rendered{
   background-color: var(--select-background);
   color: var(--text-color) !important;
+  line-height: 25px !important;
 }
 select{
   background-color: var(--page-background-color) !important;
