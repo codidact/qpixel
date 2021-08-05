@@ -45,6 +45,7 @@ body[data-theme='dark'] {
   --button-background-color: var(--footer-dark);
   --button-background-hover: var(--close-to-footer-dark);
   --button-background-one: var(--dark);
+  --button-backgound-two: var(--white);
   --select-background: var(--code-formatting-background-dark);
   --tr-hover: var(--close-to-dark-grey);
   --blockquote-border: var(--white);
@@ -80,6 +81,7 @@ body[data-theme='light'] {
   --button-background-color: var(--blue);
   --button-background-hover: var(--close-to-blue);
   --button-background-one: var(--whity-ddd);
+  --button-backgound-two: var(--dark);
   --select-background: var(--white);
   --tr-hover: var(--whity-eee);
   --blockquote-border: var(--whity-ddd);
@@ -490,6 +492,12 @@ select{
 .notice.is-danger{
   color: var(--black);
 }
+.notice.is-warning{
+  color: var(--black);
+  i{
+    color: var(--black);
+  }
+}
 .deleted-content{
   background-color: var(--deleted-content);
 }
@@ -527,4 +535,13 @@ blockquote{
 }
 .ta-popup{
   background-color: var(--default-color-white-black);
+}
+.pagination{
+  li{
+    background-color: var(--button-backgound-two) !important;
+  }
+  .active{
+    color: var(--default-color-white-black-vise-versa) !important;
+    background-color: #3f4e56 !important;
+  }
 }
