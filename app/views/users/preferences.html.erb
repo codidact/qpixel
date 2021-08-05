@@ -1,7 +1,5 @@
 <%= render 'tabs', user: current_user %>
 <h1>Preferences</h1>
-<input type="radio" id="dark" value="Dark" name="theme"><label for="dark">Dark theme</label>
-<input type="radio" id="light" value="Light" name="theme"><label for="light">Light theme</label>
 <p>
   Manage your user preferences here. Changes are automatically saved once you move away from the input field.
 </p>
@@ -9,6 +7,19 @@
 <p><%= link_to 'Manage Email Subscriptions', subscriptions_path %></p>
 
 <h2>Network Preferences</h2>
+
+<div class="user-pref">
+  <div class="user-pref--meta">
+    <strong>Theme</strong>
+    <br/>
+    <span class="desc">Mode (light or dark)</span>
+  </div>
+  <select class="form-element" id="theme" style="max-width:100px;">
+    <option id="dark" name="dark">Dark</option>
+    <option id="light" name="light">Light</option>
+  </select>
+</div>
+
 <p>These preferences apply network-wide.</p>
 
 <%= render 'prefs', prefs: @preferences, community: false %>
