@@ -339,6 +339,17 @@ body{
   color:var(--text-color);
   transition: all 250ms linear;
 }
+.badge.is-tag.is-muted.is-filled, .badge-tag.is-muted.is-master-tag, .tabs--item.is-active {
+  i {
+    color: white !important;
+  }
+}
+.tabs--item:hover{
+  i{
+    color: var(--text-color-one) !important;
+    transition: all 250ms linear;
+  }
+}
 i{
   color: var(--icon-color);
 }
