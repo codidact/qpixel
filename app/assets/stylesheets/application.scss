@@ -501,19 +501,7 @@ textarea{
   background-color: var(--page-background-color) !important;
   color: var(--text-color);
 }
-input[type="text"]{
-  background-color: var(--page-background-color) !important;
-  color: var(--text-color);
-}
-input[type="email"]{
-  background-color: var(--page-background-color) !important;
-  color: var(--text-color);
-}
-input[type="password"]{
-  background-color: var(--page-background-color) !important;
-  color: var(--text-color);
-}
-input[type="number"]{
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="file"]{
   background-color: var(--page-background-color) !important;
   color: var(--text-color);
 }
