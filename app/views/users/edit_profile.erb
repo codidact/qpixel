@@ -104,3 +104,15 @@
     <% end %>
   </div>
 <% end %>
+<script>
+const body = document.body;
+if (localStorage.getItem("theme") === null) {
+    localStorage.setItem("theme", "light");
+}
+if (localStorage.getItem("theme") === "dark") {
+    body.setAttribute('data-theme', 'dark');
+}
+else {
+    body.setAttribute('data-theme', 'light');
+}
+</script>
