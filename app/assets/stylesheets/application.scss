@@ -47,6 +47,8 @@ body[data-theme='dark'] {
   --button-background-one: var(--dark);
   --select-background: var(--code-formatting-background-dark);
   --tr-hover: var(--close-to-dark-grey);
+  --blockquote-border: var(--white);
+  --blockquote-background: var(--footer-dark);
 }
 
 body[data-theme='light'] {
@@ -79,6 +81,8 @@ body[data-theme='light'] {
   --button-background-hover: var(--close-to-blue);
   --select-background: var(--white);
   --tr-hover: var(--whity-eee);
+  --blockquote-border: var(--whity-ddd);
+  --blockquote-background: var(--ash-two);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -483,7 +487,7 @@ select{
   background-color: var(--notice-background-color);
 }
 .notice.is-danger{
-  text-color: var(--text-color);
+  color: var(--black);
 }
 .deleted-content{
   background-color: var(--deleted-content);
@@ -517,7 +521,8 @@ input[type="number"]{
   color: var(--text-color);
 }
 blockquote{
-  background-color: var(--footer-background-color);
+  background-color: var(--blockquote-background) !important;
+  border-color: var(--blockquote-border) !important;
 }
 .select2-selection__choice{
   background-color: var(--footer-background-color) !important;
