@@ -98,6 +98,7 @@
 
         let entry = {
           answerID: answerPost.id,
+          answerURL: answerPost.querySelector('.js-permalink').href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
           username: answerPost.querySelector('.user-card--link').firstChild.data.trim(),
           userid: answerPost.querySelector('.user-card--link').href.match(/\d+/)[0],
@@ -224,7 +225,7 @@
   function createRow(answer) {
     let row = document.createElement('a');
     row.classList.add('toc--entry');
-    row.href = `/posts/${CHALLENGE_ID}?sort=age&page=${answer.page}#${answer.answerID}`;
+    row.href = answer.answerURL;
 
     row.innerHTML = `
     <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
