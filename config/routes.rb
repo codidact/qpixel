@@ -88,6 +88,12 @@ Rails.application.routes.draw do
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
 
   scope 'posts' do
+    scope 'suggested-edit' do
+      get    ':id',           to: 'suggested_edit#show', as: :suggested_edit
+      post   ':id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
+      post   ':id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
+    end
+
     get    'new/:post_type',               to: 'posts#new', as: :new_post
     get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
     get    'new/:post_type/:category',     to: 'posts#new', as: :new_category_post
@@ -121,10 +127,6 @@ Rails.application.routes.draw do
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
-
-    get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
-    post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
-    post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
