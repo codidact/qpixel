@@ -37,7 +37,7 @@
     </div>
     <div class="comment--links">
       <%= link_to comment_link(comment), class: 'js-comment-permalink' do %>
-        <span class="js-text">permalink</span>
+        <span class="js-text">copy link</span>
       <% end %>
       <% if with_post_link %>
         <%= link_to 'post', generic_share_link(comment.post) %>
