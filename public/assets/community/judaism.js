@@ -327,7 +327,7 @@ $(() => {
 
     const suggestions = await getSuggestions(selection);
     const items = createPopup(suggestions);
-    QPixel.createTextareaPopup(items, $field[0], doReplacement);
+    QPixel.Popup.getPopup(items, $field[0], doReplacement);
   });
 });
 

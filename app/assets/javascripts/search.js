@@ -38,6 +38,6 @@ $(() => {
     const items = postTypes.filter(pt => pt.name.startsWith(currentWord.substr(10))).map(pt => {
       return $itemTemplate.clone().text(pt.name).attr('data-post-type-id', pt.id);
     });
-    QPixel.createTextareaPopup(items, $tgt[0], callback);
+    QPixel.Popup.getPopup(items, $tgt[0], callback);
   });
 });
