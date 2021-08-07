@@ -145,7 +145,7 @@ class PostsController < ApplicationController
                 end.includes(:votes, :user, :comments, :license, :post_type)
                 .order(Post.arel_table[:id].not_eq(params[:answer]))
                 .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
-                           score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
+                           score: Arel.sql('deleted ASC, score DESC, RAND()'), active: :last_activity)
                 .paginate(page: params[:page], per_page: 20)
   end
 
