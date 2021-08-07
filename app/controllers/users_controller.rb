@@ -99,23 +99,28 @@ class UsersController < ApplicationController
 
   def activity
     @posts = Post.undeleted.where(user: @user).count
-    @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
+    @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                      posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).count
+    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).count
 
     @all_edits = @suggested_edits + @edits
 
     items = case params[:filter]
             when 'posts'
-              Post.undeleted.where(user: @user).all
+              Post.undeleted.where(user: @user)
             when 'comments'
-              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all
+              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                    posts: { deleted: false })
             when 'edits'
-              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+              SuggestedEdit.where(user: @user) + \
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
             else
-              Post.undeleted.where(user: @user).all + \
-              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all + \
-              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+              Post.undeleted.where(user: @user) + \
+              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                    posts: { deleted: false }) + \
+              SuggestedEdit.where(user: @user).all + \
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
             end
 
     @items = items.sort_by(&:created_at).reverse
