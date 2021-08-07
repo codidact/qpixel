@@ -322,7 +322,7 @@ class ApplicationController < ActionController::Base
     helpers.user_signed_in?
   end
 
-  def authenticate_user!(_f, **_opts)
+  def authenticate_user!(_f = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
