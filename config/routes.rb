@@ -103,23 +103,18 @@ Rails.application.routes.draw do
     get    'search',                       to: 'search#search', as: :search
     get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
     get    'types',                        to: 'post_types#list', as: :post_types_list
-
-    get    ':id',                          to: 'posts#show', as: :post
-
-    get    ':id/history',                  to: 'post_history#post', as: :post_history
-    get    ':id/:answer',                  to: 'posts#show', as: :answer_post
     post   'upload',                       to: 'posts#upload', as: :upload
     post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
     post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
 
+    get    ':id',                          to: 'posts#show', as: :post
+    get    ':id/history',                  to: 'post_history#post', as: :post_history
     get    ':id/edit',                     to: 'posts#edit', as: :edit_post
     patch  ':id/edit',                     to: 'posts#update', as: :update_post
-
     post   ':id/close',                    to: 'posts#close', as: :close_post
     post   ':id/reopen',                   to: 'posts#reopen', as: :reopen_post
     post   ':id/delete',                   to: 'posts#delete', as: :delete_post
     post   ':id/restore',                  to: 'posts#restore', as: :restore_post
-
     post   ':id/category',                 to: 'posts#change_category', as: :change_category
     post   ':id/toggle_comments',          to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
@@ -127,6 +122,8 @@ Rails.application.routes.draw do
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
+
+    get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
