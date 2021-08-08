@@ -61,12 +61,13 @@
   <% unless post_type.has_parent? %>
     <div class="form-group">
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
-      <%= f.text_field :title, class: 'form-element post_title' %>
+      <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
     </div>
     <div>
-      <span class="has-float-right has-font-size-caption" id="title-char" style="display: none;">
-        <i class="fas fa-ellipsis-h" id="title-char-count__icon"></i>
-        <span id="title-char-count">0 / 255</span>
+      <span class="has-float-right has-font-size-caption js-character-count-post-title"
+            data-max="255" data-min="15">
+        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
+        <span class="js-character-count__count">0 / 255</span>
       </span>
     </div>
   <% end %>
@@ -177,9 +178,9 @@
 
   <div class="actions">
     <% if post_type.has_category && category.present? %>
-      <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
+      <%= f.submit "Save Post in #{category.name}", class: 'button is-filled', data: { character_count: ".js-character-count-post-body" } %>
     <% else %>
-      <%= f.submit 'Save Post', class: 'button is-filled' %>
+      <%= f.submit 'Save Post', class: 'button is-filled', data: { character_count: ".js-character-count-post-title" } %>
     <% end %>
     <%= link_to t('g.cancel').titlecase, cancel_redirect_path(post),
                 class: 'button is-muted is-outlined is-danger js-cancel-edit',
