@@ -41,6 +41,8 @@
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;
       <% end %>
+<span>asked by <%= link_to post.user.rtl_safe_username, user_path(post.user)%> <%= time_ago_in_words(post.created_at) %> ago
+      </span>&nbsp;&middot;&nbsp; 
       <% if @last_activity %>
         last activity <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity) %> ago</span>
         by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
