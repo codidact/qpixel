@@ -11,10 +11,20 @@ $(() => {
     const $count = $counter.find('.js-character-count__count');
     const $icon = $counter.find('.js-character-count__icon');
 
+    const displayAt = parseFloat($counter.attr('data-display-at'));
     const max = parseInt($counter.attr('data-max'), 10);
     const min = parseInt($counter.attr('data-min'), 10);
     const count = $tgt.val().length;
     const text = `${count} / ${max}`;
+
+    if (displayAt) {
+      if (count >= displayAt * max) {
+        $counter.show();
+      }
+      else {
+        $counter.hide();
+      }
+    }
 
     if (count > max) {
       $counter.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
