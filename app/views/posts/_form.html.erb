@@ -178,9 +178,9 @@
 
   <div class="actions">
     <% if post_type.has_category && category.present? %>
-      <%= f.submit "Save Post in #{category.name}", class: 'button is-filled', data: { character_count: ".js-character-count-post-body" } %>
+      <%= f.submit "Save Post in #{category.name}", class: 'button is-filled' %>
     <% else %>
-      <%= f.submit 'Save Post', class: 'button is-filled', data: { character_count: ".js-character-count-post-title" } %>
+      <%= f.submit 'Save Post', class: 'button is-filled' %>
     <% end %>
     <%= link_to t('g.cancel').titlecase, cancel_redirect_path(post),
                 class: 'button is-muted is-outlined is-danger js-cancel-edit',
