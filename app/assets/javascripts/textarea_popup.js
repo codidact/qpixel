@@ -4,6 +4,24 @@ QPixel._popups = {};
 
 QPixel.Popup = class Popup {
   /**
+   * Remove all currently open popups.
+   */
+  static destroyAll () {
+    Object.values(QPixel._popups).forEach(popup => {
+      popup.destroy();
+    });
+  }
+
+  /**
+   * Indicates whether the pressed key will be handled by the Popup class, and hence whether any
+   * calling event handlers should ignore the key press.
+   * @param code the event keyCode property
+   */
+  static isSpecialKey (code) {
+    return [13, 27, 38, 40].includes(code);
+  }
+
+  /**
    * Get a popup for a given input field. You should generally use this method instead of directly
    * calling the constructor, as this accounts for pre-existing popups.
    * @param items an array of jQuery-wrappable elements to include - apply the `item` class to each one
@@ -46,7 +64,7 @@ QPixel.Popup = class Popup {
       this.$popup.append(el);
       $(el).on('click', ev => {
         ev.stopPropagation();
-        return !!this.callback ? this.callback(ev) : null;
+        return !!this.callback ? this.callback(ev, this) : null;
       });
     });
 
@@ -61,7 +79,7 @@ QPixel.Popup = class Popup {
              .on('keydown', this._keyHandler);
 
     QPixel._popups[this._id] = this;
-    this.$field.attr('data-popup', this.id);
+    this.$field.attr('data-popup', this._id);
   }
 
   /**
@@ -74,7 +92,7 @@ QPixel.Popup = class Popup {
       this.$popup.append(el);
       $(el).on('click', ev => {
         ev.stopPropagation();
-        return !!this.callback ? this.callback(ev) : null;
+        return !!this.callback ? this.callback(ev, this) : null;
       });
     });
   }
@@ -89,6 +107,18 @@ QPixel.Popup = class Popup {
       top: `${fieldOffset.top + caretPos.top + 20}px`,
       left: `${fieldOffset.left + caretPos.left}px`
     });
+  }
+
+  getActiveIdx () {
+    const items = this.$popup.find('.item').toArray();
+    const matching = items.filter(x => $(x).hasClass('active'));
+    return matching.length > 0 ? items.indexOf(matching[0]) : null;
+  }
+
+  setActive (idx) {
+    const items = this.$popup.find('.item');
+    items.removeClass('active');
+    items.eq((items.length + idx) % items.length).addClass('active');
   }
 
   /**
@@ -120,9 +150,32 @@ QPixel.Popup = class Popup {
   getKeyHandler (ev) {
     const self = this;
     return function (ev) {
-      if (ev.keyCode === 27) {
-        ev.stopPropagation();
-        self.destroy();
+      switch (ev.keyCode) {
+        case 27: // Escape
+          ev.stopPropagation();
+          self.destroy();
+          break;
+        case 38: // Up arrow
+          ev.stopPropagation();
+          const activeUp = self.getActiveIdx();
+          const startUp = activeUp === null ? 0 : activeUp;
+          self.setActive(startUp - 1);
+          break;
+        case 40: // Down arrow
+          ev.stopPropagation();
+          const activeDown = self.getActiveIdx();
+          const startDown = activeDown === null ? -1 : activeDown;
+          self.setActive(startDown + 1);
+          break;
+        case 13: // Enter
+          const selected = self.$popup.find('.item.active');
+          console.log('enter, selected: ', selected);
+          if (selected.length > 0) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            selected.click();
+          }
+          break;
       }
     }
   }

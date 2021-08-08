@@ -179,7 +179,9 @@ $(() => {
 
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', async ev => {
-    if (ev.keyCode === 27) { return; }
+    if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
+      return;
+    }
 
     const $tgt = $(ev.target);
     const content = $tgt.val();
@@ -188,13 +190,13 @@ $(() => {
     const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
-    const callback = ev => {
+    const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
       QPixel.replaceSelection($tgt, `@#${id}`);
-      $('.ta-popup').remove();
+      popup.destroy();
       $tgt.focus();
     };
 
@@ -202,7 +204,6 @@ $(() => {
     // an attempt to ping another user with a username, and kick off suggestions -- unless it starts with @#, in which
     // case it's likely an already-selected ping.
     if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && currentWord.length >= 4) {
-      QPixel.removeTextareaPopups();
       const threadId = $tgt.data('thread');
       const postId = $tgt.data('post');
 
@@ -222,7 +223,7 @@ $(() => {
       QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
     else {
-      QPixel.removeTextareaPopups();
+      QPixel.Popup.destroyAll();
     }
   });
   

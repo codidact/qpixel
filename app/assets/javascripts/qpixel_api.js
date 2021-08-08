@@ -264,13 +264,6 @@ window.QPixel = {
   },
 
   /**
-   * Remove all currently active textarea popups, as created by createTextareaPopup.
-   */
-  removeTextareaPopups: () => {
-    $('.ta-popup').remove();
-  },
-
-  /**
    * Get the word in a string that the given position is in, and the position within that word.
    * @param splat an array, containing the string already split by however you define a "word"
    * @param posIdx the index to search for
