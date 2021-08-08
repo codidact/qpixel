@@ -12,6 +12,7 @@ class Comment < ApplicationRecord
   has_many :flags, as: :post, dependent: :destroy
 
   after_create :create_follower
+  after_update :delete_thread
 
   counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
@@ -36,6 +37,12 @@ class Comment < ApplicationRecord
   def create_follower
     if user.preference('auto_follow_comment_threads') == 'true'
       ThreadFollower.find_or_create_by(comment_thread: comment_thread, user: user)
+    end
+  end
+
+  def delete_thread
+    if deleted? && comment_thread.comments.undeleted.count.zero?
+      comment_thread.update(deleted: true, deleted_by_id: -1)
     end
   end
 end
