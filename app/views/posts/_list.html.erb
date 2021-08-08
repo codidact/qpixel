@@ -41,10 +41,11 @@
           <%= pluralize(post.answer_count, 'answer') %>
         </span>&nbsp;&middot;&nbsp;
       <% end %>
-      posted <%= time_ago_in_words(post.created_at) %> ago by
-      <%= link_to post.user.rtl_safe_username, user_path(post.user), dir: 'ltr' %>&nbsp;&middot;&nbsp;
+      posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
+      by <%= link_to post.user.rtl_safe_username, user_path(post.user), dir: 'ltr' %>&nbsp;&middot;&nbsp;
       <% if @last_activity %>
-        last activity <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity) %> ago</span>
+        last activity
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
         by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
       <% end %>
     </p>
