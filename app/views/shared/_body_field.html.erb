@@ -20,7 +20,7 @@
       %>
     <% end %>
     <%= render 'shared/markdown_tools' %>
-    <%= f.text_area field_name, { class: classes, rows: 15, placeholder: 'Start typing your post...' }.merge(value) %>
+    <%= f.text_area field_name, { class: classes, rows: 15, placeholder: 'Start typing your post...' }.merge(value), data: { character_count: ".js-character-count-post-body" } %>
     <%= render 'posts/mdhint' %>
   </div>
   <%= hidden_field_tag "__html", nil, class: 'js-post-html' %>
