@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference, :vote_summary]
+                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -448,6 +448,10 @@ class UsersController < ApplicationController
       flash[:danger] = 'Failed to save your annotation.'
       render :annotations
     end
+  end
+
+  def my_vote_summary
+    redirect_to vote_summary_path(current_user)
   end
 
   def vote_summary
