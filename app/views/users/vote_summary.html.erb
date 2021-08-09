@@ -1,1 +1,45 @@
-<h1>Vote summary</h1>
+<%= render 'tabs', user: @user %>
+
+<h1>Vote summary for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr' %></h1>
+
+<% @votes.each do |day, vote_list| %>
+<h3><%= day.strftime('%b %e, %Y') %></h3>
+<div class="item-list user-vote-summary">
+    <% vote_list.each do |post, vote_data| %>
+    <% vote_data = { -1 => [], 1 => [] }.merge(vote_data.group_by { |vd| vd.vote_type }) %>
+    <div class="item-list--item">
+        <div class="item-list--number-value">
+            <span class="item-list--number">
+                <% if vote_data[+1].count == 0 %>
+                    <span class="has-color-tertiary-600 has-font-size-subheading">+0</span>
+                <% else %>
+                    <span class="has-color-green-800 has-font-weight-bold has-font-size-subheading">+<%= vote_data[+1].first.vote_count %></span>
+                <% end %>
+            </span>
+        </div>
+        <div class="item-list--number-value">
+            <span class="item-list--number">
+                <% if vote_data[-1].count == 0 %>
+                    <span class="has-color-tertiary-600 has-font-size-subheading">&minus;0</span>
+                <% else %>
+                    <span class="has-color-red-800 has-font-weight-bold has-font-size-subheading">&minus;<%= vote_data[-1].first.vote_count %></span>
+                <% end %>
+            </span>
+        </div>
+        <div class="item-list--text-value is-primary grid">
+            <div class="grid grid--cell is-12">
+                <div class="has-font-size-larger grid--cell is-flexible">
+                    <%= link_to generic_share_link(post) do %>
+                        <%= post.post_type.is_top_level ? post.title : post.parent.title %>
+                    <% end %>
+                </div>
+                <div class="grid--cell">
+                    <span class="badge is-tag is-muted is-filled"><%= post.post_type.name %></span>
+                    <a href="<%= category_path(post.category) %>" class="badge is-tag is-muted"><%= post.category.name %></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% end %>
+</div>
+<% end %>

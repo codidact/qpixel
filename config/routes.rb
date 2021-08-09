@@ -155,12 +155,12 @@ Rails.application.routes.draw do
     get    '/me/notifications',         to: 'notifications#index', as: :notifications
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
-    get    '/me/vote-summary',          to: 'users#vote_summary', as: :vote_summary
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
+    get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
     post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
     post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role

@@ -150,3 +150,18 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
   align-items: center;
   justify-content: center;
 }
+
+
+.user-vote-summary {
+  .item-list--item {
+    padding: 0 !important;
+
+    .item-list--number-value {
+      width: 60px !important;
+    }
+
+    .grid {
+      align-items: center;
+    }
+  }
+}
