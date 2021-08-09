@@ -23,8 +23,24 @@ module CommentsHelper
   end
 
   def render_comment_helpers(comment_text)
-    comment_text.gsub!(/\[votes\]/, "<a href=\"#{my_vote_summary_path}\">votes</a>")
-    comment_text.gsub!(/\[help\]/, "<a href=\"#{help_center_path}\">help</a>")
+    comment_text.gsub! /\[(votes?)\]/, "<a href=\"#{my_vote_summary_path}\">\\1</a>"
+    comment_text.gsub! /\[(help( center)?)\]/, "<a href=\"#{help_center_path}\">\\1</a>"
+    comment_text.gsub! /\[(flags?)\]/, "<a href=\"#{flag_history_path(current_user)}\">\\1</a>"
+    comment_text.gsub! /\[category\:([A-Za-z0-9\.\&\;\,]+)\]/ do |match|
+      val = $1.gsub '&amp;', '&'
+      cat = Category.where('lower(name) = ?', val.downcase).first
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
+
+    puts '#'*50
+    puts Category.select('lower(name) as name').all.map &:name
+    puts comment_text.downcase
+    puts '#'*50
+    
     comment_text
   end
 
