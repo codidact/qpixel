@@ -26,7 +26,7 @@ module CommentsHelper
     comment_text.gsub! /\[(votes?)\]/, "<a href=\"#{my_vote_summary_path}\">\\1</a>"
     comment_text.gsub! /\[(help( center)?)\]/, "<a href=\"#{help_center_path}\">\\1</a>"
     comment_text.gsub! /\[(flags?)\]/, "<a href=\"#{flag_history_path(current_user)}\">\\1</a>"
-    comment_text.gsub! /\[category\:([A-Za-z0-9\.\&\;\,]+)\]/ do |match|
+    comment_text.gsub! /\[category\:([A-Za-z0-9\.\&\;\, ]+)\]/ do |match|
       val = $1.gsub '&amp;', '&'
       cat = Category.where('lower(name) = ?', val.downcase).first
       if cat
