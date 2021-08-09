@@ -22,6 +22,11 @@ module CommentsHelper
     end.html_safe
   end
 
+  def render_comment_helpers(comment_text)
+    comment_text.gsub! /\[votes\]/, "<a href=\"#{my_vote_summary_path}\">votes</a>"
+    comment_text
+  end
+
   def get_pingable(thread)
     post = thread.post
 
