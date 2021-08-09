@@ -6,6 +6,9 @@
     Activity
   <% end %>
   <% if user == current_user %>
+    <%= link_to vote_summary_path, class: "tabs--item #{current_page?(vote_summary_path) ? 'is-active' : ''}" do %>
+      Vote Summary
+    <% end %>
     <%= link_to edit_user_registration_path, class: "tabs--item #{current_page?(edit_user_registration_path) ? 'is-active' : ''}" do %>
       Account
     <% end %>
