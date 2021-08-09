@@ -35,6 +35,14 @@ module CommentsHelper
         match
       end
     end
+    comment_text.gsub! /\[category\#([0-9]+)\]/ do |match|
+      cat = Category.where(id: $1).first
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
 
     puts '#'*50
     puts Category.select('lower(name) as name').all.map &:name
