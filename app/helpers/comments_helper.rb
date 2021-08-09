@@ -24,6 +24,7 @@ module CommentsHelper
 
   def render_comment_helpers(comment_text)
     comment_text.gsub! /\[votes\]/, "<a href=\"#{my_vote_summary_path}\">votes</a>"
+    comment_text.gsub! /\[help\]/, "<a href=\"#{help_center_path}\">help</a>"
     comment_text
   end
 
