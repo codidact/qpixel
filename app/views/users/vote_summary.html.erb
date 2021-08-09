@@ -5,7 +5,7 @@
 <p class="is-lead">A daily summary of votes you have received for your posts.</p>
 
 <% @votes.each do |day, vote_list| %>
-<details class="user-vote-summary" <%= 'open' unless day < 30.days.ago%>>
+<details class="user-vote-summary" <%= 'open' unless day < SiteSetting['VoteSummaryAutoExpandLastNrOfDays'].days.ago%>>
 <summary>
 <h2><%= day.strftime('%b %e, %Y') %></h2>
 </summary>

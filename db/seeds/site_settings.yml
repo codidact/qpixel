@@ -402,3 +402,10 @@
   category: AdvancedSettings
   description: >
     Whether two-factor authentication should be enforced for all global admins and global moderators.
+
+- name: VoteSummaryAutoExpandLastNrOfDays
+  value: 30
+  value_type: integer
+  category: Display
+  description: >
+    Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
