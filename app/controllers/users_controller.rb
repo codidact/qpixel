@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action, 
+                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
@@ -456,12 +456,12 @@ class UsersController < ApplicationController
 
   def vote_summary
     @votes = Vote.where(recv_user: @user) \
-            .includes(:post).group(:date_of, :post_id, :vote_type)
+                 .includes(:post).group(:date_of, :post_id, :vote_type)
     @votes = @votes.select(:post_id, :vote_type) \
                    .select('count(*) as vote_count') \
                    .select('date(created_at) as date_of')
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
-            .group_by { |v| v.date_of }.map { |k, vl| [k, vl.group_by { |v| v.post } ] }
+                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] }
   end
 
   private
