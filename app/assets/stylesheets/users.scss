@@ -153,6 +153,30 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
 
 
 .user-vote-summary {
+  border: none !important;
+
+  summary {
+    margin: 0 !important;
+    background-color: #eef1f2;
+    border: none;
+    border-radius: 5px;
+
+    &:before {
+      top: 16px;
+
+      transition: none;
+    }
+
+    h2 {
+      width: 100%;
+    }
+  }
+
+  &[open] summary::before {
+    top: 13px;
+  }
+
+
   .item-list--item {
     padding: 0 !important;
 

@@ -2,9 +2,14 @@
 
 <h1>Vote summary for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr' %></h1>
 
+<p class="is-lead">A daily summary of votes you have received for your posts.</p>
+
 <% @votes.each do |day, vote_list| %>
-<h3><%= day.strftime('%b %e, %Y') %></h3>
-<div class="item-list user-vote-summary">
+<details class="user-vote-summary" <%= 'open' unless day < 30.days.ago%>>
+<summary>
+<h2><%= day.strftime('%b %e, %Y') %></h2>
+</summary>
+<div class="item-list">
     <% vote_list.each do |post, vote_data| %>
     <% vote_data = { -1 => [], 1 => [] }.merge(vote_data.group_by { |vd| vd.vote_type }) %>
     <div class="item-list--item">
@@ -42,4 +47,5 @@
     </div>
     <% end %>
 </div>
+</details>
 <% end %>
