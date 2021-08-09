@@ -461,7 +461,9 @@ class UsersController < ApplicationController
                    .select('count(*) as vote_count') \
                    .select('date(created_at) as date_of')
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
-                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] }
+                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
+                   .paginate(page: params[:page], per_page: 15)
+    @votes
   end
 
   private
