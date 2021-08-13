@@ -147,8 +147,14 @@
           </div>
         <% end %>
         <div class="widget--footer">
-          <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
-            Abilities &raquo;
+          <% if current_user&.id == @user.id %>
+           <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
+             Abilities &raquo;
+           <% end %>
+          <% else %>
+           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold' do %>
+             Abilities &raquo;
+           <% end %>
           <% end %>
         </div>
       </div>
