@@ -43,7 +43,23 @@
       <% end %>
       posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
       by <%= link_to post.user.rtl_safe_username, user_path(post.user), dir: 'ltr' %>&nbsp;&middot;&nbsp;
-      <% if post.last_activity != post.created_at %>
+      <% if post.last_activity == post.closed_at %>
+        Closed
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% elsif post.last_activity == post.locked_at %>
+        Locked
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% elsif post.last_activity == post.deleted_at %>
+        Deleted
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% elsif post.last_activity == post.last_edited_at %>
+        Edited
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% elsif post.last_activity != post.created_at %>
         last activity
         <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
         by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
