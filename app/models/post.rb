@@ -34,7 +34,7 @@ class Post < ApplicationRecord
   validate :maximum_tag_length, if: -> { post_type.has_tags }
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
-  validate :maximum_title_length, if: -> { post_type.has_tags }    
+  validate :maximum_title_length, if: -> { post_type.has_tags }
   validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_valid, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
@@ -267,7 +267,7 @@ class Post < ApplicationRecord
       errors.add(:title, 'must be more than 15 non-whitespace characters long')
     end
   end
-  
+
   def maximum_title_length
     max_title_len = SiteSetting['MaxTitleLength']
     if title.length > max_title_len
