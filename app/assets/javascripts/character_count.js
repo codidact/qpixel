@@ -4,7 +4,7 @@ $(() => {
     el.removeClass(icons.join(' ')).addClass(icon);
   };
 
-  $(document).on('keyup change', '[data-character-count]', ev => {
+  $(document).on('keyup change paste', '[data-character-count]', ev => {
     const $tgt = $(ev.target);
     const $counter = $($tgt.attr('data-character-count'));
     const $button = $counter.parents('form').find('input[type="submit"]');
