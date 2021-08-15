@@ -4,7 +4,7 @@ $(() => {
     el.removeClass(icons.join(' ')).addClass(icon);
   };
 
-  $(document).on('keyup change', '[data-character-count]', ev => {
+  $(document).on('keyup change paste', '[data-character-count]', ev => {
     const $tgt = $(ev.target);
     const $counter = $($tgt.attr('data-character-count'));
     const $button = $counter.parents('form').find('input[type="submit"]');
@@ -57,60 +57,6 @@ $(() => {
 
     $count.text(text);
   });
-  
-  $(document).on('paste', '[data-character-count]', ev => {
-     const $tgt = $(ev.target);
-     const $counter = $($tgt.attr('data-character-count'));
-     const $button = $counter.parents('form').find('input[type="submit"]');
-     const $count = $counter.find('.js-character-count__count');
-     const $icon = $counter.find('.js-character-count__icon');
-
-     const displayAt = parseFloat($counter.attr('data-display-at'));
-     const max = parseInt($counter.attr('data-max'), 10);
-     const min = parseInt($counter.attr('data-min'), 10);
-     const count = $tgt.val().length;
-     const text = `${count} / ${max}`;
-
-     if (displayAt) {
-        if (count >= displayAt * max) {
-            $counter.show();
-        }
-        else {
-            $counter.hide();
-        }
-     }
-
-     if (count > max) {
-        $counter.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
-        setIcon($icon, 'fa-times');
-        if ($button) {
-             $button.attr('disabled', true).addClass('is-muted');
-        }
-     }
-     else if (count > 0.75 * max) {
-        $counter.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
-        setIcon($icon, 'fa-exclamation-circle');
-        if ($button) {
-            $button.attr('disabled', false).removeClass('is-muted');
-        }
-     }
-     else if (min && count < min) {
-         $counter.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
-         setIcon($icon, 'fa-ellipsis-h');
-         if ($button) {
-             $button.attr('disabled', true).addClass('is-muted');
-         }
-     }
-     else {
-        $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
-        setIcon($icon, 'fa-check');
-        if ($button) {
-            $button.attr('disabled', false).removeClass('is-muted');
-        }
-     }
-
-     $count.text(text);
-  });  
 
   $(document).on('ajax:success', 'form', ev => {
     const $tgt = $(ev.target);
