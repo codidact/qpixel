@@ -99,17 +99,17 @@ class Post < ApplicationRecord
 
   def last_activity_type
     case last_activity
-      when closed_at
-        'closed'
-      when locked_at
-        'locked'
-      when deleted_at
-        'deleted'
-      when last_edited_at
-        'edited'
-      else
-        'last activity'
-      end
+    when closed_at
+      'closed'
+    when locked_at
+      'locked'
+    when deleted_at
+      'deleted'
+    when last_edited_at
+      'edited'
+    else
+      'last activity'
+    end
   end
 
   def body_plain
