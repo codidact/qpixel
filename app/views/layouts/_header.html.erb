@@ -47,7 +47,7 @@
         <% end %>
       <% end %>
       <% if user_signed_in? %>
-        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
+        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" id="inbox-toggle" data-header-slide="#js-inbox">
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
             <span class="header--alert inbox-count"><%= unread %></span>
