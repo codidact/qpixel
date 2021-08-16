@@ -126,9 +126,7 @@ $(() => {
     const inbox = document.getElementById('js-inbox');
     const inboxToggle = document.getElementById('inbox-toggle');
     if (!inboxToggle.contains(e.target)) {
-      if (inbox.contains(e.target)) {
-        console.log("inside");
-      } else {
+      if (!inbox.contains(e.target)) {
         if ($('.inbox-toggle').hasClass('is-active')) {
             inbox.style.display = 'none';
             $('.inbox-toggle').removeClass('is-active');
