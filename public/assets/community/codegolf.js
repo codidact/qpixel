@@ -94,8 +94,8 @@
         const header = answerPost.querySelector('h1, h2, h3');
         const code = header.parentElement.querySelector(':scope > pre > code');
         const full_language = header ? header.innerText.split(',')[0].trim() : undefined
-        const variant = full_language?.match(/\((.+)\)/)?.[1];
-        const language = full_language.split('(' + variant + ')').join('').trim();
+        const regexGroups = full_language?.match(/(?<language>.+?)(?: \((?<variant>.+)\))?(?: \+ (?<extensions>.+))?$/)?.groups ?? {};
+        const { language, variant, extensions } = regexGroups;
 
         const entry = {
           answerID: answerPost.id,
@@ -106,6 +106,7 @@
           full_language, full_language,
           language: language,
           variant: variant,
+          extensions: extensions,
           code: code?.innerText,
           score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
         };
@@ -236,7 +237,11 @@
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? answer.full_language : answer.language;
+    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant
+      ? answer.full_language
+      : answer.extensions
+        ? answer.language + ' + ' + answer.extensions
+        : answer.language;
     row.querySelector('.username').insertAdjacentHTML('afterend', answer.code
       ? `<code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
       : ' <em>Invalid entry format</em>');
