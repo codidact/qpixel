@@ -4,6 +4,7 @@
  */
 
 (() => {
+  const dom_parser = new DOMParser();
   let match = location.pathname.match(/(?<=posts\/)\d+/);
 
   // Don't run on non-post pages.
@@ -70,7 +71,7 @@
     let response = await fetch(`/posts/${id}`);
     let text = await response.text();
 
-    let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
+    let doc = dom_parser.parseFromString(text.toString(), 'text/html');
 
     const pagination = doc.querySelector('.pagination');
     const num_pages = pagination ? parseInt(pagination.querySelector('.next').previousElementSibling.innerText) : 1;
@@ -84,7 +85,7 @@
 
     for (let i = 0; i < pagePromises.length; i++) {
       let text = await pagePromises[i];
-      let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
+      let doc = dom_parser.parseFromString(text.toString(), 'text/html');
       let [question, ...page_answers] = doc.querySelectorAll('.post');
       let non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
 
