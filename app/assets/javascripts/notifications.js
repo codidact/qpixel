@@ -122,4 +122,21 @@ $(() => {
     const change = data.notification.is_read ? -1 : +1;
     changeInboxCount(change);
   });
+  window.addEventListener('click', async function (e) {
+    const inbox = document.getElementById('js-inbox');
+    const inboxToggle = document.getElementById('inbox-toggle');
+    if (!inboxToggle.contains(e.target)) {
+      if (inbox.contains(e.target)) {
+        console.log("inside");
+      } else {
+        if ($('.inbox-toggle').hasClass('is-active')) {
+            inbox.style.display = 'none';
+            $('.inbox-toggle').removeClass('is-active');
+        }
+      }
+    }else{
+      inbox.style.display = 'block';
+      $('.inbox-toggle').addClass('is-active');
+    }
+  });
 });
