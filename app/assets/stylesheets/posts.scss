@@ -123,12 +123,25 @@ h1 .badge.is-tag.is-master-tag {
     }
   }
 
-  .post-meta--user {
-    background: #EEE;
-    align-self: flex-end;
+  @media (prefers-color-scheme: light) {
+    .post-meta--user {
+      background: #EEE;
+      align-self: flex-end;
 
-    @media screen and (min-width: $screen-md) {
-      align-self: flex-start;
+      @media screen and (min-width: $screen-md) {
+        align-self: flex-start;
+      }
+    }
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .post-meta--user {
+      background: #141212;
+      align-self: flex-end;
+
+      @media screen and (min-width: $screen-md) {
+        align-self: flex-start;
+      }
     }
   }
 
