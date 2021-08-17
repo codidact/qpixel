@@ -81,7 +81,7 @@ $(() => {
       <input type="submit" class="button is-muted is-filled" value="Update comment" />
       <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
       <span class="has-float-right has-font-size-caption js-character-count-comment-body"
-            data-max="1000" data-min="15" data-display-at="0.75" style="display:none">
+            data-max="1000" data-min="15">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
         <span class="js-character-count__count">0 / 255</span>
       </span>
