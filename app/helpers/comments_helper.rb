@@ -46,11 +46,6 @@ module CommentsHelper
       end
     end
 
-    puts '#' * 50
-    puts Category.select('lower(name) as name').all.map(&:name)
-    puts comment_text.downcase
-    puts '#' * 50
-
     comment_text
   end
 
