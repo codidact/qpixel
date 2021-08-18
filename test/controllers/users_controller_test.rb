@@ -243,7 +243,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
-  test "my vote summary redirects to current user summary" do
+  test 'my vote summary redirects to current user summary' do
     sign_in users(:standard_user)
     get :my_vote_summary
     assert_redirected_to vote_summary_path(users(:standard_user))
