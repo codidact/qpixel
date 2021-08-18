@@ -97,6 +97,21 @@ class Post < ApplicationRecord
     update(att_source: nil, att_license_link: nil, att_license_name: nil)
   end
 
+  def last_activity_type
+    case last_activity
+    when closed_at
+      'closed'
+    when locked_at
+      'locked'
+    when deleted_at
+      'deleted'
+    when last_edited_at
+      'edited'
+    else
+      'last activity'
+    end
+  end
+
   def body_plain
     ApplicationController.helpers.strip_markdown(body_markdown)
   end

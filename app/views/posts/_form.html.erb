@@ -65,7 +65,7 @@
     </div>
     <div>
       <span class="has-float-right has-font-size-caption js-character-count-post-title"
-            data-max="255" data-min="15" data-display-at="0.75">
+            data-max="255" data-min="15" data-display-at="0.75" style="display:none">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
         <span class="js-character-count__count">0 / 255</span>
       </span>
@@ -161,7 +161,7 @@
             <span class="form-caption">Copy this edit to all communities (where the post has not been edited)?</span>
           </div>
           <div class="checkbox-setting--value">
-            <%= check_box_tag :network_push, nil, class: 'form-checkbox-element' %>
+            <%= check_box_tag :network_push, true, false, class: 'form-checkbox-element' %>
           </div>
         </div>
       </div>

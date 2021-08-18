@@ -164,7 +164,7 @@ class PostsController < ApplicationController
     if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
       if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
-         current_user.is_global_admin)
+         current_user.is_global_admin) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                     doc_slug: @post.doc_slug, body: @post.body)
         update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
@@ -177,7 +177,7 @@ class PostsController < ApplicationController
                                   before_title: before[:title], after_title: @post.title,
                                   before_tags: before[:tags], after_tags: @post.tags)
         end
-        flash[:success] = "#{helpers.pluralize(posts.size, 'post')} updated."
+        flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
       else
         if @post.update(edit_post_params.merge(body: body_rendered,
