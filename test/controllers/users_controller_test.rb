@@ -243,6 +243,33 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
+  test "my vote summary redirects to current user summary" do
+    sign_in users(:standard_user)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:standard_user))
+    sign_out :user
+
+    sign_in users(:closer)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:closer))
+    sign_out :user
+
+    sign_in users(:editor)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:editor))
+    sign_out :user
+
+    sign_in users(:moderator)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:moderator))
+    sign_out :user
+
+    sign_in users(:admin)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:admin))
+    sign_out :user
+  end
+
   private
 
   def create_other_user
