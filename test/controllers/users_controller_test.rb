@@ -270,6 +270,23 @@ class UsersControllerTest < ActionController::TestCase
     sign_out :user
   end
 
+  test 'vote summary rendered for all users, signed in or out, own or others' do
+    sign_out :user
+    get :vote_summary, params: { id: users(:standard_user).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:closer).id }
+    assert_response 200
+
+    sign_in users(:editor)
+
+    get :vote_summary, params: { id: users(:editor).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:deleter).id }
+    assert_response 200
+  end
+
   private
 
   def create_other_user
