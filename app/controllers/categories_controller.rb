@@ -42,7 +42,7 @@ class CategoriesController < ApplicationController
                            comment: "<<Category #{before}>>")
       flash[:success] = 'Your category was created.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete "categories/by_lowercase_name"
+      Rails.cache.delete 'categories/by_lowercase_name'
       Rails.cache.delete 'categories/by_id'
       redirect_to category_path(@category)
     else
@@ -64,7 +64,7 @@ class CategoriesController < ApplicationController
                            comment: "from <<Category #{before}>>\nto <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete "categories/by_lowercase_name"
+      Rails.cache.delete 'categories/by_lowercase_name'
       Rails.cache.delete 'categories/by_id'
       redirect_to category_path(@category)
     else
