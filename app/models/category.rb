@@ -38,7 +38,7 @@ class Category < ApplicationRecord
   end
 
   def self.by_id(id)
-    categories = Rails.cache.fetch "//categories/by_id" do
+    categories = Rails.cache.fetch '//categories/by_id' do
       Category.all.map { |c| [c.id, c] }.to_h
     end
     categories[id]
