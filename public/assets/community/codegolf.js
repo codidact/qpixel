@@ -24,7 +24,6 @@
   const settings = {
     _defaults: {
       groupByLanguage: true,
-      mergeVariants: false,
       showPlacements: true
     },
     currentSettings: {}, // Used as a fallback if localStorage is unavailable
@@ -33,13 +32,6 @@
     },
     set groupByLanguage(value) {
       return this._set('groupByLanguage', value);
-    },
-
-    get mergeVariants() {
-      return this._get('mergeVariants');
-    },
-    set mergeVariants(value) {
-      return this._set('mergeVariants', value);
     },
 
     get showPlacements() {
@@ -150,12 +142,6 @@
         <input id="group-by-lang" type="checkbox" ${settings.groupByLanguage ? 'checked' : ''}>
       </label>
     </div>
-    <div class="has-padding-2 cgl-option">
-      <label title="Shows variants of a language as the same language (e.g. Python (Cython) and Python (PyPy) will both be put under Python)">
-        Merge variants
-        <input id="merge-variants" type="checkbox" ${settings.mergeVariants ? 'checked' : ''}>
-      </label>
-    </div>
     <div class="has-padding-2">
       <label>
         Show placements
@@ -178,15 +164,10 @@
     }
   });
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
-  const mergeVariantsInput = embed.querySelector('#merge-variants');
   const showPlacementsInput = embed.querySelector('#show-placement');
 
   groupByLanguageInput.addEventListener('click', _ => {
     settings.groupByLanguage = groupByLanguageInput.checked;
-    refreshBoard();
-  });
-  mergeVariantsInput.addEventListener('click', _ => {
-    settings.mergeVariants = mergeVariantsInput.checked;
     refreshBoard();
   });
   showPlacementsInput.addEventListener('click', _ => {
@@ -237,13 +218,9 @@
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant
-      ? answer.full_language
-      : answer.extensions
-        ? answer.language + ' + ' + answer.extensions
-        : answer.language;
+    row.querySelector('.language-badge').innerText = answer.full_language;
     row.querySelector('.username').insertAdjacentHTML('afterend', answer.code
-      ? `<code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
+      ? ` <code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
       : ' <em>Invalid entry format</em>');
 
     return row;
@@ -251,7 +228,7 @@
 
   async function renderLeaderboardsByLanguage() {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    const languageLeaderboards = createGroups(leaderboard, entry => settings.mergeVariants ? entry.language : entry.language + entry.variant);
+    const languageLeaderboards = createGroups(leaderboard, entry => entry.full_language);
 
     for (const language in languageLeaderboards) {
       augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
