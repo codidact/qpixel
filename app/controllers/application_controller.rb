@@ -35,11 +35,11 @@ class ApplicationController < ActionController::Base
 
   def not_found(**add)
     respond_to do |format|
-      format.html do
-        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
-      end
       format.json do
         render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
+      end
+      format.any do
+        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       end
     end
     false

@@ -68,7 +68,7 @@
               <div class="post--author has-color-tertiary">
                 <div title="2020-07-10T09:32:35Z">just now</div>
                 <div>
-                  <img alt="user avatar" src="<%= current_user.nil? ? avatar_url(User.find(-1)) : avatar_url(current_user) %>" height="32" width="32"
+                  <img alt="user avatar" src="<%= current_user.nil? ? avatar_url(User.find(-1), 32) : avatar_url(current_user, 32) %>" height="32" width="32"
                     class="has-float-left avatar-32" />
                   <div class="has-padding-1 has-float-left">
                     <a href="#"><%= current_user&.rtl_safe_username || "user31415" %></a> <span

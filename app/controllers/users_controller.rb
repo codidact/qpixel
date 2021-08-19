@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action]
+                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -446,6 +446,15 @@ class UsersController < ApplicationController
     else
       flash[:danger] = 'Failed to save your annotation.'
       render :annotations
+    end
+  end
+
+  def avatar
+    respond_to do |format|
+      format.png do
+        size = params[:size]&.to_i > 0 ? params[:size]&.to_i : 64
+        send_data helpers.user_auto_avatar(@user, size).to_blob, type: 'image/png', disposition: 'inline'
+      end
     end
   end
 
