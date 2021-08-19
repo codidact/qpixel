@@ -42,6 +42,8 @@ class CategoriesController < ApplicationController
                            comment: "<<Category #{before}>>")
       flash[:success] = 'Your category was created.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
+      Rails.cache.delete "#{RequestContext.community_id}/comment-helper/category/by-name/#{@category.name.downcase}"
+      Rails.cache.delete "#{RequestContext.community_id}/comment-helper/category/by-id/#{@category.id}"
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
