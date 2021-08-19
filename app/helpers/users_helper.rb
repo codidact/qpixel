@@ -5,7 +5,7 @@ module UsersHelper
     if user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
-      "https://unicornify.pictures/avatar/#{user.id}?s=#{size}"
+      user_auto_avatar_url(user, size: size, format: :png)
     end
   end
 

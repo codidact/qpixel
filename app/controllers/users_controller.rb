@@ -10,7 +10,7 @@ class UsersController < ApplicationController
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary]
+                                  :vote_summary, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -464,6 +464,15 @@ class UsersController < ApplicationController
                    .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
                    .paginate(page: params[:page], per_page: 15)
     @votes
+  end
+
+  def avatar
+    respond_to do |format|
+      format.png do
+        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
+        send_data helpers.user_auto_avatar(@user, size).to_blob, type: 'image/png', disposition: 'inline'
+      end
+    end
   end
 
   private
