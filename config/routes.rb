@@ -143,30 +143,34 @@ Rails.application.routes.draw do
     post 'disable/link',                   to: 'two_factor#confirm_disable_link', as: :two_factor_confirm_disable_link
   end
 
-  get    'users',                          to: 'users#index', as: :users
-  get    'users/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
-  post   'users/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
-  get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
-  get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
-  get    'users/me',                       to: 'users#me', as: :users_me
-  get    'users/me/preferences',           to: 'users#preferences', as: :user_preferences
-  post   'users/me/preferences',           to: 'users#set_preference', as: :set_user_preference
-  get    'users/me/notifications',         to: 'notifications#index', as: :notifications
-  get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
-  patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
-  get    'users/:id',                      to: 'users#show', as: :user
-  get    'users/:id/flags',                to: 'flags#history', as: :flag_history
-  get    'users/:id/activity',             to: 'users#activity', as: :user_activity
-  get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
-  get    'users/:id/posts',                to: 'users#posts', as: :user_posts
-  get    'users/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
-  post   'users/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
-  post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
-  get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
-  post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
-  get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
-  post   'users/:id/hellban',              to: 'admin#hellban', as: :hellban_user
-  get    'users/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+  scope  'users' do
+    root                                to: 'users#index', as: :users
+    get    '/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
+    post   '/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
+    get    '/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
+    get    '/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
+    get    '/me',                       to: 'users#me', as: :users_me
+    get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
+    post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
+    get    '/me/notifications',         to: 'notifications#index', as: :notifications
+    get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
+    patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
+    get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
+    get    '/:id',                      to: 'users#show', as: :user
+    get    '/:id/flags',                to: 'flags#history', as: :flag_history
+    get    '/:id/activity',             to: 'users#activity', as: :user_activity
+    get    '/:id/mod',                  to: 'users#mod', as: :mod_user
+    get    '/:id/posts',                to: 'users#posts', as: :user_posts
+    get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
+    post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
+    post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
+    get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
+    post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
+    get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+    post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+    get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+  end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications

@@ -243,6 +243,48 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
+  # We can only test for one user per test block, hence there are
+  # three test blocks of users with different permission models to
+  # have a more unbiased check.
+
+  test 'my vote summary redirects to current user summary (#1 deleter)' do
+    sign_in users(:deleter)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:deleter))
+    sign_out :user
+  end
+
+  test 'my vote summary redirects to current user summary (#2 std user)' do
+    sign_in users(:standard_user)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:standard_user))
+    sign_out :user
+  end
+
+  test 'my vote summary redirects to current user summary (#3 global_admin)' do
+    sign_in users(:global_admin)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:global_admin))
+    sign_out :user
+  end
+
+  test 'vote summary rendered for all users, signed in or out, own or others' do
+    sign_out :user
+    get :vote_summary, params: { id: users(:standard_user).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:closer).id }
+    assert_response 200
+
+    sign_in users(:editor)
+
+    get :vote_summary, params: { id: users(:editor).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:deleter).id }
+    assert_response 200
+  end
+
   private
 
   def create_other_user

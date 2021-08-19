@@ -5,11 +5,12 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference]
+                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action, :avatar]
+                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
+                                  :vote_summary, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -447,6 +448,22 @@ class UsersController < ApplicationController
       flash[:danger] = 'Failed to save your annotation.'
       render :annotations
     end
+  end
+
+  def my_vote_summary
+    redirect_to vote_summary_path(current_user)
+  end
+
+  def vote_summary
+    @votes = Vote.where(recv_user: @user) \
+                 .includes(:post).group(:date_of, :post_id, :vote_type)
+    @votes = @votes.select(:post_id, :vote_type) \
+                   .select('count(*) as vote_count') \
+                   .select('date(created_at) as date_of')
+    @votes = @votes.order(date_of: :desc, post_id: :desc).all \
+                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
+                   .paginate(page: params[:page], per_page: 15)
+    @votes
   end
 
   def avatar

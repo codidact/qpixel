@@ -29,4 +29,18 @@ class Category < ApplicationRecord
   def update_activity(last_activity)
     RequestContext.redis.set("#{community_id}/#{id}/last_activity", last_activity)
   end
+
+  def self.by_lowercase_name(name)
+    categories = Rails.cache.fetch 'categories/by_lowercase_name' do
+      Category.all.map { |c| [c.name.downcase, c] }.to_h
+    end
+    categories[name]
+  end
+
+  def self.by_id(id)
+    categories = Rails.cache.fetch 'categories/by_id' do
+      Category.all.map { |c| [c.id, c] }.to_h
+    end
+    categories[id]
+  end
 end

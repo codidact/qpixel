@@ -22,6 +22,37 @@ module CommentsHelper
     end.html_safe
   end
 
+  def render_comment_helpers(comment_text, user = current_user)
+    comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_path}\">\\1</a>")
+
+    unless user.nil?
+      comment_text.gsub!(/\[(votes?)\]/, "<a href=\"#{my_vote_summary_path}\">\\1</a>")
+      comment_text.gsub!(/\[(flags?)\]/, "<a href=\"#{flag_history_path(user)}\">\\1</a>")
+    end
+
+    comment_text.gsub!(/\[category:(.+?)\]/) do |match|
+      val = Regexp.last_match(1).gsub('&amp;', '&').downcase
+      cat = Category.by_lowercase_name(val)
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
+
+    comment_text.gsub!(/\[category\#([0-9]+)\]/) do |match|
+      val = Regexp.last_match(1).to_i
+      cat = Category.by_id(val)
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
+
+    comment_text
+  end
+
   def get_pingable(thread)
     post = thread.post
 

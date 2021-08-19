@@ -62,7 +62,7 @@
     </div>
   </div>
   <div class="comment--body" dir="ltr">
-    <%= render_pings(raw(sanitize(render_markdown(comment.content), scrubber: CommentScrubber.new)),
+    <%= render_pings(raw(sanitize(render_comment_helpers(render_markdown(comment.content)), scrubber: CommentScrubber.new)),
                      pingable: pingable) %>
   </div>
 </div>
