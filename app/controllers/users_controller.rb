@@ -452,7 +452,7 @@ class UsersController < ApplicationController
   def avatar
     respond_to do |format|
       format.png do
-        size = params[:size]&.to_i > 0 ? params[:size]&.to_i : 64
+        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
         send_data helpers.user_auto_avatar(@user, size).to_blob, type: 'image/png', disposition: 'inline'
       end
     end

@@ -8,7 +8,7 @@ module Users::AvatarHelper
       ava = Image.new(size, size)
       background = "##{Digest::MD5.hexdigest(user.username)[0...6]}FF"
       text_color = yiq_contrast(background, 'black', 'white')
-      
+
       bg = Draw.new
       bg.fill background
       bg.rectangle 0, 0, size, size
