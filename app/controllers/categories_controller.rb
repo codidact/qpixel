@@ -52,6 +52,9 @@ class CategoriesController < ApplicationController
   def edit; end
 
   def update
+    # We also have to delete the old name, otherwise it would
+    # still work.
+    Rails.cache.delete("#{RequestContext.community_id}/comment-helper/category/by-name/#{@category.name.downcase}")
     before = @category.attributes_print
     if @category.update category_params
       if @category.is_homepage
@@ -62,6 +65,8 @@ class CategoriesController < ApplicationController
                            comment: "from <<Category #{before}>>\nto <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
       Rails.cache.delete "#{RequestContext.community_id}/header_categories"
+      Rails.cache.delete "#{RequestContext.community_id}/comment-helper/category/by-name/#{@category.name.downcase}"
+      Rails.cache.delete "#{RequestContext.community_id}/comment-helper/category/by-id/#{@category.id}"
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'

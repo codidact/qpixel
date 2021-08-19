@@ -31,21 +31,26 @@ module CommentsHelper
     end
 
     comment_text.gsub!(/\[category:(.+?)\]/) do |match|
-      val = Regexp.last_match(1).gsub '&amp;', '&'
-      cat = Category.where('lower(name) = ?', val.downcase).first
-      if cat
-        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
-      else
-        match
+      val = Regexp.last_match(1).gsub('&amp;', '&').downcase
+      Rails.cache.fetch("#{RequestContext.community_id}/comment-helper/category/by-name/#{val}") do
+        cat = Category.where('lower(name) = ?', val).first
+        if cat
+          "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+        else
+          match
+        end
       end
     end
 
     comment_text.gsub!(/\[category\#([0-9]+)\]/) do |match|
-      cat = Category.where(id: Regexp.last_match(1)).first
-      if cat
-        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
-      else
-        match
+      val = Regexp.last_match(1).to_i
+      Rails.cache.fetch("#{RequestContext.community_id}/comment-helper/category/by-id/#{val}") do
+        cat = Category.where(id: val).first
+        if cat
+          "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+        else
+          match
+        end
       end
     end
 
