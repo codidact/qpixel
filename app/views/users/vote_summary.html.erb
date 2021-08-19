@@ -33,7 +33,7 @@
         </div>
         <div class="item-list--text-value is-primary grid">
             <div class="grid grid--cell is-12">
-                <div class="has-font-size-larger grid--cell is-flexible">
+                <div class="grid--cell is-flexible">
                     <%= link_to generic_share_link(post) do %>
                         <%= post.post_type.is_top_level ? post.title : post.parent.title %>
                     <% end %>
