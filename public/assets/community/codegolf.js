@@ -4,14 +4,15 @@
  */
 
 (() => {
-  let match = location.pathname.match(/(?<=posts\/)\d+/);
+  const dom_parser = new DOMParser();
+  const match = location.pathname.match(/(?<=posts\/)\d+/);
 
   // Don't run on non-post pages.
   if (!match) {
     return;
   }
 
-  let CHALLENGE_ID = match[0];
+  const CHALLENGE_ID = match[0];
   let leaderboard;
   let sort;
 
@@ -20,10 +21,9 @@
   /**
    * Wrapper around localStorage
    */
-  let settings = {
+  const settings = {
     _defaults: {
       groupByLanguage: true,
-      mergeVariants: false,
       showPlacements: true
     },
     currentSettings: {}, // Used as a fallback if localStorage is unavailable
@@ -32,13 +32,6 @@
     },
     set groupByLanguage(value) {
       return this._set('groupByLanguage', value);
-    },
-
-    get mergeVariants() {
-      return this._get('mergeVariants');
-    },
-    set mergeVariants(value) {
-      return this._set('mergeVariants', value);
     },
 
     get showPlacements() {
@@ -67,10 +60,10 @@
   };
 
   async function getLeaderboard(id) {
-    let response = await fetch(`/posts/${id}`);
-    let text = await response.text();
+    const response = await fetch(`/posts/${id}`);
+    const text = await response.text();
 
-    let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
+    const doc = dom_parser.parseFromString(text.toString(), 'text/html');
 
     const pagination = doc.querySelector('.pagination');
     const num_pages = pagination ? parseInt(pagination.querySelector('.next').previousElementSibling.innerText) : 1;
@@ -83,20 +76,20 @@
     const leaderboard = [];
 
     for (let i = 0; i < pagePromises.length; i++) {
-      let text = await pagePromises[i];
-      let doc = new DOMParser().parseFromString(text.toString(), 'text/html');
-      let [question, ...page_answers] = doc.querySelectorAll('.post');
-      let non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
+      const text = await pagePromises[i];
+      const doc = dom_parser.parseFromString(text.toString(), 'text/html');
+      const [question, ...page_answers] = doc.querySelectorAll('.post');
+      const non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
 
-      for (let answerPost of non_deleted_answers) {
+      for (const answerPost of non_deleted_answers) {
 
-        let header = answerPost.querySelector('h1, h2, h3');
-        let code = header.parentElement.querySelector(':scope > pre > code');
-        let full_language = header ? header.innerText.split(',')[0].trim() : undefined
-        let variant = full_language?.match(/\((.+)\)/)?.[1];
-        let language = full_language.split('(' + variant + ')').join('').trim();
+        const header = answerPost.querySelector('h1, h2, h3');
+        const code = header.parentElement.querySelector(':scope > pre > code');
+        const full_language = header ? header.innerText.split(',')[0].trim() : undefined
+        const regexGroups = full_language?.match(/(?<language>.+?)(?: \((?<variant>.+)\))?(?: \+ (?<extensions>.+))?$/)?.groups ?? {};
+        const { language, variant, extensions } = regexGroups;
 
-        let entry = {
+        const entry = {
           answerID: answerPost.id,
           answerURL: answerPost.querySelector('.js-permalink').href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
@@ -105,6 +98,7 @@
           full_language, full_language,
           language: language,
           variant: variant,
+          extensions: extensions,
           code: code?.innerText,
           score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
         };
@@ -137,7 +131,7 @@
     }
   }
 
-  let embed = document.createElement('div');
+  const embed = document.createElement('div');
   embed.innerHTML = `
 <div class="toc cg-leaderboard">
   <div class="cgl-container">
@@ -146,12 +140,6 @@
       <label>
         Group by language
         <input id="group-by-lang" type="checkbox" ${settings.groupByLanguage ? 'checked' : ''}>
-      </label>
-    </div>
-    <div class="has-padding-2 cgl-option">
-      <label title="Shows variants of a language as the same language (e.g. Python (Cython) and Python (PyPy) will both be put under Python)">
-        Merge variants
-        <input id="merge-variants" type="checkbox" ${settings.mergeVariants ? 'checked' : ''}>
       </label>
     </div>
     <div class="has-padding-2">
@@ -176,15 +164,10 @@
     }
   });
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
-  const mergeVariantsInput = embed.querySelector('#merge-variants');
   const showPlacementsInput = embed.querySelector('#show-placement');
 
   groupByLanguageInput.addEventListener('click', _ => {
     settings.groupByLanguage = groupByLanguageInput.checked;
-    refreshBoard();
-  });
-  mergeVariantsInput.addEventListener('click', _ => {
-    settings.mergeVariants = mergeVariantsInput.checked;
     refreshBoard();
   });
   showPlacementsInput.addEventListener('click', _ => {
@@ -208,10 +191,10 @@
    * Turns arrays into associative arrays
    */
   function createGroups(array, categorizer) {
-    let groups = {};
+    const groups = {};
 
-    for (let item of array) {
-      let category = categorizer(item);
+    for (const item of array) {
+      const category = categorizer(item);
       if (groups[category]) {
         groups[category].push(item);
       } else {
@@ -223,7 +206,7 @@
   }
 
   function createRow(answer) {
-    let row = document.createElement('a');
+    const row = document.createElement('a');
     row.classList.add('toc--entry');
     row.href = answer.answerURL;
 
@@ -235,9 +218,9 @@
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = !settings.mergeVariants && answer.variant ? answer.full_language : answer.language;
+    row.querySelector('.language-badge').innerText = answer.full_language;
     row.querySelector('.username').insertAdjacentHTML('afterend', answer.code
-      ? `<code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
+      ? ` <code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
       : ' <em>Invalid entry format</em>');
 
     return row;
@@ -245,13 +228,13 @@
 
   async function renderLeaderboardsByLanguage() {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    let languageLeaderboards = createGroups(leaderboard, entry => settings.mergeVariants ? entry.language : entry.language + entry.variant);
+    const languageLeaderboards = createGroups(leaderboard, entry => entry.full_language);
 
-    for (let language in languageLeaderboards) {
+    for (const language in languageLeaderboards) {
       augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
 
-      for (let answer of languageLeaderboards[language]) {
-        let row = createRow(answer);
+      for (const answer of languageLeaderboards[language]) {
+        const row = createRow(answer);
         leaderboardsTable.appendChild(row);
       }
     }
@@ -261,15 +244,15 @@
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
     augmentLeaderboardWithPlacements(leaderboard, sort);
 
-    for (let answer of leaderboard) {
-      let row = createRow(answer);
+    for (const answer of leaderboard) {
+      const row = createRow(answer);
       leaderboardsTable.appendChild(row);
     }
   }
 
   window.addEventListener('DOMContentLoaded', _ => {
     if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      let question_tags = [...document.querySelector('.post--tags').children].map(el => el.innerText);
+      const question_tags = [...document.querySelector('.post--tags').children].map(el => el.innerText);
       
       if (question_tags.includes('code-golf') || question_tags.includes('lowest-score')) {
         sort = (x, y) => x.score - y.score;
