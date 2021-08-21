@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_174224) do
+ActiveRecord::Schema.define(version: 2021_08_21_080736) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -262,7 +262,7 @@ ActiveRecord::Schema.define(version: 2021_07_29_174224) do
   end
 
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "content"
+    t.text "content"
     t.string "link"
     t.boolean "is_read", default: false
     t.datetime "created_at", null: false
