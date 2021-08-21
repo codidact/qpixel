@@ -16,7 +16,12 @@
   padding: 0.5em;
 
   &:hover {
-    background: #eeeeee;
+    @media (prefers-color-scheme: light){
+      background: #eeeeee;
+    }
+    @media (prefers-color-scheme: dark){
+      background: rgb(24, 26, 27);
+    }
   }
 
   .username {
