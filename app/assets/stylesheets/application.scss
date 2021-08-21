@@ -16,11 +16,6 @@
 
 @import 'variables';
 
-@media (prefers-color-scheme: dark){
-  background-color: rgb(30, 30, 30);
-  color: white;
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
