@@ -4,8 +4,9 @@ $(() => {
     el.removeClass(icons.join(' ')).addClass(icon);
   };
 
-  $(document).on('keyup change paste', '[data-character-count]', ev => {
+  $(document).on('keyup change paste', '[data-character-count]','[data-field-name]', ev => {
     const $tgt = $(ev.target);
+    const $formElement = $tgt.attr('data-field-name');
     const $counter = $($tgt.attr('data-character-count'));
     const $button = $counter.parents('form').find('input[type="submit"]');
     const $count = $counter.find('.js-character-count__count');
@@ -19,10 +20,10 @@ $(() => {
 
     if (displayAt) {
       if (count >= displayAt * max) {
-        $counter.show();
+        $counter.removeClass('hide');
       }
       else {
-        $counter.hide();
+        $counter.addClass('hide');
       }
     }
 
@@ -42,6 +43,7 @@ $(() => {
     }
     else if (min && count < min) {
       $counter.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
+      document.getElementById($formElement).style.setProperty("border", "2px solid red", "important");
       setIcon($icon, 'fa-ellipsis-h');
       if ($button) {
         $button.attr('disabled', true).addClass('is-muted');
@@ -53,6 +55,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', false).removeClass('is-muted');
       }
+      document.getElementById($formElement).style.border = null;
     }
 
     $count.text(text);
