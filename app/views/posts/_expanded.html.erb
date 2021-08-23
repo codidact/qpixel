@@ -56,6 +56,16 @@
     <% end %>
 
     <div class="post--content has-padding-2">
+      
+      <% if !is_top_level && !params[:answer].nil? && params[:answer] == post.id.to_s %>
+        <div class="notice is-info">
+          <p>
+            You are accessing this answer with a direct link; it is therefore shown above all other answers regardless of it's score.
+            You can <%= link_to 'return to the normal view', generic_share_link(post.parent), class: 'is-teal' %>.
+          </p>
+        </div>
+      <% end %>
+      
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
