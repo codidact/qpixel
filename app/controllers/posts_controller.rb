@@ -51,7 +51,7 @@ class PostsController < ApplicationController
 
     if @post.title?
       if @post.title.include? "$$"
-        flash[:danger] = helpers.i18ns('You shouldn\'t use $$', type: @post_type.name)
+        flash[:danger] = helpers.i18ns('Title can not contain "$$"', type: @post_type.name)
         redirect_back fallback_location: root_path
         return
       end
