@@ -49,6 +49,14 @@ class PostsController < ApplicationController
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
+    if @post.title?
+      if @post.title.include? "$$"
+        flash[:danger] = helpers.i18ns('You shouldn\'t use $$', type: @post_type.name)
+        redirect_back fallback_location: root_path
+        return
+      end
+    end
+
     if @post_type.has_parent? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
