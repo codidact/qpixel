@@ -33,6 +33,7 @@ QPixel.Popup = class Popup {
     const popupId = $(field).attr('data-popup');
     if (!!popupId) {
       const popup = QPixel._popups[popupId];
+      popup.setCallback(cb);
       popup.updateItems(items);
       popup.updatePosition();
       return popup;
@@ -107,6 +108,16 @@ QPixel.Popup = class Popup {
       top: `${fieldOffset.top + caretPos.top + 20}px`,
       left: `${fieldOffset.left + caretPos.left}px`
     });
+  }
+
+  /**
+   * Change the callback function to the provided function.
+   * Necessary because if the callback is in a closure, old variable values (like cursor position)
+   * will remain unless we update the callback to a new function in an updated closure.
+   * @param cb the new callback function to apply
+   */
+  setCallback (cb) {
+    this.callback = cb;
   }
 
   getActiveIdx () {
