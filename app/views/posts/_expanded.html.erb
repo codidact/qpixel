@@ -24,6 +24,15 @@
     </h1>
   <% end %>
 
+  <% if !is_top_level && !params[:answer].nil? && params[:answer] == post.id.to_s %>
+    <div class="notice is-info has-font-size-caption">
+      <p>
+        You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its score.
+        You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent), class: 'is-teal' %></strong>.
+      </p>
+    </div>
+  <% end %>
+
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
@@ -55,7 +64,7 @@
       </div>
     <% end %>
 
-    <div class="post--content has-padding-2">
+    <div class="post--content has-padding-2">      
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
