@@ -64,3 +64,5 @@ en:
       In a URL of "https://yoursite.codidact.com/help/topic", the "topic" is the slug.
     responding_to: >
       Responding to:
+    no_block_mathjax_title: >
+     Title cannot contain block-level MathJax.
