@@ -52,7 +52,7 @@ class PostsController < ApplicationController
     if @post.title?
       if @post.title.include? "$$"
         flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
-        redirect_back fallback_location: root_path
+        render :new, status: :bad_request
         return
       end
     end
