@@ -1,6 +1,6 @@
 <%= render 'tabs', user: @user %>
 
-<h1>Vote summary for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr' %></h1>
+<h1>Vote summary for <%= user_link @user %></h1>
 
 <p class="is-lead">A daily summary of votes you have received for your posts.</p>
 

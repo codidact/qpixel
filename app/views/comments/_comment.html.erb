@@ -22,7 +22,7 @@
             reference to
             <a href="<%= comment_link(comment.references_comment) %>">
               comment by
-              <span dir="ltr"><%= comment.references_comment.user.rtl_safe_username %></span></a>:
+              <span dir="ltr"><%= rtl_safe_username(comment.references_comment.user) %></span></a>:
           </div>
         <% end %>
         <div class="h-p-2 has-border-left-width-4 has-border-left-style-solid has-border-color-tertiary-200">
@@ -31,7 +31,7 @@
       </div>
     <% end %>
     <div class="comment--info">
-      <%= link_to comment.user.rtl_safe_username, user_path(comment.user), dir: 'ltr' %>
+      <%= user_link comment.user %>
       wrote
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
     </div>

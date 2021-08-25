@@ -72,7 +72,7 @@
             <% unless post.close_reason.nil? %>
               as <%= post.close_reason.name %>
             <% end %>
-            by <%= link_to post.closed_by.rtl_safe_username, user_path(post.closed_by), dir: 'ltr'%>
+            by <%= user_link post.closed_by %>
             on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
           <% unless post.close_reason.nil? %>
             <p>
@@ -92,7 +92,7 @@
       <% if post.deleted %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
-            <strong>Deleted</strong> by <%= link_to post.deleted_by.rtl_safe_username, user_path(post.deleted_by), dir: 'ltr'%>
+            <strong>Deleted</strong> by <%= user_link post.deleted_by %>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </p>
           <hr>
@@ -171,7 +171,7 @@
                 <i class="fa fa-pencil-alt" title="last edited" aria-label="last edited"></i>
                 <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
                 <% unless last_edited_by_self %>
-                  by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
+                  by <%= user_link post.last_edited_by %>
                 <% end %>
               </div>
             <% end %>
@@ -390,7 +390,10 @@
                 <% next if !current_user.is_moderator && (current_user.id == flag.user.id) %>
                 <div class="widget--body">
                   <div>
-                  <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+                  <p>
+                    <strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash;
+                    <%= user_link flag.user %>
+                  </p>
                   <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
                   <div class="has-float-right has-padding-1">
                     <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>

@@ -1,10 +1,10 @@
-<% content_for :title, "User #{@user.rtl_safe_username}" %>
+<% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
 <% if moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
-<h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
+<h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
 
 <% if @user.community_user.suspended? %>
   <div class="notice is-danger h-m-b-4">
@@ -43,7 +43,7 @@
       </p>
 
       <% if @user.profile.nil? || @user.profile.blank? %>
-        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.</p>
+        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
@@ -80,7 +80,7 @@
 
       <h2 class="user-profile-heading">Posts</h2>
       <% if @posts.size == 0 %>
-        <p><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</p>
+        <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
       <% else %>
         <div class="item-list user-profile-post-list">
           <% @posts.each do |a| %>

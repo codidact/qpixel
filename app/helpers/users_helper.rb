@@ -38,4 +38,13 @@ module UsersHelper
   def deleted_user?(user)
     user.deleted? || user.community_user.deleted?
   end
+
+  def rtl_safe_username(user)
+    user.nil? ? 'deleted user' : user.rtl_safe_username
+  end
+
+  def user_link(user, **link_opts)
+    link_to user.nil? ? 'deleted user' : user.rtl_safe_username, user.nil? ? '#' : user_path(user)
+            { dir: 'ltr' }.merge(link_opts)
+  end
 end
