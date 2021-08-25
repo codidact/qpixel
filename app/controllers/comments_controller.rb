@@ -50,7 +50,7 @@ class CommentsController < ApplicationController
       flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
     end
-    redirect_to helpers.generic_show_link(@post)
+    redirect_to helpers.generic_share_link(@post)
   end
 
   def create
