@@ -49,12 +49,10 @@ class PostsController < ApplicationController
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
-    if @post.title?
-      if @post.title.include? "$$"
-        flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
-        render :new, status: :bad_request
-        return
-      end
+    if @post.title? && (@post.title.include? '$$')
+      flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
+      render :new, status: :bad_request
+      return
     end
 
     if @post_type.has_parent? && @parent.nil?
