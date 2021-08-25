@@ -1,30 +1,40 @@
-<h1 class="has-margin-bottom-2">
-  New Post
+<% unless @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level %>
+  <h1 class="has-margin-bottom-2">
+    New Post
+    <% if @category.present? %>
+      in <%= @category.name %>
+    <% end %>
+  </h1>
   <% if @category.present? %>
-    in <%= @category.name %>
-  <% end %>
-</h1>
-<% if @category.present? %>
-  <p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
+    <p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
 
-  <div class="notice is-info">
-    <p><strong>Posting Tips</strong></p>
-    <div class="has-font-size-caption">
-      <% guidance = @category.asking_guidance_override %>
-      <%= raw(sanitize(render_markdown(guidance.present? ? guidance : SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+    <div class="notice is-info">
+      <p><strong>Posting Tips</strong></p>
+      <div class="has-font-size-caption">
+        <% guidance = @category.asking_guidance_override %>
+        <%= raw(sanitize(render_markdown(guidance.present? ? guidance : SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
+      </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
 
-<% if @post.errors.any? %>
+  <% if @post.errors.any? %>
+    <div class="notice is-danger is-filled">
+      <p>The following errors prevented your post from being saved:</p>
+      <ul>
+        <% @post.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>
+<% else %>
   <div class="notice is-danger is-filled">
     <p>The following errors prevented your post from being saved:</p>
     <ul>
-      <% @post.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
+      <li>You don't have a high enough trust level to post in the Category category.
+      </li>
     </ul>
   </div>
 <% end %>
-
-<%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>
