@@ -8,7 +8,7 @@
 
 <% content_for :twitter_card_meta do %>
   <meta name="twitter:card" content="summary" />
-  <% if @post.user.twitter.present? %>
+  <% if @post.user&.twitter&.present? %>
     <meta name="twitter:creator" content="@<%= @post.user.twitter %>" />
   <% end %>
   <meta property="og:url" content="<%= post_url(@post) %>" />

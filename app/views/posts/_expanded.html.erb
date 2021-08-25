@@ -96,7 +96,7 @@
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </p>
           <hr>
-          <% if post.deleted_by.id == post.user.id %>
+          <% if post.deleted_by.id == post.user_id %>
             <p>
               The author of this post decided to delete it. It can only be seen by users with the Curate privilege.
             </p>
@@ -222,7 +222,7 @@
               </a>
             <% end %>
             <% unless post.locked? || !post_type.is_closeable %>
-              <% if check_your_privilege('flag_close') || (post.user.id === current_user&.id)%>
+              <% if check_your_privilege('flag_close') || (post.user_id === current_user&.id)%>
                 <% if !post.closed %>
                   <a href="#" class="close-dialog-link tools--item">
                     <i class="fa fa-lock"></i>
