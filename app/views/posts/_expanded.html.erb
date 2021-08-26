@@ -25,9 +25,10 @@
   <% end %>
 
   <% if !is_top_level && !params[:answer].nil? && params[:answer] == post.id.to_s %>
+    <% sort_type = params[:sort] == 'active' ? 'activity' : 'score' %>
     <div class="notice is-info has-font-size-caption">
       <p>
-        You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its score.
+        You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its <%= sort_type %>.
         You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent), class: 'is-teal' %></strong>.
       </p>
     </div>
