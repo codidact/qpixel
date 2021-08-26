@@ -23,10 +23,12 @@
     </div>
      <p class="has-color-tertiary-600 has-float-right post-list--meta">
       posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
-      by <%= user_link post.user %>&nbsp;&middot;&nbsp;
-      <%= post.last_activity_type %>
-      <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
-      by <%= user_link active_user %>
+      by <%= user_link post.user %>
+      <% if post.last_activity != post.created_at %>
+        &nbsp;&middot;&nbsp; <%= post.last_activity_type %>
+        <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
+        by <%= link_to active_user.rtl_safe_username, user_path(active_user), dir: 'ltr' %>
+      <% end %>
     </p>
     <div class="has-padding-top-2">
       <% category = defined?(@category) ? @category : post.category %>
