@@ -1,10 +1,10 @@
+<h1 class="has-margin-bottom-2">
+  New Post
+  <% if @category.present? %>
+    in <%= @category.name %>
+  <% end %>
+</h1>
 <% unless @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level %>
-  <h1 class="has-margin-bottom-2">
-    New Post
-    <% if @category.present? %>
-      in <%= @category.name %>
-    <% end %>
-  </h1>
   <% if @category.present? %>
     <p class="has-color-tertiary-500">Not where you meant to post? See <%= link_to 'Categories', categories_path %></p>
 
