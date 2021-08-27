@@ -105,7 +105,7 @@ jobs:
       - run:
           name: Run deploy
           command: |
-            ssh "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "$SSH_COMMAND"
+            ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "$SSH_COMMAND"
 
 workflows:
   test_lint:
