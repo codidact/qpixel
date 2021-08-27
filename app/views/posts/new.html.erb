@@ -17,7 +17,9 @@
     </div>
   <% end %>
 
-  <% if @post.errors.any? %>
+  <% if !@post.errors.any? %>
+   <%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>
+  <% else %>
     <div class="notice is-danger is-filled">
       <p>The following errors prevented your post from being saved:</p>
       <ul>
@@ -28,7 +30,6 @@
     </div>
   <% end %>
 
-  <%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path %>
 <% else %>
   <div class="notice is-danger is-filled">
       You don't have a high enough trust level to post in the <%= @category.name %> category.
