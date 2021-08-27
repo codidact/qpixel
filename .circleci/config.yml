@@ -102,6 +102,7 @@ jobs:
           name: Import SSH key
           command: |
             echo "$DEV_SSH_KEY" | base64 --decode > ~/deploy.key
+            chmod 0700 ~/deploy.key
       - run:
           name: Run deploy
           command: |
