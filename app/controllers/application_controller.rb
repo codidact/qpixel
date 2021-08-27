@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   helper_method :top_level_post_types, :second_level_post_types
 
   def upload
-    redirect_to helpers.upload_remote_url(params[:key])
+    redirect_to helpers.upload_remote_url(params[:key]), status: 301
   end
 
   def dashboard
