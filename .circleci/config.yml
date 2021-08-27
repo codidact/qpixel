@@ -106,7 +106,7 @@ jobs:
       - run:
           name: Run deploy
           command: |
-            ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "sudo su -l qpixel /var/apps/qpixel/deploy-dev"
+            ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "sudo su -l qpixel /var/apps/deploy-dev"
 
 workflows:
   test_lint:
