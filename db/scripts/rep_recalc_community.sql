@@ -1,9 +1,10 @@
-SET @cid = 16;
+SET @cid = 3;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (
     SELECT cu.id, SUM(vq.rep_change) + 1 AS total_rep
     FROM community_users cu
+    INNER JOIN users u on cu.user_id = u.id
     LEFT JOIN (
         SELECT v.id, v.community_id, v.recv_user_id,
                CASE
@@ -18,7 +19,7 @@ INNER JOIN ( SELECT * FROM (
           AND p.deleted = 0
     ) vq ON vq.community_id = cu.community_id AND cu.user_id = vq.recv_user_id
     WHERE cu.community_id = @cid
-    GROUP BY cu.id
+    GROUP BY cu.id, u.id
 ) q ) x ON x.id = community_users.id
 SET community_users.reputation = IFNULL(x.total_rep, 1)
 WHERE community_users.community_id = @cid
