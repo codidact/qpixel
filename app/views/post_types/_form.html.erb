@@ -154,6 +154,30 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_reactions, 'Reactions?', class: 'form-element' %>
+        <span class="form-caption">Can reactions be added to this post type?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_reactions, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_only_specific_reactions, 'Restrict to specific reactions?', class: 'form-element' %>
+        <span class="form-caption">Can only reactions specific to this post type be added?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_only_specific_reactions, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
   <div class="actions">
     <%= f.submit 'Save Changes', class: 'button is-primary is-filled' %>
   </div>
