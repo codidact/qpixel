@@ -15,6 +15,17 @@
         text-decoration: underline;
     }
 }
+.post--react > button.button {
+    color: #777777 !important;
+
+    &:hover {
+        color: #444444 !important;
+    }
+    &.is-active {
+        color: white !important;
+        background-color: #666666 !important;
+    }
+}
 .muted-p p {
     margin: 0;
 }
