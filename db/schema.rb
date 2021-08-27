@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_27_143124) do
+ActiveRecord::Schema.define(version: 2021_08_27_203013) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -394,7 +394,7 @@ ActiveRecord::Schema.define(version: 2021_08_27_143124) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked"
+    t.boolean "locked", default: false, null: false
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
@@ -462,16 +462,16 @@ ActiveRecord::Schema.define(version: 2021_08_27_143124) do
   end
 
   create_table "reactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "users_id"
-    t.bigint "reaction_types_id"
-    t.bigint "posts_id"
-    t.bigint "comments_id"
+    t.bigint "user_id"
+    t.bigint "reaction_type_id"
+    t.bigint "post_id"
+    t.bigint "comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["comments_id"], name: "index_reactions_on_comments_id"
-    t.index ["posts_id"], name: "index_reactions_on_posts_id"
-    t.index ["reaction_types_id"], name: "index_reactions_on_reaction_types_id"
-    t.index ["users_id"], name: "index_reactions_on_users_id"
+    t.index ["comment_id"], name: "index_reactions_on_comment_id"
+    t.index ["post_id"], name: "index_reactions_on_post_id"
+    t.index ["reaction_type_id"], name: "index_reactions_on_reaction_type_id"
+    t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
   create_table "site_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -618,7 +618,9 @@ ActiveRecord::Schema.define(version: 2021_08_27_143124) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.integer "trust_level"
     t.boolean "developer"
+    t.string "cid"
     t.string "discord"
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at"

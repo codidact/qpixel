@@ -15,8 +15,7 @@ class ReactionsController < ApplicationController
         return
       end
 
-      thread = CommentThread.where(title: reaction_type.name, post: @post).last
-      thread ||= CommentThread.new(title: reaction_type.name, post: @post)
+      thread = CommentThread.find_or_create_by(title: reaction_type.name, post: @post)
 
       comment = Comment.new(post: @post, content: comment_text, user: current_user, comment_thread: thread)
     elsif reaction_type.requires_comment
@@ -62,17 +61,8 @@ class ReactionsController < ApplicationController
   def edit; end
 
   def update
-    @reaction_type.update name: params[:reaction_type][:name],
-                          description: params[:reaction_type][:description],
-                          on_post_label: params[:reaction_type][:on_post_label],
-                          color: params[:reaction_type][:color],
-                          icon: params[:reaction_type][:icon],
-                          requires_comment: params[:reaction_type][:requires_comment],
-                          active: params[:reaction_type][:active],
-                          position: params[:reaction_type][:position],
-                          post_type_id: params[:reaction_type][:post_type_id]
-
-    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
+    @reaction_type.update reaction_type_params
+    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt}/reactions") }
     redirect_to reactions_path
   end
 
@@ -81,16 +71,8 @@ class ReactionsController < ApplicationController
   end
 
   def create
-    ReactionType.create name: params[:reaction_type][:name],
-                        description: params[:reaction_type][:description],
-                        on_post_label: params[:reaction_type][:on_post_label],
-                        color: params[:reaction_type][:color],
-                        icon: params[:reaction_type][:icon],
-                        requires_comment: params[:reaction_type][:requires_comment],
-                        active: params[:reaction_type][:active],
-                        position: params[:reaction_type][:position],
-                        post_type_id: params[:reaction_type][:post_type_id]
-    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
+    ReactionType.create reaction_type_params
+    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt}/reactions") }
     redirect_to reactions_path
   end
 
@@ -105,5 +87,10 @@ class ReactionsController < ApplicationController
 
   def set_reaction_type
     @reaction_type = ReactionType.find(params[:id])
+  end
+
+  def reaction_type_params
+    params.require(:reaction_type).permit(:name, :description, :on_post_label, :color, :icon,
+                                          :requires_comment, :active, :position, :post_type_id)
   end
 end

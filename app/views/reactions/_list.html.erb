@@ -58,10 +58,10 @@
                                     </p>
                                     <% if r.comment.content.size < 150 %>
                                     <%= raw(sanitize(render_markdown(r.comment.content),
-                                                    scrubber: CommentScrubber.new)) %>
+                                                     scrubber: CommentScrubber.new)) %>
                                     <% else %>
                                     <%= raw(sanitize(render_markdown(r.comment.content[0..150] + "..."),
-                                                    scrubber: CommentScrubber.new)) %>
+                                                     scrubber: CommentScrubber.new)) %>
                                     <% end %>
                                 </div>
                             <% else %>

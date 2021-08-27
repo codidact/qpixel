@@ -2,7 +2,7 @@
 
 <% if @reaction_type.errors.any? %>
   <div class="notice is-danger">
-    These errors prevented this close reason being saved:
+    These errors prevented this reaction type being saved:
     <ul>
       <% @reaction_type.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>

@@ -32,7 +32,7 @@ $(() => {
 
         const data = await resp.json();
 
-        if (data.status == 'success') {
+        if (data.status === 'success') {
             window.location.reload();
         } else {
             QPixel.createNotification("danger", data.message);
@@ -42,7 +42,7 @@ $(() => {
         e.preventDefault();
         const $this = $(e.target);
         const postId = $this.attr("data-post")
-        const reaction_type = $this.attr("data-reaction");
+        const reactionType = $this.attr("data-reaction");
 
         const resp = await fetch(`/posts/reactions/retract`, {
             method: "POST",
@@ -52,14 +52,14 @@ $(() => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                reaction_id: reaction_type,
+                reaction_id: reactionType,
                 post_id: postId
             })
         });
 
         const data = await resp.json();
 
-        if (data.status == 'success') {
+        if (data.status === 'success') {
             window.location.reload();
         } else {
             QPixel.createNotification("danger", data.message);

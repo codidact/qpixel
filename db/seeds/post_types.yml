@@ -11,6 +11,7 @@
   is_top_level: true
   is_freely_editable: false
   has_reactions: false
+  has_only_specific_reactions: true
 
 - name: Answer
   description: ~
@@ -25,6 +26,7 @@
   is_top_level: false
   is_freely_editable: false
   has_reactions: true
+  has_only_specific_reactions: false
 
 - name: PolicyDoc
   description: ~
@@ -39,6 +41,7 @@
   is_top_level: false
   is_freely_editable: false
   has_reactions: false
+  has_only_specific_reactions: false
 
 - name: HelpDoc
   description: ~
@@ -53,6 +56,7 @@
   is_top_level: false
   is_freely_editable: false
   has_reactions: false
+  has_only_specific_reactions: false
 
 - name: Article
   description: ~
@@ -67,3 +71,4 @@
   is_top_level: true
   is_freely_editable: false
   has_reactions: false
+  has_only_specific_reactions: false
