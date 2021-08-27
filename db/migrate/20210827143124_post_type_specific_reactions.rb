@@ -4,7 +4,6 @@ class PostTypeSpecificReactions < ActiveRecord::Migration[5.2]
     add_column :post_types, :has_only_specific_reactions, :boolean
 
     PostType.update_all(has_only_specific_reactions: false)
-    PostType.where(name: ['Question']).update_all(has_reactions: true,
-                                                  has_only_specific_reactions: true)
+    PostType.where(name: ['Question']).update_all(has_only_specific_reactions: true)
   end
 end
