@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_21_080736) do
+ActiveRecord::Schema.define(version: 2021_08_27_143124) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -353,6 +353,7 @@ ActiveRecord::Schema.define(version: 2021_08_21_080736) do
     t.string "icon_name"
     t.boolean "has_reactions"
     t.bigint "answer_type_id"
+    t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
   end
@@ -455,7 +456,9 @@ ActiveRecord::Schema.define(version: 2021_08_21_080736) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active"
+    t.bigint "post_type_id"
     t.index ["community_id"], name: "index_reaction_types_on_community_id"
+    t.index ["post_type_id"], name: "index_reaction_types_on_post_type_id"
   end
 
   create_table "reactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -616,7 +619,6 @@ ActiveRecord::Schema.define(version: 2021_08_21_080736) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.boolean "developer"
-    t.string "cid"
     t.string "discord"
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at"
