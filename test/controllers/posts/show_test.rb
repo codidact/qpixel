@@ -40,7 +40,8 @@ class PostsControllerTest < ActionController::TestCase
   test 'show redirects parented to parent post' do
     get :show, params: { id: posts(:answer_one).id }
     assert_response 302
-    assert_redirected_to post_path(posts(:answer_one).parent_id)
+    assert_redirected_to answer_post_path(posts(:answer_one).parent_id, answer: posts(:answer_one).id,
+                                          anchor: "answer-#{posts(:answer_one).id}")
   end
 
   test 'unprivileged user cannot see post in high trust level category' do

@@ -35,6 +35,7 @@ class Post < ApplicationRecord
   validate :maximum_tag_length, if: -> { post_type.has_tags }
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
+  validate :maximum_title_length, if: -> { post_type.has_tags }
   validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_valid, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
@@ -95,6 +96,21 @@ class Post < ApplicationRecord
 
   def remove_attribution_notice!
     update(att_source: nil, att_license_link: nil, att_license_name: nil)
+  end
+
+  def last_activity_type
+    case last_activity
+    when closed_at
+      'closed'
+    when locked_at
+      'locked'
+    when deleted_at
+      'deleted'
+    when last_edited_at
+      'edited'
+    else
+      'last activity'
+    end
   end
 
   def body_plain
@@ -270,6 +286,13 @@ class Post < ApplicationRecord
     end
     if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 15
       errors.add(:title, 'must be more than 15 non-whitespace characters long')
+    end
+  end
+
+  def maximum_title_length
+    max_title_len = SiteSetting['MaxTitleLength']
+    if title.length > max_title_len
+      errors.add(:title, "can't be more than #{max_title_len} characters")
     end
   end
 

@@ -1,6 +1,10 @@
-<% content_for :title, "User #{@user.rtl_safe_username}" %>
+<% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
-<h1><span dir="ltr"><%= @user.rtl_safe_username %></span></h1>
+<% if moderator? && deleted_user?(@user) %>
+  <%= render 'deleted', user: @user %>
+<% end %>
+
+<h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
 
 <% if @user.community_user.suspended? %>
   <div class="notice is-danger h-m-b-4">
@@ -16,24 +20,30 @@
 
 <%= render 'tabs', user: @user %>
 
-<div class="grid">
+<div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-6 h-p-t-2">
       <div class="profile-text">
-      <% if @user.website.present? || @user.twitter.present? %>
       <p>
         <% if @user.website.present? %>
-          <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
-          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span class="h-m-r-4">
+            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
+          </span>
         <% end %>
         <% if @user.twitter.present? %>
-          <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+          <span class="h-m-r-4">
+            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+          </span>
+        <% end %>
+        <% if @user.discord.present? %>
+          <span class="h-m-r-4">
+            <i class="fab fa-discord h-m-r-1"></i> <%= @user.discord %>
+          </span>
         <% end %>
       </p>
-      <% end %>
 
       <% if @user.profile.nil? || @user.profile.blank? %>
-        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= @user.rtl_safe_username %></span> yet.</p>
+        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
       <% else %>
         <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
       <% end %>
@@ -51,7 +61,6 @@
             <div class="droppanel--header">quick actions</div>
             <div class="droppanel--menu">
               <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
-              <a href="/mod/votes/user/<%= @user.id %>">suspicious voting patterns</a>
               <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
               <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
               <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
@@ -71,7 +80,7 @@
 
       <h2 class="user-profile-heading">Posts</h2>
       <% if @posts.size == 0 %>
-        <p><span dir="ltr"><%= @user.rtl_safe_username %></span> hasn't posted anything yet.</p>
+        <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
       <% else %>
         <div class="item-list user-profile-post-list">
           <% @posts.each do |a| %>
@@ -100,11 +109,11 @@
       <% end %>
     </div>
 
- <table class="table is-full-width">
+    <table class="table is-full-width">
       <tr>
       </tr>
       <tr>
-        <td colspan="2">&emsp;&nbsp; Reputation</td>
+        <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i>&nbsp; Reputation</td>
         <td><%= @user.reputation %></td>
       </tr>
       <tr>
@@ -138,8 +147,14 @@
           </div>
         <% end %>
         <div class="widget--footer">
-          <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
-            Abilities &raquo;
+          <% if current_user&.id == @user.id %>
+           <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
+             Abilities &raquo;
+           <% end %>
+          <% else %>
+           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold' do %>
+             Abilities &raquo;
+           <% end %>
           <% end %>
         </div>
       </div>

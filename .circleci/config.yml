@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get -qq update
+            sudo apt-get --allow-releaseinfo-change -qq update
             sudo apt-get -y install git libmariadb-dev libmagickwand-dev
       - checkout
       - restore_cache:
@@ -70,7 +70,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get -qq update
+            sudo apt-get --allow-releaseinfo-change -qq update
             sudo apt-get -y install git libmariadb-dev libmagickwand-dev
       - checkout
       - restore_cache:

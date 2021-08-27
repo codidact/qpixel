@@ -2,6 +2,7 @@ require 'test_helper'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
+  include ApplicationHelper
 
   test 'should get index' do
     get :index
@@ -79,38 +80,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(404)
   end
 
-  test 'soft deleting a user should not lose content' do
+  test 'should soft-delete user' do
     sign_in users(:global_admin)
-    assert_nothing_raised do
-      relations = User.reflections
-      pre_counts = relations.reject { |_, ref| ref.options[:dependent] == :destroy }
-                            .map { |_, ref| [ref.klass, ref.klass.count] }.to_h
-
-      id = users(:standard_user).id
-      delete :soft_delete, params: { id: id, transfer: users(:editor).id }
-
-      assert_response 200
-      assert_not_nil assigns(:user)
-      assert_equal 'success', JSON.parse(response.body)['status']
-
-      # Make sure the record has actually been deleted.
-      assert_raises ActiveRecord::RecordNotFound do
-        User.find(id)
-      end
-
-      pre_counts.each do |model, count|
-        # No content should have been lost to deleting the user, just re-assigned.
-        # There should be one more AuditLog than before the operation, because deleting the user
-        # should create one.
-        if model.name == 'AuditLog'
-          assert_equal count + 1, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
-                                               "got #{model.count}"
-        else
-          assert_equal count, model.count, "Expected #{count} #{model.name.underscore.humanize.downcase.pluralize}, " \
-                                           "got #{model.count}"
-        end
-      end
-    end
+    delete :soft_delete, params: { id: users(:standard_user).id, type: 'user' }
+    assert_response 200
+    assert_not_nil assigns(:user)
+    assert_equal true, assigns(:user).deleted
   end
 
   test 'should require authentication to soft-delete user' do
@@ -197,7 +172,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:token)
     assert_not_nil assigns(:qr_code)
     assert_equal 1, User.where(login_token: assigns(:token)).count
-    assert @controller.current_user.login_token_expires_at <= 5.minutes.from_now,
+    assert current_user.login_token_expires_at <= 5.minutes.from_now,
            'Login token expiry too long'
   end
 
@@ -205,9 +180,9 @@ class UsersControllerTest < ActionController::TestCase
     get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz01' }
     assert_response 302
     assert_equal 'You are now signed in.', flash[:success]
-    assert_equal users(:closer).id, @controller.current_user.id
-    assert_nil @controller.current_user.login_token
-    assert_nil @controller.current_user.login_token_expires_at
+    assert_equal users(:closer).id, current_user.id
+    assert_nil current_user.login_token
+    assert_nil current_user.login_token_expires_at
   end
 
   test 'should refuse to sign in user using expired token' do
@@ -215,7 +190,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 404
     assert_not_nil flash[:danger]
     assert_equal true, flash[:danger].start_with?("That login link isn't valid.")
-    assert_nil @controller.current_user&.id
+    assert_nil current_user&.id
   end
 
   test 'should deny anonymous users access to annotations' do
@@ -243,10 +218,78 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to user_annotations_path(users(:standard_user))
   end
 
+  test 'should deny access to deleted account' do
+    get :show, params: { id: users(:deleted_account).id }
+    assert_response 404
+  end
+
+  test 'should deny access to deleted profile' do
+    get :show, params: { id: users(:deleted_profile).id }
+    assert_response 404
+    assert_not_nil assigns(:user)
+  end
+
+  test 'should allow moderator access to deleted account' do
+    sign_in users(:moderator)
+    get :show, params: { id: users(:deleted_account).id }
+    assert_response 200
+    assert_not_nil assigns(:user)
+  end
+
+  test 'should allow moderator access to deleted profile' do
+    sign_in users(:moderator)
+    get :show, params: { id: users(:deleted_profile).id }
+    assert_response 200
+    assert_not_nil assigns(:user)
+  end
+
+  # We can only test for one user per test block, hence there are
+  # three test blocks of users with different permission models to
+  # have a more unbiased check.
+
+  test 'my vote summary redirects to current user summary (#1 deleter)' do
+    sign_in users(:deleter)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:deleter))
+    sign_out :user
+  end
+
+  test 'my vote summary redirects to current user summary (#2 std user)' do
+    sign_in users(:standard_user)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:standard_user))
+    sign_out :user
+  end
+
+  test 'my vote summary redirects to current user summary (#3 global_admin)' do
+    sign_in users(:global_admin)
+    get :my_vote_summary
+    assert_redirected_to vote_summary_path(users(:global_admin))
+    sign_out :user
+  end
+
+  test 'vote summary rendered for all users, signed in or out, own or others' do
+    sign_out :user
+    get :vote_summary, params: { id: users(:standard_user).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:closer).id }
+    assert_response 200
+
+    sign_in users(:editor)
+
+    get :vote_summary, params: { id: users(:editor).id }
+    assert_response 200
+
+    get :vote_summary, params: { id: users(:deleter).id }
+    assert_response 200
+  end
+
   private
 
   def create_other_user
     other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
+    RequestContext.redis.hset 'network/community_registrations', 'other@example.com', other_community.id
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user

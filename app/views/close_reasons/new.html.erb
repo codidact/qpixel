@@ -4,7 +4,7 @@
 
 <% if @close_reason.errors.any? %>
   <div class="notice is-danger">
-    These errors prevented this close reason being saved:
+    These errors prevented this close reason from being saved:
     <ul>
       <% @close_reason.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>

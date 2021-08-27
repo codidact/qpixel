@@ -109,4 +109,24 @@ class PostsControllerTest < ActionController::TestCase
     after = CommunityUser.where(user: user, community: communities(:sample)).count
     assert_equal before + 1, after, 'No CommunityUser record was created'
   end
+
+  test 'should prevent deleted account creating post' do
+    sign_in users(:deleted_account)
+    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
+                            post: { post_type_id: post_types(:question).id, title: sample.title,
+                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
+                                    tags_cache: sample.tags_cache } }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should prevent deleted profile creating post' do
+    sign_in users(:deleted_profile)
+    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
+                            post: { post_type_id: post_types(:question).id, title: sample.title,
+                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
+                                    tags_cache: sample.tags_cache } }
+    assert_response 302
+    assert_redirected_to new_user_session_path
+  end
 end

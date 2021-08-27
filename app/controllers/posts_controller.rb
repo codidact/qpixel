@@ -33,8 +33,12 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post_type = PostType.find(params[:post][:post_type_id])
     @parent = Post.where(id: params[:parent]).first
+    @post_type = if @parent.present? && @parent.post_type.answer_type.present?
+                   @parent.post_type.answer_type
+                 else
+                   PostType.find(params[:post][:post_type_id])
+                 end
     @category = if @post_type.has_category
                   if params[:post][:category_id].present?
                     Category.find(params[:post][:category_id])
@@ -44,6 +48,12 @@ class PostsController < ApplicationController
                 end || nil
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
+
+    if @post.title? && (@post.title.include? '$$')
+      flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
+      render :new, status: :bad_request
+      return
+    end
 
     if @post_type.has_parent? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
@@ -58,7 +68,7 @@ class PostsController < ApplicationController
     end
 
     if @category.present? && @category.min_trust_level.present? && @category.min_trust_level > current_user.trust_level
-      @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', category: @category.name))
+      @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', name: @category.name))
       render :new, status: :forbidden
       return
     end
@@ -100,6 +110,9 @@ class PostsController < ApplicationController
       ['p', '1', '2'].each do |key|
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
+
+      do_draft_delete(URI(request.referer || '').path)
+
       redirect_to helpers.generic_show_link(@post)
     else
       render :new, status: :bad_request
@@ -108,7 +121,7 @@ class PostsController < ApplicationController
 
   def show
     if @post.parent_id.present?
-      return redirect_to post_path(@post.parent_id)
+      return redirect_to answer_post_path(@post.parent_id, answer: @post.id, anchor: "answer-#{@post.id}")
     end
 
     if @post.post_type_id == HelpDoc.post_type_id
@@ -136,8 +149,9 @@ class PostsController < ApplicationController
                   Post.where(parent_id: @post.id).undeleted
                       .or(Post.where(parent_id: @post.id, user_id: current_user&.id))
                 end.includes(:votes, :user, :comments, :license, :post_type)
+                .order(Post.arel_table[:id].not_eq(params[:answer]))
                 .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
-                           score: Arel.sql('deleted ASC, score DESC, RAND()'), age: :created_at)
+                           score: Arel.sql('deleted ASC, score DESC, RAND()'), active: :last_activity)
                 .paginate(page: params[:page], per_page: 20)
   end
 
@@ -155,17 +169,36 @@ class PostsController < ApplicationController
 
     if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
-      if @post.update(edit_post_params.merge(body: body_rendered,
-                                             last_edited_at: DateTime.now, last_edited_by: current_user,
-                                             last_activity: DateTime.now, last_activity_by: current_user))
-        PostHistory.post_edited(@post, current_user, before: before[:body],
-                                after: @post.body_markdown, comment: params[:edit_comment],
-                                before_title: before[:title], after_title: @post.title,
-                                before_tags: before[:tags], after_tags: @post.tags)
-        Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-        redirect_to post_path(@post)
+      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
+         current_user.is_global_admin) && params[:network_push] == 'true'
+        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                    doc_slug: @post.doc_slug, body: @post.body)
+        update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
+                                                    last_edited_by_id: current_user.id, last_activity: DateTime.now,
+                                                    last_activity_by_id: current_user.id)
+        posts.update_all(**update_params.symbolize_keys)
+        posts.each do |post|
+          PostHistory.post_edited(post, current_user, before: before[:body],
+                                  after: @post.body_markdown, comment: params[:edit_comment],
+                                  before_title: before[:title], after_title: @post.title,
+                                  before_tags: before[:tags], after_tags: @post.tags)
+        end
+        flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
+        redirect_to help_path(slug: @post.doc_slug)
       else
-        render :edit, status: :bad_request
+        if @post.update(edit_post_params.merge(body: body_rendered,
+                                               last_edited_at: DateTime.now, last_edited_by: current_user,
+                                               last_activity: DateTime.now, last_activity_by: current_user))
+          PostHistory.post_edited(@post, current_user, before: before[:body],
+                                  after: @post.body_markdown, comment: params[:edit_comment],
+                                  before_title: before[:title], after_title: @post.title,
+                                  before_tags: before[:tags], after_tags: @post.tags)
+          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
+          do_draft_delete(URI(request.referer || '').path)
+          redirect_to post_path(@post)
+        else
+          render :edit, status: :bad_request
+        end
       end
     else
       new_user = !current_user.privilege?('unrestricted')
@@ -194,6 +227,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
+          do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           @post.errors = edit.errors
@@ -481,9 +515,7 @@ class PostsController < ApplicationController
   end
 
   def delete_draft
-    key = "saved_post.#{current_user.id}.#{params[:path]}"
-    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.del key, saved_at
+    do_draft_delete(params[:path])
     render json: { status: 'success', success: true }
   end
 
@@ -543,6 +575,12 @@ class PostsController < ApplicationController
 
   def unless_locked
     check_if_locked(@post)
+  end
+
+  def do_draft_delete(path)
+    key = "saved_post.#{current_user.id}.#{path}"
+    saved_at = "saved_post_at.#{current_user.id}.#{path}"
+    RequestContext.redis.del key, saved_at
   end
 end
 # rubocop:enable Metrics/MethodLength

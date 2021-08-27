@@ -24,6 +24,16 @@
     </h1>
   <% end %>
 
+  <% if !is_top_level && !params[:answer].nil? && params[:answer] == post.id.to_s %>
+    <% sort_type = params[:sort] == 'active' ? 'activity' : 'score' %>
+    <div class="notice is-info has-font-size-caption">
+      <p>
+        You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its <%= sort_type %>.
+        You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent), class: 'is-teal' %></strong>.
+      </p>
+    </div>
+  <% end %>
+
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
@@ -70,6 +80,7 @@
 
     <div class="post--content has-padding-2">
       <%= render('reactions/list', post: post) if post.reactions %>
+
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
@@ -77,7 +88,7 @@
             <% unless post.close_reason.nil? %>
               as <%= post.close_reason.name %>
             <% end %>
-            by <%= link_to post.closed_by.rtl_safe_username, user_path(post.closed_by), dir: 'ltr'%>
+            by <%= user_link post.closed_by %>
             on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
           <% unless post.close_reason.nil? %>
             <p>
@@ -97,11 +108,11 @@
       <% if post.deleted %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
-            <strong>Deleted</strong> by <%= link_to post.deleted_by.rtl_safe_username, user_path(post.deleted_by), dir: 'ltr'%>
+            <strong>Deleted</strong> by <%= user_link post.deleted_by %>
             on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
           </p>
           <hr>
-          <% if post.deleted_by.id == post.user.id %>
+          <% if post.deleted_by.id == post.user_id %>
             <p>
               The author of this post decided to delete it. It can only be seen by users with the Curate privilege.
             </p>
@@ -152,7 +163,8 @@
               <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
               <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
               <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                          class: "badge is-tag #{required} #{topic} #{moderator}" %>
+                          class: "badge is-tag #{required} #{topic} #{moderator}",
+                          title: tag.excerpt %>
             <% end %>
           </div>
         <% end %>
@@ -175,7 +187,7 @@
                 <i class="fa fa-pencil-alt" title="last edited" aria-label="last edited"></i>
                 <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
                 <% unless last_edited_by_self %>
-                  by <%= link_to post.last_edited_by.rtl_safe_username, user_path(post.last_edited_by), dir: 'ltr'%>
+                  by <%= user_link post.last_edited_by %>
                 <% end %>
               </div>
             <% end %>
@@ -226,7 +238,7 @@
               </a>
             <% end %>
             <% unless post.locked? || !post_type.is_closeable %>
-              <% if check_your_privilege('flag_close') || (post.user.id === current_user&.id)%>
+              <% if check_your_privilege('flag_close') || (post.user_id === current_user&.id)%>
                 <% if !post.closed %>
                   <a href="#" class="close-dialog-link tools--item">
                     <i class="fa fa-lock"></i>
@@ -394,7 +406,10 @@
                 <% next if !current_user.is_moderator && (current_user.id == flag.user.id) %>
                 <div class="widget--body">
                   <div>
-                  <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+                  <p>
+                    <strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash;
+                    <%= user_link flag.user %>
+                  </p>
                   <input class="form-element flag-resolve-comment has-float-left" style="max-width: 300px;" placeholder="Optional comment for flagger">
                   <div class="has-float-right has-padding-1">
                     <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
@@ -461,8 +476,9 @@
                 <% elsif post.comments_disabled %>
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
-                <a href="#" class="button is-muted is-small" data-modal=".js--<%= post.id %>-new-thread-modal">Start new comment thread</a>
+                <a class="button is-muted is-small js-new-thread-link" data-post="<%= post.id %>">Start new comment thread</a>
               <% end %>
+                <%= render 'comments/new_thread_modal', post: post %>
             <% end %>
           </div>
         </div>
@@ -474,8 +490,6 @@
 <% if moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
-
-<%= render 'comments/new_thread_modal', post: post %>
 
 <% if post.post_type.has_reactions && !post.locked? && user_signed_in? %>
 <%= render 'reactions/dialog', post: post %>

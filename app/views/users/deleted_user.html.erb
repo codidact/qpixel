@@ -1,0 +1,25 @@
+<div class="deleted-user-icons">
+  <i class="fas fa-skull-crossbones fa-5x has-color-red-900"></i>
+</div>
+
+<h1>Deleted user</h1>
+<p>
+  This user has been deleted. User accounts can be deleted at their owners' request, or for reasons of moderation.
+</p>
+
+<hr/>
+
+<p class="has-font-size-caption has-color-tertiary-600">
+  User accounts make an excellent snack for the Codidactyl.
+  <img src="/assets/codidactyl.png" height="16" width="16" alt="Codidactyl" />
+</p>
+
+<% if moderator? %>
+  <% deleted_object = @user.deleted? ? @user : @user.community_user %>
+  <% deletion_type = @user.deleted? ? 'User' : 'Profile' %>
+  <p class="has-font-size-caption has-color-tertiary-600">
+    <%= deletion_type %> deleted
+    <span title="<%= deleted_object.deleted_at %>"><%= time_ago_in_words(deleted_object.deleted_at) %> ago</span>
+    by <%= link_to deleted_object.deleted_by.username, user_path(deleted_object.deleted_by) %>.
+  </p>
+<% end %>

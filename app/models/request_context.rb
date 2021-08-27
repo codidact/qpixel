@@ -9,7 +9,12 @@ class RequestContext
     end
 
     def redis
-      $redis ||= Redis.new(YAML.load_file(Rails.root.join('config', 'database.yml'))["redis_#{Rails.env}"])
+      if $redis
+        $redis
+      else
+        processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
+        $redis ||= Redis.new(YAML.safe_load(processed, [], [], true)["redis_#{Rails.env}"])
+      end
     rescue NoMethodError
       raise LoadError, "You don't appear to have any Redis config in config/database.yml"
     end

@@ -2,8 +2,13 @@
 
 <p>Please confirm your registration by clicking below (or copy and paste the URL into your browser).</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token), class: 'button is-filled' %></p>
+<p>
+  <%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token, host: RequestContext.community.host),
+              class: 'button is-filled' %>
+</p>
 
-<p class="has-font-size-smaller has-color-tertiary-700"><%= confirmation_url(@resource, confirmation_token: @token) %></p>
+<p class="has-font-size-smaller has-color-tertiary-700">
+  <%= confirmation_url(@resource, confirmation_token: @token, host: RequestContext.community.host) %>
+</p>
 
 <%= render 'devise/mailer/friendly_footer' %>

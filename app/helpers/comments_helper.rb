@@ -16,10 +16,41 @@ module CommentsHelper
       else
         was_pung = pingable.present? && pingable.include?(u.id)
         classes = "ping #{u.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
-        tag.a "@#{u.rtl_safe_username}", href: user_path(u), class: classes, dir: 'ltr',
-              title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
+        user_link u, class: classes, dir: 'ltr',
+                  title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
       end
     end.html_safe
+  end
+
+  def render_comment_helpers(comment_text, user = current_user)
+    comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_path}\">\\1</a>")
+
+    unless user.nil?
+      comment_text.gsub!(/\[(votes?)\]/, "<a href=\"#{my_vote_summary_path}\">\\1</a>")
+      comment_text.gsub!(/\[(flags?)\]/, "<a href=\"#{flag_history_path(user)}\">\\1</a>")
+    end
+
+    comment_text.gsub!(/\[category:(.+?)\]/) do |match|
+      val = Regexp.last_match(1).gsub('&amp;', '&').downcase
+      cat = Category.by_lowercase_name(val)
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
+
+    comment_text.gsub!(/\[category\#([0-9]+)\]/) do |match|
+      val = Regexp.last_match(1).to_i
+      cat = Category.by_id(val)
+      if cat
+        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+      else
+        match
+      end
+    end
+
+    comment_text
   end
 
   def get_pingable(thread)
@@ -50,8 +81,8 @@ end
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
-    self.tags = %w[a b i em strong strike del code p]
-    self.attributes = %w[href title]
+    self.tags = %w[a b i em strong s strike del pre code p blockquote span sup sub]
+    self.attributes = %w[href title lang dir id class]
   end
 
   def skip_node?(node)

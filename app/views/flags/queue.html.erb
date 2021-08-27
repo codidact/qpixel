@@ -1,6 +1,6 @@
 <% content_for :title, "Moderator Flag Queue" %>
 <%= link_to moderator_path, class: 'has-font-size-small' do %>
-  &laquo; Return to mod tools
+  &laquo; Return to moderator tools
 <% end %>
 
 <h1>Moderator Flag Queue</h1>
@@ -22,7 +22,10 @@
       <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
     <% end %>
     <div class="widget--body">
-      <p><strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash; <a dir="ltr" href="/users/<%= flag.user.id %>"><%= flag.user.rtl_safe_username %></a></p>
+      <p>
+        <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
+        <%= user_link flag.user %>
+      </p>
     </div>
     <div class="widget--footer flex-row jc-sb">
       <textarea class="form-element flag-resolve-comment has-rows primary" placeholder="Optional comment for flagger" rows="2"></textarea>

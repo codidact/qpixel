@@ -50,7 +50,7 @@ class CommentsController < ApplicationController
       flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
     end
-    redirect_to helpers.generic_show_link(@post)
+    redirect_to helpers.generic_share_link(@post)
   end
 
   def create
@@ -77,12 +77,15 @@ class CommentsController < ApplicationController
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
 
+        thread_url = comment_thread_url(@comment_thread, host: @comment_thread.community.host)
         existing_notification = follower.user.notifications.where(is_read: false)
-                                        .where('link LIKE ?', "#{helpers.comment_link(@comment)}%")
-        unless existing_notification.exists?
-          follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}'",
-                                            helpers.comment_link(@comment))
-        end
+                                        .where('link LIKE ?', "#{thread_url}%")
+        next if existing_notification.exists?
+
+        title = @post.parent.nil? ? @post.title : @post.parent.title
+        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                          "on the post '#{title}'",
+                                          helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -289,10 +292,12 @@ class CommentsController < ApplicationController
       user = User.where(id: p).first
       next if user.nil?
 
-      unless user.id == @comment.post.user_id
-        user.create_notification("You were mentioned in a comment to #{@comment_thread.title}",
-                                 helpers.comment_link(@comment))
-      end
+      next if user.id == @comment.post.user_id
+
+      title = @post.parent.nil? ? @post.title : @post.parent.title
+      user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+                               "on the post '#{title}'",
+                               helpers.comment_link(@comment))
     end
   end
 

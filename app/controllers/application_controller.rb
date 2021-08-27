@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   helper_method :top_level_post_types, :second_level_post_types
 
   def upload
-    redirect_to helpers.upload_remote_url(params[:key])
+    redirect_to helpers.upload_remote_url(params[:key]), status: 301
   end
 
   def dashboard
@@ -30,16 +30,16 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:username, :profile, :website, :twitter])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:profile, :website, :twitter])
   end
 
   def not_found(**add)
     respond_to do |format|
-      format.html do
-        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
-      end
       format.json do
         render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
+      end
+      format.any do
+        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       end
     end
     false
@@ -312,5 +312,27 @@ class ApplicationController < ActionController::Base
 
   def read_only_mode?
     helpers.read_only? && request.method.upcase == 'POST'
+  end
+
+  def current_user
+    helpers.current_user
+  end
+
+  def user_signed_in?
+    helpers.user_signed_in?
+  end
+
+  def authenticate_user!(_fav = nil, **_opts)
+    unless user_signed_in?
+      respond_to do |format|
+        format.html do
+          flash[:error] = 'You need to sign in or sign up to continue.'
+          redirect_to new_user_session_path
+        end
+        format.json do
+          render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
+        end
+      end
+    end
   end
 end

@@ -65,4 +65,24 @@ class VotesControllerTest < ActionController::TestCase
     assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
     assert_response(403)
   end
+
+  test 'should prevent deleted account casting votes' do
+    sign_in users(:deleted_account)
+    post :create, params: { post_id: posts(:question_two).id, vote_type: 1 }
+    assert_response 403
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+  end
+
+  test 'should prevent deleted profile casting votes' do
+    sign_in users(:deleted_profile)
+    post :create, params: { post_id: posts(:question_two).id, vote_type: 1 }
+    assert_response 403
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+  end
 end

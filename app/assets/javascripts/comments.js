@@ -77,9 +77,14 @@ $(() => {
 
     const formTemplate = `<form action="/comments/${commentId}/edit" method="POST" class="comment-edit-form" data-remote="true">
       <label for="comment-content" class="form-element">Comment body:</label>
-      <textarea id="comment-content" rows="3" class="form-element is-small" name="comment[content]">${content}</textarea>
+      <textarea id="comment-content" rows="3" class="form-element is-small" data-character-count=".js-character-count-comment-body" name="comment[content]">${content}</textarea>
       <input type="submit" class="button is-muted is-filled" value="Update comment" />
       <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
+      <span class="has-float-right has-font-size-caption js-character-count-comment-body"
+            data-max="1000" data-min="15">
+        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
+        <span class="js-character-count__count">0 / 1000</span>
+      </span>
     </form>`;
 
     $commentBody.html(formTemplate);
@@ -177,38 +182,26 @@ $(() => {
       $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
-  const currentCaretSequence = (splat, posIdx) => {
-    let searchIdx = 0;
-    let splatIdx = 0;
-    let posInSeq;
-    let currentSequence;
-    do {
-      currentSequence = splat[splatIdx];
-      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
-      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
-      splatIdx += 1;
-    } while (searchIdx < posIdx);
-    return [currentSequence, posInSeq];
-  };
-
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', async ev => {
-    if (ev.keyCode === 27) { return; }
+    if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
+      return;
+    }
 
     const $tgt = $(ev.target);
     const content = $tgt.val();
     const splat = content.split(' ');
     const caretPos = $tgt[0].selectionStart;
-    const [currentWord, posInWord] = currentCaretSequence(splat, caretPos);
+    const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
-    const callback = ev => {
+    const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
       QPixel.replaceSelection($tgt, `@#${id}`);
-      $('.ta-popup').remove();
+      popup.destroy();
       $tgt.focus();
     };
 
@@ -216,7 +209,6 @@ $(() => {
     // an attempt to ping another user with a username, and kick off suggestions -- unless it starts with @#, in which
     // case it's likely an already-selected ping.
     if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && currentWord.length >= 4) {
-      QPixel.removeTextareaPopups();
       const threadId = $tgt.data('thread');
       const postId = $tgt.data('post');
 
@@ -233,10 +225,37 @@ $(() => {
         return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
                            .attr('data-user-id', id);
       });
-      QPixel.createTextareaPopup(items, $tgt[0], callback);
+      QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
     else {
-      QPixel.removeTextareaPopups();
+      QPixel.Popup.destroyAll();
     }
+  });
+  
+  $('.js-new-thread-link').on('click', async ev => {
+    ev.preventDefault();
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post');
+    const $thread = $(`#new-thread-modal-${postId}`);
+
+    if ($thread.is(':hidden')) {
+      $thread.show();
+    } 
+    else {
+      $thread.hide();
+    }
+  });
+
+  $('.js-comment-permalink > .js-text').text('copy link');
+  $(document).on('click', '.js-comment-permalink', ev => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
+    const link = $tgt.attr('href');
+    navigator.clipboard.writeText(link);
+    $tgt.find('.js-text').text('copied!');
+    setTimeout(() => {
+      $tgt.find('.js-text').text('copy link');
+    }, 1000);
   });
 });

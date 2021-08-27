@@ -9,9 +9,7 @@
   <div class="widget--body">
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %>: </strong><%= flag.reason %> &mdash;
-      <%= link_to user_path(flag.user) do %>
-        <span dir="ltr"><%= flag.user.rtl_safe_username %></span>
-      <% end %>
+      <%= user_link flag.user %>
       (<%= link_to 'history', flag_history_path(flag.user) %>)
     </p>
     <p>
@@ -25,7 +23,7 @@
       <% if flag.handled_by_id.present? %>
         &mdash;
         <%= link_to user_path(flag.handled_by) do %>
-          <span dir="ltr"><%= flag.handled_by.rtl_safe_username %></span>
+          <span dir="ltr"><%= rtl_safe_username(flag.handled_by) %></span>
         <% end %>
       <% end %>
     </p>

@@ -7,7 +7,7 @@
 
 <% ckb ||= false %>
 
-<div class="user-card">
+<div class="user-card <%= user.deleted? || user.community_user&.deleted? ? 'deleted-content' : '' %>">
   <div class="user-card--avatar">
     <img alt="user card" src="<%= avatar_url(user, 48) %>" height="48" width="48" class="has-float-left" />
   </div>
@@ -18,7 +18,7 @@
        end
     %>
     <%= link_to user_path(user), dir: 'ltr', class: 'user-card--link', data: data do %>
-      <%= user.rtl_safe_username %>
+      <%= rtl_safe_username(user) %>
        <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
         <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>
        <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
@@ -35,7 +35,7 @@
           <span class="user-card--break"></span>
         <% when 'r' %>
           <span class="user-card--detail">
-            <%= user.reputation %> <span title="reputation">reputation.</span>
+            <%= user.reputation %> <span>reputation</span>
           </span>
         <% when 'p' %>
           <span class="user-card--detail">

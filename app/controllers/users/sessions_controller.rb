@@ -1,10 +1,26 @@
-class CustomSessionsController < Devise::SessionsController
+class Users::SessionsController < Devise::SessionsController
   protect_from_forgery except: [:create]
 
   @@first_factor = []
 
   def create
     super do |user|
+      if user.deleted?
+        sign_out user
+        flash[:notice] = nil
+        flash[:danger] = 'Invalid Email or password.'
+        render :new
+        return
+      end
+
+      if user.community_user&.deleted?
+        sign_out user
+        flash[:notice] = nil
+        flash[:danger] = 'Your profile on this community has been deleted.'
+        render :new
+        return
+      end
+
       if user.present? && user.enabled_2fa
         sign_out user
         case user.two_factor_method

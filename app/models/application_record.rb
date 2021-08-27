@@ -19,8 +19,8 @@ class ApplicationRecord < ActiveRecord::Base
     ApplicationRecord.match_search(term, **cols)
   end
 
-  def attributes_print
-    attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')
+  def attributes_print(join: ', ')
+    attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(join)
   end
 
   def self.sanitize_for_search(term, **cols)
@@ -80,7 +80,9 @@ class ApplicationRecord < ActiveRecord::Base
         'random data again.',
       'This community has reached a critical mass and collapsed into a black hole. Currently trying to ' \
         'recover using Hawking radiation.',
-      'Operations are on pause while we attempt to recapture the codidactyl. Please hold.'
+      'Operations are on pause while we attempt to recapture the codidactyl. Please hold.',
+      'The data center is on fire. Please hold while we activate fire suppression systems.',
+      'The reciprocal controller flag is set incorrectly. Please stand on your head and rickroll yourself to fix this.'
     ]
   end
 end

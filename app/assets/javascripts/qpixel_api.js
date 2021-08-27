@@ -264,49 +264,22 @@ window.QPixel = {
   },
 
   /**
-   * Create a textarea 'suggestions'-type popup that drops down from the current caret position.
-   * @param items an array of jQuery-wrappable elements to include - apply the `item` class to each one
-   * @param textarea the parent textarea HTMLElement that this popup is for
-   * @param cb a callback that will be called when an item is clicked - it will be passed the click event
-   * @returns {void}
+   * Get the word in a string that the given position is in, and the position within that word.
+   * @param splat an array, containing the string already split by however you define a "word"
+   * @param posIdx the index to search for
+   * @returns {[string, number]} the word the given position is in, and the position within that word
    */
-  createTextareaPopup: (items, textarea, cb) => {
-    const $popup = $('<div class="ta-popup"></div>');
-    items.forEach(el => {
-      $popup.append(el);
-      $(el).on('click', ev => {
-        ev.stopPropagation();
-        return !!cb ? cb(ev) : null;
-      });
-    });
-    const caretPos = getCaretCoordinates(textarea, textarea.selectionStart);
-    const fieldOffset = QPixel.offset(textarea);
-    $popup.css({
-      top: `${fieldOffset.top + caretPos.top + 20}px`,
-      left: `${fieldOffset.left + caretPos.left}px`
-    }).appendTo('body');
-
-    const bodyClickHandler = () => { $popup.remove(); };
-    const bodyEscHandler = ev => {
-      if (ev.keyCode === 27 && $('.ta-popup').length > 0) {
-        ev.stopPropagation();
-        $popup.remove();
-      }
-    };
-
-    $('body').on('click', () => {
-      bodyClickHandler();
-      $('body').off('click', bodyClickHandler);
-    }).on('keydown', ev => {
-      bodyEscHandler(ev);
-      $('body').off('keydown', bodyEscHandler);
-    });
-  },
-
-  /**
-   * Remove all currently active textarea popups, as created by createTextareaPopup.
-   */
-  removeTextareaPopups: () => {
-    $('.ta-popup').remove();
+  currentCaretSequence: (splat, posIdx) => {
+    let searchIdx = 0;
+    let splatIdx = 0;
+    let posInSeq;
+    let currentSequence;
+    do {
+      currentSequence = splat[splatIdx];
+      posInSeq = posIdx - (splatIdx === 0 ? searchIdx : searchIdx + 1);
+      searchIdx += currentSequence.length + (splatIdx === 0 ? 0 : 1);
+      splatIdx += 1;
+    } while (searchIdx < posIdx);
+    return [currentSequence, posInSeq];
   }
 };
