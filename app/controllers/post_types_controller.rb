@@ -53,7 +53,7 @@ class PostTypesController < ApplicationController
                                       :is_top_level, :is_freely_editable, :icon_name, :answer_type_id,
                                       :has_reactions, :has_only_specific_reactions)
   end
-  
+
   def clear_cache!
     Rails.cache.delete 'network/post_types/rep_changes'
     Rails.cache.delete 'network/post_types/post_type_ids'

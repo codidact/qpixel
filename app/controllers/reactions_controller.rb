@@ -72,7 +72,7 @@ class ReactionsController < ApplicationController
                           position: params[:reaction_type][:position],
                           post_type_id: params[:reaction_type][:post_type_id]
 
-    PostType.mapping.keys.each { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
+    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
     redirect_to reactions_path
   end
 
@@ -90,7 +90,7 @@ class ReactionsController < ApplicationController
                         active: params[:reaction_type][:active],
                         position: params[:reaction_type][:position],
                         post_type_id: params[:reaction_type][:post_type_id]
-    PostType.mapping.keys.each { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
+    PostType.mapping.each_key { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
     redirect_to reactions_path
   end
 
