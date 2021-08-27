@@ -69,7 +69,10 @@ class ReactionsController < ApplicationController
                           icon: params[:reaction_type][:icon],
                           requires_comment: params[:reaction_type][:requires_comment],
                           active: params[:reaction_type][:active],
-                          position: params[:reaction_type][:position]
+                          position: params[:reaction_type][:position],
+                          post_type_id: params[:reaction_type][:post_type_id]
+
+    PostType.mapping.keys.each { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
     redirect_to reactions_path
   end
 
@@ -85,7 +88,9 @@ class ReactionsController < ApplicationController
                         icon: params[:reaction_type][:icon],
                         requires_comment: params[:reaction_type][:requires_comment],
                         active: params[:reaction_type][:active],
-                        position: params[:reaction_type][:position]
+                        position: params[:reaction_type][:position],
+                        post_type_id: params[:reaction_type][:post_type_id]
+    PostType.mapping.keys.each { |pt| Rails.cache.delete("post_type/#{pt.name}/reactions") }
     redirect_to reactions_path
   end
 

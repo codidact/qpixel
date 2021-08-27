@@ -1,4 +1,5 @@
 class ReactionType < ApplicationRecord
   include CommunityRelated
-  scope :active, -> { where(active: true).order(position: :asc) }
+  belongs_to :post_type, class_name: 'PostType', optional: true
+  scope :active, -> { where(active: true) }
 end

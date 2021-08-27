@@ -6,7 +6,7 @@
   <div class="droppanel--header">
     Mark this <%= post.post_type.name.downcase %> as ...
   </div>
-  <% ReactionType.active.all.each do |rt| %>
+  <% post.post_type.reactions.each do |rt| %>
   <div class="grid">
     <div class="grid--cell">
       <input class="form-radio-element reaction-type" type="radio" name="reaction-type"

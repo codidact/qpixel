@@ -68,6 +68,14 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :post_type_id, "Limited to Post Type", class: "form-element" %>
+    <div class="form-caption">
+      You can limit the availability of this reaction type to one specific post type; if left blank, the reaction will be available for all post types that are not restricting reactions to specific ones.
+    </div>
+    <%= f.select(:post_type_id, ([['', nil]] + PostType.all.map { |pt| [pt.name.underscore.humanize, pt.id] }), {}, { class: "form-element" }) %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :position, "Position", class: "form-element" %>
     <div class="form-caption">
       The order in which the reactions are to be shown in the add reaction dialog; lower positions go first
