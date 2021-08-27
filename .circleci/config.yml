@@ -91,8 +91,31 @@ jobs:
           command: |
             bundle exec rubocop
 
+  deploy:
+    docker:
+      - image: circleci/ruby:2.6.6-node
+
+    working_directory: ~/qpixel
+
+    steps:
+      - run:
+          name: Import SSH key
+          command: |
+            echo "$DEV_SSH_KEY" | base64 --decode > ~/deploy.key
+      - run:
+          name: Run deploy
+          command: |
+            ssh "$SSH_USER"@"$SSH_IP":"$SSH_PORT" -i ~/deploy.key "$SSH_COMMAND"
+
 workflows:
   test_lint:
     jobs:
       - test
       - rubocop
+      - deploy:
+          requires:
+            - test
+            - rubocop
+          filters:
+            branches:
+              only: develop
