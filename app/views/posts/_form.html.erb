@@ -61,8 +61,7 @@
   <% unless post_type.has_parent? %>
     <div class="form-group">
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
-      <%= f.text_field :title, class: 'form-element post_title', id: 'post_title',
-                       data: { character_count: ".js-character-count-post-title", field_name: "post_title"} %>
+      <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
     </div>
     <div>
       <span class="has-float-right has-font-size-caption js-character-count-post-title hide"
