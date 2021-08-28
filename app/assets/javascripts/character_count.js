@@ -7,7 +7,6 @@ $(() => {
   $(document).on('keyup change paste', '[data-character-count]', ev => {
     const $tgt = $(ev.target);
     const $counter = $($tgt.attr('data-character-count'));
-    const $formElement = $tgt.attr('data-field-name');
     const $button = $counter.parents('form').find('input[type="submit"]');
     const $count = $counter.find('.js-character-count__count');
     const $icon = $counter.find('.js-character-count__icon');
@@ -47,7 +46,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', true).addClass('is-muted');
       }
-      document.getElementById($formElement).style.setProperty("border", "2px solid red", "important");
+      $tgt.css("border", "2px solid red", "important");
     }
     else {
       $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
@@ -55,7 +54,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', false).removeClass('is-muted');
       }
-      document.getElementById($formElement).style.border = null;
+      $tgt.removeAttr("style");
     }
 
     $count.text(text);
