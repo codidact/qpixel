@@ -103,7 +103,11 @@ class Post < ApplicationRecord
       if duplicate_post
         'closed as duplicate'
       else
-        'closed'
+        if closed == false
+          'reopened'
+        else
+          'closed'
+        end
       end
     when locked_at
       'locked'
