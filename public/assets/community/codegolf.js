@@ -70,7 +70,7 @@
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
-      pagePromises.push(fetch(`/posts/${id}?sort=age&page=${i}`).then(response => response.text()));
+      pagePromises.push(fetch(`/posts/${id}?sort=active&page=${i}`).then(response => response.text()));
     }
 
     const leaderboard = [];
