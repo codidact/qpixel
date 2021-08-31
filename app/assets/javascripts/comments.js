@@ -67,6 +67,7 @@ $(() => {
     const $commentBody = $comment.find('.comment--body');
     const commentId = $comment.attr('data-id');
     const originalComment = $commentBody.clone();
+    const $counter = $tgt.attr('data-body');
 
     const resp = await fetch(`/comments/${commentId}`, {
       credentials: 'include',
@@ -74,6 +75,7 @@ $(() => {
     });
     const data = await resp.json();
     const content = data.content;
+    const length =  $counter.length;
 
     const formTemplate = `<form action="/comments/${commentId}/edit" method="POST" class="comment-edit-form" data-remote="true">
       <label for="comment-content" class="form-element">Comment body:</label>
@@ -83,7 +85,7 @@ $(() => {
       <span class="has-float-right has-font-size-caption js-character-count-comment-body"
             data-max="1000" data-min="15">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / 1000</span>
+        <span class="js-character-count__count">`+length+` / 1000</span>
       </span>
     </form>`;
 
