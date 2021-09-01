@@ -98,6 +98,26 @@ class Post < ApplicationRecord
   end
 
   def last_activity_type
+    last_activity_on_post = last_activity
+    last_edited = children.map(&:last_edited_at)
+    last_edited_children = nil
+    last_edited.each do |x| if x==last_activity_on_post
+                              last_edited_children = x
+                            end
+    end
+    last_deleted = children.map(&:deleted_at)
+    last_deleted_children = nil
+    last_deleted.each do |y| if y==last_activity_on_post
+                              last_deleted_children = y
+                            end
+    end
+    last_created = children.map(&:created_at)
+    last_created_children = nil
+    last_created.each do |z| if z==last_activity_on_post
+                               last_created_children = z
+                             end
+    end
+    
     case last_activity
     when closed_at
       if duplicate_post
@@ -115,6 +135,12 @@ class Post < ApplicationRecord
       'deleted'
     when last_edited_at
       'edited'
+    when last_created_children
+      'posted an answer'
+    when last_deleted_children
+      'deleted an answer'
+    when last_edited_children
+      'edited an answer'
     else
       'last activity'
     end
