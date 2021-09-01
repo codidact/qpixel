@@ -85,7 +85,7 @@ $(() => {
       <span class="has-float-right has-font-size-caption js-character-count-comment-body"
             data-max="1000" data-min="15">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">`+length+` / 1000</span>
+        <span class="js-character-count__count">${content.length} / 1000</span>
       </span>
     </form>`;
 
