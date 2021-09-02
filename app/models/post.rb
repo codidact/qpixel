@@ -100,7 +100,15 @@ class Post < ApplicationRecord
   def last_activity_type
     case last_activity
     when closed_at
-      'closed'
+      if closed == false
+        'reopened'
+      else  
+        if duplicate_post
+          'closed as duplicate'
+        else
+          'closed'
+        end
+      end
     when locked_at
       'locked'
     when deleted_at
