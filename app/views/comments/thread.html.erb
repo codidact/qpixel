@@ -1,7 +1,14 @@
 <% pingable = get_pingable(@comment_thread) %>
 
+<% if @post.parent.present? %>
+  <details>
+    <summary>Question</summary>
+    <%= render 'posts/expanded', post: @post.parent %>
+  </details>
+<% end %>
+
 <details>
-  <summary>Post</summary>
+  <summary> <% if !@post.parent.present? %> Thread on question <% else %> Thread on answer <% end %> </summary>
   <%= render 'posts/expanded', post: @post %>
 </details>
 
