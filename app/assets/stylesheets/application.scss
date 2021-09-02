@@ -16,6 +16,10 @@
 
 @import 'variables';
 
+.red-700-border-2px-width{
+  border: 2px solid #d21919 !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
