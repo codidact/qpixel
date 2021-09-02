@@ -43,7 +43,7 @@
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
       <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
-        <a href="#" data-body="<%= comment.content %>" class="js-comment-edit">edit</a>
+        <a href="#" class="js-comment-edit">edit</a>
         <% if comment.deleted %>
           <a href="#" class="is-red js-comment-undelete">undelete</a>
         <% else %>
