@@ -46,7 +46,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', true).addClass('is-muted');
       }
-      $tgt.addClass('red-700-border-2px-width');
+      $tgt.addClass('failed-validation');
     }
     else {
       $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
@@ -54,7 +54,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', false).removeClass('is-muted');
       }
-      $tgt.removeClass('red-700-border-2px-width');
+      $tgt.removeClass('failed-validation');
     }
 
     $count.text(text);
