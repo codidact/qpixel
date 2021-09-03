@@ -189,3 +189,7 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
     }
   }
 }
+
+.failed-validation {
+  border: 2px solid #d21919 !important;
+}
