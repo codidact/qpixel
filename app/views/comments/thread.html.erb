@@ -2,13 +2,13 @@
 
 <% if @post.parent.present? %>
   <details>
-    <summary>Question</summary>
+    <summary>Parent</summary>
     <%= render 'posts/expanded', post: @post.parent %>
   </details>
 <% end %>
 
 <details>
-  <summary> <% if !@post.parent.present? %> Thread on question <% else %> Thread on answer <% end %> </summary>
+  <summary>Post</summary>
   <%= render 'posts/expanded', post: @post %>
 </details>
 
