@@ -15,6 +15,14 @@ $danger: #EB5959;
 $success: #2ECC71;
 $info: #58A09A;
 
+$data: (
+  #4B68FF,
+  #A23B72,
+  #F18F01,
+  #558C8C,
+  #3B1F2B
+);
+
 :root {
   --key: #{$key};
   --muted-text: #{$muted-text};
@@ -25,6 +33,11 @@ $info: #58A09A;
   --danger: #{$danger};
   --success: #{$success};
   --info: #{$info};
+  --data-0: #{nth($data, 1)};
+  --data-1: #{nth($data, 2)};
+  --data-2: #{nth($data, 3)};
+  --data-3: #{nth($data, 4)};
+  --data-4: #{nth($data, 5)};
 }
 
 $font-stack-plain: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;

@@ -42,12 +42,11 @@ module ApplicationHelper
     $active_search_param == param&.to_sym
   end
 
-  def stat_panel(heading, value)
-    tag.div class: 'panel panel-default stat-panel' do
-      tag.div class: 'panel-body' do
-        tag.h4(heading, class: 'stat-panel-heading') +
-          tag.span(value, class: 'stat-value')
-      end
+  def stat_panel(heading, value, caption: nil)
+    tag.div class: 'stat-panel' do
+      tag.h4(heading, class: 'stat-panel-heading') +
+        (caption.nil? ? '' : tag.span(caption, class: 'stat-panel-caption')) +
+        tag.span(value, class: 'stat-value')
     end
   end
 

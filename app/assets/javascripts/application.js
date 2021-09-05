@@ -69,5 +69,11 @@ $(document).on('ready', function() {
     $('#fvn-dismiss').on('click', () => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
     });
-  };
+  }
+});
+
+const cssVar = name => window.getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
+
+Chartkick.setDefaultOptions({
+  colors: Array.from(Array(5).keys()).map(idx => cssVar(`data-${idx}`))
 });
