@@ -19,10 +19,10 @@ $(() => {
 
     if (displayAt) {
       if (count >= displayAt * max) {
-        $counter.show();
+        $counter.removeClass('hide');
       }
       else {
-        $counter.hide();
+        $counter.addClass('hide');
       }
     }
 
@@ -46,6 +46,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', true).addClass('is-muted');
       }
+      $tgt.addClass('failed-validation');
     }
     else {
       $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
@@ -53,6 +54,7 @@ $(() => {
       if ($button) {
         $button.attr('disabled', false).removeClass('is-muted');
       }
+      $tgt.removeClass('failed-validation');
     }
 
     $count.text(text);
