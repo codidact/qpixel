@@ -31,6 +31,25 @@ $(() => {
     window.MathJax && MathJax.typeset();
   });
 
+  $(document).on('click', '.js-expand-thread', evt => {
+    const $droppanel = $('.inline-droppanel');
+    const $footerInlineThread = $('.footer-inline-thread');
+    const $inlineHeader = $('.inline--header');
+    const $jsExpandThread = $('.js-expand-thread');
+    const $inlineComments = $('.inline-comments');
+    const $comments = $('.comments');
+    const $commentsAdditionalTools = $('.comment-additional-tools');
+    const $inlineCommentField = $('.inline-comment-field');
+    $droppanel.removeClass('hide');
+    $footerInlineThread.addClass('hide');
+    $inlineHeader.removeClass('hide');
+    $jsExpandThread.addClass('hide');
+    $inlineComments.removeClass('hide');
+    $comments.removeClass('hide');
+    $commentsAdditionalTools.removeClass('hide');
+    $inlineCommentField.removeClass('hide');
+  });
+  
   $(document).on('click', '.js-collapse-thread', async ev => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
