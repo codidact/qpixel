@@ -38,7 +38,7 @@
       <div class="inline--header hide">
     <% end %>
       <% if current_user&.privilege? 'flag_curate' %>
-        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+        <a href="#" class="widget--header-link mod-tools" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
       <% end %>
       <% unless current_user.nil? %>
         <% if @comment_thread.followed_by? current_user %>
