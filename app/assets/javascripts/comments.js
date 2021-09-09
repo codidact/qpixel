@@ -46,13 +46,11 @@ $(() => {
     $jsExpandThread.addClass('hide');
     $inlineComments.removeClass('hide');
     $comments.removeClass('hide');
-    $commentsAdditionalTools.removeClass('hide');
+    //$commentsAdditionalTools.removeClass('hide');
     $inlineCommentField.removeClass('hide');
     
     //just hiding them since they aren't working for inline
-    const $flag = $('.js-comment-flag');
     const $tools = $('.mod-tools');
-    $flag.addClass('hide');
     $tools.addClass('hide');
   });
   
