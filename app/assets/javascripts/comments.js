@@ -45,7 +45,7 @@ $(() => {
     $inlineHeader.removeClass('hide');
     $jsExpandThread.addClass('hide');
     $inlineComments.removeClass('hide');
-    $comments.removeClass('hide');
+    $comments.addClass('hide');
     //$commentsAdditionalTools.removeClass('hide');
     $inlineCommentField.removeClass('hide');
     
