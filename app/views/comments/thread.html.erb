@@ -29,9 +29,6 @@
       </a>
       <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">
         collapse
-      </a>   
-      <a href="javascript:void(0)" class="js-expand-thread widget--header-link">
-        expand
       </a>
     <% end %>
     <% if params[:inline] == 'true' %>
@@ -197,6 +194,9 @@
               </span>
 
               <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
+              <% if params[:inline] == 'true' %>
+                <%= link_to 'Go to thread page', comment_thread_path(@comment_thread) %>
+              <% end %>
             <% end %>
           <% end %>
         <% elsif @comment_thread.deleted %>
@@ -215,7 +215,13 @@
     <div class="widget--footer footer-inline-thread">
       <p class="h-m-0">
         Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
-        <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
+        <a href="javascript:void(0)" class="js-expand-thread widget--header-link">
+          <% if [5, @comment_thread.reply_count].min == 5 %>
+            Show more
+          <% else %>
+            See the whole thread
+          <% end %>
+        </a>.
       </p>
     </div>
   <% end %>
