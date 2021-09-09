@@ -60,8 +60,12 @@
         <% if params[:inline] == 'true' %>
           <div class="comment-additional-tools hide">
         <% end %>
-          <a href="javascript:void(0)" data-drop="#flag-comment-<%= comment.id %>">flag</a>
-          <div class="droppanel is-large h-c-black" id="flag-comment-<%= comment.id %>">
+          <% if params[:inline] == 'true' %>
+            <a href="javascript:void(0)" class="flag-button" data-drop=".flag-comment-<%= comment.id %>">flag</a>
+          <% else %>
+            <a href="javascript:void(0)" data-drop="#flag-comment-<%= comment.id %>">flag</a>
+          <% end %>
+          <div class="droppanel is-large h-c-black flag-comment-<%= comment.id %>" id="flag-comment-<%= comment.id %>">
             <label for="flag-post-<%= comment.id %>">Flag reason</label>
             <input type="text" id="flag-post-<%= comment.id %>" class="form-element" />
             <a href="javascript:void(0)" class="flag-link js-comment-flag button is-danger" data-post-id="<%= comment.id %>"
