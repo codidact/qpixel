@@ -46,12 +46,23 @@ $(() => {
     $jsExpandThread.addClass('hide');
     $inlineComments.removeClass('hide');
     $comments.addClass('hide');
-    //$commentsAdditionalTools.removeClass('hide');
+    $commentsAdditionalTools.removeClass('hide');
     $inlineCommentField.removeClass('hide');
     
     //just hiding them since they aren't working for inline
     const $tools = $('.mod-tools');
     $tools.addClass('hide');
+  });
+  
+  $(document).on('click', '.flag-button', ['data-drop'], ev => {
+      const $tgt = $(ev.target);
+      const $data = $($tgt.attr('data-drop'));
+      console.log('hello');
+      if($data.hasClass('is-active')){
+          $data.removeClass('is-active');
+      }else{
+          $data.addClass('is-active');
+      }
   });
   
   $(document).on('click', '.js-collapse-thread', async ev => {
