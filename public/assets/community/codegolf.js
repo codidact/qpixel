@@ -219,9 +219,12 @@
 
     row.querySelector('.username').innerText = answer.username
     row.querySelector('.language-badge').innerText = answer.full_language;
-    row.querySelector('.username').insertAdjacentHTML('afterend', answer.code
-      ? ` <code>${answer.code.split('\n')[0].substring(0, 200)}</code>`
-      : ' <em>Invalid entry format</em>');
+    if (answer.code) {
+      row.querySelector('.username').after(document.createElement('code'));
+      row.querySelector('code').innerText = answer.code.split('\n')[0].substring(0, 200);
+    } else {
+      row.querySelector('.username').insertAdjacentHTML('afterend', '<em>Invalid entry format</em>');
+    }
 
     return row;
   }
