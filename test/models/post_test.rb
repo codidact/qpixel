@@ -70,4 +70,18 @@ class PostTest < ActiveSupport::TestCase
                  post.errors.full_messages[0]
     assert_nil post.id
   end
+
+  test 'reaction list should be empty if none has been added' do
+    post_without_reactions = posts(:answer_two)
+    reaction_list = post_without_reactions.reaction_list
+    assert reaction_list.empty?
+  end
+
+  test 'reaction list should be not empty if one has been added' do
+    post_with_reactions = posts(:answer_one)
+    reaction_list = post_with_reactions.reaction_list
+    refute reaction_list.empty?
+    assert reaction_list.key? reaction_types(:wfm)
+    assert_equal 1, reaction_list[reaction_types(:wfm)].count
+  end
 end

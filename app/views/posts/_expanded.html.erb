@@ -54,7 +54,7 @@
             &minus;<%= post.downvote_count %>
           </div>
           <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>" <%= (post.locked?) ? 'disabled' : '' %>
+            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
                     data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
                 <svg width="2em" height="1.33em" viewbox="0 0 100 50">
                   <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
@@ -62,10 +62,25 @@
             </button>
           <% end %>
         </div>
+        <% if post.post_type.has_reactions %>
+        <div class="post--react has-text-align-center">
+          <% unless post.locked? %>
+            <button class="react-button button is-muted is-icon-only-button h-fw-bold"
+                    id="post-<%= post.id %>-react" aria-label="Add Reaction"
+                    data-drop="#post-<%= post.id %>-reactions-panel"
+                    data-drop-self-class-toggle="is-active"
+                    data-drop-force-dir="down">
+                react
+            </button>
+          <% end %>
+        </div>
+        <% end %>
       </div>
     <% end %>
 
-    <div class="post--content has-padding-2">      
+    <div class="post--content has-padding-2">
+      <%= render('reactions/list', post: post) if post.reactions %>
+
       <% if post_type.is_closeable && post.closed %>
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
@@ -474,4 +489,8 @@
 
 <% if moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
+<% end %>
+
+<% if post.post_type.has_reactions && !post.locked? && user_signed_in? %>
+<%= render 'reactions/dialog', post: post %>
 <% end %>

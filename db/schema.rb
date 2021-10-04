@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_21_080736) do
+ActiveRecord::Schema.define(version: 2021_08_27_203013) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -351,7 +351,9 @@ ActiveRecord::Schema.define(version: 2021_08_21_080736) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
+    t.boolean "has_reactions"
     t.bigint "answer_type_id"
+    t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
   end
@@ -440,6 +442,36 @@ ActiveRecord::Schema.define(version: 2021_08_21_080736) do
     t.integer "user_id", null: false
     t.index ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id"
     t.index ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id"
+  end
+
+  create_table "reaction_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "on_post_label"
+    t.string "icon"
+    t.string "color"
+    t.boolean "requires_comment"
+    t.bigint "community_id"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "active"
+    t.bigint "post_type_id"
+    t.index ["community_id"], name: "index_reaction_types_on_community_id"
+    t.index ["post_type_id"], name: "index_reaction_types_on_post_type_id"
+  end
+
+  create_table "reactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "reaction_type_id"
+    t.bigint "post_id"
+    t.bigint "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_reactions_on_comment_id"
+    t.index ["post_id"], name: "index_reactions_on_post_id"
+    t.index ["reaction_type_id"], name: "index_reactions_on_reaction_type_id"
+    t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
   create_table "site_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

@@ -87,6 +87,18 @@ Rails.application.routes.draw do
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
 
+  scope 'posts/reactions' do
+    root                                  to: 'reactions#index', as: :reactions
+    get   ':id/edit',                     to: 'reactions#edit', as: :edit_reaction
+    patch ':id/edit',                     to: 'reactions#update', as: :update_reaction
+    get   'new',                          to: 'reactions#new', as: :new_reaction
+    post  'new',                          to: 'reactions#create', as: :create_reaction
+
+    post  'add',                          to: 'reactions#add', as: :add_reaction
+    post  'retract',                      to: 'reactions#retract', as: :retract_reaction
+
+  end
+
   scope 'posts' do
     scope 'suggested-edit' do
       get    ':id',           to: 'suggested_edit#show', as: :suggested_edit

@@ -23,8 +23,7 @@ class PostTypesController < ApplicationController
   def create
     @type = PostType.new post_type_params
     if @type.save
-      Rails.cache.delete 'network/post_types/rep_changes'
-      Rails.cache.delete 'network/post_types/post_type_ids'
+      clear_cache!
       redirect_to post_types_path
     else
       render :new
@@ -35,8 +34,7 @@ class PostTypesController < ApplicationController
 
   def update
     if @type.update post_type_params
-      Rails.cache.delete 'network/post_types/rep_changes'
-      Rails.cache.delete 'network/post_types/post_type_ids'
+      clear_cache!
       redirect_to post_types_path
     else
       render :edit
@@ -52,6 +50,18 @@ class PostTypesController < ApplicationController
   def post_type_params
     params.require(:post_type).permit(:name, :description, :has_answers, :has_votes, :has_tags, :has_parent,
                                       :has_category, :has_license, :is_public_editable, :is_closeable,
-                                      :is_top_level, :is_freely_editable, :icon_name, :answer_type_id)
+                                      :is_top_level, :is_freely_editable, :icon_name, :answer_type_id,
+                                      :has_reactions, :has_only_specific_reactions)
+  end
+
+  def clear_cache!
+    Rails.cache.delete 'network/post_types/rep_changes'
+    Rails.cache.delete 'network/post_types/post_type_ids'
+    current_community = RequestContext.community
+    Community.all.each do |c|
+      RequestContext.community = c
+      Rails.cache.delete("post_type/#{@type.name}/reactions")
+    end
+    RequestContext.community = current_community
   end
 end
