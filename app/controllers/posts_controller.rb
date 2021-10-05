@@ -121,7 +121,7 @@ class PostsController < ApplicationController
 
   def show
     if @post.parent_id.present?
-      return redirect_to answer_post_path(@post.parent_id, answer: @post.id, anchor: "answer-#{@post.id}")
+      return redirect_to answer_post_path(@post.parent_id, answer: @post.id, anchor: "/#{@post.id}/answer-#{@post.id}")
     end
 
     if @post.post_type_id == HelpDoc.post_type_id
