@@ -62,7 +62,7 @@
             </button>
           <% end %>
         </div>
-        <% if post.post_type.has_reactions %>
+        <% if post.post_type.has_reactions && user_signed_in? %>
         <div class="post--react has-text-align-center">
           <% unless post.locked? %>
             <button class="react-button button is-muted is-icon-only-button h-fw-bold"
