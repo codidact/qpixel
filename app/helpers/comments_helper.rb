@@ -81,7 +81,7 @@ end
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
-    self.tags = %w[a b i em strong s strike del pre code p blockquote span sup sub]
+    self.tags = %w[a b i em strong s strike del pre code p blockquote span sup sub br]
     self.attributes = %w[href title lang dir id class]
   end
 
