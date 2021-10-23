@@ -41,10 +41,10 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.action_mailer.delivery_method = :ses
+  config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
 
-  config.active_storage.service = :s3
+  config.active_storage.service = :local
 
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true
