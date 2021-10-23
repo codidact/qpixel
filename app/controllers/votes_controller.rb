@@ -20,7 +20,7 @@ class VotesController < ApplicationController
                        ' are exempt.'
 
       AuditLog.rate_limit_log(event_type: 'vote', related: post, user: current_user,
-                            comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
+                              comment: "limit: #{max_votes_per_day}\n\nvote:\n#{params[:vote_type].to_i}")
 
       render json: { status: 'failed', message: vote_limit_msg }, status: :forbidden
       return

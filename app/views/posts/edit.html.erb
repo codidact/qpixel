@@ -24,7 +24,7 @@
 
 <% if @post.errors.any? %>
   <div class="notice is-danger is-filled">
-    <p>The following errors prevented your post being saved:</p>
+    <p>The following errors prevented your post from being saved:</p>
     <ul>
       <% @post.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -35,3 +35,8 @@
 
 <%= render 'form', post: @post, post_type: @post_type, category: @category, submit_path: request.path,
            edit_comment: true, parent: @post.parent, type_summary: false %>
+
+<% if @post.parent.present? %>
+  <h2 class="h-m-t-8">Responding to:</h2>
+  <%= render 'posts/expanded', post: @post.parent %>
+<% end %>

@@ -58,7 +58,7 @@
           <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
         <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
+          <img alt="user avatar" src="<%= avatar_url(current_user, 40) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
@@ -88,14 +88,14 @@
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
+    <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
     <% Community.where(hidden: false).each do |c| %>
       <div class="community-header-list-entry">
-        <% settings = SiteSetting.for_community_id(c.id) %>
-        <% logo_setting = settings.find_by(name: 'SiteLogoPath') %>
+        <% logo_setting = logo_paths[c.id] %>
         <%= link_to "//#{c.host}" do %>
-          <% unless logo_setting.nil? %>
+          <% if logo_setting.present? %>
             <div class="img">
-              <img src="<%= logo_setting&.typed %>" alt="<%= c.name %>" class="community-header-list-image">
+              <img src="<%= logo_setting %>" alt="<%= c.name %>" class="community-header-list-image">
             </div>
           <% end %>
           <div class="label">
@@ -177,7 +177,7 @@
           <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
             <%= cat.name %>
             <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-              <span class="badge is-status" title="new posts for you"></span>
+              <span class="badge is-status" title="unread activity in category"></span>
             <% end %>
           <% end %>
         <% end %>

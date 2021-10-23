@@ -20,6 +20,9 @@ class ReportsController < ApplicationController
     @answers = Answer.where('created_at >= ?', 1.year.ago).undeleted
     @comments = Comment.where('created_at >= ?', 1.year.ago).undeleted
     @this_month = Post.where('created_at >= ?', 1.month.ago).undeleted
+    @categories = Category.where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                          .order(:sequence)
+    @posts_categories = Post.where(category: @categories).group(:category_id).count
   end
 
   def users_global
@@ -40,6 +43,11 @@ class ReportsController < ApplicationController
     @answers = Post.unscoped.where(post_type_id: Answer.post_type_id).where('created_at >= ?', 1.year.ago).undeleted
     @comments = Comment.unscoped.where('created_at >= ?', 1.year.ago).undeleted
     @this_month = Post.unscoped.where('created_at >= ?', 1.month.ago).undeleted
+    @categories = Category.unscoped
+                          .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                          .includes(:community).order(:community_id, :sequence)
+    @posts_categories = Post.unscoped.where(category: @categories).group(:category_id).count
+    @global = true
     render :posts
   end
 end

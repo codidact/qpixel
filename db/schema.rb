@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_12_225651) do
+ActiveRecord::Schema.define(version: 2021_09_13_143253) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -114,9 +114,12 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.bigint "tag_id"
   end
 
-  create_table "categories_post_types", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id", null: false
     t.bigint "post_type_id", null: false
+    t.integer "upvote_rep", default: 0, null: false
+    t.integer "downvote_rep", default: 0, null: false
+    t.index ["category_id", "post_type_id"], name: "index_categories_post_types_on_category_id_and_post_type_id", unique: true
   end
 
   create_table "categories_required_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -138,6 +141,28 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.index ["community_id"], name: "index_close_reasons_on_community_id"
   end
 
+  create_table "comment_threads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "title"
+    t.integer "reply_count", default: 0, null: false
+    t.bigint "post_id"
+    t.boolean "locked", default: false, null: false
+    t.bigint "locked_by_id"
+    t.timestamp "locked_until"
+    t.boolean "archived", default: false, null: false
+    t.bigint "archived_by_id"
+    t.boolean "ever_archived_before"
+    t.boolean "deleted", default: false, null: false
+    t.bigint "deleted_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "community_id", null: false
+    t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
+    t.index ["community_id"], name: "index_comment_threads_on_community_id"
+    t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
+    t.index ["locked_by_id"], name: "index_comment_threads_on_locked_by_id"
+    t.index ["post_id"], name: "index_comment_threads_on_post_id"
+  end
+
   create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -146,8 +171,14 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.boolean "deleted", default: false
     t.integer "user_id"
     t.bigint "community_id", null: false
+    t.bigint "comment_thread_id"
+    t.boolean "has_reference", default: false, null: false
+    t.text "reference_text"
+    t.bigint "references_comment_id"
+    t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
     t.index ["community_id"], name: "index_comments_on_community_id"
     t.index ["post_id"], name: "index_comments_on_post_type_and_post_id"
+    t.index ["references_comment_id"], name: "index_comments_on_references_comment_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
@@ -173,7 +204,11 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.datetime "suspension_end"
     t.string "suspension_public_comment"
     t.integer "trust_level"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
+    t.bigint "deleted_by_id"
     t.index ["community_id"], name: "index_community_users_on_community_id"
+    t.index ["deleted_by_id"], name: "index_community_users_on_deleted_by_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
 
@@ -194,7 +229,7 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
   end
 
   create_table "flags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "reason"
+    t.text "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
@@ -205,9 +240,10 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.datetime "handled_at"
     t.bigint "community_id", null: false
     t.bigint "post_flag_type_id"
+    t.string "post_type"
     t.index ["community_id"], name: "index_flags_on_community_id"
     t.index ["post_flag_type_id"], name: "index_flags_on_post_flag_type_id"
-    t.index ["post_id"], name: "index_flags_on_post_type_and_post_id"
+    t.index ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id"
     t.index ["status"], name: "index_flags_on_status"
     t.index ["user_id"], name: "index_flags_on_user_id"
   end
@@ -225,8 +261,22 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.index ["name"], name: "index_licenses_on_name"
   end
 
+  create_table "mod_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.text "body"
+    t.boolean "is_suspension"
+    t.datetime "suspension_end"
+    t.boolean "active"
+    t.bigint "author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "read", default: false
+    t.index ["author_id"], name: "index_mod_messages_on_author_id"
+    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+  end
+
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "content"
+    t.text "content"
     t.string "link"
     t.boolean "is_read", default: false
     t.datetime "created_at", null: false
@@ -260,6 +310,7 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.bigint "post_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "requires_details", default: false, null: false
     t.index ["community_id"], name: "index_post_flag_types_on_community_id"
     t.index ["post_type_id"], name: "index_post_flag_types_on_post_type_id"
   end
@@ -314,8 +365,8 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.integer "upvote_rep"
-    t.integer "downvote_rep"
+    t.bigint "answer_type_id"
+    t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
   end
 
@@ -470,18 +521,6 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.bigint "tag_id", null: false
   end
 
-  create_table "suspicious_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "from_user_id"
-    t.integer "to_user_id"
-    t.boolean "was_investigated", default: false
-    t.integer "investigated_by"
-    t.datetime "investigated_at"
-    t.integer "suspicious_count"
-    t.integer "total_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "tag_sets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.bigint "community_id", null: false
@@ -503,6 +542,15 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.index ["community_id"], name: "index_tags_on_community_id"
     t.index ["parent_id"], name: "index_tags_on_parent_id"
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
+  end
+
+  create_table "thread_followers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "comment_thread_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
+    t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
   create_table "user_abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -555,7 +603,12 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.integer "trust_level"
     t.boolean "developer"
     t.string "cid"
+    t.string "discord"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
+    t.bigint "deleted_by_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username"
@@ -584,38 +637,32 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
     t.index ["community_id"], name: "index_warning_templates_on_community_id"
   end
 
-  create_table "warnings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "community_user_id"
-    t.text "body"
-    t.boolean "is_suspension"
-    t.datetime "suspension_end"
-    t.boolean "active"
-    t.bigint "author_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "read", default: false
-    t.index ["author_id"], name: "index_warnings_on_author_id"
-    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
-  end
-
   add_foreign_key "abilities", "communities"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
+  add_foreign_key "comment_threads", "users", column: "archived_by_id"
+  add_foreign_key "comment_threads", "users", column: "deleted_by_id"
+  add_foreign_key "comment_threads", "users", column: "locked_by_id"
+  add_foreign_key "comments", "comments", column: "references_comment_id"
   add_foreign_key "comments", "communities"
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
+  add_foreign_key "community_users", "users", column: "deleted_by_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
+  add_foreign_key "mod_messages", "community_users"
+  add_foreign_key "mod_messages", "users", column: "author_id"
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"
   add_foreign_key "post_histories", "communities"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"
+  add_foreign_key "post_types", "post_types", column: "answer_type_id"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "licenses"
@@ -633,8 +680,7 @@ ActiveRecord::Schema.define(version: 2021_01_12_225651) do
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
+  add_foreign_key "users", "users", column: "deleted_by_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"
-  add_foreign_key "warnings", "community_users"
-  add_foreign_key "warnings", "users", column: "author_id"
 end

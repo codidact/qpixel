@@ -49,6 +49,39 @@ $(() => {
     }
   });
 
+  $('.js-post-field').on('keydown', ev => {
+    if (ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
+      switch (ev.keyCode) {
+        case 66:
+          $('[data-action="bold"]').click();
+          break;
+        
+        case 73:
+          $('[data-action="italic"]').click();
+          break;
+
+        case 75:
+          ev.preventDefault();
+          $('[data-modal="#markdown-link-insert"]').click();
+          break;
+
+        case 80:
+          ev.preventDefault();
+          $('[data-action="code"]').click();
+          break;
+
+        case 81:
+          $('[data-action="quote"]').click();
+          break;
+
+        case 85:
+          ev.preventDefault();
+          $('[data-modal="#markdown-image-upload"]').click();
+          break;
+      }
+    }
+  });
+
   $(document).on('click', '.js-markdown-insert-link', ev => {
     ev.preventDefault();
 

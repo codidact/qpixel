@@ -8,7 +8,7 @@ gem 'fastimage', '~> 2.1'
 gem 'image_processing', '~> 1.11'
 gem 'jquery-rails', '~> 4.3.5'
 gem 'mysql2', '~> 0.5.3'
-gem 'puma', '~> 3.12.4'
+gem 'puma', '~> 4.3.9'
 gem 'rails', '~> 5.2'
 gem 'rails-html-sanitizer', '~> 1.3'
 gem 'redis', '~> 4.1'
@@ -38,7 +38,7 @@ gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
 gem 'aws-sdk-s3', '~> 1.61', require: false
-gem 'aws-ses', '~> 0.6.0'
+gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduler.
 gem 'whenever', '~> 1.0', require: false
@@ -87,4 +87,5 @@ end
 group :development do
   gem 'spring', '~> 2.1'
   gem 'web-console', '~> 3.7'
+  gem 'letter_opener_web', '~> 1.0'
 end

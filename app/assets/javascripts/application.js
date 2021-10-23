@@ -21,56 +21,6 @@ $(document).on('ready', function() {
     const self = $(ev.target);
     self.parents(".post--body").find(".js-flag-box").toggleClass("is-active");
   });
-  $("button.flag-link").bind("click", (ev) => {
-    ev.preventDefault();
-    const self = $(ev.target);
-    
-    const active_radio = self.parents(".js-flag-box").find("input[type='radio'][name='flag-reason']:checked");
-    const reason = parseInt(active_radio.val()) || null;
-
-    if (reason === null) {
-      QPixel.createNotification('danger', "Please choose a reason.");
-      return;
-    }
-
-    const data = {
-      'flag_type': (reason != -1) ? reason : null,
-      'post_id': self.data("post-id"),
-      'reason': self.parents(".js-flag-box").find(".js-flag-comment").val()
-    };
-
-    if ((reason === -1 && data['reason'].length < 10) || (reason !== -1 && data['reason'].length > 0 && data['reason'].length < 10)) {
-      QPixel.createNotification('danger', "Please enter at least 10 characters.");
-      return;
-    }
-
-    $.ajax({
-      'type': 'POST',
-      'url': '/flags/new',
-      'data': data,
-      'target': self
-    })
-    .done((response) => {
-      if(response.status !== 'success') {
-        QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
-      }
-      else {
-        QPixel.createNotification('success', '<strong>Thanks!</strong> A moderator will review your flag.');
-        self.parents(".js-flag-box").find(".js-flag-comment").val("");
-      }
-      self.parents(".js-flag-box").removeClass("is-active");
-    })
-      .fail((jqXHR, textStatus, errorThrown) => {
-        let message = jqXHR.status;
-        try {
-          message = JSON.parse(jqXHR.responseText)['message'];
-        }
-        finally {
-          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
-        }
-        self.parents(".js-flag-box").removeClass("is-active");
-    });
-  });
 
   $('.close-dialog-link').on('click', (ev) => {
     ev.preventDefault();
@@ -119,5 +69,11 @@ $(document).on('ready', function() {
     $('#fvn-dismiss').on('click', () => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
     });
-  };
+  }
+});
+
+const cssVar = name => window.getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
+
+Chartkick.setDefaultOptions({
+  colors: Array.from(Array(5).keys()).map(idx => cssVar(`data-${idx}`))
 });

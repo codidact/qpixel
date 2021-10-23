@@ -64,3 +64,5 @@ es:
       En un/a URL de "https://susitio.codidact.com/ayuda/tema", el "tema" es la babosa.
     responding_to: >
       Respondiendo a:
+    no_block_mathjax_title: >
+      El título no puede contener MathJax de nivel de bloque.

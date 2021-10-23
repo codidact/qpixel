@@ -1,0 +1,68 @@
+// Place all the styles related to the reactions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.reactions-list { flex-wrap: wrap; }
+
+.badge.is-reaction {
+    padding: 0.35rem 0.7rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    a {
+        color: inherit;
+        text-decoration: underline;
+    }
+}
+.post--react > button.button {
+    color: #777777 !important;
+
+    &:hover {
+        color: #444444 !important;
+    }
+    &.is-active {
+        color: white !important;
+        background-color: #666666 !important;
+    }
+}
+.muted-p p {
+    margin: 0;
+}
+
+.reaction-info-modal {
+    .comment-col { width: 60%; }
+}
+
+.droppanel.droppanel-for-reactions {
+    .droppanel--header {
+        font-weight: bold;
+    }
+
+    .grid .grid--cell.is-flexible {
+        width: 0;
+
+        label {
+            margin: 0;
+
+            &.disabled .badge,
+            &.disabled .form-caption {
+                opacity: 0.35;
+                pointer-events: none;
+            }
+
+            .form-caption, p {
+                margin-bottom: 0;
+            }
+        }
+
+        .badge { margin: 0; }
+    }
+}
+@media all and (max-width: 640px) {
+    .droppanel.droppanel-for-reactions {
+        left: 0 !important;
+        right: 0 !important;
+        max-width: none;
+    }
+}

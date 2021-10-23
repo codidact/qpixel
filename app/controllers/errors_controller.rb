@@ -1,6 +1,8 @@
 # Provides web actions that represent errors. Rails' standard error pages are static HTML with inline CSS; by using
 # a custom error controller we get all the layouts and CSS.
 class ErrorsController < ApplicationController
+  protect_from_forgery except: [:error]
+
   def error
     @exception = request.env['action_dispatch.exception']
     @status = ActionDispatch::ExceptionWrapper.new(request.env, @exception)&.status_code

@@ -16,10 +16,12 @@ class Post < ApplicationRecord
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :comment_threads, dependent: :destroy
   has_many :post_histories, dependent: :destroy
-  has_many :flags, dependent: :destroy
+  has_many :flags, as: :post, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
+  has_many :reactions
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
 
@@ -33,6 +35,7 @@ class Post < ApplicationRecord
   validate :maximum_tag_length, if: -> { post_type.has_tags }
   validate :no_spaces_in_tags, if: -> { post_type.has_tags }
   validate :stripped_minimum, if: -> { post_type.has_tags }
+  validate :maximum_title_length, if: -> { post_type.has_tags }
   validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_valid, if: -> { post_type.has_license }
   validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
@@ -95,6 +98,29 @@ class Post < ApplicationRecord
     update(att_source: nil, att_license_link: nil, att_license_name: nil)
   end
 
+  def last_activity_type
+    case last_activity
+    when closed_at
+      if closed == false
+        'reopened'
+      else  
+        if duplicate_post
+          'closed as duplicate'
+        else
+          'closed'
+        end
+      end
+    when locked_at
+      'locked'
+    when deleted_at
+      'deleted'
+    when last_edited_at
+      'edited'
+    else
+      'last activity'
+    end
+  end
+
   def body_plain
     ApplicationController.helpers.strip_markdown(body_markdown)
   end
@@ -133,6 +159,17 @@ class Post < ApplicationRecord
     if locked
       update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
     end
+  end
+
+  def can_access?(user)
+    (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
+      (!category.present? || !category.min_view_trust_level.present? ||
+        category.min_view_trust_level <= (user&.trust_level || 0))
+  end
+
+  def reaction_list
+    reactions.includes(:reaction_type).group_by(&:reaction_type_id)
+             .map { |_k, v| [v.first.reaction_type, v] }.to_h
   end
 
   private
@@ -257,6 +294,13 @@ class Post < ApplicationRecord
     end
     if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 15
       errors.add(:title, 'must be more than 15 non-whitespace characters long')
+    end
+  end
+
+  def maximum_title_length
+    max_title_len = SiteSetting['MaxTitleLength']
+    if title.length > max_title_len
+      errors.add(:title, "can't be more than #{max_title_len} characters")
     end
   end
 

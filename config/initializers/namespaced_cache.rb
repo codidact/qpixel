@@ -14,7 +14,7 @@ module QPixel
     end
 
     # These methods need a hash of cache keys updating before we pass it to the underlying cache.
-    [:fetch_multi, :read_multi, :write_multi].each do |method|
+    [:write_multi].each do |method|
       define_method method do |hash, *args, **opts, &block|
         hash = hash.map { |k, v| [construct_ns_key(k), v] }.to_h
         @underlying.send(method, hash, *args, **opts, &block)
@@ -26,6 +26,17 @@ module QPixel
       define_method method do |*args, **opts, &block|
         @underlying.send(method, *args, **opts, &block)
       end
+    end
+
+    def read_multi(*keys, **opts)
+      keys = keys.map { |k| [construct_ns_key(k), k] }.to_h
+      results = @underlying.read_multi *keys.keys, **opts
+      results.map { |k, v| [keys[k], v] }.to_h
+    end
+
+    def fetch_multi(*keys, **opts, &block)
+      keys = keys.map { |k| construct_ns_key(k) }
+      @underlying.fetch_multi *keys, **opts, &block
     end
 
     def persistent(name, **opts, &block)

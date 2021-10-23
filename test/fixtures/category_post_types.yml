@@ -1,0 +1,65 @@
+main_question:
+  category: main
+  post_type: question
+  upvote_rep: 5
+  downvote_rep: -2
+
+main_answer:
+  category: main
+  post_type: answer
+  upvote_rep: 10
+  downvote_rep: -2
+
+main_article:
+  category: main
+  post_type: article
+  upvote_rep: 10
+  downvote_rep: -2
+
+main_free_edit:
+  category: main
+  post_type: free_edit
+  upvote_rep: 10
+  downvote_rep: -2
+
+meta_question:
+  category: meta
+  post_type: question
+  upvote_rep: 0
+  downvote_rep: 0
+
+meta_answer:
+  category: meta
+  post_type: answer
+  upvote_rep: 0
+  downvote_rep: 0
+
+high_trust_question:
+  category: high_trust
+  post_type: question
+  upvote_rep: 0
+  downvote_rep: 0
+
+high_trust_answer:
+  category: high_trust
+  post_type: answer
+  upvote_rep: 0
+  downvote_rep: 0
+
+admin_only_question:
+  category: admin_only
+  post_type: question
+  upvote_rep: 0
+  downvote_rep: 0
+
+admin_only_answer:
+  category: admin_only
+  post_type: answer
+  upvote_rep: 0
+  downvote_rep: 0
+
+articles_only_article:
+  category: articles_only
+  post_type: article
+  upvote_rep: 10
+  downvote_rep: -2

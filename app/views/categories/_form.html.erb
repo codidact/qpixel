@@ -33,12 +33,17 @@
                    { include_blank: true }, multiple: true, class: 'form-element' %>
     </div>
 
-    <div class="form-group">
-      <%= f.label :post_type_ids, 'Allowed post types', class: 'form-element' %>
-      <span class="form-caption">Only these post types will be allowed in this category.</span>
-      <%= f.select :post_type_ids, options_for_select(PostType.mapping.to_a, selected: @category.post_type_ids),
-                   { include_blank: true }, multiple: true, class: 'form-element' %>
-    </div>
+    <% if @category.id.present? %>
+      <div class="form-group">
+        <%= f.label :post_type_ids, 'Allowed post types', class: 'form-element' %>
+        <div class="form-caption h-m-t-1">Only these post types will be allowed in this category.</div>
+        <%= link_to edit_category_post_types_path(@category) do %>
+          Edit allowed post types &raquo;
+        <% end %>
+      </div>
+    <% else %>
+      <p>You'll be able to set up allowed post types in this category once you've created it.</p>
+    <% end %>
 
     <div class="form-group">
       <%= f.label :tag_set_id, 'Tag set', class: 'form-element' %>

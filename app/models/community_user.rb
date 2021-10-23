@@ -4,10 +4,13 @@ class CommunityUser < ApplicationRecord
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
+  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: [:community_id] }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
+  scope :active, -> { where(deleted: false) }
+  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
 
@@ -54,7 +57,7 @@ class CommunityUser < ApplicationRecord
   ## Privilege functions
 
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    if (internal_id != 'mod' || ignore_mod) && user.is_moderator
+    if internal_id != 'mod' && !ignore_mod && user.is_moderator
       return true # includes: privilege? 'mod'
     end
 
@@ -77,7 +80,7 @@ class CommunityUser < ApplicationRecord
 
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
-    return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: true)
+    return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: false)
 
     priv = Ability.where(internal_id: internal_id).first
 

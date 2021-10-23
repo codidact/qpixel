@@ -43,10 +43,19 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'can create post type' do
     sign_in users(:global_admin)
-    post :create, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                         has_answers: 'true', has_license: 'true', has_category: 'true' } }
+    data = { name: 'Test Type', description: 'words', icon_name: 'heart',
+      has_answers: true, has_license: true, has_category: true,
+      answer_type_id: Answer.post_type_id, has_reactions: false,
+      has_only_specific_reactions: true }
+    post :create, params: { post_type: data }
     assert_response 302
     assert_redirected_to post_types_path
+
+    # Test, if the correct values are applied
+    assert_not_nil assigns(:type)
+    data.each do |k, v|
+      assert_equal v, assigns(:type).send(k)
+    end
   end
 
   test 'create requires auth' do
@@ -84,11 +93,20 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'can update post type' do
     sign_in users(:global_admin)
-    patch :update, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                          has_answers: 'true', has_license: 'true', has_category: 'true' },
+    data = { name: 'Test Type', description: 'words', icon_name: 'heart',
+      has_answers: true, has_license: true, has_category: true,
+      answer_type_id: Answer.post_type_id, has_reactions: false,
+      has_only_specific_reactions: true }
+    patch :update, params: { post_type: data,
                              id: post_types(:question).id }
     assert_response 302
     assert_redirected_to post_types_path
+
+    # Test, if the correct values are applied
+    assert_not_nil assigns(:type)
+    data.each do |k, v|
+      assert_equal v, assigns(:type).send(k)
+    end
   end
 
   test 'update requires auth' do

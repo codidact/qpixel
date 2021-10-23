@@ -1,0 +1,14 @@
+<h1>New reaction</h1>
+
+<% if @reaction_type.errors.any? %>
+  <div class="notice is-danger">
+    These errors prevented this reaction type being saved:
+    <ul>
+      <% @reaction_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= render 'form', submit_url: create_reaction_path, method: :post %>

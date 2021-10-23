@@ -26,21 +26,12 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :upvote_rep, 'Upvote reputation', class: 'form-element' %>
+    <%= f.label :answer_type_id, 'Answer type', class: 'form-element' %>
     <span class="form-caption">
-      How much reputation should be awarded for upvotes on this post type? Enter 0 if this type should not grant rep or
-      if votes will be disabled.
+      Required if this post type has answers. Specify the post type that answers to this post type will be created as.
     </span>
-    <%= f.number_field :upvote_rep, class: 'form-element' %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :downvote_rep, 'Downvote reputation', class: 'form-element' %>
-    <span class="form-caption">
-      How much reputation should be awarded for downvotes on this post type? Enter 0 if this type should not grant rep or
-      if votes will be disabled. Include the minus sign if this should take away rep!
-    </span>
-    <%= f.number_field :downvote_rep, class: 'form-element' %>
+    <%= f.select :answer_type_id, options_for_select(PostType.mapping.to_a, selected: @type.answer_type_id),
+                 { include_blank: true },  class: 'form-element' %>
   </div>
 
   <div class="form-group">
@@ -159,6 +150,30 @@
       </div>
       <div class="checkbox-setting--value">
         <%= f.check_box :is_top_level, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_reactions, 'Reactions?', class: 'form-element' %>
+        <span class="form-caption">Can reactions be added to this post type?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_reactions, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :has_only_specific_reactions, 'Restrict to specific reactions?', class: 'form-element' %>
+        <span class="form-caption">Can only reactions specific to this post type be added?</span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :has_only_specific_reactions, class: 'form-checkbox-element' %>
       </div>
     </div>
   </div>

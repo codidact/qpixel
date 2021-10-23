@@ -66,7 +66,7 @@ class SuggestedEditController < ApplicationController
     now = DateTime.now
 
     if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
-                                                    decided_by: current_user, updated_at: now)
+                    decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
       render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }

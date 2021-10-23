@@ -7,6 +7,13 @@
   <%= stat_panel 'posts this month', @this_month.count %>
 </div>
 
+<h3>Categories</h3>
+<div class="flex-row">
+  <% @categories.each do |cat| %>
+    <%= stat_panel cat.name, @posts_categories[cat.id] || 0, caption: @global ? cat.community.name : nil %>
+  <% end %>
+</div>
+
 <h3>New posts</h3>
 <%= line_chart [
   { name: 'Questions', data: @questions.group_by_week(:created_at).count },

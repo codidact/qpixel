@@ -182,3 +182,11 @@ h1 .badge.is-tag.is-master-tag {
   overflow-y: hidden;
   padding: 0 0 1px 0;
 }
+
+pre code.hljs {
+  padding: unset !important;
+}
+
+.failed-validation {
+  border: 2px solid #d21919 !important;
+}

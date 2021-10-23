@@ -1,19 +1,19 @@
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+  include ::UserMerge
+
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
          :lockable, :omniauthable
 
   has_many :posts, dependent: :nullify
-  has_many :votes, dependent: :nullify
+  has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :community_users, dependent: :destroy
   has_many :flags, dependent: :nullify
-  has_many :error_logs, dependent: :nullify
+  has_many :error_logs, dependent: :destroy
   has_one :community_user, -> { for_context }, autosave: true, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
   has_many :suggested_edits, dependent: :nullify
@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :audit_logs, dependent: :nullify
   has_many :audit_logs_related, class_name: 'AuditLog', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
+  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_blank: true }
@@ -32,6 +33,9 @@ class User < ApplicationRecord
   validate :email_not_bad_pattern
 
   delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+
+  scope :active, -> { where(deleted: false) }
+  scope :deleted, -> { where(deleted: true) }
 
   after_create :send_welcome_tour_message
 
@@ -62,15 +66,15 @@ class User < ApplicationRecord
     end
   end
 
-  # post_types must be the list of applicable post types
-  # passed only for '1' and '2'
-  def metric(key, post_types = [])
+  def metric(key)
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'
         Post.qa_only.undeleted.where(user: self).count
-      when '1', '2'
-        Post.undeleted.where(post_type: post_types, user: self).count
+      when '1'
+        Post.undeleted.where(post_type: PostType.top_level, user: self).count
+      when '2'
+        Post.undeleted.where(post_type: PostType.second_level, user: self).count
       when 's'
         Vote.where(recv_user_id: id, vote_type: 1).count - \
           Vote.where(recv_user_id: id, vote_type: -1).count
@@ -85,7 +89,7 @@ class User < ApplicationRecord
   end
 
   def create_notification(content, link)
-    notification = Notification.create(content: content, link: link)
+    notification = Notification.create!(content: content, link: link)
     notifications << notification
   end
 
@@ -249,6 +253,10 @@ class User < ApplicationRecord
         RequestContext.redis.hdel key, *deprecated
       end
     end
+  end
+
+  def preference(name, community: false)
+    preferences[community ? :community : :global][name]
   end
   # rubocop:enable Naming/PredicateName
 end

@@ -1,6 +1,6 @@
-<% content_for :title, "Moderator Tools: #{@user.rtl_safe_username}" %>
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
-<h1>Full activity log for <%= link_to @user.rtl_safe_username, user_path(@user), dir: 'ltr'%></h1>
+<h1>Full activity log for <%= user_link @user %></h1>
 
 <p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to it.</p>
 

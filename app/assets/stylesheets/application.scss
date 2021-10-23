@@ -267,3 +267,12 @@ table.is-with-hover tr:hover td {
 .notice {
   z-index: 9999;
 }
+
+/* Fix header images being stretched - https://meta.codidact.com/posts/278377 */
+img.header--item-image {
+  object-fit: contain;
+}
+
+.widget--header-link {
+  margin: 0 0 0 0.5em;
+}

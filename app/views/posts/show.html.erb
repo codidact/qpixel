@@ -8,7 +8,7 @@
 
 <% content_for :twitter_card_meta do %>
   <meta name="twitter:card" content="summary" />
-  <% if @post.user.twitter.present? %>
+  <% if @post.user&.twitter&.present? %>
     <meta name="twitter:creator" content="@<%= @post.user.twitter %>" />
   <% end %>
   <meta property="og:url" content="<%= post_url(@post) %>" />
@@ -24,7 +24,7 @@
 
   <div class="button-list is-gutterless has-float-right">
     <a href="<%= query_url(sort: 'score') %>" class="button is-muted is-outlined <%= params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : '' %>">Score</a>
-    <a href="<%= query_url(sort: 'age') %>" class="button is-muted is-outlined <%= params[:sort] == 'age' ? 'is-active' : '' %>">Active</a>
+    <a href="<%= query_url(sort: 'active') %>" class="button is-muted is-outlined <%= params[:sort] == 'active' ? 'is-active' : '' %>">Active</a>
   </div>
 
   <div class="has-clear-clear"></div>

@@ -5,11 +5,13 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference]
+                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action]
+                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
+                                  :vote_summary, :avatar]
+  before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -98,23 +100,28 @@ class UsersController < ApplicationController
 
   def activity
     @posts = Post.undeleted.where(user: @user).count
-    @comments = Comment.undeleted.where(user: @user).where(post: Post.undeleted).count
+    @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                      posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.where(user: @user).where(post: Post.undeleted).count
+    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).count
 
     @all_edits = @suggested_edits + @edits
 
     items = case params[:filter]
             when 'posts'
-              Post.undeleted.where(user: @user).all
+              Post.undeleted.where(user: @user)
             when 'comments'
-              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all
+              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                    posts: { deleted: false })
             when 'edits'
-              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+              SuggestedEdit.where(user: @user) + \
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
             else
-              Post.undeleted.where(user: @user).all + \
-              Comment.undeleted.where(user: @user).where(post: Post.undeleted).all + \
-              SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).where(post: Post.undeleted)
+              Post.undeleted.where(user: @user) + \
+              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
+                                                                    posts: { deleted: false }) + \
+              SuggestedEdit.where(user: @user).all + \
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
             end
 
     @items = items.sort_by(&:created_at).reverse
@@ -189,6 +196,10 @@ class UsersController < ApplicationController
       Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                                         deleted: true, deleted_at: DateTime.now,
                                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
+      Comment.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                           deleted: true)
+      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      SuggestedEdit.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
@@ -205,37 +216,39 @@ class UsersController < ApplicationController
       return
     end
 
-    relations = User.reflections
-    transfer_id = SiteSetting['SoftDeleteTransferUser']
-    relations.select { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
-      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
-        @user.send(name).destroy_all
-      else
-        @user.send(name).destroy
+    case params[:type]
+    when 'profile'
+      AuditLog.moderator_audit(event_type: 'profile_delete', related: @user.community_user, user: current_user,
+                               comment: @user.community_user.attributes_print(join: "\n"))
+      @user.community_user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now)
+    when 'user'
+      unless current_user.is_global_moderator || current_user.is_global_admin
+        render json: { status: 'failed', message: 'Non-global moderator cannot perform global deletion.' },
+               status: 403
+        return
       end
-    end
-    relations.reject { |_, ref| ref.options[:dependent] == :destroy }.each do |name, ref|
-      if ref.macro == :has_many || ref.macro == :has_and_belongs_to_many
-        @user.send(name)&.update_all(ref.foreign_key => transfer_id)
-      else
-        @user.send(name)&.update(ref.foreign_key => transfer_id)
-      end
-    end
 
-    before = @user.attributes_print
-    unless @user.destroy
-      render(json: { status: 'failed', message: 'Failed to destroy; ask a dev.' }, status: :internal_server_error)
+      AuditLog.moderator_audit(event_type: 'user_delete', related: @user, user: current_user,
+                               comment: @user.attributes_print(join: "\n"))
+      @user.assign_attributes(deleted: true, deleted_by_id: current_user.id, deleted_at: DateTime.now,
+                              username: "user#{@user.id}", email: "#{@user.id}@deleted.localhost",
+                              password: SecureRandom.hex(32))
+      @user.skip_reconfirmation!
+      @user.save
+    else
+      render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
     end
-    AuditLog.moderator_audit(event_type: 'user_delete', user: current_user, comment: "<<User #{before}>>")
 
-    render json: { status: 'success' }
+    render json: { status: 'success', user: @user.id }
   end
 
-  def edit_profile; end
+  def edit_profile
+    render layout: 'without_sidebar'
+  end
 
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter)
+    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
     profile_params[:twitter] = profile_params[:twitter].delete('@')
 
     if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
@@ -346,7 +359,7 @@ class UsersController < ApplicationController
                            comment: "#{ability.internal_id} ability removed")
 
       AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
-                           comment: ability.internal_id)
+                            comment: ability.internal_id)
     else
       return not_found
     end
@@ -437,6 +450,31 @@ class UsersController < ApplicationController
     end
   end
 
+  def my_vote_summary
+    redirect_to vote_summary_path(current_user)
+  end
+
+  def vote_summary
+    @votes = Vote.where(recv_user: @user) \
+                 .includes(:post).group(:date_of, :post_id, :vote_type)
+    @votes = @votes.select(:post_id, :vote_type) \
+                   .select('count(*) as vote_count') \
+                   .select('date(created_at) as date_of')
+    @votes = @votes.order(date_of: :desc, post_id: :desc).all \
+                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
+                   .paginate(page: params[:page], per_page: 15)
+    @votes
+  end
+
+  def avatar
+    respond_to do |format|
+      format.png do
+        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
+        send_data helpers.user_auto_avatar(@user, size).to_blob, type: 'image/png', disposition: 'inline'
+      end
+    end
+  end
+
   private
 
   def set_user
@@ -445,7 +483,17 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    User.joins(:community_user).includes(:community_user, :avatar_attachment)
+    if helpers.moderator?
+      User.all
+    else
+      User.active
+    end.joins(:community_user).includes(:community_user, :avatar_attachment)
+  end
+
+  def check_deleted
+    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
+      render :deleted_user, layout: 'without_sidebar', status: 404
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -1,0 +1,41 @@
+<p class="has-font-size-caption">
+  <%= link_to edit_category_path(@category) do %>
+    &laquo; Back to category edit
+  <% end %>
+</p>
+<h1>Allowed post types for <%= @category.name %></h1>
+<p class="has-font-size-caption">
+  Only post types listed here are allowed to be posted in this category. Not all will be displayed as available options
+  when creating a post; to configure that, go back to category settings. You must configure reputation awards for each
+  post type.
+</p>
+
+<div class="js-cpt-list">
+  <% @category_post_types.each do |cpt| %>
+    <%= render 'category_post_type_edit', cpt: cpt %>
+  <% end %>
+</div>
+
+<h3>Add post type</h3>
+<div class="widget">
+  <div class="grid has-padding-2 ai-c">
+    <div class="grid--cell is-6 is-12-sm">
+      <%= label_tag 'post-type-new', 'Post type' %>
+      <%= select_tag 'post-type-new', options_for_select(PostType.all.map { |pt| [pt.name, pt.id] }), include_blank: true,
+                     class: 'form-element js-cpt-post-type' %>
+    </div>
+    <div class="grid--cell is-2 is-6-sm">
+      <%= label_tag 'upvote-rep-new', 'Upvote rep' %>
+      <%= number_field_tag 'upvote-rep-new', nil, class: 'form-element js-cpt-upvote-rep' %>
+    </div>
+    <div class="grid--cell is-2 is-6-sm">
+      <%= label_tag 'downvote-rep-new', 'Downvote rep' %>
+      <%= number_field_tag 'downvote-rep-new', nil, class: 'form-element js-cpt-downvote-rep' %>
+    </div>
+    <div class="grid--cell is-2 is-12-sm">
+      <button type="button" class="add-cpt js-update-cpt button is-filled" data-category="<%= @category.id %>">
+        Add
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="notice is-danger has-color-red-900">
+  <% deletion_type = user.deleted? ? 'user' : 'profile' %>
+  <p>
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Deleted user</strong>
+  </p>
+  <p>
+    This <%= deletion_type %> is deleted. You have access to this page as a moderator, but this is not public information.
+  </p>
+</div>

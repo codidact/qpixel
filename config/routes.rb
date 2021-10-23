@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: 'custom_sessions' }
+  devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
   devise_scope :user do
-    get  'users/2fa/login',                to: 'custom_sessions#verify_2fa', as: :login_verify_2fa
-    post 'users/2fa/login',                to: 'custom_sessions#verify_code', as: :login_verify_code
+    get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
+    post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
   end
 
   root                                     to: 'categories#homepage'
 
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
     get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
@@ -75,9 +77,6 @@ Rails.application.routes.draw do
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
-  get    'mod/votes',                      to: 'suspicious_votes#index', as: :suspicious_votes
-  patch  'mod/votes/investigated/:id',     to: 'suspicious_votes#investigated', as: :investigated_suspicious_vote
-  get    'mod/votes/user/:id',             to: 'suspicious_votes#user', as: :suspicious_votes_user
   delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
 
   scope 'mod/featured' do
@@ -89,9 +88,26 @@ Rails.application.routes.draw do
   end
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
-  get    'questions/feed',                 to: 'questions#feed', as: :question_feed
+
+  scope 'posts/reactions' do
+    root                                  to: 'reactions#index', as: :reactions
+    get   ':id/edit',                     to: 'reactions#edit', as: :edit_reaction
+    patch ':id/edit',                     to: 'reactions#update', as: :update_reaction
+    get   'new',                          to: 'reactions#new', as: :new_reaction
+    post  'new',                          to: 'reactions#create', as: :create_reaction
+
+    post  'add',                          to: 'reactions#add', as: :add_reaction
+    post  'retract',                      to: 'reactions#retract', as: :retract_reaction
+
+  end
 
   scope 'posts' do
+    scope 'suggested-edit' do
+      get    ':id',           to: 'suggested_edit#show', as: :suggested_edit
+      post   ':id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
+      post   ':id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
+    end
+
     get    'new/:post_type',               to: 'posts#new', as: :new_post
     get    'new/:post_type/respond/:parent', to: 'posts#new', as: :new_response
     get    'new/:post_type/:category',     to: 'posts#new', as: :new_category_post
@@ -100,22 +116,19 @@ Rails.application.routes.draw do
     post   'new/:post_type/:category',     to: 'posts#create', as: :create_category_post
     get    'search',                       to: 'search#search', as: :search
     get    'promoted',                     to: 'moderator#promotions', as: :promoted_posts
-
-    get    ':id',                          to: 'posts#show', as: :post
-
-    get    ':id/history',                  to: 'post_history#post', as: :post_history
+    get    'types',                        to: 'post_types#list', as: :post_types_list
     post   'upload',                       to: 'posts#upload', as: :upload
     post   'save-draft',                   to: 'posts#save_draft', as: :save_draft
     post   'delete-draft',                 to: 'posts#delete_draft', as: :delete_draft
 
+    get    ':id',                          to: 'posts#show', as: :post
+    get    ':id/history',                  to: 'post_history#post', as: :post_history
     get    ':id/edit',                     to: 'posts#edit', as: :edit_post
     patch  ':id/edit',                     to: 'posts#update', as: :update_post
-
     post   ':id/close',                    to: 'posts#close', as: :close_post
     post   ':id/reopen',                   to: 'posts#reopen', as: :reopen_post
     post   ':id/delete',                   to: 'posts#delete', as: :delete_post
     post   ':id/restore',                  to: 'posts#restore', as: :restore_post
-
     post   ':id/category',                 to: 'posts#change_category', as: :change_category
     post   ':id/toggle_comments',          to: 'posts#toggle_comments', as: :post_comments_allowance_toggle
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
@@ -124,9 +137,7 @@ Rails.application.routes.draw do
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
 
-    get    'suggested-edit/:id',           to: 'suggested_edit#show', as: :suggested_edit
-    post   'suggested-edit/:id/approve',   to: 'suggested_edit#approve', as: :suggested_edit_approve
-    post   'suggested-edit/:id/reject',    to: 'suggested_edit#reject', as: :suggested_edit_reject
+    get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
   get    'policy/:slug',                   to: 'posts#document', as: :policy
@@ -146,29 +157,34 @@ Rails.application.routes.draw do
     post 'disable/link',                   to: 'two_factor#confirm_disable_link', as: :two_factor_confirm_disable_link
   end
 
-  get    'users',                          to: 'users#index', as: :users
-  get    'users/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
-  post   'users/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
-  get    'users/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
-  get    'users/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
-  get    'users/me',                       to: 'users#me', as: :users_me
-  get    'users/me/preferences',           to: 'users#preferences', as: :user_preferences
-  post   'users/me/preferences',           to: 'users#set_preference', as: :set_user_preference
-  get    'users/me/notifications',         to: 'notifications#index', as: :notifications
-  get    'users/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
-  patch  'users/edit/profile',             to: 'users#update_profile', as: :update_user_profile
-  get    'users/:id',                      to: 'users#show', as: :user
-  get    'users/:id/flags',                to: 'flags#history', as: :flag_history
-  get    'users/:id/activity',             to: 'users#activity', as: :user_activity
-  get    'users/:id/mod',                  to: 'users#mod', as: :mod_user
-  get    'users/:id/posts',                to: 'users#posts', as: :user_posts
-  get    'users/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
-  post   'users/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
-  post   'users/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
-  get    'users/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
-  post   'users/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
-  get    'users/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
-  post   'users/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+  scope  'users' do
+    root                                to: 'users#index', as: :users
+    get    '/stack-redirect',           to: 'users#stack_redirect', as: :stack_redirect
+    post   '/claim-content',            to: 'users#transfer_se_content', as: :claim_stack_content
+    get    '/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
+    get    '/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
+    get    '/me',                       to: 'users#me', as: :users_me
+    get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
+    post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
+    get    '/me/notifications',         to: 'notifications#index', as: :notifications
+    get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
+    patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
+    get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
+    get    '/:id',                      to: 'users#show', as: :user
+    get    '/:id/flags',                to: 'flags#history', as: :flag_history
+    get    '/:id/activity',             to: 'users#activity', as: :user_activity
+    get    '/:id/mod',                  to: 'users#mod', as: :mod_user
+    get    '/:id/posts',                to: 'users#posts', as: :user_posts
+    get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
+    post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
+    post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
+    get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
+    post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
+    get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+    post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+    get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+  end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
   post   'notifications/read_all',         to: 'notifications#read_all', as: :read_all_notifications
@@ -180,12 +196,21 @@ Rails.application.routes.draw do
 
   post   'flags/new',                      to: 'flags#new', as: :new_flag
 
-  post   'comments/new',                   to: 'comments#create', as: :create_comment
-  get    'comments/post/:post_id',         to: 'comments#post', as: :post_comments
-  get    'comments/:id',                   to: 'comments#show', as: :comment
-  post   'comments/:id/edit',              to: 'comments#update', as: :update_comment
-  delete 'comments/:id/delete',            to: 'comments#destroy', as: :delete_comment
-  patch  'comments/:id/delete',            to: 'comments#undelete', as: :undelete_comment
+  scope 'comments' do
+    post   'new',                          to: 'comments#create_thread', as: :create_comment_thread
+    get    'thread/:id/pingable',          to: 'comments#pingable', as: :thread_pingable
+    post   'thread/:id/new',               to: 'comments#create', as: :create_comment
+    post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
+    post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
+    post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
+    get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
+    get    'post/:post_id',                to: 'comments#post', as: :post_comments
+    get    ':id',                          to: 'comments#show', as: :comment
+    get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
+    post   ':id/edit',                     to: 'comments#update', as: :update_comment
+    delete ':id/delete',                   to: 'comments#destroy', as: :delete_comment
+    patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
+  end
 
   get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
@@ -208,6 +233,9 @@ Rails.application.routes.draw do
     get    ':id',                          to: 'categories#show', as: :category
     get    ':id/edit',                     to: 'categories#edit', as: :edit_category
     post   ':id/edit',                     to: 'categories#update', as: :update_category
+    get    ':id/edit/post-types',          to: 'categories#category_post_types', as: :edit_category_post_types
+    post   ':id/edit/post-types',          to: 'categories#update_cat_post_type', as: :update_category_post_types
+    delete ':id/edit/post-types',          to: 'categories#delete_cat_post_type', as: :destroy_category_post_type
     delete ':id',                          to: 'categories#destroy', as: :destroy_category
     get    ':id/types',                    to: 'categories#post_types', as: :category_post_types
     get    ':id/feed',                     to: 'categories#rss_feed', as: :category_feed
@@ -263,11 +291,6 @@ Rails.application.routes.draw do
     get ':id',                             to: 'abilities#show', as: :ability
   end
 
-  scope 'birthday' do
-    root                                   to: 'birthday#index', as: :birthday
-    get 'ranking',                         to: 'birthday#ranking', as: :birthday_ranking
-  end
-
   scope 'donate' do
     root                                   to: 'donations#index', as: :donate
     post 'intent',                         to: 'donations#intent', as: :donation_intent
@@ -282,6 +305,8 @@ Rails.application.routes.draw do
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '423',                             to: 'errors#read_only'
   get   '500',                             to: 'errors#internal_server_error'
+
+  get   'osd',                             to: 'application#osd', as: :osd
 
   scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities

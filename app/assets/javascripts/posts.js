@@ -105,12 +105,12 @@ $(() => {
     await saveDraft(postText, $field, true);
   });
 
-  let mathjaxTimeout = null;
+  let featureTimeout = null;
   let draftTimeout = null;
 
   const postFields = $('.post-field');
 
-  postFields.on('focus keyup markdown', evt => {
+  postFields.on('focus keyup paste change markdown', evt => {
     const $tgt = $(evt.target);
 
     if (!window.converter) {
@@ -124,18 +124,22 @@ $(() => {
     window.setTimeout(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
-      const html = converter.render(text);
+      const unsafe_html = converter.render(text);
+      const html = DOMPurify.sanitize( unsafe_html , {USE_PROFILES: {html: true}} );
       $tgt.parents('.form-group').siblings('.post-preview').html(html);
       $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
 
-    if (mathjaxTimeout) {
-      clearTimeout(mathjaxTimeout);
+    if (featureTimeout) {
+      clearTimeout(featureTimeout);
     }
 
-    mathjaxTimeout = setTimeout(() => {
+    featureTimeout = setTimeout(() => {
       if (window['MathJax']) {
         MathJax.typeset();
+      }
+      if (window['hljs']) {
+        hljs.highlightAll();
       }
     }, 1000);
   }).on('keyup', ev => {

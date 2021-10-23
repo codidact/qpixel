@@ -5,7 +5,7 @@
   <a href="https://codidact.com/">Codidact communities</a>.
 </div>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), method: :post) do |f| %>
   <div class="form-group">
     <%= f.label :email, class: "form-element" %>
     <%= f.email_field :email, class: 'form-element', autofocus: true, autocomplete: "email" %>

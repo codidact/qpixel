@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get -qq update
+            sudo apt-get --allow-releaseinfo-change -qq update
             sudo apt-get -y install git libmariadb-dev libmagickwand-dev
       - checkout
       - restore_cache:
@@ -70,7 +70,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get -qq update
+            sudo apt-get --allow-releaseinfo-change -qq update
             sudo apt-get -y install git libmariadb-dev libmagickwand-dev
       - checkout
       - restore_cache:
@@ -91,8 +91,32 @@ jobs:
           command: |
             bundle exec rubocop
 
+  deploy:
+    docker:
+      - image: circleci/ruby:2.6.6-node
+
+    working_directory: ~/qpixel
+
+    steps:
+      - run:
+          name: Import SSH key
+          command: |
+            echo "$DEV_SSH_KEY" | base64 --decode > ~/deploy.key
+            chmod 0700 ~/deploy.key
+      - run:
+          name: Run deploy
+          command: |
+            ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "sudo su -l qpixel /var/apps/deploy-dev"
+
 workflows:
   test_lint:
     jobs:
       - test
       - rubocop
+      - deploy:
+          requires:
+            - test
+            - rubocop
+          filters:
+            branches:
+              only: develop

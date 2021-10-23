@@ -1,30 +1,145 @@
 @import 'variables';
 
 .comment {
-  display: flex;
-  flex-direction: column;
-  border-bottom: 1px solid $muted-graphic;
-  padding: 0.5em;
-  align-items: stretch;
-  max-width: 100%;
-  overflow: auto;
-
-  .comment--content {
-    margin-bottom: 0;
-  }
-
-  .comment--meta {
-    margin-left: auto;
-  }
-}
-
-.comment-form {
-  margin-top: 0.5em;
-}
-.post--comments {
+  margin: 0.25rem;
+  border: 1px solid #ccc;
   font-size: 0.9em;
+}
+
+.widget:not(.flag-widget) .comment {
+  margin: -0.75rem;
+  border: none;
+}
+
+.flag-widget .comment {
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+
+.comment:target {
+  box-shadow: 0 0 0 5px rgba(255, 200, 0, 0.3);
+}
+
+.comment .comment-meta {
+  font-size: 0.9em;
+  color: #666;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+
+  .comment--reference {
+    position: relative;
+    width: 1.5rem;
+
+    .comment--reference-button {
+      padding: 0.25rem;
+      position: absolute;
+      top: -0.35rem;
+      left: -0.55rem;
+    }
+  }
+
+  .comment--links {
+    flex-grow: 1;
+    display: flex;
+    justify-content: right;
+
+    a {
+      margin: 0 0.25rem;
+    }
+  }
+}
+
+.comment .comment--body {
+  padding: 0.5rem 0.75rem;
+  padding-top: 0.125rem;
+}
+
+.deleted-comments {
+  margin: -0.75rem 0;
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+}
+
+.post--comments-thread.is-inline {
+  padding: 0.5rem 0.25rem;
+  display: flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  transition: all .3s ease;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.is-deleted {
+    background-color: #fdd;
+    opacity: 0.5;
+    &:hover { opacity: 0.7; }
+  }
+  &.is-archived {
+    opacity: 0.5;
+    &:hover { opacity: 0.7; }
+  }
+
+  a {
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    width: 0;
+    margin-right: 0.5rem;
+  }
+}
+
+.post--comments-thread.is-embedded {
+  background-color: #fafafa;
+}
+
+.ping {
+  color: #666;
+  background-color: #eee;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.85em;
+  font-weight: bold;
+
+  &:hover {
+    color: #666;
+    text-decoration: none !important;
+  }
+
+  &.me {
+    background-color: #444;
+    color: white;
+
+    &:hover {
+      background-color: #222;
+      color: white;
+    }
+  }
+
+  &.unpingable {
+    background: #fdeded;
+    color: #991212;
+
+    &:hover {
+      background: #f9cbcb;
+      color: #991212;
+    }
+  }
 }
 
 .comment-content {
   resize: vertical !important;
+}
+
+.new-thread-modal {
+  box-shadow: 0 3px 5px -2px #eee;
+  border: 1px solid #d0d9dd;
+  margin-top: 10px;
+  padding: 0.7em;
+  display: none;
 }

@@ -1,0 +1,88 @@
+<%= form_for @reaction_type, url: submit_url, method: method do |f| %>
+  <div class="form-group">
+    <%= f.label :name, "Name", class: "form-element" %>
+    <%= f.text_field :name, class: "form-element" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Description", class: "form-element" %>
+    <%= f.text_area :description, class: "form-element is-small" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :on_post_label, "Label on Post", class: "form-element" %>
+    <div class="form-caption">
+        This label will be shown on posts marked with this reaction; directly followed by a list of people who used it. Should end in a preposition such as "for" or "by"
+    </div>
+    <%= f.text_field :on_post_label, class: "form-element" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :color, "Color", class: "form-element" %>
+    <div class="form-caption">
+    </div>
+    <%= f.select(:color, [
+          ['blue (light)', ''], ['blue (dark)', 'is-filled'],
+          ['red (light)', 'is-red'], ['red (dark)', 'is-red is-filled'],
+          ['yellow (light)', 'is-yellow'], ['yellow (dark)', 'is-yellow is-filled'],
+          ['green (light)', 'is-green'], ['green (dark)', 'is-green is-filled'],
+          ['teal (light)', 'is-teal'], ['teal (dark)', 'is-teal is-filled'],
+          ['gray (light)', 'is-muted'], ['gray (dark)', 'is-muted is-filled']
+        ], {}, { class: "form-element" }) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :icon, "Icon", class: "form-element" %>
+    <div class="form-caption">
+      The code for a <a href="https://fontawesome.com/">FontAwesome</a> (free) icon to be used for this reaction. Has two parts separated by space (<code>faX</code> for the icon set and <code>fa-X</code> for the icon code).
+    </div>
+    <%= f.text_field :icon, class: "form-element", placeholder: 'fas fa-exclamation-triangle' %>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :requires_comment, 'Require comment?', class: 'form-element' %>
+        <span class="form-caption">
+          Check this box if the reaction requires users to add a comment explaining their reaction. Should be used sparingly, as it can facilitate circumvention.
+        </span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :requires_comment, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="checkbox-setting">
+      <div class="checkbox-setting--desc">
+        <%= f.label :active, 'Active?', class: 'form-element' %>
+        <span class="form-caption">
+          Check this box if the reaction is active and can be added to posts by anyone.
+        </span>
+      </div>
+      <div class="checkbox-setting--value">
+        <%= f.check_box :active, class: 'form-checkbox-element' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :post_type_id, "Limited to Post Type", class: "form-element" %>
+    <div class="form-caption">
+      You can limit the availability of this reaction type to one specific post type; if left blank, the reaction will be available for all post types that are not restricting reactions to specific ones.
+    </div>
+    <%= f.select(:post_type_id, ([['', nil]] + PostType.all.map { |pt| [pt.name.underscore.humanize, pt.id] }), {}, { class: "form-element" }) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :position, "Position", class: "form-element" %>
+    <div class="form-caption">
+      The order in which the reactions are to be shown in the add reaction dialog; lower positions go first
+    </div>
+    <%= f.number_field :position, class: "form-element" %>
+  </div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= link_to 'Cancel', reactions_path, class: 'button' %>
+<% end %>

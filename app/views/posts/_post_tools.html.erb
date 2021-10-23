@@ -81,9 +81,9 @@
           </p>
           <%= form_tag post_comments_allowance_toggle_path(post), remote: true, class: 'js-toggle-comments' do %>
             <div class="form-group">
-              <%= label_tag :delete_all_comments, 'Purge all comments?', class: 'form-element', for: "purge_comments_id_#{post.id}" %>
+              <%= label_tag :delete_all_comments, 'Purge all comments?', class: 'form-element', for: "purge_comments_#{post.id}" %>
               <div class="form-caption">You can optionally remove all comments. You can undelete them manually later.</div>
-              <%= check_box_tag :delete_all_comments, 'yes' %>
+              <%= check_box_tag :delete_all_comments, 'yes', nil, id: "purge_comments_#{post.id}" %>
             </div>
 
             <%= submit_tag 'Disable', class: 'button is-filled' %>

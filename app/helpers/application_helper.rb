@@ -1,5 +1,7 @@
 # Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
+  include Warden::Test::Helpers
+
   def moderator?
     user_signed_in? && (current_user.is_moderator || current_user.is_admin)
   end
@@ -40,12 +42,11 @@ module ApplicationHelper
     $active_search_param == param&.to_sym
   end
 
-  def stat_panel(heading, value)
-    tag.div class: 'panel panel-default stat-panel' do
-      tag.div class: 'panel-body' do
-        tag.h4(heading, class: 'stat-panel-heading') +
-          tag.span(value, class: 'stat-value')
-      end
+  def stat_panel(heading, value, caption: nil)
+    tag.div class: 'stat-panel' do
+      tag.h4(heading, class: 'stat-panel-heading') +
+        (caption.nil? ? '' : tag.span(caption, class: 'stat-panel-caption')) +
+        tag.span(value, class: 'stat-value')
     end
   end
 
@@ -76,7 +77,7 @@ module ApplicationHelper
 
   def generic_share_link(post)
     if second_level_post_types.include?(post.post_type_id)
-      post_url(post, anchor: "answer-#{post.id}")
+      answer_post_url(id: post.parent_id, answer: post.id, anchor: "answer-#{post.id}")
     else
       post_url(post)
     end
@@ -140,5 +141,20 @@ module ApplicationHelper
 
   def read_only?
     RequestContext.redis.get('network/read_only') == 'true'
+  end
+
+  # Redefine Devise helpers so that we can additionally check for deleted profiles/users.
+  def current_user
+    @current_user ||= warden.authenticate(scope: :user)
+    if @current_user&.deleted? || @current_user&.community_user&.deleted?
+      scope = Devise::Mapping.find_scope!(:user)
+      logout scope
+      @current_user = nil
+    end
+    @current_user
+  end
+
+  def user_signed_in?
+    !!current_user && !current_user.deleted? && !current_user.community_user.deleted?
   end
 end

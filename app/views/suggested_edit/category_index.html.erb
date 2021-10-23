@@ -27,7 +27,7 @@
         <div class="form-caption h-m-t-2">
           <strong class="<%= edit.active ? '' : (edit.approved? ? 'h-c-green-700' : 'h-c-red-600' ) %>"
           ><%= edit.active ? 'Pending' : (edit.approved? ? 'Approved' : 'Rejected' ) %></strong> suggested edit
-          by <%= link_to edit.user.rtl_safe_username, user_path(edit.user), dir: 'ltr' %>,
+          by <%= user_link edit.user %>,
           <span title="<%= edit.created_at.iso8601 %>"><%= time_ago_in_words(edit.created_at) %> ago</span>
         </div>
       </div>

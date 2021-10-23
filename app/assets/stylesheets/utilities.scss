@@ -1,5 +1,9 @@
 @import 'variables';
 
+@mixin shadow {
+  box-shadow: 0.1em 0.1em 0.2em $muted-graphic;
+}
+
 .flex-row-always {
   display: flex;
   flex-direction: row;
@@ -16,9 +20,11 @@
 .flex-row {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
+
     & > * {
       margin: 0 0.5em !important;
     }
@@ -88,17 +94,29 @@ pre.pre-wrap {
 
 .stat-panel {
   flex: 1;
+  border: 1px solid $muted-graphic;
+  border-radius: 4px;
+  margin: 0.5em;
+  padding: 0.5em;
+  @include shadow;
 }
 
 .stat-panel-heading {
-  margin-top: 0;
+  margin: 0;
   font-variant: small-caps;
   color: $muted-text;
   font-weight: bold;
   letter-spacing: 0.5px;
 }
 
+.stat-panel-caption {
+  display: block;
+  font-size: 0.8em;
+  color: $muted-text;
+}
+
 .stat-value {
+  margin-top: 0.2em;
   font-size: 2.0em;
 }
 

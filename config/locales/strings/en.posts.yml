@@ -2,7 +2,7 @@ en:
   posts:
     #alert/notice
     category_low_trust_level: >
-      You don't have a high enough tr ust level to post in the :name category.
+      You don't have a high enough trust level to post in the :name category.
     type_requires_category: >
       You can't create a :type without a category.
     type_requires_parent: >
@@ -64,3 +64,5 @@ en:
       In a URL of "https://yoursite.codidact.com/help/topic", the "topic" is the slug.
     responding_to: >
       Responding to:
+    no_block_mathjax_title: >
+      Title cannot contain block-level MathJax.

@@ -4,10 +4,10 @@
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
 
-<% @history.each do |event| %>
+<% @history.each.with_index do |event,index| %>
   <details class="history-event">
     <summary>
-      <strong><%= event.post_history_type.name.humanize %></strong>
+      <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
       <span class="has-color-tertiary-600 history-meta">
         <span>
           by
@@ -15,7 +15,7 @@
             (deleted user)
           <% else %>
             <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-            <%= link_to event.user&.rtl_safe_username, user_path(event.user), dir: 'ltr'%>
+            <%= user_link event.user %>
           <% end %>
           &middot;
           <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)

@@ -5,7 +5,7 @@ module UsersHelper
     if user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
-      "https://unicornify.pictures/avatar/#{user.id}?s=#{size}"
+      user_auto_avatar_url(user, size: size, format: :png)
     end
   end
 
@@ -32,11 +32,19 @@ module UsersHelper
   def user_preference(name, community: false)
     return nil if current_user.nil?
 
-    global_key = "prefs.#{current_user.id}"
-    community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
-    key = community ? community_key : global_key
-    AppConfig.preferences.select { |_k, v| (v['community'] || false) == community }
-             .transform_values { |v| v['default'] }
-             .merge(RequestContext.redis.hgetall(key))[name]
+    current_user.preference(name, community: community)
+  end
+
+  def deleted_user?(user)
+    user.deleted? || user.community_user.deleted?
+  end
+
+  def rtl_safe_username(user)
+    user.nil? ? 'deleted user' : user.rtl_safe_username
+  end
+
+  def user_link(user, **link_opts)
+    link_to user.nil? ? 'deleted user' : user.rtl_safe_username, user.nil? ? '#' : user_path(user),
+            { dir: 'ltr' }.merge(link_opts)
   end
 end

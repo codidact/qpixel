@@ -251,6 +251,20 @@ answer_two:
   upvote_count: 0
   downvote_count: 0
 
+comments_disabled:
+  post_type: answer
+  body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  score: 0.5
+  parent: question_one
+  user: closer
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+  comments_disabled: true
+
 bad_answer:
   post_type: answer
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ

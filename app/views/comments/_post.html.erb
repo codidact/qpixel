@@ -1,0 +1,11 @@
+<% comment_threads.each do |thread| %>
+  <div class="post--comments-thread is-inline <%= thread.deleted ? 'is-deleted' : '' %> <%= thread.archived ? 'is-archived' : '' %>">
+    <% if thread.deleted %>
+      <i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>
+    <% elsif thread.archived %>
+      <i class="fas fa-archive fa-fw" title="Archived thread" aria-label="Archived thread"></i>
+    <% end %>
+    <%= link_to thread.title, comment_thread_path(thread), class: 'js--comment-link', data: { thread: thread.id } %>
+    (<%= pluralize(thread.reply_count, 'comment') %>)
+  </div>
+<% end %>

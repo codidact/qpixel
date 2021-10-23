@@ -1,0 +1,19 @@
+.cg-leaderboard .cgl-container {
+    display: flex;
+    align-items: center;
+}
+
+.cgl-container .cgl-option {
+    margin-left: auto;
+}
+
+.cg-leaderboard .toc--full {
+    display: flex;
+    align-items: center;
+}
+
+.cg-leaderboard .row-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

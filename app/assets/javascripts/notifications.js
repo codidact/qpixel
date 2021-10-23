@@ -7,7 +7,8 @@ $(() => {
                 <span class="js-notif-state">${notification.is_read ? 'read' : `<strong>unread</strong>`}</span> &middot;
                 <span data-livestamp="${notification.created_at}">${notification.created_at}</span>
             </div>
-            <p><a href="${notification.link}" data-id="${notification.id}" class="h-fw-bold is-not-underlined">${notification.content}</a></p>
+            <p><a href="${notification.link}" data-id="${notification.id}"
+                  class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''}">${notification.content}</a></p>
             <p class="has-font-size-caption"><a href="javascript:void(0)" data-notif-id="${notification.id}" class="js-notification-toggle">
                 <i class="fas fa-${notification.is_read ? 'envelope' : 'envelope-open'}"></i>
                 mark ${notification.is_read ? 'unread' : 'read'}
@@ -15,6 +16,30 @@ $(() => {
         </div>
     </div>`;
     return template;
+  };
+
+  const changeInboxCount = change => {
+    const counter = $('.inbox-count');
+    let count;
+    if (counter.length !== 0) {
+      count = parseInt(counter.text(), 10);
+    }
+    else {
+      count = 0;
+    }
+    count = Math.max(0, count + change);
+
+    if (count === 0 && counter.length !== 0) {
+      counter.remove();
+    }
+    else {
+      if (counter.length === 0) {
+        $(`<span class="header--alert inbox-count">${count}</span>`).prependTo($('.inbox-toggle'));
+      }
+      else {
+        counter.text(count);
+      }
+    }
   };
 
   $('.inbox-toggle').on('click', async evt => {
@@ -66,14 +91,14 @@ $(() => {
   $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async evt => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
-    await fetch(`/notifications/${id}/read`, {
+    const resp = await fetch(`/notifications/${id}/read`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
     });
-    const $inboxCount = $('.inbox-count');
-    const currentCount = parseInt($inboxCount.text(), 10);
-    $inboxCount.text(currentCount - 1);
+    const data = await resp.json();
+    $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
+    changeInboxCount(-1);
   });
 
   $(document).on('click', '.js-notification-toggle', async ev => {
@@ -93,9 +118,8 @@ $(() => {
     }
 
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
-    const $inboxCount = $('.inbox-count');
-    const currentCount = parseInt($inboxCount.text(), 10);
-    const newCount = Math.max(0, data.notification.is_read ? currentCount - 1 : currentCount + 1);
-    $inboxCount.text(newCount === 0 ? '' : newCount);
+
+    const change = data.notification.is_read ? -1 : +1;
+    changeInboxCount(change);
   });
 });

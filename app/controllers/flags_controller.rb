@@ -18,13 +18,20 @@ class FlagsController < ApplicationController
                        ' flags. Please come back tomorrow to continue flagging.'
 
       AuditLog.rate_limit_log(event_type: 'flag', related: Post.find(params[:post_id]), user: current_user,
-                        comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")
+                              comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")
 
       render json: { status: 'failed', message: flag_limit_msg }, status: :forbidden
       return
     end
 
-    @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id], user: current_user)
+    if type&.name == "needs author's attention"
+      create_as_feedback_comment Post.find(params[:post_id]), current_user, params[:reason]
+      render json: { status: 'success' }, status: :created
+      return
+    end
+
+    @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id],
+                     post_type: params[:post_type], user: current_user)
     if @flag.save
       render json: { status: 'success' }, status: :created
     else
@@ -73,5 +80,16 @@ class FlagsController < ApplicationController
       return not_found if type.nil? || type.confidential
       return not_found if current_user.id == @flag.user.id
     end
+  end
+
+  def create_as_feedback_comment(post, user, content)
+    thread = post.comment_threads.find_or_create_by(title: 'Post Feedback', deleted: false)
+    comment = nil
+    ActiveRecord::Base.transaction do
+      comment = thread.comments.create!(user: user, post: post, comment_thread: thread, content: content)
+      post.user.create_notification("New feedback on #{comment.root.title}",
+                                    comment_thread_path(thread, anchor: "comment-#{comment.id}"))
+    end
+    comment
   end
 end

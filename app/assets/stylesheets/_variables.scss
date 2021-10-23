@@ -16,6 +16,14 @@ $success: #2ECC71;
 $info: #58A09A;
 $brand: #4B68FF;
 
+$data: (
+  #4B68FF,
+  #A23B72,
+  #F18F01,
+  #558C8C,
+  #3B1F2B
+);
+
 :root {
   --key: #{$key};
   --muted-text: #{$muted-text};
@@ -27,6 +35,11 @@ $brand: #4B68FF;
   --success: #{$success};
   --info: #{$info};
   --brand: #{$brand};
+  --data-0: #{nth($data, 1)};
+  --data-1: #{nth($data, 2)};
+  --data-2: #{nth($data, 3)};
+  --data-3: #{nth($data, 4)};
+  --data-4: #{nth($data, 5)};
 }
 
 $font-stack-plain: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
