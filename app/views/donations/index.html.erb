@@ -15,16 +15,25 @@
   </div>
   <div class="dc-content">
     <%= form_tag donation_intent_path, class: 'js-dc-amt-form' do %>
-      <%= label_tag :amount, 'Choose your donation amount (GBP):' %>
-
-      <div class="suggestions">
-        <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="5.00">£5.00</a>
-        <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="10.00">£10.00</a>
-        <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="25.00">£25.00</a>
+      <div class="form-group">
+        <%= label_tag :currency, 'Choose your currency:' %>
+        <%= select_tag :currency, options_for_select([['GBP (£)', 'GBP'], ['USD ($)', 'USD'], ['EUR (€)', 'EUR']]),
+                       class: 'form-element js-dc-currency' %>
       </div>
 
-      <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00, autocomplete: 'off',
-                           class: 'form-element dc-amount-field js-dc-amount' %>
+      <div class="form-group">
+        <%= label_tag :amount, 'Choose your donation amount:' %>
+
+        <div class="suggestions">
+          <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="5.00">£5.00</a>
+          <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="10.00">£10.00</a>
+          <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="25.00">£25.00</a>
+        </div>
+
+        <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00, autocomplete: 'off',
+                             class: 'form-element dc-amount-field js-dc-amount' %>
+      </div>
+
       <span class="js-dc-validation has-color-red-600 has-font-size-small"></span>
       <%= submit_tag 'Next', class: 'button is-filled is-large dc-submit' %>
     <% end %>

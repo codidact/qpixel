@@ -9,6 +9,9 @@ class DonationsController < ApplicationController
   def index; end
 
   def intent
+    currencies = ['GBP', 'USD', 'EUR']
+    @currency = currencies.include?(params[:currency]) ? params[:currency] : 'GBP'
+    @symbol = { 'GBP' => '£', 'USD' => '$', 'EUR' => '€' }[@currency]
     begin
       amount = params[:amount].to_f
     rescue
@@ -17,22 +20,23 @@ class DonationsController < ApplicationController
       return
     end
 
-    if amount < 1.00
-      flash[:danger] = "Sorry, we can't accept amounts below £1.00. We appreciate your generosity, but the processing "\
-                       'fees make it prohibitive.'
+    if amount < 0.10
+      flash[:danger] = "Sorry, we can't accept amounts below #{symbol}0.10. We appreciate your generosity, but the " \
+                       'processing fees make it prohibitive.'
       redirect_to donate_path
       return
     end
 
     # amount * 100 because Stripe takes amounts in pence
     @amount = amount
-    @intent = Stripe::PaymentIntent.create({ amount: (amount * 100).to_i, currency: 'GBP',
+    @intent = Stripe::PaymentIntent.create({ amount: (amount * 100).to_i, currency: @currency,
                                              metadata: { user_id: current_user&.id } },
                                            { idempotency_key: params[:authenticity_token] })
   end
 
   def success
     @amount = params[:amount]
+    @symbol = params[:currency]
   end
 
   def callback

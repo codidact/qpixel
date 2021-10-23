@@ -3,7 +3,6 @@
 .dc-container-centered {
   width: 100%;
   margin: 0 0.5em;
-  border: 1px solid $muted-text;
   border-radius: 1em;
   overflow: hidden;
 
@@ -17,7 +16,6 @@
 .dc-hero {
   text-align: center;
   background: $brand;
-  background: linear-gradient(darken(adjust_hue($brand, 45), 10%), 35%, $brand);
   color: white;
   padding: 1em 0;
 
@@ -90,7 +88,7 @@
 
     .dc-amount-field {
       text-align: center;
-      font-size: 3em;
+      font-size: 2em;
     }
 
     input[type="submit"], button[type="submit"] {

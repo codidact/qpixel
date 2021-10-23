@@ -7,11 +7,6 @@ $(() => {
     elements = stripe.elements();
   }
 
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'GBP'
-  });
-
   const failValidation = (el, message) => {
     el.addClass('is-danger');
     el.siblings('.js-dc-validation').text(message);
@@ -19,6 +14,19 @@ $(() => {
       el.parents('form').find('input[type="submit"]').enable();
     }, 10);
   };
+
+  $('.js-dc-currency').on('change', ev => {
+    const symbols = {
+      'GBP': '£',
+      'USD': '$',
+      'EUR': '€'
+    };
+    const selected = $(ev.target).val();
+    $('.js-dc-suggestion').each((idx, el) => {
+      const $el = $(el);
+      $el.text(`${symbols[selected]}${$el.attr('data-amount')}`);
+    });
+  });
 
   $('.js-dc-suggestion').on('click', ev => {
     ev.preventDefault();
@@ -30,6 +38,11 @@ $(() => {
   $('.js-dc-amount').on('change', ev => {
     const $tgt = $(ev.target);
     const amount = parseFloat($tgt.val() || '') || 1;
+    const currency = $('.js-dc-currency').val();
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency
+    });
     $tgt.val(formatter.format(amount).replaceAll(',', '').substr(1));
   });
 

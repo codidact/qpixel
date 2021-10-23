@@ -5,12 +5,13 @@
   <div class="dc-content">
     <p class="lede">Thanks for considering donating!</p>
     <p class="dc-p-center">You're donating</p>
-    <p class="lede"><%= number_to_currency(@amount, unit: '£') %></p>
+    <p class="lede"><%= number_to_currency(@amount, unit: @symbol) %></p>
     <p class="dc-p-center">to help us build software and help people learn things</p>
   </div>
   <div class="dc-content">
     <%= form_tag donation_success_path, method: :post, id: 'stripe-df', data: { intent: @intent.client_secret } do %>
       <%= hidden_field_tag :amount, @amount %>
+      <%= hidden_field_tag :currency, @symbol %>
 
       <div class="field">
         <%= label_tag :billing_name, 'Name on card:' %>
@@ -27,7 +28,7 @@
           <%= label_tag :billing_email, 'Your email address:' %>
           <%= email_field_tag :billing_email, nil, class: 'form-element', required: true %>
           <div class="form-caption">
-            Required for billing purposes. You're not signed in, so we won't use this for any other purposes.
+            Required for billing purposes. We won't use this for any other purpose.
           </div>
         </div>
       <% end %>
