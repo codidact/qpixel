@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
     get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
