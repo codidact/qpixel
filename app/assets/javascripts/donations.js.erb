@@ -1,10 +1,8 @@
-const stripe = Stripe('<%= StripeHelpers.public_key %>');
-
 $(() => {
   let elements;
 
   if (location.pathname.startsWith('/donate')) {
-    elements = stripe.elements();
+    elements = QPixel.stripe.elements();
   }
 
   const failValidation = (el, message) => {

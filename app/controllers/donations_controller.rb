@@ -1,5 +1,5 @@
 class DonationsController < ApplicationController
-  layout 'without_sidebar'
+  layout 'stripe'
   skip_forgery_protection only: [:callback]
   skip_before_action :set_globals, only: [:callback]
   skip_before_action :check_if_warning_or_suspension_pending, only: [:callback]
