@@ -115,7 +115,7 @@ $(() => {
         email: $tgt.find('input[name="billing_email"]').val()
       };
 
-      const result = await stripe.confirmCardPayment(clientSecret, {
+      const result = await QPixel.stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: card,
           billing_details: billingDetails
