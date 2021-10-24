@@ -261,20 +261,6 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
     t.index ["name"], name: "index_licenses_on_name"
   end
 
-  create_table "mod_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "community_user_id"
-    t.text "body"
-    t.boolean "is_suspension"
-    t.datetime "suspension_end"
-    t.boolean "active"
-    t.bigint "author_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "read", default: false
-    t.index ["author_id"], name: "index_mod_messages_on_author_id"
-    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
-  end
-
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.text "content"
     t.string "link"
@@ -669,6 +655,20 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
     t.index ["community_id"], name: "index_warning_templates_on_community_id"
   end
 
+  create_table "warnings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.text "body"
+    t.boolean "is_suspension"
+    t.datetime "suspension_end"
+    t.boolean "active"
+    t.bigint "author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "read", default: false
+    t.index ["author_id"], name: "index_mod_messages_on_author_id"
+    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+  end
+
   add_foreign_key "abilities", "communities"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
@@ -686,8 +686,6 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
-  add_foreign_key "mod_messages", "community_users"
-  add_foreign_key "mod_messages", "users", column: "author_id"
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"
@@ -715,4 +713,6 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
   add_foreign_key "users", "users", column: "deleted_by_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"
+  add_foreign_key "warnings", "community_users"
+  add_foreign_key "warnings", "users", column: "author_id"
 end
