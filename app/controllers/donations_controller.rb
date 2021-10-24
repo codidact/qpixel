@@ -9,6 +9,7 @@ class DonationsController < ApplicationController
   def index; end
 
   def intent
+    @referrer = params[:return_to]
     currencies = ['GBP', 'USD', 'EUR']
     @currency = currencies.include?(params[:currency]) ? params[:currency] : 'GBP'
     @symbol = { 'GBP' => '£', 'USD' => '$', 'EUR' => '€' }[@currency]
@@ -37,6 +38,7 @@ class DonationsController < ApplicationController
   def success
     @amount = params[:amount]
     @symbol = params[:currency]
+    @referrer = params[:return_to]
   end
 
   def callback

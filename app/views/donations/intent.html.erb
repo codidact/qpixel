@@ -12,6 +12,7 @@
     <%= form_tag donation_success_path, method: :post, id: 'stripe-df', data: { intent: @intent.client_secret } do %>
       <%= hidden_field_tag :amount, @amount %>
       <%= hidden_field_tag :currency, @symbol %>
+      <%= hidden_field_tag :return_to, @referrer %>
 
       <div class="field">
         <%= label_tag :billing_name, 'Name on card:' %>

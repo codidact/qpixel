@@ -118,6 +118,15 @@
     }
   }
 
+  a.text-link {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
   &:last-of-type {
     border-bottom: 0;
   }
