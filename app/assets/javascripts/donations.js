@@ -7,10 +7,10 @@ $(() => {
 
   const failValidation = (el, message) => {
     el.addClass('is-danger');
-    el.siblings('.js-dc-validation').text(message);
+    el.parents('form').find('.js-dc-validation').text(message);
     setTimeout(() => {
       el.parents('form').find('input[type="submit"]').enable();
-    }, 10);
+    }, 100);
   };
 
   $('.js-dc-currency').on('change', ev => {
@@ -63,9 +63,9 @@ $(() => {
       ev.preventDefault();
       return;
     }
-    if (parseFloat(amount) < 1.00) {
+    if (parseFloat(amount) < 0.10) {
       failValidation(amountInput,
-        "Sorry, we can't accept amounts under £1.00. We appreciate your generosity, but the processing fees make it prohibitive.");
+        "Sorry, we can't accept amounts under £0.10. We appreciate your generosity, but the processing fees make it prohibitive.");
       ev.preventDefault();
       return;
     }
