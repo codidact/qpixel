@@ -25,13 +25,12 @@
 
 <hr/>
 
-<% if Rails.env.development? %>
+<% if Rails.env.development? || current_user&.developer? %>
   <h1 class="has-margin-bottom-0 has-margin-top-0">Hi! You seem like you know what you're doing.</h1>
   <p class="is-lead has-margin-top-0">Here's the full gory details you really didn't want.</p>
 
-  <p class="raw-markdown has-font-size-larger has-font-weight-bold has-color-red-700">
-    <code><%= @exception.class %>: <%= @exception.message %></code>
-  </p>
+  <pre class="raw-markdown has-font-size-larger has-font-weight-bold has-color-red-700"><%= @exception.class %>:
+<%= @exception.message %></pre>
 
   <pre class="error-trace raw-markdown"><%= @exception.backtrace.select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
 

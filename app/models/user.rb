@@ -21,6 +21,9 @@ class User < ApplicationRecord
   has_many :audit_logs, dependent: :nullify
   has_many :audit_logs_related, class_name: 'AuditLog', dependent: :nullify, as: :related
   has_many :mod_warning_author, class_name: 'ModWarning', foreign_key: 'author_id', dependent: :nullify
+  has_many :comments, dependent: :nullify
+  has_many :comment_threads_deleted, class_name: 'CommentThread', foreign_key: :deleted_by_id, dependent: :nullify
+  has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }

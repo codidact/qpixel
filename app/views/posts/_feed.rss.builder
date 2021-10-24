@@ -3,8 +3,8 @@ posts.each do |post|
     builder.id generic_show_link(post)
     builder.title post.title
     builder.author do
-      builder.name post.user.username
-      builder.uri user_url(post.user)
+      builder.name rtl_safe_username(post.user)
+      builder.uri deleted_user?(post.user) ? '#' : user_url(post.user)
     end
     builder.published post.created_at&.iso8601
     builder.updated post.last_activity&.iso8601
