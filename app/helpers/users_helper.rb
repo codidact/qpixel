@@ -1,7 +1,6 @@
 # Provides helper methods for use by views under <tt>UsersController</tt>.
 module UsersHelper
   def avatar_url(user, size = 16)
-    user ||= current_user
     if user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
@@ -36,7 +35,7 @@ module UsersHelper
   end
 
   def deleted_user?(user)
-    user.deleted? || user.community_user.deleted?
+    user&.deleted? || user&.community_user&.deleted?
   end
 
   def rtl_safe_username(user)
@@ -44,7 +43,10 @@ module UsersHelper
   end
 
   def user_link(user, **link_opts)
-    link_to user.nil? ? 'deleted user' : user.rtl_safe_username, user.nil? ? '#' : user_path(user),
-            { dir: 'ltr' }.merge(link_opts)
+    if user.nil? || deleted_user?(user)
+      link_to 'deleted user', '#', { dir: 'ltr' }.merge(link_opts)
+    else
+      link_to user.rtl_safe_username, user_path(user), { dir: 'ltr' }.merge(link_opts)
+    end
   end
 end
