@@ -42,14 +42,14 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.8.0)
+    addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     arel (9.0.0)
     ast (2.4.2)
     awesome_print (1.9.2)
     aws-eventstream (1.1.1)
-    aws-partitions (1.466.0)
-    aws-sdk-core (3.114.2)
+    aws-partitions (1.465.0)
+    aws-sdk-core (3.114.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -110,7 +110,6 @@ GEM
     execjs (2.8.1)
     fastimage (2.2.4)
     ffi (1.15.1)
-    ffi (1.15.1-x64-mingw32)
     flamegraph (0.9.5)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -139,7 +138,7 @@ GEM
       actionmailer (>= 3.2)
       letter_opener (~> 1.0)
       railties (>= 3.2)
-    loofah (2.10.0)
+    loofah (2.9.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -149,22 +148,15 @@ GEM
     method_source (1.0.0)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2021.0225)
+    mime-types-data (3.2021.0901)
     mini_magick (4.11.0)
     mini_mime (1.1.0)
-    mini_portile2 (2.6.1)
     minitest (5.10.3)
     minitest-ci (3.4.0)
       minitest (>= 5.0.6)
     mysql2 (0.5.3)
-    mysql2 (0.5.3-x64-mingw32)
-    nio4r (2.5.8)
-    nokogiri (1.12.5)
-      mini_portile2 (~> 2.6.1)
-      racc (~> 1.4)
-    nokogiri (1.12.5-x64-mingw32)
-      racc (~> 1.4)
-    nokogiri (1.12.5-x86_64-darwin)
+    nio4r (2.5.7)
+    nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     omniauth (1.9.1)
       hashie (>= 3.4.6)
@@ -181,7 +173,7 @@ GEM
       actionmailer (>= 3)
       premailer (~> 1.7, >= 1.7.9)
     public_suffix (4.0.6)
-    puma (4.3.9)
+    puma (4.3.10)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -236,7 +228,7 @@ GEM
       chunky_png (~> 1.0)
       rqrcode_core (~> 0.2)
     rqrcode_core (0.2.0)
-    rubocop (1.16.1)
+    rubocop (1.16.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -281,6 +273,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     stackprof (0.2.17)
+    stripe (5.34.0)
     sync (0.5.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
@@ -313,12 +306,11 @@ GEM
     will_paginate (3.3.0)
     will_paginate-bootstrap (1.0.2)
       will_paginate (>= 3.0.3)
-    xml-simple (1.1.8)
+    xml-simple (1.1.9)
+      rexml
 
 PLATFORMS
-  ruby
-  x64-mingw32
-  x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   awesome_print (~> 1.8)
@@ -362,6 +354,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   spring (~> 2.1)
   stackprof (~> 0.2)
+  stripe (~> 5.28)
   term-ansicolor (~> 1.7)
   thwait (~> 0.1)
   tzinfo-data (~> 1.2019.3)
@@ -375,4 +368,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.19
+   2.2.3

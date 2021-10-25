@@ -66,6 +66,9 @@ gem 'ruby-progressbar', '~> 1.10'
 # Image generation
 gem 'rmagick'
 
+# Payments. Kinda important, y'know.
+gem 'stripe', '~> 5.28'
+
 # EeeMAILS!
 gem 'premailer-rails', '~> 1.11'
 

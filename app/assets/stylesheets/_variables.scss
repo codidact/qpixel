@@ -14,6 +14,7 @@ $warning: #FDD835;
 $danger: #EB5959;
 $success: #2ECC71;
 $info: #58A09A;
+$brand: #4B68FF;
 
 $data: (
   #4B68FF,
@@ -33,6 +34,7 @@ $data: (
   --danger: #{$danger};
   --success: #{$success};
   --info: #{$info};
+  --brand: #{$brand};
   --data-0: #{nth($data, 1)};
   --data-1: #{nth($data, 2)};
   --data-2: #{nth($data, 3)};

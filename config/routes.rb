@@ -291,6 +291,13 @@ Rails.application.routes.draw do
     get ':id',                             to: 'abilities#show', as: :ability
   end
 
+  scope 'donate' do
+    root                                   to: 'donations#index', as: :donate
+    post 'intent',                         to: 'donations#intent', as: :donation_intent
+    post 'success',                        to: 'donations#success', as: :donation_success
+    post 'callback',                       to: 'donations#callback', as: :donation_callback
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'

@@ -1,0 +1,16 @@
+<div class="dc-container-centered">
+  <div class="dc-hero">
+    <h1>Donate</h1>
+  </div>
+  <div class="dc-content">
+    <p class="lede">Thanks for donating!</p>
+    <h1 class="has-color-green-600 has-text-align-center"><i class="far fa-check-circle"></i></h1>
+    <p class="lede">Your donation of <%= number_to_currency @amount, unit: @symbol %> has been received.</p>
+    <p>
+      Donations from folks like you are what make us able to continue developing and supporting our communities&mdash;to
+      help everyone learn, together.
+    </p>
+    <p><%= link_to 'Back to where you left off', @referrer, class: 'text-link' %></p>
+  </div>
+</div>
+
