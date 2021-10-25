@@ -15,6 +15,6 @@ class DonationMailer < ApplicationMailer
     @name = params[:name]
     @intent = params[:intent]
     mail from: 'donations-support@codidact.com', reply_to: 'support@codidact.com',
-         to: @email, subject: "Your donation is unfinished - was everything okay?"
+         to: @email, subject: 'Your donation is unfinished - was everything okay?'
   end
 end
