@@ -35,6 +35,10 @@ jobs:
           paths:
             - ~/gems
       - run:
+          name: Copy key
+          command: |
+            echo "$MASTER_KEY" > config/master.key
+      - run:
           name: Prepare config & database
           environment:
             RAILS_ENV: test
