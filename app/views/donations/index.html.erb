@@ -32,7 +32,7 @@
           <a href="javascript:void(0)" class="suggestion js-dc-suggestion" data-amount="25.00">£25.00</a>
         </div>
 
-        <%= number_field_tag :amount, params[:amount], step: 0.01, min: 1.00, autocomplete: 'off',
+        <%= number_field_tag :amount, params[:amount], step: 0.01, min: 0.50, autocomplete: 'off',
                              class: 'form-element dc-amount-field js-dc-amount' %>
       </div>
 

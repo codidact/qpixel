@@ -63,9 +63,9 @@ $(() => {
       ev.preventDefault();
       return;
     }
-    if (parseFloat(amount) < 0.10) {
+    if (parseFloat(amount) < 0.50) {
       failValidation(amountInput,
-        "Sorry, we can't accept amounts under £0.10. We appreciate your generosity, but the processing fees make it prohibitive.");
+        "Sorry, we can't accept amounts under £0.50. We appreciate your generosity, but the processing fees make it prohibitive.");
       ev.preventDefault();
       return;
     }

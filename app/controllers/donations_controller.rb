@@ -21,8 +21,8 @@ class DonationsController < ApplicationController
       return
     end
 
-    if amount < 0.10
-      flash[:danger] = "Sorry, we can't accept amounts below #{symbol}0.10. We appreciate your generosity, but the " \
+    if amount < 0.50
+      flash[:danger] = "Sorry, we can't accept amounts below #{symbol}0.50. We appreciate your generosity, but the " \
                        'processing fees make it prohibitive.'
       redirect_to donate_path
       return
@@ -31,7 +31,7 @@ class DonationsController < ApplicationController
     # amount * 100 because Stripe takes amounts in pence
     @amount = amount
     @intent = Stripe::PaymentIntent.create({ amount: (amount * 100).to_i, currency: @currency,
-                                             metadata: { user_id: current_user&.id } },
+                                             metadata: { user_id: current_user&.id }, description: params[:desc] },
                                            { idempotency_key: params[:authenticity_token] })
   end
 
