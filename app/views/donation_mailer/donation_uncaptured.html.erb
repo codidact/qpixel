@@ -1,0 +1,24 @@
+<% if @name.nil? %>
+  <h2>Your donation is unfinished</h2>
+<% else %>
+  <h2>Your donation is unfinished, <%= @name %></h2>
+<% end %>
+
+<p>
+  You started the process to make a donation of <%= number_to_currency(@amount, units: @symbol) %>, but
+  left off before finishing up.
+</p>
+
+<p>
+  We want to make sure that everything's okay. If you just changed your mind, that's absolutely fine! We're not here
+  to push. If you ran into problems, however, please let us know if we can help &mdash; you can reply to this email to
+  reach us at <a href="mailto:support@codidact.org">support@codidact.org</a>, or you can post on our
+  <a href="https://meta.codidact.com/">Meta</a> site, and someone will lend a hand.
+</p>
+
+<p>Whatever happened, thanks for thinking of us!</p>
+
+<p>
+  Thanks and see you around,<br/>
+  The Codidact Team
+</p>

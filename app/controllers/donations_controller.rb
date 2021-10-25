@@ -39,6 +39,9 @@ class DonationsController < ApplicationController
     @amount = params[:amount]
     @symbol = params[:currency]
     @referrer = params[:return_to]
+    DonationMailer.with(amount: @amount, currency: @symbol, email: params[:billing_email],
+                        name: current_user&.username || params[:billing_name])
+                  .donation_successful.deliver_now
   end
 
   def callback
