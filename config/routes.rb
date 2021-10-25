@@ -222,6 +222,7 @@ Rails.application.routes.draw do
     root                                   to: 'reports#users', as: :users_report
     get    'subscriptions',                to: 'reports#subscriptions', as: :subscriptions_report
     get    'posts',                        to: 'reports#posts', as: :posts_report
+    get    'reactions',                    to: 'reports#reactions', as: :reactions_report
   end
 
   get    'help',                           to: 'posts#help_center', as: :help_center

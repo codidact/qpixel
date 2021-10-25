@@ -15,5 +15,7 @@
     <%= link_to 'Posts', posts_report_path, class: "button is-muted is-outlined #{current_page?(posts_report_path) ? 'is-active' : ''}" %>
     <%= link_to 'Subscriptions', subscriptions_report_path,
                 class: "button is-muted is-outlined #{current_page?(subscriptions_report_path) ? 'is-active' : ''}" %>
+    <%= link_to 'Reactions', reactions_report_path,
+                class: "button is-muted is-outlined #{current_page?(reactions_report_path) ? 'is-active' : ''}" %>
   </div>
 <% end %>

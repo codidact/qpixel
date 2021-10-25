@@ -25,6 +25,12 @@ class ReportsController < ApplicationController
     @posts_categories = Post.where(category: @categories).group(:category_id).count
   end
 
+  def reactions
+    @reaction_types = ReactionType.active
+    @reactions = Reaction.all
+    @users = Reaction.select(:user_id).distinct
+  end
+
   def users_global
     @users_all = User.where('users.created_at >= ?', 1.year.ago)
     @users = @users_all.where("users.email NOT LIKE '%localhost'")
