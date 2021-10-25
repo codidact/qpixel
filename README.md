@@ -135,8 +135,20 @@ Rails.cache.clear
 Run the server!
 
     rails s
+    
+### 8. Create admin account    
+    
+You can create the first user account in the application, which should be running at `http://localhost:3000/`. To upgrade
+the user account
+to an admin account, run `rails c` for a console, followed by:
 
-### 8. Configure Categories
+```ruby
+User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
+```    
+
+If you create more accounts, you can visit `http://localhost:3000/letter_opener` to see the emails that would otherwise be sent by QPixel.
+
+### 9. Configure Categories
 
 Before you try to create a post we need to configure categories! 
 Go to `http://localhost:3000/categories/`
@@ -156,7 +168,7 @@ associated with the "Meta" tag set, and the Q&A category can be associated with 
 Make sure to click save for each one.<br> 
 <em>Note:</em> You may need to run `rails db:seed` again.
 
-### 8. Create a Post
+### 10. Create a Post
 
 You should then be able to create a post! There are character requirements for the
 body and title, and you are required at least one tag.
@@ -167,14 +179,6 @@ And then click to "Save Post in Q&A"
 
 ![img/post.png](img/post.png)
 
-
-You can create the first user account in the application, which should be running at `http://localhost:3000/`. To upgrade
-the user account
-to an admin account, run `rails c` for a console, followed by:
-
-```ruby
-User.last.update(confirmed_at: DateTime.now, is_global_admin: true)
-```
 
 ### Install with Docker
 
