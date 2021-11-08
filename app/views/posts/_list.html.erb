@@ -62,9 +62,15 @@
           <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
           <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
           <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-          <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                      class: "badge is-tag #{required} #{topic} #{moderator}",
-                      title: tag.excerpt %>
+          <% if tag.excerpt == "" %>
+                <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                            class: "badge is-tag #{required} #{topic} #{moderator}",
+                            title: "no description yet" %>
+              <% else %>
+                <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
+                            class: "badge is-tag #{required} #{topic} #{moderator}",
+                            title: tag.excerpt %>
+              <% end %>
         <% end %>
       <% end %>
       <% display_label = user_preference('display_import_labels', community: true) == 'true' %>
