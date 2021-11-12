@@ -63,8 +63,8 @@
           <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
           <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
           <%= link_to tag.name, tag_path(id: post.category_id, tag_id: tag.id),
-                      class: "badge is-tag #{required} #{topic} #{moderator}",
-                      title: tag.excerpt %>
+                           class: "badge is-tag #{required} #{topic} #{moderator}",
+                           title: tag.excerpt.present? ? tag.excerpt : "(no description yet)" %>
         <% end %>
       <% end %>
       <% display_label = user_preference('display_import_labels', community: true) == 'true' %>
