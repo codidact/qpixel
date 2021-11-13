@@ -157,4 +157,16 @@ module ApplicationHelper
   def user_signed_in?
     !!current_user && !current_user.deleted? && !current_user.community_user.deleted?
   end
+
+  # Check if the current request is a direct user request, or a resource load.
+  # @return true if the request is direct, false if not, or nil if it cannot be determined
+  def direct_request?
+    if request.headers['Sec-Fetch-Mode'].present? && request.headers['Sec-Fetch-Mode'] == 'navigate'
+      true
+    elsif request.headers['Sec-Fetch-Mode'].present?
+      false
+    else
+      nil
+    end
+  end
 end

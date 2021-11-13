@@ -4,7 +4,7 @@
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
 
-<% @history.each.with_index do |event,index| %>
+<% @history.each.with_index do |event, index| %>
   <details class="history-event">
     <summary>
       <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
