@@ -175,8 +175,6 @@ module ApplicationHelper
       true
     elsif request.headers['Sec-Fetch-Mode'].present?
       false
-    else
-      nil
     end
   end
 end
