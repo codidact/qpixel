@@ -248,6 +248,8 @@ Rails.application.routes.draw do
     post   ':id/tags/:tag_id/rename',      to: 'tags#rename', as: :rename_tag
     get    ':id/tags/:tag_id/merge',       to: 'tags#select_merge', as: :select_tag_merge
     post   ':id/tags/:tag_id/merge',       to: 'tags#merge', as: :merge_tag
+    get    ':id/tags/:tag_id/nuke',        to: 'tags#nuke_warning', as: :nuke_tag_warning
+    delete ':id/tags/:tag_id/nuke',        to: 'tags#nuke', as: :nuke_tag
     get    ':category/suggested-edits',    to: 'suggested_edit#category_index', as: :suggested_edits_queue
   end
 

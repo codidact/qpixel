@@ -2,14 +2,18 @@
 
 <h1 class="has-margin-0 has-margin-top-4">
   Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span>
-  <% if current_user&.is_moderator %>
-    <a href="#" class="has-font-size-caption js-rename-tag"
+  <% if moderator? %>
+    <a href="#" class="has-font-size-caption js-rename-tag h-m-r-2"
        data-category="<%= @category.id %>" data-tag="<%= @tag.id %>" data-name="<%= @tag.name %>">
       <i class="fas fa-pencil-alt" aria-label="Rename" title="Rename"></i>
     </a>
-    <span class="has-font-size-caption has-color-tertiary-600">&middot;</span>
-    <%= link_to select_tag_merge_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption' do %>
+    <%= link_to select_tag_merge_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2' do %>
       <i class="fas fa-project-diagram" aria-label="Merge" title="Merge"></i>
+    <% end %>
+  <% end %>
+  <% if admin? %>
+    <%= link_to nuke_tag_warning_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2 is-red' do %>
+      <i class="fas fa-trash" aria-label="Nuke" title="Nuke"></i>
     <% end %>
   <% end %>
 </h1>

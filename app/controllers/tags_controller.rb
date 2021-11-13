@@ -1,8 +1,9 @@
 class TagsController < ApplicationController
   before_action :authenticate_user!, only: [:edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
-  before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge]
+  before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
   before_action :verify_moderator, only: [:rename, :merge, :select_merge]
+  before_action :verify_admin, only: [:nuke, :nuke_warning]
 
   def index
     @tag_set = if params[:tag_set].present?
@@ -107,6 +108,9 @@ class TagsController < ApplicationController
 
     @subordinate = Tag.find params[:merge_with_id]
 
+    AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user,
+                             comment: "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
+
     # Take the tag off posts
     posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
@@ -125,6 +129,7 @@ class TagsController < ApplicationController
     exec([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
     exec([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
     exec([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
+    exec([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
 
     # Nuke it from orbit
     @subordinate.destroy
@@ -132,6 +137,34 @@ class TagsController < ApplicationController
     flash[:success] = "Merged #{@subordinate.name} into #{@primary.name}."
     redirect_to tag_path(id: @category.id, tag_id: @primary.id)
   end
+
+  def nuke
+    AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
+                         comment: "#{@tag.name} (#{@tag.id})"
+
+    tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
+              'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
+
+    # Remove tag from caches
+    caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                 'WHERE posts_tags.tag_id = ?'
+    exec([caches_sql, "\n- #{@tag.name}", '', @tag.id])
+
+    # Delete all references to the tag
+    tables.each do |tbl|
+      sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
+      exec([sql, @tag.id])
+    end
+
+    # Nuke it
+    @tag.destroy
+
+    flash[:success] = "Deleted #{@tag.name}"
+    redirect_to category_tags_path(@category)
+  end
+
+  def nuke_warning; end
 
   private
 
