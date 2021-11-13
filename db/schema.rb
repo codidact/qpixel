@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_13_143253) do
+ActiveRecord::Schema.define(version: 2021_11_13_223347) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -241,7 +241,12 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
     t.bigint "community_id", null: false
     t.bigint "post_flag_type_id"
     t.string "post_type"
+    t.boolean "escalated", default: false, null: false
+    t.datetime "escalated_at"
+    t.text "escalation_comment"
+    t.bigint "escalated_by_id"
     t.index ["community_id"], name: "index_flags_on_community_id"
+    t.index ["escalated_by_id"], name: "index_flags_on_escalated_by_id"
     t.index ["post_flag_type_id"], name: "index_flags_on_post_flag_type_id"
     t.index ["post_type", "post_id"], name: "index_flags_on_post_type_and_post_id"
     t.index ["status"], name: "index_flags_on_status"
@@ -686,6 +691,7 @@ ActiveRecord::Schema.define(version: 2021_09_13_143253) do
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
+  add_foreign_key "flags", "users", column: "escalated_by_id"
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"

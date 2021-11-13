@@ -1,0 +1,53 @@
+<%#
+    Single flag handling view.
+
+    Params:
+     * flag : the flag to display
+     * controls : boolean, whether or not to display handling controls - true by default
+     * escalation : boolean, if true will display escalation comment - false by default
+%>
+
+<% controls ||= defined?(controls) && !controls.nil? ? controls : true %>
+<% escalation ||= defined?(escalation) && !escalation.nil? ? escalation : false %>
+
+<div class="widget flag-widget">
+  <% if flag.post_type == 'Post' %>
+    <div class="item-list">
+      <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
+    </div>
+  <% elsif flag.post_type == 'Comment' %>
+    <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
+  <% end %>
+  <div class="widget--body">
+    <p>
+      <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
+      <%= user_link flag.user %>
+    </p>
+  </div>
+  <% if escalation %>
+    <div class="widget--body">
+      <p>
+        <strong>Escalation reason</strong>: <%= flag.escalation_comment %> &mdash;
+        <%= user_link flag.escalated_by %> <%= flag.escalated_at.iso8601 %>
+      </p>
+    </div>
+  <% end %>
+  <% if controls %>
+    <div class="widget--footer flex-row jc-sb">
+      <textarea class="form-element flag-resolve-comment has-rows primary" placeholder="Optional comment for flagger" rows="2"></textarea>
+      <div class="has-padding-1">
+        <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+        <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
+        <% if flag.escalated? && !escalation %>
+          <button class="button is-muted" disabled>
+            <i class="fas fa-clock"></i> Escalated
+          </button>
+        <% elsif !escalation %>
+          <button class="button is-danger js-start-escalate" data-flag="<%= flag.id %>">
+            <i class="fas fa-arrow-up"></i> Escalate
+          </button>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

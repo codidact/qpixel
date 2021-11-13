@@ -1,7 +1,8 @@
 # Provides web and API actions that relate to flagging.
 class FlagsController < ApplicationController
   before_action :authenticate_user!
-  before_action :verify_moderator, only: [:queue, :handled]
+  before_action :verify_moderator, only: [:queue, :handled, :escalate]
+  before_action :verify_admin, only: [:escalated_queue]
   before_action :flag_verify, only: [:resolve]
 
   def new
@@ -66,6 +67,19 @@ class FlagsController < ApplicationController
     else
       render json: { status: 'failed', message: 'Failed to save new status.' }, status: :internal_server_error
     end
+  end
+
+  def escalate
+    @flag = Flag.find params[:id]
+    @flag.update(escalated: true, escalated_by: current_user, escalated_at: DateTime.now,
+                 escalation_comment: params[:comment])
+    FlagMailer.with(flag: @flag).flag_escalated.deliver_now
+    render json: { status: 'success' }
+  end
+
+  def escalated_queue
+    @flags = Flag.unhandled.includes(:post, :user).where(escalated: true).paginate(page: params[:page], per_page: 20)
+    render :queue
   end
 
   private

@@ -75,6 +75,14 @@ module ApplicationHelper
     markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
   end
 
+  def top_level_post_types
+    post_type_ids(is_top_level: true)
+  end
+
+  def second_level_post_types
+    post_type_ids(is_top_level: false, has_parent: true)
+  end
+
   def generic_share_link(post)
     if second_level_post_types.include?(post.post_type_id)
       answer_post_url(id: post.parent_id, answer: post.id, anchor: "answer-#{post.id}")
@@ -145,6 +153,8 @@ module ApplicationHelper
 
   # Redefine Devise helpers so that we can additionally check for deleted profiles/users.
   def current_user
+    return nil unless defined?(warden)
+
     @current_user ||= warden.authenticate(scope: :user)
     if @current_user&.deleted? || @current_user&.community_user&.deleted?
       scope = Devise::Mapping.find_scope!(:user)

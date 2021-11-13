@@ -8,33 +8,38 @@
   moderator attention; use that to help you determine what needs to be done.</p>
 
 <div class="button-list is-gutterless">
-  <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined is-active' %>
+  <%= link_to 'Active', flag_queue_path,
+              class: "button is-muted is-outlined #{current_page?(flag_queue_path) ? 'is-active' : ''}" %>
   <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined' %>
+  <% if admin? %>
+    <%= link_to 'Escalated', escalated_flags_path,
+                class: "button is-muted is-outlined #{current_page?(escalated_flags_path) ? 'is-active' : ''}" %>
+  <% end %>
 </div>
 
 <% @flags.each do |flag| %>
-  <div class="widget flag-widget">
-    <% if flag.post_type == 'Post' %>
-      <div class="item-list">
-        <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
-      </div>
-    <% elsif flag.post_type == 'Comment' %>
-      <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
-    <% end %>
-    <div class="widget--body">
-      <p>
-        <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
-        <%= user_link flag.user %>
-      </p>
-    </div>
-    <div class="widget--footer flex-row jc-sb">
-      <textarea class="form-element flag-resolve-comment has-rows primary" placeholder="Optional comment for flagger" rows="2"></textarea>
-      <div class="has-padding-1">
-        <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
-        <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
-      </div>
-    </div>
-  </div>
+  <%= render 'flag', flag: flag, escalation: current_page?(escalated_flags_path) %>
 <% end %>
 
 <%= will_paginate @flags, renderer: BootstrapPagination::Rails %>
+
+<div class="modal is-with-backdrop js-escalation-modal">
+  <div class="modal--container">
+    <div class="modal--header">
+      <button class="button is-close-button modal--header-button" data-modal=".js-escalation-modal">&times;</button>
+      Escalate
+    </div>
+    <div class="modal--body">
+      <p class="has-font-size-caption">
+        If you need support, additional tooling, or further review, you can escalate a flag to the admin team.
+        You can optionally add additional details to let an admin know why you're escalating this flag.
+      </p>
+
+      <%= label_tag :comment %>
+      <%= text_field_tag :comment, nil, class: 'form-element js-escalation-comment' %>
+    </div>
+    <div class="modal--footer">
+      <%= button_tag 'Escalate', class: 'button is-filled js-flag-escalate' %>
+    </div>
+  </div>
+</div>

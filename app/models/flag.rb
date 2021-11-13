@@ -5,6 +5,7 @@ class Flag < ApplicationRecord
   belongs_to :user
   belongs_to :handled_by, class_name: 'User', optional: true
   belongs_to :post_flag_type, optional: true
+  belongs_to :escalated_by, class_name: 'User', optional: true
 
   scope :handled, -> { where.not(status: nil) }
   scope :unhandled, -> { where(status: nil) }

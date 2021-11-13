@@ -6,6 +6,9 @@
 <div class="button-list is-gutterless">
   <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined' %>
   <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined is-active' %>
+  <% if admin? %>
+    <%= link_to 'Escalated', escalated_flags_path, class: 'button is-muted is-outlined' %>
+  <% end %>
 </div>
 
 <% @flags.each do |flag| %>
