@@ -58,14 +58,6 @@
   <%= f.submit 'Save', class: 'button is-filled' %>
 <% end %>
 
-<% unless SiteSetting['AllowContentTransfer'] %>
-  <h2>Link with Stack Exchange</h2>
-  <div class="notice is-warning">
-    You can't link a Stack Exchange account to your account on this site because there is no associated
-    Stack Exchange site from which to transfer your content.
-  </div>
-<% end %>
-
 <% if SiteSetting['AllowContentTransfer'] && current_user.se_acct_id.nil? %>
   <div class="has-padding-4">
     <h2>Link with Stack Exchange</h2>
