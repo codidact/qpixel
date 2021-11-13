@@ -1,7 +1,9 @@
 # Provides helper methods for use by views under <tt>UsersController</tt>.
 module UsersHelper
   def avatar_url(user, size = 16)
-    if user&.avatar&.attached?
+    if deleted_user?(user)
+      user_auto_avatar_url(-1, size: size, format: :png)
+    elsif user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
       user_auto_avatar_url(user, size: size, format: :png)
