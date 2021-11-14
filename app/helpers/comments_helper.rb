@@ -23,18 +23,18 @@ module CommentsHelper
   end
 
   def render_comment_helpers(comment_text, user = current_user)
-    comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_path}\">\\1</a>")
+    comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_url}\">\\1</a>")
 
     unless user.nil?
-      comment_text.gsub!(/\[(votes?)\]/, "<a href=\"#{my_vote_summary_path}\">\\1</a>")
-      comment_text.gsub!(/\[(flags?)\]/, "<a href=\"#{flag_history_path(user)}\">\\1</a>")
+      comment_text.gsub!(/\[(votes?)\]/, "<a href=\"#{my_vote_summary_url}\">\\1</a>")
+      comment_text.gsub!(/\[(flags?)\]/, "<a href=\"#{flag_history_url(user)}\">\\1</a>")
     end
 
     comment_text.gsub!(/\[category:(.+?)\]/) do |match|
       val = Regexp.last_match(1).gsub('&amp;', '&').downcase
       cat = Category.by_lowercase_name(val)
       if cat
-        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+        "<a href=\"#{category_url(cat)}\">#{cat.name}</a>"
       else
         match
       end
@@ -44,7 +44,7 @@ module CommentsHelper
       val = Regexp.last_match(1).to_i
       cat = Category.by_id(val)
       if cat
-        "<a href=\"#{category_path(cat)}\">#{cat.name}</a>"
+        "<a href=\"#{category_url(cat)}\">#{cat.name}</a>"
       else
         match
       end
