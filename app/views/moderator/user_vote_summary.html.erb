@@ -1,0 +1,53 @@
+<h1>Vote Summary: <%= @user.username %></h1>
+<p>
+  This is a summary of votes cast and received by this user. This may help you to identify voting patterns and
+  sock puppets, but use caution: what you see as a pattern may also be coincidence. Look for conclusive undeniable
+  patterns before using this data for sanctions.
+</p>
+
+<p>
+  <strong>Key</strong>:
+  <%= text_bg 'yellow-200', '> 20%', class: 'has-padding-1 has-margin-horizontal-1' %>
+  <%= text_bg 'yellow-700', '> 30%', class: 'has-padding-1 has-margin-horizontal-1' %>
+  <%= text_bg 'red-200', '> 40%', class: 'has-padding-1 has-margin-horizontal-1' %>
+  <%= text_bg 'red-700', '> 50%', class: 'has-color-white has-padding-1 has-margin-horizontal-1' %>
+</p>
+
+<% [:cast, :received].each do |type| %>
+  <h2>Votes <%= type %></h2>
+
+  <table class="table is-striped is-full-width has-margin-bottom-8">
+    <thead>
+    <tr>
+      <th><%= type == :cast ? 'To' : 'From' %> user</th>
+      <th>Vote type</th>
+      <th>Vote count</th>
+      <th>% of total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @vote_data[type].breakdown.each do |key, count| %>
+      <tr>
+        <td><%= user_link @users.select { |x| x.id == key[0] }[0] %></td>
+        <td><%= key[1] %></td>
+        <td><%= count %></td>
+        <% pct = count * 100.0 / @vote_data[type].total %>
+        <td>
+          <% if pct >= 50 %>
+            <%= text_bg 'red-700', number_to_percentage(pct, precision: 2), class: 'has-color-white has-padding-1' %>
+          <% elsif pct >= 40 %>
+            <%= text_bg 'red-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+          <% elsif pct >= 30 %>
+            <%= text_bg 'yellow-700', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+          <% elsif pct >= 20 %>
+            <%= text_bg 'yellow-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+          <% else %>
+            <%= number_to_percentage(pct, precision: 2) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+

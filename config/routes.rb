@@ -77,9 +77,10 @@ Rails.application.routes.draw do
   get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
   get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
   get    'mod/flags/escalated',            to: 'flags#escalated_queue', as: :escalated_flags
+  delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
+  get    'mod/users/votes/:id',            to: 'moderator#user_vote_summary', as: :mod_vote_summary
   post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
   post   'mod/flags/:id/escalate',         to: 'flags#escalate', as: :escalate_flag
-  delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
 
   scope 'mod/featured' do
     root                                   to: 'pinned_links#index', as: :pinned_links
