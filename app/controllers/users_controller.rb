@@ -488,6 +488,7 @@ class UsersController < ApplicationController
     else
       User.active
     end.joins(:community_user).includes(:community_user, :avatar_attachment)
+       .where.not(deleted: true, community_users: { deleted: true })
   end
 
   def check_deleted
