@@ -1,5 +1,8 @@
 # This file is maintained in alphabetic order by class name (Layout, Metrics, Style) first, then by key name.
 
+require:
+  - ./lib/rubocop/path_in_helpers.rb
+
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:
@@ -23,6 +26,10 @@ Layout/SpaceInsideArrayLiteralBrackets:
 
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
+Lint/PathInHelpers:
+  Enabled: true
+  Include:
+    - app/helpers/**/*.rb
 Lint/RaiseException:
   Enabled: true
 Lint/StructNewOverride:
