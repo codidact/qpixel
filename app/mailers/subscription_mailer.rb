@@ -17,6 +17,6 @@ class SubscriptionMailer < ApplicationMailer
               end
 
     @subscription.update(last_sent_at: DateTime.now)
-    mail from: 'subscriptions@codidact.com', to: @subscription.user.email, subject: subject
+    mail from: 'Codidact Subscriptions <subscriptions@codidact.com>', to: @subscription.user.email, subject: subject
   end
 end
