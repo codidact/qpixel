@@ -103,9 +103,9 @@ module ApplicationHelper
     else
       case post.post_type_id
       when HelpDoc.post_type_id
-        help_path(post.doc_slug)
+        help_url(post.doc_slug)
       when PolicyDoc.post_type_id
-        policy_path(post.doc_slug)
+        policy_url(post.doc_slug)
       else
         '#'
       end

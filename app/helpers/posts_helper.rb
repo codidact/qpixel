@@ -5,13 +5,13 @@ module PostsHelper
 
   def cancel_redirect_path(post)
     if post.id.present?
-      post_path(post)
+      post_url(post)
     elsif post.parent_id.present?
-      post_path(post.parent_id)
+      post_url(post.parent_id)
     elsif post.category_id.present?
-      category_path(post.category_id)
+      category_url(post.category_id)
     else
-      root_path
+      root_url
     end
   end
 

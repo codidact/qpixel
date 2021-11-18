@@ -1,12 +1,12 @@
 module CategoriesHelper
   def active?(category)
     current_category
-    current_page?(category_path(category)) || (category.is_homepage && current_page?(root_path)) ||
+    current_page?(category_url(category)) || (category.is_homepage && current_page?(root_url)) ||
       (defined?(@current_category) && @current_category&.id == category.id)
   end
 
   def expandable?
-    (defined?(@category) && !@category.nil? && !@category.id.nil? && !current_page?(new_category_path)) ||
+    (defined?(@category) && !@category.nil? && !@category.id.nil? && !current_page?(new_category_url)) ||
       (defined?(@post) && !@post.category.nil?) ||
       (defined?(@question) && !@question.category.nil?) ||
       (defined?(@article) && !@article.category.nil?)
