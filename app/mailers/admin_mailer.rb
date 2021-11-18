@@ -1,5 +1,5 @@
 class AdminMailer < ApplicationMailer
-  default from: 'moderators-noreply@codidact.com'
+  default from: "Codidact Admins <moderators-noreply@codidact.com>"
 
   def to_moderators
     @subject = params[:subject]
