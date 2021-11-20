@@ -39,7 +39,7 @@
     <div class="diff-section">
       <% if before.is_a?(String) %>
         <div class="diff-new is-changed raw-markdown">
-          <%= before %>
+          <pre class="unformatted"><%= before %></pre>
         </div>
       <% else %>
         <div class="diff-new is-changed">
