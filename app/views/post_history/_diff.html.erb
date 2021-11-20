@@ -1,8 +1,7 @@
 <div class="diff">
   <% if before.present? && after.present? %>
     <% if before.is_a?(String) && after.is_a?(String) %>
-      <% diff = Diffy::SplitDiff.new(CGI.escapeHTML(sanitize(before, scrubber: scrubber)),
-                                     CGI.escapeHTML(sanitize(after, scrubber: scrubber)), format: :html) %>
+      <% diff = Diffy::SplitDiff.new(before, after, format: :html) %>
       <div class="diff-section">
         <div class="diff-old is-changed raw-markdown">
           <%= raw(diff.left) %>
@@ -40,7 +39,7 @@
     <div class="diff-section">
       <% if before.is_a?(String) %>
         <div class="diff-new is-changed raw-markdown">
-          <%= raw(CGI.escapeHTML(sanitize(before, scrubber: scrubber)).gsub("\n", "<br/>")) %>
+          <%= before %>
         </div>
       <% else %>
         <div class="diff-new is-changed">
@@ -61,7 +60,7 @@
     <div class="diff-section">
       <% if after.is_a?(String) %>
         <div class="diff-new is-changed raw-markdown">
-          <%= raw(CGI.escapeHTML(sanitize(after, scrubber: scrubber)).gsub("\n", "<br/>")) %>
+          <pre class="unformatted"><%= after %></pre>
         </div>
       <% else %>
         <div class="diff-new is-changed">
