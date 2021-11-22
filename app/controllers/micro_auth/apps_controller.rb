@@ -22,11 +22,11 @@ class MicroAuth::AppsController < ApplicationController
 
   def create
     @app = MicroAuth::App.new(app_params.merge({
-      public_key: SecureRandom.base58(32),
+                                                 public_key: SecureRandom.base58(32),
       secret_key: SecureRandom.base58(32),
       app_id: generate_app_id,
       user: current_user
-    }))
+                                               }))
     if @app.save
       redirect_to oauth_app_path(@app.app_id)
     else
