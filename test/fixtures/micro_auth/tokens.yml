@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  micro_auth/app: one
+  app: one
   user: one
   token: MyString
   expires_at: 2021-11-21 19:51:00
 
 two:
-  micro_auth/app: two
+  app: two
   user: two
   token: MyString
   expires_at: 2021-11-21 19:51:00
