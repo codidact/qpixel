@@ -1,0 +1,12 @@
+<% content_for :title, 'App Approved' %>
+
+<h1>App Approved</h1>
+
+<p>
+  You have successfully approved the app <strong><%= @app.name %></strong> to access your account. Please return to the
+  app to continue where you left off.
+</p>
+
+<p>Your code to complete authentication is:</p>
+
+<p class="auth-code"><code><%= @token.code %></code></p>

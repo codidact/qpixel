@@ -288,13 +288,17 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
   end
 
   create_table "micro_auth_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "micro_auth_app_id"
+    t.bigint "app_id"
     t.bigint "user_id"
     t.string "token"
     t.datetime "expires_at"
+    t.text "scope"
+    t.string "code"
+    t.datetime "code_expires_at"
+    t.text "redirect_uri"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["micro_auth_app_id"], name: "index_micro_auth_tokens_on_micro_auth_app_id"
+    t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
   end
 
@@ -726,7 +730,7 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
   add_foreign_key "flags", "users", column: "escalated_by_id"
   add_foreign_key "micro_auth_apps", "users"
   add_foreign_key "micro_auth_apps", "users", column: "deactivated_by_id"
-  add_foreign_key "micro_auth_tokens", "micro_auth_apps"
+  add_foreign_key "micro_auth_tokens", "micro_auth_apps", column: "app_id"
   add_foreign_key "micro_auth_tokens", "users"
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"

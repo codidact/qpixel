@@ -305,15 +305,20 @@ Rails.application.routes.draw do
     post 'callback',                       to: 'donations#callback', as: :donation_callback
   end
 
-  scope 'uauth' do
+  scope 'oauth' do
+    root                                   to: 'micro_auth/authentication#initiate', as: :initiate_oauth
+    post   'approve',                      to: 'micro_auth/authentication#approve', as: :approve_oauth
+    get    'reject',                       to: 'micro_auth/authentication#reject', as: :reject_oauth
+    post   'token',                        to: 'micro_auth/authentication#token', as: :oauth_token
+
     scope 'apps' do
-      root                                 to: 'micro_auth/apps#index', as: :uauth_apps
-      get    'new',                        to: 'micro_auth/apps#new', as: :new_uauth_app
-      post   'new',                        to: 'micro_auth/apps#create', as: :create_uauth_app
-      get    ':id',                        to: 'micro_auth/apps#show', as: :uauth_app
-      get    ':id/edit',                   to: 'micro_auth/apps#edit', as: :edit_uauth_app
-      post   ':id/edit',                   to: 'micro_auth/apps#update', as: :update_uauth_app
-      post   ':id/deactivate',             to: 'micro_auth/apps#deactivate', as: :deactivate_uauth_app
+      root                                 to: 'micro_auth/apps#index', as: :oauth_apps
+      get    'new',                        to: 'micro_auth/apps#new', as: :new_oauth_app
+      post   'new',                        to: 'micro_auth/apps#create', as: :create_oauth_app
+      get    ':id',                        to: 'micro_auth/apps#show', as: :oauth_app
+      get    ':id/edit',                   to: 'micro_auth/apps#edit', as: :edit_oauth_app
+      post   ':id/edit',                   to: 'micro_auth/apps#update', as: :update_oauth_app
+      post   ':id/deactivate',             to: 'micro_auth/apps#deactivate', as: :deactivate_oauth_app
     end
   end
 

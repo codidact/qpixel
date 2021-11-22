@@ -7,4 +7,14 @@ class MicroAuth::App < ApplicationRecord
   validates :app_id, presence: true, uniqueness: true
   validates :secret_key, presence: true, uniqueness: true
   validates :public_key, presence: true, uniqueness: true
+
+  def valid_redirect?(redirect_uri)
+    begin
+      valid_domain = URI(auth_domain.start_with?('http') ? auth_domain : "http://#{auth_domain}").hostname
+      redirect_domain = URI(redirect_uri).hostname
+      redirect_domain.end_with? valid_domain
+    rescue URI::InvalidURIError
+      false
+    end
+  end
 end

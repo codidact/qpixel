@@ -1,0 +1,28 @@
+<% content_for :title, 'App Access Request' %>
+
+<h1>App Access Request</h1>
+
+<p>
+  The app <strong><%= @app.name %></strong> is requesting access to your account. The following is the app owner's
+  description of what this app does:
+</p>
+
+<p><em><%= @app.description %></em></p>
+
+<% permissions = params[:scope].reject { |s| valid_auth_scopes[s].nil? } %>
+<% if permissions.any? %>
+  <p>
+    The app is requesting the following additional permissions:
+  </p>
+
+  <ul>
+    <% permissions.each do |p| %>
+      <li><%= valid_auth_scopes[p] %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<p>You can choose to allow or deny this request.</p>
+
+<%= link_to 'Allow', approve_oauth_path(request.query_parameters), method: :post, class: 'button is-green is-filled' %>
+<%= link_to 'Deny', reject_oauth_path, class: 'button is-danger is-outlined' %>

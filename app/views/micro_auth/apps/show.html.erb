@@ -1,6 +1,6 @@
 <% content_for :title, "#{@app.name} - OAuth App" %>
 
-<%= link_to uauth_apps_path, class: 'has-font-size-caption' do %>
+<%= link_to oauth_apps_path, class: 'has-font-size-caption' do %>
   &laquo; Back to apps list
 <% end %>
 
@@ -11,10 +11,12 @@
   Owned by <%= user_link @app.user %> &middot;
   created <%= time_ago_in_words(@app.created_at) %> ago &middot;
   <%= app_active_badge(@app) %> &middot;
-  <%= link_to edit_uauth_app_path(@app.app_id) do %>
+  <%= link_to edit_oauth_app_path(@app.app_id) do %>
     <i class="fas fa-edit"></i> edit
   <% end %>
 </p>
+
+<%= line_chart @data %>
 
 <div class="widget has-margin-vertical-2 app-security">
   <div class="widget--header">
@@ -44,7 +46,7 @@
       <a href="javascript:void(0)"><i class="fas fa-copy js-copy-key" title="Copy to clipboard"></i></a>
     <% end %>
     <span class="form-caption">
-    Use this when a <code>app_id</code> parameter is required. Safe to include in client-side code or public repositories.
+    Use this when an <code>app_id</code> parameter is required. Safe to include in client-side code or public repositories.
   </span>
     <%= text_field_tag :app_id, @app.app_id, class: 'form-element', readonly: true %>
   </div>
@@ -82,9 +84,52 @@
 
         <p>You will not be able to reactivate this app later.</p>
 
-        <%= link_to "I understand, deactivate #{@app.name}", deactivate_uauth_app_path(@app.app_id), method: :post,
+        <%= link_to "I understand, deactivate #{@app.name}", deactivate_oauth_app_path(@app.app_id), method: :post,
                     class: 'button is-danger is-filled' %>
       </div>
     </div>
   </div>
 <% end %>
+
+<div class="widget is-teal">
+  <div class="widget--header">Authentication</div>
+  <div class="widget--body">
+    <p>To authenticate a user through your app, follow these steps:</p>
+    <ol>
+      <li>
+        Send your user to <code>https://meta.codidact.com/oauth</code> with these parameters in the query string:
+        <ul>
+          <li><code>app_id</code></li>
+          <li><code>scope</code> optional, if you want to request additional capabilities</li>
+          <li><code>state</code> optional, will be sent back to you at redirect</li>
+          <li><code>redirect_uri</code> optional, if you want to use a server-side flow</li>
+        </ul>
+      </li>
+      <li>
+        The user approves your app.
+        <ul>
+          <li>
+            If you provided a <code>redirect_uri</code>, the user will be redirected there, with query string parameters
+            <code>state</code> (exactly as you sent in the previous step) and <code>code</code> (your token retrieval
+            code).
+          </li>
+          <li>
+            If you didn't provide a <code>redirect_uri</code>, the user will be shown a success screen which will
+            include the token retrieval <code>code</code>. Ask them to enter this into your app before the next step.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Send a token retrieval POST request to <code>https://meta.codidact.com/oauth/token</code>, with these
+        parameters:
+        <ul>
+          <li><code>app_id</code></li>
+          <li><code>secret</code></li>
+          <li><code>code</code> as you were given in the previous step</li>
+        </ul>
+        The response is either a 200 OK containing a JSON object with <code>token</code> and <code>expires_at</code>
+        parameters, or a 400 Bad Request containing a JSON object with error details.
+      </li>
+    </ol>
+  </div>
+</div>

@@ -3,22 +3,22 @@
 <h1>Your OAuth Apps</h1>
 
 <div class="flex-row jc-sb">
-  <%= link_to new_uauth_app_path, class: 'button is-filled' do %>
+  <%= link_to new_oauth_app_path, class: 'button is-filled' do %>
     <i class="fas fa-plus-circle"></i> Create
   <% end %>
 
   <% if admin? %>
     <div class="button-list is-gutterless">
       <% classes = 'button is-outlined is-muted' %>
-      <%= link_to 'yours', uauth_apps_path(request.query_parameters.except(:admin)),
+      <%= link_to 'yours', oauth_apps_path(request.query_parameters.except(:admin)),
                   class: "#{classes} #{params[:admin].nil? ? 'is-active' : ''}" %>
-      <%= link_to 'admin', uauth_apps_path(request.query_parameters.merge(admin: true)),
+      <%= link_to 'admin', oauth_apps_path(request.query_parameters.merge(admin: true)),
                   class: "#{classes} #{params[:admin].present? ? 'is-active' : ''}" %>
     </div>
   <% end %>
 </div>
 
-<%= form_tag uauth_apps_path, method: :get, class: 'has-margin-vertical-2' do %>
+<%= form_tag oauth_apps_path, method: :get, class: 'has-margin-vertical-2' do %>
   <% if params[:admin].present? %>
     <%= hidden_field_tag :admin, true %>
   <% end %>
@@ -39,7 +39,7 @@
     <div class="widget--body">
       <div class="flex-row ai-c">
         <div class="primary">
-          <%= link_to app.name, uauth_app_path(app.app_id) %>
+          <%= link_to app.name, oauth_app_path(app.app_id) %>
         </div>
         <div>
           <div class="has-font-size-caption has-color-tertiary-900 has-text-align-center">

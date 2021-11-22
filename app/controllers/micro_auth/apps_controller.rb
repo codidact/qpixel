@@ -28,20 +28,25 @@ class MicroAuth::AppsController < ApplicationController
       user: current_user
     }))
     if @app.save
-      redirect_to uauth_app_path(@app.app_id)
+      redirect_to oauth_app_path(@app.app_id)
     else
       flash[:danger] = 'There was an error while trying to create your app.'
       render :new
     end
   end
 
-  def show; end
+  def show
+    @data = [
+      { name: 'Authentications', data: @app.tokens.group_by_week(:created_at).count },
+      { name: 'Users', data: @app.tokens.group_by_week(:created_at).count('DISTINCT user_id') }
+    ]
+  end
 
   def edit; end
 
   def update
     if @app.update app_params
-      redirect_to uauth_app_path(@app.app_id)
+      redirect_to oauth_app_path(@app.app_id)
     else
       flash[:danger] = 'There was an error while trying to update your app.'
     end
@@ -51,7 +56,7 @@ class MicroAuth::AppsController < ApplicationController
     @app.update(active: false, deactivated_by: current_user, deactivated_at: DateTime.now,
                 deactivate_comment: params[:comment])
     flash[:success] = 'App deactivated.'
-    redirect_to uauth_app_path(@app.app_id)
+    redirect_to oauth_app_path(@app.app_id)
   end
 
   private
