@@ -71,22 +71,25 @@ Rails.application.routes.draw do
     post   ':id/toggle',                   to: 'licenses#toggle', as: :toggle_license
   end
 
-  get    'mod',                            to: 'moderator#index', as: :moderator
-  get    'mod/deleted',                    to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
-  get    'mod/comments',                   to: 'moderator#recent_comments', as: :recent_comments
-  get    'mod/flags',                      to: 'flags#queue', as: :flag_queue
-  get    'mod/flags/handled',              to: 'flags#handled', as: :handled_flags
-  get    'mod/flags/escalated',            to: 'flags#escalated_queue', as: :escalated_flags
-  post   'mod/flags/:id/resolve',          to: 'flags#resolve', as: :resolve_flag
-  post   'mod/flags/:id/escalate',         to: 'flags#escalate', as: :escalate_flag
-  delete 'mod/users/destroy/:id',          to: 'users#destroy', as: :destroy_user
+  scope 'mod' do
+    root                                   to: 'moderator#index', as: :moderator
+    get    'deleted',                      to: 'moderator#recently_deleted_posts', as: :recently_deleted_posts
+    get    'comments',                     to: 'moderator#recent_comments', as: :recent_comments
+    get    'flags',                        to: 'flags#queue', as: :flag_queue
+    get    'flags/handled',                to: 'flags#handled', as: :handled_flags
+    get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
+    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
+    get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
+    post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
+    post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
 
-  scope 'mod/featured' do
-    root                                   to: 'pinned_links#index', as: :pinned_links
-    get   'new',                           to: 'pinned_links#new', as: :new_pinned_link
-    post  'new',                           to: 'pinned_links#create', as: :create_pinned_link
-    get   ':id/edit',                      to: 'pinned_links#edit', as: :edit_pinned_link
-    patch ':id/edit',                      to: 'pinned_links#update', as: :update_pinned_link
+    scope 'featured' do
+      root                                 to: 'pinned_links#index', as: :pinned_links
+      get   'new',                         to: 'pinned_links#new', as: :new_pinned_link
+      post  'new',                         to: 'pinned_links#create', as: :create_pinned_link
+      get   ':id/edit',                    to: 'pinned_links#edit', as: :edit_pinned_link
+      patch ':id/edit',                    to: 'pinned_links#update', as: :update_pinned_link
+    end
   end
 
   get    'questions/lottery',              to: 'questions#lottery', as: :questions_lottery
@@ -100,7 +103,6 @@ Rails.application.routes.draw do
 
     post  'add',                          to: 'reactions#add', as: :add_reaction
     post  'retract',                      to: 'reactions#retract', as: :retract_reaction
-
   end
 
   scope 'posts' do
@@ -301,6 +303,23 @@ Rails.application.routes.draw do
     post 'intent',                         to: 'donations#intent', as: :donation_intent
     post 'success',                        to: 'donations#success', as: :donation_success
     post 'callback',                       to: 'donations#callback', as: :donation_callback
+  end
+
+  scope 'oauth' do
+    root                                   to: 'micro_auth/authentication#initiate', as: :initiate_oauth
+    post   'approve',                      to: 'micro_auth/authentication#approve', as: :approve_oauth
+    get    'reject',                       to: 'micro_auth/authentication#reject', as: :reject_oauth
+    post   'token',                        to: 'micro_auth/authentication#token', as: :oauth_token
+
+    scope 'apps' do
+      root                                 to: 'micro_auth/apps#index', as: :oauth_apps
+      get    'new',                        to: 'micro_auth/apps#new', as: :new_oauth_app
+      post   'new',                        to: 'micro_auth/apps#create', as: :create_oauth_app
+      get    ':id',                        to: 'micro_auth/apps#show', as: :oauth_app
+      get    ':id/edit',                   to: 'micro_auth/apps#edit', as: :edit_oauth_app
+      post   ':id/edit',                   to: 'micro_auth/apps#update', as: :update_oauth_app
+      post   ':id/deactivate',             to: 'micro_auth/apps#deactivate', as: :deactivate_oauth_app
+    end
   end
 
   get   '403',                             to: 'errors#forbidden'

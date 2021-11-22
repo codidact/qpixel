@@ -1,0 +1,20 @@
+<% content_for :title, 'OAuth Error' %>
+
+<h1>OAuth Error</h1>
+
+<p>
+  An error occurred while trying to connect you back to the <strong><%= @app.name %></strong> app. Please contact the
+  app's developer. This app is owned by <%= user_link @app.user %>.
+</p>
+
+<hr/>
+
+<div class="widget has-font-size-caption">
+  <div class="widget--body">
+    <h4>Technical information for the app developer</h4>
+    <p>
+      <code>redirect_uri</code> was not under the app's configured authentication domain. Check your app configuration
+      and authentication code.
+    </p>
+  </div>
+</div>

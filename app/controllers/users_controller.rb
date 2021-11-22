@@ -19,7 +19,8 @@ class UsersController < ApplicationController
                user_scope.search(params[:search])
              else
                user_scope.order(sort_param => :desc)
-             end.paginate(page: params[:page], per_page: 48)
+             end.where.not(deleted: true, community_users: { deleted: true })
+                .paginate(page: params[:page], per_page: 48) # rubocop:disable Layout/MultilineMethodCallIndentation
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
   end
 

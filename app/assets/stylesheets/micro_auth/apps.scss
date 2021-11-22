@@ -1,0 +1,11 @@
+// Place all the styles related to the MicroAuth/Apps controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import '../variables';
+
+.app-security {
+  input[type="text"] {
+    font-family: $font-stack-code;
+  }
+}

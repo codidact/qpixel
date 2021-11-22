@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_13_223347) do
+ActiveRecord::Schema.define(version: 2021_11_21_195100) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -264,6 +264,42 @@ ActiveRecord::Schema.define(version: 2021_11_13_223347) do
     t.text "description"
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
+  end
+
+  create_table "micro_auth_apps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "app_id"
+    t.string "public_key"
+    t.string "secret_key"
+    t.text "description"
+    t.string "auth_domain"
+    t.bigint "user_id"
+    t.boolean "active", default: true, null: false
+    t.bigint "deactivated_by_id"
+    t.datetime "deactivated_at"
+    t.string "deactivate_comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["app_id"], name: "index_micro_auth_apps_on_app_id"
+    t.index ["deactivated_by_id"], name: "index_micro_auth_apps_on_deactivated_by_id"
+    t.index ["public_key"], name: "index_micro_auth_apps_on_public_key"
+    t.index ["secret_key"], name: "index_micro_auth_apps_on_secret_key"
+    t.index ["user_id"], name: "index_micro_auth_apps_on_user_id"
+  end
+
+  create_table "micro_auth_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "app_id"
+    t.bigint "user_id"
+    t.string "token"
+    t.datetime "expires_at"
+    t.text "scope"
+    t.string "code"
+    t.datetime "code_expires_at"
+    t.text "redirect_uri"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
+    t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
   end
 
   create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -692,6 +728,10 @@ ActiveRecord::Schema.define(version: 2021_11_13_223347) do
   add_foreign_key "error_logs", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "flags", "users", column: "escalated_by_id"
+  add_foreign_key "micro_auth_apps", "users"
+  add_foreign_key "micro_auth_apps", "users", column: "deactivated_by_id"
+  add_foreign_key "micro_auth_tokens", "micro_auth_apps", column: "app_id"
+  add_foreign_key "micro_auth_tokens", "users"
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"

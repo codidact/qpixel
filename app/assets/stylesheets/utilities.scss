@@ -82,6 +82,9 @@ pre.unformatted {
   color: unset;
   background: unset;
   border: unset;
+  overflow-x: unset;
+  overflow-y: unset;
+  max-height: unset;
 }
 
 pre.pre-wrap {
@@ -167,6 +170,7 @@ pre.pre-wrap {
 
     li {
       min-height: 20px;
+      white-space: pre-wrap;
 
       del, ins {
         text-decoration: none;

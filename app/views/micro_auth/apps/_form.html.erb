@@ -1,0 +1,28 @@
+<%= form_for @app, url: submit_url, method: :post do |f| %>
+  <div class="form-group">
+    <%= f.label :name, 'App name', class: 'form-element' %>
+    <span class="form-caption">The public name for your app. Something recognisable.</span>
+    <%= f.text_field :name, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, 'Description', class: 'form-element' %>
+    <span class="form-caption">
+      A longer description for your app. Describe what it does and why it's useful in a few sentences.
+    </span>
+    <%= f.text_area :description, class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :auth_domain, 'Authentication domain', class: 'form-element' %>
+    <span class="form-caption">
+      The domain name under which authentication redirects will be accepted for your app. Any <code>redirect_url</code>
+      parameters during authentication must reside under this domain (including subdomains).
+    </span>
+    <%= f.text_field :auth_domain, class: 'form-element' %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit @app.id.nil? ? 'Create' : 'Update', class: 'button is-filled' %>
+  </div>
+<% end %>
