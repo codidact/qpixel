@@ -1,0 +1,5 @@
+<% content_for :title, 'Edit OAuth App' %>
+
+<h1>Edit OAuth App</h1>
+
+<%= render 'form', submit_url: update_uauth_app_path(@app.app_id) %>

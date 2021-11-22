@@ -1,0 +1,90 @@
+<% content_for :title, "#{@app.name} - OAuth App" %>
+
+<%= link_to uauth_apps_path, class: 'has-font-size-caption' do %>
+  &laquo; Back to apps list
+<% end %>
+
+<h1>
+  <%= @app.name %>
+</h1>
+<p class="has-color-tertiary-900">
+  Owned by <%= user_link @app.user %> &middot;
+  created <%= time_ago_in_words(@app.created_at) %> ago &middot;
+  <%= app_active_badge(@app) %> &middot;
+  <%= link_to edit_uauth_app_path(@app.app_id) do %>
+    <i class="fas fa-edit"></i> edit
+  <% end %>
+</p>
+
+<div class="widget has-margin-vertical-2 app-security">
+  <div class="widget--header">
+    Security details
+  </div>
+  <div class="widget--body">
+    <%= label_tag :public_key, class: 'form-element' do %>
+      Public key
+      <a href="javascript:void(0)"><i class="fas fa-copy js-copy-key" title="Copy to clipboard"></i></a>
+    <% end %>
+    <span class="form-caption">
+    Use this when a <code>key</code> parameter is required. Safe to include in client-side code or public repositories.
+  </span>
+    <%= text_field_tag :public_key, @app.public_key, class: 'form-element', readonly: true %>
+
+    <%= label_tag :secret_key, class: 'form-element' do %>
+      Secret key
+      <a href="javascript:void(0)"><i class="fas fa-copy js-copy-key" title="Copy to clipboard"></i></a>
+    <% end %>
+    <span class="form-caption">
+    Use this when a <code>secret</code> parameter is required. <strong>Do not share this key publicly.</strong>
+  </span>
+    <%= text_field_tag :secret_key, @app.secret_key, class: 'form-element is-danger', readonly: true %>
+
+    <%= label_tag :app_id, class: 'form-element' do %>
+      App ID
+      <a href="javascript:void(0)"><i class="fas fa-copy js-copy-key" title="Copy to clipboard"></i></a>
+    <% end %>
+    <span class="form-caption">
+    Use this when a <code>app_id</code> parameter is required. Safe to include in client-side code or public repositories.
+  </span>
+    <%= text_field_tag :app_id, @app.app_id, class: 'form-element', readonly: true %>
+  </div>
+</div>
+
+<% if @app.active? %>
+  <div class="widget is-red">
+    <div class="widget--header">
+      Deactivate
+    </div>
+    <div class="widget--body">
+      <p>If you no longer intend to maintain this app, you can deactivate it. This will remove it from public display and
+        prevent new users and authentications to your app.</p>
+
+      <p>This cannot be undone.</p>
+
+      <button class="button is-danger is-outlined" data-modal="#deactivate-modal">Deactivate</button>
+    </div>
+  </div>
+
+  <div class="modal is-danger is-with-backdrop" id="deactivate-modal">
+    <div class="modal--container">
+      <div class="modal--header">
+        <button class="button is-close-button modal--header-button" data-modal="#deactivate-modal">&times;</button>
+        Deactivate
+      </div>
+      <div class="modal--body">
+        <p>Please be sure before continuing. This will:</p>
+
+        <ul>
+          <li>Prevent new users using your app</li>
+          <li>Prevent existing users authenticating to your app</li>
+          <li>Remove your app from public display</li>
+        </ul>
+
+        <p>You will not be able to reactivate this app later.</p>
+
+        <%= link_to "I understand, deactivate #{@app.name}", deactivate_uauth_app_path(@app.app_id), method: :post,
+                    class: 'button is-danger is-filled' %>
+      </div>
+    </div>
+  </div>
+<% end %>
