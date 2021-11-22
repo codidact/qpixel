@@ -13,9 +13,28 @@
       <%= hidden_field_tag :amount, @amount %>
       <%= hidden_field_tag :currency, @symbol %>
       <%= hidden_field_tag :return_to, @referrer %>
+      <%= hidden_field_tag :intent, @intent.id %>
 
       <div class="field">
-        <%= label_tag :billing_name, 'Name on card:' %>
+        <%= label_tag :public_name, 'Display name' %>
+        <%= text_field_tag :public_name, nil, class: 'form-element' %>
+        <div class="form-caption">
+          Only if you wish to be included in our public acknowledgements of donors. Subject to space and editorial
+          approval where necessary.
+        </div>
+      </div>
+
+      <div class="field">
+        <%= label_tag :public_comments, 'Message' %>
+        <%= text_area_tag :public_comments, nil, class: 'form-element' %>
+        <div class="form-caption">
+          If you'd like to include a message with your donation to show on our donor acknowledgements page, write it here.
+          Subject to space and editorial approval where necessary.
+        </div>
+      </div>
+
+      <div class="field">
+        <%= label_tag :billing_name, 'Name on card' %>
         <%= text_field_tag :billing_name, nil, class: 'form-element', required: true %>
         <div class="form-caption">
           Required for billing. Not used for anything else, and never made public.
@@ -26,7 +45,7 @@
         <%= hidden_field_tag :billing_email, current_user.email %>
       <% else %>
         <div class="field">
-          <%= label_tag :billing_email, 'Your email address:' %>
+          <%= label_tag :billing_email, 'Your email address' %>
           <%= email_field_tag :billing_email, nil, class: 'form-element', required: true %>
           <div class="form-caption">
             Required for billing purposes. We won't use this for any other purpose.
