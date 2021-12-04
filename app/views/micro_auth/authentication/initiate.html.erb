@@ -9,7 +9,7 @@
 
 <p><em><%= @app.description %></em></p>
 
-<% permissions = params[:scope].reject { |s| valid_auth_scopes[s].nil? } %>
+<% permissions = (params[:scope].is_a?(Array) ? params[:scope] : [params[:scope]]).reject { |s| valid_auth_scopes[s].nil? } %>
 <% if permissions.any? %>
   <p>
     The app is requesting the following additional permissions:

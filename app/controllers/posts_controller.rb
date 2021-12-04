@@ -147,7 +147,7 @@ class PostsController < ApplicationController
                   Post.where(parent_id: @post.id)
                 else
                   Post.where(parent_id: @post.id).undeleted
-                      .or(Post.where(parent_id: @post.id, user_id: current_user&.id))
+                      .or(Post.where(parent_id: @post.id, user_id: current_user&.id).where.not(user_id: nil))
                 end.includes(:votes, :user, :comments, :license, :post_type)
                 .order(Post.arel_table[:id].not_eq(params[:answer]))
                 .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },

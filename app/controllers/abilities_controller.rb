@@ -10,7 +10,7 @@ class AbilitiesController < ApplicationController
     @ability = Ability.where(internal_id: params[:id]).first
     return not_found if @ability.nil?
 
-    @your_ability = @user.community_user.privilege @ability.internal_id
+    @your_ability = @user&.community_user&.privilege @ability.internal_id
   end
 
   def recalc
@@ -21,10 +21,10 @@ class AbilitiesController < ApplicationController
   private
 
   def set_user
-    @user = current_user
-    if params[:for]
-      @user = User.where(id: params[:for]).first || @user
-    end
-    return not_found if @user.nil?
+    @user = if params[:for].present?
+              User.where(id: params[:for]).first || @user
+            else
+              current_user
+            end
   end
 end
