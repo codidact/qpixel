@@ -183,7 +183,7 @@
             <% end %>
 
             <% if been_edited %>
-              <div>
+              <div title="<%= post.last_edited_at.iso8601 %>">
                 <i class="fa fa-pencil-alt" title="last edited" aria-label="last edited"></i>
                 <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
                 <% unless last_edited_by_self %>
