@@ -1,5 +1,5 @@
 class TwoFactorMailer < ApplicationMailer
-  default from: 'noreply@codidact.com'
+  default from: 'Codidact <noreply@codidact.com>'
 
   def disable_email
     user = params[:user]
