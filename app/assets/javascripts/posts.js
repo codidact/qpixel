@@ -1,3 +1,10 @@
+// IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/helpers/posts_helper.rb
+const ALLOWED_TAGS = ['a', 'p', 'span', 'b', 'i', 'em', 'strong', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'blockquote', 'img', 'strike', 'del', 'code', 'pre', 'br', 'ul', 'ol', 'li', 'sup', 'sub', 'section', 'details',
+  'summary', 'ins', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 's'];
+const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 'alt', 'rowspan', 'colspan', 'lang',
+  'start', 'dir'];
+
 $(() => {
   const $uploadForm = $('.js-upload-form');
 
@@ -125,7 +132,11 @@ $(() => {
       const converter = window.converter;
       const text = $(evt.target).val();
       const unsafe_html = converter.render(text);
-      const html = DOMPurify.sanitize( unsafe_html , {USE_PROFILES: {html: true}} );
+      const html = DOMPurify.sanitize(unsafe_html, {
+        USE_PROFILES: { html: true },
+        ALLOWED_TAGS,
+        ALLOWED_ATTR
+      });
       $tgt.parents('.form-group').siblings('.post-preview').html(html);
       $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
     }, 0);
