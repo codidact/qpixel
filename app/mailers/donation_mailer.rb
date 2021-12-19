@@ -4,7 +4,8 @@ class DonationMailer < ApplicationMailer
     @amount = params[:amount]
     @email = params[:email]
     @name = params[:name]
-    mail from: 'Codidact Donations <donations-support@codidact.com>', reply_to: 'Codidact Support <support@codidact.com>',
+    mail from: 'Codidact Donations <donations-support@codidact.com>',
+         reply_to: 'Codidact Support <support@codidact.com>',
          to: @email, subject: 'Thanks for your donation!'
   end
 
@@ -14,7 +15,8 @@ class DonationMailer < ApplicationMailer
     @email = params[:email]
     @name = params[:name]
     @intent = params[:intent]
-    mail from: 'Codidact Donations <donations-support@codidact.com>', reply_to: 'Codidact Support <support@codidact.com>',
+    mail from: 'Codidact Donations <donations-support@codidact.com>',
+         reply_to: 'Codidact Support <support@codidact.com>',
          to: @email, subject: 'Your donation is unfinished - was everything okay?'
   end
 end

@@ -11,10 +11,10 @@ class AbilitiesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
-  test 'should not get index when not logged in' do
+  test 'should get index when not logged in' do
     sign_out :user
     get :index
-    assert_response 404
+    assert_response 200
   end
 
   test 'should get index for other user when logged in' do
@@ -42,10 +42,10 @@ class AbilitiesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:your_ability)
   end
 
-  test 'should not get show when not logged in' do
+  test 'should get show when not logged in' do
     sign_out :user
     get :show, params: { id: 'unrestricted' }
-    assert_response 404
+    assert_response 200
   end
 
   test 'should get show for other user when logged in' do
