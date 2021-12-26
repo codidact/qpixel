@@ -2,7 +2,7 @@
 module UsersHelper
   def avatar_url(user, size = 16)
     if deleted_user?(user)
-      user_auto_avatar_url(-1, size: size, format: :png)
+      user_auto_avatar_url(letter: 'X', color: '#E73737FF', size: size, format: :png)
     elsif user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else

@@ -78,13 +78,13 @@ pre.unformatted {
   padding: unset;
   margin: unset;
   font-size: unset;
-  line-height: unset;
   color: unset;
   background: unset;
   border: unset;
   overflow-x: unset;
   overflow-y: unset;
   max-height: unset;
+  white-space: pre-wrap;
 }
 
 pre.pre-wrap {

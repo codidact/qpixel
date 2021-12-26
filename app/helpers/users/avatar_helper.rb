@@ -3,11 +3,26 @@ require 'rmagick'
 module Users::AvatarHelper
   include Magick
 
-  def user_auto_avatar(user, size)
-    Rails.cache.fetch "network/avatars/#{user.id}/#{size}px", include_community: false, expires_in: 24.hours do
+  def user_auto_avatar(size, user: nil, letter: nil, color: nil)
+    raise ArgumentError, 'Either user or letter must be set' if user.nil? && letter.nil?
+    raise ArgumentError, 'Color must be set if user is not provided' if user.nil? && color.nil?
+
+    if letter.nil?
+      letter = user.username[0]
+    end
+    if color.nil?
+      color = "##{Digest::MD5.hexdigest(user.username)[0...6]}FF"
+    end
+
+    cache_key = if user.present?
+                  "network/avatars/#{user.id}/#{size}px"
+                else
+                  "network/avatars/#{letter}+#{color}/#{size}px"
+                end
+
+    Rails.cache.fetch cache_key, include_community: false, expires_in: 24.hours do
       ava = Image.new(size, size)
-      background = "##{Digest::MD5.hexdigest(user.username)[0...6]}FF"
-      text_color = yiq_contrast(background, 'black', 'white')
+      text_color = yiq_contrast(color, 'black', 'white')
 
       bg = Draw.new
       bg.fill background
@@ -20,7 +35,7 @@ module Users::AvatarHelper
       letter.font = './app/assets/imgfonts/Roboto.ttf'
       letter.pointsize = size * 0.75
       letter.gravity = CenterGravity
-      letter.annotate ava, size, size * 1.16, 0, 0, user.username[0].upcase do
+      letter.annotate ava, size, size * 1.16, 0, 0, letter.upcase do
         self.fill = text_color
       end
 

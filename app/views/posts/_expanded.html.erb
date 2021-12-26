@@ -62,18 +62,18 @@
             </button>
           <% end %>
         </div>
-        <% if post.post_type.has_reactions && user_signed_in? %>
-        <div class="post--react has-text-align-center">
-          <% unless post.locked? %>
-            <button class="react-button button is-muted is-icon-only-button h-fw-bold"
-                    id="post-<%= post.id %>-react" aria-label="Add Reaction"
-                    data-drop="#post-<%= post.id %>-reactions-panel"
-                    data-drop-self-class-toggle="is-active"
-                    data-drop-force-dir="down">
-                react
-            </button>
-          <% end %>
-        </div>
+        <% if user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any? %>
+          <div class="post--react has-text-align-center">
+            <% unless post.locked? %>
+              <button class="react-button button is-muted is-icon-only-button h-fw-bold"
+                      id="post-<%= post.id %>-react" aria-label="Add Reaction"
+                      data-drop="#post-<%= post.id %>-reactions-panel"
+                      data-drop-self-class-toggle="is-active"
+                      data-drop-force-dir="down">
+                  react
+              </button>
+            <% end %>
+          </div>
         <% end %>
       </div>
     <% end %>
@@ -492,5 +492,5 @@
 <% end %>
 
 <% if post.post_type.has_reactions && !post.locked? && user_signed_in? %>
-<%= render 'reactions/dialog', post: post %>
+  <%= render 'reactions/dialog', post: post %>
 <% end %>

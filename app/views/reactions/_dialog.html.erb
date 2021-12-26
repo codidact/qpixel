@@ -7,33 +7,33 @@
     Mark this <%= post.post_type.name.downcase %> as ...
   </div>
   <% post.post_type.reactions.each do |rt| %>
-  <div class="grid">
-    <div class="grid--cell">
-      <input class="form-radio-element reaction-type" type="radio" name="reaction-type"
-              value="<%= rt.id %>"
-              id="reaction-type-input-<%= post.id %>-<%= rt.id %>"
-              <%= rt.requires_comment ? 'data-reaction-require-comment' : '' %>
-              <%= 'disabled' if user_reactions_types.include? rt %>>
+    <div class="grid">
+      <div class="grid--cell">
+        <input class="form-radio-element reaction-type" type="radio" name="reaction-type"
+                value="<%= rt.id %>"
+                id="reaction-type-input-<%= post.id %>-<%= rt.id %>"
+                <%= rt.requires_comment ? 'data-reaction-require-comment' : '' %>
+                <%= 'disabled' if user_reactions_types.include? rt %>>
+      </div>
+      <div class="grid--cell is-flexible">
+        <label class="form-element <%= 'disabled' if user_reactions_types.include? rt %>"
+               for="reaction-type-input-<%= post.id %>-<%= rt.id %>" >
+          <span class="badge is-tag <%= rt.color %>">
+            <i class="<%= rt.icon %> fa-fw"></i>
+            <%= rt.name %>
+          </span>
+          <% if user_reactions_types.include? rt %>
+          (used already;
+          <a href="#" class="reaction-retract" data-reaction="<%= rt.id %>" data-post="<%= post.id %>">retract?</a>)
+          <% elsif rt.requires_comment %>
+          (requires comment)
+          <% end %>
+          <div class="form-caption">
+            <%= raw render_markdown(rt.description) %>
+          </div>
+        </label>
+      </div>
     </div>
-    <div class="grid--cell is-flexible">
-      <label class="form-element <%= 'disabled' if user_reactions_types.include? rt %>"
-             for="reaction-type-input-<%= post.id %>-<%= rt.id %>" >
-        <span class="badge is-tag <%= rt.color %>">
-          <i class="<%= rt.icon %> fa-fw"></i>
-          <%= rt.name %>
-        </span>
-        <% if user_reactions_types.include? rt %>
-        (used already;
-        <a href="#" class="reaction-retract" data-reaction="<%= rt.id %>" data-post="<%= post.id %>">retract?</a>)
-        <% elsif rt.requires_comment %>
-        (requires comment)
-        <% end %>
-        <div class="form-caption">
-          <%= raw render_markdown(rt.description) %>
-        </div>
-      </label>
-    </div>
-  </div>
   <% end %>
   <label for="reaction-type-comment-<%= post.id %>">Explain in comment?</label>
   <textarea class="form-element reaction-comment-field is-small"
