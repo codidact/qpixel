@@ -10,7 +10,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze JS
+    name: Analyze JS and Ruby
     runs-on: ubuntu-latest
    # Apply principle of least privilege to GITHUB_TOKEN 
     permissions:
