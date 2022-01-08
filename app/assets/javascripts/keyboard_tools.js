@@ -166,8 +166,6 @@ $(() => {
         window.location.href = '/users/' + _CodidactKeyboard.user_id;
       } else if (e.key === 'f') {
         window.location.href = '/mod/flags';
-      } else if (e.key === 'f') {
-        window.location.href = '/mod/flags';
       } else if (e.key === "t") {
         const data = Object.entries(_CodidactKeyboard.categories());
         let string_response = "";
