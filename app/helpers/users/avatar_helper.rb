@@ -25,17 +25,17 @@ module Users::AvatarHelper
       text_color = yiq_contrast(color, 'black', 'white')
 
       bg = Draw.new
-      bg.fill background
+      bg.fill color
       bg.rectangle 0, 0, size, size
       bg.draw ava
 
-      letter = Draw.new
-      letter.font_family = 'Roboto'
-      letter.font_weight = 400
-      letter.font = './app/assets/imgfonts/Roboto.ttf'
-      letter.pointsize = size * 0.75
-      letter.gravity = CenterGravity
-      letter.annotate ava, size, size * 1.16, 0, 0, letter.upcase do
+      let = Draw.new
+      let.font_family = 'Roboto'
+      let.font_weight = 400
+      let.font = './app/assets/imgfonts/Roboto.ttf'
+      let.pointsize = size * 0.75
+      let.gravity = CenterGravity
+      let.annotate ava, size, size * 1.16, 0, 0, letter.upcase do
         self.fill = text_color
       end
 
