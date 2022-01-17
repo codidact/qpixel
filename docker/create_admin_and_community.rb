@@ -1,6 +1,7 @@
 # 1. Create the community
 community_name = ENV['COMMUNITY_NAME'] || 'Dinosaur Community'
 Community.create(name: community_name, host: "localhost:#{ENV['LOCAL_DEV_PORT']}")
+Rails.cache.clear
 
 # 2. Create the admin user, ensure doesn't require confirmation
 username = ENV['COMMUNITY_ADMIN_USERNAME'] || 'admin'
