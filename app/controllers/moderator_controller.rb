@@ -64,6 +64,7 @@ class ModeratorController < ApplicationController
         total: Vote.where(recv_user: @user).count
       )
     )
+    render layout: 'without_sidebar'
   end
 
   private

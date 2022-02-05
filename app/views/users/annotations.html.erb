@@ -1,29 +1,39 @@
-<h1>User annotations</h1>
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
-<details>
-  <summary>Add an annotation</summary>
-  <% if defined?(@log) && @log.errors.any? %>
-    <div class="notice is-danger">
-      There was an error while trying to save your annotation.
-      <ul>
-        <% @log.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+<%= render 'tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>User annotations</h1>
+
+    <details>
+      <summary>Add an annotation</summary>
+      <% if defined?(@log) && @log.errors.any? %>
+        <div class="notice is-danger">
+          There was an error while trying to save your annotation.
+          <ul>
+            <% @log.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <%= form_tag annotate_user_path(@user), method: :post do %>
+        <div class="form-group">
+          <%= label_tag :comment, 'Comment', class: 'form-element' %>
+          <%= text_field_tag :comment, params[:comment], class: 'form-element' %>
+        </div>
+
+        <%= submit_tag 'Save', class: 'button is-filled' %>
+      <% end %>
+    </details>
+
+    <div class="category-meta">
+      <h3><%= pluralize(@logs.count, 'log') %></h3>
     </div>
-  <% end %>
-  <%= form_tag annotate_user_path(@user), method: :post do %>
-    <div class="form-group">
-      <%= label_tag :comment, 'Comment', class: 'form-element' %>
-      <%= text_field_tag :comment, params[:comment], class: 'form-element' %>
-    </div>
 
-    <%= submit_tag 'Save', class: 'button is-filled' %>
-  <% end %>
-</details>
-
-<div class="category-meta">
-  <h3><%= pluralize(@logs.count, 'log') %></h3>
+    <%= render 'admin/log_table' %>
+  </div>
 </div>
-
-<%= render 'admin/log_table' %>

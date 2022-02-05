@@ -1,46 +1,56 @@
-<h1>Warnings sent to <%= user_link @user %></h1>
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
-<table class="table is-full-width is-with-hover">
-    <tr>
-        <th>Date</th>
-        <th>Type</th>
-        <th>From</th>
-        <th>Excerpt</th>
-        <th>Status</th>
-    </tr>
-    <% @warnings.each do |w| %>
+<%= render 'users/tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>Previously Sent Warnings</h1>
+
+    <table class="table is-full-width is-with-hover">
         <tr>
-            <td>
-                <span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span>
-            </td>
-            <td>
-                <% if w.is_suspension %>
-                <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
-                <span class="badge is-tag is-red is-filled">Suspension</span> (<%= diff %>d)
-                <% else %>
-                <span class="badge is-tag is-muted">Warning</span>
-                <% end %>
-            </td>
-            <td>
-                <%= user_link w.author %>
-            </td>
-            <td>
-                <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
-            </td>
-            <td>
-                <% if w.suspension_active? %>
-                <strong>Current</strong>
-                <%= form_tag lift_mod_warning_url(@user.id), method: :post do %>
-                    <%= submit_tag '(lift)', class: 'link is-red' %>
-                <% end %>
-                <% elsif w.active %>
-                <strong>Unread</strong>
-                <% elsif w.read %>
-                Read
-                <% else %>
-                <strong>Lifted</strong>
-                <% end %>
-            </td>
+            <th>Date</th>
+            <th>Type</th>
+            <th>From</th>
+            <th>Excerpt</th>
+            <th>Status</th>
         </tr>
-    <% end %>
-</table>
+        <% @warnings.each do |w| %>
+            <tr>
+                <td>
+                    <span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span>
+                </td>
+                <td>
+                    <% if w.is_suspension %>
+                    <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
+                    <span class="badge is-tag is-red is-filled">Suspension</span> (<%= diff %>d)
+                    <% else %>
+                    <span class="badge is-tag is-muted">Warning</span>
+                    <% end %>
+                </td>
+                <td>
+                    <%= user_link w.author %>
+                </td>
+                <td>
+                    <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
+                </td>
+                <td>
+                    <% if w.suspension_active? %>
+                    <strong>Current</strong>
+                    <%= form_tag lift_mod_warning_url(@user.id), method: :post do %>
+                        <%= submit_tag '(lift)', class: 'link is-red' %>
+                    <% end %>
+                    <% elsif w.active %>
+                    <strong>Unread</strong>
+                    <% elsif w.read %>
+                    Read
+                    <% else %>
+                    <strong>Lifted</strong>
+                    <% end %>
+                </td>
+            </tr>
+        <% end %>
+    </table>
+  </div>
+</div>
