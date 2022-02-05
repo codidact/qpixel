@@ -8,5 +8,171 @@
   <div class="grid--cell is-9">
     <h1>User Moderation Tools</h1>
     <p class="lead">Please note that many information shown in these user moderation tools are sensitive and should not be shared with anyone outside the moderator and admin team.</p>
+
+    <div class="widget">
+      <div class="widget--header">Account Information</div>
+      <div class="widget--body">
+        <table class="table is-full-width modtools-tbl-noborder">
+          <tr>
+            <th>User Name</th>
+            <td dir="ltr"><%= rtl_safe_username(@user) %></td>
+          </tr>
+          <tr>
+            <th>Account ID</th>
+            <td>#<%= @user.id %></td>
+          </tr>
+          <tr>
+            <th>Joined</th>
+            <td><%= @user.created_at.strftime("%Y-%m-%d") %> (network), <%= @user.community_user.created_at.strftime("%Y-%m-%d") %> (community)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="widget--header">Activity Summary</div>
+      <div class="widget--body">
+        <table class="table is-full-width">
+          <tr>
+            <th>Behavior</th>
+            <th>Since Creation</th>
+            <th>Last Year</th>
+            <th>Last Month</th>
+            <th>Most Recent</th>
+          </tr>
+          <tr>
+            <td>Posts Written</td>
+            <td>
+              <%= @user.posts.count %>
+            </td>
+            <td>
+              <%= @user.posts.where(created_at: 360.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <%= @user.posts.where(created_at: 30.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <% last_post = @user.posts.last %>
+              <% if last_post %>
+              <span title="<%= last_post.created_at.iso8601 %>"><%= time_ago_in_words(last_post.created_at, locale: :en_abbrev) %> ago</span>
+              <% else %>
+              never
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td>Votes Cast</td>
+            <td>
+              <%= @user.votes.count %>
+            </td>
+            <td>
+              <%= @user.votes.where(created_at: 360.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <%= @user.votes.where(created_at: 30.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <% last_vote = @user.votes.last %>
+              <% if last_vote %>
+              <span title="<%= last_vote.created_at.iso8601 %>"><%= time_ago_in_words(last_vote.created_at, locale: :en_abbrev) %> ago</span>
+              <% else %>
+              never
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td>Comments written</td>
+            <td>
+              <%= @user.comments.count %>
+            </td>
+            <td>
+              <%= @user.comments.where(created_at: 360.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <%= @user.comments.where(created_at: 30.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <% last_comment = @user.comments.last %>
+              <% if last_comment %>
+              <span title="<%= last_comment.created_at.iso8601 %>"><%= time_ago_in_words(last_comment.created_at, locale: :en_abbrev) %> ago</span>
+              <% else %>
+              never
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td>Edits Suggested</td>
+            <td>
+              <%= @user.suggested_edits.count %>
+            </td>
+            <td>
+              <%= @user.suggested_edits.where(created_at: 360.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <%= @user.suggested_edits.where(created_at: 30.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <% last_suggested_edit = @user.suggested_edits.last %>
+              <% if last_suggested_edit %>
+              <span title="<%= last_suggested_edit.created_at.iso8601 %>"><%= time_ago_in_words(last_suggested_edit.created_at, locale: :en_abbrev) %> ago</span>
+              <% else %>
+              never
+              <% end %>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="widget--header">Moderation Summary</div>
+      <div class="widget--body">
+        <% annotations_count = AuditLog.where(log_type: 'user_annotation', related: @user).count %>
+        <% warnings_count = ModWarning.where(community_user: @user.community_user, is_suspension: false).count %>
+        <% suspensions_count = ModWarning.where(community_user: @user.community_user, is_suspension: true).count %>
+        <table class="table is-full-width modtools-tbl-noborder">
+          <tr>
+            <th>Annotations</th>
+            <td>
+              <% if annotations_count > 0 %>
+                <strong class="badge is-tag is-filled is-red"><%= annotations_count %></strong>
+              <% else %>
+                <span class="badge is-tag is-muted">0</span>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th>Currently Suspended?</th>
+            <td>
+              <% if @user.community_user.suspended? %>
+                <strong class="badge is-tag is-filled is-red">yes</strong>
+              <% else %>
+                <span class="badge is-tag is-muted">0</span>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th>Warnings</th>
+            <td>
+              <% if warnings_count > 0 %>
+                <strong class="badge is-tag is-filled is-red"><%= warnings_count %></strong>
+              <% else %>
+                <span class="badge is-tag is-muted">0</span>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th>Suspensions</th>
+            <td>
+              <% if suspensions_count > 0 %>
+                <strong class="badge is-tag is-filled is-red"><%= suspensions_count %></strong>
+              <% else %>
+                <span class="badge is-tag is-muted">0</span>
+              <% end %>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
