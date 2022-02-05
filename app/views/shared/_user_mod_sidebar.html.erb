@@ -46,16 +46,20 @@
                 <% end %>
 
                 <div class="menu--heading">Account</div>
-                <%= link_to '', class: 'menu--item' do %>
+                <%= link_to mod_delete_or_destroy_path(user),
+                            class: "menu--item #{current_page?(mod_delete_or_destroy_path(user)) ? 'is-active' : ''}" do %>
                     Delete or Destroy Account
-                <% end %>
-                <%= link_to '', class: 'menu--item' do %>
-                    Feed to STAT
                 <% end %>
 
                 <% if current_user.is_global_admin %>
-                <div class="menu--heading">Network-wide Tools</div>
-                <span class="menu--item">(none yet, sorry ^^)</span>
+                <div class="menu--heading">Global Mod Tools</div>
+                <%= link_to '', class: 'menu--item' do %>
+                    Network-wide Suspension
+                <% end %>
+                <%= link_to '', class: 'menu--item' do %>
+                    Hungry Codidactyl<br>
+                    (Delete, Feed to STAT)
+                <% end %>
                 <% end %>
 
                 <% if current_user.developer %>
