@@ -465,6 +465,7 @@ class UsersController < ApplicationController
                    .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
                    .paginate(page: params[:page], per_page: 15)
     @votes
+    render layout: 'without_sidebar'
   end
 
   def avatar

@@ -19,4 +19,10 @@
       Preferences
     <% end %>
   <% end %>
+  <div class="tabs--push"></div>
+  <% if current_user&.is_moderator %>
+    <%= link_to mod_user_path(user), class: "tabs--item" do %>
+      <i class="fas fa-shield-alt"></i> Moderator Tools
+    <% end %>
+  <% end %>
 </div>

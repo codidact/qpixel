@@ -4,25 +4,26 @@
   <%= render 'deleted', user: @user %>
 <% end %>
 
-<h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
-
-<% if @user.community_user.suspended? %>
-  <div class="notice is-danger h-m-b-4">
-  <% if @user.community_user.suspension_public_comment.nil? %>
-    <p>This user has been <strong>temporarily suspended</strong>.
-  <% else %>
-    <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
-  <% end %>
-
-    The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
-  </div>
-<% end %>
-
 <%= render 'tabs', user: @user %>
 
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
-    <div class="h-p-6 h-p-t-2">
+    <div class="h-p-6 h-p-l-2 h-p-t-0">
+
+      <h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
+
+      <% if @user.community_user.suspended? %>
+        <div class="notice is-danger h-m-b-4">
+        <% if @user.community_user.suspension_public_comment.nil? %>
+          <p>This user has been <strong>temporarily suspended</strong>.
+        <% else %>
+          <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
+        <% end %>
+
+          The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
+        </div>
+      <% end %>
+
       <div class="profile-text">
       <p>
         <% if @user.website.present? %>
@@ -54,22 +55,6 @@
           <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
-        <% end %>
-        <% if current_user&.is_moderator %>
-          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
-          <div class="droppanel" id="mod-tools-drop">
-            <div class="droppanel--header">quick actions</div>
-            <div class="droppanel--menu">
-              <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
-              <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
-              <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
-              <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
-            </div>
-            <div class="h-m-t-6">
-              <a href="<%= mod_user_path(@user) %>" class="button is-filled">Show all tools</a>
-            </div>
-          </div>
         <% end %>
         <% if current_user&.id == @user.id %>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
