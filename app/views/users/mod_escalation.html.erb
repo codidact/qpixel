@@ -1,0 +1,32 @@
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>Contact Community Team</h1>
+    <p class="lead">You can always ask the Community Team for assistance.</p>
+
+    <p>Use this tool, for example,</p>
+
+    <ul>
+        <li>if you are suspecting voting fraud and require confirmation by someone with database access,</li>
+        <li>if you are suspecting that a user is misbehaving across multiple communities, or</li>
+        <li>if there is anything else you feel uncertain with or want assistance by the Community Team.</li>
+    </ul>
+
+    <p>If in doubt, feel free to use this tool. You can also contact us at <%= SiteSetting['AdminContactEmail'] %> or reach out to us in chat.</p>
+
+    <%= form_for @flag, url: user_escalate_path(@user), method: :post do |f| %>
+    <div class="h-p-y-5">
+        <%= f.label :reason, 'Request', class: 'form-element' %>
+        <div class="form-caption h-m-t-2">Explain, what you need assistance with.</div>
+        <%= f.text_area :reason, class: 'form-element' %>
+    </div>
+    <%= f.submit 'Escalate to Community Team', class: 'button is-filled' %>
+    <% end %>
+
+  </div>
+</div>

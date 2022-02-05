@@ -76,8 +76,7 @@
                 <%= link_to mod_hungry_codidactyl_path(user),
                             class: "menu--item #{current_page?(mod_hungry_codidactyl_path(user)) ? 'is-active' : ''}" do %>
                     <i class="fas fa-skull fa-fw"></i>
-                    Hungry Codidactyl<br>
-                    (Delete, Feed to STAT)
+                    Hungry Codidactyl (Delete, Feed to STAT)
                 <% end %>
                 <% end %>
                 <% if current_user.developer %>
@@ -89,6 +88,14 @@
                 <% end %>
                 <% end %>
             </div>
+        </div>
+        <div class="widget--body">
+            <p>You can always ask the Community Team for assistance:</p>
+            <%= link_to user_escalation_path(user),
+                        class: "button is-primary is-outlined #{current_page?(user_escalation_path(user)) ? 'is-active' : ''}" do %>
+                <i class="fas fa-flag fa-fw"></i>
+                Contact Community Team
+            <% end %>
         </div>
     </div>
 </div>
