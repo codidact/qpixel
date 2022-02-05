@@ -1,41 +1,12 @@
 <% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
-<h1>Moderator Tools: <%= user_link @user %></h1>
+<%= render 'tabs', user: @user %>
 
-<div class="widget">
-  <div class="widget--header">Links</div>
-  <div class="widget--body">
-    <ul>
-      <li><a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a></li>
-      <li><%= link_to 'annotations on user', user_annotations_path(@user) %></li>
-      <li><a href="/users/<%= @user.id %>/mod/privileges">privileges</a></li>
-      <li><a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user</a> <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %></li>
-      <li><a href="/warning/new/<%= @user.id %>">warn or suspend user</a></li>
-      <li><%= link_to 'vote summary', mod_vote_summary_path(@user) %></li>
-      <% if current_user.developer %>
-       <li><%= link_to 'impersonate', start_impersonating_path(@user), class: 'is-yellow' %></li>
-      <% end %>
-    </ul>
-  </div>
-</div>
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
 
-<div class="widget is-red">
-  <div class="widget--header h-c-red-700"><span class="h-fw-bold">Danger Zone</span></div>
-  <div class="widget--body">
-    <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
-      after initiating an action.</p>
-    <div class="delete-actions">
-      <%= link_to 'Destroy user', destroy_user_path(@user.id), remote: true,
-                  method: :delete, class: 'js-destroy-user button is-danger is-filled' %>
-      <%= link_to 'Delete community profile', soft_delete_user_path(@user.id, type: 'profile'), remote: true,
-                  method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
-      <% if current_user.is_global_moderator || current_user.is_global_admin %>
-        <%= link_to 'Delete user network-wide', soft_delete_user_path(@user.id, type: 'user'), remote: true,
-                    method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
-      <% end %>
-      <% if current_user.is_global_admin %>
-        <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
-      <% end %>
-    </div>
+  <div class="grid--cell is-9">
+    <h1>User Moderation Tools</h1>
+    <p>Please note that many information shown in these user moderation tools are sensitive and should not be shared with anyone outside the moderator and admin team.</p>
   </div>
 </div>
