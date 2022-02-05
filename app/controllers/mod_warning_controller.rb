@@ -22,7 +22,11 @@ class ModWarningController < ApplicationController
   end
 
   def log
-    @warnings = ModWarning.where(community_user: @user.community_user).order(created_at: :desc).all
+    @warnings = ModWarning.where(community_user: @user.community_user)
+    if current_user.is_global_moderator
+      @warnings = @warnings.or ModWarning.where(user: @user, is_global: true)
+    end
+    @warnings = @warnings.order(created_at: :desc).all
     render layout: 'without_sidebar'
   end
 
@@ -86,11 +90,24 @@ class ModWarningController < ApplicationController
   end
 
   def lift
-    @warning = ModWarning.where(community_user: @user.community_user, active: true).last
+    @warning   = ModWarning.where(user: @user, is_global: true, active: true).last
+    @warning ||= ModWarning.where(community_user: @user.community_user, active: true).last
     return not_found if @warning.nil?
 
+    if @warning.is_global && !current_user.is_global_moderator
+      flash[:error] = 'A network-wide suspension has been applied which may only be lifted ' \
+                      'by global moderators. Community-wide suspensions which have been imposed ' \
+                      'before that global suspensions cannot be lifted at this time (which is ' \
+                      'probably, why you are seeing this error).'
+      redirect_to mod_warning_log_path(@user)
+    end
+
     @warning.update(active: false, read: false)
-    @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
+    if @warning.is_global
+      @user.update is_globally_suspended: false, global_suspension_end: nil
+    else
+      @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
+    end
 
     AuditLog.moderator_audit(event_type: 'warning_lift', related: @warning, user: current_user,
                              comment: "<<Warning #{@warning.attributes_print} >>")
