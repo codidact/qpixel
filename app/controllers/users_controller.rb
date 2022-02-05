@@ -13,11 +13,13 @@ class UsersController < ApplicationController
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete]
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete, :mod_reset_profile,
+                                          :mod_clear_profile]
   before_action :verify_global_moderator, only: [:mod_destroy]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :network, :avatar, :mod_delete, :mod_destroy]
+                                  :vote_summary, :network, :avatar, :mod_delete, :mod_destroy, :mod_reset_profile,
+                                  :mod_clear_profile]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -325,6 +327,20 @@ class UsersController < ApplicationController
   def mod_privileges
     @abilities = Ability.all
     render layout: 'without_sidebar'
+  end
+
+  def mod_reset_profile
+    render layout: 'without_sidebar'
+  end
+
+  def mod_clear_profile
+    before = @user.attributes_print
+    @user.update(username: "user#{@user.id}", profile: "", website: "", twitter: "",
+                 profile_markdown: "", discord: "")
+    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
+                              'notification to update your profile.', edit_user_profile_path)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>", related: @user)
+    redirect_to mod_user_path(@user)
   end
 
   def mod_delete
