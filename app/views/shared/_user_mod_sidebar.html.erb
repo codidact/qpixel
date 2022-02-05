@@ -1,0 +1,59 @@
+<div class="grid--cell is-3">
+    <div class="menu">
+        <%= link_to mod_user_path(@user),
+                    class: "menu--item #{current_page?(mod_user_path(user)) ? 'is-active' : ''}" do %>
+            Dashboard
+        <% end %>
+        <div class="menu--heading">Activity</div>
+        <%= link_to full_user_log_path(@user),
+                    class: "menu--item #{current_page?(full_user_log_path(user)) ? 'is-active' : ''}" do %>
+            Full Activity Log
+        <% end %>
+        <%= link_to user_annotations_path(@user),
+                    class: "menu--item #{current_page?(user_annotations_path(user)) ? 'is-active' : ''}" do %>
+            Annotations
+        <% end %>
+        <%= link_to mod_vote_summary_path(@user),
+                    class: "menu--item #{current_page?(mod_vote_summary_path(user)) ? 'is-active' : ''}" do %>
+            Voting Behavior
+        <% end %>
+
+        <div class="menu--heading">Privileges</div>
+        <%= link_to user_privileges_path(@user),
+                    class: "menu--item #{current_page?(user_privileges_path(user)) ? 'is-active' : ''}" do %>
+            Manage Privileges
+        <% end %>
+
+        <div class="menu--heading">Warnings and Suspensions</div>
+        <%= link_to mod_warning_log_path(@user),
+                    class: "menu--item #{current_page?(mod_warning_log_path(user)) ? 'is-active' : ''}" do %>
+            List Previous
+        <% if @user.community_user.suspended? %>(includes lifting the suspension)<% end %>
+        <% end %>
+        <%= link_to new_mod_warning_path(@user),
+                    class: "menu--item #{current_page?(new_mod_warning_path(user)) ? 'is-active' : ''}" do %>
+            Create New
+        <% end %>
+
+        <div class="menu--heading">Account</div>
+        <%= link_to '', class: 'menu--item' do %>
+            Delete or Destroy Account
+        <% end %>
+        <%= link_to '', class: 'menu--item' do %>
+            Feed to STAT
+        <% end %>
+
+        <% if current_user.is_global_admin %>
+        <div class="menu--heading">Network-wide Tools</div>
+        <span class="menu--item">(none yet, sorry ^^)</span>
+        <% end %>
+
+        <% if current_user.developer %>
+        <div class="menu--heading">Developer Tools</div>
+        <%= link_to start_impersonating_path(@user),
+                    class: "menu--item #{current_page?(start_impersonating_path(user)) ? 'is-active' : ''}" do %>
+            Impersonate
+        <% end %>
+        <% end %>
+    </div>
+</div>

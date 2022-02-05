@@ -275,7 +275,9 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def mod; end
+  def mod
+    render layout: 'without_sidebar'
+  end
 
   def full_log
     @posts = Post.by(@user).count
