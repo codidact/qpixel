@@ -13,10 +13,10 @@ class UsersController < ApplicationController
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action]
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :network, :avatar]
+                                  :vote_summary, :network, :avatar, :mod_delete]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -324,6 +324,43 @@ class UsersController < ApplicationController
   def mod_privileges
     @abilities = Ability.all
     render layout: 'without_sidebar'
+  end
+
+  def mod_delete
+    render layout: 'without_sidebar'
+  end
+
+  def destroy
+    if @user.votes.count > 100
+      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
+             status: :unprocessable_entity
+      return
+    end
+
+    if @user.is_admin || @user.is_moderator
+      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
+             status: :unprocessable_entity
+      return
+    end
+
+    before = @user.attributes_print
+    @user.block('user destroyed')
+
+    if @user.destroy
+      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                        deleted: true, deleted_at: DateTime.now,
+                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
+      Comment.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                                           deleted: true)
+      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      SuggestedEdit.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
+      render json: { status: 'success' }
+    else
+      render json: { status: 'failed',
+                     message: 'Failed to destroy user; ask a dev.' },
+             status: :internal_server_error
+    end
   end
 
   def soft_delete
