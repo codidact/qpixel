@@ -7,11 +7,12 @@ class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete]
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete, :mod_reset_profile,
+                                          :mod_clear_profile]
   before_action :verify_global_moderator, only: [:mod_destroy]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar, :mod_delete, :mod_destroy]
+                                  :vote_summary, :avatar, :mod_delete, :mod_destroy, :mod_reset_profile, :mod_clear_profile]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -179,6 +180,20 @@ class UsersController < ApplicationController
   def mod_privileges
     @abilities = Ability.all
     render layout: 'without_sidebar'
+  end
+
+  def mod_reset_profile
+    render layout: 'without_sidebar'
+  end
+
+  def mod_clear_profile
+    before = @user.attributes_print
+    @user.update(username: "user#{@user.id}", profile: "", website: "", twitter: "",
+                 profile_markdown: "", discord: "")
+    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
+                              'notification to update your profile.', edit_user_profile_path)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>", related: @user)
+    redirect_to mod_user_path(@user)
   end
 
   def mod_delete
@@ -476,7 +491,6 @@ class UsersController < ApplicationController
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
                    .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
                    .paginate(page: params[:page], per_page: 15)
-    @votes
     render layout: 'without_sidebar'
   end
 

@@ -181,6 +181,8 @@ Rails.application.routes.draw do
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
+    get    '/:id/mod/profile-reset',    to: 'users#mod_reset_profile', as: :mod_reset_profile
+    post   '/:id/mod/profile-reset',    to: 'users#mod_clear_profile', as: :mod_clear_profile
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges

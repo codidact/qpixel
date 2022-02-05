@@ -55,9 +55,14 @@
                 <% end %>
 
                 <div class="menu--heading">Account</div>
+                <%= link_to mod_reset_profile_path(user),
+                            class: "menu--item #{current_page?(mod_reset_profile_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-times fa-fw"></i>
+                    Clear User Profile
+                <% end %>
                 <%= link_to mod_delete_or_destroy_path(user),
                             class: "menu--item #{current_page?(mod_delete_or_destroy_path(user)) ? 'is-active' : ''}" do %>
-                    <i class="fas fa-user-times fa-fw"></i>
+                    <i class="fas fa-trash fa-fw"></i>
                     Delete or Destroy Account
                 <% end %>
 
