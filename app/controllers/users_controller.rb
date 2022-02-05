@@ -59,6 +59,7 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
