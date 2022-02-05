@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
 
     delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+    get    'users/suspend/:user_id',       to: 'mod_warning#new_global', as: :new_global_warning
+    post   'users/suspend/:user_id',       to: 'mod_warning#create_global', as: :create_global_warning
 
     get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
     get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege

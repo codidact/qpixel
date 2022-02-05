@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_21_195100) do
+ActiveRecord::Schema.define(version: 2022_02_05_204928) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -392,8 +392,8 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.bigint "answer_type_id"
     t.boolean "has_reactions"
+    t.bigint "answer_type_id"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -435,7 +435,7 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
     t.boolean "comments_disabled"
     t.datetime "last_edited_at"
     t.bigint "last_edited_by_id"
-    t.boolean "locked", default: false, null: false
+    t.boolean "locked"
     t.bigint "locked_by_id"
     t.datetime "locked_at"
     t.datetime "locked_until"
@@ -659,13 +659,14 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.integer "trust_level"
     t.boolean "developer"
-    t.string "cid"
     t.string "discord"
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at"
     t.bigint "deleted_by_id"
+    t.string "cid"
+    t.boolean "is_globally_suspended", default: false
+    t.datetime "global_suspension_end"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -706,8 +707,11 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_mod_messages_on_author_id"
-    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+    t.boolean "is_global", default: false
+    t.bigint "user_id"
+    t.index ["author_id"], name: "index_warnings_on_author_id"
+    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.index ["user_id"], name: "index_warnings_on_user_id"
   end
 
   add_foreign_key "abilities", "communities"

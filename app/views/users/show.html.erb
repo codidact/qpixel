@@ -12,7 +12,12 @@
 
       <h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
 
-      <% if @user.community_user.suspended? %>
+      <% if @user.globally_suspended? %>
+        <div class="notice is-danger h-m-b-4">
+          <p>This user has been <strong>temporarily suspended network-wide</strong>.
+          The suspension ends <span title="<%= @user.global_suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.global_suspension_end) %></span>.</p>
+        </div>
+      <% elsif @user.community_user.suspended? %>
         <div class="notice is-danger h-m-b-4">
         <% if @user.community_user.suspension_public_comment.nil? %>
           <p>This user has been <strong>temporarily suspended</strong>.

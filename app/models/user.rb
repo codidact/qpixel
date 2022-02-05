@@ -69,6 +69,16 @@ class User < ApplicationRecord
     end
   end
 
+  def globally_suspended?
+    return true if is_globally_suspended && !global_suspension_end.past?
+
+    if is_globally_suspended
+      update(is_globally_suspended: false, global_suspension_end: nil)
+    end
+
+    false
+  end
+
   def metric(key)
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key

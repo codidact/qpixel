@@ -1,8 +1,9 @@
 class ModWarningController < ApplicationController
   before_action :verify_moderator, only: [:log, :new, :create, :lift]
+  before_action :verify_global_moderator, only: [:new_global, :create_global]
 
   before_action :set_warning, only: [:current, :approve]
-  before_action :set_user, only: [:log, :new, :create, :lift]
+  before_action :set_user, only: [:log, :new, :create, :lift, :new_global, :create_global]
 
   def current
     render layout: 'without_sidebar'
@@ -44,14 +45,41 @@ class ModWarningController < ApplicationController
 
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: is_suspension,
-                              suspension_end: suspension_end, active: true, read: false)
+                              suspension_end: suspension_end, active: true, read: false,
+                              is_global: false)
     if @warning.save
       if is_suspension
         @user.community_user.update(is_suspended: is_suspension, suspension_end: suspension_end,
                                     suspension_public_comment: params[:mod_warning][:suspension_public_notice])
       end
 
-      redirect_to user_path(@user)
+      redirect_to mod_user_path(@user)
+    else
+      render :new
+    end
+  end
+
+  def new_global
+    @warning = ModWarning.new(author: current_user, is_suspension: true)
+    render layout: 'without_sidebar'
+  end
+
+  def create_global
+    suspension_duration = params[:mod_warning][:suspension_duration].to_i
+
+    suspension_duration = 1 if suspension_duration <= 0
+    suspension_duration = 7300 if suspension_duration > 7300
+
+    suspension_end = DateTime.now + suspension_duration.days
+
+    @warning = ModWarning.new(author: current_user, user: @user,
+                              body: params[:mod_warning][:body], is_suspension: true,
+                              suspension_end: suspension_end, active: true, read: false,
+                              is_global: true)
+    if @warning.save
+      @user.update(is_globally_suspended: true, global_suspension_end: suspension_end)
+
+      redirect_to mod_user_path(@user)
     else
       render :new
     end
@@ -75,7 +103,8 @@ class ModWarningController < ApplicationController
   private
 
   def set_warning
-    @warning = ModWarning.where(community_user: current_user.community_user, active: true).last
+    @warning   = ModWarning.where(user: current_user, active: true, is_global: true).last
+    @warning ||= ModWarning.where(community_user: current_user.community_user, active: true).last
     not_found if @warning.nil?
   end
 
