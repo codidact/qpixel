@@ -24,10 +24,11 @@
                 <td>
                     <% if w.is_suspension %>
                     <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
-                    <span class="badge is-tag is-red is-filled">Suspension</span> (<%= diff %>d)
-                    <% if w.is_global %>(network-wide)<% end %>
+                    <span class="badge is-tag is-red is-filled">Suspension</span>
+                    <span class="badge is-tag is-muted">length: <%= diff %>d</span>
+                    <% if w.is_global %><span class="badge is-tag is-muted">network-wide</span><% end %>
                     <% else %>
-                    <span class="badge is-tag is-muted">Warning</span>
+                    <span class="badge is-tag is-muted is-filled">Warning</span>
                     <% end %>
                 </td>
                 <td>

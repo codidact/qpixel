@@ -127,8 +127,12 @@
                         Flag
                     </td>
                     <td>
-                        <% if i.post %>
+                        <% if i.post_type == 'Post' %>
                             <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                        <% elsif i.post_type == 'Comment' %>
+                            <%= link_to "Comment #" + i.post.id.to_s, comment_link(i.post.id)%>
+                        <% elsif i.post_type == 'User' %>
+                            <%= link_to "User #" + i.post.id.to_s, user_path(i.post)%>
                         <% end %>
                     </td>
                     <td class="h-fs-caption">
