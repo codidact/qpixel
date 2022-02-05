@@ -8,9 +8,10 @@ class UsersController < ApplicationController
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete]
+  before_action :verify_global_moderator, only: [:mod_destroy]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar, :mod_delete]
+                                  :vote_summary, :avatar, :mod_delete, :mod_destroy]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -181,6 +182,10 @@ class UsersController < ApplicationController
   end
 
   def mod_delete
+    render layout: 'without_sidebar'
+  end
+
+  def mod_destroy
     render layout: 'without_sidebar'
   end
 
