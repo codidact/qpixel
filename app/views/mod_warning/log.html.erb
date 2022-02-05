@@ -22,11 +22,12 @@
             <span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span>
           </td>
           <td>
-            <% if w.suspension? %>
+            <% if w.is_suspension %>
               <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
-              <span class="badge is-tag is-red is-filled no-wrap">Suspension</span> (<%= diff %>d)
+              <span class="badge is-tag is-red is-filled">Suspension</span>
+              <span class="badge is-tag is-muted">length: <%= diff %>d</span>
             <% else %>
-              <span class="badge is-tag is-muted no-wrap">Warning</span>
+              <span class="badge is-tag is-muted is-filled">Warning</span>
             <% end %>
           </td>
           <td>
