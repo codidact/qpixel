@@ -14,12 +14,14 @@ class UsersController < ApplicationController
 
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
-  before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_delete, :mod_privilege_action,
-                                          :mod_privileges, :role_toggle, :soft_delete, :undelete]
+  before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_clear_profile, :mod_delete,
+                                          :mod_privilege_action, :mod_privileges, :mod_reset_profile, :role_toggle,
+                                          :soft_delete, :undelete]
   before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban]
-  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_delete,
-                                  :mod_delete_network_account, :mod_failban, :mod_privilege_action, :mod_privileges,
-                                  :network, :posts, :role_toggle, :show, :soft_delete, :undelete, :vote_summary]
+  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_clear_profile,
+                                  :mod_delete, :mod_delete_network_account, :mod_failban, :mod_privilege_action,
+                                  :mod_privileges, :mod_reset_profile, :network, :posts, :role_toggle, :show,
+                                  :soft_delete, :undelete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
   before_action :verify_user_not_deleted, only: [:undelete]
 
@@ -323,6 +325,16 @@ class UsersController < ApplicationController
 
   def mod_privileges
     @abilities = Ability.all
+  end
+
+  def mod_clear_profile
+    before = @user.attributes_print
+    @user.update(username: "user#{@user.id}", profile: "", website: "", twitter: "",
+                 profile_markdown: "", discord: "")
+    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
+                              'notification to update your profile.', edit_user_profile_path)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>", related: @user)
+    redirect_to mod_user_path(@user)
   end
 
   def soft_delete
