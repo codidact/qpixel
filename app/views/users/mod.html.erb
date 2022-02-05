@@ -6,7 +6,7 @@
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
   <div class="grid--cell is-9">
-    <h1>User Moderation Tools</h1>
+    <h1>Dashboard</h1>
     <p class="lead">Please note that many information shown in these user moderation tools are sensitive and should not be shared with anyone outside the moderator and admin team.</p>
 
     <div class="widget">
@@ -130,6 +130,7 @@
         <% annotations_count = AuditLog.where(log_type: 'user_annotation', related: @user).count %>
         <% warnings_count = ModWarning.where(community_user: @user.community_user, is_suspension: false).count %>
         <% suspensions_count = ModWarning.where(community_user: @user.community_user, is_suspension: true).count %>
+        <% suspensions_count += ModWarning.where(user: @user, is_global: true, is_suspension: true).count %>
         <table class="table is-full-width modtools-tbl-noborder">
           <tr>
             <th>Annotations</th>
@@ -144,7 +145,7 @@
           <tr>
             <th>Currently Suspended?</th>
             <td>
-              <% if @user.community_user.suspended? %>
+              <% if @user.globally_suspended? || @user.community_user.suspended? %>
                 <strong class="badge is-tag is-filled is-red">yes</strong>
               <% else %>
                 <span class="badge is-tag is-muted">0</span>
