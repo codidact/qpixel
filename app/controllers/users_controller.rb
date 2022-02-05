@@ -4,15 +4,21 @@ require 'net/http'
 class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
-  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect,
+                                            :transfer_se_content,
+                                            :qr_login_code, :me, :preferences, :set_preference,
+                                            :my_vote_summary]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete, :mod_reset_profile,
+                                          :annotate, :annotations, :mod_privileges,
+                                          :mod_privilege_action, :mod_delete, :mod_reset_profile,
                                           :mod_clear_profile, :mod_escalation, :mod_escalate]
   before_action :verify_global_moderator, only: [:mod_destroy]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
+                                  :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar, :mod_delete, :mod_destroy, :mod_reset_profile, :mod_clear_profile, :mod_escalation, :mod_escalate]
+                                  :vote_summary, :avatar, :mod_delete, :mod_destroy,
+                                  :mod_reset_profile, :mod_clear_profile, :mod_escalation,
+                                  :mod_escalate]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -143,9 +149,9 @@ class UsersController < ApplicationController
 
   def mod_escalate
     @flag = Flag.create(post_flag_type: nil, reason: params[:flag][:reason], post_id: @user.id,
-                     post_type: 'User', user: current_user, escalated: true,
-                     escalated_by: current_user, escalated_at: DateTime.now,
-                     escalation_comment: '(escalated via Contact Community Team Tool)')
+                        post_type: 'User', user: current_user, escalated: true,
+                        escalated_by: current_user, escalated_at: DateTime.now,
+                        escalation_comment: '(escalated via Contact Community Team Tool)')
     FlagMailer.with(flag: @flag).flag_escalated.deliver_now
     flash[:success] = 'Thank you for your message. We have been notified and are looking into it.'
     redirect_to mod_user_path(@user)
@@ -204,11 +210,12 @@ class UsersController < ApplicationController
 
   def mod_clear_profile
     before = @user.attributes_print
-    @user.update(username: "user#{@user.id}", profile: "", website: "", twitter: "",
-                 profile_markdown: "", discord: "")
+    @user.update(username: "user#{@user.id}", profile: '', website: '', twitter: '',
+                 profile_markdown: '', discord: '')
     @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
                               'notification to update your profile.', edit_user_profile_path)
-    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>", related: @user)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>",
+                             related: @user)
     redirect_to mod_user_path(@user)
   end
 
