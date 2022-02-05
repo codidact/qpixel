@@ -16,7 +16,8 @@ class UsersController < ApplicationController
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete, :mod_reset_profile,
                                           :mod_clear_profile]
   before_action :verify_global_moderator, only: [:mod_destroy]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
+                                  :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :network, :avatar, :mod_delete, :mod_destroy, :mod_reset_profile,
                                   :mod_clear_profile]
@@ -335,11 +336,12 @@ class UsersController < ApplicationController
 
   def mod_clear_profile
     before = @user.attributes_print
-    @user.update(username: "user#{@user.id}", profile: "", website: "", twitter: "",
-                 profile_markdown: "", discord: "")
+    @user.update(username: "user#{@user.id}", profile: '', website: '', twitter: '',
+                 profile_markdown: '', discord: '')
     @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
                               'notification to update your profile.', edit_user_profile_path)
-    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>", related: @user)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>",
+                             related: @user)
     redirect_to mod_user_path(@user)
   end
 
