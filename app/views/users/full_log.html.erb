@@ -127,7 +127,9 @@
                         Flag
                     </td>
                     <td>
-                        <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                        <% if i.post %>
+                            <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                        <% end %>
                     </td>
                     <td class="h-fs-caption">
                         <%= i.reason[0..300] + ((i.reason.length > 300) ? "..." : "") %><br>
