@@ -323,6 +323,7 @@ class UsersController < ApplicationController
 
   def mod_privileges
     @abilities = Ability.all
+    render layout: 'without_sidebar'
   end
 
   def soft_delete
