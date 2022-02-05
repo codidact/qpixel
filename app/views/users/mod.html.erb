@@ -119,6 +119,26 @@
               never
               <% end %>
             </td>
+          <tr>
+            <td>Flags Raised</td>
+            <td>
+              <%= @user.flags.count %>
+            </td>
+            <td>
+              <%= @user.flags.where(created_at: 360.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <%= @user.votes.where(created_at: 30.days.ago..DateTime.now).count %>
+            </td>
+            <td>
+              <% last_flag = @user.flags.last %>
+              <% if last_flag %>
+              <span title="<%= last_flag.created_at.iso8601 %>"><%= time_ago_in_words(last_flag.created_at, locale: :en_abbrev) %> ago</span>
+              <% else %>
+              never
+              <% end %>
+            </td>
+          </tr>
           </tr>
         </table>
       </div>
