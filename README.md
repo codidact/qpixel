@@ -43,11 +43,9 @@ For Debian-Based Linux:
 
 ```
 sudo apt update
-sudo apt install gcc
-sudo apt install make
-sudo apt install libmysqlclient-dev
+sudo apt install gcc make pkg-config
 sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
-sudo apt install mysql-server
+sudo apt install mysql-server libmysqlclient-dev
 ```
 
 For Arch-Based Linux:
