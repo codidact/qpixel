@@ -31,7 +31,16 @@
       </div>
     <% end %>
     <div class="comment--info">
-      <%= user_link comment.user %>
+      <% if @comment_thread.is_private %>
+        <% if comment.user == current_user || current_user.is_moderator || !comment.user.is_moderator %>
+          <%= user_link comment.user %>
+          <% if comment.user.is_moderator %>(visible only to you)<% end %>
+        <% else %>
+          <strong>moderator team</strong>
+        <% end %>
+      <% else %>
+        <%= user_link comment.user %>
+      <% end %>
       wrote
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
     </div>
@@ -42,7 +51,7 @@
       <% if with_post_link %>
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
-      <% if user_signed_in? && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
+      <% if user_signed_in? && !@comment_thread.is_private && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
         <a href="#" class="js-comment-edit">edit</a>
         <% if comment.deleted %>
           <a href="#" class="is-red js-comment-undelete">undelete</a>

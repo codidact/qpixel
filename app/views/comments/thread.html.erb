@@ -38,7 +38,7 @@
       <% if current_user&.privilege? 'flag_curate' %>
         <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
       <% end %>
-      <% unless current_user.nil? %>
+      <% unless current_user.nil? || @comment_thread.is_private %>
         <% if @comment_thread.followed_by? current_user %>
           <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
             data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time.">
