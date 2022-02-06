@@ -25,7 +25,11 @@
         <% if current_user.is_global_admin %>
         <div class="widget--body">
             <h4>Feed to STAT</h4>
-            <p>Blatant spammers and trolls may be fed into STAT ("Stop The Awful Troll") which causes the system to <a href="/418">fail-ban</a> them and limits the amount of damage they might possibly do. Only use for accounts where you are sure that they are never going to constructively use this site. Use, however, regularly to prevent the Codidactyl from getting hungry and looking for sugar.</p>
+            <p>Blatant spammers and trolls may be fed into STAT ("Stop The Awful Troll") which causes the system to <a href="/418">fail-ban</a> them and limits the amount of damage they might possibly do. Only use for accounts where you are sure that they are never going to constructively use this site.
+            <% if Rails.env.development? %>
+              Use, however, regularly to prevent the Codidactyl from getting hungry and looking for sugar.
+            <% end %>
+            </p>
 
             <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
         </div>
