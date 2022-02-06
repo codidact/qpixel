@@ -77,7 +77,9 @@ If you haven't already got it, [download and install Redis](https://redis.io/dow
 ### 3. Install Imagemagick
 
 If you haven't already installed Imagemagick, you'll need to [install it for
-your system](https://imagemagick.org/script/download.php).
+your system](https://imagemagick.org/script/download.php). 
+
+If you install Imagemagick from APT on a Debian-Based system, you may need to also install the `libmagickwand-dev` package.
 
 ### 4. Download QPixel
 Clone the repository and `cd` into the directory:
