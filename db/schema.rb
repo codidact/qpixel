@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_05_204928) do
+ActiveRecord::Schema.define(version: 2022_02_06_213138) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(version: 2022_02_05_204928) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "community_id", null: false
+    t.boolean "is_private", default: false
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
