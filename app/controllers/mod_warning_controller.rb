@@ -23,7 +23,7 @@ class ModWarningController < ApplicationController
 
   def log
     @warnings = ModWarning.where(community_user: @user.community_user)
-    if current_user.is_global_moderator
+    if current_user.is_global_moderator || current_user.is_global_admin
       @warnings = @warnings.or ModWarning.where(user: @user, is_global: true)
     end
     @warnings = @warnings.order(created_at: :desc).all
@@ -94,7 +94,7 @@ class ModWarningController < ApplicationController
     @warning ||= ModWarning.where(community_user: @user.community_user, active: true).last
     return not_found if @warning.nil?
 
-    if @warning.is_global && !current_user.is_global_moderator
+    if @warning.is_global && !current_user.is_global_moderator && !current_user.is_global_admin
       flash[:error] = 'A network-wide suspension has been applied which may only be lifted ' \
                       'by global moderators. Community-wide suspensions which have been imposed ' \
                       'before that global suspensions cannot be lifted at this time (which is ' \
