@@ -39,7 +39,7 @@ class CommentThread < ApplicationRecord
   # automatically followed on new answer comment threads. Comment author follower creation is done
   # on the Comment model.
   def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
+    if post.present? && post.user.preference('auto_follow_comment_threads') == 'true'
       ThreadFollower.create comment_thread: self, user: post.user
     end
   end

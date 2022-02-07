@@ -1,0 +1,41 @@
+<% content_for :head do %>
+  <%= render 'posts/markdown_script' %>
+<% end %>
+
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'users/tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>Contact Privately</h1>
+
+    <p>As a moderator, you may contact users privately. If, however, means of public and private contact have not been effective, a <%= link_to 'formal warning', new_mod_warning_path(@user) %> might be in order.</p>
+
+    <p>These messages will only be visible to the contacted user and to the moderation team. Your user name will be hidden for the contacted user; we generally recommend not identifying yourself.</p>
+
+    <%= form_tag mod_message_path do %>
+      <%= label_tag :title, 'Subject', class: 'form-element' %>
+      <%= text_field_tag :title, '', class: 'form-element', data: { character_count: ".js-character-count-thread-title" } %>
+
+      <span class="has-float-right has-font-size-caption js-character-count-thread-title"
+            data-max="255" data-min="0" data-display-at="0.75">
+        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
+        <span class="js-character-count__count">0 / 255</span>
+      </span>
+      
+      <%= label_tag :body, 'Message', class: 'form-element' %>
+      <%= text_area_tag :body, '', class: 'form-element is-large js-comment-field', required: true,
+                        data: { thread: '-1', character_count: ".js-character-count-modmsg-body" } %>
+      <span class="has-float-right has-font-size-caption js-character-count-modmsg-body"
+            data-max="1000" data-min="15">
+        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
+        <span class="js-character-count__count">0 / 1000</span>
+      </span>
+
+      <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_modmsg_button", disabled: true %>
+    <% end %>
+  </div>
+</div>

@@ -197,6 +197,8 @@ Rails.application.routes.draw do
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
     get    '/:id/mod/escalate',         to: 'users#mod_escalation', as: :user_escalation
     post   '/:id/mod/escalate',         to: 'users#mod_escalate', as: :user_escalate
+    get    '/:id/mod/contact',          to: 'users#mod_contact', as: :mod_contact
+    post   '/:id/mod/contact',          to: 'users#mod_message', as: :mod_message
   end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications

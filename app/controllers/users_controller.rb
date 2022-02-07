@@ -11,14 +11,15 @@ class UsersController < ApplicationController
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges,
                                           :mod_privilege_action, :mod_delete, :mod_reset_profile,
-                                          :mod_clear_profile, :mod_escalation, :mod_escalate]
+                                          :mod_clear_profile, :mod_escalation, :mod_escalate,
+                                          :mod_contact, :mod_message]
   before_action :verify_global_moderator, only: [:mod_destroy]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
                                   :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :avatar, :mod_delete, :mod_destroy,
                                   :mod_reset_profile, :mod_clear_profile, :mod_escalation,
-                                  :mod_escalate]
+                                  :mod_escalate, :mod_contact, :mod_message]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -155,6 +156,38 @@ class UsersController < ApplicationController
     FlagMailer.with(flag: @flag).flag_escalated.deliver_now
     flash[:success] = 'Thank you for your message. We have been notified and are looking into it.'
     redirect_to mod_user_path(@user)
+  end
+
+  def mod_contact
+    render layout: 'without_sidebar'
+  end
+
+  def mod_message
+    title = params[:title]
+    unless title.present?
+      title = "Private Moderator Message"
+    end
+
+    body = params[:body]
+
+    @comment_thread = CommentThread.new(title: title, post: nil, is_private: true)
+    @comment = Comment.new(post: nil, content: body, user: current_user, comment_thread: @comment_thread)
+
+    success = ActiveRecord::Base.transaction do
+      @comment_thread.save!
+      @comment.save!
+      ThreadFollower.create! comment_thread: @comment_thread, user: @user
+    end
+
+    if success
+      @user.create_notification("You have received a moderator message: #{@comment_thread.title}",
+                                helpers.comment_link(@comment))
+      redirect_to comment_thread_path(@comment_thread.id)
+    else
+      flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
+                                                           + @comment.errors.full_messages).join(', ')}"
+      render :mod_contact, layout: 'without_sidebar'
+    end
   end
 
   def full_log

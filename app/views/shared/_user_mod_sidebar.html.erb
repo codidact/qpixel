@@ -40,6 +40,11 @@
                 <% end %>
 
                 <div class="menu--heading">Warnings and Suspensions</div>
+                <%= link_to mod_contact_path(user),
+                            class: "menu--item #{current_page?(mod_contact_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-envelope fa-fw"></i>
+                    Contact Privately
+                <% end %>
                 <%= link_to mod_warning_log_path(user),
                             class: "menu--item #{current_page?(mod_warning_log_path(user)) ? 'is-active' : ''}" do %>
                     <i class="fas fa-user-lock fa-fw"></i>
