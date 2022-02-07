@@ -1,4 +1,6 @@
 # Provides mainly web actions for using and making comments.
+
+# rubocop:disable Metrics/ClassLength
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
@@ -84,12 +86,12 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        unless @post.nil?
-          title = @post.parent.nil? ? @post.title : @post.parent.title
-          follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                            "on the post '#{title}'",
-                                            helpers.comment_link(@comment))
-        end
+        next if @post.nil?
+
+        title = @post.parent.nil? ? @post.title : @post.parent.title
+        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
+                                          "on the post '#{title}'",
+                                          helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -368,3 +370,4 @@ class CommentsController < ApplicationController
     false
   end
 end
+# rubocop:enable Metrics/ClassLength

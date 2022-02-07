@@ -1,6 +1,6 @@
 class CommentThread < ApplicationRecord
   include CommunityRelated
-  
+
   belongs_to :post, optional: true
   has_many :comments
   has_many :thread_follower

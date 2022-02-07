@@ -165,7 +165,7 @@ class UsersController < ApplicationController
   def mod_message
     title = params[:title]
     unless title.present?
-      title = "Private Moderator Message"
+      title = 'Private Moderator Message'
     end
 
     body = params[:body]
