@@ -17,7 +17,7 @@
   <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
 </h1>
 <% else %>
-<h1>Private Notification</h1>
+<h1><i class="fa fa-envelope"></i> Private Notification</h1>
 <% end %>
 
 <!-- THREAD STARTS BELOW -->
