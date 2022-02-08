@@ -3,9 +3,11 @@
     Variables:
       user : the User instance to display
     ? ckb  : enable keyboard navigation on this usercard? Default false.
+    ? small : smaller max width of user card link in order to avoid long user names
 %>
 
 <% ckb ||= false %>
+<% small ||= false %>
 
 <% if user.nil? || deleted_user?(user) %>
   <div class="user-card deleted-content">
@@ -27,7 +29,7 @@
            data = {'ckb-item-link': ''}
          end
       %>
-      <%= link_to user_path(user), dir: 'ltr', class: 'user-card--link', data: data do %>
+      <%= link_to user_path(user), dir: 'ltr', class: small ? :'user-card--link-small' :'user-card--link', data: data do %>
         <%= rtl_safe_username(user) %>
         <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
           <span class="badge is-user-role" title="Administrator"><%= SiteSetting['AdminBadgeCharacter'] %></span>

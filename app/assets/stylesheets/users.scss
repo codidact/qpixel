@@ -100,7 +100,13 @@
     padding: 0 0.25rem;
 
     .user-card--link {
-      margin-bottom: 0.75rem;
+      display:inline-block;
+      max-width: 420px;
+
+      &-small {
+        display:inline-block;
+        max-width: 180px;
+      }
     }
 
     .user-card--meta {
