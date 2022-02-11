@@ -1,3 +1,10 @@
+<%#
+    Single comment view.
+    Variables:
+    ? with_post_link : includes share labelled post
+    ? pingable       : ???
+%>
+
 <% with_post_link ||= false %>
 <% pingable ||= nil %>
 
@@ -42,7 +49,10 @@
         <%= user_link comment.user %>
       <% end %>
       wrote
-      <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago:</span>
+      <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
+      <% if comment.updated_at > comment.created_at %>
+        · <span title="<%= comment.updated_at.iso8601 %>">edited <%= time_ago_in_words(comment.updated_at) %> ago</span>
+      <% end %>
     </div>
     <div class="comment--links">
       <%= link_to comment_link(comment), class: 'js-comment-permalink' do %>

@@ -1,3 +1,7 @@
+<%#
+    List of comment threads below a post.
+%>
+
 <% comment_threads.each do |thread| %>
   <div class="post--comments-thread is-inline <%= thread.deleted ? 'is-deleted' : '' %> <%= thread.archived ? 'is-archived' : '' %>">
     <% if thread.deleted %>
