@@ -13,7 +13,7 @@
     <h1>Warn or Suspend User</h1>
 
     <div class="notice is-warning">
-        <p>Use the warning tool only against users who have violated the site rules. Prefer other measurements, such as friendly asking the user to stop certain behaviors in a comment or <%= link_to 'contacting them privately', mod_contact_path(@user) %>.</p>
+        <p>Use the warning tool only against users who have violated the site rules. Prefer other measures, such as friendly asking the user to stop certain behaviors in a comment or <%= link_to 'contacting them privately', mod_contact_path(@user) %>.</p>
     </div>
 
     <%= form_for @warning, url: create_mod_warning_path(@user.id), method: :post do |f| %>

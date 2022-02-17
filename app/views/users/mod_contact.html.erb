@@ -12,9 +12,11 @@
   <div class="grid--cell is-9">
     <h1>Contact Privately</h1>
 
-    <p>As a moderator, you may contact users privately. If, however, means of public and private contact have not been effective, a <%= link_to 'formal warning', new_mod_warning_path(@user) %> might be in order.</p>
+    <div class="notice">
+      <p>As a moderator, you may contact users privately. If, however, means of public and private contact have not been effective, a <%= link_to 'formal warning', new_mod_warning_path(@user) %> might be in order.</p>
 
-    <p>These messages will only be visible to the contacted user and to the moderation team. Your user name will be hidden for the contacted user; we generally recommend not identifying yourself.</p>
+      <p>These messages will only be visible to the contacted user and to the moderation team. Your user name will be hidden for the contacted user; we generally recommend not identifying yourself.</p>
+    </div>
 
     <%= form_tag mod_message_path do %>
       <%= label_tag :title, 'Subject', class: 'form-element' %>
