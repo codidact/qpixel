@@ -1,18 +1,3 @@
-- name: Question
-  description: ~
-  has_answers: true
-  has_votes: true
-  has_tags: true
-  has_parent: false
-  has_category: true
-  has_license: true
-  is_public_editable: true
-  is_closeable: true
-  is_top_level: true
-  is_freely_editable: false
-  has_reactions: false
-  has_only_specific_reactions: true
-
 - name: Answer
   description: ~
   has_answers: false
@@ -27,6 +12,24 @@
   is_freely_editable: false
   has_reactions: true
   has_only_specific_reactions: false
+
+### split
+
+- name: Question
+  description: ~
+  has_answers: true
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: true
+  is_top_level: true
+  is_freely_editable: false
+  has_reactions: false
+  has_only_specific_reactions: true
+  answer_type_id: <%= PostType['Answer'].id %>
 
 - name: PolicyDoc
   description: ~
