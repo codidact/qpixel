@@ -34,7 +34,7 @@
       <% if comment.comment_thread.is_private %>
         <% if comment.user == current_user || current_user.is_moderator || !comment.user.is_moderator %>
           <%= user_link comment.user %>
-          <% if comment.user.is_moderator %>(visible only to you)<% end %>
+          <% if comment.user.is_moderator %>(only moderators can see name)<% end %>
         <% else %>
           <strong>moderator team</strong>
         <% end %>
