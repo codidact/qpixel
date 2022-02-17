@@ -6,53 +6,57 @@
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
   <div class="grid--cell is-9">
-    <h1>Previously Sent Warnings</h1>
+    <h1>Previously Sent Messages and Warnings</h1>
 
-    <table class="table is-full-width is-with-hover">
-        <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>From</th>
-            <th>Excerpt</th>
-            <th>Status</th>
-        </tr>
-        <% @warnings.each do |w| %>
-            <tr>
-                <td>
-                    <span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span>
-                </td>
-                <td>
-                    <% if w.is_suspension %>
-                    <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
-                    <span class="badge is-tag is-red is-filled">Suspension</span>
-                    <span class="badge is-tag is-muted">length: <%= diff %>d</span>
-                    <% if w.is_global %><span class="badge is-tag is-muted">network-wide</span><% end %>
-                    <% else %>
-                    <span class="badge is-tag is-muted is-filled">Warning</span>
-                    <% end %>
-                </td>
-                <td>
-                    <%= user_link w.author %>
-                </td>
-                <td>
+    <% @entries.each do |e| %>
+        <div class="widget">
+            <% if e[:type] == :message %>
+                <% m = e[:value] %>
+                <div class="widget--header is-complex h-bg-tertiary-050">
+                    <div>
+                        <span class="badge is-tag is-filled badge-nobreak"><i class="fas fa-envelope fa-fw"></i> Message</span>
+                    </div>
+                    <div class="h-c-tertiary-700 h-fs-caption h-m-t-2"><span title="<%= m.created_at.iso8601 %>"><%= time_ago_in_words(m.created_at) %> ago</span> by <%= user_link m.comments.first.user %></div>
+                </div>
+                <div class="widget--body">
+                    <%= raw(sanitize(render_markdown(m.comments.first.content), scrubber: scrubber)) %>
+                </div>
+            <% elsif e[:type] == :warning %>
+                <% w = e[:value] %>
+                <div class="widget--header is-complex h-bg-tertiary-050">
+                    <div class="has-float-right h-p-1 h-fs-caption">
+                        <% if w.suspension_active? %>
+                        <%= form_tag lift_mod_warning_url(@user.id), method: :post, class: 'mod-warnings-clear-form' do %>
+                            <%= submit_tag '(lift)', class: 'link is-red' %>
+                        <% end %> &middot;
+                        <strong>Current <i class="fas fa-fw fa-clock"></i></strong>
+                        <% elsif w.active %>
+                        <strong>Unread <i class="fas fa-fw fa-eye-slash"></i></strong>
+                        <% elsif w.read %>
+                        Read <i class="fas fa-fw fa-eye"></i>
+                        <% else %>
+                        Lifted <i class="fas fa-fw fa-undo"></i>
+                        <% end %>
+                    </div>
+                    <div>
+                        <% if w.is_suspension %>
+                            <% diff = ((w.suspension_end - w.created_at) / (3600 * 24)).to_i %>
+                            <span class="badge is-tag is-red is-filled badge-nobreak"><i class="fas fa-user-slash fa-fw"></i> Suspension</span>
+                            <span class="badge is-tag is-muted badge-nobreak">length: <%= diff %>d</span>
+                            <% if w.is_global %>
+                                <span class="badge is-tag is-muted badge-nobreak">network-wide</span>
+                            <% end %>
+                        <% else %>
+                            <span class="badge is-tag is-yellow is-filled badge-nobreak"><i class="fas fa-exclamation-triangle fa-fw"></i> Warning</span>
+                        <% end %>
+                    </div>
+                    <div class="h-c-tertiary-700 h-fs-caption h-m-t-2"><span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span> by <%= user_link w.author %></div>
+                </div>
+                <div class="widget--body">
                     <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
-                </td>
-                <td>
-                    <% if w.suspension_active? %>
-                    <strong>Current</strong>
-                    <%= form_tag lift_mod_warning_url(@user.id), method: :post do %>
-                        <%= submit_tag '(lift)', class: 'link is-red' %>
-                    <% end %>
-                    <% elsif w.active %>
-                    <strong>Unread</strong>
-                    <% elsif w.read %>
-                    Read
-                    <% else %>
-                    <strong>Lifted</strong>
-                    <% end %>
-                </td>
-            </tr>
-        <% end %>
-    </table>
+                </div>
+            <% end %>
+        </div>
+    <% end %>
   </div>
 </div>
