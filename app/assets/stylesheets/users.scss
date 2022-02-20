@@ -2,8 +2,13 @@
 
 .user-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 1em;
+
+  grid-template-columns: auto;
+
+  @media screen and (min-width: $screen-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media screen and (min-width: $screen-lg) {
     grid-template-columns: repeat(3, 1fr);
@@ -100,7 +105,13 @@
     padding: 0 0.25rem;
 
     .user-card--link {
-      margin-bottom: 0.75rem;
+      display:inline-block;
+      max-width: 420px;
+
+      &-small {
+        display:inline-block;
+        max-width: 180px;
+      }
     }
 
     .user-card--meta {
