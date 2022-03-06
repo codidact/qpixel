@@ -165,7 +165,7 @@ module ApplicationHelper
   end
 
   def user_signed_in?
-    !!current_user && !current_user.deleted? && !current_user.community_user.deleted?
+    !!current_user && !current_user.deleted? && !current_user.community_user&.deleted?
   end
 
   # Check if the current request is a direct user request, or a resource load.
