@@ -82,8 +82,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commonmarker (0.21.2)
-      ruby-enum (~> 0.5)
+    commonmarker (0.23.4)
     concurrent-ruby (1.1.9)
     counter_culture (2.8.0)
       activerecord (>= 4.2)
@@ -117,7 +116,7 @@ GEM
       activesupport (>= 5)
     hashie (4.1.0)
     htmlentities (4.3.4)
-    i18n (1.8.11)
+    i18n (1.10.0)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.1)
       mini_magick (>= 4.9.5, < 5)
@@ -243,8 +242,6 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.7.0, < 2.0)
-    ruby-enum (0.9.0)
-      i18n
     ruby-progressbar (1.11.0)
     ruby-vips (2.1.2)
       ffi (~> 1.12)
@@ -319,7 +316,7 @@ DEPENDENCIES
   byebug (~> 11.1)
   chartkick (~> 3.4)
   coffee-rails (~> 4.2.2)
-  commonmarker (~> 0.21)
+  commonmarker (~> 0.23)
   counter_culture (~> 2.0)
   coveralls (~> 0.8)
   devise (~> 4.7)

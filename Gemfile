@@ -22,7 +22,7 @@ gem 'devise', '~> 4.7'
 gem 'omniauth', '~> 1.9'
 
 # Markdown support in both directions.
-gem 'commonmarker', '~> 0.21'
+gem 'commonmarker', '~> 0.23'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.
