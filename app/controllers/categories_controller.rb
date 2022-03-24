@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.all.order(:sequence, :name)
+    @categories = Category.all.order(sequence: :asc, id: :asc)
     respond_to do |format|
       format.html
       format.json do

@@ -5,10 +5,10 @@ ruby '2.6.6'
 gem 'coffee-rails', '~> 4.2.2'
 gem 'counter_culture', '~> 2.0'
 gem 'fastimage', '~> 2.1'
-gem 'image_processing', '~> 1.11'
+gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.3.5'
 gem 'mysql2', '~> 0.5.3'
-gem 'puma', '~> 4.3.9'
+gem 'puma', '~> 4.3.11'
 gem 'rails', '~> 5.2'
 gem 'rails-html-sanitizer', '~> 1.3'
 gem 'redis', '~> 4.1'
@@ -22,7 +22,7 @@ gem 'devise', '~> 4.7'
 gem 'omniauth', '~> 1.9'
 
 # Markdown support in both directions.
-gem 'commonmarker', '~> 0.21'
+gem 'commonmarker', '~> 0.23'
 gem 'reverse_markdown', '~> 2.0'
 
 # Charting stuff.

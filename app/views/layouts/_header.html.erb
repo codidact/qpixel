@@ -45,6 +45,9 @@
         <%= link_to help_center_path, class: 'header--item' do %>
           <i class="fas fa-fw fa-question-circle"></i> Help
         <% end %>
+        <%= link_to dashboard_path, class: 'header--item' do %>
+          <i class="fas fa-fw fa-th" title='Dashboard'></i>
+        <% end %>
       <% end %>
       <% if user_signed_in? %>
         <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
@@ -105,12 +108,6 @@
       </div>
     <% end %>
   </div>
-  <hr class="has-margin-top-2 has-margin-bottom-2" />
-  <div>
-    <%= link_to dashboard_path, class: 'button is-muted has-float-right' do %>
-      Dashboard
-    <% end %>
-  </div>
 </div>
 
 <div class="header-slide is-large" id="search-slide">
@@ -141,7 +138,9 @@
 
     <div class='header-slide--separator'></div>
 
-    <%= link_to 'Help', help_center_path, class: 'menu--item' %>
+    <%= link_to 'Help', help_center_path, class: 'menu--item' %>	
+
+    <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
 
     <% if user_signed_in? %>
       <% if current_user.is_admin || current_user.is_moderator %>
