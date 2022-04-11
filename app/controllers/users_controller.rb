@@ -13,13 +13,13 @@ class UsersController < ApplicationController
                                           :mod_privilege_action, :mod_delete, :mod_reset_profile,
                                           :mod_clear_profile, :mod_escalation, :mod_escalate,
                                           :mod_contact, :mod_message]
-  before_action :verify_global_moderator, only: [:mod_destroy]
+  before_action :verify_global_moderator, only: [:mod_destroy, :global_log]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
                                   :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :avatar, :mod_delete, :mod_destroy,
                                   :mod_reset_profile, :mod_clear_profile, :mod_escalation,
-                                  :mod_escalate, :mod_contact, :mod_message]
+                                  :mod_escalate, :mod_contact, :mod_message, :global_log]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -222,11 +222,59 @@ class UsersController < ApplicationController
               when 'interesting'
                 Comment.where(user: @user, deleted: true).all + Flag.where(user: @user, status: 'declined').all + \
                   SuggestedEdit.where(user: @user, active: false, accepted: false).all + \
-                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all + \
+                  ModWarning.where(community_user: @user.community_user).all
               else
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
                   SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
+              end).sort_by(&:created_at).reverse
+
+    render layout: 'without_sidebar'
+  end
+
+  def global_log
+    @posts = Post.unscoped.where(user: @user).count
+    @comments = Comment.unscoped.where(user: @user).count
+    @flags = Flag.unscoped.where(user: @user).count
+    @suggested_edits = SuggestedEdit.unscoped.where(user: @user).count
+    @edits = PostHistory.unscoped.where(user: @user).count
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_users).count + \
+                             ModWarning.where(user: @user).count
+
+    @all_edits = @suggested_edits + @edits
+
+    @interesting_comments = Comment.unscoped.where(user: @user, deleted: true).count
+    @interesting_flags = Flag.unscoped.where(user: @user, status: 'declined').count
+    @interesting_edits = SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).count
+    @interesting_posts = Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').count
+
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+                   @interesting_edits + @interesting_posts
+
+    @items = (case params[:filter]
+              when 'posts'
+                Post.unscoped.where(user: @user).all
+              when 'comments'
+                Comment.unscoped.where(user: @user).all
+              when 'flags'
+                Flag.unscoped.where(user: @user).all
+              when 'edits'
+                SuggestedEdit.unscoped.where(user: @user).all + PostHistory.where(user: @user).all
+              when 'warnings'
+                ModWarning.where(community_user: @user.community_users).all + \
+                ModWarning.where(user: @user).all
+              when 'interesting'
+                Comment.unscoped.where(user: @user, deleted: true).all + Flag.unscoped.where(user: @user, status: 'declined').all + \
+                  SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all + \
+                  Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all + \
+                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                  ModWarning.where(user: @user).all
+              else
+                Post.unscoped.where(user: @user).all + Comment.unscoped.where(user: @user).all + Flag.unscoped.where(user: @user).all + \
+                  SuggestedEdit.unscoped.where(user: @user).all + PostHistory.unscoped.where(user: @user).all + \
+                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                  ModWarning.where(user: @user).all
               end).sort_by(&:created_at).reverse
 
     render layout: 'without_sidebar'

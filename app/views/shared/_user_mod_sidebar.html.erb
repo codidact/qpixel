@@ -73,6 +73,11 @@
 
                 <% if current_user.is_global_moderator || current_user.is_global_admin %>
                 <div class="menu--heading">Global Mod Tools</div>
+                <%= link_to global_user_log_path(user),
+                            class: "menu--item #{current_page?(global_user_log_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-heartbeat fa-fw"></i>
+                    Global Summary
+                <% end %>
                 <%= link_to new_global_warning_path(user),
                             class: "menu--item #{current_page?(new_global_warning_path(user)) ? 'is-active' : ''}" do %>
                     <i class="fas fa-user-slash fa-fw"></i>

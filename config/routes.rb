@@ -191,6 +191,7 @@ Rails.application.routes.draw do
     get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
     post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+    get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
     post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
     get    '/:id/mod/delete-or-destroy', to: 'users#mod_delete', as: :mod_delete_or_destroy
     get    '/:id/mod/hungry-codidactyl', to: 'users#mod_destroy', as: :mod_hungry_codidactyl
