@@ -227,7 +227,11 @@
                 <% else %>
                   <%= link_to edit_post_path(post), class: 'tools--item' do %>
                     <i class="fa fa-pencil-alt"></i>
-                    Suggest edit
+                     <% if current_user&.is_staff %>
+                             Edit
+                     <% else %>
+                             Suggest edit  
+                     <% end %>            
                   <% end %>
                 <% end %>
               <% end %>
