@@ -100,7 +100,7 @@ class CommentsController < ApplicationController
   end
 
   def update
-    if @comment_thread.is_private
+    if @comment_thread&.is_private
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -122,7 +122,7 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    if @comment_thread.is_private
+    if @comment_thread&.is_private
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -141,7 +141,7 @@ class CommentsController < ApplicationController
   end
 
   def undelete
-    if @comment_thread.is_private
+    if @comment_thread&.is_private
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -193,7 +193,7 @@ class CommentsController < ApplicationController
       return
     end
 
-    if @comment_thread.is_private && !current_user.is_moderator
+    if @comment_thread&.is_private && !current_user.is_moderator
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -204,7 +204,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_restrict
-    if @comment_thread.is_private && !current_user.is_moderator
+    if @comment_thread&.is_private && !current_user.is_moderator
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -240,7 +240,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_unrestrict
-    if @comment_thread.is_private && !current_user.is_moderator
+    if @comment_thread&.is_private && !current_user.is_moderator
       flash[:danger] = 'This action is not permitted.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
