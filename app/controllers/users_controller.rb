@@ -260,19 +260,24 @@ class UsersController < ApplicationController
               when 'flags'
                 Flag.unscoped.where(user: @user).all
               when 'edits'
-                SuggestedEdit.unscoped.where(user: @user).all + PostHistory.where(user: @user).all
+                SuggestedEdit.unscoped.where(user: @user).all + \
+                  PostHistory.where(user: @user).all
               when 'warnings'
                 ModWarning.where(community_user: @user.community_users).all + \
-                ModWarning.where(user: @user).all
+                  ModWarning.where(user: @user).all
               when 'interesting'
-                Comment.unscoped.where(user: @user, deleted: true).all + Flag.unscoped.where(user: @user, status: 'declined').all + \
+                Comment.unscoped.where(user: @user, deleted: true).all + \
+                  Flag.unscoped.where(user: @user, status: 'declined').all + \
                   SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all + \
                   Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all + \
                   ModWarning.unscoped.where(community_user: @user.community_users).all + \
                   ModWarning.where(user: @user).all
               else
-                Post.unscoped.where(user: @user).all + Comment.unscoped.where(user: @user).all + Flag.unscoped.where(user: @user).all + \
-                  SuggestedEdit.unscoped.where(user: @user).all + PostHistory.unscoped.where(user: @user).all + \
+                Post.unscoped.where(user: @user).all + \
+                  Comment.unscoped.where(user: @user).all + \
+                  Flag.unscoped.where(user: @user).all + \
+                  SuggestedEdit.unscoped.where(user: @user).all + \
+                  PostHistory.unscoped.where(user: @user).all + \
                   ModWarning.unscoped.where(community_user: @user.community_users).all + \
                   ModWarning.where(user: @user).all
               end).sort_by(&:created_at).reverse
