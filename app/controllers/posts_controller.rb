@@ -168,7 +168,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user.is_staff || current_user == @post.user || \
+    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user.staff || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
       if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
          current_user.is_global_admin) && params[:network_push] == 'true'
