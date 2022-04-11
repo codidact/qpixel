@@ -323,7 +323,7 @@ class Post < ApplicationRecord
   def moderator_tags
     mod_tags = category&.moderator_tags&.map(&:name)
     return unless mod_tags.present? && !mod_tags.empty?
-    return if RequestContext.user&.is_moderator
+    return if RequestContext.user&.is_moderator || RequestContext.user&.is_staff
 
     sc = changes
     return unless sc.include? 'tags_cache'
