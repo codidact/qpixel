@@ -65,6 +65,13 @@ $(document).on('ready', function() {
     });
   });
 
+  $(".is-partial-only:not(.open)").on("click", (evt) => {
+    if(evt.target.classList.contains("open")) return;
+
+    evt.target.classList.add("open");
+    evt.stopPropagation();
+  })
+
   if (document.cookie.indexOf('dismiss_fvn') === -1 ) {
     $('#fvn-dismiss').on('click', () => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';

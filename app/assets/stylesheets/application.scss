@@ -277,3 +277,35 @@ img.header--item-image {
 .widget--header-link {
   margin: 0 0 0 0.5em;
 }
+
+
+.is-partial-only:not(.open) {
+  max-height: 100px;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0; left: 0;
+    bottom: 0;
+    height: 75px;
+    background-color: rgba(255, 255, 255, 0.5);
+    background: linear-gradient(#ffffff66, #fffffffa);
+    z-index: 10000000;
+  }
+
+  &::before {
+    content: 'expand';
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 10px;
+    z-index: 10000001;
+    padding: 5px 20px;
+    background-color: #ddd;
+    border: 1px solid #666;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+}

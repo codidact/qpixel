@@ -52,7 +52,7 @@
                     </div>
                     <div class="h-c-tertiary-700 h-fs-caption h-m-t-2"><span title="<%= w.created_at.iso8601 %>"><%= time_ago_in_words(w.created_at) %> ago</span> by <%= user_link w.author %></div>
                 </div>
-                <div class="widget--body">
+                <div class="widget--body is-partial-only">
                     <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
                 </div>
             <% end %>
