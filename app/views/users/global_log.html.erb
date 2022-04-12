@@ -63,7 +63,7 @@
                             <%= (i.question? ? "Question" : (i.article? ? "Article" : "Answer")) %>
                         </span>
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>&mdash;</td>
                     <td class="h-fs-caption">
                         <% if !i.answer? %>
@@ -79,7 +79,7 @@
                     <td>
                         Comment
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                     </td>
@@ -92,7 +92,7 @@
                     <td>
                         Edit
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                     </td>
@@ -108,7 +108,7 @@
                     <td>
                         Suggested Edit
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                     </td>
@@ -122,7 +122,11 @@
                     <td>
                         <span class="h-fw-bold h-c-red-700">Warning</span>
                     </td>
-                    <td><%= i.community_user.present? ? i.community_user.community.name : 'Global' %></td>
+                    <% if i.community_user.present? %>
+                        <td><%= link_to i.community_user.community.name, "//#{i.community_user.community.host}" %></td>
+                    <% else %>
+                        <td>Global</td>
+                    <% end %>
                     <td>&mdash;</td>
                     <td class="h-fs-caption">
                         <%= i.body[0..300] + ((i.body.length > 300) ? "..." : "") %>
@@ -132,7 +136,7 @@
                     <td>
                         Flag
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <% if i.post_type == 'Post' %>
                             <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
@@ -152,7 +156,7 @@
                     <td>
                         <span class="badge is-tag is-muted">Unknown</span>
                     </td>
-                    <td><%= i.community.name %></td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>&mdash;</td>
                     <td><%= i.class %></td>
                     <td>&mdash;</td>
