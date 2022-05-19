@@ -19,11 +19,9 @@ For Debian-Based Linux:
 
 ```
 sudo apt update
-sudo apt install gcc
-sudo apt install make
-sudo apt install libmysqlclient-dev
+sudo apt install gcc make pkg-config
 sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
-sudo apt install mysql-server
+sudo apt install mysql-server libmysqlclient-dev
 ```
 
 For Arch-Based Linux:
@@ -59,8 +57,12 @@ or for example `sudo apt install redis-server`.
 ### Install Imagemagick
 
 If you haven't already installed Imagemagick, you'll need to [install it for
-your system](https://imagemagick.org/script/download.php) or
-for example `sudo apt install libmagick++-dev`.
+your system](https://imagemagick.org/script/download.php).
+
+If you install Imagemagick from APT on a Debian-based system, you may need to
+also install the `libmagickwand-dev` package.
+
+`sudo apt install libmagick++-dev` should also work.
 
 ## Install QPixel
 
