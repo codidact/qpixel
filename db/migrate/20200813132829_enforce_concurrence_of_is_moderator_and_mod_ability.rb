@@ -9,7 +9,7 @@ class EnforceConcurrenceOfIsModeratorAndModAbility < ActiveRecord::Migration[5.2
   def down
     # Nothing to do, because the up only duplicates content,
     # which cannot be easily reversed without likely quite
-    # complex algorithmis. This is unneccessary, because the duplicate
+    # complex algorithmis. This is unnecessary, because the duplicate
     # content isn't harmful in any way.
   end
 end

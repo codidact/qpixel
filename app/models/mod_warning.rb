@@ -20,7 +20,7 @@ class ModWarning < ApplicationRecord
     ApplicationController.helpers.render_markdown(body)
   end
 
-  # These two are neccessary for the new warning form to work.
+  # These two are necessary for the new warning form to work.
   def suspension_duration
     1
   end

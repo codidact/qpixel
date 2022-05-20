@@ -3,7 +3,7 @@ require 'test_helper'
 class SuggestedEditTest < ActiveSupport::TestCase
   include CommunityRelatedHelper
 
-  test 'is commmunity related' do
+  test 'is community related' do
     assert_community_related(SuggestedEdit)
   end
 

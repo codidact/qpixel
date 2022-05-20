@@ -107,9 +107,9 @@ class CommunityUser < ApplicationRecord
     end
   end
 
-  # This check makes sure, that every user gets the
-  # everyone permission upon creation. We do not want
-  # to create a noone by accident.
+  # This check makes sure that every user gets the
+  # 'everyone' permission upon creation. We do not want
+  # to create a no permissions user by accident.
   # Polyphemus is very grateful for this.
   def prevent_ulysses_case
     recalc_privileges

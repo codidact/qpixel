@@ -32,7 +32,7 @@ class ReactionsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  test 'add should fail if reaction type requires commment but none provided' do
+  test 'add should fail if reaction type requires comment but none provided' do
     sign_in users(:standard_user)
     post :add, params: { reaction_id: reaction_types(:bad).id, comment: nil, post_id: posts(:answer_two) }
     assert_not_nil assigns(:post)
@@ -40,7 +40,7 @@ class ReactionsControllerTest < ActionController::TestCase
     assert_response 403
   end
 
-  test 'add should pass if reaction type requires commment and one provided' do
+  test 'add should pass if reaction type requires comment and one provided' do
     sign_in users(:standard_user)
     post :add, params: { reaction_id: reaction_types(:bad).id, comment: 'A' * 50, post_id: posts(:answer_two) }
     assert_not_nil assigns(:post)
@@ -48,7 +48,7 @@ class ReactionsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  test 'add should pass if reaction type requires no commment but one provided' do
+  test 'add should pass if reaction type requires no comment but one provided' do
     sign_in users(:standard_user)
     post :add, params: { reaction_id: reaction_types(:old).id, comment: 'A' * 50, post_id: posts(:answer_two) }
     assert_not_nil assigns(:post)
