@@ -27,12 +27,6 @@ Rails-based version of our core software, powering [codidact.com](https://codida
 
 ## Features
 
-### 6. Set up QPixel
-Install gems:
-=======
-## Features
->>>>>>> moved installation instructions to separate file, added screenshot to readme
-
 ![img/example_screenshot_codidact.jpg](img/example_screenshot_codidact.jpg)
 
 - Supports multiple communities within a single installation
