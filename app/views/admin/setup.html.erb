@@ -81,7 +81,7 @@
 
       <div class="form-group">
         <%= label_tag :content_transfer, 'Has content transfer?', class: 'form-element' %>
-        <span class="form-caption">Whether this site has transfered content from an other (ex. SE) site. Will allow users to claim their content in the profile.</span>
+        <span class="form-caption">Whether this site has transferred content from an other (ex. SE) site. Will allow users to claim their content in the profile.</span>
         <%= select_tag :content_transfer, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['AllowContentTransfer']),
                       class: 'form-element' %>
       </div>
