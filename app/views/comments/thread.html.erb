@@ -1,5 +1,9 @@
 <% pingable = get_pingable(@comment_thread) %>
 
+<h1>Comments on
+  <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
+</h1>
+
 <% if @post.parent.present? %>
   <details>
     <summary>Parent</summary>
@@ -11,10 +15,6 @@
   <summary>Post</summary>
   <%= render 'posts/expanded', post: @post %>
 </details>
-
-<h1>Comments on
-  <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
-</h1>
 
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
