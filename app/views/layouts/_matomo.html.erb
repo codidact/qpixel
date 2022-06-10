@@ -1,8 +1,7 @@
 <% unless SiteSetting['AnalyticsURL'].blank? || SiteSetting['AnalyticsSiteId'].blank? %>
   <% cache [RequestContext.community, SiteSetting['AnalyticsURL'], SiteSetting['AnalyticsSiteId']] do %>
-    <script async defer type="text/javascript">
-      (async () => {
-        var _paq = window._paq || [];
+    <script defer type="text/javascript">
+        var _paq = window._paq = window._paq || [];
         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
 
         const user = await QPixel.user();
@@ -14,22 +13,16 @@
 
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
-        (function () {
-          var u = "<%= SiteSetting['AnalyticsURL'] %>";
-          _paq.push(['setTrackerUrl', u + 'matomo.php']);
+        (function() {
+          var u="<%= SiteSetting['AnalyticsURL'] %>";
+          _paq.push(['setTrackerUrl', u+'matomo.php']);
           _paq.push(['setSiteId', '<%= SiteSetting['AnalyticsSiteId'] %>']);
-          var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-          g.type = 'text/javascript';
-          g.async = true;
-          g.defer = true;
-          g.src = u + 'matomo.js';
-          s.parentNode.insertBefore(g, s);
+          var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+          g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
         })();
-      })();
     </script>
     <noscript><p>
-      <img src="<%= SiteSetting['AnalyticsURL'] %>matomo.php?idsite=<%= SiteSetting['AnalyticsSiteId'] %>&amp;rec=1"
-                      style="border:0;" alt="" />
+      <img referrerpolicy="no-referrer-when-downgrade" src="<%= SiteSetting['AnalyticsURL'] %>matomo.php?idsite=<%= SiteSetting['AnalyticsSiteId'] %>&amp;rec=1" style="border:0" alt="" />
     </p></noscript>
   <% end %>
 <% end %>
