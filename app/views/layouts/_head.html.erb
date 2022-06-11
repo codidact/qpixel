@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
 <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" %>
-<%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.0/dist/codidact.css" %>
+<%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.5/dist/codidact.css" %>
 <%= stylesheet_link_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" %>
 <%= stylesheet_link_tag "/assets/community/#{@community.host.split('.')[0]}.css" %>
 <%= stylesheet_link_tag 'application', media: 'all' %>
@@ -31,7 +31,7 @@
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/dompurify@2.2.9/dist/purify.min.js" %>
 <%= javascript_include_tag "/assets/community/#{@community.host.split('.')[0]}.js" %>
 <%= javascript_include_tag 'application' %>
-<script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.0/js/co-design.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.5/js/co-design.js" defer></script>
 
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
