@@ -30,7 +30,7 @@ gem 'chartkick', '~> 3.4'
 gem 'groupdate', '~> 4.3'
 
 # View stuff.
-gem 'diffy', '~> 3.3'
+gem 'diffy', '~> 3.4'
 gem 'jbuilder', '~> 2.10'
 gem 'rqrcode', '~> 1.1'
 gem 'will_paginate', '~> 3.3'

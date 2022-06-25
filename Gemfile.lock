@@ -102,7 +102,7 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    diffy (3.4.0)
+    diffy (3.4.1)
     docile (1.4.0)
     e2mmap (0.1.0)
     erubi (1.10.0)
@@ -320,7 +320,7 @@ DEPENDENCIES
   counter_culture (~> 2.0)
   coveralls (~> 0.8)
   devise (~> 4.7)
-  diffy (~> 3.3)
+  diffy (~> 3.4)
   e2mmap (~> 0.1)
   fastimage (~> 2.1)
   flamegraph (~> 0.9)
