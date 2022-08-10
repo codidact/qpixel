@@ -8,9 +8,20 @@ else
   find_glob = 'db/seeds/**/*.yml'
 end
 
-Dir.glob(Rails.root.join(find_glob)).each do |f|
+# Get all seed files and determine their model types
+files = Dir.glob(Rails.root.join(find_glob))
+types = files.map do |f|
   basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
-  type = basename.gsub('.yml', '').singularize.classify.constantize
+  basename.gsub('.yml', '').singularize.classify.constantize
+end
+
+# Prioritize the following models (in this order) such that models depending on them get created after
+priority = [PostType, CloseReason, License, TagSet, PostHistoryType]
+sorted = files.zip(types).to_h.sort do |a, b|
+  (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
+end.to_h
+
+sorted.each do |f, type|
   begin
     processed = ERB.new(File.read(f)).result(binding)
     data = YAML.load(processed)
