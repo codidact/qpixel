@@ -11,3 +11,4 @@
     content from deleted users, among other things.</p>
   is_global_moderator: true
   is_global_admin: true
+  confirmed_at: 1990-01-01 12:00
