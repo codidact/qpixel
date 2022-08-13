@@ -6,20 +6,20 @@ module CategoriesHelper
   end
 
   def expandable?
-    (defined?(@category) && !@category.nil? && !@category.id.nil? && !current_page?(new_category_url)) ||
-      (defined?(@post) && !@post.category.nil?) ||
-      (defined?(@question) && !@question.category.nil?) ||
-      (defined?(@article) && !@article.category.nil?)
+    (defined?(@category) && !@category&.id.nil? && !current_page?(new_category_url)) ||
+      (defined?(@post) && !@post&.category.nil?) ||
+      (defined?(@question) && !@question&.category.nil?) ||
+      (defined?(@article) && !@article&.category.nil?)
   end
 
   def current_category
-    @current_category ||= if defined?(@category) && !@category.nil? && !@category.id.nil?
+    @current_category ||= if defined?(@category) && !@category&.id.nil?
                             @category
-                          elsif defined?(@post) && !@post.category.nil?
+                          elsif defined?(@post) && !@post&.category.nil?
                             @post.category
-                          elsif defined?(@question) && !@question.category.nil?
+                          elsif defined?(@question) && !@question&.category.nil?
                             @question.category
-                          elsif defined?(@article) && !@article.category.nil?
+                          elsif defined?(@article) && !@article&.category.nil?
                             @article.category
                           end
   end
