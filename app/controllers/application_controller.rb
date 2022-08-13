@@ -16,7 +16,12 @@ class ApplicationController < ActionController::Base
   helper_method :top_level_post_types, :second_level_post_types
 
   def upload
-    redirect_to helpers.upload_remote_url(params[:key]), status: 301
+    if ActiveStorage::Blob.service.class.name.end_with?('S3Service')
+      redirect_to helpers.upload_remote_url(params[:key]), status: 301
+    else
+      blob = params[:key]
+      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key))
+    end
   end
 
   def dashboard
