@@ -1,19 +1,5 @@
-- name: Question
-  description: ~
-  has_answers: true
-  has_votes: true
-  has_tags: true
-  has_parent: false
-  has_category: true
-  has_license: true
-  is_public_editable: true
-  is_closeable: true
-  is_top_level: true
-  is_freely_editable: false
-  has_reactions: false
-  has_only_specific_reactions: true
-
-- name: Answer
+- id: 2
+  name: Answer
   description: ~
   has_answers: false
   has_votes: true
@@ -27,6 +13,23 @@
   is_freely_editable: false
   has_reactions: true
   has_only_specific_reactions: false
+
+- id: 1
+  name: Question
+  description: ~
+  has_answers: true
+  answer_type_id: 2
+  has_votes: true
+  has_tags: true
+  has_parent: false
+  has_category: true
+  has_license: true
+  is_public_editable: true
+  is_closeable: true
+  is_top_level: true
+  is_freely_editable: false
+  has_reactions: false
+  has_only_specific_reactions: true
 
 - name: PolicyDoc
   description: ~
