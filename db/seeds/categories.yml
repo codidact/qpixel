@@ -6,7 +6,7 @@
     - <%= PostType['Question'].id %>
     - <%= PostType['Answer'].id %>
   is_homepage: true
-  tag_set_id: <%= TagSet.unscoped.where(name: 'Main').first %>
+  tag_set_id: <%= TagSet.unscoped.where(name: 'Main').first.id %>
   use_for_hot_posts: true
   use_for_advertisement: true
 
@@ -17,7 +17,7 @@
   post_type_ids:
     - <%= PostType['Question'].id %>
     - <%= PostType['Answer'].id %>
-  tag_set_id: <%= TagSet.unscoped.where(name: 'Meta').first %>
+  tag_set_id: <%= TagSet.unscoped.where(name: 'Meta').first.id %>
   use_for_hot_posts: true
   use_for_advertisement: false
   color_code: bluegray
