@@ -72,6 +72,10 @@ gem 'stripe', '~> 5.28'
 # EeeMAILS!
 gem 'premailer-rails', '~> 1.11'
 
+# Better searching
+gem 'elasticsearch-model', '~> 7.2'
+gem 'elasticsearch-rails', '~> 7.2'
+
 group :test do
   gem 'minitest', '~> 5.10.3'
   gem 'minitest-ci', '~> 3.4.0'
