@@ -416,3 +416,29 @@
   category: Display
   description: >
     Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
+
+- name: ElasticsearchEnabled
+  value: false
+  value_type: boolean
+  community_id: ~
+  category: Search
+  description: >
+    Enable better searching with Elasticsearch. Requires Elasticsearch to be installed and configured.
+    WARNING: When enabling this, you must also synchronize elasticsearch with the database.
+    If elasticsearch is out of sync with the database, server errors will occur.
+
+- name: ElasticsearchTitleWeight
+  value: 5
+  value_type: integer
+  community_id: ~
+  category: Search
+  description: >
+    The relative weight that matches in the title get (Elasticsearch only).
+
+- name: ElasticsearchBodyWeight
+  value: 1
+  value_type: integer
+  community_id: ~
+  category: Search
+  description: >
+    The relative weight that matches in the body get (Elasticsearch only).
