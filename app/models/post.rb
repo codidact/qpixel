@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include Elasticsearchable
 
   belongs_to :user
   belongs_to :post_type
@@ -58,8 +59,12 @@ class Post < ApplicationRecord
   after_save :update_category_activity, if: -> { post_type.has_category }
   after_save :recalc_score
 
-  def self.search(term)
-    match_search term, posts: :body_markdown
+  scope :search, ->(term) do
+    if SiteSetting['ElasticsearchEnabled']
+      __elasticsearch__.search(create_elasticsearch_query(term)).records.merge(self)
+    else
+      match_search term, posts: :body_markdown
+    end
   end
 
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
@@ -170,6 +175,15 @@ class Post < ApplicationRecord
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .map { |_k, v| [v.first.reaction_type, v] }.to_h
+  end
+
+  # Defines how Elasticsearch should index the data.
+  settings do
+    mappings dynamic: false do
+      indexes :id, type: :integer
+      indexes :title, type: :text, analyzer: :english
+      indexes :body_markdown, type: :text, analyzer: :english
+    end
   end
 
   private
@@ -337,5 +351,25 @@ class Post < ApplicationRecord
     if saved_changes.include? 'last_activity'
       category.update_activity(last_activity)
     end
+  end
+
+  def self.create_elasticsearch_query(term)
+    {
+      query: {
+        bool: {
+          must: [
+            {
+              multi_match: {
+                query: term,
+                fields: %W[
+                    title^#{SiteSetting['ElasticsearchTitleWeight'] || 5}
+                    body_markdown^#{SiteSetting['ElasticsearchBodyWeight'] || 1}
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
   end
 end
