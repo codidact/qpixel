@@ -97,12 +97,16 @@ module UserSortable
     requested = term_opts[:term]
     direction = term_opts[:direction] || :desc
     if requested.nil? || field_mappings.exclude?(requested.to_sym)
-      $active_search_param = default
-      default.is_a?(Symbol) ? order(default => direction) : order(default)
+      sort_key = default
     else
-      requested_val = field_mappings[requested.to_sym]
-      $active_search_param = requested_val
-      requested_val.is_a?(Symbol) ? order(requested_val => direction) : order(requested_val)
+      sort_key = field_mappings[requested.to_sym]
+    end
+
+    $active_search_param = sort_key
+    if sort_key == :es_search_score
+      self
+    else
+      sort_key.is_a?(Symbol) ? order(sort_key => direction) : order(sort_key)
     end
   end
 end
