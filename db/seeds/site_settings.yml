@@ -428,7 +428,7 @@
     If elasticsearch is out of sync with the database, server errors will occur.
 
 - name: ElasticsearchTitleWeight
-  value: 5
+  value: 2
   value_type: integer
   community_id: ~
   category: Search

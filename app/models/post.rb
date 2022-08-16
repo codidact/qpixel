@@ -356,17 +356,11 @@ class Post < ApplicationRecord
   def self.create_elasticsearch_query(term)
     {
       query: {
-        bool: {
-          must: [
-            {
-              multi_match: {
-                query: term,
-                fields: %W[
-                    title^#{SiteSetting['ElasticsearchTitleWeight'] || 5}
-                    body_markdown^#{SiteSetting['ElasticsearchBodyWeight'] || 1}
-                ]
-              }
-            }
+        multi_match: {
+          query: term,
+          fields: %W[
+              title^#{SiteSetting['ElasticsearchTitleWeight'] || 2}
+              body_markdown^#{SiteSetting['ElasticsearchBodyWeight'] || 1}
           ]
         }
       }
