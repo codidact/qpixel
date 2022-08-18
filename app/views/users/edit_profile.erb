@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <%= render 'posts/markdown_script' %>
+<% end %>
+
 <%= render 'tabs', user: current_user %>
 
 <h1>Edit Profile</h1>
@@ -30,6 +34,8 @@
     <div class="form-caption">What other people call you.</div>
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
+
+  <%= render 'posts/image_upload' %>
 
   <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user %>
 
