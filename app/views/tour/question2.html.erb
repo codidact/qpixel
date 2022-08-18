@@ -1,256 +1,256 @@
 <%= render 'posts/markdown_script' %>
 
 <div class="grid step-0">
-    <div class="grid--cell codidactyl">
-        <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell codidactyl">
+    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  </div>
+  <div class="grid--cell is-flexible">
+    <div class="widget">
+      <div class="widget--body">
+        <p>This is the "ask question" form. You can find it by looking at the category bar (the labels below the header that say things like "Q&A" and "Meta") and clicking on the "Ask Question" button. (In some categories this button might say something different, like "Create Challenge".)</p>
+        <p>I will put some hints into the sidebar. Please study them carefully and build your first question.</p>
+      </div>
+      <div class="widget--footer">
+        <button class="button is-filled" data-step-from=".step-0" data-step-to=".step-1">Get started</button>
+      </div>
     </div>
-    <div class="grid--cell is-flexible">
-        <div class="widget">
-            <div class="widget--body">
-                <p>This is the "ask question" form. You can find it by looking at the category bar (the labels below the header that say things like "Q&A" and "Meta") and clicking on the "Ask Question" button. (In some categories this button might say something different, like "Create Challenge".)</p>
-                <p>I will put some hints into the sidebar. Please study them carefully and build your first question.</p>
-            </div>
-            <div class="widget--footer">
-                <button class="button is-filled" data-step-from=".step-0" data-step-to=".step-1">Get started</button>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
 <hr>
 
 <div class="grid">
-    <div class="grid--cell is-8">
-        <h1>New Post in Q&amp;A</h1>
-        <div class="notice is-info">
-            <%= raw(sanitize(render_markdown(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
-        </div>
-        <div class="form-group">
-            <label for="tour-post-body" class="form-element">Body</label>
-            <div class="widget">
-                <%= render 'shared/markdown_tools' %>
-                <textarea class="form-element post-field js-post-field widget--body h-b-0 h-m-0" rows=15 placeholder="Start typing your post..." id="tour-post-body"></textarea>
-                <%= render 'posts/mdhint' %>
-            </div>
-        </div>
-
-        <div class="post-preview"></div>
-
-        <div class="form-group">
-            <label for="tour-post-title" class="form-element">Summarize your post with a title:</label>
-            <input id="tour-post-title" class="form-element">
-        </div>
-
-        <div class="form-group">
-            <label class="form-element" for="post_tags_cache">Tags (at least one):</label>
-            <input name="post[tags_cache][]" type="hidden" value="" /><select multiple="multiple" class="form-element js-tag-select" data-tag-set="-1" name="post[tags_cache][]" id="post_tags_cache"><option value=""></option></select>
-        </div>
-
+  <div class="grid--cell is-8">
+    <h1>New Post in Q&amp;A</h1>
+    <div class="notice is-info">
+      <%= raw(sanitize(render_markdown(SiteSetting['AskingGuidance']), scrubber: scrubber)) %>
     </div>
-    <div class="grid--cell is-4">
-        <div class="codidactyl-hints codidactyl-sticky">
-            <div class="widget step-1 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Let's imagine you have a question about dragons.</p>
-                    <p>If you'd really had a question about dragons, you'd need to check first whether it's <a href="/help/faq">on-topic for this site</a>, but I checked this for you now already. 😉</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" disabled>Back</button>
-                    <button class="button is-filled" data-step-from=".step-1" data-step-to=".step-2">Next</button>
-                </div>
-            </div>
-            <div class="widget step-2 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p><strong>Step 1: Question body</strong></p>
-                    <p>Every question starts with a body, which is a full explanation of your question including additional information needed to answer it.</p>
-                    <p>I'll guide you through writing a good question body.</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-1" data-step-to=".step-2">Back</button>
-                    <button class="button is-filled" data-step-from=".step-2" data-step-to=".step-3">Next</button>
-                </div>
-            </div>
-            <div class="widget step-3 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>You should start your question body with a short summary of your problem. For example, in our case, this could be:</p>
-<blockquote class="h-ff-code">My dragon Martha has constantly been chasing my sheep around, and I'd like to get her to stop this behavior.</blockquote>
-                    <p>Why don't you write (or copy) that into the body form?</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-2" data-step-to=".step-3">Back</button>
-                    <button class="button is-filled" data-step-from=".step-3" data-step-to=".step-4">Next</button>
-                </div>
-            </div>
-            <div class="widget step-4 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Next you should add some more detailed information about your specific issue. What exactly has happened? What went wrong? If you have error messages, add them here too.</p>
-                    <p>Other users should be able to understand your problems and ideally be able to reproduce the issue.</p>
-                    <p>This is how the explanation could look for your dragon Martha.</p>
-<blockquote class="h-ff-code">Martha is a Hot Red Firebreather, and is five and a half feet long at about a year old (still pretty young, since dragons are only fully grown at three). I've had her for about three months now. She's generally very well-behaved - never breathing fire inside the house and not fighting with my neighbor's old Sapphire Blue Waterspouter. However, every time she sees my (solitary) sheep, she chases him around and bothers him, and it's really not good for the sheep.</blockquote>
-                    <p>Formatting tip: Add a blank line to start a new paragraph.</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-3" data-step-to=".step-4">Back</button>
-                    <button class="button is-filled" data-step-from=".step-4" data-step-to=".step-5">Next</button>
-                </div>
-            </div>
-            <div class="widget step-5 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Awesome.</p>
-                    <p>When you ask a question, we generally expect you to have done some research and to have tried to solve the issue by yourself.</p>
-                    <p>Add a short summary of your prior efforts and how they failed. Help the community help you by sharing what you already know, so they know where to start and they don't waste time suggesting things you've already tried.</p>
-                    <p>This is how it could look for your dragon question:</p>
-<blockquote class="h-ff-code">I've asked around and done some research, and the folks at the Dwarven Library told me that I could paint my sheep blue to prevent this from happening. However, I'm not looking to do anything to the sheep - just for training the dragon.</blockquote>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-4" data-step-to=".step-5">Back</button>
-                    <button class="button is-filled" data-step-from=".step-5" data-step-to=".step-6">Next</button>
-                </div>
-            </div>
-            <div class="widget step-6 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Now you're almost finished.</p>
-                    <p>In some cases, you might want to add some restrictions, what you definitely do not want to do. This helps answerers focus on what you really need.</p>
-                    <p>For example, you might not want to tickle the dragon:</p>
-<blockquote class="h-ff-code">I do not want to use any training methods that involve pain or restricting the dragon in any way, and I'm not looking to do anything to the sheep. I'm pretty experienced in training dragons, but I've never had to deal with this situation before.</blockquote>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-5" data-step-to=".step-6">Back</button>
-                    <button class="button is-filled" data-step-from=".step-6" data-step-to=".step-7">Next</button>
-                </div>
-            </div>
-            <div class="widget step-7 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>That's it.</p>
-                    <p>You have written your first question body. You can see a preview of how it will look below the text input.</p>
-                    <p>You might want to improve the formatting of the post. We use <a href="/help/formatting">Markdown</a> for that. You can also use the buttons at the top of the post editor. Each button has a tooltip.</p>
-                    <p>Use <strong>**bold**</strong>, <em>*italics*</em> or <code>`code`</code> formatting and two newlines for new paragraphs. For lists, just use numbers (1., 2., 3.) or bullet points (* or -).</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-6" data-step-to=".step-7">Back</button>
-                    <button class="button is-filled" data-step-from=".step-7" data-step-to=".step-8">Next</button>
-                </div>
-            </div>
-            <div class="widget step-8 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p><strong>Step 2: Question title</strong></p>
-                    <p>After writing the question body, summarize your question in a title. This summary will be shown to other users looking for posts to answer, so make it clear and specific.</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-7" data-step-to=".step-8">Back</button>
-                    <button class="button is-filled" data-step-from=".step-8" data-step-to=".step-9">Next</button>
-                </div>
-            </div>
-            <div class="widget step-9 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Good question titles include neither too much nor too little information. They don't have to tell everything your question includes, but they shouldn't be just a general summary of the related topics (that's what tags are for, to which we'll come a bit later). The title can, but doesn't have to be, a question.</p>
-                    <p>For example, the title "Dragon vs Sheep" is not good for our current question and neither is "Stop cute one year old dragon from eating my sheep without painting them blue or restraining the dragon". Instead, use something like this:</p>
-                    <blockquote class="h-ff-code">How do I teach my dragon not to chase my sheep around?</blockquote>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-8" data-step-to=".step-9">Back</button>
-                    <button class="button is-filled" data-step-from=".step-9" data-step-to=".step-10">Next</button>
-                </div>
-            </div>
-            <div class="widget step-10 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p><strong>Step 3: Question tags</strong></p>
-                    <p>Tags categorize posts. They're shown alongside the title, which helps people browsing the list of questions, and they can also be searched for, helping people who are experts in particular topics find questions to answer (like yours).</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-9" data-step-to=".step-10">Back</button>
-                    <button class="button is-filled" data-step-from=".step-10" data-step-to=".step-11">Next</button>
-                </div>
-            </div>
-            <div class="widget step-11 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>You should add at least two to three tags to your question. Good tags are about a topical area of your post, rather than some meta-information (experience level, "urgent", ...). Tags are alphanumerical and use dashes (-) to separate multiple words.</p>
-                    <p>Many tags should already exist, but if you need a new one, you can create them, too.</p>
-                    <p>For your dragon question, you might want to use these tags:</p>
-                    <p>
-                        <span class="badge is-tag">hot-red-firebreather</span>
-                        <span class="badge is-tag">training</span>
-                        <span class="badge is-tag">behavior</span>
-                    </p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-10" data-step-to=".step-11">Back</button>
-                    <button class="button is-filled" data-step-from=".step-11" data-step-to=".step-12">Next</button>
-                </div>
-            </div>
-            <div class="widget step-12 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Fantastic!</p>
-                    <p>Your first question is almost complete. Just check through everything once again to make sure that there are no spelling errors and that everything looks okay. Try to imagine that you don't already know about Martha and your sheep as you review your question. Is the question clear and complete?</p>
-                    <p>Don't worry. You'll be able to edit your question after submission, too.</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-11" data-step-to=".step-12">Back</button>
-                    <button class="button is-filled" data-step-from=".step-12" data-step-to=".step-13">Next</button>
-                </div>
-            </div>
-            <div class="widget step-13 hide">
-                <div class="widget--header">
-                    <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-                    Codidactyl's Hints
-                </div>
-                <div class="widget--body">
-                    <p>Ready?</p>
-                    <p>Let's go. You can now submit your question, so that other users can answer it.</p>
-                </div>
-                <div class="widget--footer">
-                    <button class="button" data-step-from=".step-12" data-step-to=".step-13">Back</button>
-                    <a href="/tour/qa" class="button is-filled">Post question</a>
-                </div>
-            </div>
-        </div>
+    <div class="form-group">
+      <label for="tour-post-body" class="form-element">Body</label>
+      <div class="widget">
+        <%= render 'shared/markdown_tools' %>
+        <textarea class="form-element post-field js-post-field widget--body h-b-0 h-m-0" rows=15 placeholder="Start typing your post..." id="tour-post-body"></textarea>
+        <%= render 'posts/mdhint' %>
+      </div>
     </div>
+
+    <div class="post-preview"></div>
+
+    <div class="form-group">
+      <label for="tour-post-title" class="form-element">Summarize your post with a title:</label>
+      <input id="tour-post-title" class="form-element">
+    </div>
+
+    <div class="form-group">
+      <label class="form-element" for="post_tags_cache">Tags (at least one):</label>
+      <input name="post[tags_cache][]" type="hidden" value="" /><select multiple="multiple" class="form-element js-tag-select" data-tag-set="-1" name="post[tags_cache][]" id="post_tags_cache"><option value=""></option></select>
+    </div>
+
+  </div>
+  <div class="grid--cell is-4">
+    <div class="codidactyl-hints codidactyl-sticky">
+      <div class="widget step-1 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Let's imagine you have a question about dragons.</p>
+          <p>If you'd really had a question about dragons, you'd need to check first whether it's <a href="/help/faq">on-topic for this site</a>, but I checked this for you now already. 😉</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" disabled>Back</button>
+          <button class="button is-filled" data-step-from=".step-1" data-step-to=".step-2">Next</button>
+        </div>
+      </div>
+      <div class="widget step-2 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p><strong>Step 1: Question body</strong></p>
+          <p>Every question starts with a body, which is a full explanation of your question including additional information needed to answer it.</p>
+          <p>I'll guide you through writing a good question body.</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-1" data-step-to=".step-2">Back</button>
+          <button class="button is-filled" data-step-from=".step-2" data-step-to=".step-3">Next</button>
+        </div>
+      </div>
+      <div class="widget step-3 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>You should start your question body with a short summary of your problem. For example, in our case, this could be:</p>
+          <blockquote class="h-ff-code">My dragon Martha has constantly been chasing my sheep around, and I'd like to get her to stop this behavior.</blockquote>
+          <p>Why don't you write (or copy) that into the body form?</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-2" data-step-to=".step-3">Back</button>
+          <button class="button is-filled" data-step-from=".step-3" data-step-to=".step-4">Next</button>
+        </div>
+      </div>
+      <div class="widget step-4 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Next you should add some more detailed information about your specific issue. What exactly has happened? What went wrong? If you have error messages, add them here too.</p>
+          <p>Other users should be able to understand your problems and ideally be able to reproduce the issue.</p>
+          <p>This is how the explanation could look for your dragon Martha.</p>
+          <blockquote class="h-ff-code">Martha is a Hot Red Firebreather, and is five and a half feet long at about a year old (still pretty young, since dragons are only fully grown at three). I've had her for about three months now. She's generally very well-behaved - never breathing fire inside the house and not fighting with my neighbor's old Sapphire Blue Waterspouter. However, every time she sees my (solitary) sheep, she chases him around and bothers him, and it's really not good for the sheep.</blockquote>
+          <p>Formatting tip: Add a blank line to start a new paragraph.</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-3" data-step-to=".step-4">Back</button>
+          <button class="button is-filled" data-step-from=".step-4" data-step-to=".step-5">Next</button>
+        </div>
+      </div>
+      <div class="widget step-5 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Awesome.</p>
+          <p>When you ask a question, we generally expect you to have done some research and to have tried to solve the issue by yourself.</p>
+          <p>Add a short summary of your prior efforts and how they failed. Help the community help you by sharing what you already know, so they know where to start and they don't waste time suggesting things you've already tried.</p>
+          <p>This is how it could look for your dragon question:</p>
+          <blockquote class="h-ff-code">I've asked around and done some research, and the folks at the Dwarven Library told me that I could paint my sheep blue to prevent this from happening. However, I'm not looking to do anything to the sheep - just for training the dragon.</blockquote>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-4" data-step-to=".step-5">Back</button>
+          <button class="button is-filled" data-step-from=".step-5" data-step-to=".step-6">Next</button>
+        </div>
+      </div>
+      <div class="widget step-6 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Now you're almost finished.</p>
+          <p>In some cases, you might want to add some restrictions, what you definitely do not want to do. This helps answerers focus on what you really need.</p>
+          <p>For example, you might not want to tickle the dragon:</p>
+          <blockquote class="h-ff-code">I do not want to use any training methods that involve pain or restricting the dragon in any way, and I'm not looking to do anything to the sheep. I'm pretty experienced in training dragons, but I've never had to deal with this situation before.</blockquote>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-5" data-step-to=".step-6">Back</button>
+          <button class="button is-filled" data-step-from=".step-6" data-step-to=".step-7">Next</button>
+        </div>
+      </div>
+      <div class="widget step-7 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>That's it.</p>
+          <p>You have written your first question body. You can see a preview of how it will look below the text input.</p>
+          <p>You might want to improve the formatting of the post. We use <a href="/help/formatting">Markdown</a> for that. You can also use the buttons at the top of the post editor. Each button has a tooltip.</p>
+          <p>Use <strong>**bold**</strong>, <em>*italics*</em> or <code>`code`</code> formatting and two newlines for new paragraphs. For lists, just use numbers (1., 2., 3.) or bullet points (* or -).</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-6" data-step-to=".step-7">Back</button>
+          <button class="button is-filled" data-step-from=".step-7" data-step-to=".step-8">Next</button>
+        </div>
+      </div>
+      <div class="widget step-8 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p><strong>Step 2: Question title</strong></p>
+          <p>After writing the question body, summarize your question in a title. This summary will be shown to other users looking for posts to answer, so make it clear and specific.</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-7" data-step-to=".step-8">Back</button>
+          <button class="button is-filled" data-step-from=".step-8" data-step-to=".step-9">Next</button>
+        </div>
+      </div>
+      <div class="widget step-9 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Good question titles include neither too much nor too little information. They don't have to tell everything your question includes, but they shouldn't be just a general summary of the related topics (that's what tags are for, to which we'll come a bit later). The title can, but doesn't have to be, a question.</p>
+          <p>For example, the title "Dragon vs Sheep" is not good for our current question and neither is "Stop cute one year old dragon from eating my sheep without painting them blue or restraining the dragon". Instead, use something like this:</p>
+          <blockquote class="h-ff-code">How do I teach my dragon not to chase my sheep around?</blockquote>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-8" data-step-to=".step-9">Back</button>
+          <button class="button is-filled" data-step-from=".step-9" data-step-to=".step-10">Next</button>
+        </div>
+      </div>
+      <div class="widget step-10 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p><strong>Step 3: Question tags</strong></p>
+          <p>Tags categorize posts. They're shown alongside the title, which helps people browsing the list of questions, and they can also be searched for, helping people who are experts in particular topics find questions to answer (like yours).</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-9" data-step-to=".step-10">Back</button>
+          <button class="button is-filled" data-step-from=".step-10" data-step-to=".step-11">Next</button>
+        </div>
+      </div>
+      <div class="widget step-11 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>You should add at least two to three tags to your question. Good tags are about a topical area of your post, rather than some meta-information (experience level, "urgent", ...). Tags are alphanumerical and use dashes (-) to separate multiple words.</p>
+          <p>Many tags should already exist, but if you need a new one, you can create them, too.</p>
+          <p>For your dragon question, you might want to use these tags:</p>
+          <p>
+            <span class="badge is-tag">hot-red-firebreather</span>
+            <span class="badge is-tag">training</span>
+            <span class="badge is-tag">behavior</span>
+          </p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-10" data-step-to=".step-11">Back</button>
+          <button class="button is-filled" data-step-from=".step-11" data-step-to=".step-12">Next</button>
+        </div>
+      </div>
+      <div class="widget step-12 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Fantastic!</p>
+          <p>Your first question is almost complete. Just check through everything once again to make sure that there are no spelling errors and that everything looks okay. Try to imagine that you don't already know about Martha and your sheep as you review your question. Is the question clear and complete?</p>
+          <p>Don't worry. You'll be able to edit your question after submission, too.</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-11" data-step-to=".step-12">Back</button>
+          <button class="button is-filled" data-step-from=".step-12" data-step-to=".step-13">Next</button>
+        </div>
+      </div>
+      <div class="widget step-13 hide">
+        <div class="widget--header">
+          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
+          Codidactyl's Hints
+        </div>
+        <div class="widget--body">
+          <p>Ready?</p>
+          <p>Let's go. You can now submit your question, so that other users can answer it.</p>
+        </div>
+        <div class="widget--footer">
+          <button class="button" data-step-from=".step-12" data-step-to=".step-13">Back</button>
+          <a href="/tour/qa" class="button is-filled">Post question</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

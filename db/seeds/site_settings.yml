@@ -416,3 +416,94 @@
   category: Display
   description: >
     Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
+
+- name: TourMoreBeginningDescription
+  value: >
+    <p>Yay!</p>
+    <p>You have successfully learned the basics of using our Q&A site. However, there are some more
+    things you should know, which differentiate us from other communities.</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the first element on the tour more page. Markdown allowed.
+
+- name: TourMoreCategoriesDescription
+  value: >
+    <p>First, there is more than just pure questions and answers. We have multiple categories
+    (which you can navigate through in the top bar), which structure content. The categories are
+    for different purposes. Click each category to see its description, or click the "Categories"
+    link at the top to see all of them. Here are the current descriptions for this site:</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description of the different categories of the site on the tour more page. Markdown allowed.
+
+- name: TourMorePostTypesDescription
+  value: >
+    <p>We also have more post types than questions and answers.</p>
+    <p>Their usage depends on the category, but it's possible to write</p>
+    <ul>
+        <li>questions (with answers, can be voted and commented on) and</li>
+        <li>articles (without answers, can be voted and commented on).</li>
+    </ul>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description of the different post types on the tour more page. Markdown allowed.
+
+- name: TourMoreMetaDescription
+  value: $FILE site_settings/tour_meta_description.html
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description of the meta page and site on the tour more page. Markdown allowed.
+
+- name: TourMoreDisplayOtherCommunities
+  value: true
+  value_type: boolean
+  community_id: ~
+  category: Tour
+  description: >
+    Whether the tour's more page should display a list of other communities.
+
+- name: TourMoreOtherCommunitiesDescription
+  value: >
+    <p>Did you know that there are other communities, too? You can check them out on
+    <a href="https://codidact.com">codidact.com</a> and decide if you want to join them:</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description for the tour's more page element about other communities. Markdown allowed.
+
+- name: TourMoreProfileDescription
+  value: >
+    <p>By the way, we have generated a user profile for you, which is publicly visible to other users.</p>
+    <p>It's currently mostly blank, but you can <a href="/users/edit/profile">personalize it</a> if you want.</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description for the tour's more page regarding profile personalization. Markdown allowed.
+
+- name: TourMoreSignUpDescription
+  value: >
+    <p>By the way. When this here looks interesting, why don't you
+    <a href="/users/sign_up">sign up</a> and create an account to join our communities?</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description for the tour's more page regarding signing up (user not signed in). Markdown allowed.
+
+- name: TourMoreMoreInformationDescription
+  value: $FILE site_settings/tour_more_information.html
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the description for the tour's more page for where users can find additional information. Markdown allowed.
