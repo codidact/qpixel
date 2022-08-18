@@ -102,9 +102,13 @@
       <div class="widget--body h-ta-center" title="This user is an official Staff member.">
         <i class="fas fa-users-cog"></i> Staff
       </div>
-      <% elsif @user.is_moderator || @user.is_admin %>
+      <% elsif @user.is_admin %>
+      <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
+        <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
+      </div>
+      <% elsif @user.is_moderator %>
       <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
-        <i class="fas fa-shield-alt"></i> Moderator
+        <i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i> Moderator
       </div>
       <% end %>
     </div>
