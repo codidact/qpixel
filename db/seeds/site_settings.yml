@@ -74,18 +74,18 @@
     How many "hot" questions to display in the sidebar.
 
 - name: AdminBadgeCharacter
-  value: ""
+  value: "shield-alt"
   value_type: string
   category: Display
   description: >
-    A character to display after an admin's username to distinguish their role.
+    The fontawesome v5 icon (e.g. shield-alt, hammer, ...) to display after an admin's username to distinguish their role.
 
 - name: ModBadgeCharacter
-  value: ""
+  value: "shield-alt"
   value_type: string
   category: Display
   description: >
-    A character to display after a moderator's username to distinguish their role.
+    The fontawesome v5 icon (e.g. shield-alt, hammer, ...) to display after a moderator's username to distinguish their role.
 
 - name: SoftDeleteTransferUser
   value: -1
