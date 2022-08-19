@@ -348,7 +348,11 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          redirect_to new_user_session_path
+          if SiteSetting['MixedSignIn'] || !SiteSetting['SsoSignIn']
+            redirect_to new_user_session_path
+          else
+            redirect_to new_saml_user_session_path
+          end
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
