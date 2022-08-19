@@ -1,13 +1,14 @@
 Rails.application.routes.draw do
-  # All devise routes except for the usual ones
-  devise_for :users, skip: %i[sessions registrations confirmations unlock passwords saml_authenticatable]
-  # Add normal sign in/sign up, confirmations, registrations, unlocking and password editing routes only if no SSO or mixed.
+  # Add normal sign in/sign up, confirmations, registrations, unlocking and password editing routes only if no SSO or mixed sign in.
   devise_for :users, only: %i[sessions registrations confirmations unlock passwords],
              controllers: { sessions: 'users/sessions', registrations: 'users/registrations' },
              constraints: { url: lambda { |_url| SiteSetting['MixedSignIn'] || !SiteSetting['SsoSignIn'] } }
   # Add SAML routes only when SAML enabled
   devise_for :users, only: :saml_authenticatable,
+             controllers: { saml_sessions: 'users/saml_sessions' },
              constraints: { url: lambda { |_url| SiteSetting['SsoSignIn'] } }
+  # Add any other devise routes that may exist that we did not add yet
+  devise_for :users, skip: %i[sessions registrations confirmations unlock passwords saml_authenticatable]
   devise_scope :user do
     get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
