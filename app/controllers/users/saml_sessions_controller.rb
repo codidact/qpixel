@@ -3,19 +3,11 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # made here should probably also be applied over there.
   def create
     super do |user|
-      if user.deleted?
+      if user.deleted? || user.community_user&.deleted?
         # The IDP already confirmed the sign in, so we can't fool the user any more that their credentials were incorrect.
         sign_out user
         flash[:notice] = nil
         flash[:danger] = 'We could not sign you in because of an issue with your account.'
-        redirect_to root_path
-        return
-      end
-
-      if user.community_user&.deleted?
-        sign_out user
-        flash[:notice] = nil
-        flash[:danger] = 'Your profile on this community has been deleted.'
         redirect_to root_path
         return
       end

@@ -61,7 +61,7 @@ class Users::SessionsController < Devise::SessionsController
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."
-        if SiteSetting['MixedSignIn'] || !SiteSetting['SsoSignIn']
+        if devise_sign_in_enabled?
           redirect_to new_session_path(target_user)
         else
           redirect_to new_saml_session_path(target_user)
