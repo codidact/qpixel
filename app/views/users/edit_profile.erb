@@ -18,6 +18,8 @@
   </div>
 <% end %>
 
+<%= render 'posts/image_upload' %>
+
 <%= form_for current_user, url: update_user_profile_path do |f| %>
   <div class="form-group has-padding-2">
     <img alt="user avatar" class="has-float-right has-margin-2 avatar-64" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
@@ -34,8 +36,6 @@
     <div class="form-caption">What other people call you.</div>
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
-
-  <%= render 'posts/image_upload' %>
 
   <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user %>
 
