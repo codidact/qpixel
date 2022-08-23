@@ -15,4 +15,4 @@
 'email': 'saml_init_email'
 'urn:mace:dir:attribute-def:email': 'saml_init_email'
 'displayName': 'saml_init_username_no_update'
-'urn:mace:dir:attribute-def': 'saml_init_username_no_update'
+'urn:mace:dir:attribute-def:displayName': 'saml_init_username_no_update'
