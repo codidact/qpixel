@@ -340,12 +340,20 @@ class ApplicationController < ActionController::Base
     helpers.user_signed_in?
   end
 
+  def sso_sign_in_enabled?
+    SiteSetting['SsoSignIn']
+  end
+
+  def devise_sign_in_enabled?
+    SiteSetting['MixedSignIn'] || !sso_sign_in_enabled?
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          if SiteSetting['MixedSignIn'] || !SiteSetting['SsoSignIn']
+          if devise_sign_in_enabled?
             redirect_to new_user_session_path
           else
             redirect_to new_saml_user_session_path
