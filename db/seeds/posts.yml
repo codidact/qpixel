@@ -19,23 +19,15 @@
   body_markdown: $FILE posts/coc.html
   body: $FILE posts/coc.html
   doc_slug: code-of-conduct
-  help_category: About Codidact
+  help_category: About the Network
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Codidact FAQ
+  title: Network FAQ
   body_markdown: $FILE posts/global_faq.html
   body: $FILE posts/global_faq.html
-  doc_slug: codidact-faq
-  help_category: About Codidact
-  community_id: ~
-
-- post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Guidelines for promotional content in posts on Codidact communities
-  body_markdown: $FILE posts/spam.html
-  body: $FILE posts/spam.html
-  doc_slug: spam
-  help_category: About Codidact
+  doc_slug: network-faq
+  help_category: About the Network
   community_id: ~
 
 - post_type_id: <%= HelpDoc.post_type_id %>
@@ -88,21 +80,21 @@
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidelines for referencing and quoting on Codidact communities
+  title: Guidelines for referencing and quoting
   body_markdown: $FILE posts/referencing.html
   body: $FILE posts/referencing.html
   doc_slug: referencing
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidance on available licenses on Codidact communities
+  title: Guidance on available licenses
   body_markdown: $FILE posts/licenses.html
   body: $FILE posts/licenses.html
   doc_slug: licenses
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Codidact search options
+  title: Search options
   body_markdown: $FILE posts/search.html
   body: $FILE posts/search.html
   doc_slug: search
