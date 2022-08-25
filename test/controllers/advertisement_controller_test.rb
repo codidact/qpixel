@@ -6,7 +6,7 @@ class AdvertisementControllerTest < ActionController::TestCase
   test 'index should return html' do
     get :index
     assert_response(200)
-    assert_equal response.content_type, 'text/html'
+    assert_equal response.content_type, 'text/html; charset=utf-8'
   end
 
   test 'image paths should return png' do
