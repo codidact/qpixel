@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_21_195100) do
+ActiveRecord::Schema.define(version: 2022_08_18_143017) do
 
   create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
@@ -86,18 +86,18 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
 
   create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.text "short_wiki", limit: 16777215
+    t.text "short_wiki", size: :medium
     t.bigint "community_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "display_post_types", limit: 16777215
+    t.text "display_post_types", size: :medium
     t.boolean "is_homepage"
     t.bigint "tag_set_id"
     t.integer "min_trust_level"
     t.string "button_text"
     t.string "color_code"
-    t.text "asking_guidance_override", limit: 16777215
-    t.text "answering_guidance_override", limit: 16777215
+    t.text "asking_guidance_override", size: :medium
+    t.text "answering_guidance_override", size: :medium
     t.integer "min_view_trust_level"
     t.bigint "license_id"
     t.integer "sequence"
@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
 
   create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.text "description", limit: 16777215
+    t.text "description", size: :medium
     t.boolean "active"
     t.boolean "requires_other_post"
     t.bigint "community_id"
@@ -216,9 +216,9 @@ ActiveRecord::Schema.define(version: 2021_11_21_195100) do
     t.bigint "community_id"
     t.bigint "user_id"
     t.string "klass"
-    t.text "message", limit: 16777215
-    t.text "backtrace", limit: 16777215
-    t.text "request_uri", limit: 16777215, null: false
+    t.text "message", size: :medium
+    t.text "backtrace", size: :medium
+    t.text "request_uri", size: :medium, null: false
     t.string "host", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
