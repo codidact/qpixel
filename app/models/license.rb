@@ -4,7 +4,7 @@ class License < ApplicationRecord
   scope :enabled, -> { where(enabled: true) }
   scope :disabled, -> { where(enabled: false) }
 
-  validates :name, uniqueness: { scope: [:community_id] }
+  validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   def self.default_order(category = nil, user_default = nil)
     if category.present? && user_default.present?

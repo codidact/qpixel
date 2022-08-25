@@ -4,7 +4,7 @@ class PostType < ApplicationRecord
   has_many :categories, through: :category_post_types
   belongs_to :answer_type, required: false, class_name: 'PostType'
 
-  validates :name, uniqueness: true
+  validates :name, uniqueness: { case_sensitive: false }
   validates :answer_type_id, presence: true, if: :has_answers?
 
   def reactions
