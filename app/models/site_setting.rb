@@ -3,7 +3,7 @@
 class SiteSetting < ApplicationRecord
   belongs_to :community
 
-  validates :name, uniqueness: { scope: [:community_id] }
+  validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   scope :for_community_id, ->(community_id) { where(community_id: community_id) }
   scope :global, -> { for_community_id(nil) }
