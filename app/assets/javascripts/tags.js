@@ -28,6 +28,11 @@ $(() => {
     const useIds = $tgt.attr('data-use-ids') === 'true';
     $tgt.select2({
       tags: $tgt.attr('data-create') !== 'false',
+      insertTag: function (data, tag) {
+        tag.desc = "(Create new tag)"
+        // Insert the tag at the end of the results
+        data.push(tag);
+      },
       ajax: {
         url: '/tags',
         data: function (params) {
