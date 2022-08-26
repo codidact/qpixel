@@ -507,3 +507,11 @@
   category: Tour
   description: >
     Displayed as the description for the tour's more page for where users can find additional information. Markdown allowed.
+
+- name: PostBodyListTruncateLength
+  value: 200
+  value_type: integer
+  category: Display
+  description: >
+    The content of a post is shown in short in lists (e.g. category post overview or in search).
+    This setting controls how many characters of a post are shown.

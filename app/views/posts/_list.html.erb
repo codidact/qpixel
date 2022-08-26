@@ -35,6 +35,11 @@
       <%= post.duplicate_post && post.post_type.is_closeable && post.closed ? "[duplicate]" : "" %>
       <% end %>
     </div>
+    <% if (SiteSetting['PostBodyListTruncateLength'] || 0) > 0 %>
+      <p class="post-list--content">
+        <%= strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200) %>
+      </p>
+    <% end %>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
       <% if post.post_type.has_answers? %>
         <span class="answer-count <%= post.answer_count == 0 ? 'badge is-tag is-red is-small' : 'h-c-green-700' %>">
