@@ -6,7 +6,7 @@ class AdvertisementControllerTest < ActionController::TestCase
   test 'index should return html' do
     get :index
     assert_response(200)
-    assert_equal response.content_type, 'text/html; charset=utf-8'
+    assert_equal 'text/html', response.media_type
   end
 
   test 'image paths should return png' do
@@ -15,13 +15,13 @@ class AdvertisementControllerTest < ActionController::TestCase
     [:codidact, :community].each do |path|
       get path
       assert_response(200)
-      assert_equal response.content_type, 'image/png'
+      assert_equal 'image/png', response.media_type
     end
   end
 
   test 'post image path should return png' do
     get :specific_question, params: { id: posts(:question_one).id }
     assert_response(200)
-    assert_equal response.content_type, 'image/png'
+    assert_equal 'image/png', response.media_type
   end
 end
