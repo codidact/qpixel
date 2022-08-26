@@ -64,7 +64,7 @@ Rails.application.configure do
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true
     host_ip = `/sbin/ip route|awk '/default/ { print $3 }'`.strip
-    config.web_console.whitelisted_ips << host_ip
+    config.web_console.allowed_ips << host_ip
 
     # ==> Configuration for :confirmable
     # A period that the user is allowed to access the website even without
