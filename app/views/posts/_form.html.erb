@@ -154,7 +154,8 @@
     </div>
 
     <% if edit_comment %>
-      <div class="form-group">
+    <% if current_user.is_admin %>
+    <div class="form-group">
         <div class="checkbox-setting">
           <div class="checkbox-setting--desc">
             <%= label_tag :network_push, 'Push to network', class: 'form-element' %>
@@ -165,6 +166,7 @@
           </div>
         </div>
       </div>
+    <% end %>
     <% end %>
   <% end %>
 
