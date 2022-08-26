@@ -60,7 +60,7 @@ module Advertisements::CommunityHelper
       slogan.gravity = NorthGravity
       position = 0
       wrap_text(SiteSetting['SiteAdSlogan'], 500, 30).split("\n").each do |line|
-        slogan.annotate ad, 500, 100, 50, 225 + position * 45, line do
+        slogan.annotate ad, 500, 100, 50, 225 + (position * 45), line do
           self.fill = '#333333'
         end
         position += 1

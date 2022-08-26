@@ -50,10 +50,10 @@ class SiteSetting < ApplicationRecord
     settings = if missing.empty?
                  {}
                else
-                 SiteSetting.where(name: name, community_id: missing).map { |s| [s.community_id, s] }.to_h
+                 SiteSetting.where(name: name, community_id: missing).to_h { |s| [s.community_id, s] }
                end
-    Rails.cache.write_multi missing.map { |cid| [keys[cid], settings[cid]&.typed] }.to_h
-    communities.map do |c|
+    Rails.cache.write_multi(missing.to_h { |cid| [keys[cid], settings[cid]&.typed] })
+    communities.to_h do |c|
       [
         c.id,
         if cached.include?(keys[c.id])
@@ -66,7 +66,7 @@ class SiteSetting < ApplicationRecord
           settings[nil]&.typed
         end
       ]
-    end.to_h
+    end
   end
 end
 

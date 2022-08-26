@@ -140,7 +140,7 @@ class ApplicationController < ActionController::Base
                        "You may only suggest #{max_edits} edits per day."
                      else
                        "You may only suggest #{max_edits} edits per day. " \
-                       'Once you have some well-received posts, that limit will increase.'
+                         'Once you have some well-received posts, that limit will increase.'
                      end
 
     if recent_edits >= max_edits

@@ -24,7 +24,7 @@ class VoteTest < ActiveSupport::TestCase
     cpt = CategoryPostType.find_by(category: posts(:question_two).category, post_type: posts(:question_two).post_type)
     rep_change_up = cpt.upvote_rep
     rep_change_down = cpt.downvote_rep
-    expected_rep_change = 3 * rep_change_up + 2 * rep_change_down
+    expected_rep_change = (3 * rep_change_up) + (2 * rep_change_down)
 
     post.votes.create([
                         { user: users(:standard_user), recv_user: author, vote_type: 1 },
@@ -45,7 +45,7 @@ class VoteTest < ActiveSupport::TestCase
     cpt = CategoryPostType.find_by(category: posts(:answer_one).category, post_type: posts(:answer_one).post_type)
     rep_change_up = cpt.upvote_rep
     rep_change_down = cpt.downvote_rep
-    expected = 4 * rep_change_up + 1 * rep_change_down
+    expected = (4 * rep_change_up) + (1 * rep_change_down)
     assert_equal expected, Vote.total_rep_change(post.votes)
   end
 end

@@ -46,7 +46,7 @@ module Advertisements::CodidactHelper
       slogan.gravity = NorthGravity
       position = 0
       wrap_text('Join our communities or build your own on codidact.com.', 500, 30).split("\n").each do |line|
-        slogan.annotate ad, 500, 100, 50, 300 + position * 45, line do
+        slogan.annotate ad, 500, 100, 50, 300 + (position * 45), line do
           self.fill = '#333333'
         end
         position += 1

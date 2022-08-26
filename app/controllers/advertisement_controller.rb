@@ -89,10 +89,10 @@ class AdvertisementController < ApplicationController
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
-    Post.undeleted.joins(:post_type).where(post_types: { is_top_level: true })\
-        .where(posts: { last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now })\
-        .where(posts: { category: category })\
-        .where('posts.score > ?', SiteSetting['HotPostsScoreThreshold'])\
+    Post.undeleted.joins(:post_type).where(post_types: { is_top_level: true }) \
+        .where(posts: { last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now }) \
+        .where(posts: { category: category }) \
+        .where('posts.score > ?', SiteSetting['HotPostsScoreThreshold']) \
         .order('posts.score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
   end
 

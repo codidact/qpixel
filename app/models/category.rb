@@ -32,14 +32,14 @@ class Category < ApplicationRecord
 
   def self.by_lowercase_name(name)
     categories = Rails.cache.fetch 'categories/by_lowercase_name' do
-      Category.all.map { |c| [c.name.downcase, c] }.to_h
+      Category.all.to_h { |c| [c.name.downcase, c] }
     end
     categories[name]
   end
 
   def self.by_id(id)
     categories = Rails.cache.fetch 'categories/by_id' do
-      Category.all.map { |c| [c.id, c] }.to_h
+      Category.all.to_h { |c| [c.id, c] }
     end
     categories[id]
   end

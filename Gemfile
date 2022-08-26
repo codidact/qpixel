@@ -67,7 +67,7 @@ gem 'ruby-progressbar', '~> 1.11'
 gem 'rmagick'
 
 # Payments. Kinda important, y'know.
-gem 'stripe', '~> 5.55' # Taeir: Stripe did 2 major releases this year, but I cannot easily test whether the new versions work well. Therefore, I left this at the last v5.
+gem 'stripe', '~> 5.55' # Taeir: Left as last v5. Stripe did 2 major releases this year, but I cannot easily test.
 
 # EeeMAILS!
 gem 'premailer-rails', '~> 1.11'

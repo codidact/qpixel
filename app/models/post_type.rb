@@ -21,7 +21,7 @@ class PostType < ApplicationRecord
 
   def self.mapping
     Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
-      PostType.all.map { |pt| [pt.name, pt.id] }.to_h
+      PostType.all.to_h { |pt| [pt.name, pt.id] }
     end
   end
 

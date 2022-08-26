@@ -48,17 +48,20 @@ class ModeratorController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
+  VoteData = Struct.new(:cast, :received)
+  VoteSummary = Struct.new(:breakdown, :types, :total)
+
   def user_vote_summary
     @user = User.find params[:id]
     @users = User.where(id: Vote.where(user: @user).select(:recv_user_id).distinct)
                  .or(User.where(id: Vote.where(recv_user: @user).select(:user_id).distinct))
-    @vote_data = OpenStruct.new(
-      cast: OpenStruct.new(
+    @vote_data = VoteData.new(
+      cast: VoteSummary.new(
         breakdown: Vote.where(user: @user).group(:recv_user_id, :vote_type).count,
         types: Vote.where(user: @user).group(:vote_type).count,
         total: Vote.where(user: @user).count
       ),
-      received: OpenStruct.new(
+      received: VoteSummary.new(
         breakdown: Vote.where(recv_user: @user).group(:user_id, :vote_type).count,
         types: Vote.where(recv_user: @user).group(:vote_type).count,
         total: Vote.where(recv_user: @user).count
