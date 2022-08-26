@@ -12,7 +12,7 @@ module UsersHelper
 
   def stack_oauth_url
     "https://stackoverflow.com/oauth?client_id=#{SiteSetting['SEApiClientId']}" \
-    "&scope=&redirect_uri=#{stack_redirect_url}"
+      "&scope=&redirect_uri=#{stack_redirect_url}"
   end
 
   def can_change_category(user, target)

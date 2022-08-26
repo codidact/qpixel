@@ -169,7 +169,7 @@ class Post < ApplicationRecord
 
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
-             .map { |_k, v| [v.first.reaction_type, v] }.to_h
+             .to_h { |_k, v| [v.first.reaction_type, v] }
   end
 
   private

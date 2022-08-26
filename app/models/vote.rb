@@ -35,7 +35,7 @@ class Vote < ApplicationRecord
 
   def rep_change(direction)
     change = CategoryPostType.rep_changes[[post.category_id, post.post_type_id]][vote_type] || 0
-    recv_user.update!(reputation: recv_user.reputation + direction * change)
+    recv_user.update!(reputation: recv_user.reputation + (direction * change))
   end
 
   def post_not_deleted

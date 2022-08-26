@@ -53,7 +53,7 @@ class UsersController < ApplicationController
       end
       format.json do
         data = [:id, :username, :is_moderator, :is_admin, :is_global_moderator, :is_global_admin, :trust_level,
-                :se_acct_id].map { |a| [a, @user.send(a)] }.to_h
+                :se_acct_id].to_h { |a| [a, @user.send(a)] }
         render json: data
       end
     end
