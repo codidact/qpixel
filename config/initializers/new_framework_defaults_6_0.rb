@@ -27,8 +27,8 @@ Rails.application.config.active_job.return_false_on_aborted_enqueue = true
 #                   You can also leave these unset.
 #
 # Send Active Storage analysis and purge jobs to dedicated queues.
-# Rails.application.config.active_storage.queues.analysis = :active_storage_analysis
-# Rails.application.config.active_storage.queues.purge    = :active_storage_purge
+Rails.application.config.active_storage.queues.analysis = :active_storage_analysis
+Rails.application.config.active_storage.queues.purge    = :active_storage_purge
 
 # When assigning to a collection of attachments declared via `has_many_attached`, replace existing
 # attachments instead of appending. Use #attach to add new attachments without replacing existing ones.
@@ -44,7 +44,7 @@ Rails.application.config.active_storage.replace_on_assign_to_many = true
 # If you send mail in the background, job workers need to have a copy of
 # MailDeliveryJob to ensure all delivery jobs are processed properly.
 # Make sure your entire app is migrated and stable on 6.0 before using this setting.
-# Rails.application.config.action_mailer.delivery_job = "ActionMailer::MailDeliveryJob"
+Rails.application.config.action_mailer.delivery_job = "ActionMailer::MailDeliveryJob"
 
 # Enable the same cache key to be reused when the object being cached of type
 # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
