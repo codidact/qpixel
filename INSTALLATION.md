@@ -189,8 +189,12 @@ If you are running a development server, you might not care a lot about what's i
 - Spam policy  
 - Global (network) FAQ
 
-The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like.  We recommend reviewing all of the content in these topics.  There are two ways to edit these topics:
+The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like.  We recommend reviewing all of the content in these topics.  There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
 
-- Edit the seed files before seeding your database.  
-- Edit the topics in the UI.  As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities.
+If you edit the seed files, use the following command to add them to your database:
+
+`UPDATE_POSTS=true rails db:seed`
+
+You can also edit the topics in the UI.  As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities.  Administrators can update help topics in this way at any time.
+
 
