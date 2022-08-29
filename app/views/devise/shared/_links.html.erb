@@ -1,10 +1,9 @@
-<%- if controller_name != 'sessions' && controller_name != 'saml_sessions' %>
-  <%- if devise_sign_in_enabled? %>
-    <%= link_to "Sign in", new_session_path(resource_name) %><br />
-  <% end %>
-  <%- if sso_sign_in_enabled? %>
-    <%= link_to "SSO Sign in", new_saml_session_path(resource_name) %><br />
-  <% end %>
+<%- if controller_name != 'sessions' && devise_sign_in_enabled? %>
+  <%= link_to "Sign in", new_session_path(resource_name) %><br />
+<% end %>
+
+<%- if controller_name != 'saml_sessions' && sso_sign_in_enabled? %>
+  <%= link_to "SSO Sign in", new_saml_user_session_path(resource_name) %><br />
 <% end %>
 
 <%- if devise_mapping.registerable? && controller_name != 'registrations' && devise_sign_in_enabled? %>

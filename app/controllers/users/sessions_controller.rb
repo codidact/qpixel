@@ -64,7 +64,7 @@ class Users::SessionsController < Devise::SessionsController
         if devise_sign_in_enabled?
           redirect_to new_session_path(target_user)
         else
-          redirect_to new_saml_session_path(target_user)
+          redirect_to new_saml_user_session_path(target_user)
         end
       end
     else
