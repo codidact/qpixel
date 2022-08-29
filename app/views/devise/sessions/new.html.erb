@@ -5,6 +5,13 @@
   <a href="https://codidact.com/">Codidact communities</a>.
 </div>
 
+<% if sso_sign_in_enabled? %>
+  <div class="notice is-info has-margin-bottom-4">
+    <i class="fas fa-info-circle"></i> You can also sign in with your Single Sign-On provider.
+    <%= link_to "SSO Sign in", new_saml_session_path(resource_name), class: 'button is-primary is-filled' %>
+  </div>
+<% end %>
+
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), method: :post) do |f| %>
   <div class="form-group">
     <%= f.label :email, class: "form-element" %>
