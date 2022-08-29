@@ -341,11 +341,11 @@ class ApplicationController < ActionController::Base
   end
 
   def sso_sign_in_enabled?
-    SiteSetting['SsoSignIn']
+    helpers.sso_sign_in_enabled?
   end
 
   def devise_sign_in_enabled?
-    SiteSetting['MixedSignIn'] || !sso_sign_in_enabled?
+    helpers.devise_sign_in_enabled?
   end
 
   def authenticate_user!(_fav = nil, **_opts)
