@@ -51,4 +51,12 @@ module UsersHelper
       link_to user.rtl_safe_username, user_url(user), { dir: 'ltr' }.merge(link_opts)
     end
   end
+
+  def sso_sign_in_enabled?
+    SiteSetting['SsoSignIn']
+  end
+
+  def devise_sign_in_enabled?
+    SiteSetting['MixedSignIn'] || !sso_sign_in_enabled?
+  end
 end
