@@ -67,3 +67,9 @@ auto_follow_comment_threads:
   description: >
     Automatically follow any comment thread you participate in.
   default: 'true'
+
+sticky_header:
+  type: boolean
+  description: >
+    Make the Codidact navigation bar sticky
+  default: false
