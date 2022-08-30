@@ -254,12 +254,18 @@ class ApplicationController < ActionController::Base
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
     end
+
+    # We need to filter out pinned links that aren't posts
+    # because for whatever reason, where.not(id: nil) will return an empty query
+    pinned_post_ids = @pinned_links.pluck(:post_id).select(&:present?)
+  
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
+            .where.not(id: pinned_post_ids)
             .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
       end
     end
