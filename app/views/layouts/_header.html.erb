@@ -1,7 +1,11 @@
 <% logo_path = SiteSetting['SiteLogoPath'] %>
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
+<% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
-<header class="header is-small has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>">
+<header class="header is-small has-margin-0 <%= SiteSetting['SiteHeaderIsDark'] ? 'is-dark' : '' %>"
+    <% if sticky_header %>
+      style="position:sticky;top:0;"
+    <% end %>>
   <div class="container header--container">
     <div class="header--brand">
       <% if mobile_logo_path.present? %>
