@@ -138,6 +138,14 @@ It is also possible to open up a rails console to do more complicated things:
 $ docker compose exec uwsgi rails c
 ```
 
+Please keep in mind that for database related actions to work as expected, you first need to run the following in the rails console.
+
+```ruby
+RequestContext.community = Community.first
+```
+
+This correctly scopes all database actions to the first (and probably only) community in your system.
+
 ### 10. Stop Containers
 
 When you are finished, don't forget to clean up.
