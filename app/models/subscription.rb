@@ -14,12 +14,14 @@ class Subscription < ApplicationRecord
     case type
     when 'all'
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
-              .where('created_at >= ?', last_sent_at)
+              .where(Question.arel_table[:created_at].gteq(last_sent_at || created_at))
     when 'tag'
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .where(Question.arel_table[:created_at].gteq(last_sent_at || created_at))
               .joins(:tags).where(tags: { name: qualifier })
     when 'user'
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .where(Question.arel_table[:created_at].gteq(last_sent_at || created_at))
               .where(user_id: qualifier)
     when 'interesting'
       RequestContext.community = community # otherwise SiteSetting#[] doesn't work
@@ -28,6 +30,7 @@ class Subscription < ApplicationRecord
               .order(Arel.sql('RAND()'))
     when 'category'
       Question.unscoped.where(community: community, post_type_id: Question.post_type_id)
+              .where(Question.arel_table[:created_at].gteq(last_sent_at || created_at))
               .where(category_id: qualifier)
     end&.order(created_at: :desc)&.limit(25)
   end
