@@ -29,6 +29,7 @@ $(() => {
 
     $tgt.parent()[0].outerHTML = data;
     window.MathJax && MathJax.typeset();
+    window.hljs && hljs.highlightAll();
   });
 
   $(document).on('click', '.js-collapse-thread', async ev => {
@@ -178,8 +179,8 @@ $(() => {
   });
 
   $(document).on('click', '.comment-form input[type="submit"]', async evt => {
-      // Comment posting has been clicked.
-      $(evt.target).attr('data-disable-with', 'Posting...');
+    // Comment posting has been clicked.
+    $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
   const pingable = {};
@@ -223,7 +224,7 @@ $(() => {
         const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
         const id = e[1];
         return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
-                           .attr('data-user-id', id);
+          .attr('data-user-id', id);
       });
       QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
@@ -231,7 +232,7 @@ $(() => {
       QPixel.Popup.destroyAll();
     }
   });
-  
+
   $('.js-new-thread-link').on('click', async ev => {
     ev.preventDefault();
     const $tgt = $(ev.target);
@@ -240,7 +241,7 @@ $(() => {
 
     if ($thread.is(':hidden')) {
       $thread.show();
-    } 
+    }
     else {
       $thread.hide();
     }
