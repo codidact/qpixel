@@ -125,7 +125,7 @@ Running in this docker-compose setup, the system does not actually send emails. 
 This is especially useful to confirm other accounts that you make in the container.
 
 ### 9. Running commands in the docker container
-Often, it may be useful to run some ruby/rails code directly, e.g. for debugging purposes. YOu can do so with the following command:
+Often, it may be useful to run some ruby/rails code directly, e.g. for debugging purposes. You can do so with the following command:
 
 ```bash
 $ docker compose exec uwsgi rails runner "<ruby code here>"
