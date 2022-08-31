@@ -127,6 +127,7 @@ $(() => {
         linkify: true
       });
       window.converter.use(window.markdownitFootnote);
+      window.converter.use(window.latexEscape);
     }
     window.setTimeout(() => {
       const converter = window.converter;
