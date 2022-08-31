@@ -10,8 +10,8 @@ if [ ! -f "/db-created" ]; then
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
     rails db:migrate RAILS_ENV=development
-    rails db:seed
     rails r docker/create_admin_and_community.rb
+    UPDATE_POSTS=true rails db:seed
     touch /db-created
 fi
 

@@ -2,10 +2,32 @@
 
 A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
 
-## 1. Build Containers
+## 1. Setup and Secrets
 
-You should first build the images, before making any changes to config files. We do this so the container
-is not built with secrets.
+The `docker-compose.yml` file uses a `.env` file in the same directory to load dynamic values used when the docker containers are initialized.
+
+This is useful for setting up custom values locally. Additionally, your secrets (the mysql database credentials and admin user name) are inserted into the running container through the `docker/env` file.
+
+Both the `.env` file and the `docker/env` file are gitignored, so you can change values to suit. These files need to be copied to the correct locations with some default values. You can do this in one step by executing a bash script.
+
+```bash
+# ensure script is executable, from the project root:
+chmod +x docker/local-setup.sh
+docker/local-setup.sh
+```
+
+Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
+
+## 2. Database File
+Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/env) file. The `config/database.yml` should already be gitignored.
+
+The `COMMUNITY_NAME` value defined in the `.env` file defines the initial community name on your local DB.
+
+the `COMMUNITY_ADMIN_USERNAME`, `COMMUNITY_ADMIN_PASSWORD` and `COMMUNITY_ADMIN_EMAIL` values in the `docker/env` file define the first user you can log in as. Please note that the password should be at least 6 characters long.
+
+## 3. Build Containers
+
+Next, you should build the images.
 
 ```bash
 docker-compose build
@@ -18,29 +40,6 @@ docker-compose build uwsgi
 docker-compose build db
 docker-compose build redis
 ```
-
-## 2. Setup and Secrets
-
-The `docker-compose.yml` file uses a `.env` file in the same directory to load dynamic values used when the docker containers are initialized.
-
-This is useful for setting up custom values locally. Additionally, your secrets (the mysql database credentials and admin user name) are inserted into the running container through the `docker/env` file.
-
-Both the `.env` file and the `docker/env` file are gitignored, so you can change values to suit, these filed need to be copied to the correct locations with some default values. You can do this in one step by executing a bash script.
-
-```bash
-# ensure script is executable, from the project root:
-chmod +x docker/local-setup.sh
-docker/local-setup.sh
-```
-
-Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
-
-## 3. Database File
-Ensure `config/database.yml` has the username and password as defined in [docker/env](dummy.env) file. The `config/database.yml` should already be gitignored.
-
-The `COMMUNITY_NAME` value defined in the `.env` file defines the initial community name on your local DB.
-
-the `COMMUNITY_ADMIN_USERNAME`, `COMMUNITY_ADMIN_PASSWORD` and `COMMUNITY_ADMIN_EMAIL` values in the `docker/env` file define the first user you can log in as - however you will need to follow the instructions below to ensure you can log in as that user.
 
 ## 4. Start Containers
 
@@ -73,17 +72,7 @@ and see the interface.
 
 ![img/interface.png](../img/interface.png)
 
-Before you login, since we don't have email configured, you'll need to set a manual
-`confirmed_at` variable for your newly created user. You can do this easily with a single
-command to the container:
-
-```bash
-$ docker exec qpixel_uwsgi_1 rails runner "User.second.update(confirmed_at: DateTime.now)"
-Running via Spring preloader in process 111
-```
-
-The first user is the system user, so the second user is the admin created during the
-start of the container. And you can of course do this same command for any future users that you don't want to require email confirmation for. You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or greater, otherwise the user won't be created. 
+You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or longer, otherwise the user won't be created.
 
 ## 5. Login
 
@@ -123,7 +112,25 @@ And then click to "Save Post in Q&A"
 
 That's it!
 
-### 8. Stop Containers
+## 8. Accessing emails
+Running in this docker-compose setup, the system does not actually send emails. However, you can see the emails that would have been sent by going to [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener).
+This is especially useful to confirm other accounts that you make in the container.
+
+### 9. Running commands in the docker container
+Often, it may be useful to run some ruby/rails code directly, e.g. for debugging purposes. YOu can do so with the following command:
+
+```bash
+$ docker exec qpixel_uwsgi_1 rails runner "<ruby code here>"
+Running via Spring preloader in process 111
+```
+
+It is also possible to open up a rails console to do more complicated things:
+
+```bash
+$ docker exec qpixel_uwsgi_1 rails c
+```
+
+### 10. Stop Containers
 
 When you are finished, don't forget to clean up.
 
@@ -132,7 +139,7 @@ docker-compose stop
 docker-compose rm
 ```
 
-### 9. Next steps
+### 11. Next steps
 
 The current goal of this container is to provide a development environment for
 working on QPixel. This deployment has not been tested with email notifications
