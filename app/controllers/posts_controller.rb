@@ -276,7 +276,7 @@ class PostsController < ApplicationController
 
     if @post.update(closed: true, closed_by: current_user, closed_at: DateTime.now, last_activity: DateTime.now,
                     last_activity_by: current_user, close_reason: reason, duplicate_post: duplicate_of)
-      PostHistory.question_closed(@post, current_user)
+      PostHistory.question_closed(@post, current_user, comment: "Closed as #{reason.name}")
       render json: { status: 'success' }
     else
       render json: { status: 'failed', message: helpers.i18ns('posts.cant_close_post'),
