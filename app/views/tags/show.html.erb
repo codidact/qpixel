@@ -78,6 +78,9 @@
   <div>
     <%= short_number_to_human post_count, precision: 1, significant: false %>
     <%= 'post'.pluralize(post_count) %>
+    <%= link_to 'Subscribe',
+                new_subscription_path(type: 'tag', qualifier: @tag.name, return_to: request.path),
+                class: 'button is-outlined' %>
   </div>
 
   <div class="button-list is-gutterless has-margin-2">
