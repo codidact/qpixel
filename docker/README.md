@@ -2,6 +2,14 @@
 
 A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
 
+To use docker compose, you need to install the docker-compose-plugin. For a system like debian or ubuntu, you can use the following command.
+
+```bash
+sudo apt-get install docker-compose-plugin
+```
+
+Depending on your setup, you may need to prefix every docker command with sudo.
+
 ## 1. Setup and Secrets
 
 The `docker-compose.yml` file uses a `.env` file in the same directory to load dynamic values used when the docker containers are initialized.
@@ -30,15 +38,15 @@ the `COMMUNITY_ADMIN_USERNAME`, `COMMUNITY_ADMIN_PASSWORD` and `COMMUNITY_ADMIN_
 Next, you should build the images.
 
 ```bash
-docker-compose build
+docker compose build
 ```
 
 If you need to just rebuild one container, you can do that too.
 
 ```bash
-docker-compose build uwsgi
-docker-compose build db
-docker-compose build redis
+docker compose build uwsgi
+docker compose build db
+docker compose build redis
 ```
 
 ## 4. Start Containers
@@ -46,7 +54,7 @@ docker-compose build redis
 Then start your containers! 
 
 ```bash
-docker-compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
+docker compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
 Creating qpixel_redis_1 ... done
 Creating qpixel_db_1    ... done
 Creating qpixel_uwsgi_1 ... done
@@ -120,14 +128,14 @@ This is especially useful to confirm other accounts that you make in the contain
 Often, it may be useful to run some ruby/rails code directly, e.g. for debugging purposes. YOu can do so with the following command:
 
 ```bash
-$ docker exec qpixel_uwsgi_1 rails runner "<ruby code here>"
+$ docker compose exec uwsgi rails runner "<ruby code here>"
 Running via Spring preloader in process 111
 ```
 
 It is also possible to open up a rails console to do more complicated things:
 
 ```bash
-$ docker exec qpixel_uwsgi_1 rails c
+$ docker compose exec uwsgi rails c
 ```
 
 ### 10. Stop Containers
@@ -135,8 +143,8 @@ $ docker exec qpixel_uwsgi_1 rails c
 When you are finished, don't forget to clean up.
 
 ```bash
-docker-compose stop
-docker-compose rm
+docker compose stop
+docker compose rm
 ```
 
 ### 11. Next steps
