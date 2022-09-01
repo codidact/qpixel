@@ -9,7 +9,7 @@ gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 4.3.12' # Taeir: Check migration to puma 5
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1.0'
 gem 'rails-html-sanitizer', '~> 1.4'
 gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'

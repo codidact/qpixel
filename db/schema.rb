@@ -2,17 +2,17 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_18_143017) do
+ActiveRecord::Schema.define(version: 2022_09_01_194345) do
 
-  create_table "abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
     t.text "description"
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_id"], name: "index_abilities_on_community_id"
   end
 
-  create_table "ability_queues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "ability_queues", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.text "comment"
     t.boolean "completed"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_user_id"], name: "index_ability_queues_on_community_user_id"
   end
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -54,10 +54,17 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "audit_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "audit_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "log_type"
     t.string "event_type"
     t.string "related_type"
@@ -74,7 +81,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
-  create_table "blocked_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "blocked_items", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "item_type"
     t.text "value"
     t.datetime "expires"
@@ -84,7 +91,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "categories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "short_wiki", size: :medium
     t.bigint "community_id"
@@ -109,12 +116,12 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
 
-  create_table "categories_moderator_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_moderator_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id"
     t.bigint "tag_id"
   end
 
-  create_table "categories_post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_post_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id", null: false
     t.bigint "post_type_id", null: false
     t.integer "upvote_rep", default: 0, null: false
@@ -122,17 +129,17 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["category_id", "post_type_id"], name: "index_categories_post_types_on_category_id_and_post_type_id", unique: true
   end
 
-  create_table "categories_required_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_required_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id"
     t.bigint "tag_id"
   end
 
-  create_table "categories_topic_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "categories_topic_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id"
     t.bigint "tag_id"
   end
 
-  create_table "close_reasons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "close_reasons", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "description", size: :medium
     t.boolean "active"
@@ -141,7 +148,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_id"], name: "index_close_reasons_on_community_id"
   end
 
-  create_table "comment_threads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "comment_threads", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "title"
     t.integer "reply_count", default: 0, null: false
     t.bigint "post_id"
@@ -164,7 +171,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["post_id"], name: "index_comment_threads_on_post_id"
   end
 
-  create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "comments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "post_id"
@@ -183,7 +190,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
-  create_table "communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "communities", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "host", null: false
     t.datetime "created_at", null: false
@@ -193,7 +200,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["host"], name: "index_communities_on_host"
   end
 
-  create_table "community_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "community_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id", null: false
     t.bigint "user_id", null: false
     t.boolean "is_moderator"
@@ -213,7 +220,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
 
-  create_table "error_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "error_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.bigint "user_id"
     t.string "klass"
@@ -229,7 +236,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_error_logs_on_user_id"
   end
 
-  create_table "flags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "flags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.text "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -254,7 +261,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_flags_on_user_id"
   end
 
-  create_table "licenses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "licenses", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "url"
     t.boolean "default"
@@ -267,7 +274,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["name"], name: "index_licenses_on_name"
   end
 
-  create_table "micro_auth_apps", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "micro_auth_apps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "app_id"
     t.string "public_key"
@@ -288,7 +295,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_micro_auth_apps_on_user_id"
   end
 
-  create_table "micro_auth_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "micro_auth_tokens", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "app_id"
     t.bigint "user_id"
     t.string "token"
@@ -303,7 +310,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
   end
 
-  create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.text "content"
     t.string "link"
     t.boolean "is_read", default: false
@@ -315,7 +322,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
-  create_table "pinned_links", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "pinned_links", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "label"
     t.string "link"
@@ -329,7 +336,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["post_id"], name: "index_pinned_links_on_post_id"
   end
 
-  create_table "post_flag_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "post_flag_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
     t.text "description"
@@ -343,7 +350,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["post_type_id"], name: "index_post_flag_types_on_post_type_id"
   end
 
-  create_table "post_histories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "post_histories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "post_history_type_id"
     t.integer "user_id"
     t.datetime "created_at", null: false
@@ -361,7 +368,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_post_histories_on_user_id"
   end
 
-  create_table "post_history_tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "post_history_tags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "post_history_id"
     t.bigint "tag_id"
     t.string "relationship"
@@ -371,7 +378,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["tag_id"], name: "index_post_history_tags_on_tag_id"
   end
 
-  create_table "post_history_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "post_history_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "created_at", null: false
@@ -379,7 +386,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["name"], name: "index_post_history_types_on_name"
   end
 
-  create_table "post_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "post_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.boolean "has_answers", default: false, null: false
@@ -400,7 +407,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["name"], name: "index_post_types_on_name"
   end
 
-  create_table "posts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "posts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "title"
     t.text "body"
     t.string "tags_cache"
@@ -461,7 +468,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
-  create_table "posts_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "posts_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "tag_id"
     t.bigint "post_id"
     t.index ["post_id", "tag_id"], name: "index_posts_tags_on_post_id_and_tag_id", unique: true
@@ -469,7 +476,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["tag_id"], name: "index_posts_tags_on_tag_id"
   end
 
-  create_table "privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "privileges", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
@@ -479,14 +486,14 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["name"], name: "index_privileges_on_name"
   end
 
-  create_table "privileges_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "privileges_users", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "privilege_id", null: false
     t.integer "user_id", null: false
     t.index ["privilege_id", "user_id"], name: "index_privileges_users_on_privilege_id_and_user_id"
     t.index ["user_id", "privilege_id"], name: "index_privileges_users_on_user_id_and_privilege_id"
   end
 
-  create_table "reaction_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "reaction_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.string "on_post_label"
@@ -503,7 +510,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["post_type_id"], name: "index_reaction_types_on_post_type_id"
   end
 
-  create_table "reactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "reactions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "reaction_type_id"
     t.bigint "post_id"
@@ -516,7 +523,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
-  create_table "site_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "site_settings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "value"
     t.datetime "created_at", null: false
@@ -530,7 +537,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["name"], name: "index_site_settings_on_name"
   end
 
-  create_table "subscriptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "subscriptions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "type", null: false
     t.string "qualifier"
     t.bigint "user_id"
@@ -545,7 +552,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
-  create_table "suggested_edits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "suggested_edits", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "post_id"
     t.bigint "user_id"
     t.bigint "community_id"
@@ -571,17 +578,17 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_suggested_edits_on_user_id"
   end
 
-  create_table "suggested_edits_before_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "suggested_edits_before_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "suggested_edit_id", null: false
     t.bigint "tag_id", null: false
   end
 
-  create_table "suggested_edits_tags", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "suggested_edits_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "suggested_edit_id", null: false
     t.bigint "tag_id", null: false
   end
 
-  create_table "tag_sets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "tag_sets", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.bigint "community_id", null: false
     t.datetime "created_at", null: false
@@ -589,7 +596,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_id"], name: "index_tag_sets_on_community_id"
   end
 
-  create_table "tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "tags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -604,7 +611,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["tag_set_id"], name: "index_tags_on_tag_set_id"
   end
 
-  create_table "thread_followers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "comment_thread_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -613,7 +620,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
-  create_table "user_abilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "user_abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.bigint "ability_id"
     t.boolean "is_suspended", default: false
@@ -625,7 +632,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_user_id"], name: "index_user_abilities_on_community_user_id"
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password"
     t.string "reset_password_token"
@@ -675,7 +682,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["username"], name: "index_users_on_username"
   end
 
-  create_table "votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "votes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "vote_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -688,7 +695,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 
-  create_table "warning_templates", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "warning_templates", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
     t.text "body"
@@ -698,7 +705,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
     t.index ["community_id"], name: "index_warning_templates_on_community_id"
   end
 
-  create_table "warnings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "warnings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.text "body"
     t.boolean "is_suspension"
@@ -717,6 +724,7 @@ ActiveRecord::Schema.define(version: 2022_08_18_143017) do
 
   add_foreign_key "abilities", "communities"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
