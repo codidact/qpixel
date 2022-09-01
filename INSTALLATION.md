@@ -43,6 +43,9 @@ brew install mysql bison openssl mysql-client
 bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
 ```
 
+QPixel development requires Ruby 2.7+.
+For a production instance, Ruby 2.6+ is required (but 2.7+ is recommended).
+
 ### Install JS runtime
 
 If you already have Node.JS installed, you can skip this step. If not,
