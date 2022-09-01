@@ -66,7 +66,8 @@ $(() => {
           };
         },
       },
-      templateResult: template
+      templateResult: template,
+      allowClear: true
     });
   });
 
