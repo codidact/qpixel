@@ -11,7 +11,7 @@ gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 4.3.12' # Taeir: Check migration to puma 5
 gem 'rails', '~> 6.0.0'
 gem 'rails-html-sanitizer', '~> 1.4'
-gem 'redis', '~> 4.8'
+gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'
 gem 'sass-rails', '~> 5.0' # Taeir: v6 is a wrapper around sassc-rails, which differs in behavior, verify to be working
 gem 'tzinfo-data', '~> 1.2022.3'
