@@ -8,18 +8,18 @@ gem 'fastimage', '~> 2.2'
 gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
 gem 'mysql2', '~> 0.5.4'
-gem 'puma', '~> 4.3.12' # Taeir: Check migration to puma 5
+gem 'puma', '~> 5.6'
 gem 'rails', '~> 6.1.0'
 gem 'rails-html-sanitizer', '~> 1.4'
 gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'
-gem 'sass-rails', '~> 5.0' # Taeir: v6 is a wrapper around sassc-rails, which differs in behavior, verify to be working
+gem 'sass-rails', '~> 5.0'
 gem 'tzinfo-data', '~> 1.2022.3'
 gem 'uglifier', '>= 4.2.0'
 
 # Sign in
 gem 'devise', '~> 4.8'
-gem 'omniauth', '~> 1.9' # Taeir: Should be updated to 2.0+, requires testing?
+gem 'omniauth', '~> 1.9'
 
 # Markdown support in both directions.
 gem 'commonmarker', '~> 0.23'
@@ -34,7 +34,7 @@ gem 'diffy', '~> 3.4'
 gem 'jbuilder', '~> 2.11'
 gem 'rqrcode', '~> 2.1'
 gem 'will_paginate', '~> 3.3'
-gem 'will_paginate-bootstrap', '~> 1.0' # Taeir: unmaintained, last update 7 years ago...
+gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
 gem 'aws-sdk-s3', '~> 1.61', require: false
@@ -50,7 +50,7 @@ gem 'rubocop', '~> 1'
 gem 'rubocop-rails', '~> 2.15'
 
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
-gem 'flamegraph', '~> 0.9' # Taeir: not updated for 5 years
+gem 'flamegraph', '~> 0.9'
 gem 'memory_profiler', '~> 1.0'
 gem 'rack-mini-profiler', '~> 3.0'
 gem 'stackprof', '~> 0.2'
@@ -67,7 +67,7 @@ gem 'ruby-progressbar', '~> 1.11'
 gem 'rmagick'
 
 # Payments. Kinda important, y'know.
-gem 'stripe', '~> 5.55' # Taeir: Left as last v5. Stripe did 2 major releases this year, but I cannot easily test.
+gem 'stripe', '~> 5.55'
 
 # EeeMAILS!
 gem 'premailer-rails', '~> 1.11'
