@@ -2,6 +2,7 @@
   Full post view, containing all details and interactions.
   Variables:
     post : the Post instance to display
+    float_notice : whether to display the float notice
 %>
 
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
@@ -24,7 +25,7 @@
     </h1>
   <% end %>
 
-  <% if !is_top_level && !params[:answer].nil? && params[:answer] == post.id.to_s %>
+  <% if float_notice %>
     <% sort_type = params[:sort] == 'active' ? 'activity' : 'score' %>
     <div class="notice is-info has-font-size-caption">
       <p>

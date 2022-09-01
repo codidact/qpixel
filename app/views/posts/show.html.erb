@@ -17,7 +17,7 @@
   <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
-<%= render 'posts/expanded', post: @post %>
+<%= render 'posts/expanded', post: @post, float_notice: false %>
 
 <% if @post.post_type.has_answers %>
   <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
@@ -30,7 +30,7 @@
   <div class="has-clear-clear"></div>
 
   <% @children.each do |answer| %>
-    <%= render 'posts/expanded', post: answer %>
+    <%= render 'posts/expanded', post: answer, float_notice: answer.id == params[:answer]&.to_i && @children.length > 1 %>
   <% end %>
 
   <div class="text-center">
