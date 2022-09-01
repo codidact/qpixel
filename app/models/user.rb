@@ -102,8 +102,7 @@ class User < ApplicationRecord
   end
 
   def create_notification(content, link)
-    notification = Notification.create!(content: content, link: link)
-    notifications << notification
+    notifications.create!(content: content, link: link)
   end
 
   def unread_count

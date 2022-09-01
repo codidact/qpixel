@@ -24,7 +24,7 @@ module Qpixel
     # config.i18n.default_locale = :de
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
 
     config.exceptions_app = -> (env) do
       ErrorsController.action(:error).call(env)
