@@ -3,7 +3,7 @@ ruby '2.7.6'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 5.0.0'
-gem 'counter_culture', '~> 3.2' # Taeir: from v2 to v3 drops support for ruby 2.6
+gem 'counter_culture', '~> 3.2'
 gem 'fastimage', '~> 2.2'
 gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
@@ -26,8 +26,8 @@ gem 'commonmarker', '~> 0.23'
 gem 'reverse_markdown', '~> 2.1'
 
 # Charting stuff.
-gem 'chartkick', '~> 4.2' # Taeir: v3 -> v4 drops support for Ruby < 2.6
-gem 'groupdate', '~> 6.1' # Taeir: v4 -> v6 drops support for Ruby < 2.6
+gem 'chartkick', '~> 4.2'
+gem 'groupdate', '~> 6.1'
 
 # View stuff.
 gem 'diffy', '~> 3.4'
@@ -52,7 +52,7 @@ gem 'rubocop-rails', '~> 2.15'
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
 gem 'flamegraph', '~> 0.9' # Taeir: not updated for 5 years
 gem 'memory_profiler', '~> 1.0'
-gem 'rack-mini-profiler', '~> 3.0' # Taeir: Confirm working
+gem 'rack-mini-profiler', '~> 3.0'
 gem 'stackprof', '~> 0.2'
 
 # Ruby 2.7 compatibility: thwait and e2mmap are no longer bundled with Ruby, but
@@ -83,9 +83,10 @@ group :development, :test do
   gem 'byebug', '~> 11.1'
 end
 
+# Development packages require at least ruby 2.7+ (in contrast to production, which also works on ruby 2.6)
 group :development do
-  gem 'letter_opener_web', '~> 2.0' # Taeir: Requires ruby 2.7 or higher
+  gem 'letter_opener_web', '~> 2.0'
   gem 'listen', '~> 3.7'
-  gem 'spring', '~> 4.0' # Taeir: Requires ruby 2.7+ and rails 6.0+
+  gem 'spring', '~> 4.0'
   gem 'web-console', '~> 4.2'
 end
