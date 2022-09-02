@@ -81,8 +81,6 @@
         <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
       </div>
       <% skipped_deleted = 0 %>
-    <% else %>
-      <% skipped_deleted = 0 %>
     <% end %>
     <div class="widget--body">
       <%= render 'comments/comment', comment: comment, pingable: pingable %>
