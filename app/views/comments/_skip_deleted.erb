@@ -1,0 +1,15 @@
+<div class="deleted-comments">
+  <p>
+    <% if skipped_deleted == 1 %>
+      Skipping <%= skipped_deleted %> deleted comment.
+      <% if current_user&.is_moderator %>
+        <a href="?show_deleted_comments=1">Show it anyway.</a>
+      <% end %>
+    <% else %>
+      Skipping <%= skipped_deleted %> deleted comments.
+      <% if current_user&.is_moderator %>
+        <a href="?show_deleted_comments=1">Show them anyway.</a>
+      <% end %>
+    <% end %>
+  </p>
+</div>
