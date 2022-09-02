@@ -70,7 +70,11 @@
   <% skipped_deleted = 0 %>
   <% comments = @comment_thread.comments %>
   <% if params[:inline] == 'true' %>
-    <% comments = comments.where(deleted: false).take 5 %>
+    <% count = 0 %>
+    <% comments = comments.take_while do |comment| %>
+      <% count += 1 if !comment.deleted %>
+      <% count <= 5 %>
+    <% end %>
   <% end %>
   <% comments.each do |comment| %>
     <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
