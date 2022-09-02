@@ -73,21 +73,7 @@
       <% next %>
     <% elsif skipped_deleted > 0 %>
       <div class="widget--body">
-        <div class="deleted-comments">
-          <p>
-          <% if skipped_deleted == 1 %>
-            Skipping <%= skipped_deleted %> deleted comment.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show it anyway.</a>
-            <% end %>
-          <% else %>
-            Skipping <%= skipped_deleted %> deleted comments.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show them anyway.</a>
-            <% end %>
-          <% end %>
-          </p>
-        </div>
+        <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
       </div>
       <% skipped_deleted = 0 %>
     <% else %>
@@ -99,21 +85,7 @@
   <% end %>
   <% if skipped_deleted > 0 %>
     <div class="widget--body">
-      <div class="deleted-comments">
-        <p>
-          <% if skipped_deleted == 1 %>
-            Skipping <%= skipped_deleted %> deleted comment.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show it anyway.</a>
-            <% end %>
-          <% else %>
-            Skipping <%= skipped_deleted %> deleted comments.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show them anyway.</a>
-            <% end %>
-          <% end %>
-          </p>
-      </div>
+      <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
     </div>
     <% skipped_deleted = 0 %>
   <% end %>
