@@ -1,7 +1,7 @@
 # Represents a site setting. Site settings control the operation and display of most aspects of the site, such as
 # reputation awards, additional content, and site constants such as name and logo.
 class SiteSetting < ApplicationRecord
-  belongs_to :community
+  belongs_to :community, optional: true
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
