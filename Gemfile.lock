@@ -403,6 +403,8 @@ DEPENDENCIES
   ruby-progressbar (~> 1.11)
   sass-rails (~> 6.0)
   spring (~> 4.0)
+  sprockets (~> 4.1)
+  sprockets-rails (~> 3.4)
   stackprof (~> 0.2)
   stripe (~> 5.55)
   term-ansicolor (~> 1.7)

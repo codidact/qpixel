@@ -14,6 +14,8 @@ gem 'rails-html-sanitizer', '~> 1.4'
 gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'
 gem 'sass-rails', '~> 6.0'
+gem 'sprockets', '~> 4.1'
+gem 'sprockets-rails', '~> 3.4', require: 'sprockets/railtie'
 gem 'tzinfo-data', '~> 1.2022.3'
 gem 'uglifier', '>= 4.2.0'
 
