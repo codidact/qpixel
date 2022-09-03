@@ -40,11 +40,15 @@ latexEscape.inlineRule = ruleset => (state, silent) => {
 latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
   const start = state.bMarks[startLine] + state.tShift[startLine]
 
-  if (!state.src.startsWith(ruleset.open, start)) { return false; }
+  ruleset.match.lastIndex = start;
+  const match = ruleset.match.exec(state.src);
+  if (!match) { return false; }
 
-  let nextLine = startLine + 1;
+  const end = start + match[0].length
 
-  while (nextLine < endLine && !state.src.endsWith(ruleset.close, state.eMarks[nextLine])) {
+  let nextLine = startLine;
+
+  while (nextLine < endLine && state.eMarks[nextLine] != end) {
     ++nextLine;
   }
 
@@ -59,7 +63,7 @@ latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
   state.parentType = 'math';
 
   const block_token = state.push('block_math', 'math', 0)
-  block_token.content = state.src.substring(start, state.eMarks[nextLine]);
+  block_token.content = state.src.substring(start, end);
 
   state.push('math_close', 'math', -1);
 
@@ -86,15 +90,17 @@ latexEscape.inlineDelimiters = {
   }
 };
 
-// Similar format to the above
-// Regexes aren't really necessary, since blocks can only match whole lines anyway
+// Same format as above
+// Note: all regexs *must* end in an end-of-line assertion $
+// This is because markdown-it needs blocks to contain full lines.
 latexEscape.blockDelimiters = {
   '$$': {
-    open: '$$',
-    close: '$$',
+    match: /\$\$[^]+\$\$$/my   // $$...$$
   },
   '\\[': {
-    open: '\\[',
-    close: '\\]',
+    match: /\\\[[^]+\\\]$/my   // \[...\]
+  },
+  'begin-end': {
+    match: /\\begin\{(.+)\}[^]+\\end\{\1\}$/my // \begin{...}...\end{...}
   }
 }
