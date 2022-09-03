@@ -72,7 +72,7 @@
   <% if params[:inline] == 'true' %>
     <% count = 0 %>
     <% comments = comments.take_while do |comment| %>
-      <% count += 1 if !comment.deleted %>
+      <% count += 1 unless comment.deleted %>
       <% count <= 5 %>
     <% end %>
   <% end %>
