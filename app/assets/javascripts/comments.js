@@ -17,9 +17,13 @@ $(() => {
     if (evt.ctrlKey) { return; }
 
     evt.preventDefault();
-    const $tgt = $(evt.target);
 
-    const resp = await fetch($tgt.attr("href") + '?inline=true', {
+    $tgt = $(evt.target);
+    openThread($tgt.closest('.post--comments-thread-wrapper')[0], $tgt.attr("href"));
+  });
+
+  async function openThread(wrapper, targetUrl, showDeleted = false) {
+    const resp = await fetch(`${targetUrl}?inline=true&show_deleted_comments=${showDeleted ? 1 : 0}`, {
       headers: { 'Accept': 'text/html' }
     });
     let data = await resp.text();
@@ -27,10 +31,17 @@ $(() => {
     data = data.split("<!-- THREAD STARTS BELOW -->")[1];
     data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
 
-    $tgt.parent()[0].outerHTML = data;
+    wrapper.innerHTML = data;
+
+    $('a.show-deleted-comments').click(async evt => {
+      if (evt.ctrlKey) { return; }
+      evt.preventDefault();
+      openThread(wrapper, targetUrl, true);
+    });
+
     window.MathJax && MathJax.typeset();
     window.hljs && hljs.highlightAll();
-  });
+  }
 
   $(document).on('click', '.js-collapse-thread', async ev => {
     const $tgt = $(ev.target);
