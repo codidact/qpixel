@@ -18,7 +18,7 @@ $(() => {
 
     evt.preventDefault();
 
-    $tgt = $(evt.target);
+    const $tgt = $(evt.target);
     openThread($tgt.closest('.post--comments-thread-wrapper')[0], $tgt.attr("href"));
   });
 
