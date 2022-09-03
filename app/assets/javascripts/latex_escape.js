@@ -21,15 +21,11 @@ function latexEscape(md, options) {
 latexEscape.inlineRule = ruleset => (state, silent) => {
   const start = state.pos;
 
-  ruleset.open.lastIndex = start;
-  const open_match = ruleset.open.exec(state.src);
-  if (!open_match) { return false; }
+  ruleset.match.lastIndex = start;
+  const match = ruleset.match.exec(state.src);
+  if (!match) { return false; }
 
-  ruleset.close.lastIndex = start + open_match[0].length;
-  const close_match = ruleset.close.exec(state.src);
-  if (!close_match) { return false; }
-
-  const end = ruleset.close.lastIndex + close_match[0].length
+  const end = start + match[0].length
 
   if (!silent) {
     const token = state.push('inline_math', 'math', 0);
@@ -73,25 +69,20 @@ latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
   return true;
 }
 
-// open: opening delimiter
-// close: closing delimiter
+// match: Sticky regex matching the LaTeX
 latexEscape.inlineDelimiters = {
   '$': {
-    open: /\$(?!\$)/y,   // $ not followed by a $
-    close: /(?<!\\)\$/g, // $ not escaped by a \
+    match: /\$.+\$/y       // $...$
   },
   '\\(': {
-    open: /\\\(/y,       // \(
-    close: /\\\(/g,      // \)
+    match: /\\\(.+\\\)/y   // \(...\)
   },
   // Block-level delimiters work inline too!
   '$$': {
-    open: /\$\$/y,       // $$
-    close: /\$\$/g,      // $$
+    match: /\$\$.+\$\$/y   // $$...$$
   },
   '\\[': {
-    open: /\\\[/y,       // \[
-    close: /\\\]/g,      // \]
+    match: /\\\[.+\\\]/y   // \[...\]
   }
 };
 
