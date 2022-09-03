@@ -13,7 +13,7 @@ gem 'rails', '~> 6.1.0'
 gem 'rails-html-sanitizer', '~> 1.4'
 gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 6.0'
 gem 'tzinfo-data', '~> 1.2022.3'
 gem 'uglifier', '>= 4.2.0'
 
