@@ -42,7 +42,7 @@ latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
 
   ruleset.match.lastIndex = start;
   const match = ruleset.match.exec(state.src);
-  if (!match) { return false; }
+  if (!match || ruleset.validate && !ruleset.validate(match[0])) { return false; }
 
   const end = start + match[0].length
 
@@ -76,17 +76,17 @@ latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
 // match: Sticky regex matching the LaTeX
 latexEscape.inlineDelimiters = {
   '$': {
-    match: /\$.+\$/y       // $...$
+    match: /\$.+?\$/y       // $...$
   },
   '\\(': {
-    match: /\\\(.+\\\)/y   // \(...\)
+    match: /\\\(.+?\\\)/y   // \(...\)
   },
   // Block-level delimiters work inline too!
   '$$': {
-    match: /\$\$.+\$\$/y   // $$...$$
+    match: /\$\$.+?\$\$/y   // $$...$$
   },
   '\\[': {
-    match: /\\\[.+\\\]/y   // \[...\]
+    match: /\\\[.+?\\\]/y   // \[...\]
   }
 };
 
@@ -95,10 +95,17 @@ latexEscape.inlineDelimiters = {
 // This is because markdown-it needs blocks to contain full lines.
 latexEscape.blockDelimiters = {
   '$$': {
-    match: /\$\$[^]+\$\$$/my   // $$...$$
+    // $$...$$
+    match: /\$\$[^]+?\$\$$/my,
+    // Make sure there's no intervening $$
+    // Fixes the bug where it would match all of the following 3 lines
+    // $$123$$ some text
+    //
+    // not math $$456$$
+    validate: match => match.indexOf('$$', 2) === match.length - 2.
   },
   '\\[': {
-    match: /\\\[[^]+\\\]$/my   // \[...\]
+    match: /\\\[[^]+?\\\]$/my   // \[...\]
   },
   'begin-end': {
     match: /\\begin\{(.+)\}[^]+\\end\{\1\}$/my // \begin{...}...\end{...}
