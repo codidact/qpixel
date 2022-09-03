@@ -16,6 +16,9 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
+  # Enable server timing
+  config.server_timing = true
+
   # Set the cache store to the redis that was configured in the database.yml
   processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
   redis_config = YAML.safe_load(processed, [], [], true)["redis_#{Rails.env}"]
@@ -32,6 +35,7 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.delivery_method = :ses
   config.action_mailer.asset_host = 'https://meta.codidact.com'
+
   config.action_mailer.perform_caching = false
 
   # Print deprecation notices to the Rails logger.
@@ -86,10 +90,6 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
-
-  # Use an evented file watcher to asynchronously detect changes in source code,
-  # routes, locales, etc. This feature depends on the listen gem.
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
