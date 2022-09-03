@@ -9,7 +9,7 @@ gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 5.6'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0.0'
 gem 'rails-html-sanitizer', '~> 1.4'
 gem 'redis', '~> 5.0'
 gem 'rotp', '~> 6.2'
@@ -83,7 +83,6 @@ group :development, :test do
   gem 'byebug', '~> 11.1'
 end
 
-# Development packages require at least ruby 2.7+ (in contrast to production, which also works on ruby 2.6)
 group :development do
   gem 'letter_opener_web', '~> 2.0'
   gem 'listen', '~> 3.7'
