@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
   include CommunityRelated
 
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
