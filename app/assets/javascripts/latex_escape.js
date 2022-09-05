@@ -108,6 +108,6 @@ latexEscape.blockDelimiters = {
     match: /\\\[[^]+?\\\]$/my   // \[...\]
   },
   'begin-end': {
-    match: /\\begin\{(.+)\}[^]+\\end\{\1\}$/my // \begin{...}...\end{...}
+    match: /\\begin\{(.+?)\}[^]+?\\end\{\1\}$/my // \begin{...}...\end{...}
   }
 }
