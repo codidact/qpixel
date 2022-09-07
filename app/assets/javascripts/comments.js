@@ -17,9 +17,13 @@ $(() => {
     if (evt.ctrlKey) { return; }
 
     evt.preventDefault();
-    const $tgt = $(evt.target);
 
-    const resp = await fetch($tgt.attr("href") + '?inline=true', {
+    const $tgt = $(evt.target);
+    openThread($tgt.closest('.post--comments-thread-wrapper')[0], $tgt.attr("href"));
+  });
+
+  async function openThread(wrapper, targetUrl, showDeleted = false) {
+    const resp = await fetch(`${targetUrl}?inline=true&show_deleted_comments=${showDeleted ? 1 : 0}`, {
       headers: { 'Accept': 'text/html' }
     });
     let data = await resp.text();
@@ -27,9 +31,17 @@ $(() => {
     data = data.split("<!-- THREAD STARTS BELOW -->")[1];
     data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
 
-    $tgt.parent()[0].outerHTML = data;
+    wrapper.innerHTML = data;
+
+    $('a.show-deleted-comments').click(async evt => {
+      if (evt.ctrlKey) { return; }
+      evt.preventDefault();
+      openThread(wrapper, targetUrl, true);
+    });
+
     window.MathJax && MathJax.typeset();
-  });
+    window.hljs && hljs.highlightAll();
+  }
 
   $(document).on('click', '.js-collapse-thread', async ev => {
     const $tgt = $(ev.target);
@@ -178,8 +190,8 @@ $(() => {
   });
 
   $(document).on('click', '.comment-form input[type="submit"]', async evt => {
-      // Comment posting has been clicked.
-      $(evt.target).attr('data-disable-with', 'Posting...');
+    // Comment posting has been clicked.
+    $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
   const pingable = {};
@@ -223,7 +235,7 @@ $(() => {
         const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
         const id = e[1];
         return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
-                           .attr('data-user-id', id);
+          .attr('data-user-id', id);
       });
       QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
@@ -231,7 +243,7 @@ $(() => {
       QPixel.Popup.destroyAll();
     }
   });
-  
+
   $('.js-new-thread-link').on('click', async ev => {
     ev.preventDefault();
     const $tgt = $(ev.target);
@@ -240,7 +252,7 @@ $(() => {
 
     if ($thread.is(':hidden')) {
       $thread.show();
-    } 
+    }
     else {
       $thread.hide();
     }

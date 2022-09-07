@@ -65,7 +65,11 @@
   <% skipped_deleted = 0 %>
   <% comments = @comment_thread.comments %>
   <% if params[:inline] == 'true' %>
-    <% comments = comments.where(deleted: false).take 5 %>
+    <% count = 0 %>
+    <% comments = comments.take_while do |comment| %>
+      <% count += 1 unless comment.deleted %>
+      <% count <= 5 %>
+    <% end %>
   <% end %>
   <% comments.each do |comment| %>
     <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
@@ -73,24 +77,8 @@
       <% next %>
     <% elsif skipped_deleted > 0 %>
       <div class="widget--body">
-        <div class="deleted-comments">
-          <p>
-          <% if skipped_deleted == 1 %>
-            Skipping <%= skipped_deleted %> deleted comment.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show it anyway.</a>
-            <% end %>
-          <% else %>
-            Skipping <%= skipped_deleted %> deleted comments.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show them anyway.</a>
-            <% end %>
-          <% end %>
-          </p>
-        </div>
+        <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
       </div>
-      <% skipped_deleted = 0 %>
-    <% else %>
       <% skipped_deleted = 0 %>
     <% end %>
     <div class="widget--body">
@@ -99,21 +87,7 @@
   <% end %>
   <% if skipped_deleted > 0 %>
     <div class="widget--body">
-      <div class="deleted-comments">
-        <p>
-          <% if skipped_deleted == 1 %>
-            Skipping <%= skipped_deleted %> deleted comment.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show it anyway.</a>
-            <% end %>
-          <% else %>
-            Skipping <%= skipped_deleted %> deleted comments.
-            <% if current_user&.is_moderator %>
-              <a href="?show_deleted_comments=1">Show them anyway.</a>
-            <% end %>
-          <% end %>
-          </p>
-      </div>
+      <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
     </div>
     <% skipped_deleted = 0 %>
   <% end %>

@@ -1,0 +1,10 @@
+<div class="deleted-comments">
+  <p>
+    Skipping <%= pluralize(skipped_deleted, 'deleted comment') %>.
+    <% if current_user&.is_moderator %>
+      <a class="show-deleted-comments" href="?show_deleted_comments=1">
+        Show <%= skipped_deleted > 1 ? 'them' : 'it' %> anyway.
+      </a>
+    <% end %>
+  </p>
+</div>
