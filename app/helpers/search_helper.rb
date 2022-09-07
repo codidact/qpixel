@@ -77,7 +77,9 @@ module SearchHelper
         next unless value.match?(valid_value[:numeric])
 
         operator, val = numeric_value_sql value
+        post_types_with_answers = PostType.where(has_answers: true)
         query = query.where("answer_count #{operator.presence || '='} ?", val.to_i)
+                     .where(post_type_id: post_types_with_answers)
       end
     end
 
