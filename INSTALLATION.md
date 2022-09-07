@@ -115,8 +115,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can call `rails db:seed` to fill the database with necessary seed data, such as
-settings, help posts and default templates.
+After that you can call `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -179,3 +178,23 @@ body and title, and you are required at least one tag.
 And then click to "Save Post in Q&A"
 
 ![img/post.png](img/post.png)
+
+## Optional: Help Topics
+
+If you are running a development server, you might not care a lot about what's in the help.  If you are planning to deploy a server for actual use, however, note that the seeds have some placeholder text you'll want to edit.  We have provided starting points (to be edited) for the following topics:
+
+- Terms of service (TOS)  
+- Code of conduct (COC)  
+- Privacy policy  
+- Spam policy  
+- Global (network) FAQ
+
+The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like.  We recommend reviewing all of the content in these topics.  There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
+
+If you edit the seed files, use the following command to add them to your database:
+
+`UPDATE_POSTS=true rails db:seed`
+
+You can also edit the topics in the UI.  As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities.  Administrators can update help topics in this way at any time.
+
+
