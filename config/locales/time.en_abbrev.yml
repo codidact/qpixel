@@ -11,4 +11,6 @@ en_abbrev:
       about_x_months: '%{count}mo'
       x_months: '%{count}mo'
       about_x_years: '%{count}y'
+      almost_x_years: '%{count}y'
       x_years: '%{count}y'
+      over_x_years: '%{count}y'

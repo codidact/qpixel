@@ -11,8 +11,8 @@ es_abbrev:
         one: '1min'
         other: '%{count}mins'
       about_x_hours:
-        one: '~1h'
-        other: '~%{count}hs'
+        one: '1h'
+        other: '%{count}hs'
       x_hours:
         one: '1h'
         other: '%{count}hs'
@@ -21,10 +21,12 @@ es_abbrev:
         one: '1sem'
         other: '%{count}sems'
       about_x_months:
-        one: '~1mes'
-        other: '~%{count}meses'
+        one: '1mes'
+        other: '%{count}meses'
       x_months:
         one: '1mes'
         other: '%{count}meses'
-      about_x_years: '~%{count}a'
+      about_x_years: '%{count}a'
+      almost_x_years: '%{count}a'
       x_years: '%{count}a'
+      over_x_years: '%{count}a'
