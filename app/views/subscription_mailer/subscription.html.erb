@@ -3,6 +3,10 @@
   <% if @subscription.name.present? %>
     "<%= @subscription.name %>"
   <% end %>
+
+  <% if @questions.count == 25 %>
+    This e-mail only shows the 25 most recent items matching your filter.
+  <% end %>
 </h2>
 
 <% @questions.each do |question| %>
