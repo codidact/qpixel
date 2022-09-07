@@ -99,6 +99,8 @@ You'll also need to fill in details for the Redis connection. If you've followed
 the sample file should already contain the correct values for you, but if you've customised your
 setup you'll need to correct them.
 
+If you are using MariaDB instead of MySQL, you will need to replace all occurrences of
+`utf8mb4_0900_ai_ci` with `utf8mb4_unicode_ci` in `db/schema.rb`.
 
 Set up the database:
 
