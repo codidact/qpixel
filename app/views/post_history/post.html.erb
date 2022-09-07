@@ -11,7 +11,7 @@
       <span class="has-color-tertiary-600 history-meta">
         <span>
           by
-          <% if event.user.nil? %>
+          <% if deleted_user? event.user %>
             (deleted user)
           <% else %>
             <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
