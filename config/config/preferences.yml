@@ -71,5 +71,5 @@ auto_follow_comment_threads:
 sticky_header:
   type: boolean
   description: >
-    Make the Codidact navigation bar sticky
+    Make the top navigation bar sticky.
   default: false
