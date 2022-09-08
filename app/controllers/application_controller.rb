@@ -254,12 +254,25 @@ class ApplicationController < ActionController::Base
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
     end
+
+    # We need to filter out pinned links that aren't posts
+    # If pinned_post_ids contains nil, then the query formed is
+    # SELECT WHERE NOT IN (... NULL)
+    # In SQL, when the rhs of IN contains NULL, it returns NULL if not present, rather than false
+    # Secondly, NOT NULL evaluates to NULL
+    # These two counterintuitive behaviors mean that if NULL is in pinned_post_ids,
+    # Post not pinned => NOT IN pinned_post_ids = NOT NULL = NULL => Not Selected
+    # Post pinned => NOT IN pinned_post_ids = NOT TRUE = FALSE => Not Selected
+    # I.e., if pinned_post_ids contains null, the selection will never return records
+    pinned_post_ids = @pinned_links.map(&:post_id).reject(&:nil?)
+  
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
+            .where.not(id: pinned_post_ids)
             .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
       end
     end
