@@ -3,7 +3,7 @@ test:
   root: <%= Rails.root.join('tmp/storage') %>
 
 local:
-  storage: Disk
+  service: Disk
   root: <%= Rails.root.join('storage') %>
 
 s3:
