@@ -1,6 +1,10 @@
  New questions in your filter <%= @subscription.name.present? ? @subscription.name : '' %>
 ==============================<%= @subscription.name.present? ? ('='*@subscription.name.length) + '=' : '' %>
 
+<%- if @questions.count == 25 -%>
+NOTE: This e-mail only shows the 25 most recent items matching your filter.
+<%- end -%>
+
 <% @questions.each do |question| %>
 score <%= " +-"[question.score <=> 0] + question.score.to_s %>: <%= question.title %>
 <%= post_url(question, host: @subscription.community.host) %>
