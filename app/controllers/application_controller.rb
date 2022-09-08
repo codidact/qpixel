@@ -264,8 +264,8 @@ class ApplicationController < ActionController::Base
     # Post not pinned => NOT IN pinned_post_ids = NOT NULL = NULL => Not Selected
     # Post pinned => NOT IN pinned_post_ids = NOT TRUE = FALSE => Not Selected
     # I.e., if pinned_post_ids contains null, the selection will never return records
-    pinned_post_ids = @pinned_links.map(&:post_id).reject(&:nil?)
-  
+    pinned_post_ids = @pinned_links.map(&:post_id).compact
+
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
