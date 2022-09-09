@@ -1,4 +1,5 @@
 - name: post_edited
+- name: post_redacted
 - name: post_deleted
 - name: post_undeleted
 - name: question_closed
@@ -10,3 +11,4 @@
 - name: imported_from_external_source
 - name: nominated_for_promotion
 - name: promotion_removed
+- name: history_hidden

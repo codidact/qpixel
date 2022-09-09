@@ -5,6 +5,21 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
+  # Limit to the history which should be visible for the given user.
+  scope :visible, lambda { |user|
+    unless user.is_admin
+      max_created_at = joins(:post_history_type)
+                       .where(post_history_types: { name: 'post_redacted' })
+                       .order(created_at: :desc)
+                       .first.&created_at
+      if max_created_at
+        joins(:post_history_type)
+          .where(created_at: max_created_at...)
+          .where.not(post_history_types: { name: 'post_redacted' })
+      end
+    end
+  }
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end

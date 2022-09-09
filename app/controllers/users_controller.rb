@@ -208,13 +208,13 @@ class UsersController < ApplicationController
                                                                     posts: { deleted: false })
             when 'edits'
               SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).visible(current_user)
             else
               Post.undeleted.where(user: @user) + \
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                     posts: { deleted: false }) + \
               SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).visible(current_user)
             end
 
     @items = items.sort_by(&:created_at).reverse
@@ -249,7 +249,7 @@ class UsersController < ApplicationController
               when 'flags'
                 Flag.where(user: @user).all
               when 'edits'
-                SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all
+                SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).visible(current_user).all
               when 'warnings'
                 ModWarning.where(community_user: @user.community_user).all
               when 'interesting'
@@ -258,7 +258,7 @@ class UsersController < ApplicationController
                   Post.where(user: @user).where('score < 0.25 OR deleted=1').all
               else
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
-                  SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
+                  SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).visible(current_user).all + \
                   ModWarning.where(community_user: @user.community_user).all
               end).sort_by(&:created_at).reverse
 
