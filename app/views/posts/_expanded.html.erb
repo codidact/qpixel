@@ -5,6 +5,7 @@
     float_notice : whether to display the float notice
 %>
 
+<% float_notice ||= float_notice%>
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
 <% post_type ||= defined?(@post_type) && @post_type.id == post.post_type_id ? @post_type : post.post_type %>
 
