@@ -60,7 +60,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.cache_store = QPixel::NamespacedEnvCache.new(
-    RedisCacheStore.new(url: 'redis://localhost:6379/1')
+    ActiveSupport::Cache::RedisCacheStore.new(url: 'redis://localhost:6379/1')
   )
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
