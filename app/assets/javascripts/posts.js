@@ -117,6 +117,14 @@ $(() => {
 
   const postFields = $('.post-field');
 
+  postFields.on('paste', async evt => {
+    if (evt.originalEvent.clipboardData.files.length > 0) {
+      const $fileInput = $uploadForm.find('input[type="file"]');
+      $fileInput[0].files = evt.originalEvent.clipboardData.files;
+      $fileInput.trigger('change');
+    }
+  });
+
   postFields.on('focus keyup paste change markdown', evt => {
     const $tgt = $(evt.target);
 
