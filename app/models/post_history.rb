@@ -10,8 +10,9 @@ class PostHistory < ApplicationRecord
     unless user.is_admin
       max_created_at = joins(:post_history_type)
                        .where(post_history_types: { name: 'post_redacted' })
-                       .order(created_at: :desc)
-                       .first.&created_at
+                       .where.not(user: user)
+                       .maximum(:created_at)
+
       if max_created_at
         joins(:post_history_type)
           .where(created_at: max_created_at...)
