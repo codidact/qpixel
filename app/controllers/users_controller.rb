@@ -81,7 +81,7 @@ class UsersController < ApplicationController
       key = params[:community].present? && params[:community] ? community_key : global_key
       current_user.validate_prefs!
       render json: { status: 'success', success: true,
-                     count: RequestContext.redis.hset(key, params[:name], params[:value]),
+                     count: RequestContext.redis.hset(key, params[:name], params[:value].to_s),
                      preferences: current_user.preferences }
     else
       render json: { status: 'failed', success: false, errors: ['Both name and value parameters are required'] },
