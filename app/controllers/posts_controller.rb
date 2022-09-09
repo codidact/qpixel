@@ -196,7 +196,7 @@ class PostsController < ApplicationController
                                       after: @post.body_markdown, comment: params[:edit_comment],
                                       before_title: before[:title], after_title: @post.title,
                                       before_tags: before[:tags], after_tags: @post.tags)
-            PostHistory.history_hidden(self, current_user, after: body_markdown, after_title: title, after_tags: tags)
+            PostHistory.history_hidden(@post, current_user, after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags)
           else
             PostHistory.post_edited(@post, current_user, before: before[:body],
                                     after: @post.body_markdown, comment: params[:edit_comment],
