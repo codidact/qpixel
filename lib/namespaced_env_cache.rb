@@ -71,6 +71,7 @@ module QPixel
     end
 
     private
+
     def construct_ns_key(key, include_community: true)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
