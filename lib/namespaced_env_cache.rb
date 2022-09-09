@@ -77,5 +77,3 @@ module QPixel
     end
   end
 end
-
-Rails.cache = QPixel::NamespacedEnvCache.new(Rails.cache)

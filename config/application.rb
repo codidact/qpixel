@@ -26,6 +26,8 @@ module Qpixel
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
+    config.autoload_paths << Rails.root.join('lib')
+
     config.exceptions_app = -> (env) do
       ErrorsController.action(:error).call(env)
     end

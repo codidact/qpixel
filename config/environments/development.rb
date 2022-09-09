@@ -1,4 +1,5 @@
 require 'active_support/core_ext/integer/time'
+require 'namespaced_env_cache'
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -18,9 +19,11 @@ Rails.application.configure do
   # Set the cache store to the redis that was configured in the database.yml
   processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
   redis_config = YAML.safe_load(processed, [], [], true)["redis_#{Rails.env}"]
-  config.cache_store = :redis_cache_store, {
-    url: "redis://#{redis_config['host']}:#{redis_config['port']}"
-  }
+  config.cache_store = QPixel::NamespacedEnvCache.new(
+    ActiveSupport::Cache::RedisCacheStore.new(
+      url: "redis://#{redis_config['host']}:#{redis_config['port']}"
+    )
+  )
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
