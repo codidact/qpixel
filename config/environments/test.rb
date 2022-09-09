@@ -1,4 +1,5 @@
 require 'active_support/core_ext/integer/time'
+require 'namespaced_env_cache'
 
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
@@ -25,6 +26,14 @@ Rails.application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
+
+  processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
+  redis_config = YAML.safe_load(processed, [], [], true)["redis_#{Rails.env}"]
+  config.cache_store = QPixel::NamespacedEnvCache.new(
+    ActiveSupport::Cache::RedisCacheStore.new(
+      url: "redis://#{redis_config['host']}:#{redis_config['port']}"
+    )
+  )
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
