@@ -5,19 +5,20 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
-  # Limit to the history which should be visible for the given user.
+  # Limits the history (across multiple posts) which should be visible for the given user.
   scope :visible, lambda { |user|
     unless user.is_admin
-      max_created_at = joins(:post_history_type)
-                       .where(post_history_types: { name: 'post_redacted' })
-                       .where.not(user: user)
-                       .maximum(:created_at)
+      subquery = where(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
+                 .where.not(user: user)
+                 .joins(:post)
+                 .where.not(posts: { user: user })
+                 .group(:post_id)
+                 .select(Arel.sql('post_id, IFNULL(MAX(post_histories.created_at), 0) target_created_at'))
 
-      if max_created_at
-        joins(:post_history_type)
-          .where(created_at: max_created_at...)
-          .where.not(post_history_types: { name: 'post_redacted' })
-      end
+      joins(Arel.sql("LEFT OUTER JOIN (#{subquery.to_sql}) sub ON post_histories.post_id = sub.post_id"))
+        .where.not(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
+        .where(arel_table[:created_at].gteq(Arel.sql('sub.target_created_at'))
+                                      .or(Arel.sql('sub.target_created_at IS NULL')))
     end
   }
 

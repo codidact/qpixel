@@ -208,13 +208,17 @@ class UsersController < ApplicationController
                                                                     posts: { deleted: false })
             when 'edits'
               SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).visible(current_user)
+              PostHistory.joins(Arel.sql('INNER JOIN `posts` ON `posts`.`id` = `post_histories`.`post_id`'))
+                         .where(user: @user).where(posts: { deleted: false })
+                         .visible(current_user).all
             else
               Post.undeleted.where(user: @user) + \
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                     posts: { deleted: false }) + \
               SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).visible(current_user)
+              PostHistory.joins(Arel.sql('INNER JOIN `posts` ON `posts`.`id` = `post_histories`.`post_id`'))
+                         .where(user: @user).where(posts: { deleted: false })
+                         .visible(current_user).all
             end
 
     @items = items.sort_by(&:created_at).reverse
