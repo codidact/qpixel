@@ -107,6 +107,7 @@ $(() => {
           'm   Main page\n' +
           'u   User list\n' +
           'h   Help\n' +
+          'd   Dashboard\n' +
           'p   Your profile page\n' +
           'c   Category ...\n' +
           't   Tags of category ...\n' +
@@ -160,6 +161,8 @@ $(() => {
         window.location.href = '/';
       } else if (e.key === 'u') {
         window.location.href = '/users';
+      } else if (e.key === 'd') {
+        window.location.href = '/dashboard';
       } else if (e.key === 'h') {
         window.location.href = '/help';
       } else if (e.key === 'p') {
