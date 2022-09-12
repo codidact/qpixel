@@ -1,8 +1,8 @@
 class TagsController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :update, :rename, :merge, :select_merge]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
   before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
-  before_action :verify_moderator, only: [:rename, :merge, :select_merge]
+  before_action :verify_moderator, only: [:new, :create, :rename, :merge, :select_merge]
   before_action :verify_admin, only: [:nuke, :nuke_warning]
 
   def index
@@ -59,6 +59,21 @@ class TagsController < ApplicationController
     end
   end
 
+  def new
+    @tag = Tag.new
+  end
+
+  def create
+    @tag = Tag.new(tag_params.merge(tag_set_id: @category.tag_set.id))
+    if @tag.save
+      flash[:danger] = nil
+      redirect_to tag_path(id: @category.id, tag_id: @tag.id)
+    else
+      flash[:danger] = @tag.errors.full_messages.join(', ')
+      render :new, status: :bad_request
+    end
+  end
+
   def edit
     check_your_privilege('edit_tags', nil, true)
   end
@@ -67,7 +82,7 @@ class TagsController < ApplicationController
     return unless check_your_privilege('edit_tags', nil, true)
 
     wiki_md = params[:tag][:wiki_markdown]
-    if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil))
+    if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil).except(:name))
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :edit, status: :bad_request
@@ -177,7 +192,7 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
   end
 
   def exec(sql_array)
