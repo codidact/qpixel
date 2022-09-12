@@ -21,7 +21,7 @@ gem 'tzinfo-data', '~> 1.2022.3'
 
 # Sign in
 gem 'devise', '~> 4.8'
-gem 'omniauth', '~> 1.9'
+gem 'omniauth', '~> 2.1'
 
 # Markdown support in both directions.
 gem 'commonmarker', '~> 0.23'
