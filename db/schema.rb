@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_09_03_174045) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -21,8 +20,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.decimal "post_score_threshold", precision: 10, scale: 8
     t.decimal "edit_score_threshold", precision: 10, scale: 8
     t.decimal "flag_score_threshold", precision: 10, scale: 8
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "summary"
     t.index ["community_id"], name: "index_abilities_on_community_id"
   end
@@ -31,8 +30,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "community_user_id"
     t.text "comment"
     t.boolean "completed"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_user_id"], name: "index_ability_queues_on_community_user_id"
   end
 
@@ -41,7 +40,7 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -53,8 +52,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.text "metadata"
     t.bigint "byte_size", null: false
     t.string "checksum"
-    t.datetime "created_at", null: false
-    t.string "service_name", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.string "service_name"
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -71,8 +70,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "related_id"
     t.bigint "user_id"
     t.text "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id"
     t.index ["community_id"], name: "index_audit_logs_on_community_id"
     t.index ["event_type"], name: "index_audit_logs_on_event_type"
@@ -84,19 +83,19 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "blocked_items", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "item_type"
     t.text "value"
-    t.datetime "expires"
+    t.datetime "expires", precision: nil
     t.boolean "automatic"
     t.string "reason"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "short_wiki", size: :medium
     t.bigint "community_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "display_post_types", size: :medium
     t.boolean "is_homepage"
     t.bigint "tag_set_id"
@@ -160,8 +159,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.boolean "ever_archived_before"
     t.boolean "deleted", default: false, null: false
     t.bigint "deleted_by_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
     t.boolean "is_private", default: false
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
@@ -172,8 +171,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   end
 
   create_table "comments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "post_id"
     t.text "content"
     t.boolean "deleted", default: false
@@ -193,8 +192,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "communities", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "host", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "is_fake", default: false
     t.boolean "hidden", default: false
     t.index ["host"], name: "index_communities_on_host"
@@ -206,14 +205,14 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.boolean "is_moderator"
     t.boolean "is_admin"
     t.integer "reputation"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "is_suspended"
-    t.datetime "suspension_end"
+    t.datetime "suspension_end", precision: nil
     t.string "suspension_public_comment"
     t.integer "trust_level"
     t.boolean "deleted", default: false, null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["deleted_by_id"], name: "index_community_users_on_deleted_by_id"
@@ -228,8 +227,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.text "backtrace", size: :medium
     t.text "request_uri", size: :medium, null: false
     t.string "host", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "uuid"
     t.string "user_agent"
     t.index ["community_id"], name: "index_error_logs_on_community_id"
@@ -238,19 +237,19 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
 
   create_table "flags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.text "reason"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
     t.integer "post_id"
     t.string "status"
     t.text "message"
     t.integer "handled_by_id"
-    t.datetime "handled_at"
+    t.datetime "handled_at", precision: nil
     t.bigint "community_id", null: false
     t.bigint "post_flag_type_id"
     t.string "post_type"
     t.boolean "escalated", default: false, null: false
-    t.datetime "escalated_at"
+    t.datetime "escalated_at", precision: nil
     t.text "escalation_comment"
     t.bigint "escalated_by_id"
     t.index ["community_id"], name: "index_flags_on_community_id"
@@ -266,8 +265,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "url"
     t.boolean "default"
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "enabled", default: true
     t.text "description"
     t.index ["community_id"], name: "index_licenses_on_community_id"
@@ -284,10 +283,10 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "user_id"
     t.boolean "active", default: true, null: false
     t.bigint "deactivated_by_id"
-    t.datetime "deactivated_at"
+    t.datetime "deactivated_at", precision: nil
     t.string "deactivate_comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["app_id"], name: "index_micro_auth_apps_on_app_id"
     t.index ["deactivated_by_id"], name: "index_micro_auth_apps_on_deactivated_by_id"
     t.index ["public_key"], name: "index_micro_auth_apps_on_public_key"
@@ -299,13 +298,13 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "app_id"
     t.bigint "user_id"
     t.string "token"
-    t.datetime "expires_at"
+    t.datetime "expires_at", precision: nil
     t.text "scope"
     t.string "code"
-    t.datetime "code_expires_at"
+    t.datetime "code_expires_at", precision: nil
     t.text "redirect_uri"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
   end
@@ -314,8 +313,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.text "content"
     t.string "link"
     t.boolean "is_read", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
     t.bigint "community_id", null: false
     t.index ["community_id"], name: "index_notifications_on_community_id"
@@ -328,10 +327,10 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "link"
     t.bigint "post_id"
     t.boolean "active"
-    t.datetime "shown_after"
-    t.datetime "shown_before"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "shown_after", precision: nil
+    t.datetime "shown_before", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_pinned_links_on_community_id"
     t.index ["post_id"], name: "index_pinned_links_on_post_id"
   end
@@ -343,8 +342,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.boolean "confidential"
     t.boolean "active"
     t.bigint "post_type_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "requires_details", default: false, null: false
     t.index ["community_id"], name: "index_post_flag_types_on_community_id"
     t.index ["post_type_id"], name: "index_post_flag_types_on_post_type_id"
@@ -353,8 +352,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "post_histories", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "post_history_type_id"
     t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "post_id"
     t.text "before_state"
     t.text "after_state"
@@ -372,8 +371,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "post_history_id"
     t.bigint "tag_id"
     t.string "relationship"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["post_history_id"], name: "index_post_history_tags_on_post_history_id"
     t.index ["tag_id"], name: "index_post_history_tags_on_tag_id"
   end
@@ -381,8 +380,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "post_history_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["name"], name: "index_post_history_types_on_name"
   end
 
@@ -416,16 +415,16 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.integer "user_id"
     t.boolean "closed", default: false, null: false
     t.integer "closed_by_id"
-    t.datetime "closed_at"
+    t.datetime "closed_at", precision: nil
     t.boolean "deleted", default: false, null: false
     t.integer "deleted_by_id"
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "post_type_id", null: false
     t.text "body_markdown"
     t.integer "answer_count", default: 0, null: false
-    t.datetime "last_activity", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "last_activity", precision: nil, default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "att_source"
     t.string "att_license_name"
     t.string "att_license_link"
@@ -441,12 +440,12 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.integer "upvote_count", default: 0, null: false
     t.integer "downvote_count", default: 0, null: false
     t.boolean "comments_disabled"
-    t.datetime "last_edited_at"
+    t.datetime "last_edited_at", precision: nil
     t.bigint "last_edited_by_id"
     t.boolean "locked"
     t.bigint "locked_by_id"
-    t.datetime "locked_at"
-    t.datetime "locked_until"
+    t.datetime "locked_at", precision: nil
+    t.datetime "locked_until", precision: nil
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -477,8 +476,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   end
 
   create_table "privileges", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "name"
     t.integer "threshold"
     t.bigint "community_id", null: false
@@ -502,8 +501,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.boolean "requires_comment"
     t.bigint "community_id"
     t.integer "position"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "active"
     t.bigint "post_type_id"
     t.index ["community_id"], name: "index_reaction_types_on_community_id"
@@ -515,8 +514,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "reaction_type_id"
     t.bigint "post_id"
     t.bigint "comment_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["comment_id"], name: "index_reactions_on_comment_id"
     t.index ["post_id"], name: "index_reactions_on_post_id"
     t.index ["reaction_type_id"], name: "index_reactions_on_reaction_type_id"
@@ -526,8 +525,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "site_settings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "value_type", null: false
     t.text "description"
     t.string "category"
@@ -543,9 +542,9 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "user_id"
     t.boolean "enabled", default: true, null: false
     t.integer "frequency", null: false
-    t.datetime "last_sent_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "last_sent_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "name"
     t.bigint "community_id", null: false
     t.index ["community_id"], name: "index_subscriptions_on_community_id"
@@ -563,11 +562,11 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "comment"
     t.boolean "active"
     t.boolean "accepted"
-    t.datetime "decided_at"
+    t.datetime "decided_at", precision: nil
     t.bigint "decided_by_id"
     t.string "rejected_comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "before_title"
     t.text "before_body"
     t.text "before_body_markdown"
@@ -591,15 +590,15 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "tag_sets", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_tag_sets_on_community_id"
   end
 
   create_table "tags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
     t.bigint "tag_set_id", null: false
     t.text "wiki_markdown"
@@ -614,8 +613,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
   create_table "thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "comment_thread_id"
     t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
@@ -624,10 +623,10 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "community_user_id"
     t.bigint "ability_id"
     t.boolean "is_suspended", default: false
-    t.datetime "suspension_end"
+    t.datetime "suspension_end", precision: nil
     t.text "suspension_message"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["ability_id"], name: "index_user_abilities_on_ability_id"
     t.index ["community_user_id"], name: "index_user_abilities_on_community_user_id"
   end
@@ -636,15 +635,15 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "email"
     t.string "encrypted_password"
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "is_global_moderator"
     t.boolean "is_global_admin"
     t.string "username"
@@ -655,22 +654,23 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.integer "se_acct_id"
     t.boolean "transferred_content", default: false
     t.string "login_token"
-    t.datetime "login_token_expires_at"
+    t.datetime "login_token_expires_at", precision: nil
     t.string "two_factor_token"
     t.boolean "enabled_2fa", default: false
     t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.string "two_factor_method"
     t.boolean "staff", default: false, null: false
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
-    t.datetime "locked_at"
+    t.datetime "locked_at", precision: nil
+    t.integer "trust_level"
     t.boolean "developer"
     t.string "discord"
     t.boolean "deleted", default: false, null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.string "cid"
     t.boolean "is_globally_suspended", default: false
@@ -684,8 +684,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
 
   create_table "votes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "vote_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
     t.integer "post_id"
     t.integer "recv_user_id"
@@ -700,8 +700,8 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.string "name"
     t.text "body"
     t.boolean "active"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_warning_templates_on_community_id"
   end
 
@@ -709,11 +709,11 @@ ActiveRecord::Schema[6.1].define(version: 2022_09_03_174045) do
     t.bigint "community_user_id"
     t.text "body"
     t.boolean "is_suspension"
-    t.datetime "suspension_end"
+    t.datetime "suspension_end", precision: nil
     t.boolean "active"
     t.bigint "author_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
     t.boolean "is_global", default: false
     t.bigint "user_id"
