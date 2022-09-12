@@ -6,15 +6,22 @@ class PostHistory < ApplicationRecord
   has_many :tags, through: :post_history_tags
 
   # Limits the history (across multiple posts) which should be visible for the given user.
+  # @param user [User, Nil]
   scope :visible, lambda { |user|
-    unless user.is_admin
+    unless user&.is_admin
+      # This collects for each post the last time that the post was redacted.
       subquery = where(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
-                 .where.not(user: user)
-                 .joins(:post)
-                 .where.not(posts: { user: user })
                  .group(:post_id)
                  .select(Arel.sql('post_id, IFNULL(MAX(post_histories.created_at), 0) target_created_at'))
 
+      # Do include history where the current user is the redactor or the poster
+      unless user.nil?
+        subquery = subquery.where.not(user: user)
+                           .joins(:post)
+                           .where.not(posts: { user: user })
+      end
+
+      # Show only history after the last redaction for each post
       joins(Arel.sql("LEFT OUTER JOIN (#{subquery.to_sql}) sub ON post_histories.post_id = sub.post_id"))
         .where.not(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
         .where(arel_table[:created_at].gteq(Arel.sql('sub.target_created_at'))
