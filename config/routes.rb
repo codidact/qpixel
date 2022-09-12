@@ -257,6 +257,8 @@ Rails.application.routes.draw do
     get    ':id/types',                    to: 'categories#post_types', as: :category_post_types
     get    ':id/feed',                     to: 'categories#rss_feed', as: :category_feed
     get    ':id/tags',                     to: 'tags#category', as: :category_tags
+    get    ':id/tags/new',                 to: 'tags#new', as: :new_tag
+    post   ':id/tags/new',                 to: 'tags#create', as: :create_tag
     get    ':id/tags/:tag_id',             to: 'tags#show', as: :tag
     get    ':id/tags/:tag_id/children',    to: 'tags#children', as: :tag_children
     get    ':id/tags/:tag_id/edit',        to: 'tags#edit', as: :edit_tag
