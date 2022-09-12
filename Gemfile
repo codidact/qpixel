@@ -6,10 +6,10 @@ gem 'coffee-rails', '~> 4.2.2'
 gem 'counter_culture', '~> 2.0'
 gem 'fastimage', '~> 2.1'
 gem 'image_processing', '~> 1.12'
-gem 'jquery-rails', '~> 4.3.5'
-gem 'mysql2', '~> 0.5.3'
+gem 'jquery-rails', '~> 4.3.5' #4.5.0
+gem 'mysql2', '0.5.3' # ~> 0.5.4
 gem 'puma', '~> 4.3.12'
-gem 'rails', '~> 5.2'
+gem 'rails', '~> 6.0.0'
 gem 'rails-html-sanitizer', '~> 1.3'
 gem 'redis', '~> 4.1'
 gem 'rotp', '~> 6.0'
@@ -85,6 +85,7 @@ end
 
 group :development do
   gem 'letter_opener_web', '~> 1.0'
+  gem 'listen'
   gem 'spring', '~> 2.1'
   gem 'web-console', '~> 3.7'
 end
