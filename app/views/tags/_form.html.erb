@@ -1,0 +1,54 @@
+<%= render 'posts/markdown_script' %>
+
+<% if @tag.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving this tag:
+
+    <ul>
+      <% @tag.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @tag, url: submit_path do |f| %>
+  <% if submit_path == create_tag_path %>
+    <div class="form-group">
+      <%= f.label :name, 'Name', class: 'form-element' %>
+      <span class="form-caption">
+        Name of the tag
+      </span>
+      <%= f.text_field :name, class: 'form-element' %>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :parent_id, 'Parent tag', class: 'form-element' %>
+    <span class="form-caption">
+      Optional. Select a parent tag to make this part of a tag hierarchy.
+    </span>
+    <%= f.select :parent_id, options_for_select(@tag.parent.present? ? [[@tag.parent.name, @tag.parent_id]] : [],
+                                                selected: @tag.parent.present? ? @tag.parent_id : nil),
+                 { include_blank: true }, class: "form-element js-tag-select",
+                 data: { tag_set: @category.tag_set_id, use_ids: true, placeholder: "None" } %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :excerpt, 'Usage guidance', class: 'form-element' %>
+    <span class="form-caption">
+      Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
+      the tag page.
+    </span>
+    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3 %>
+    <span class="has-float-right has-font-size-caption js-character-count"
+          data-target=".js-tag-excerpt" data-max="600">0 / 600</span>
+  </div>
+
+  <%= render 'shared/body_field', f: f, field_name: :wiki_markdown, field_label: 'Wiki', post: @tag do %>
+    Full usage guidance and any other information you want people to know about this tag.
+  <% end %>
+  <div class="post-preview"></div>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+<% end %>

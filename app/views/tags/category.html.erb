@@ -2,6 +2,10 @@
 
 <h1>Tags used in <%= @category.name %></h1>
 
+<% if current_user&.is_moderator %>
+  <%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined' %>
+<% end %>
+
 <%= form_tag category_tags_path(@category), method: :get, class: 'form-inline' do %>
   <div class="form-group-horizontal">
     <div class="form-group">
