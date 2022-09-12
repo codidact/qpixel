@@ -2,15 +2,15 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: cimg/ruby:2.7.6-node
-      - image: cimg/mysql:8.0.20
+      - image: cimg/ruby:2.7-node
+      - image: cimg/mysql:8.0
         command: [--default-authentication-plugin=mysql_native_password]
         environment:
           MYSQL_ROOT_HOST: '%'
           MYSQL_USER: 'root'
           MYSQL_ROOT_PASSWORD: 'root'
           MYSQL_DATABASE: 'qpixel_test'
-      - image: cimg/redis:6.0.0
+      - image: cimg/redis:7.0
 
     working_directory: ~/qpixel
 
@@ -66,7 +66,7 @@ jobs:
 
   rubocop:
     docker:
-      - image: cimg/ruby:2.7.6-node
+      - image: cimg/ruby:2.7-node
 
     working_directory: ~/qpixel
 
@@ -97,7 +97,7 @@ jobs:
 
   deploy:
     docker:
-      - image: cimg/ruby:2.7.6-node
+      - image: cimg/ruby:2.7-node
 
     working_directory: ~/qpixel
 
