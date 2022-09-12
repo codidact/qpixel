@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.7.6'
+ruby '>= 2.7', '< 4'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 5.0.0'
@@ -61,6 +61,9 @@ gem 'stackprof', '~> 0.2'
 # import needs thwait and ActiveSupport needs e2mmap.
 gem 'e2mmap', '~> 0.1'
 gem 'thwait', '~> 0.2'
+
+# Ruby 3.0 compatibility: net-smtp is no longer bundled with Ruby
+gem 'net-smtp', '~> 0.3'
 
 # Stuff for imports
 gem 'ruby-progressbar', '~> 1.11'
