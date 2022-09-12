@@ -4,7 +4,7 @@ class TagSet < ApplicationRecord
   has_many :tags_with_paths, class_name: 'TagWithPath'
   has_many :categories
 
-  validates :name, uniqueness: { scope: [:community_id] }, presence: true
+  validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }, presence: true
 
   def self.meta
     where(name: 'Meta').first

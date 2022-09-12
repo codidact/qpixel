@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
   include CommunityRelated
 
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
@@ -28,7 +28,7 @@ class Post < ApplicationRecord
   serialize :tags_cache, Array
 
   validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
-  validates :doc_slug, uniqueness: { scope: [:community_id] }, if: -> { doc_slug.present? }
+  validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
   validates :title, :body, :tags_cache, presence: true, if: -> { post_type.has_tags }
   validate :tags_in_tag_set, if: -> { post_type.has_tags }
   validate :maximum_tags, if: -> { post_type.has_tags }
@@ -169,7 +169,7 @@ class Post < ApplicationRecord
 
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
-             .map { |_k, v| [v.first.reaction_type, v] }.to_h
+             .to_h { |_k, v| [v.first.reaction_type, v] }
   end
 
   private

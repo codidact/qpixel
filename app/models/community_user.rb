@@ -6,7 +6,7 @@ class CommunityUser < ApplicationRecord
   has_many :user_abilities, dependent: :destroy
   belongs_to :deleted_by, required: false, class_name: 'User'
 
-  validates :user_id, uniqueness: { scope: [:community_id] }
+  validates :user_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
   scope :active, -> { where(deleted: false) }

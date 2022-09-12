@@ -20,8 +20,8 @@ module Advertisements::CommunityHelper
       community_url.font_weight = 700
       community_url.pointsize = 20
       community_url.gravity = CenterGravity
-      community_url.annotate ad, 600, 50, 0, 450, @community.host do
-        self.fill = 'white'
+      community_url.annotate ad, 600, 50, 0, 450, @community.host do |img|
+        img.fill = 'white'
       end
 
       icon_path = SiteSetting['SiteLogoPath']
@@ -37,8 +37,8 @@ module Advertisements::CommunityHelper
         community_name.font = './app/assets/imgfonts/Roboto-Black.ttf'
         community_name.pointsize = (50 + (100.0 / name.length))
         community_name.gravity = CenterGravity
-        community_name.annotate ad, 600, 250, 0, 0, name do
-          self.fill = 'black'
+        community_name.annotate ad, 600, 250, 0, 0, name do |img|
+          img.fill = 'black'
         end
       end
 
@@ -48,8 +48,8 @@ module Advertisements::CommunityHelper
       on_codidact.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       on_codidact.pointsize = 25
       on_codidact.gravity = EastGravity
-      on_codidact.annotate ad, 0, 50, 500, 150, 'on codidact.com' do
-        self.fill = '#666666'
+      on_codidact.annotate ad, 0, 50, 500, 150, 'on codidact.com' do |img|
+        img.fill = '#666666'
       end
 
       slogan = Draw.new
@@ -60,8 +60,8 @@ module Advertisements::CommunityHelper
       slogan.gravity = NorthGravity
       position = 0
       wrap_text(SiteSetting['SiteAdSlogan'], 500, 30).split("\n").each do |line|
-        slogan.annotate ad, 500, 100, 50, 225 + position * 45, line do
-          self.fill = '#333333'
+        slogan.annotate ad, 500, 100, 50, 225 + (position * 45), line do |img|
+          img.fill = '#333333'
         end
         position += 1
       end

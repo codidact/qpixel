@@ -249,7 +249,7 @@ class CommentsController < ApplicationController
     thread = params[:id] == '-1' ? CommentThread.new(post_id: params[:post]) : CommentThread.find(params[:id])
     ids = helpers.get_pingable(thread)
     users = User.where(id: ids)
-    render json: users.map { |u| [u.username, u.id] }.to_h
+    render json: users.to_h { |u| [u.username, u.id] }
   end
 
   private
@@ -309,9 +309,9 @@ class CommentsController < ApplicationController
 
     if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
        && recent_comments >= max_comments_per_day
-      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments." \
-                          ' Come back tomorrow to continue commenting. Comments on own posts and on answers' \
-                          ' to own posts are exempt.'
+      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments. " \
+                          'Come back tomorrow to continue commenting. Comments on own posts and on answers ' \
+                          'to own posts are exempt.'
 
       if recent_comments.zero? && !current_user.privilege?('unrestricted')
         comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'

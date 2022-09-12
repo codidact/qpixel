@@ -1,3 +1,5 @@
+require 'devise/mailer'
+
 Devise::Mailer.layout 'devise_mailer'
 
 # Use this hook to configure devise mailer, warden hooks and so forth.

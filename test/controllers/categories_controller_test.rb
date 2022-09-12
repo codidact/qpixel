@@ -65,7 +65,7 @@ class CategoriesControllerTest < ActionController::TestCase
     sign_in users(:admin)
     post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue',
+                                        tag_set_id: tag_sets(:main).id, color_code: 'blue',
                                         license_id: licenses(:cc_by_sa).id } }
     assert_response 302
     assert_not_nil assigns(:category)

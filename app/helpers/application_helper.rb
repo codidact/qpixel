@@ -29,7 +29,7 @@ module ApplicationHelper
       uri.path = base_uri.path
     end
 
-    query = query.merge(params.map { |k, v| [k.to_s, v.to_s] }.to_h)
+    query = query.merge(params.to_h { |k, v| [k.to_s, v.to_s] })
     uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
     uri.to_s
   end

@@ -9,7 +9,7 @@ module AbilitiesHelper
   # Solution: We transform the ideal case formula y=(x+2)/(x+4)
   # to x=(4y-2)/(1-y) and use that for the progress bar.
   def linearize_progress(score)
-    linear_score = (4 * score - 2) / (1 - score)
+    linear_score = ((4 * score) - 2) / (1 - score)
     [0, linear_score].max
   end
 
@@ -19,18 +19,18 @@ module AbilitiesHelper
     if ua&.suspended?
       if action.nil?
         "Your use of the #{ability.name} ability has been temporarily suspended. " \
-        "See /abilities/#{ability.internal_id} for more information."
+          "See /abilities/#{ability.internal_id} for more information."
       else
         "Your use of the #{ability.name} ability has been temporarily suspended, so you cannot #{action}." \
-        "See /abilities/#{ability.internal_id} for more information."
+          "See /abilities/#{ability.internal_id} for more information."
       end
     else
       if action.nil?
         "You need the #{ability.name} ability to do this." \
-        "See /abilities/#{ability.internal_id} for more information."
+          "See /abilities/#{ability.internal_id} for more information."
       else
         "You need the #{ability.name} ability to #{action}." \
-        "See /abilities/#{ability.internal_id} for more information."
+          "See /abilities/#{ability.internal_id} for more information."
       end
     end
   end

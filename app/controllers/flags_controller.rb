@@ -14,9 +14,9 @@ class FlagsController < ApplicationController
     max_flags_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Flags' : 'RL_NewUserFlags']
 
     if recent_flags >= max_flags_per_day
-      flag_limit_msg = 'Thank you. Flags from people like you help us keep this site clean.' \
-                       " However, you have reached your daily flag limit of #{max_flags_per_day}" \
-                       ' flags. Please come back tomorrow to continue flagging.'
+      flag_limit_msg = 'Thank you. Flags from people like you help us keep this site clean. ' \
+                       "However, you have reached your daily flag limit of #{max_flags_per_day} " \
+                       'flags. Please come back tomorrow to continue flagging.'
 
       AuditLog.rate_limit_log(event_type: 'flag', related: Post.find(params[:post_id]), user: current_user,
                               comment: "limit: #{max_flags_per_day}\n\ntype:#{type}\ncomment:\n#{params[:reason].to_i}")

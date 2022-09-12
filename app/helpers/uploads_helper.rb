@@ -7,7 +7,7 @@ module UploadsHelper
   end
 
   def valid_image?(io)
-    content_types = ActiveStorage::Variant::WEB_IMAGE_CONTENT_TYPES
+    content_types = Rails.application.config.active_storage.web_image_content_types
     extensions = content_types.map { |ct| ct.gsub('image/', '') }
     submitted_extension = io.original_filename.split('.')[-1].downcase
     content_types.include?(io.content_type) && extensions.include?(submitted_extension) &&

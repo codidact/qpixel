@@ -63,12 +63,18 @@ module QPixel
       end
     end
 
+    # We have to statically report that we support cache versioning even though this depends on the underlying class.
+    # However, this is not really a problem since all cache stores provided by activesupport support the feature and
+    # we only use the redis cache (by activesupport) for QPixel.
+    def self.supports_cache_versioning?
+      true
+    end
+
     private
+
     def construct_ns_key(key, include_community: true)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
     end
   end
 end
-
-Rails.cache = QPixel::NamespacedEnvCache.new(Rails.cache)

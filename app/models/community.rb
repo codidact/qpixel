@@ -4,5 +4,5 @@ class Community < ApplicationRecord
 
   default_scope { where(is_fake: false) }
 
-  validates :host, uniqueness: true
+  validates :host, uniqueness: { case_sensitive: false }
 end

@@ -21,6 +21,6 @@ module MicroAuth::AuthenticationHelper
     fields = [:id, :created_at, :is_global_moderator, :is_global_admin, :username, :website, :twitter, :staff,
               :developer, :discord]
     fields << :email if token.scope.include? 'pii'
-    fields.map { |f| [f, token.user.send(f)] }.to_h
+    fields.to_h { |f| [f, token.user.send(f)] }
   end
 end

@@ -1,6 +1,7 @@
 en:
   g:
     # Alphabetical order please!
+    age: 'age'
     at: 'at'
     body: 'body'
     cancel: 'cancel'

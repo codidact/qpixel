@@ -39,7 +39,7 @@
   }
 
   p {
-    margin: 0 min(max(0.5em, 15%), 4em) 0.5em min(max(0.5em, 15%), 4em);
+    margin: 0 calc(min(max(0.5em, 15%), 4em)) 0.5em calc(min(max(0.5em, 15%), 4em));
     text-align: justify;
 
     &.lede {
@@ -57,7 +57,7 @@
   }
 
   form {
-    margin: 2em min(max(0.5em, 15%), 4em) 2em min(max(0.5em, 15%), 4em);
+    margin: 2em calc(min(max(0.5em, 15%), 4em)) 2em calc(min(max(0.5em, 15%), 4em));
 
     label {
       font-weight: bold;

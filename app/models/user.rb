@@ -27,7 +27,7 @@ class User < ApplicationRecord
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
-  validates :login_token, uniqueness: { allow_blank: true }
+  validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
   validate :no_links_in_username
   validate :username_not_fake_admin
   validate :no_blank_unicode_in_username
@@ -92,8 +92,7 @@ class User < ApplicationRecord
   end
 
   def create_notification(content, link)
-    notification = Notification.create!(content: content, link: link)
-    notifications << notification
+    notifications.create!(content: content, link: link)
   end
 
   def unread_count

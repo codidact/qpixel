@@ -20,7 +20,7 @@ class PostHistory < ApplicationRecord
 
     object, user = args
     fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags]
-    values = fields.map { |f| [f, nil] }.to_h.merge(opts)
+    values = fields.to_h { |f| [f, nil] }.merge(opts)
 
     history_type_name = name.to_s
     history_type = PostHistoryType.find_by(name: history_type_name)
@@ -39,13 +39,13 @@ class PostHistory < ApplicationRecord
 
     history = PostHistory.create params
 
-    post_history_tags = { before_tags: 'before', after_tags: 'after' }.map do |arg, rel|
+    post_history_tags = { before_tags: 'before', after_tags: 'after' }.to_h do |arg, rel|
       if values[arg].nil?
         [arg, nil]
       else
         [arg, values[arg].map { |t| { post_history_id: history.id, tag_id: t.id, relationship: rel } }]
       end
-    end.to_h.values.compact.flatten
+    end.values.compact.flatten
 
     history.post_history_tags = PostHistoryTag.create(post_history_tags)
 

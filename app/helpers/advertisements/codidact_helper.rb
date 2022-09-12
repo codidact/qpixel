@@ -20,8 +20,8 @@ module Advertisements::CodidactHelper
       community_url.font_weight = 700
       community_url.pointsize = 20
       community_url.gravity = CenterGravity
-      community_url.annotate ad, 600, 50, 0, 450, 'Try on codidact.com' do
-        self.fill = 'white'
+      community_url.annotate ad, 600, 50, 0, 450, 'Try on codidact.com' do |img|
+        img.fill = 'white'
       end
 
       icon = ::Magick::ImageList.new('./app/assets/images/codidact.png')
@@ -34,8 +34,8 @@ module Advertisements::CodidactHelper
       on_codidact.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       on_codidact.pointsize = 25
       on_codidact.gravity = CenterGravity
-      on_codidact.annotate ad, 400, 50, 100, 200, 'The Open Source Q&A Platform.' do
-        self.fill = '#666666'
+      on_codidact.annotate ad, 400, 50, 100, 200, 'The Open Source Q&A Platform.' do |img|
+        img.fill = '#666666'
       end
 
       slogan = Draw.new
@@ -46,8 +46,8 @@ module Advertisements::CodidactHelper
       slogan.gravity = NorthGravity
       position = 0
       wrap_text('Join our communities or build your own on codidact.com.', 500, 30).split("\n").each do |line|
-        slogan.annotate ad, 500, 100, 50, 300 + position * 45, line do
-          self.fill = '#333333'
+        slogan.annotate ad, 500, 100, 50, 300 + (position * 45), line do |img|
+          img.fill = '#333333'
         end
         position += 1
       end

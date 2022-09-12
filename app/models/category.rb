@@ -12,7 +12,7 @@ class Category < ApplicationRecord
 
   serialize :display_post_types, Array
 
-  validates :name, uniqueness: { scope: [:community_id] }
+  validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
@@ -32,14 +32,14 @@ class Category < ApplicationRecord
 
   def self.by_lowercase_name(name)
     categories = Rails.cache.fetch 'categories/by_lowercase_name' do
-      Category.all.map { |c| [c.name.downcase, c] }.to_h
+      Category.all.to_h { |c| [c.name.downcase, c] }
     end
     categories[name]
   end
 
   def self.by_id(id)
     categories = Rails.cache.fetch 'categories/by_id' do
-      Category.all.map { |c| [c.id, c] }.to_h
+      Category.all.to_h { |c| [c.id, c] }
     end
     categories[id]
   end

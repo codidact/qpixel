@@ -97,9 +97,9 @@ class CategoriesController < ApplicationController
     # Break rep awards cache either way and regenerate.
     cache_key = 'network/category_post_types/rep_changes'
     Rails.cache.delete cache_key, include_community: false
-    Rails.cache.write(cache_key, CategoryPostType.all.map do |cpt|
+    Rails.cache.write(cache_key, CategoryPostType.all.to_h do |cpt|
       [[cpt.category_id, cpt.post_type_id], { 1 => cpt.upvote_rep, -1 => cpt.downvote_rep }]
-    end.to_h, include_community: false)
+    end, include_community: false)
 
     view_name = 'categories/_category_post_type_edit'
     render json: { status: 'success', cpt: @category_post_type,

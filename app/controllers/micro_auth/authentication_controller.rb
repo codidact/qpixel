@@ -77,7 +77,7 @@ class MicroAuth::AuthenticationController < ApplicationController
   end
 
   def clean_scope(scope)
-    scope = scope.is_a?(Array) ? scope : [scope]
+    scope = [scope] unless scope.is_a?(Array)
     scope.select do |s|
       helpers.valid_auth_scopes.keys.include? s
     end

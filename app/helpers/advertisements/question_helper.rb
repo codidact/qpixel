@@ -21,11 +21,11 @@ module Advertisements::QuestionHelper
       answer.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       answer.pointsize = 40
       answer.gravity = CenterGravity
-      answer.annotate ad, 600, 50, 0, 10, 'Could you answer' do
-        self.fill = 'white'
+      answer.annotate ad, 600, 50, 0, 10, 'Could you answer' do |img|
+        img.fill = 'white'
       end
-      answer.annotate ad, 600, 50, 0, 70, 'this question?' do
-        self.fill = 'white'
+      answer.annotate ad, 600, 50, 0, 70, 'this question?' do |img|
+        img.fill = 'white'
       end
 
       icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
@@ -40,8 +40,8 @@ module Advertisements::QuestionHelper
         community_name.font = './app/assets/imgfonts/Roboto-Bold.ttf'
         community_name.pointsize = 25
         community_name.gravity = SouthWestGravity
-        community_name.annotate ad, 0, 0, 20, 20, question.community.name do
-          self.fill = '#4B68FF'
+        community_name.annotate ad, 0, 0, 20, 20, question.community.name do |img|
+          img.fill = '#4B68FF'
         end
       end
 
@@ -51,8 +51,8 @@ module Advertisements::QuestionHelper
       community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       community_url.pointsize = 20
       community_url.gravity = SouthEastGravity
-      community_url.annotate ad, 0, 0, 20, 20, question.community.host do
-        self.fill = '#666666'
+      community_url.annotate ad, 0, 0, 20, 20, question.community.host do |img|
+        img.fill = '#666666'
       end
 
       title = Draw.new
@@ -65,15 +65,15 @@ module Advertisements::QuestionHelper
       if question.title.length > 60
         title.pointsize = 35
         wrap_text(do_rtl_witchcraft(question.title), 500, 35).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 135 + position * 55, line do
-            self.fill = '#333333'
+          title.annotate ad, 500, 100, 50, 135 + (position * 55), line do |img|
+            img.fill = '#333333'
           end
           position += 1
         end
       else
         wrap_text(do_rtl_witchcraft(question.title), 500, 55).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 160 + position * 70, line do
-            self.fill = '#333333'
+          title.annotate ad, 500, 100, 50, 160 + (position * 70), line do |img|
+            img.fill = '#333333'
           end
           position += 1
         end
