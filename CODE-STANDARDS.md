@@ -198,9 +198,9 @@ allowed where transparency is a requirement.
     box-shadow: 0 14px 14px rgba(0, 0, 0, 0.16);
 
     /* these are non conforming */
-    color: #ff0000;
-    color: red;
-    background-color: rgb(45, 52, 54);
+    color: #ff0000; /* should be #f00 */
+    color: red; /* should be #f00 */
+    background-color: rgb(45, 52, 54); /* should be #2d3436 */
 }
 ```
 ## HTML
