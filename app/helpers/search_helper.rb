@@ -42,6 +42,14 @@ module SearchHelper
       filter_qualifiers.append({ param: :score, operator: '<=', value: params[:filter_score_max].to_f })
     end
 
+    if params[:filter_answers_min]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :answers, operator: '>=', value: params[:filter_answers_min].to_i })
+    end
+
+    if params[:filter_answers_max]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :answers, operator: '<=', value: params[:filter_answers_max].to_i })
+    end
+
     filter_qualifiers
   end
 
