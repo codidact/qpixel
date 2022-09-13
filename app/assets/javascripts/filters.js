@@ -2,11 +2,13 @@ $(() => {
   const predefined = {
     'Positive': {
       'score-min': 0.5,
-      'score-max': 1
+      'score-max': 1,
+      'status': 'open'
     },
     'Unanswered': {
       'answers-min': 0,
-      'answers-max': 0
+      'answers-max': 0,
+      'status': 'open'
     }
   };
 
