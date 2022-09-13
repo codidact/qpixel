@@ -3,6 +3,10 @@ $(() => {
     'Positive': {
       'score-min': 0.5,
       'score-max': 1
+    },
+    'Unanswered': {
+      'answers-min': 0,
+      'answers-max': 0
     }
   };
 
