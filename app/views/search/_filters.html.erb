@@ -1,9 +1,12 @@
 <div class="form-group">
   <div class="form-group-horizontal">
-    <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
-    <%= select_tag :predefined_filter, options_for_select([]),
-        include_blank: true, class: "form-element js-filter-select", id: nil,
-        data: { placeholder: "" } %>
+    <div class="form-group">
+      <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
+      <%= select_tag :predefined_filter, options_for_select([]),
+          include_blank: true, class: "form-element js-filter-select", id: nil,
+          data: { placeholder: "" } %>
+    </div>
+    <button type="button" class="filter-clear button is-medium is-danger">Clear</button>
   </div>
   <div class="form-group-horizontal">
     <div class="form-group">

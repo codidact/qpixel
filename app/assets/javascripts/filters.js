@@ -32,4 +32,11 @@ $(() => {
       });
     });
   });
+
+  $('.filter-clear').on('click', evt => {
+    const $tgt = $(evt.target);
+    const $form = $tgt.closest('form');
+
+    $form.find('.form--filter').val(null).trigger('change');
+  });
 });
