@@ -29,6 +29,7 @@ module SearchHelper
   def filters_to_qualifiers
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
+      status: /any|open|closed/,
       numeric: /^[\d.]+$/
     }
 
@@ -50,6 +51,10 @@ module SearchHelper
       filter_qualifiers.append({ param: :answers, operator: '<=', value: params[:filter_answers_max].to_i })
     end
 
+    if params[:filter_status]&.match?(valid_value[:status])
+      filter_qualifiers.append({ param: :status, value: params[:filter_status] })
+    end
+
     filter_qualifiers
   end
 
@@ -68,6 +73,7 @@ module SearchHelper
   def parse_qualifier_strings(qualifiers)
     valid_value = {
       date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
+      status: /any|open|closed/,
       numeric: /^[<>=]{0,2}[\d.]+$/
     }
 
@@ -126,6 +132,10 @@ module SearchHelper
 
         operator, val = numeric_value_sql value
         { param: :answers, operator: operator.presence || '=', value: val.to_i }
+      when 'status'
+        next unless value.match?(valid_value[:status])
+
+        { param: :status, value: value }
       end
     end
   end
@@ -135,7 +145,7 @@ module SearchHelper
     allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
     query = query.where(category_id: allowed_categories)
 
-    qualifiers.each do |qualifier|
+    qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
       case qualifier[:param]
       when :score
         query = query.where("score #{qualifier[:operator]} ?", qualifier[:value])
@@ -163,6 +173,13 @@ module SearchHelper
         post_types_with_answers = PostType.where(has_answers: true)
         query = query.where("answer_count #{qualifier[:operator]} ?", qualifier[:value])
                      .where(post_type_id: post_types_with_answers)
+      when :status
+        case qualifier[:value]
+        when 'open'
+          query = query.where(closed: false)
+        when 'closed'
+          query = query.where(closed: true)
+        end
       end
     end
 

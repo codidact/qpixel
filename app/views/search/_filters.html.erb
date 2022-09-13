@@ -32,4 +32,9 @@
           min: 0, step: 1, class: 'form-element form--filter filter-answers-max' %>
     </div>
   </div>
+  <div class="form-group">
+      <%= label_tag :filter_status, 'Status', class: "form-element" %>
+      <%= select_tag :filter_status, options_for_select(['any', 'open', 'closed'], selected: params[:filter_status] || 'any'),
+          min: 0, step: 1, class: 'form-element form--filter filter-status' %>
+    </div>
 </div>
