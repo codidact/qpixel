@@ -86,19 +86,21 @@
       </div>
     </div>
   <% end %>
-  <div class="widget has-margin-4">
-    <div class="widget--header">
-      Filters
+  <% if defined?(@category) && current_page?(category_path(@category)) %>
+    <div class="widget has-margin-4">
+      <div class="widget--header">
+        Filters
+      </div>
+      <div class="widget--body">
+        <%= form_tag request.original_url, method: :get do %>
+          <%= render 'search/filters' %>
+          <div class="actions has-padding-bottom-1">
+            <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+          </div>
+        <% end %>
+      </div>
     </div>
-    <div class="widget--body">
-      <%= form_tag request.original_url, method: :get do %>
-        <%= render 'search/filters' %>
-        <div class="actions has-padding-bottom-1">
-          <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+  <% end %>
   <% unless @community.is_fake %>
     <% if user_signed_in? %>
       <div class="widget has-margin-4">
