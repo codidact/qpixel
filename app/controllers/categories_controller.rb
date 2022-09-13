@@ -161,8 +161,9 @@ class CategoriesController < ApplicationController
                     native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
-                      .order(sort_param)
+                      .includes(:post_type, :tags).list_includes
+    @posts = helpers.filters_to_sql @posts
+    @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
   def update_last_visit(category)
