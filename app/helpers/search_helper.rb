@@ -131,7 +131,11 @@ module SearchHelper
   end
 
   def qualifiers_to_sql(qualifiers, query)
-    qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
+    trust_level = current_user&.trust_level || 0
+    allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
+    query = query.where(category_id: allowed_categories)
+
+    qualifiers.each do |qualifier|
       case qualifier[:param]
       when :score
         query = query.where("score #{qualifier[:operator]} ?", qualifier[:value])
@@ -152,10 +156,7 @@ module SearchHelper
       when :exclude_tag
         query = query.where.not(posts: { id: PostsTag.where(tag_id: qualifier[:tag_id]).select(:post_id) })
       when :category
-        trust_level = current_user&.trust_level || 0
-        allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
         query = query.where("category_id #{qualifier[:operator]} ?", qualifier[:category_id])
-                     .where(category_id: allowed_categories)
       when :post_type
         query = query.where("post_type_id #{qualifier[:operator]} ?", qualifier[:post_type_id])
       when :answers
