@@ -455,6 +455,21 @@
           <h4 class="has-margin-0">
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
+          <% if user_signed_in? %>
+            <p class="has-font-size-caption">
+              <% if CommentThread.post_followed?(post, current_user) %>
+                <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                            title: 'Don\'t follow new comment threads on this post' do %>
+                  <i class="fas fa-fw fa-minus"></i> unfollow new
+                <% end %>
+              <% else %>
+                <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                            title: 'Follow all new comment threads on this post' do %>
+                  <i class="fas fa-fw fa-plus"></i> follow new
+                <% end %>
+              <% end %>
+            </p>
+          <% end %>
           <div class="post--comments-container">
             <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
           </div>

@@ -6,7 +6,7 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-  before_action :check_if_target_post_locked, only: [:create]
+  before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
   def create_thread
@@ -42,9 +42,16 @@ class CommentsController < ApplicationController
     end
 
     if success
+      notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
       unless @comment.post.user == current_user
-        @comment.post.user.create_notification("New comment thread on #{@comment.root.title}: #{@comment_thread.title}",
-                                               helpers.comment_link(@comment))
+        @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
+      end
+
+      ThreadFollower.where(post: @post).each do |tf|
+        unless tf.user == current_user || tf.user == @comment.post.user
+          tf.user.create_notification(notification, helpers.comment_link(@comment))
+        end
+        ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
       end
 
       apply_pings pings
@@ -285,6 +292,16 @@ class CommentsController < ApplicationController
       format.html { render layout: false }
       format.json { render json: @comment_threads }
     end
+  end
+
+  def post_follow
+    @post = Post.find(params[:post_id])
+    if CommentThread.post_followed?(@post, current_user)
+      ThreadFollower.where(post: @post, user: current_user).destroy_all
+    else
+      ThreadFollower.create(post: @post, user: current_user)
+    end
+    redirect_to post_path(@post)
   end
 
   def pingable
