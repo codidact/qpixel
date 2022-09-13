@@ -210,6 +210,7 @@ Rails.application.routes.draw do
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
     get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments
+    post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
     post   ':id/edit',                     to: 'comments#update', as: :update_comment

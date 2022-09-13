@@ -32,6 +32,10 @@ class CommentThread < ApplicationRecord
       post.can_access?(user)
   end
 
+  def self.post_followed?(post, user)
+    ThreadFollower.where(post: post, user: user).any?
+  end
+
   private
 
   # Comment author and post author are automatically followed to the thread. Question author is NOT
