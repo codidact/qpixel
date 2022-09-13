@@ -1,4 +1,45 @@
 module SearchHelper
+  def search_posts
+    # Check permissions
+    posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
+            .qa_only.list_includes
+
+    # Filter based on search string qualifiers
+    if params[:search].present?
+      search_data = parse_search(params[:search])
+      posts = qualifiers_to_sql(search_data[:qualifiers], posts)
+    end
+
+    posts = filters_to_sql(posts)
+
+    posts = posts.paginate(page: params[:page], per_page: 25)
+
+    if params[:search].present? && search_data[:search].present?
+      posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
+                                                   relevance: :search_score, score: :score, age: :created_at)
+    else
+      posts.user_sort({ term: params[:sort], default: :score },
+                      score: :score, age: :created_at)
+    end
+  end
+
+  def filters_to_sql(query)
+    valid_value = {
+      date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
+      numeric: /^[\d.]+$/
+    }
+
+    if params[:filter_score_min]&.match?(valid_value[:numeric])
+      query = query.where('score >= ?', params[:filter_score_min].to_f)
+    end
+
+    if params[:filter_score_max]&.match?(valid_value[:numeric])
+      query = query.where('score <= ?', params[:filter_score_max].to_f)
+    end
+
+    query
+  end
+
   def parse_search(raw_search)
     qualifiers_regex = /([\w\-_]+(?<!\\):[^ ]+)/
     qualifiers = raw_search.scan(qualifiers_regex).flatten
