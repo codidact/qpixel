@@ -162,7 +162,8 @@ class CategoriesController < ApplicationController
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type, :tags).list_includes
-    @posts = helpers.filters_to_sql @posts
+    filter_qualifiers = helpers.filters_to_qualifiers
+    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
