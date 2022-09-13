@@ -86,7 +86,14 @@
       </div>
     </div>
   <% end %>
-
+  <div class="widget has-margin-4">
+    <div class="widget--header">
+      Filters
+    </div>
+    <div class="widget--body">
+      <%= render 'search/filters' %>
+    </div>
+  </div>
   <% unless @community.is_fake %>
     <% if user_signed_in? %>
       <div class="widget has-margin-4">
