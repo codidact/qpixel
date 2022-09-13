@@ -2,7 +2,7 @@
   <div class="form-group-horizontal">
     <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
     <%= select_tag :predefined_filter, options_for_select([]),
-        include_blank: true, class: "form-element js-filter-select",
+        include_blank: true, class: "form-element js-filter-select", id: nil,
         data: { placeholder: "" } %>
   </div>
   <div class="form-group-horizontal">
