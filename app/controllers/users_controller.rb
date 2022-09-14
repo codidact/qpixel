@@ -99,6 +99,32 @@ class UsersController < ApplicationController
     end
   end
 
+  def delete_filter
+    unless params[:name]
+      return render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+                    status: 400
+    end
+
+    as_user = current_user
+
+    if params[:system] == true
+      if current_user&.is_global_admin
+        as_user = User.find(-1)
+      else
+        return render json: { status: 'failed', success: false, errors: ['You do not have permission to delete'] },
+                      status: 400
+      end
+    end
+
+    filter = Filter.find_by(user: as_user, name: params[:name])
+    if filter.destroy
+      render json: { status: 'success', success: true, filters: filters_json }
+    else
+      render json: { status: 'failed', success: false, errors: ['Failed to delete'] },
+             status: 400
+    end
+  end
+
   def set_preference
     if !params[:name].nil? && !params[:value].nil?
       global_key = "prefs.#{current_user.id}"

@@ -3,13 +3,14 @@ $(() => {
     const $select = $(el);
     const $form = $select.closest('form');
     const $saveButton = $form.find('.filter-save');
+    const $deleteButton = $form.find('.filter-delete');
 
     async function initializeSelect() {
       const filters = await QPixel.filters();
-  
+
       function template(option) {
         if (option.id == '') { return 'None'; }
-  
+
         const filter = filters[option.id];
         const name = `<span>${option.text}</span>`;
         const systemIndicator = filter?.system
@@ -20,22 +21,22 @@ $(() => {
           : '';
         return $(name + systemIndicator + newIndicator);
       }
-    
+
       $select.select2({
         data: Object.keys(filters),
         tags: true,
-  
+
         templateResult: template,
         templateSelection: template
       }).on('select2:select', evt => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
-  
+
         // Name is not one of the presets, i.e user is creating a new preset
         if (!preset) { return; }
-  
+
         $saveButton.prop('disabled', true);
-  
+
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
         }
@@ -64,6 +65,15 @@ $(() => {
       // Reinitialize to get new options
       await initializeSelect();
       $saveButton.prop('disabled', true);
+    });
+
+    $deleteButton?.on('click', async evt => {
+      if (confirm(`Are you sure you want to delete ${$select.val()}?`)) {
+        await QPixel.deleteFilter($select.val());
+        // Reinitialize to get new options
+        await initializeSelect();
+        $saveButton.prop('disabled', true);
+      }
     });
 
     $form.find('.filter-clear').on('click', _ => {
