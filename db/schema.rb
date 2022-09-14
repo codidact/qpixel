@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_14_044523) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_14_193044) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -235,8 +235,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_14_044523) do
   end
 
   create_table "filters", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_id"
-    t.string "name"
+    t.bigint "user_id", null: false
+    t.string "name", null: false
     t.float "min_score"
     t.float "max_score"
     t.integer "min_answers"
