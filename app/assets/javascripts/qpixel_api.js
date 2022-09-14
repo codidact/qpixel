@@ -263,6 +263,27 @@ window.QPixel = {
     }
   },
 
+  filters: async () => {
+    if (this._filters == null && localStorage['qpixel.user_filters']) {
+      this._filters = JSON.parse(localStorage['qpixel.user_filters']);
+    }
+    else if (this._filters == null) {
+      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
+      // loaded them for yet. Load via AJAX.
+      const resp = await fetch('/users/me/filters', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await resp.json();
+      localStorage['qpixel.user_filters'] = JSON.stringify(data);
+      this._filters = data;
+    }
+
+    return this._filters;
+  },
+
   /**
    * Get the word in a string that the given position is in, and the position within that word.
    * @param splat an array, containing the string already split by however you define a "word"
