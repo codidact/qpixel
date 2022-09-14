@@ -1,5 +1,5 @@
 class Filter < ApplicationRecord
-  belongs_to :user, required: true, class_name: 'User'
+  belongs_to :user
 
   # Helper method to convert it to the form expected by the client
   def json
