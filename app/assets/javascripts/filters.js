@@ -7,6 +7,15 @@ $(() => {
       $tgt.select2({
         data: Object.keys(filters),
         tags: true,
+        
+        templateResult: option => {
+          const filter = filters[option.id];
+          const name = `<span>${option.text}</span>`;
+          const systemIndicator = filter?.system
+            ? ' <span class=has-color-tertiary-900 has-font-size-caption">(System)</span>'
+            : ''
+          return $(name + systemIndicator);
+        }
       }).on('select2:select', evt => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
