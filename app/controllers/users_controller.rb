@@ -64,6 +64,27 @@ class UsersController < ApplicationController
     end
   end
 
+  def filters
+    respond_to do |format|
+      format.json do
+        render json: current_user.filters.select(:name, :min_score, :max_score, :min_answers, :max_answers, :status)
+      end
+    end
+  end
+
+  def set_filter
+    if params[:name]
+      filter = Filter.find_or_create_by(user: current_user, name: params[:name])
+      filter.update(min_score: params[:min_score], max_score: params[:max_score], min_answers: params[:min_answers],
+                    max_answers: params[:max_answers], status: params[:status])
+
+      render json: { status: 'success', success: true }
+    else
+      render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+             status: 400
+    end
+  end
+
   def set_preference
     if !params[:name].nil? && !params[:value].nil?
       global_key = "prefs.#{current_user.id}"
