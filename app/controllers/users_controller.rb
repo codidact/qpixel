@@ -79,6 +79,7 @@ class UsersController < ApplicationController
 
   def filters
     respond_to do |format|
+      format.html
       format.json do
         render json: filters_json
       end

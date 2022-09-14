@@ -1,3 +1,6 @@
+<% allow_delete ||= false %>
+<% allow_apply = true if allow_apply.nil? %>
+
 <div class="form-group">
   <div class="form-group-horizontal">
     <div class="form-group">
@@ -38,7 +41,12 @@
         min: 0, step: 1, class: 'form-element form--filter' %>
   </div>
   <div class="form-group">
-    <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+    <% if allow_apply %>
+      <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+    <% end %>
     <button type="button" class="filter-save button is-medium is-filled">Save</button>
+    <% if allow_delete %>
+      <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
+    <% end %>
   </div>
 </div>
