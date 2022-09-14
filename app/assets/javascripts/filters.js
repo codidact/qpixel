@@ -12,16 +12,17 @@ $(() => {
         ? ' <span has-font-size-caption">(New)</span>'
         : '';
       return $(name + systemIndicator + newIndicator);
-    }  
+    }
 
     $('.js-filter-select').each((i, el) => {
       const $tgt = $(el);
       const $form = $tgt.closest('form');
+      const $saveButton = $('.filter-save');
 
       $tgt.select2({
         data: Object.keys(filters),
         tags: true,
-        
+
         templateResult: template,
         templateSelection: template
       }).on('select2:select', evt => {
@@ -31,6 +32,8 @@ $(() => {
         // Name is not one of the presets, i.e user is creating a new preset
         if (!preset) { return; }
 
+        $saveButton.prop('disabled', true);
+
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
         }
@@ -39,17 +42,22 @@ $(() => {
       // Clear the preset when the user enters in a filter manually
       $form.find('.form--filter').each((i, filter) => {
         $(filter).on('change', _ => {
-          $tgt.val(null).trigger('change');
+          $saveButton.prop('disabled', false);
         });
       });
 
-      $('.filter-save').on('click', evt => {
+      $saveButton.on('click', async evt => {
+        if (!$form[0].reportValidity()) {
+          return;
+        }
+
         const filter = {};
 
         for (const el of $('.form--filter')) {
           filter[el.name] = el.value;
         }
-        QPixel.setFilter($tgt.val(), filter)
+        await QPixel.setFilter($tgt.val(), filter);
+        $saveButton.prop('disabled', true);
       });
     });
   });
