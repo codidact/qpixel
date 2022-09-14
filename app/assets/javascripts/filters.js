@@ -39,7 +39,7 @@ $(() => {
         }
       });
 
-      // Clear the preset when the user enters in a filter manually
+      // Enable saving when the filter is changed
       $form.find('.form--filter').each((i, filter) => {
         $(filter).on('change', _ => {
           $saveButton.prop('disabled', false);
@@ -59,12 +59,10 @@ $(() => {
         await QPixel.setFilter($tgt.val(), filter);
         $saveButton.prop('disabled', true);
       });
-    });
-  });
-  $('.filter-clear').on('click', evt => {
-    const $tgt = $(evt.target);
-    const $form = $tgt.closest('form');
 
-    $form.find('.form--filter').val(null).trigger('change');
+      $form.find('.filter-clear').on('click', _ => {
+        $form.find('.form--filter').val(null).trigger('change');
+      });
+    });
   });
 });
