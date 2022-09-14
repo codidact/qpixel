@@ -284,6 +284,28 @@ window.QPixel = {
     return this._filters;
   },
 
+  setFilter: async (name, filter) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.assign(filter, { name }))
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter persist failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
   /**
    * Get the word in a string that the given position is in, and the position within that word.
    * @param splat an array, containing the string already split by however you define a "word"

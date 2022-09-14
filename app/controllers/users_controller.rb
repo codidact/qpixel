@@ -64,19 +64,23 @@ class UsersController < ApplicationController
     end
   end
 
-  def filters
+  def filters_json
     system_filters = Rails.cache.fetch 'system_filters' do
       User.find(-1).filters.to_h { |filter| [filter.name, filter.json] }
     end
 
+    if user_signed_in?
+      current_user.filters.to_h { |filter| [filter.name, filter.json] }
+                  .merge(system_filters)
+    else
+      system_filters
+    end
+  end
+
+  def filters
     respond_to do |format|
       format.json do
-        if user_signed_in?
-          render json: current_user.filters.to_h { |filter| [filter.name, filter.json] }
-                                   .merge(system_filters)
-        else
-          render json: system_filters
-        end
+        render json: filters_json
       end
     end
   end
@@ -87,7 +91,7 @@ class UsersController < ApplicationController
       filter.update(min_score: params[:min_score], max_score: params[:max_score], min_answers: params[:min_answers],
                     max_answers: params[:max_answers], status: params[:status])
 
-      render json: { status: 'success', success: true }
+      render json: { status: 'success', success: true, filters: filters_json }
     else
       render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
              status: 400
