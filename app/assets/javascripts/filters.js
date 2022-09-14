@@ -6,9 +6,13 @@ $(() => {
 
       $tgt.select2({
         data: Object.keys(filters),
+        tags: true,
       }).on('select2:select', evt => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
+
+        // Name is not one of the presets, i.e user is creating a new preset
+        if (!preset) { return; }
 
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
@@ -20,6 +24,15 @@ $(() => {
         $(filter).on('change', _ => {
           $tgt.val(null).trigger('change');
         });
+      });
+
+      $('.filter-save').on('click', evt => {
+        const filter = {};
+
+        for (const el of $('.form--filter')) {
+          filter[el.name] = el.value;
+        }
+        QPixel.setFilter($tgt.val(), filter)
       });
     });
   });
