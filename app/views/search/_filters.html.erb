@@ -10,32 +10,32 @@
   </div>
   <div class="form-group-horizontal">
     <div class="form-group">
-      <%= label_tag :filter_score_min, 'Min Score', class: "form-element" %>
-      <%= number_field_tag :filter_score_min, params[:filter_score_min],
-          min: 0, max: 1, step: 0.01, class: 'form-element form--filter filter-score-min' %>
+      <%= label_tag :min_score, 'Min Score', class: "form-element" %>
+      <%= number_field_tag :min_score, params[:min_score],
+          min: 0, max: 1, step: 0.01, class: 'form-element form--filter' %>
     </div>
     <div class="form-group">
-      <%= label_tag :filter_score_max, 'Max Score', class: "form-element" %>
-      <%= number_field_tag :filter_score_max, params[:filter_score_max],
-          min: 0, max: 1, step: 0.01, class: 'form-element form--filter filter-score-max' %>
+      <%= label_tag :max_score, 'Max Score', class: "form-element" %>
+      <%= number_field_tag :max_score, params[:max_score],
+          min: 0, max: 1, step: 0.01, class: 'form-element form--filter' %>
     </div>
   </div>
   <div class="form-group-horizontal">
     <div class="form-group">
-      <%= label_tag :filter_answers_min, 'Min Answers', class: "form-element" %>
-      <%= number_field_tag :filter_answers_min, params[:filter_answers_min],
-          min: 0, step: 1, class: 'form-element form--filter filter-answers-min' %>
+      <%= label_tag :min_answers, 'Min Answers', class: "form-element" %>
+      <%= number_field_tag :min_answers, params[:min_answers],
+          min: 0, step: 1, class: 'form-element form--filter' %>
     </div>
     <div class="form-group">
-      <%= label_tag :filter_answers_max, 'Max Answers', class: "form-element" %>
-      <%= number_field_tag :filter_answers_max, params[:filter_answers_max],
-          min: 0, step: 1, class: 'form-element form--filter filter-answers-max' %>
+      <%= label_tag :max_answers, 'Max Answers', class: "form-element" %>
+      <%= number_field_tag :max_answers, params[:max_answers],
+          min: 0, step: 1, class: 'form-element form--filter' %>
     </div>
   </div>
   <div class="form-group">
-    <%= label_tag :filter_status, 'Status', class: "form-element" %>
-    <%= select_tag :filter_status, options_for_select(['any', 'open', 'closed'], selected: params[:filter_status] || 'any'),
-        min: 0, step: 1, class: 'form-element form--filter filter-status' %>
+    <%= label_tag :status, 'Status', class: "form-element" %>
+    <%= select_tag :status, options_for_select(['any', 'open', 'closed'], selected: params[:status] || 'any'),
+        min: 0, step: 1, class: 'form-element form--filter' %>
   </div>
   <div class="form-group">
     <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>

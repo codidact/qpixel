@@ -11,7 +11,7 @@ $(() => {
         const preset = filters[filterName];
 
         for (const [name, value] of Object.entries(preset)) {
-          $form.find(`.filter-${name}`).val(value);
+          $form.find(`.form--filter[name=${name}]`).val(value);
         }
       });
 

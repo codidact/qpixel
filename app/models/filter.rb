@@ -4,12 +4,12 @@ class Filter < ApplicationRecord
   # Helper method to convert it to the form expected by the client
   def json
     {
-      'score-min' => min_score,
-      'score-max' => max_score,
-      'answers-min' => min_answers,
-      'answers-max' => max_answers,
-      'status' => status,
-      'system' => user_id == -1
+      min_score: min_score,
+      max_score: max_score,
+      min_answers: min_answers,
+      max_answers: max_answers,
+      status: status,
+      system: user_id == -1
     }
   end
 end

@@ -35,24 +35,24 @@ module SearchHelper
 
     filter_qualifiers = []
 
-    if params[:filter_score_min]&.match?(valid_value[:numeric])
-      filter_qualifiers.append({ param: :score, operator: '>=', value: params[:filter_score_min].to_f })
+    if params[:min_score]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :score, operator: '>=', value: params[:min_score].to_f })
     end
 
-    if params[:filter_score_max]&.match?(valid_value[:numeric])
-      filter_qualifiers.append({ param: :score, operator: '<=', value: params[:filter_score_max].to_f })
+    if params[:max_score]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :score, operator: '<=', value: params[:max_score].to_f })
     end
 
-    if params[:filter_answers_min]&.match?(valid_value[:numeric])
-      filter_qualifiers.append({ param: :answers, operator: '>=', value: params[:filter_answers_min].to_i })
+    if params[:min_answers]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :answers, operator: '>=', value: params[:min_answers].to_i })
     end
 
-    if params[:filter_answers_max]&.match?(valid_value[:numeric])
-      filter_qualifiers.append({ param: :answers, operator: '<=', value: params[:filter_answers_max].to_i })
+    if params[:max_answers]&.match?(valid_value[:numeric])
+      filter_qualifiers.append({ param: :answers, operator: '<=', value: params[:max_answers].to_i })
     end
 
-    if params[:filter_status]&.match?(valid_value[:status])
-      filter_qualifiers.append({ param: :status, value: params[:filter_status] })
+    if params[:status]&.match?(valid_value[:status])
+      filter_qualifiers.append({ param: :status, value: params[:status] })
     end
 
     filter_qualifiers
