@@ -66,30 +66,13 @@ class UsersController < ApplicationController
 
   def filters
     system_filters = Rails.cache.fetch 'system_filters' do
-      User.find(-1).filters.to_h do |filter|
-        [filter.name, {
-          'score-min' => filter.min_score,
-          'score-max' => filter.max_score,
-          'answers-min' => filter.min_answers,
-          'answers-max' => filter.max_answers,
-          'status' => filter.status,
-          'system' => true
-        }]
-      end
+      User.find(-1).filters.to_h { |filter| [filter.name, filter.json] }
     end
 
     respond_to do |format|
       format.json do
-        render json: current_user.filters.to_h { |filter|
-                       [filter.name, {
-                         'score-min' => filter.min_score,
-                         'score-max' => filter.max_score,
-                         'answers-min' => filter.min_answers,
-                         'answers-max' => filter.max_answers,
-                         'status' => filter.status,
-                         'system' => false
-                       }]
-                     }.merge(system_filters)
+        render json: current_user.filters.to_h { |filter| [filter.name, filter.json] }
+                                 .merge(system_filters)
       end
     end
   end
