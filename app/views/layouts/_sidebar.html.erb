@@ -94,9 +94,6 @@
       <div class="widget--body">
         <%= form_tag request.original_url, method: :get do %>
           <%= render 'search/filters' %>
-          <div class="actions has-padding-bottom-1">
-            <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
-          </div>
         <% end %>
       </div>
     </div>

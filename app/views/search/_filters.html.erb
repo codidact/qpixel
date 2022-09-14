@@ -33,8 +33,12 @@
     </div>
   </div>
   <div class="form-group">
-      <%= label_tag :filter_status, 'Status', class: "form-element" %>
-      <%= select_tag :filter_status, options_for_select(['any', 'open', 'closed'], selected: params[:filter_status] || 'any'),
-          min: 0, step: 1, class: 'form-element form--filter filter-status' %>
-    </div>
+    <%= label_tag :filter_status, 'Status', class: "form-element" %>
+    <%= select_tag :filter_status, options_for_select(['any', 'open', 'closed'], selected: params[:filter_status] || 'any'),
+        min: 0, step: 1, class: 'form-element form--filter filter-status' %>
+  </div>
+  <div class="form-group">
+    <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+    <button type="button" class="filter-save button is-medium is-filled">Save</button>
+  </div>
 </div>
