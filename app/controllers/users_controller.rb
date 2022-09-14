@@ -71,7 +71,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.json do
-        if current_user
+        if user_signed_in?
           render json: current_user.filters.to_h { |filter| [filter.name, filter.json] }
                                    .merge(system_filters)
         else
