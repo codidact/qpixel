@@ -67,7 +67,15 @@ class UsersController < ApplicationController
   def filters
     respond_to do |format|
       format.json do
-        render json: current_user.filters.select(:name, :min_score, :max_score, :min_answers, :max_answers, :status)
+        render json: current_user.filters.to_h { |filter|
+          [filter.name, {
+            'score-min' => filter.min_score,
+            'score-max' => filter.max_score,
+            'answer-min' => filter.min_answers,
+            'answer-max' => filter.max_answers,
+            'status' => filter.status
+          }]
+        }
       end
     end
   end
