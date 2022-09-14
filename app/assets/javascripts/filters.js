@@ -61,6 +61,7 @@ $(() => {
       });
 
       $form.find('.filter-clear').on('click', _ => {
+        $tgt.val(null).trigger('change');
         $form.find('.form--filter').val(null).trigger('change');
       });
     });
