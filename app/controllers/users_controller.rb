@@ -71,8 +71,12 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.json do
-        render json: current_user.filters.to_h { |filter| [filter.name, filter.json] }
-                                 .merge(system_filters)
+        if current_user
+          render json: current_user.filters.to_h { |filter| [filter.name, filter.json] }
+                                   .merge(system_filters)
+        else
+          render json: system_filters
+        end
       end
     end
   end
