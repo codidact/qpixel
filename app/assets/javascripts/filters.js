@@ -22,6 +22,8 @@ $(() => {
         return $(name + systemIndicator + newIndicator);
       }
 
+      // Clear out any old options
+      $select.children().filter((_, option) => !filters[option.value]).detach();
       $select.select2({
         data: Object.keys(filters),
         tags: true,
@@ -40,7 +42,7 @@ $(() => {
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
         }
-      });
+      })
     }
 
     initializeSelect();
