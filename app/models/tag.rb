@@ -5,6 +5,7 @@ class Tag < ApplicationRecord
   has_many :children, class_name: 'Tag', foreign_key: :parent_id
   has_many :children_with_paths, class_name: 'TagWithPath', foreign_key: :parent_id
   has_many :post_history_tags
+  has_many :tag_synonyms, dependent: :destroy
   belongs_to :tag_set
   belongs_to :parent, class_name: 'Tag', optional: true
 
@@ -16,9 +17,12 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
-    where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
-      .or(where('excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
-      .order(Arel.sql(sanitize_sql_array(['name LIKE ? DESC, name', "#{sanitize_sql_like(term)}%"])))
+    base = joins(:tag_synonyms)
+    base.where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
+        .or(base.where('excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
+        .or(base.where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%"))
+        .distinct
+        .order(Arel.sql(sanitize_sql_array(['name LIKE ? DESC, tag_synonyms.name LIKE ? DESC, name', "#{sanitize_sql_like(term)}%"])))
   end
 
   def all_children
