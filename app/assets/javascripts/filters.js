@@ -35,23 +35,27 @@ $(() => {
         const preset = filters[filterName];
 
         // Name is not one of the presets, i.e user is creating a new preset
-        if (!preset) { return; }
-
+        if (!preset) {
+          $saveButton.prop('disabled', false);
+          $deleteButton.prop('disabled', true);
+          return;
+        }
         $saveButton.prop('disabled', true);
+        $deleteButton.prop('disabled', preset.system);
 
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
         }
-      })
+      });
+      $saveButton.prop('disabled', true);
+      $deleteButton.prop('disabled', true);
     }
 
     initializeSelect();
 
     // Enable saving when the filter is changed
-    $form.find('.form--filter').each((i, filter) => {
-      $(filter).on('change', _ => {
-        $saveButton.prop('disabled', false);
-      });
+    $form.find('.form--filter').on('change', _ => {
+      $saveButton.prop('disabled', false);
     });
 
     $saveButton.on('click', async evt => {
@@ -67,6 +71,7 @@ $(() => {
       // Reinitialize to get new options
       await initializeSelect();
       $saveButton.prop('disabled', true);
+      $deleteButton.prop('disabled', false);
     });
 
     $deleteButton?.on('click', async evt => {
@@ -75,12 +80,15 @@ $(() => {
         // Reinitialize to get new options
         await initializeSelect();
         $saveButton.prop('disabled', true);
+        $deleteButton.prop('disabled', true);
       }
     });
 
     $form.find('.filter-clear').on('click', _ => {
       $select.val(null).trigger('change');
       $form.find('.form--filter').val(null).trigger('change');
+      $saveButton.prop('disabled', true);
+      $deleteButton.prop('disabled', true);
     });
   });
 });
