@@ -515,3 +515,21 @@
   description: >
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
+
+- name: SsoSignIn
+  value: false
+  value_type: boolean
+  community_id: ~
+  category: SignInAndSignUp
+  description: >
+    Whether to enable SSO Sign in. If enabled, this replaces normal Sign In and Sign Up unless if Mixed Sign In is enabled.
+    NOTE: This requires a SAML provider to be configured and set up.
+
+- name: MixedSignIn
+  value: false
+  value_type: boolean
+  community_id: ~
+  category: SignInAndSignUp
+  description: >
+    This setting only has an effect when SSO Sign In is enabled. Enables mixed sign in: both signing in and signing up as well as SSO sign in are enabled.
+    If disabled, only one sign in method is enabled.
