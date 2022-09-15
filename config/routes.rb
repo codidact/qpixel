@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
+  devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }, skip: :saml_authenticatable
+  devise_for :users, only: :saml_authenticatable, constraints: { url: lambda { |_url| SiteSetting['SsoSignIn'] } }
   devise_scope :user do
     get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
