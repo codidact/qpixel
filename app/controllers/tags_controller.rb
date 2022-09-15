@@ -192,7 +192,7 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name, tag_synonyms_attributes: [:name])
   end
 
   def exec(sql_array)

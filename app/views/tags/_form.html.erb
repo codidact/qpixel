@@ -24,6 +24,16 @@
   <% end %>
 
   <div class="form-group">
+    <%= f.label :tag_synonyms, 'Tag Synonyms', class: 'form-element' %>
+    <%= f.fields_for :tag_synonyms do |tsf| %>
+      <div class="form-group">
+        <%= tsf.label :name, 'Name', class: 'form-element' %>
+        <%= tsf.text_field :name, class: 'form-element' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :parent_id, 'Parent tag', class: 'form-element' %>
     <span class="form-caption">
       Optional. Select a parent tag to make this part of a tag hierarchy.
