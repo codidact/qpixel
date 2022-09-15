@@ -15,6 +15,7 @@ class Tag < ApplicationRecord
   validates :name, presence: true, format: { with: /[^ \t]+/, message: 'Tag names may not include spaces' }
   validate :parent_not_self
   validate :parent_not_own_child
+  validate :synonym_unique
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
@@ -57,6 +58,12 @@ class Tag < ApplicationRecord
 
     if all_children.include? parent_id
       errors.add(:base, "The #{parent.name} tag is already a child of this tag.")
+    end
+  end
+
+  def synonym_unique
+    if TagSynonym.joins(:tag).where(tags: { community_id: community_id }).exists?(name: name)
+      errors.add(:base, "A tag synonym with the name #{name} already exists.")
     end
   end
 end

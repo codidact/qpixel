@@ -599,7 +599,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_tag_synonyms_on_name", unique: true
     t.index ["tag_id"], name: "index_tag_synonyms_on_tag_id"
   end
 
