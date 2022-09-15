@@ -60,7 +60,7 @@ $(() => {
           return {
             results: data.map(t => ({
               id: useIds ? t.id : t.name,
-              text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
+              text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;') + convert_synonyms(t.tag_synonyms),
               desc: t.excerpt
             }))
           };
@@ -70,6 +70,14 @@ $(() => {
       allowClear: true
     });
   });
+
+  function convert_synonyms(synonyms) {
+    if (synonyms.length === 0) {
+      return '';
+    } else {
+      return ' <i>(' + synonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', ') + ')</i>';
+    }
+  }
 
   $('.js-add-required-tag').on('click', ev => {
     const $tgt = $(ev.target);

@@ -13,10 +13,10 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.paginate(page: params[:page], per_page: 50)
+            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
-        render json: @tags
+        render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
       end
     end
   end
