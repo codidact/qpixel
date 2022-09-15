@@ -19,12 +19,16 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
-    base = joins(:tag_synonyms)
-    base.where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
+    base = joins(:tag_synonyms).includes(:tag_synonyms)
+    base.where('tags.name LIKE ?', "%#{sanitize_sql_like(term)}%")
         .or(base.where('excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
         .or(base.where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%"))
         .distinct
-        .order(Arel.sql(sanitize_sql_array(['name LIKE ? DESC, tag_synonyms.name LIKE ? DESC, name', "#{sanitize_sql_like(term)}%"])))
+        .order(Arel.sql(sanitize_sql_array([
+                                             'tags.name LIKE ? DESC, tag_synonyms.name LIKE ? DESC, tags.name',
+                                             "#{sanitize_sql_like(term)}%",
+                                             "#{sanitize_sql_like(term)}%"
+                                           ])))
   end
 
   def all_children
