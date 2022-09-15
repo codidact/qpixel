@@ -17,6 +17,14 @@
     <% end %>
   <% end %>
 </h1>
+<h3 class="has-margin-0">
+<% if @tag.tag_synonyms.any? %>
+  Synonyms:
+  <% @tag.tag_synonyms.each do |synonym| %>
+    <span class="<%= tag_classes(@tag, @category) %>"><%= synonym.name %></span>
+  <% end %>
+<% end %>
+</h3>
 <p class="has-color-tertiary-900 has-font-weight-normal has-margin-0 has-font-family-brand">
   <% if @tag.parent_id.present? %>
       Subtag of <%= link_to @tag.parent.name, tag_path(id: @category.id, tag_id: @tag.parent_id),
