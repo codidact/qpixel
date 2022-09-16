@@ -5,7 +5,8 @@
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
-      <%= select_tag :predefined_filter, options_for_select([]),
+      <%= select_tag :predefined_filter, options_for_select([params[:predefined_filter]],
+                                                            selected: params[:predefined_filter]),
           include_blank: true, class: "form-element js-filter-select", id: nil,
           data: { placeholder: "" } %>
     </div>
