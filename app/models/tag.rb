@@ -19,16 +19,19 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
-    base = joins(:tag_synonyms).includes(:tag_synonyms)
-    base.where('tags.name LIKE ?', "%#{sanitize_sql_like(term)}%")
-        .or(base.where('excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
-        .or(base.where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%"))
-        .distinct
-        .order(Arel.sql(sanitize_sql_array([
-                                             'tags.name LIKE ? DESC, tag_synonyms.name LIKE ? DESC, tags.name',
-                                             "#{sanitize_sql_like(term)}%",
-                                             "#{sanitize_sql_like(term)}%"
-                                           ])))
+    # Query to search on tags, the name is used for sorting.
+    q1 = where('tags.name LIKE ?', "%#{sanitize_sql_like(term)}%")
+           .or(where('tags.excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
+           .select(Arel.sql('name AS sortname, tags.*'))
+
+    # Query to search on synonyms, the synonym name is used for sorting.
+    # The order clause here actually applies to the union of q1 and q2 (so not just q2).
+    q2 = joins(:tag_synonyms)
+           .where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%")
+           .select(Arel.sql('tag_synonyms.name AS sortname, tags.*'))
+           .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(term)}%"])))
+
+    from(Arel.sql("(#{q1.to_sql} UNION #{q2.to_sql}) tags"))
   end
 
   def all_children
