@@ -2,8 +2,37 @@ $(() => {
   $('.js-filter-select').each((_, el) => {
     const $select = $(el);
     const $form = $select.closest('form');
+    const $formFilters = $form.find('.form--filter');
     const $saveButton = $form.find('.filter-save');
     const $deleteButton = $form.find('.filter-delete');
+
+    // Enables/Disables Save & Delete buttons programatically
+    async function computeEnables() {
+      const filters = await QPixel.filters();
+      const filterName = $select.val();
+
+      // Nothing set
+      if (!filterName) {
+        $saveButton.prop('disabled', true);
+        $deleteButton.prop('disabled', true);
+        return;
+      }
+
+      const filter = filters[filterName]
+
+      // New filter
+      if (!filter) {
+        $saveButton.prop('disabled', false);
+        $deleteButton.prop('disabled', true);
+        return;
+      }
+
+      // Not a new filter
+      $deleteButton.prop('disabled', filter.system);
+
+      const hasChanges = [...$formFilters].some(el => filter[el.name] ? filter[el.name] != el.value : el.value);
+      $saveButton.prop('disabled', filter.system || !hasChanges);
+    }
 
     async function initializeSelect() {
       const filters = await QPixel.filters();
@@ -34,29 +63,24 @@ $(() => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
 
+        computeEnables();
+
         // Name is not one of the presets, i.e user is creating a new preset
         if (!preset) {
-          $saveButton.prop('disabled', false);
-          $deleteButton.prop('disabled', true);
           return;
         }
-        $saveButton.prop('disabled', true);
-        $deleteButton.prop('disabled', preset.system);
 
         for (const [name, value] of Object.entries(preset)) {
           $form.find(`.form--filter[name=${name}]`).val(value);
         }
       });
-      $saveButton.prop('disabled', true);
-      $deleteButton.prop('disabled', true);
+      computeEnables();
     }
 
     initializeSelect();
 
     // Enable saving when the filter is changed
-    $form.find('.form--filter').on('change', _ => {
-      $saveButton.prop('disabled', false);
-    });
+    $formFilters.on('change', computeEnables);
 
     $saveButton.on('click', async evt => {
       if (!$form[0].reportValidity()) { return; }
@@ -70,8 +94,6 @@ $(() => {
       await QPixel.setFilter($select.val(), filter);
       // Reinitialize to get new options
       await initializeSelect();
-      $saveButton.prop('disabled', true);
-      $deleteButton.prop('disabled', false);
     });
 
     $deleteButton?.on('click', async evt => {
@@ -79,16 +101,13 @@ $(() => {
         await QPixel.deleteFilter($select.val());
         // Reinitialize to get new options
         await initializeSelect();
-        $saveButton.prop('disabled', true);
-        $deleteButton.prop('disabled', true);
       }
     });
 
     $form.find('.filter-clear').on('click', _ => {
       $select.val(null).trigger('change');
       $form.find('.form--filter').val(null).trigger('change');
-      $saveButton.prop('disabled', true);
-      $deleteButton.prop('disabled', true);
+      computeEnables();
     });
   });
 });
