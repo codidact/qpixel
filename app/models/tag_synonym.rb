@@ -2,6 +2,7 @@ class TagSynonym < ApplicationRecord
   belongs_to :tag
   has_one :community, through: :tag
 
+  validates :name, presence: true, format: { with: /[^ \t]+/, message: 'Tag names may not include spaces' }
   validate :name_unique
 
   private
