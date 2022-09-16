@@ -28,16 +28,22 @@
     <span class="form-caption">
       Alternative names for this tag
     </span>
-    <%= f.fields_for :tag_synonyms do |tsf| %>
-      <div id="tag-synonyms-wrapper">
-        <fieldset id="-1" hidden>
-          <%= tsf.text_field :name, class: 'form-element', style: 'display: inline; width: 90%;', disabled: true %>
-          <button type="button" class="button is-outlined remove-tag-synonym" style="float: right;">X</button>
-        </fieldset>
-      </div>
-    <% end %>
-    <button id="add-tag-synonym" type="button" class="button is-outlined">Add synonym</button>
+    <div id="tag-synonyms-wrapper">
+      <% i = -1 %>
+      <%= f.fields_for :tag_synonyms do |tsf| %>
+        <div class="grid tag-synonym" data-id="<%= i+=1 %>" style="<%= 'display: none;' if tsf.object&.name.blank? %>">
+          <div class="grid--cell is-11">
+            <%= tsf.text_field :name, class: 'form-element tag-synonym-name', readonly: tsf.object&.name.present? %>
+          </div>
+          <div class="grid--cell is-1">
+            <button type="button" class="button is-outlined remove-tag-synonym has-float-right">X</button>
+          </div>
+          <%= tsf.hidden_field :_destroy, value: false, class: 'destroy-tag-synonym' %>
+        </div>
+      <% end %>
+    </div>
   </div>
+  <button id="add-tag-synonym" type="button" class="button is-outlined">Add synonym</button>
 
   <div class="form-group">
     <%= f.label :parent_id, 'Parent tag', class: 'form-element' %>

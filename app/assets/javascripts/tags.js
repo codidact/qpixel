@@ -75,15 +75,33 @@ $(() => {
 
   $('#add-tag-synonym').on('click', ev => {
     const $wrapper = $('#tag-synonyms-wrapper');
-    const lastId = $wrapper.children().last().attr('id');
+    const lastId = $wrapper.children('.tag-synonym').last().attr('data-id');
     const newId = parseInt(lastId, 10) + 1;
-    const newFieldset = $wrapper.find('[id="-1"]')[0].outerHTML.replace(/-1/g, newId).replace(/disabled/g, '').replace(/hidden/g, '');
-    $wrapper.append(newFieldset);
-    $wrapper.find(`[id="${newId}"] .remove-tag-synonym`).click(function() {
-      console.log('LOG')
-      $(this).parent().remove();
-    });
+
+    //Duplicate the first element at the end of the wrapper
+    const newField = $wrapper.find('.tag-synonym[data-id="0"]')[0]
+                             .outerHTML
+                             .replace(/data-id="0"/g, 'data-id="' + newId + '"')
+                             .replace(/(?<connector>attributes(\]\[)|(_))0/g, '$<connector>' + newId)
+    $wrapper.append(newField);
+
+    //Alter the newly added tag synonym
+    const $newTagSynonym = $wrapper.children().last();
+    $newTagSynonym.find('.tag-synonym-name').removeAttr('value').removeAttr('readonly');
+    $newTagSynonym.find('.destroy-tag-synonym').attr('value', 'false');
+    $newTagSynonym.show();
+
+    //Add handler for removing an element
+    $newTagSynonym.find(`.remove-tag-synonym`).click(removeTagSynonym);
   });
+
+  $('.remove-tag-synonym').click(removeTagSynonym);
+
+  function removeTagSynonym() {
+    const synonym = $(this).closest('.tag-synonym');
+    synonym.find('.destroy-tag-synonym').attr('value', 'true');
+    synonym.hide();
+  }
 
   $('.js-add-required-tag').on('click', ev => {
     const $tgt = $(ev.target);
