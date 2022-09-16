@@ -21,7 +21,7 @@
 <% if @tag.tag_synonyms.any? %>
   Synonyms:
   <% @tag.tag_synonyms.each do |synonym| %>
-    <span class="<%= tag_classes(@tag, @category) %>"><%= synonym.name %></span>
+    <span class="badge is-tag is-teal"><%= synonym.name %></span>
   <% end %>
 <% end %>
 </h3>
