@@ -86,7 +86,7 @@
       </div>
     </div>
   <% end %>
-  <% if defined?(@category) && current_page?(category_path(@category)) %>
+  <% if current_page?(root_path) || defined?(@category) && current_page?(category_path(@category)) %>
     <div class="widget has-margin-4">
       <div class="widget--header">
         Filters
