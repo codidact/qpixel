@@ -38,12 +38,14 @@
   </div>
   <div class="form-group">
     <%= label_tag :include_tags, 'Include Tags', class: "form-element" %>
-    <%= select_tag :include_tags, options_for_select([]), multiple: true, class: 'form-element js-tag-select',
+    <%= select_tag :include_tags, options_for_select(Tag.where(id: params[:include_tags]).map { |tag| [tag.name, tag.id] },
+                   selected: params[:include_tags] || []), multiple: true, class: 'form-element js-tag-select',
                    data: { tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
   </div>
   <div class="form-group">
     <%= label_tag :exclude_tags, 'Exclude Tags', class: "form-element" %>
-    <%= select_tag :exclude_tags, options_for_select([]), multiple: true, class: 'form-element js-tag-select',
+    <%= select_tag :exclude_tags, options_for_select(Tag.where(id: params[:exclude_tags]).map { |tag| [tag.name, tag.id] },
+                   selected: params[:exclude_tags]|| []), multiple: true, class: 'form-element js-tag-select',
                    data: { tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
   </div>
   <div class="form-group">
