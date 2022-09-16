@@ -33,7 +33,6 @@ $(() => {
       const hasChanges = [...$formFilters].some(el => {
         const filterValue = filter[el.dataset.name];
         let elValue = $(el).val();
-        console.log(filterValue, elValue)
         if (filterValue?.constructor == Array) {
           elValue = elValue ?? [];
           return filterValue.length != elValue.length || filterValue.some((v, i) => v[1] != elValue[i]);
@@ -63,7 +62,7 @@ $(() => {
       }
 
       // Clear out any old options
-      $select.children().filter((_, option) => !filters[option.value]).detach();
+      $select.children().filter((_, option) => option.value && !filters[option.value]).detach();
       $select.select2({
         data: Object.keys(filters),
         tags: true,
@@ -116,18 +115,21 @@ $(() => {
       await initializeSelect();
     });
 
+    function clear() {
+      $select.val(null).trigger('change');
+      $form.find('.form--filter').val(null).trigger('change');
+      computeEnables();
+    }
+
     $deleteButton?.on('click', async evt => {
       if (confirm(`Are you sure you want to delete ${$select.val()}?`)) {
         await QPixel.deleteFilter($select.val());
         // Reinitialize to get new options
         await initializeSelect();
+        clear();
       }
     });
 
-    $form.find('.filter-clear').on('click', _ => {
-      $select.val(null).trigger('change');
-      $form.find('.form--filter').val(null).trigger('change');
-      computeEnables();
-    });
+    $form.find('.filter-clear').on('click', clear);
   });
 });
