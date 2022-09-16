@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_14_193044) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_16_075849) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -244,6 +244,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_14_193044) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "include_tags"
+    t.string "exclude_tags"
     t.index ["user_id"], name: "index_filters_on_user_id"
   end
 

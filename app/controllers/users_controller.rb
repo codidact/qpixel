@@ -89,8 +89,11 @@ class UsersController < ApplicationController
   def set_filter
     if params[:name]
       filter = Filter.find_or_create_by(user: current_user, name: params[:name])
-      filter.update(min_score: params[:min_score], max_score: params[:max_score], min_answers: params[:min_answers],
-                    max_answers: params[:max_answers], status: params[:status])
+
+      filter.update(min_score: params[:min_score], max_score: params[:max_score],
+                    min_answers: params[:min_answers], max_answers: params[:max_answers],
+                    include_tags: params[:include_tags], exclude_tags: params[:exclude_tags],
+                    status: params[:status])
 
       render json: { status: 'success', success: true, filters: filters_json }
     else

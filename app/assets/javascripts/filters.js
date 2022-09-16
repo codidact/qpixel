@@ -30,7 +30,18 @@ $(() => {
       // Not a new filter
       $deleteButton.prop('disabled', filter.system);
 
-      const hasChanges = [...$formFilters].some(el => filter[el.name] ? filter[el.name] != el.value : el.value);
+      const hasChanges = [...$formFilters].some(el => {
+        const filterValue = filter[el.dataset.name];
+        let elValue = $(el).val();
+        console.log(filterValue, elValue)
+        if (filterValue?.constructor == Array) {
+          elValue = elValue ?? [];
+          return filterValue.length != elValue.length || filterValue.some((v, i) => v[1] != elValue[i]);
+        }
+        else {
+          return filterValue ? filterValue != elValue : elValue;
+        }
+      });
       $saveButton.prop('disabled', filter.system || !hasChanges);
     }
 
@@ -71,7 +82,16 @@ $(() => {
         }
 
         for (const [name, value] of Object.entries(preset)) {
-          $form.find(`.form--filter[name=${name}]`).val(value);
+          const $el = $form.find(`.form--filter[data-name=${name}]`);
+          if (value?.constructor == Array) {
+            $el.val(null);
+            for (const val of value) {
+              $el.append(new Option(val[0], val[1], false, true));
+            }
+            $el.trigger('change');
+          } else {
+            $el.val(value).trigger('change');
+          }
         }
       });
       computeEnables();
@@ -87,8 +107,8 @@ $(() => {
 
       const filter = {};
 
-      for (const el of $('.form--filter')) {
-        filter[el.name] = el.value;
+      for (const el of $formFilters) {
+        filter[el.dataset.name] = $(el).val();
       }
 
       await QPixel.setFilter($select.val(), filter);
