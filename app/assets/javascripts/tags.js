@@ -14,7 +14,8 @@ $(() => {
   };
 
   const template = (tag) => {
-    const tagSpan = `<span>${tag.text}</span>`;
+    const tagSynonyms = !!tag.synonyms ? ` <i>(${tag.synonyms})</i>` : '';
+    const tagSpan = `<span>${tag.text}${tagSynonyms}</span>`;
     let desc = !!tag.desc ? splitWordsMaxLength(tag.desc, 120) : '';
     const descSpan = !!tag.desc ?
       `<br/><span class="has-color-tertiary-900 has-font-size-caption">${desc[0]}${desc.length > 1 ? '...' : ''}</span>` :
@@ -60,7 +61,8 @@ $(() => {
           return {
             results: data.map(t => ({
               id: useIds ? t.id : t.name,
-              text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;') + convert_synonyms(t.tag_synonyms),
+              text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
+              synonyms: t.tag_synonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', '),
               desc: t.excerpt
             }))
           };
@@ -70,14 +72,6 @@ $(() => {
       allowClear: true
     });
   });
-
-  function convert_synonyms(synonyms) {
-    if (synonyms.length === 0) {
-      return '';
-    } else {
-      return ' <i>(' + synonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', ') + ')</i>';
-    }
-  }
 
   $('#add-tag-synonym').on('click', ev => {
     const $wrapper = $('#tag-synonyms-wrapper');
