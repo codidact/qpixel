@@ -61,6 +61,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.tag_synonyms.build
   end
 
   def create

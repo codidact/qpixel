@@ -25,12 +25,18 @@
 
   <div class="form-group">
     <%= f.label :tag_synonyms, 'Tag Synonyms', class: 'form-element' %>
+    <span class="form-caption">
+      Alternative names for this tag
+    </span>
     <%= f.fields_for :tag_synonyms do |tsf| %>
-      <div class="form-group">
-        <%= tsf.label :name, 'Name', class: 'form-element' %>
-        <%= tsf.text_field :name, class: 'form-element' %>
+      <div id="tag-synonyms-wrapper">
+        <fieldset id="-1" hidden>
+          <%= tsf.text_field :name, class: 'form-element', style: 'display: inline; width: 90%;', disabled: true %>
+          <button type="button" class="button is-outlined remove-tag-synonym" style="float: right;">X</button>
+        </fieldset>
       </div>
     <% end %>
+    <button id="add-tag-synonym" type="button" class="button is-outlined">Add synonym</button>
   </div>
 
   <div class="form-group">

@@ -6,7 +6,7 @@ class Tag < ApplicationRecord
   has_many :children_with_paths, class_name: 'TagWithPath', foreign_key: :parent_id
   has_many :post_history_tags
   has_many :tag_synonyms, dependent: :destroy
-  accepts_nested_attributes_for :tag_synonyms
+  accepts_nested_attributes_for :tag_synonyms, allow_destroy: true
   belongs_to :tag_set
   belongs_to :parent, class_name: 'Tag', optional: true
 

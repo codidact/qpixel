@@ -79,6 +79,18 @@ $(() => {
     }
   }
 
+  $('#add-tag-synonym').on('click', ev => {
+    const $wrapper = $('#tag-synonyms-wrapper');
+    const lastId = $wrapper.children().last().attr('id');
+    const newId = parseInt(lastId, 10) + 1;
+    const newFieldset = $wrapper.find('[id="-1"]')[0].outerHTML.replace(/-1/g, newId).replace(/disabled/g, '').replace(/hidden/g, '');
+    $wrapper.append(newFieldset);
+    $wrapper.find(`[id="${newId}"] .remove-tag-synonym`).click(function() {
+      console.log('LOG')
+      $(this).parent().remove();
+    });
+  });
+
   $('.js-add-required-tag').on('click', ev => {
     const $tgt = $(ev.target);
     const useIds = $tgt.attr('data-use-ids') === 'true';
