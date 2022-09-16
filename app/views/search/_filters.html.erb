@@ -37,6 +37,16 @@
     </div>
   </div>
   <div class="form-group">
+    <%= label_tag :include_tags, 'Include Tags', class: "form-element" %>
+    <%= select_tag :include_tags, options_for_select([]), multiple: true, class: 'form-element js-tag-select',
+                   data: { tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
+  </div>
+  <div class="form-group">
+    <%= label_tag :exclude_tags, 'Exclude Tags', class: "form-element" %>
+    <%= select_tag :exclude_tags, options_for_select([]), multiple: true, class: 'form-element js-tag-select',
+                   data: { tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
+  </div>
+  <div class="form-group">
     <%= label_tag :status, 'Status', class: "form-element" %>
     <%= select_tag :status, options_for_select(['any', 'open', 'closed'], selected: params[:status] || 'any'),
         min: 0, step: 1, class: 'form-element form--filter' %>

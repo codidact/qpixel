@@ -30,7 +30,8 @@ module SearchHelper
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
       status: /any|open|closed/,
-      numeric: /^[\d.]+$/
+      numeric: /^[\d.]+$/,
+      integer: /^\d+$/
     }
 
     filter_qualifiers = []
@@ -53,6 +54,14 @@ module SearchHelper
 
     if params[:status]&.match?(valid_value[:status])
       filter_qualifiers.append({ param: :status, value: params[:status] })
+    end
+
+    if params[:include_tags]&.all? { |id| id.match? valid_value[:integer] }
+      filter_qualifiers.append({ param: :include_tags, tag_ids: params[:include_tags] })
+    end
+
+    if params[:exclude_tags]&.all? { |id| id.match? valid_value[:integer] }
+      filter_qualifiers.append({ param: :exclude_tags, tag_ids: params[:exclude_tags] })
     end
 
     filter_qualifiers
@@ -163,8 +172,15 @@ module SearchHelper
         query = query.where("(upvote_count - downvote_count) #{qualifier[:operator]} ?", qualifier[:value])
       when :include_tag
         query = query.where(posts: { id: PostsTag.where(tag_id: qualifier[:tag_id]).select(:post_id) })
+      when :include_tags
+        # Efficiency is... questionable
+        qualifier[:tag_ids].each do |id|
+          query = query.where(id: PostsTag.where(tag_id: id).select(:post_id))
+        end
       when :exclude_tag
         query = query.where.not(posts: { id: PostsTag.where(tag_id: qualifier[:tag_id]).select(:post_id) })
+      when :exclude_tags
+        query = query.where.not(id: PostsTag.where(tag_id: qualifier[:tag_ids]).select(:post_id))
       when :category
         query = query.where("category_id #{qualifier[:operator]} ?", qualifier[:category_id])
       when :post_type
