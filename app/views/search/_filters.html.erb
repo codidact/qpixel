@@ -62,7 +62,9 @@
     <% if allow_apply %>
       <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
     <% end %>
-    <button type="button" class="filter-save button is-medium is-filled">Save</button>
+    <% if user_signed_in? %>
+      <button type="button" class="filter-save button is-medium is-filled">Save</button>
+    <% end %>
     <% if allow_delete %>
       <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
     <% end %>
