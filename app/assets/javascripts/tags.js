@@ -62,7 +62,7 @@ $(() => {
             results: data.map(t => ({
               id: useIds ? t.id : t.name,
               text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
-              synonyms: t.tag_synonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', '),
+              synonyms: processSynonyms($this, t.tag_synonyms),
               desc: t.excerpt
             }))
           };
@@ -72,6 +72,22 @@ $(() => {
       allowClear: true
     });
   });
+
+  function processSynonyms($search, synonyms) {
+    if (!synonyms) return synonyms;
+
+    if (synonyms.length > 3) {
+      const searchValue = $search.data('select2').selection.$search.val().toLowerCase();
+      displayedSynonyms = synonyms.filter(ts => ts.name.includes(searchValue)).slice(0, 3);
+    } else {
+      displayedSynonyms = synonyms;
+    }
+    let synonymsString = displayedSynonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', ');
+    if (synonyms.length > displayedSynonyms.length) {
+      synonymsString += `, ${synonyms.length - displayedSynonyms.length} more synonyms`;
+    }
+    return synonymsString;
+  }
 
   $('#add-tag-synonym').on('click', ev => {
     const $wrapper = $('#tag-synonyms-wrapper');
