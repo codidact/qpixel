@@ -9,6 +9,7 @@
   tag_set_id: <%= TagSet.unscoped.where(name: 'Main').first.id %>
   use_for_hot_posts: true
   use_for_advertisement: true
+  license_id: <%= License.unscoped.first.id %>
 
 - name: Meta
   short_wiki: Discussions and feedback about the site itself in Q&A format.
@@ -21,3 +22,4 @@
   use_for_hot_posts: true
   use_for_advertisement: false
   color_code: bluegray
+  license_id: <%= License.unscoped.first.id %>
