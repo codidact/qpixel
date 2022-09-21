@@ -235,11 +235,17 @@ class User < ApplicationRecord
     global_key = "prefs.#{id}"
     community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
     {
-      global: AppConfig.preferences.reject { |_, v| v['community'] }.transform_values { |v| v['default'] }
+      global: AppConfig.preferences.select { |_, v| v['global'] }.transform_values { |v| v['default'] }
                        .merge(RequestContext.redis.hgetall(global_key)),
       community: AppConfig.preferences.select { |_, v| v['community'] }.transform_values { |v| v['default'] }
                           .merge(RequestContext.redis.hgetall(community_key))
     }
+  end
+
+  def category_preference(category_id)
+    category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
+    AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
+             .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!

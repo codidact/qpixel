@@ -284,6 +284,20 @@ window.QPixel = {
     return this._filters;
   },
 
+  // Assumes we're on a category page
+  setFilterAsDefault: async name => {
+    const resp = await fetch(location.href + '/filters/default', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    });
+  },
+
   setFilter: async (name, filter) => {
     const resp = await fetch('/users/me/filters', {
       method: 'POST',

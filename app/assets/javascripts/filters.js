@@ -4,6 +4,7 @@ $(() => {
     const $form = $select.closest('form');
     const $formFilters = $form.find('.form--filter');
     const $saveButton = $form.find('.filter-save');
+    const $saveAsDefaultButton = $form.find('.filter-save-default');
     const $deleteButton = $form.find('.filter-delete');
 
     // Enables/Disables Save & Delete buttons programatically
@@ -101,7 +102,7 @@ $(() => {
     // Enable saving when the filter is changed
     $formFilters.on('change', computeEnables);
 
-    $saveButton.on('click', async evt => {
+    async function saveFilter() {
       if (!$form[0].reportValidity()) { return; }
 
       const filter = {};
@@ -113,6 +114,13 @@ $(() => {
       await QPixel.setFilter($select.val(), filter);
       // Reinitialize to get new options
       await initializeSelect();
+    }
+
+    $saveButton.on('click', saveFilter);
+
+    $saveAsDefaultButton.on('click', async _ => {
+      await saveFilter();
+      QPixel.setFilterAsDefault($select.val());
     });
 
     function clear() {

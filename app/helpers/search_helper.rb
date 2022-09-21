@@ -26,6 +26,19 @@ module SearchHelper
     end
   end
 
+  # Convert a Filter record into a form parseable by the search function
+  def filter_to_qualifiers(filter)
+    qualifiers = []
+    qualifiers.append({ param: :score, operator: '>=', value: filter.min_score }) unless filter.min_score.nil?
+    qualifiers.append({ param: :score, operator: '<=', value: filter.max_score }) unless filter.max_score.nil?
+    qualifiers.append({ param: :answers, operator: '>=', value: filter.min_answers }) unless filter.min_answers.nil?
+    qualifiers.append({ param: :answers, operator: '<=', value: filter.max_answers }) unless filter.max_answers.nil?
+    qualifiers.append({ param: :include_tags, tag_ids: filter.include_tags }) unless filter.include_tags.nil?
+    qualifiers.append({ param: :exclude_tags, tag_ids: filter.exclude_tags }) unless filter.exclude_tags.nil?
+    qualifiers.append({ param: :status, value: filter.status }) unless filter.status.nil?
+    qualifiers
+  end
+
   def filters_to_qualifiers
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,

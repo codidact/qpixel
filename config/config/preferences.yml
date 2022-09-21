@@ -17,6 +17,7 @@ keyboard_tools:
   description: >
     Enable keyboard shortcuts. Press ? for a list of shortcuts.
   default: 'true'
+  global: true
 
 autosave:
   type: choice
@@ -67,9 +68,16 @@ auto_follow_comment_threads:
   description: >
     Automatically follow any comment thread you participate in.
   default: 'true'
+  global: true
 
 sticky_header:
   type: boolean
   description: >
     Make the top navigation bar sticky.
   default: false
+  global: true
+
+default_filter_name:
+  type: integer
+  default: none
+  category: true

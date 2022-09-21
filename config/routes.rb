@@ -239,6 +239,7 @@ Rails.application.routes.draw do
     root                                   to: 'categories#index', as: :categories
     get    'new',                          to: 'categories#new', as: :new_category
     post   'new',                          to: 'categories#create', as: :create_category
+    post   ':id/filters/default',          to: 'categories#default_filter', as: :set_default_filter
     get    ':id',                          to: 'categories#show', as: :category
     get    ':id/edit',                     to: 'categories#edit', as: :edit_category
     post   ':id/edit',                     to: 'categories#update', as: :update_category

@@ -133,6 +133,20 @@ class CategoriesController < ApplicationController
     end
   end
 
+  def default_filter
+    filter = Filter.find_by(name: params[:name], user_id: [-1, current_user.id])
+
+    unless filter.present?
+      return render json: { status: 'failed', success: false, errors: ['Filter does not exist'] },
+                    status: 400
+    end
+
+    key = "prefs.#{current_user.id}.category.#{RequestContext.community_id}.category.#{@category.id}"
+    RequestContext.redis.hset(key, 'filter', filter.id)
+    render json: { status: 'success', success: true },
+           status: 200
+  end
+
   private
 
   def set_category
@@ -163,7 +177,42 @@ class CategoriesController < ApplicationController
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type, :tags).list_includes
     filter_qualifiers = helpers.filters_to_qualifiers
-    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
+
+    @active_filter = {
+      default: false,
+      name: params[:predefined_filter],
+      min_score: params[:min_score],
+      max_score: params[:max_score],
+      min_answers: params[:min_answers],
+      max_answers: params[:max_answers],
+      include_tags: params[:include_tags],
+      exclude_tags: params[:exclude_tags],
+      status: params[:status]
+    }
+
+    if filter_qualifiers.blank? && user_signed_in?
+      default_filter_id = current_user.category_preference(@category.id)['filter']
+      default_filter = Filter.find_by(id: default_filter_id)
+      unless default_filter.nil?
+        filter_qualifiers = helpers.filter_to_qualifiers default_filter unless default_filter.nil?
+        @active_filter = {
+          default: true,
+          name: default_filter.name,
+          min_score: default_filter.min_score,
+          max_score: default_filter.max_score,
+          min_answers: default_filter.min_answers,
+          max_answers: default_filter.max_answers,
+          include_tags: default_filter.include_tags,
+          exclude_tags: default_filter.exclude_tags,
+          status: default_filter.status
+        }
+      end
+    end
+
+    unless filter_qualifiers.blank?
+      @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
+    end
+
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
