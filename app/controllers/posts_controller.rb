@@ -13,7 +13,9 @@ class PostsController < ApplicationController
     @category = params[:category].present? ? Category.find(params[:category]) : nil
     @parent = Post.where(id: params[:parent]).first
     @post = Post.new(category: @category, post_type: @post_type, parent: @parent)
-
+    @post.last_activity = @post.created_at
+    @post.last_activity_by = current_user
+    
     if @post_type.has_parent? && @parent.nil?
       flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
       redirect_back fallback_location: root_path
@@ -48,6 +50,8 @@ class PostsController < ApplicationController
                 end || nil
     @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
+    @post.last_activity = @post.created_at
+    @post.last_activity_by = current_user
 
     if @post.title? && (@post.title.include? '$$')
       flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
