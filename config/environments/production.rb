@@ -58,9 +58,16 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :subdomain, :uuid ]
 
-  # Use a different cache store in production.
+  # Set the cache store to the redis that was configured in the database.yml
+  processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
+  redis_config = YAML.safe_load(processed, permitted_classes: [], permitted_symbols: [], aliases: true)["redis_#{Rails.env}"]
   config.cache_store = QPixel::NamespacedEnvCache.new(
-    ActiveSupport::Cache::RedisCacheStore.new(url: 'redis://localhost:6379/1')
+    ActiveSupport::Cache::RedisCacheStore.new(
+      **redis_config.deep_symbolize_keys.merge(reconnect_attempts: 3),
+      error_handler: -> (method:, returning:, exception:) {
+        Rails.logger.error("Cache error: method=#{method} returning=#{returning} exception=#{exception.message}")
+      }
+    )
   )
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
