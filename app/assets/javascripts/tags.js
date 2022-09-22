@@ -76,6 +76,7 @@ $(() => {
   function processSynonyms($search, synonyms) {
     if (!synonyms) return synonyms;
 
+    let displayedSynonyms;
     if (synonyms.length > 3) {
       const searchValue = $search.data('select2').selection.$search.val().toLowerCase();
       displayedSynonyms = synonyms.filter(ts => ts.name.includes(searchValue)).slice(0, 3);
