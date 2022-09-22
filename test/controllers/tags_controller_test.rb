@@ -12,7 +12,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:tags)
   end
 
-  test 'index with search params should return tags starting with search' do
+  test 'index with search params should return tags including search term' do
     get :index, params: { format: 'json', term: 'dis' }
     assert_response 200
     assert_nothing_raised do
@@ -20,7 +20,19 @@ class TagsControllerTest < ActionController::TestCase
     end
     assert_not_nil assigns(:tags)
     JSON.parse(response.body).each do |tag|
-      assert_equal true, tag['name'].start_with?('dis')
+      assert_equal true, tag['name'].include?('dis') || tag['tag_synonyms'].any? { |ts| ts['name'].include?('syn') }
+    end
+  end
+
+  test 'index with search params should return tags whose synonyms include search term' do
+    get :index, params: { format: 'json', term: 'syn' }
+    assert_response 200
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    assert_not_nil assigns(:tags)
+    JSON.parse(response.body).each do |tag|
+      assert_equal true, tag['name'].include?('syn') || tag['tag_synonyms'].any? { |ts| ts['name'].include?('syn') }
     end
   end
 
@@ -123,6 +135,26 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:tag)
     assert_equal tags(:discussion).id, assigns(:tag).parent_id
     assert_equal 'things', assigns(:tag).excerpt
+  end
+
+  test 'should update tag with synonym addition' do
+    sign_in users(:deleter)
+    patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
+                             tag: { tag_synonyms_attributes: { '1': { name: 'conversation' } } } }
+    assert_response 302
+    assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:topic).id)
+    assert_not_nil assigns(:tag)
+    assert_equal 'conversation', assigns(:tag).tag_synonyms.first&.name
+  end
+
+  test 'should update tag with synonym removal' do
+    sign_in users(:deleter)
+    patch :update, params: { id: categories(:main).id, tag_id: tags(:base).id,
+                             tag: { tag_synonyms_attributes: { '1': { id: tag_synonyms(:base_synonym).id, _destroy: 'true' } } } }
+    assert_response 302
+    assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:base).id)
+    assert_not_nil assigns(:tag)
+    assert_equal true, assigns(:tag).tag_synonyms.none? { |ts| ts.name == 'synonym' }
   end
 
   test 'should prevent a tag being its own parent' do
