@@ -104,7 +104,7 @@ $(() => {
 
     //Alter the newly added tag synonym
     const $newTagSynonym = $wrapper.children().last();
-    $newTagSynonym.find('.tag-synonym-name').removeAttr('value').removeAttr('readonly');
+    $newTagSynonym.find('.tag-synonym-name').removeAttr('value').removeAttr('readonly').removeAttr('disabled');
     $newTagSynonym.find('.destroy-tag-synonym').attr('value', 'false');
     $newTagSynonym.show();
 

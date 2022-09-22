@@ -77,6 +77,7 @@ class TagsController < ApplicationController
 
   def edit
     check_your_privilege('edit_tags', nil, true)
+    @tag.tag_synonyms.build
   end
 
   def update
