@@ -154,7 +154,7 @@ class TagsControllerTest < ActionController::TestCase
     assert_response 302
     assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:base).id)
     assert_not_nil assigns(:tag)
-    assert_equal true, assigns(:tag).tag_synonyms.none? { |ts| ts.name == 'synonym' }
+    assert_equal true, (assigns(:tag).tag_synonyms.none? { |ts| ts.name == 'synonym' })
   end
 
   test 'should prevent a tag being its own parent' do
