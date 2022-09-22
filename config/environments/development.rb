@@ -24,8 +24,7 @@ Rails.application.configure do
   redis_config = YAML.safe_load(processed, permitted_classes: [], permitted_symbols: [], aliases: true)["redis_#{Rails.env}"]
   config.cache_store = QPixel::NamespacedEnvCache.new(
     ActiveSupport::Cache::RedisCacheStore.new(
-      url: "redis://#{redis_config['host']}:#{redis_config['port']}",
-      inherit_socket: true,
+      **redis_config.deep_symbolize_keys.merge(reconnect_attempts: 3),
       error_handler: -> (method:, returning:, exception:) {
         Rails.logger.error("Cache error: method=#{method} returning=#{returning} exception=#{exception.message}")
       }
