@@ -265,9 +265,9 @@ class Post < ApplicationRecord
 
   def maximum_tags
     if tags_cache.length > 5
-      errors.add(:tags, "can't have more than 5 tags")
+      errors.add(:base, "Post can't have more than 5 tags.")
     elsif tags_cache.empty?
-      errors.add(:tags, 'must have at least one tag')
+      errors.add(:base, 'Post must have at least one tag.')
     end
   end
 
