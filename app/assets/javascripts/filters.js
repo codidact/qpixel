@@ -120,7 +120,8 @@ $(() => {
 
     $saveAsDefaultButton.on('click', async _ => {
       await saveFilter();
-      QPixel.setFilterAsDefault($select.val());
+      const id = $saveAsDefaultButton.data('categoryId');
+      QPixel.setFilterAsDefault(id, $select.val());
     });
 
     function clear() {

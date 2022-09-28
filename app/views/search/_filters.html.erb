@@ -65,7 +65,10 @@
     <% end %>
     <% if user_signed_in? %>
       <button type="button" class="filter-save button is-medium is-filled">Save</button>
-      <button type="button" class="filter-save-default button is-small is-outlined">Save as default for this category</button>
+      <% if defined? @category %>
+        <button type="button" class="filter-save-default button is-small is-outlined"
+                data-category-id="<%= @category.id %>">Save as default for this category</button>
+      <% end%>
     <% end %>
     <% if allow_delete %>
       <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>

@@ -284,9 +284,8 @@ window.QPixel = {
     return this._filters;
   },
 
-  // Assumes we're on a category page
-  setFilterAsDefault: async name => {
-    const resp = await fetch(location.pathname + '/filters/default', {
+  setFilterAsDefault: async (category_id, name) => {
+    const resp = await fetch(`/categories/${category_id}/filters/default`, {
       method: 'POST',
       credentials: 'include',
       headers: {
