@@ -12,6 +12,19 @@
           data: { placeholder: "" } %>
     </div>
     <button type="button" class="filter-clear button is-medium is-danger">Clear</button>
+    <% if allow_apply %>
+      <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+    <% end %>
+    <% if user_signed_in? %>
+      <button type="button" class="filter-save button is-medium is-filled">Save</button>
+      <% if defined? @category %>
+        <button type="button" class="filter-save-default button is-small is-outlined"
+                data-category-id="<%= @category.id %>">Save as default for this category</button>
+      <% end%>
+    <% end %>
+    <% if allow_delete %>
+      <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
+    <% end %>
   </div>
   <div class="form-group-horizontal">
     <div class="form-group">
@@ -38,6 +51,12 @@
           min: 0, step: 1, class: 'form-element form--filter',
           data: { name: 'max_answers' } %>
     </div>
+    <div class="form-group">
+      <%= label_tag :status, 'Status', class: "form-element" %>
+      <%= select_tag :status, options_for_select(['any', 'open', 'closed'], selected: @active_filter[:status] || 'any'),
+        min: 0, step: 1, class: 'form-element form--filter',
+        data: { name: 'status' } %>
+    </div>
   </div>
   <div class="form-group-horizontal">
     <div class="form-group">
@@ -52,26 +71,5 @@
                    selected: @active_filter[:exclude_tags]|| []), multiple: true, class: 'form-element form--filter js-tag-select',
                    data: { name: 'exclude_tags', tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
     </div>
-  </div>
-  <div class="form-group">
-    <%= label_tag :status, 'Status', class: "form-element" %>
-    <%= select_tag :status, options_for_select(['any', 'open', 'closed'], selected: @active_filter[:status] || 'any'),
-        min: 0, step: 1, class: 'form-element form--filter',
-        data: { name: 'status' } %>
-  </div>
-  <div class="form-group">
-    <% if allow_apply %>
-      <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
-    <% end %>
-    <% if user_signed_in? %>
-      <button type="button" class="filter-save button is-medium is-filled">Save</button>
-      <% if defined? @category %>
-        <button type="button" class="filter-save-default button is-small is-outlined"
-                data-category-id="<%= @category.id %>">Save as default for this category</button>
-      <% end%>
-    <% end %>
-    <% if allow_delete %>
-      <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
-    <% end %>
   </div>
 </div>
