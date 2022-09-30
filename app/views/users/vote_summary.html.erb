@@ -2,7 +2,7 @@
 
 <h1>Vote summary for <%= user_link @user %></h1>
 
-<p class="is-lead">A daily summary of votes you have received for your posts.</p>
+<p class="is-lead">A daily summary of votes received for posts.</p>
 
 <% @votes.each do |day, vote_list| %>
 <details class="user-vote-summary" <%= 'open' unless day < SiteSetting['VoteSummaryAutoExpandLastNrOfDays'].days.ago%>>
