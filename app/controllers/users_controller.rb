@@ -64,13 +64,27 @@ class UsersController < ApplicationController
     end
   end
 
+  # Helper method to convert it to the form expected by the client
+  def filter_json(filter)
+    {
+      min_score: filter.min_score,
+      max_score: filter.max_score,
+      min_answers: filter.min_answers,
+      max_answers: filter.max_answers,
+      include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
+      exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
+      status: filter.status,
+      system: filter.user_id == -1
+    }
+  end
+
   def filters_json
     system_filters = Rails.cache.fetch 'system_filters' do
-      User.find(-1).filters.to_h { |filter| [filter.name, filter.json] }
+      User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
 
     if user_signed_in?
-      current_user.filters.to_h { |filter| [filter.name, filter.json] }
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
                   .merge(system_filters)
     else
       system_filters
