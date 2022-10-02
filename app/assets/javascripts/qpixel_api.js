@@ -284,6 +284,17 @@ window.QPixel = {
     return this._filters;
   },
 
+  defaultFilter: async categoryId => {
+    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    return data.name;
+  },
+
   setFilterAsDefault: async (category_id, name) => {
     const resp = await fetch(`/categories/${category_id}/filters/default`, {
       method: 'POST',
@@ -297,7 +308,7 @@ window.QPixel = {
     });
   },
 
-  setFilter: async (name, filter) => {
+  setFilter: async (name, filter, category, is_default) => {
     const resp = await fetch('/users/me/filters', {
       method: 'POST',
       credentials: 'include',
@@ -306,7 +317,7 @@ window.QPixel = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(Object.assign(filter, { name }))
+      body: JSON.stringify(Object.assign(filter, { name, category, is_default }))
     });
     const data = await resp.json();
     if (data.status !== 'success') {

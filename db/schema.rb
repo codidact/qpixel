@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_16_075849) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -136,6 +136,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_16_075849) do
   create_table "categories_topic_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id"
     t.bigint "tag_id"
+  end
+
+  create_table "category_filter_defaults", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "filter_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id"], name: "index_category_filter_defaults_on_category_id"
+    t.index ["filter_id"], name: "index_category_filter_defaults_on_filter_id"
+    t.index ["user_id"], name: "index_category_filter_defaults_on_user_id"
   end
 
   create_table "close_reasons", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -740,6 +749,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_16_075849) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
+  add_foreign_key "category_filter_defaults", "categories"
+  add_foreign_key "category_filter_defaults", "filters"
+  add_foreign_key "category_filter_defaults", "users"
   add_foreign_key "comment_threads", "users", column: "archived_by_id"
   add_foreign_key "comment_threads", "users", column: "deleted_by_id"
   add_foreign_key "comment_threads", "users", column: "locked_by_id"

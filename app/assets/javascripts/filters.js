@@ -1,10 +1,12 @@
 $(() => {
-  $('.js-filter-select').each((_, el) => {
+  $('.js-filter-select').each(async (_, el) => {
     const $select = $(el);
     const $form = $select.closest('form');
     const $formFilters = $form.find('.form--filter');
     const $saveButton = $form.find('.filter-save');
-    const $saveAsDefaultButton = $form.find('.filter-save-default');
+    const $isDefaultCheckbox = $form.find('.filter-is-default');
+    const categoryId = $isDefaultCheckbox.val();
+    var defaultFilter = await QPixel.defaultFilter(categoryId);
     const $deleteButton = $form.find('.filter-delete');
 
     // Enables/Disables Save & Delete buttons programatically
@@ -42,10 +44,12 @@ $(() => {
           return filterValue ? filterValue != elValue : elValue;
         }
       });
-      $saveButton.prop('disabled', filter.system || !hasChanges);
+      const defaultStatusChanged = $isDefaultCheckbox.prop('checked') != (defaultFilter === $select.val());
+      $saveButton.prop('disabled', !defaultStatusChanged && (filter.system || !hasChanges));
     }
 
     async function initializeSelect() {
+      defaultFilter = await QPixel.defaultFilter(categoryId);
       const filters = await QPixel.filters();
 
       function template(option) {
@@ -70,10 +74,11 @@ $(() => {
 
         templateResult: template,
         templateSelection: template
-      }).on('select2:select', evt => {
+      }).on('select2:select', async evt => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
 
+        $isDefaultCheckbox.prop('checked', defaultFilter === $select.val());
         computeEnables();
 
         // Name is not one of the presets, i.e user is creating a new preset
@@ -101,6 +106,7 @@ $(() => {
 
     // Enable saving when the filter is changed
     $formFilters.on('change', computeEnables);
+    $isDefaultCheckbox.on('change', computeEnables);
 
     async function saveFilter() {
       if (!$form[0].reportValidity()) { return; }
@@ -111,18 +117,14 @@ $(() => {
         filter[el.dataset.name] = $(el).val();
       }
 
-      await QPixel.setFilter($select.val(), filter);
+      await QPixel.setFilter($select.val(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
+      defaultFilter = await QPixel.defaultFilter(categoryId);
+
       // Reinitialize to get new options
       await initializeSelect();
     }
 
     $saveButton.on('click', saveFilter);
-
-    $saveAsDefaultButton.on('click', async _ => {
-      await saveFilter();
-      const id = $saveAsDefaultButton.data('categoryId');
-      QPixel.setFilterAsDefault(id, $select.val());
-    });
 
     function clear() {
       $select.val(null).trigger('change');

@@ -30,6 +30,20 @@ module UsersHelper
     end
   end
 
+  def default_filter(user_id, category_id)
+    CategoryFilterDefault.find_by(user_id: user_id, category_id: category_id)&.filter
+  end
+
+  def set_filter_default(user_id, filter_id, category_id, keep)
+    if keep
+      CategoryFilterDefault.find_or_create_by(user_id: user_id, category_id: category_id)
+                           .update(filter_id: filter_id)
+    else
+      CategoryFilterDefault.where(user_id: user_id, category_id: category_id)
+                           .destroy_all
+    end
+  end
+
   def user_preference(name, community: false)
     return nil if current_user.nil?
 

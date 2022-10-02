@@ -17,15 +17,15 @@
     <% end %>
     <% if user_signed_in? %>
       <button type="button" class="filter-save button is-medium is-filled">Save</button>
-      <% if defined? @category %>
-        <button type="button" class="filter-save-default button is-small is-outlined"
-                data-category-id="<%= @category.id %>">Save as default for this category</button>
-      <% end%>
     <% end %>
     <% if allow_delete %>
       <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
     <% end %>
   </div>
+  <% if user_signed_in? && defined? @category %>
+    <%= label_tag :save_as_default, 'Is default for this category?' %>
+    <%= check_box_tag :save_as_default, @category.id, false, { class: 'filter-is-default form-checkbox-element' } %>
+  <% end %>
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= label_tag :min_score, 'Min Score', class: "form-element" %>

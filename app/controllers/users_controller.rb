@@ -101,7 +101,7 @@ class UsersController < ApplicationController
   end
 
   def set_filter
-    if params[:name]
+    if user_signed_in? && params[:name]
       filter = Filter.find_or_create_by(user: current_user, name: params[:name])
 
       filter.update(min_score: params[:min_score], max_score: params[:max_score],
@@ -109,7 +109,12 @@ class UsersController < ApplicationController
                     include_tags: params[:include_tags], exclude_tags: params[:exclude_tags],
                     status: params[:status])
 
-      render json: { status: 'success', success: true, filters: filters_json }
+      unless params[:category].nil? || params[:is_default].nil?
+        helpers.set_filter_default(current_user.id, filter.id, params[:category].to_i, params[:is_default])
+      end
+
+      render json: { status: 'success', success: true, filters: filters_json },
+             status: 200
     else
       render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
              status: 400
@@ -138,6 +143,17 @@ class UsersController < ApplicationController
       render json: { status: 'success', success: true, filters: filters_json }
     else
       render json: { status: 'failed', success: false, errors: ['Failed to delete'] },
+             status: 400
+    end
+  end
+
+  def default_filter
+    if user_signed_in? && params[:category]
+      default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
+      render json: { status: 'success', success: true, name: default_filter&.name },
+             status: 200
+    else
+      render json: { status: 'failed', success: false },
              status: 400
     end
   end

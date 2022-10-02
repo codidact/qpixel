@@ -133,20 +133,6 @@ class CategoriesController < ApplicationController
     end
   end
 
-  def default_filter
-    filter = Filter.find_by(name: params[:name], user_id: [-1, current_user.id])
-
-    unless filter.present?
-      return render json: { status: 'failed', success: false, errors: ['Filter does not exist'] },
-                    status: 400
-    end
-
-    key = "prefs.#{current_user.id}.category.#{RequestContext.community_id}.category.#{@category.id}"
-    RequestContext.redis.hset(key, 'filter', filter.id)
-    render json: { status: 'success', success: true },
-           status: 200
-  end
-
   private
 
   def set_category
@@ -191,10 +177,10 @@ class CategoriesController < ApplicationController
     }
 
     if filter_qualifiers.blank? && user_signed_in?
-      default_filter_id = current_user.category_preference(@category.id)['filter']
+      default_filter_id = helpers.default_filter(current_user.id, @category.id)
       default_filter = Filter.find_by(id: default_filter_id)
       unless default_filter.nil?
-        filter_qualifiers = helpers.filter_to_qualifiers default_filter unless default_filter.nil?
+        filter_qualifiers = helpers.filter_to_qualifiers default_filter
         @active_filter = {
           default: true,
           name: default_filter.name,

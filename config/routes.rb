@@ -171,6 +171,7 @@ Rails.application.routes.draw do
     get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
     post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
     get    '/me/filters',               to: 'users#filters', as: :user_filters
+    get    '/me/filters/default/',      to: 'users#default_filter', as: :default_filter
     post   '/me/filters',               to: 'users#set_filter', as: :set_user_filter
     delete '/me/filters',               to: 'users#delete_filter', as: :delete_user_filter
     get    '/me/notifications',         to: 'notifications#index', as: :notifications
