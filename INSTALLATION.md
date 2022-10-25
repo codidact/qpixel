@@ -56,6 +56,16 @@ If you already have Node.JS installed, you can skip this step. If not,
 If you haven't already got it, [download and install Redis](https://redis.io/download)
 or for example `sudo apt install redis-server`.
 
+### Install Imagemagick
+
+If you haven't already installed Imagemagick, you'll need to
+[install it for your system](https://imagemagick.org/script/download.php).
+
+If you install Imagemagick from APT on a Debian-based system, you may need to
+also install the `libmagickwand-dev` package.
+
+`sudo apt install libmagick++-dev` should also work.
+
 ### Install Libvips
 
 If you haven't already installed Libvips, you'll need to [install it for
