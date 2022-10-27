@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Give database chance to finish creation
-sleep 15
-
 # If not created yet
 if [ ! -f "/db-created" ]; then
     rails db:create
