@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 services:
   db:
     build:
@@ -11,6 +11,13 @@ services:
     command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
     cap_add:
       - SYS_NICE
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
 
   uwsgi:
     restart: always
@@ -18,7 +25,10 @@ services:
       context: "."
       dockerfile: docker/Dockerfile
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - COMMUNITY_NAME=${COMMUNITY_NAME}
       - RAILS_ENV=${RAILS_ENV}
@@ -39,5 +49,5 @@ services:
   redis:
     restart: always
     image: redis:latest
-    depends_on:
-      - db
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
