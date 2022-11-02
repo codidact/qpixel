@@ -50,6 +50,7 @@ $(() => {
 
     async function initializeSelect() {
       defaultFilter = await QPixel.defaultFilter(categoryId);
+      $isDefaultCheckbox.prop('checked', defaultFilter === $select.val());
       const filters = await QPixel.filters();
 
       function template(option) {
@@ -129,6 +130,7 @@ $(() => {
     function clear() {
       $select.val(null).trigger('change');
       $form.find('.form--filter').val(null).trigger('change');
+      $isDefaultCheckbox.prop('checked', false);
       computeEnables();
     }
 
