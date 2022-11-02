@@ -195,10 +195,8 @@ class CategoriesController < ApplicationController
       end
     end
 
-    unless filter_qualifiers.blank?
-      @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
-    end
-
+    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
+    @filtered = filter_qualifiers.any?
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
