@@ -4,10 +4,17 @@
 
 <p class="is-lead">A daily summary of votes received for posts.</p>
 
-<% @votes.each do |day, vote_list| %>
+<% @votes.each do |day, vote_list, net_votes| %>
 <details class="user-vote-summary" <%= 'open' unless day < SiteSetting['VoteSummaryAutoExpandLastNrOfDays'].days.ago%>>
 <summary>
-<h2><%= day.strftime('%b %e, %Y') %></h2>
+<h2><%= day.strftime('%b %e, %Y') %>:
+<% if net_votes > 0 %>
+  <span class="has-color-green-800 has-font-weight-bold">+<%= net_votes %></span>
+<% elsif net_votes < 0 %>
+  <span class="has-color-red-800 has-font-weight-bold"><%= net_votes %></span>
+<% else %>
+  <span class="has-color-tertiary-600">0</span>
+<% end %></h2>
 </summary>
 <div class="item-list">
     <% vote_list.each do |post, vote_data| %>
