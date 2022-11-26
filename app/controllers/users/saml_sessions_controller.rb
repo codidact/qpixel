@@ -12,7 +12,8 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
         return
       end
 
-      if user.present? && user.enabled_2fa
+      # Enforce 2fa if enabled for SSO users
+      if SiteSetting['Enable2FAForSsoUsers'] && user.present? && user.enabled_2fa
         sign_out user
         case user.two_factor_method
         when 'app'

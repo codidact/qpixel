@@ -309,7 +309,8 @@ class ApplicationController < ActionController::Base
        # Enable users to log out even if 2fa is enforced
        !request.fullpath.end_with?('/users/sign_out') &&
        (current_user.is_global_admin ||
-         current_user.is_global_moderator)
+         current_user.is_global_moderator) &&
+       (current_user.sso_profile.blank? || SiteSetting['Enable2FAForSsoUsers'])
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)
         flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue' \

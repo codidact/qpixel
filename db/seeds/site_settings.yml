@@ -533,3 +533,12 @@
   description: >
     This setting only has an effect when SSO Sign In is enabled. Enables mixed sign in: both signing in and signing up as well as SSO sign in are enabled.
     If disabled, only one sign in method is enabled.
+
+- name: Enable2FAForSsoUsers
+  value: false
+  value_type: boolean
+  community_id: ~
+  category: SignInAndSignUp
+  description: >
+    This setting only has an effect when SSO Sign In is enabled. Enables 2FA options (and enforces 2FA for global mods and admins if configured) also for SSO users.
+    When the authentication is outsourced to a Single Sign On provider (which may already require 2FA), it often does not make sense to have an additional 2FA check on top of that.
