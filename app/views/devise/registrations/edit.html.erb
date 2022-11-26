@@ -8,6 +8,12 @@
 
 <% sso = current_user.sso_profile.present? %>
 <% if sso %>
+  <% if SiteSetting['AllowSsoDisconnect'] %>
+    <%= link_to user_disconnect_sso_path, class: 'button is-outlined is-danger' do %>
+      Disconnect Single Sign On &raquo;
+    <% end %>
+  <% end %>
+
   <div class="notice is-warning">
     You sign in through a Single Sign On provider.
     Because of that, you cannot change your email address or password here.

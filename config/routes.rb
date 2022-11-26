@@ -186,6 +186,8 @@ Rails.application.routes.draw do
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
     get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
+    get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
+    post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
