@@ -5,6 +5,12 @@ class TwoFactorController < ApplicationController
   def tf_status; end
 
   def enable_2fa
+    if current_user.sso_profile.present? && !SiteSetting['Enable2FAForSsoUsers']
+      flash[:danger] = 'You cannot enable 2FA because you sign in through SSO.'
+      redirect_to two_factor_status_path
+      return
+    end
+
     case params[:method]
     when 'app'
       secret = ROTP::Base32.random
