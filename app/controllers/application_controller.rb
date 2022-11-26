@@ -17,10 +17,10 @@ class ApplicationController < ActionController::Base
 
   def upload
     if ActiveStorage::Blob.service.class.name.end_with?('S3Service')
-      redirect_to helpers.upload_remote_url(params[:key]), status: 301
+      redirect_to helpers.upload_remote_url(params[:key]), status: 301, allow_other_host: true
     else
       blob = params[:key]
-      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key))
+      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key)), allow_other_host: true
     end
   end
 
@@ -268,7 +268,9 @@ class ApplicationController < ActionController::Base
 
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
+        Post.undeleted.where(closed: false)
+            .where(locked: false)
+            .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])

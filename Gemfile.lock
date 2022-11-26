@@ -107,7 +107,6 @@ GEM
     coffee-script-source (1.12.2)
     commonmarker (0.23.5)
     concurrent-ruby (1.1.10)
-    connection_pool (2.2.5)
     counter_culture (3.2.1)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
@@ -265,10 +264,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (5.0.4)
-      redis-client (>= 0.7.4)
-    redis-client (0.8.0)
-      connection_pool
+    redis (4.8.0)
     regexp_parser (2.5.0)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -403,7 +399,7 @@ DEPENDENCIES
   rails (~> 7.0.0)
   rails-controller-testing (~> 1.0)
   rails-html-sanitizer (~> 1.4)
-  redis (~> 5.0)
+  redis (~> 4.8)
   reverse_markdown (~> 2.1)
   rmagick
   rotp (~> 6.2)

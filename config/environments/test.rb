@@ -28,11 +28,15 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
+  # Set the cache store to the redis that was configured in the database.yml
   processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
   redis_config = YAML.safe_load(processed, permitted_classes: [], permitted_symbols: [], aliases: true)["redis_#{Rails.env}"]
   config.cache_store = QPixel::NamespacedEnvCache.new(
     ActiveSupport::Cache::RedisCacheStore.new(
-      url: "redis://#{redis_config['host']}:#{redis_config['port']}"
+      **redis_config.deep_symbolize_keys.merge(reconnect_attempts: 3),
+      error_handler: -> (method:, returning:, exception:) {
+        Rails.logger.error("Cache error: method=#{method} returning=#{returning} exception=#{exception.message}")
+      }
     )
   )
 
