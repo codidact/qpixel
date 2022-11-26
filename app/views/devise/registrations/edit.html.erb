@@ -8,7 +8,7 @@
 
 <% sso = current_user.sso_profile.present? %>
 <% if sso %>
-  <% if SiteSetting['AllowSsoDisconnect'] %>
+  <% if devise_sign_in_enabled? && SiteSetting['AllowSsoDisconnect'] %>
     <%= link_to user_disconnect_sso_path, class: 'button is-outlined is-danger' do %>
       Disconnect Single Sign On &raquo;
     <% end %>

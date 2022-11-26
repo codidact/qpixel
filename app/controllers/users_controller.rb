@@ -494,7 +494,7 @@ class UsersController < ApplicationController
   end
 
   def confirm_disconnect_sso
-    if current_user.sso_profile.blank? || !SiteSetting['AllowSsoDisconnect']
+    if current_user.sso_profile.blank? || !helpers.devise_sign_in_enabled? || !SiteSetting['AllowSsoDisconnect']
       flash[:danger] = 'You cannot disable Single Sign On.'
       redirect_to edit_user_registration_path
       return
