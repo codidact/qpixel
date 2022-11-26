@@ -25,7 +25,7 @@ class Users::SessionsController < Devise::SessionsController
       if user.present? && user.sso_profile.present?
         sign_out user
         flash[:notice] = nil
-        flash[:danger] = 'Please sign in using the Single Sign On service of your institution.'
+        flash[:danger] = 'Please sign in using the Single Sign-On service of your institution.'
         redirect_to new_saml_user_session_path
         return
       end

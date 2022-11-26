@@ -495,17 +495,17 @@ class UsersController < ApplicationController
 
   def confirm_disconnect_sso
     if current_user.sso_profile.blank? || !helpers.devise_sign_in_enabled? || !SiteSetting['AllowSsoDisconnect']
-      flash[:danger] = 'You cannot disable Single Sign On.'
+      flash[:danger] = 'You cannot disable Single Sign-On.'
       redirect_to edit_user_registration_path
       return
     end
 
     if current_user.sso_profile.destroy
       current_user.send_reset_password_instructions
-      flash[:success] = 'Successfully disconnected from Single Sign On. Please see your email to set your password.'
+      flash[:success] = 'Successfully disconnected from Single Sign-On. Please see your email to set your password.'
       redirect_to edit_user_registration_path
     else
-      flash[:danger] = 'Failed to disconnect from Single Sign On.'
+      flash[:danger] = 'Failed to disconnect from Single Sign-On.'
       redirect_to user_disconnect_sso_path
     end
   end

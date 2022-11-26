@@ -31,7 +31,7 @@
     <h3>Enable two-factor authentication</h3>
     <% if current_user.sso_profile.present? && !SiteSetting['Enable2FAForSsoUsers'] %>
       <p>
-        Because you sign in with Single Sign On, you cannot enable two-factor authentication.
+        Because you sign in with Single Sign-On, you cannot enable two-factor authentication.
       </p>
     <% else %>
       <%= form_tag two_factor_enable_path do %>
