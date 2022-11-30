@@ -125,6 +125,9 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise_saml_authenticatable (1.9.0)
+      devise (> 2.0.0)
+      ruby-saml (~> 1.7)
     diffy (3.4.2)
     digest (3.1.0)
     docile (1.4.0)
@@ -292,6 +295,9 @@ GEM
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
     ruby-progressbar (1.11.0)
+    ruby-saml (1.14.0)
+      nokogiri (>= 1.10.5)
+      rexml
     ruby-vips (2.1.4)
       ffi (~> 1.12)
     sass-rails (6.0.0)
@@ -370,6 +376,7 @@ DEPENDENCIES
   counter_culture (~> 3.2)
   coveralls (~> 0.8)
   devise (~> 4.8)
+  devise_saml_authenticatable (~> 1.9)
   diffy (~> 3.4)
   e2mmap (~> 0.1)
   fastimage (~> 2.2)

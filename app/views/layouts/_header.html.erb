@@ -69,8 +69,13 @@
       <a href="#" class="header--item is-visible-on-mobile" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
       <% unless user_signed_in? %>
         <div class="header--item">
-          <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
-          <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
+          <% if devise_sign_in_enabled? %>
+            <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
+            <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
+          <% end %>
+          <% if sso_sign_in_enabled? %>
+            <%= link_to 'SSO Sign In', new_saml_user_session_path, class: 'button is-muted is-outlined' %>
+          <% end %>
         </div>
       <% end %>
       <% unless @community.is_fake %>
@@ -88,7 +93,11 @@
 
 <div class="header-slide" id="communities-slide">
   <% if user_signed_in? %>
-    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+    <% if devise_sign_in_enabled? %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+    <% else %>
+      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+    <% end %>
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
@@ -182,10 +191,19 @@
           <% end %>
         <% end %>
       <% end %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+      <% if devise_sign_in_enabled? %>
+        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+      <% else %>
+        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item' %>
+      <% end %>
     <% else %>
-      <%= link_to 'Sign In', new_user_session_path, class: 'menu--item' %>
-      <%= link_to 'Sign Up', new_user_registration_path, class: 'menu--item' %>
+      <% if sso_sign_in_enabled? %>
+        <%= link_to 'SSO Sign In', new_saml_user_session_path, class: 'menu--item' %>
+      <% end %>
+      <% if devise_sign_in_enabled? %>
+        <%= link_to 'Sign In', new_user_session_path, class: 'menu--item' %>
+        <%= link_to 'Sign Up', new_user_registration_path, class: 'menu--item' %>
+      <% end %>
     <% end %>
   </div>
 </div>
