@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
+  before_action :enforce_signed_in, unless: :devise_controller?
   before_action :check_if_warning_or_suspension_pending
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
@@ -319,6 +320,55 @@ class ApplicationController < ActionController::Base
         redirect_to(redirect_path)
       end
     end
+  end
+
+  # Ensure that the user is signed in before showing any content. If the user is not signed in, display the main page.
+  #
+  # Exceptions:
+  # - 4** and 500 error pages
+  # - stylesheets and javascript
+  # - assets
+  # - /help, /policy, /help/* and /policy/*
+  def enforce_signed_in
+    if SiteSetting['RestrictedAccess'] &&
+      !user_signed_in? &&
+      !Rails.env.test? &&
+      !request.fullpath.start_with?('/4') &&
+      request.fullpath != '/500' &&
+      !request.fullpath.end_with?('.css') &&
+      !request.fullpath.end_with?('.js') &&
+      !request.fullpath.start_with?('/assets/') &&
+      (
+        controller_name != 'posts' ||
+          (!request.fullpath.start_with?('/help') && !request.fullpath.start_with?('/policy'))
+      )
+
+      store_location_for(:user, request.fullpath) if storable_location?
+
+      render 'errors/restricted_content', layout: 'without_sidebar', status: :forbidden
+      return false
+    end
+    true
+  end
+
+  # Redirect user to original page they tried to visit after signing in.
+  def after_sign_in_path_for(resource)
+    stored_location_for(resource) || root_path
+  end
+
+  # Checks if the requested location should be stored.
+  #
+  # Its important that the location is NOT stored if:
+  # - The request method is not GET (non idempotent)
+  # - The request is handled by a Devise controller such as Devise::SessionsController as that could cause an
+  #    infinite redirect loop.
+  # - The request is an Ajax request as this can lead to very unexpected behaviour.
+  def storable_location?
+    request.get? &&
+      is_navigational_format? &&
+      !devise_controller? &&
+      !request.xhr? &&
+      !request.path.start_with?('/users/')
   end
 
   def block_write_request(**add)
