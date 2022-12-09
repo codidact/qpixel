@@ -77,7 +77,7 @@ sticky_header:
   type: boolean
   description: >
     Make the top navigation bar sticky.
-  default: false
+  default: 'false'
   global: true
 
 default_filter_name:
