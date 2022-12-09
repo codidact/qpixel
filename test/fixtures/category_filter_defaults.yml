@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
+main_default_filter:
+  user: standard_user
   filter: one
-  category: one
+  category: main
 
-two:
-  user: two
-  filter: two
-  category: two
+meta_default_filter:
+  user: standard_user
+  filter: one
+  category: meta
