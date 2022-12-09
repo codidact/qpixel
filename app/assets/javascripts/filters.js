@@ -6,7 +6,7 @@ $(() => {
     const $saveButton = $form.find('.filter-save');
     const $isDefaultCheckbox = $form.find('.filter-is-default');
     const categoryId = $isDefaultCheckbox.val();
-    var defaultFilter = await QPixel.defaultFilter(categoryId);
+    let defaultFilter = await QPixel.defaultFilter(categoryId);
     const $deleteButton = $form.find('.filter-delete');
 
     // Enables/Disables Save & Delete buttons programatically
