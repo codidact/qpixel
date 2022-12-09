@@ -10,7 +10,10 @@
 #     - if
 #     - type is choice
 #   default: string default value | ~
-#   community: true | false  # optional, default false (global)
+##  Either community, global or category should be set to true, all default to false
+#   community: true | false
+#   global: true | false
+#   category: true | false
 
 keyboard_tools:
   type: boolean
