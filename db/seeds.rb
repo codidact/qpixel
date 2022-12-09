@@ -16,7 +16,7 @@ types = files.map do |f|
 end
 
 # Prioritize the following models (in this order) such that models depending on them get created after
-priority = [PostType, CloseReason, License, TagSet, PostHistoryType]
+priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, Filter]
 sorted = files.zip(types).to_h.sort do |a, b|
   (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
 end.to_h
