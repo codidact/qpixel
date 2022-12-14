@@ -1,0 +1,117 @@
+name: Test, lint and deploy
+on:
+  push:
+    branches:
+    - develop
+jobs:
+  test:
+    defaults:
+      run:
+        working-directory: "~/qpixel"
+    runs-on: ubuntu-latest
+    container:
+      image: cimg/ruby:2.7-node
+    services:
+      mysql:
+        image: cimg/mysql:8.0
+        env:
+          MYSQL_ROOT_HOST: "%"
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: qpixel_test
+        options: "   --default-authentication-plugin=mysql_native_password"
+      redis:
+        image: cimg/redis:7.0
+    steps:
+    - name: Install packages
+      run: |-
+        sudo apt-get --allow-releaseinfo-change -qq update
+        sudo apt-get -y install git libmariadb-dev libmagickwand-dev
+    - uses: actions/checkout@v3.1.0
+    - name: restore_cache
+      uses: actions/cache@v3
+      with:
+        key: qpixel-{{ checksum "Gemfile" }}
+        restore-keys: |-
+          qpixel-{{ checksum "Gemfile" }}
+          qpixel-
+        path: "~/gems"
+    - name: Install Bundler & gems
+      run: |-
+        gem install bundler
+        bundle install --path=~/gems
+    - name: Copy key
+      env:
+        MASTER_KEY: ${{ secrets.MASTER_KEY }}
+      run: echo "$MASTER_KEY" > config/master.key
+    - name: Prepare config & database
+      run: |-
+        cp config/database.sample.yml config/database.yml
+        cp config/storage.sample.yml config/storage.yml
+        bundle exec rails db:create
+        bundle exec rails db:schema:load
+        bundle exec rails db:migrate
+        bundle exec rails test:prepare
+      env:
+        RAILS_ENV: test
+    - name: Current revision
+      run: git rev-parse $(git rev-parse --abbrev-ref HEAD)
+    - name: Coveralls token
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: 'echo "repo_token: $COVERALLS_REPO_TOKEN" > .coveralls.yml'
+    - name: Test
+      run: bundle exec rails test
+    - uses: actions/upload-artifact@v3.1.1
+      with:
+        path: "~/qpixel/test/reports"
+  rubocop:
+    defaults:
+      run:
+        working-directory: "~/qpixel"
+    runs-on: ubuntu-latest
+    container:
+      image: cimg/ruby:2.7-node
+    steps:
+    - name: Install packages
+      run: |-
+        sudo apt-get --allow-releaseinfo-change -qq update
+        sudo apt-get -y install git libmariadb-dev libmagickwand-dev
+    - uses: actions/checkout@v3.1.0
+    - name: restore_cache
+      uses: actions/cache@v3
+      with:
+        key: qpixel-{{ checksum "Gemfile" }}
+        restore-keys: |-
+          qpixel-{{ checksum "Gemfile" }}
+          qpixel-
+        path: "~/gems"
+    - name: Install Bundler & gems
+      run: |-
+        gem install bundler
+        bundle install --path=~/gems
+    - name: Rubocop
+      run: bundle exec rubocop
+  deploy:
+    if: github.ref == 'refs/heads/develop'
+    defaults:
+      run:
+        working-directory: "~/qpixel"
+    runs-on: ubuntu-latest
+    container:
+      image: cimg/ruby:2.7-node
+    needs:
+    - test
+    - rubocop
+    steps:
+    - name: Import SSH key
+      env:
+        DEV_SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      run: |-
+        echo "$DEV_SSH_KEY" | base64 --decode > ~/deploy.key
+        chmod 0700 ~/deploy.key
+    - name: Run deploy
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_IP: ${{ secrets.SSH_IP }}
+        SSH_PORT: ${{ secrets.SSH_PORT }}
+      run: ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" -p "$SSH_PORT" -i ~/deploy.key "sudo su -l qpixel /var/apps/deploy-dev"
