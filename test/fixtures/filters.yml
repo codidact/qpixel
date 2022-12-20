@@ -2,6 +2,7 @@
 
 one:
   name: MyString
+  user: standard_user
   min_score: 1.5
   max_score: 1.5
   min_answers: 1
