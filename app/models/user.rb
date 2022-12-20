@@ -25,6 +25,7 @@ class User < ApplicationRecord
   has_many :comment_threads_deleted, class_name: 'CommentThread', foreign_key: :deleted_by_id, dependent: :nullify
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
   has_many :filters, dependent: :destroy
+  has_many :category_filter_defaults, dependent: :destroy
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
