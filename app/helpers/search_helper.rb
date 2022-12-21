@@ -116,9 +116,14 @@ module SearchHelper
         operator, val, timeframe = date_value_sql value
         { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
       when 'user'
-        next unless value.match?(valid_value[:numeric])
+        operator, val = if value.match?(valid_value[:numeric])
+          numeric_value_sql value
+        elsif value == 'me'
+          ['=', current_user.id]
+        else
+          next
+        end
 
-        operator, val = numeric_value_sql value
         { param: :user, operator: operator.presence || '=', user_id: val.to_i }
       when 'upvotes'
         next unless value.match?(valid_value[:numeric])
