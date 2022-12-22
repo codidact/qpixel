@@ -4,7 +4,7 @@ module SearchHelper
     posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
             .qa_only.list_includes
 
-    qualifiers = filters_to_qualifiers
+    qualifiers = params_to_qualifiers
     search_string = params[:search]
 
     # Filter based on search string qualifiers
@@ -39,7 +39,7 @@ module SearchHelper
     qualifiers
   end
 
-  def filters_to_qualifiers
+  def params_to_qualifiers
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
       status: /any|open|closed/,
