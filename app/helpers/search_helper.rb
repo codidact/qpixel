@@ -164,7 +164,8 @@ module SearchHelper
 
         { param: :status, value: value }
       end
-    end
+    end.reject(&:nil?)
+    # Consider partitioning and telling the user which filters were invalid
   end
 
   def qualifiers_to_sql(qualifiers, query)
