@@ -39,6 +39,20 @@ module SearchHelper
     qualifiers
   end
 
+  def active_filter()
+    {
+      default: false,
+      name: params[:predefined_filter],
+      min_score: params[:min_score],
+      max_score: params[:max_score],
+      min_answers: params[:min_answers],
+      max_answers: params[:max_answers],
+      include_tags: params[:include_tags],
+      exclude_tags: params[:exclude_tags],
+      status: params[:status]
+    }
+  end
+
   def params_to_qualifiers
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,

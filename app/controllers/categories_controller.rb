@@ -163,18 +163,7 @@ class CategoriesController < ApplicationController
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type, :tags).list_includes
     filter_qualifiers = helpers.params_to_qualifiers
-
-    @active_filter = {
-      default: false,
-      name: params[:predefined_filter],
-      min_score: params[:min_score],
-      max_score: params[:max_score],
-      min_answers: params[:min_answers],
-      max_answers: params[:max_answers],
-      include_tags: params[:include_tags],
-      exclude_tags: params[:exclude_tags],
-      status: params[:status]
-    }
+    @active_filter = helpers.active_filter
 
     if filter_qualifiers.blank? && user_signed_in?
       default_filter_id = helpers.default_filter(current_user.id, @category.id)

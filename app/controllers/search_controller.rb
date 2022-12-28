@@ -1,6 +1,7 @@
 class SearchController < ApplicationController
   def search
     @posts = helpers.search_posts
+    @active_filter = helpers.active_filter
     @count = begin
       @posts&.count
     rescue
