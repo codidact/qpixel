@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
+  name: MyFilterOne
   user: standard_user
   min_score: 1.5
   max_score: 1.5
@@ -10,7 +10,7 @@ one:
   status: MyString
 
 two:
-  name: MyString
+  name: MyFilterTwo
   user: standard_user
   min_score: 1.5
   max_score: 1.5
