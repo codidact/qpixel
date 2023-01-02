@@ -41,7 +41,7 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :password, class: "form-element" %>
+    <%= f.label :password, "New password", class: "form-element" %>
     <div class="form-caption">
       Leave blank if you don't want to change it.
       <% if @minimum_password_length %>
@@ -52,7 +52,7 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :password_confirmation, class: "form-element" %>
+    <%= f.label :password_confirmation, "Confirm new password", class: "form-element" %>
     <%= f.password_field :password_confirmation, class: 'form-element', autocomplete: "new-password", disabled: sso %>
   </div>
 
