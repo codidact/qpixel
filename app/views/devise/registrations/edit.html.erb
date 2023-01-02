@@ -34,6 +34,13 @@
   <% end %>
 
   <div class="form-group">
+    <%= f.label :current_password, class: "form-element" %>
+    <div class="form-caption">We need your current password to confirm your changes.</div>
+    <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password", required: true,
+                         disabled: sso %>
+  </div>
+
+  <div class="form-group">
     <%= f.label :password, class: "form-element" %>
     <div class="form-caption">
       Leave blank if you don't want to change it.
@@ -47,13 +54,6 @@
   <div class="form-group">
     <%= f.label :password_confirmation, class: "form-element" %>
     <%= f.password_field :password_confirmation, class: 'form-element', autocomplete: "new-password", disabled: sso %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :current_password, class: "form-element" %>
-    <div class="form-caption">We need your current password to confirm your changes.</div>
-    <%= f.password_field :current_password, class: 'form-element', autocomplete: "current-password", required: true,
-                         disabled: sso %>
   </div>
 
   <%= f.submit "Update", class: 'button is-filled is-very-large', disabled: sso %>
