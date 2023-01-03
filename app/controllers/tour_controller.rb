@@ -5,7 +5,9 @@ class TourController < ApplicationController
 
   def question1; end
 
-  def question2; end
+  def question2
+    @tagset_id = TagSet.find_by(name: 'Tour')&.id || -1
+  end
 
   def question3; end
 
