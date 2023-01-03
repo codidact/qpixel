@@ -248,10 +248,7 @@
           <%= link_to suggested_edits_queue_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
             Edits
-            <% has_pending = Rails.cache.fetch "pending_suggestions/#{current_cat.id}" do %>
-              <% SuggestedEdit.where(post: Post.undeleted.where(category: current_cat), active: true).any? %>
-            <% end %>
-            <% if has_pending %>
+            <% if pending_suggestions? %>
               <span class="badge is-status" title="Suggested edits pending"></span>
             <% end %>
           <% end %>
