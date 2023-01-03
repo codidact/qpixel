@@ -38,8 +38,8 @@ $(() => {
         data: function (params) {
           $this = $(this);
           // (for the tour)
-          if ($this.data('tag-set') === '-1') {
-            return Object.assign(params, { tag_set: "1" });
+          if ($this.data('tag-set') === -1) {
+            return Object.assign(params, { tag_set: '1' });
           }
           return Object.assign(params, { tag_set: $this.data('tag-set') });
         },
@@ -47,7 +47,7 @@ $(() => {
         delay: 100,
         processResults: data => {
           // (for the tour)
-          if ($this.data('tag-set') === '-1') {
+          if ($this.data('tag-set') === -1) {
             return {
               results: [
                 { id: 1, text: 'hot-red-firebreather', desc: 'Very cute dragon' },
