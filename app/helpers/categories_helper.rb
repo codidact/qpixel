@@ -23,4 +23,10 @@ module CategoriesHelper
                             @article.category
                           end
   end
+
+  def pending_suggestions?
+    Rails.cache.fetch "pending_suggestions/#{current_category.id}" do
+      SuggestedEdit.where(post: Post.undeleted.where(category: current_category), active: true).any?
+    end
+  end
 end
