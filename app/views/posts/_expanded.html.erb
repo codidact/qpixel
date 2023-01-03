@@ -150,9 +150,10 @@
         <% end %>
       <% end %>
 
-      <div class="post--body">
+      <article class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
-
+      </article>
+      <div>
         <% been_edited = post.last_edited_by_id != nil %>
         <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
 
