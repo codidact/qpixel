@@ -28,7 +28,7 @@ class CommentsHelperTest < ActionView::TestCase
   test '[flags?] substitution' do
     expected = {
       '[flag] me if you can' => "<a href=\"#{flag_history_url(users(:standard_user).id)}\">flag</a> me if you can",
-      '\'cause it\'s our [flags]hip product' => "\'cause it\'s our <a href=\"#{flag_history_url(users(:standard_user).id)}\">flags</a>hip product",
+      '\'cause it\'s our [flags]hip product' => "'cause it's our <a href=\"#{flag_history_url(users(:standard_user).id)}\">flags</a>hip product",
       'yeah bad pun - [flagged] and downvoted' => 'yeah bad pun - [flagged] and downvoted'
     }
     expected.each do |input, expect|

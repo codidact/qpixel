@@ -20,7 +20,8 @@ class ApplicationController < ActionController::Base
       redirect_to helpers.upload_remote_url(params[:key]), status: 301, allow_other_host: true
     else
       blob = params[:key]
-      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key)), allow_other_host: true
+      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key)),
+                  allow_other_host: true
     end
   end
 

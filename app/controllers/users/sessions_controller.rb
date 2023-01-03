@@ -31,20 +31,8 @@ class Users::SessionsController < Devise::SessionsController
       end
 
       if user.present? && user.enabled_2fa
-        sign_out user
-        case user.two_factor_method
-        when 'app'
-          id = user.id
-          @@first_factor << id
-          redirect_to login_verify_2fa_path(uid: id)
-          return
-        when 'email'
-          TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
-          flash[:notice] = nil
-          flash[:info] = 'Please check your email inbox for a link to sign in.'
-          redirect_to root_path
-          return
-        end
+        handle_2fa_login(user)
+        return
       end
     end
   end
@@ -79,6 +67,23 @@ class Users::SessionsController < Devise::SessionsController
       AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'wrong code')
       flash[:danger] = "That's not the right code."
       redirect_to login_verify_2fa_path(uid: params[:uid])
+    end
+  end
+
+  private
+
+  def handle_2fa_login(user)
+    sign_out user
+    case user.two_factor_method
+    when 'app'
+      id = user.id
+      @@first_factor << id
+      redirect_to login_verify_2fa_path(uid: id)
+    when 'email'
+      TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
+      flash[:notice] = nil
+      flash[:info] = 'Please check your email inbox for a link to sign in.'
+      redirect_to root_path
     end
   end
 end
