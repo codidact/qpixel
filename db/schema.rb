@@ -535,6 +535,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.index ["name"], name: "index_site_settings_on_name"
   end
 
+  create_table "sso_profiles", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "saml_identifier", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_sso_profiles_on_user_id"
+  end
+
   create_table "subscriptions", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "type", null: false
     t.string "qualifier"
@@ -763,6 +769,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
   add_foreign_key "posts", "users", column: "locked_by_id"
   add_foreign_key "privileges", "communities"
   add_foreign_key "site_settings", "communities"
+  add_foreign_key "sso_profiles", "users"
   add_foreign_key "subscriptions", "communities"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "suggested_edits", "communities"

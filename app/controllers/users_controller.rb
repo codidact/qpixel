@@ -5,7 +5,8 @@ class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary]
+                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
+                                            :disconnect_sso, :confirm_disconnect_sso]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -462,7 +463,9 @@ class UsersController < ApplicationController
                    .select('count(*) as vote_count') \
                    .select('date(created_at) as date_of')
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
-                   .group_by(&:date_of).map { |k, vl| [k, vl.group_by(&:post) ] } \
+                   .group_by(&:date_of).map do |k, vl|
+                     [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
+                   end \
                    .paginate(page: params[:page], per_page: 15)
     @votes
   end
@@ -483,6 +486,27 @@ class UsersController < ApplicationController
         send_data helpers.user_auto_avatar(size, letter: params[:letter], color: params[:color]).to_blob,
                   type: 'image/png', disposition: 'inline'
       end
+    end
+  end
+
+  def disconnect_sso
+    render layout: 'without_sidebar'
+  end
+
+  def confirm_disconnect_sso
+    if current_user.sso_profile.blank? || !helpers.devise_sign_in_enabled? || !SiteSetting['AllowSsoDisconnect']
+      flash[:danger] = 'You cannot disable Single Sign-On.'
+      redirect_to edit_user_registration_path
+      return
+    end
+
+    if current_user.sso_profile.destroy
+      current_user.send_reset_password_instructions
+      flash[:success] = 'Successfully disconnected from Single Sign-On. Please see your email to set your password.'
+      redirect_to edit_user_registration_path
+    else
+      flash[:danger] = 'Failed to disconnect from Single Sign-On.'
+      redirect_to user_disconnect_sso_path
     end
   end
 

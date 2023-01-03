@@ -125,44 +125,49 @@ $(() => {
     }
   });
 
-  postFields.on('focus keyup paste change markdown', evt => {
-    const $tgt = $(evt.target);
-
-    if (!window.converter) {
-      window.converter = window.markdownit({
-        html: true,
-        breaks: false,
-        linkify: true
-      });
-      window.converter.use(window.markdownitFootnote);
-      window.converter.use(window.latexEscape);
-    }
-    window.setTimeout(() => {
-      const converter = window.converter;
+  postFields.on('focus keyup paste change markdown', (() => {
+    let previous = null;
+    return evt => {
+      const $tgt = $(evt.target);
       const text = $(evt.target).val();
-      const unsafe_html = converter.render(text);
-      const html = DOMPurify.sanitize(unsafe_html, {
-        USE_PROFILES: { html: true },
-        ALLOWED_TAGS,
-        ALLOWED_ATTR
-      });
-      $tgt.parents('.form-group').siblings('.post-preview').html(html);
-      $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
-    }, 0);
-
-    if (featureTimeout) {
-      clearTimeout(featureTimeout);
-    }
-
-    featureTimeout = setTimeout(() => {
-      if (window['MathJax']) {
-        MathJax.typeset();
+      // Don't bother re-rendering if nothing's changed
+      if (text === previous) { return; }
+      previous = text;
+      if (!window.converter) {
+        window.converter = window.markdownit({
+          html: true,
+          breaks: false,
+          linkify: true
+        });
+        window.converter.use(window.markdownitFootnote);
+        window.converter.use(window.latexEscape);
       }
-      if (window['hljs']) {
-        hljs.highlightAll();
+      window.setTimeout(() => {
+        const converter = window.converter;
+        const unsafe_html = converter.render(text);
+        const html = DOMPurify.sanitize(unsafe_html, {
+          USE_PROFILES: { html: true },
+          ALLOWED_TAGS,
+          ALLOWED_ATTR
+        });
+        $tgt.parents('.form-group').siblings('.post-preview').html(html);
+        $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
+      }, 0);
+
+      if (featureTimeout) {
+        clearTimeout(featureTimeout);
       }
-    }, 1000);
-  }).on('keyup', ev => {
+
+      featureTimeout = setTimeout(() => {
+        if (window['MathJax']) {
+          MathJax.typeset();
+        }
+        if (window['hljs']) {
+          hljs.highlightAll();
+        }
+      }, 1000);
+    };
+  })()).on('keyup', ev => {
     clearTimeout(draftTimeout);
     const text = $(ev.target).val();
     draftTimeout = setTimeout(() => {

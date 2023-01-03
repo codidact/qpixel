@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
+  # Add normal sign in/sign up, confirmations, registrations, unlocking and password editing routes only if no SSO or mixed sign in.
+  devise_for :users, only: %i[sessions registrations confirmations unlock passwords],
+             controllers: { sessions: 'users/sessions', registrations: 'users/registrations' },
+             constraints: { url: lambda { |_url| SiteSetting['MixedSignIn'] || !SiteSetting['SsoSignIn'] } }
+  # Add SAML routes only when SAML enabled
+  devise_for :users, only: :saml_authenticatable,
+             controllers: { saml_sessions: 'users/saml_sessions' },
+             constraints: { url: lambda { |_url| SiteSetting['SsoSignIn'] } }
+  # Add any other devise routes that may exist that we did not add yet
+  devise_for :users, skip: %i[sessions registrations confirmations unlock passwords saml_authenticatable]
   devise_scope :user do
     get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
@@ -175,6 +184,8 @@ Rails.application.routes.draw do
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
     get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
+    get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
+    post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity

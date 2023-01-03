@@ -17,10 +17,10 @@ class ApplicationController < ActionController::Base
 
   def upload
     if ActiveStorage::Blob.service.class.name.end_with?('S3Service')
-      redirect_to helpers.upload_remote_url(params[:key]), status: 301
+      redirect_to helpers.upload_remote_url(params[:key]), status: 301, allow_other_host: true
     else
       blob = params[:key]
-      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key))
+      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key)), allow_other_host: true
     end
   end
 
@@ -268,7 +268,9 @@ class ApplicationController < ActionController::Base
 
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
+        Post.undeleted.where(closed: false)
+            .where(locked: false)
+            .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
@@ -307,7 +309,8 @@ class ApplicationController < ActionController::Base
        # Enable users to log out even if 2fa is enforced
        !request.fullpath.end_with?('/users/sign_out') &&
        (current_user.is_global_admin ||
-         current_user.is_global_moderator)
+         current_user.is_global_moderator) &&
+       (current_user.sso_profile.blank? || SiteSetting['Enable2FAForSsoUsers'])
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)
         flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue' \
@@ -340,12 +343,24 @@ class ApplicationController < ActionController::Base
     helpers.user_signed_in?
   end
 
+  def sso_sign_in_enabled?
+    helpers.sso_sign_in_enabled?
+  end
+
+  def devise_sign_in_enabled?
+    helpers.devise_sign_in_enabled?
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          redirect_to new_user_session_path
+          if devise_sign_in_enabled?
+            redirect_to new_user_session_path
+          else
+            redirect_to new_saml_user_session_path
+          end
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401

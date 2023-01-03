@@ -2,11 +2,19 @@
 
 A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
 
-To use docker compose, you need to install the docker-compose-plugin. For a system like debian or ubuntu, you can use the following command.
+To use docker compose, you need to install the docker-compose-plugin. You can check whether it is already installed by running the following command.
+
+```bash
+sudo docker compose version
+```
+
+If your version is 2.x or higher, then you are good. Otherwise, you should install the docker compose plugin. For a system like debian or ubuntu, you can use the following command.
 
 ```bash
 sudo apt-get install docker-compose-plugin
 ```
+
+For Mac OS, you can install docker desktop by downloading it from the docker website. After starting the application, the docker compose command becomes available in your terminal.
 
 Depending on your setup, you may need to prefix every docker command with sudo.
 
@@ -49,6 +57,8 @@ docker compose build db
 docker compose build redis
 ```
 
+NOTE: If you get an error like "Cannot connect to the Docker daemon at ...", you need to ensure you start docker. Depending on your system, this can be done with `sudo service docker start` (Ubuntu) or by opening the Docker Desktop application and waiting for it to start (Mac OS).
+
 ## 4. Start Containers
 
 Then start your containers! 
@@ -64,15 +74,17 @@ The uwsgi container has a sleep command for 15 seconds to give the database a ch
 so don't expect to see output right away. After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
 
 ```
-uwsgi_1  | => Booting Puma
-uwsgi_1  | => Rails 5.2.4.3 application starting in development 
-uwsgi_1  | => Run `rails server -h` for more startup options
-uwsgi_1  | Puma starting in single mode...
-uwsgi_1  | * Version 3.12.6 (ruby 2.6.5-p114), codename: Llamas in Pajamas
-uwsgi_1  | * Min threads: 0, max threads: 16
-uwsgi_1  | * Environment: development
-uwsgi_1  | * Listening on tcp://localhost:3000
-uwsgi_1  | Use Ctrl-C to stop
+qpixel_uwsgi_1  | => Booting Puma
+qpixel_uwsgi_1  | => Rails 7.0.4 application starting in development 
+qpixel_uwsgi_1  | => Run `rails server -h` for more startup options
+qpixel_uwsgi_1  | Puma starting in single mode...
+qpixel_uwsgi_1  | * Puma version: 5.6.5 (ruby 2.7.6-p219) ("Birdie's Version")
+qpixel_uwsgi_1  | * Min threads: 5
+qpixel_uwsgi_1  | * Max threads: 5
+qpixel_uwsgi_1  | * Environment: development
+qpixel_uwsgi_1  | *         PID: 49
+qpixel_uwsgi_1  | * Listening on http://0.0.0.0:3000
+qpixel_uwsgi_1  | Use Ctrl-C to stop
 ```
 
 You should then be able to open your browser to [http://localhost:3000](http://localhost:3000)

@@ -1,0 +1,12 @@
+<h1>Disconnect from Single Sign-On</h1>
+<p>
+  You currently sign in using your institutions Single Sign-On service.
+  It is possible to switch to signing in with a normal email address and password by disconnecting your account from
+  the Single Sign-On service.
+  After disconnecting your account, you will be sent an email to set the password for your account.
+</p>
+
+<%= link_to 'Disconnect my account from SSO',
+            user_confirm_disconnect_sso_path,
+            method: :post,
+            class: 'button is-filled is-danger' %>

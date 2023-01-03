@@ -1,8 +1,9 @@
 class Users::SessionsController < Devise::SessionsController
   protect_from_forgery except: [:create]
 
-  @@first_factor = []
+  mattr_accessor :first_factor, default: [], instance_writer: false, instance_reader: false
 
+  # Any changes made here should also be made to the Users::SamlSessionsController.
   def create
     super do |user|
       if user.deleted?
@@ -18,6 +19,14 @@ class Users::SessionsController < Devise::SessionsController
         flash[:notice] = nil
         flash[:danger] = 'Your profile on this community has been deleted.'
         render :new
+        return
+      end
+
+      if user.present? && user.sso_profile.present?
+        sign_out user
+        flash[:notice] = nil
+        flash[:danger] = 'Please sign in using the Single Sign-On service of your institution.'
+        redirect_to new_saml_user_session_path
         return
       end
 
@@ -60,7 +69,11 @@ class Users::SessionsController < Devise::SessionsController
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."
-        redirect_to new_session_path(target_user)
+        if devise_sign_in_enabled?
+          redirect_to new_session_path(target_user)
+        else
+          redirect_to new_saml_user_session_path(target_user)
+        end
       end
     else
       AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'wrong code')
