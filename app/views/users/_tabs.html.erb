@@ -18,6 +18,9 @@
     <%= link_to user_preferences_path, class: "tabs--item #{current_page?(user_preferences_path) ? 'is-active' : ''}" do %>
       Preferences
     <% end %>
+    <%= link_to notifications_path, class: "tabs--item #{current_page?(notifications_path) ? 'is-active' : ''}" do %>
+      Notifications
+    <% end %>
   <% end %>
   <div class="tabs--push"></div>
   <% if current_user&.is_moderator %>
