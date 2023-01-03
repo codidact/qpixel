@@ -38,7 +38,8 @@
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
-        <div class="vote-widget">
+        <% sticky_votes = user_preference('sticky_vote_tool', community: false) == 'true' %>
+        <div <% if sticky_votes then %> class="sticky" <% end %>>
           <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
             <% existing_vote = my_vote(post) %>
             <% unless post.locked? %>

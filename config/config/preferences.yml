@@ -73,3 +73,9 @@ sticky_header:
   description: >
     Make the top navigation bar sticky.
   default: false
+
+sticky_vote_tool:
+  type: boolean
+  description: >
+    Make the up and downvote buttons scroll along with the post
+  default: false
