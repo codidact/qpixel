@@ -107,11 +107,11 @@ module UserSortable
   end
 end
 
-klasses = [::ActiveRecord::Relation]
-klasses << if defined? ::ActiveRecord::Associations::CollectionProxy
-             ::ActiveRecord::Associations::CollectionProxy
+klasses = [ActiveRecord::Relation]
+klasses << if defined? ActiveRecord::Associations::CollectionProxy
+             ActiveRecord::Associations::CollectionProxy
            else
-             ::ActiveRecord::Associations::AssociationCollection
+             ActiveRecord::Associations::AssociationCollection
            end
 
 ActiveRecord::Base.extend UserSortable
