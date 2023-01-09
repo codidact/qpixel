@@ -181,7 +181,7 @@ window.QPixel = {
     if (this._preferences != null) {
       return this._preferences;
     }
-    if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
+    if (!!localStorage['qpixel.user_preferences']) {
       this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
     }
     if (this._preferences == null) {
