@@ -179,12 +179,6 @@ window.QPixel = {
   preferences: async () => {
     if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
       this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
-
-      // If we don't have the global key, we're probably using an old preferences schema.
-      if (!this._preferences.global) {
-        delete localStorage['qpixel.user_preferences'];
-        this._preferences = null;
-      }
     }
     if (this._preferences == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
