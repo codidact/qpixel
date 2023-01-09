@@ -186,7 +186,7 @@ window.QPixel = {
         this._preferences = null;
       }
     }
-    else if (this._preferences == null) {
+    if (this._preferences == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
       // loaded them for yet. Load from Redis via AJAX.
       const resp = await fetch('/users/me/preferences', {
