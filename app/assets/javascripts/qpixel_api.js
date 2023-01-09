@@ -177,6 +177,10 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
   preferences: async () => {
+    // Early return for the most frequent case
+    if (this._preferences != null) {
+      return this._preferences;
+    }
     if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
       this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
     }
