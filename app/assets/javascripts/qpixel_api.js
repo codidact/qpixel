@@ -177,6 +177,11 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
   preferences: async () => {
+    const user = await QPixel.user();
+    // Do not attempt to access preferences if user is not signed in
+    if ('error' in user) {
+      return null;
+    }
     // Early return for the most frequent case (local variable already contains the preferences)
     if (QPixel._preferences != null) {
       return QPixel._preferences;
