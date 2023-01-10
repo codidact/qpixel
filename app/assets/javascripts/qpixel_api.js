@@ -178,16 +178,16 @@ window.QPixel = {
    */
   preferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
-    if (this._preferences != null) {
-      return this._preferences;
+    if (QPixel._preferences != null) {
+      return QPixel._preferences;
     }
     // Early return the preferences from localStorage unless null or undefined
     const localStoragePreferences = ('qpixel.user_preferences' in localStorage)
                                     ? JSON.parse(localStorage['qpixel.user_preferences'])
                                     : null;
     if (localStoragePreferences != null) {
-      this._preferences = localStoragePreferences;
-      return this._preferences;
+      QPixel._preferences = localStoragePreferences;
+      return QPixel._preferences;
     }
     // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
     // haven't loaded them for yet. Load from Redis via AJAX.
@@ -199,8 +199,8 @@ window.QPixel = {
     });
     const data = await resp.json();
     localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-    this._preferences = data;
-    return this._preferences;
+    QPixel._preferences = data;
+    return QPixel._preferences;
   },
 
   /**
@@ -224,7 +224,7 @@ window.QPixel = {
       });
       const data = await resp.json();
       localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-      this._preferences = data;
+      QPixel._preferences = data;
 
       prefs = await QPixel.preferences();
       value = community ? prefs.community[name] : prefs.global[name];
@@ -259,8 +259,8 @@ window.QPixel = {
       console.error(resp);
     }
     else {
-      this._preferences = data.preferences;
-      localStorage['qpixel.user_preferences'] = JSON.stringify(this._preferences);
+      QPixel._preferences = data.preferences;
+      localStorage['qpixel.user_preferences'] = JSON.stringify(QPixel._preferences);
     }
   },
 
