@@ -177,7 +177,7 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
   preferences: async () => {
-    // Early return for the most frequent case
+    // Early return for the most frequent case (local variable already contains the preferences)
     if (this._preferences != null) {
       return this._preferences;
     }
