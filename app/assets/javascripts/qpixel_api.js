@@ -181,8 +181,13 @@ window.QPixel = {
     if (this._preferences != null) {
       return this._preferences;
     }
-    if (!!localStorage['qpixel.user_preferences']) {
-      this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
+    // Early return the preferences from localStorage unless null or undefined
+    const localStoragePreferences = ('qpixel.user_preferences' in localStorage)
+                                    ? JSON.parse(localStorage['qpixel.user_preferences'])
+                                    : null;
+    if (localStoragePreferences != null) {
+      this._preferences = localStoragePreferences;
+      return this._preferences;
     }
     if (this._preferences == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
