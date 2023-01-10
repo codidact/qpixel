@@ -189,19 +189,17 @@ window.QPixel = {
       this._preferences = localStoragePreferences;
       return this._preferences;
     }
-    if (this._preferences == null) {
-      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
-      // loaded them for yet. Load from Redis via AJAX.
-      const resp = await fetch('/users/me/preferences', {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      const data = await resp.json();
-      localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-      this._preferences = data;
-    }
+    // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
+    // haven't loaded them for yet. Load from Redis via AJAX.
+    const resp = await fetch('/users/me/preferences', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    localStorage['qpixel.user_preferences'] = JSON.stringify(data);
+    this._preferences = data;
     return this._preferences;
   },
 
