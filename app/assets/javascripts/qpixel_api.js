@@ -171,6 +171,11 @@ window.QPixel = {
 
   _preferences: null,
 
+  preferencesLocalStorageKey: async () => {
+    const user = await QPixel.user();
+    return `qpixel.user_${user.id}_preferences`;
+  }
+
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * localStorage, or Redis via AJAX.
@@ -187,8 +192,9 @@ window.QPixel = {
       return QPixel._preferences;
     }
     // Early return the preferences from localStorage unless null or undefined
-    const localStoragePreferences = ('qpixel.user_preferences' in localStorage)
-                                    ? JSON.parse(localStorage['qpixel.user_preferences'])
+    const key = await preferencesLocalStorageKey();
+    const localStoragePreferences = (key in localStorage)
+                                    ? JSON.parse(localStorage[key])
                                     : null;
     if (localStoragePreferences != null) {
       QPixel._preferences = localStoragePreferences;
@@ -268,7 +274,8 @@ window.QPixel = {
 
   updatePreferencesLocally: data => {
     QPixel._preferences = data;
-    localStorage['qpixel.user_preferences'] = JSON.stringify(QPixel._preferences);
+    const key = await preferencesLocalStorageKey();
+    localStorage[key] = JSON.stringify(QPixel._preferences);
   }
 
   /**
