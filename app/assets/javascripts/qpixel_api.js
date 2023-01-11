@@ -203,8 +203,7 @@ window.QPixel = {
       }
     });
     const data = await resp.json();
-    localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-    QPixel._preferences = data;
+    updatePreferencesLocally(data);
     return QPixel._preferences;
   },
 
@@ -228,8 +227,7 @@ window.QPixel = {
         }
       });
       const data = await resp.json();
-      localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-      QPixel._preferences = data;
+      updatePreferencesLocally(data);
 
       prefs = await QPixel.preferences();
       value = community ? prefs.community[name] : prefs.global[name];
@@ -264,10 +262,14 @@ window.QPixel = {
       console.error(resp);
     }
     else {
-      QPixel._preferences = data.preferences;
-      localStorage['qpixel.user_preferences'] = JSON.stringify(QPixel._preferences);
+      updatePreferencesLocally(data.preferences);
     }
   },
+
+  updatePreferencesLocally: data => {
+    QPixel._preferences = data;
+    localStorage['qpixel.user_preferences'] = JSON.stringify(QPixel._preferences);
+  }
 
   /**
    * Get the word in a string that the given position is in, and the position within that word.
