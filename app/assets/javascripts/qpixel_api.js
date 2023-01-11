@@ -225,25 +225,23 @@ window.QPixel = {
     let prefs = await QPixel.preferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
-    // Deliberate === here: null is a valid value for a preference, but undefined means we haven't fetched it.
+    // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
+    if (typeof(value) !== 'undefined') {
+      return value;
+    }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
-    if (value === undefined) {
-      const resp = await fetch('/users/me/preferences', {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      const data = await resp.json();
-      updatePreferencesLocally(data);
+    const resp = await fetch('/users/me/preferences', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    updatePreferencesLocally(data);
 
-      prefs = await QPixel.preferences();
-      value = community ? prefs.community[name] : prefs.global[name];
-      return value;
-    }
-    else {
-      return value;
-    }
+    prefs = await QPixel.preferences();
+    value = community ? prefs.community[name] : prefs.global[name];
+    return value;
   },
 
   /**
