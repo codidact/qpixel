@@ -158,7 +158,9 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user details
    */
   user: async () => {
-    if (QPixel._user) return QPixel._user;
+    if (QPixel._user != null) {
+      return QPixel._user;
+    }
     const resp = await fetch('/users/me', {
       credentials: 'include',
       headers: {
