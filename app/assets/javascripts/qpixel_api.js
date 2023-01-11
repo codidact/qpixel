@@ -176,7 +176,7 @@ window.QPixel = {
   preferencesLocalStorageKey: async () => {
     const user = await QPixel.user();
     return `qpixel.user_${user.id}_preferences`;
-  }
+  },
 
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
@@ -278,7 +278,7 @@ window.QPixel = {
     QPixel._preferences = data;
     const key = await preferencesLocalStorageKey();
     localStorage[key] = JSON.stringify(QPixel._preferences);
-  }
+  },
 
   /**
    * Get the word in a string that the given position is in, and the position within that word.
