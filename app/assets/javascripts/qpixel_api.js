@@ -253,11 +253,19 @@ window.QPixel = {
     }
   },
 
+  /**
+   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
+   * @returns {Promise<string>} the localStorage key
+   */
   _preferencesLocalStorageKey: async () => {
     const user = await QPixel.user();
     return `qpixel.user_${user.id}_preferences`;
   },
 
+  /**
+   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
+   * @returns {Promise<void>}
+   */
   _fetchPreferences: async () => {
     const resp = await fetch('/users/me/preferences', {
       credentials: 'include',
@@ -269,6 +277,11 @@ window.QPixel = {
     await QPixel._updatePreferencesLocally(data);
   },
 
+  /**
+   * Set local variable _preferences and localStorage to new preferences data
+   * @param data an object, containing the new preferences data
+   * @returns {Promise<void>}
+   */
   _updatePreferencesLocally: async data => {
     QPixel._preferences = data;
     const key = await QPixel._preferencesLocalStorageKey();
