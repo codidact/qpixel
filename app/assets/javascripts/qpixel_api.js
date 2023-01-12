@@ -173,19 +173,14 @@ window.QPixel = {
 
   _preferences: null,
 
-  preferencesLocalStorageKey: async () => {
-    const user = await QPixel.user();
-    return `qpixel.user_${user.id}_preferences`;
-  },
-
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * localStorage, or Redis via AJAX.
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
   preferences: async () => {
-    const user = await QPixel.user();
     // Do not attempt to access preferences if user is not signed in
+    const user = await QPixel.user();
     if ('error' in user) {
       return null;
     }
@@ -194,7 +189,7 @@ window.QPixel = {
       return QPixel._preferences;
     }
     // Early return the preferences from localStorage unless null or undefined
-    const key = await preferencesLocalStorageKey();
+    const key = await QPixel._preferencesLocalStorageKey();
     const localStoragePreferences = (key in localStorage)
                                     ? JSON.parse(localStorage[key])
                                     : null;
@@ -204,14 +199,7 @@ window.QPixel = {
     }
     // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
     // haven't loaded them for yet. Load from Redis via AJAX.
-    const resp = await fetch('/users/me/preferences', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    const data = await resp.json();
-    updatePreferencesLocally(data);
+    await QPixel._fetchPreferences();
     return QPixel._preferences;
   },
 
@@ -230,14 +218,7 @@ window.QPixel = {
       return value;
     }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
-    const resp = await fetch('/users/me/preferences', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    const data = await resp.json();
-    updatePreferencesLocally(data);
+    await QPixel._fetchPreferences();
 
     prefs = await QPixel.preferences();
     value = community ? prefs.community[name] : prefs.global[name];
@@ -268,13 +249,29 @@ window.QPixel = {
       console.error(resp);
     }
     else {
-      updatePreferencesLocally(data.preferences);
+      await QPixel._updatePreferencesLocally(data.preferences);
     }
   },
 
-  updatePreferencesLocally: data => {
+  _preferencesLocalStorageKey: async () => {
+    const user = await QPixel.user();
+    return `qpixel.user_${user.id}_preferences`;
+  },
+
+  _fetchPreferences: async () => {
+    const resp = await fetch('/users/me/preferences', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    await QPixel._updatePreferencesLocally(data);
+  },
+
+  _updatePreferencesLocally: async data => {
     QPixel._preferences = data;
-    const key = await preferencesLocalStorageKey();
+    const key = await QPixel._preferencesLocalStorageKey();
     localStorage[key] = JSON.stringify(QPixel._preferences);
   },
 
