@@ -121,7 +121,7 @@ Pseudo-classes and pseudo-element selectors should appear *after* the main selec
 `@media` and other nested [*at-rules*](https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule) should be added to
 the end of the document, preceded by an extra blank line.
 
-See [*landing-page/primary.css @1ca2f671*](https://github.com/codidact/landing-page/blob/1ca2f671/dist/assets/css/primary.css)
+See [* landing-page/dist/assets/css/primary.css @1ca2f671*](https://github.com/codidact/landing-page/blob/1ca2f671/dist/assets/css/primary.css)
 for an example of all of the above.
 
 ### Spacing
