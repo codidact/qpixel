@@ -259,7 +259,7 @@ When referencing external resources (including those local to the domain), do no
 HTTPS access to resources if possible.
 
 Prefer retrieving resources by canonical URIs when possible, i.e. those that do not redirect upon request. Check
-with a command-line tool or a service such as [apitester.org](https://apitester.org/) to be sure.
+with a command-line tool or a service such as [apitester.org](https://apitester.org/app) to be sure.
 
 ```html
 <script type="application/javascript" src="https://codidact.org/assets/product.js"></script>
