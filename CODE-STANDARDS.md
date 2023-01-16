@@ -130,9 +130,9 @@ for an example of all of the above.
 - Do not write more than one statement per line.
 
 ### Line breaks
-Rules should be separated by a blank line, except for the two special cases provided in item
-[**#3**](#Order-of-selectors) - namely, an extra blank line is expected between universal selectors and other
-selectors, as well as before nested _at-rules_. As such, these rule groups should be separated by *two* spaces.
+Rules should be separated by a blank line, except for the two special cases provided in
+[Order of selectors](#order-of-selectors) - namely, an extra blank line is expected between universal selectors and
+other selectors, as well as before nested _at-rules_. As such, these rule groups should be separated by *two* spaces.
 
 All properties are written on their own line and end with a semicolon. The closing bracket must appear in its own
 line.
