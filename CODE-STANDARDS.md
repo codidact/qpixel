@@ -388,7 +388,7 @@ history.
     approach is to either link to an actual page/resource that performs the same expected action, or use a
     `<button>` element styled as a link instead. The JS-enabled link (`<a>`) strategy MUST be reserved for the
     rare cases, if any, where these are not possible - and ideally, they SHOULD be added ("injected") to the page
-    using JavaScript.<sup>[\[1\]](https://stackoverflow.com/a/134957/3258851) [\[2\]](https://stackoverflow.com/a/20215524/3258851)</sup>
+    using JavaScript[^1][^2]
 
 #### `<img>`
 - Use a compressed image format or small file size where possible.
@@ -601,3 +601,6 @@ first and then developing features, it can be helpful to create a commit where t
 channel - anything on there should be suitable for production deployment. Commits should generally not be made
 directly to master - only organization and repository administrators have the ability to, and should avoid doing
 so if at all possible.
+
+[^1]: [Which 'href' value should I use for JavaScript links, '#' or 'javascript:void(0)'?](https://stackoverflow.com/a/134957/3258851)
+[^2]: [Prevent href='#' link from changing the URL hash](https://stackoverflow.com/a/20215524/3258851)
