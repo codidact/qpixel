@@ -392,7 +392,7 @@ When adding an ID or class to reference an element from JavaScript, prefix the v
 - Make use of `<picture>`/`srcset` where possible.
 - Load images asynchronously where possible.
 
-#### <h1-6>`
+#### `<h1-6>`
 - Ensure all pages have a level 1 header (`<h1>`) that is not the website name.
 - Pages MUST NOT have more than one `<h1>` element.
 - Use headings in order; style via CSS rather than using a smaller heading level.
