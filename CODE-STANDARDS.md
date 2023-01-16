@@ -379,7 +379,10 @@ When adding an ID or class to reference an element from JavaScript, prefix the v
 
 #### `<a>`
 - If using `target="_blank"` to open links in a new tab, also include `rel="noopener noreferrer"`.
-- If a JS-enabled link is necessary (it normally shouldn't - see note below), prefer `href="#"` over `href="javascript:void(0)"` (and its equivalent `href="javascript:;"`). Please do combine this with `event.preventDefault()` in order to prevent unwanted scrolling and adding of pointless entries to the user's browsing history.
+- If a JS-enabled link is necessary (it normally shouldn't be - see note below), prefer `href="#"` over
+`href="javascript:void(0)"` (and its equivalent `href="javascript:;"`). Please do combine this with
+`event.preventDefault()` in order to prevent unwanted scrolling and adding of pointless entries to the user's browsing
+history.
 
     **Note:** Since the above directive still requires JavaScript to be enabled, the RECOMMENDED first-line
     approach is to either link to an actual page/resource that performs the same expected action, or use a
