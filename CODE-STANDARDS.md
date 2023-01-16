@@ -521,7 +521,7 @@ this.dataset = (Object.keys(data).length > 0) ? data : {};
 Note the use of parentheses around the conditional expression - it makes it more obvious at first glance that this
 is a conditional statement. **This is a requirement.**
 
-For very long or deeply indented expressions that exceed the 120-char line length limit ([item 8](#8-line-length)),
+For very long or deeply indented expressions that exceed the [120-char line length limit](line-length),
 use the following line-break and indenting style:
 
 ```js
