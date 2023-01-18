@@ -1,4 +1,4 @@
-require "application_system_test_case"
+require 'application_system_test_case'
 
 class BasicTest < ApplicationSystemTestCase
   test 'newly registered user can sign in after confirming their account' do

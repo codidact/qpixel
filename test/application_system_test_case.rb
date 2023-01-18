@@ -47,7 +47,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def confirm_email(user_or_fixture)
     u = user(user_or_fixture)
     visit user_confirmation_url(
-            params: { confirmation_token: u.confirmation_token }
+      params: { confirmation_token: u.confirmation_token }
     )
   end
 
