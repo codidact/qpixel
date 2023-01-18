@@ -95,6 +95,15 @@ GEM
     bindex (0.8.1)
     builder (3.2.4)
     byebug (11.1.3)
+    capybara (3.38.0)
+      addressable
+      matrix
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
     chartkick (4.2.1)
     chronic (0.10.2)
     chunky_png (1.4.0)
@@ -175,6 +184,7 @@ GEM
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (1.0.2)
+    matrix (0.4.2)
     memory_profiler (1.0.0)
     method_source (1.0.0)
     mime-types (3.4.1)
@@ -300,6 +310,7 @@ GEM
       rexml
     ruby-vips (2.1.4)
       ffi (~> 1.12)
+    rubyzip (2.3.2)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -310,6 +321,10 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    selenium-webdriver (4.7.1)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -350,6 +365,11 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
+    webdrivers (5.2.0)
+      nokogiri (~> 1.6)
+      rubyzip (>= 1.3.0)
+      selenium-webdriver (~> 4.0)
+    websocket (1.2.9)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -360,6 +380,8 @@ GEM
       will_paginate (>= 3.0.3)
     xml-simple (1.1.9)
       rexml
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
     zeitwerk (2.6.0)
 
 PLATFORMS
@@ -370,6 +392,7 @@ DEPENDENCIES
   aws-sdk-s3 (~> 1.61)
   aws-ses-v4
   byebug (~> 11.1)
+  capybara (~> 3.38)
   chartkick (~> 4.2)
   coffee-rails (~> 5.0.0)
   commonmarker (~> 0.23)
@@ -408,6 +431,7 @@ DEPENDENCIES
   rubocop-rails (~> 2.15)
   ruby-progressbar (~> 1.11)
   sass-rails (~> 6.0)
+  selenium-webdriver (~> 4.7)
   spring (~> 4.0)
   sprockets (~> 4.1)
   sprockets-rails (~> 3.4)
@@ -418,6 +442,7 @@ DEPENDENCIES
   thwait (~> 0.2)
   tzinfo-data (~> 1.2022.3)
   web-console (~> 4.2)
+  webdrivers (~> 5.2)
   whenever (~> 1.0)
   will_paginate (~> 3.3)
   will_paginate-bootstrap (~> 1.0)
