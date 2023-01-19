@@ -5,11 +5,16 @@
 
 <p class="is-lead">Your request couldn't be processed.</p>
 
-<p>
-  Our server's sulking today. Log out and back in, and if this keeps happening, let us know
-  <a href="https://meta.codidact.com/" target="_blank" rel="noopener noreferrer">on Meta</a>.
-</p>
-
+<% if codidact? %>
+  <p>
+    Our server's sulking today. Log out and back in, and if this keeps happening, let us know
+    <a href="https://meta.codidact.com/" target="_blank" rel="noopener noreferrer">on Meta</a>.
+  </p>
+<% else %>
+  <p>
+    Our server's sulking today. Log out and back in, and if this keeps happening, let us know.
+  </p>
+<% end %>
 
 <p>
   <%= link_to 'Go back', :back, class: 'button is-outlined' %>
