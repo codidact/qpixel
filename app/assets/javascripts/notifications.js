@@ -67,8 +67,6 @@ $(() => {
         const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
-  
-      $inboxContainer.append(`<a href="/users/me/notifications" class="button is-muted is-small">See all your notifications &raquo;</a>`);
     }
   });
 
