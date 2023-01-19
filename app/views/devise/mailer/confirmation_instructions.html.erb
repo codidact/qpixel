@@ -1,4 +1,8 @@
-<p>Welcome to Codidact, <%= @resource.username %>! We're glad you're here.</p>
+<% if codidact? %>
+  <p>Welcome to Codidact, <%= @resource.username %>! We're glad you're here.</p>
+<% else %>
+  <p>Welcome, <%= @resource.username %>! We're glad you're here.</p>
+<% end %>
 
 <p>Please confirm your registration by clicking below (or copy and paste the URL into your browser).</p>
 
