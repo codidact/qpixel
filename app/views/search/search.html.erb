@@ -25,11 +25,17 @@
 </div>
 
 <% unless @posts.nil? %>
-  <div class="button-list is-gutterless has-float-right">
-    <%= link_to 'Relevance', query_url(sort: 'relevance'),
-                class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}" %>
-    <%= link_to 'Score', query_url(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}" %>
-    <%= link_to 'Age', query_url(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+  <% post_count = @posts.count %>
+  <div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
+    <div>
+     <%= short_number_to_human post_count, precision: 1, significant: false %>
+     <%= 'post'.pluralize(post_count) %>
+    </div>
+    <div class="button-list is-gutterless has-margin-2">
+      <%= link_to 'Relevance', query_url(sort: 'relevance'), class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}" %>
+      <%= link_to 'Score', query_url(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}" %>
+      <%= link_to 'Age', query_url(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+    </div>
   </div>
   <div class="has-clear-clear">&nbsp;</div>
 
@@ -37,7 +43,7 @@
     <p class="has-color-tertiary"><em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em></p>
   <% end %>
 
-  <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
+  <div class="item-list">
     <% @posts.each do |post| %>
       <% next if post.nil? %>
       <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
