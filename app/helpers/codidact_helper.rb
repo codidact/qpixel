@@ -4,8 +4,8 @@ module CodidactHelper
   def codidact?
     Rails.cache.fetch 'is_codidact' do
       Rails.env.development? ||
-        RequestContext.community.host.include?('.codidact.com') ||
-        RequestContext.community.host.include?('.codidact.org')
+        RequestContext.community.host.end_with?('.codidact.com') ||
+        RequestContext.community.host.end_with?('.codidact.org')
     end
   end
 end
