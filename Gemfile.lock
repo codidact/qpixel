@@ -137,7 +137,7 @@ GEM
     fastimage (2.2.6)
     ffi (1.15.5)
     flamegraph (0.9.5)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     groupdate (6.1.0)
       activesupport (>= 5.2)
