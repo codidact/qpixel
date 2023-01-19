@@ -7,19 +7,23 @@
           <li><%= link_to 'Terms of Service', '/policy/tos' %></li>
           <li><%= link_to 'Privacy Policy', '/policy/privacy-policy' %></li>
           <li><%= link_to 'Code of Conduct', '/policy/code-of-conduct' %></li>
-          <li><%= link_to 'About us', 'https://codidact.org/' %></li>
-          <li><%= link_to 'Contact us', 'https://codidact.com/contact' %></li>
-          <li><%= link_to 'Other communities', 'https://codidact.com/' %></li>
-        </ul>
-      </div>
-      <div class="grid--cell is-6 is-12-md is-12-sm">
-        <h3>Other Codidact Communities</h3>
-        <ul>
-          <% Rails.cache.persistent('codidact_sites').each do |site| %>
-            <li><%= link_to site['name'], site['canonical_url'] %></li>
+          <% if codidact? %>
+            <li><%= link_to 'About us', 'https://codidact.org/' %></li>
+            <li><%= link_to 'Contact us', 'https://codidact.com/contact' %></li>
+            <li><%= link_to 'Other communities', 'https://codidact.com/' %></li>
           <% end %>
         </ul>
       </div>
+      <% if codidact? %>
+        <div class="grid--cell is-6 is-12-md is-12-sm">
+          <h3>Other Codidact Communities</h3>
+          <ul>
+            <% Rails.cache.persistent('codidact_sites').each do |site| %>
+              <li><%= link_to site['name'], site['canonical_url'] %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
     </div>
     <% commit = Rails.cache.persistent('current_commit') %>
     <p>
