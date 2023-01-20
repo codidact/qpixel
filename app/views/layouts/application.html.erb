@@ -4,7 +4,6 @@
   <%= render 'layouts/head' %>
 </head>
 <body class="<%= Rails.env.development? ? 'development' : '' %>"
-      data-signed-in="<%= user_signed_in? ? 'true' : 'false' %>"
       data-user-id="<%= user_signed_in? ? current_user.id : 'none' %>" >
   <%= render 'layouts/header' %>
 
