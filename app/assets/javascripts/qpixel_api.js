@@ -281,7 +281,6 @@ window.QPixel = {
   /**
    * Set local variable _preferences and localStorage to new preferences data
    * @param data an object, containing the new preferences data
-   * @returns {Promise<void>}
    */
   _updatePreferencesLocally: data => {
     QPixel._preferences = data;
