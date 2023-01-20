@@ -180,8 +180,7 @@ window.QPixel = {
    */
   preferences: async () => {
     // Do not attempt to access preferences if user is not signed in
-    const user = await QPixel.user();
-    if ('error' in user) {
+    if (document.body.dataset.signedIn === 'false') {
       return null;
     }
     // Early return for the most frequent case (local variable already contains the preferences)
