@@ -158,7 +158,7 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user details
    */
   user: async () => {
-    if (QPixel._user != null) {
+    if (QPixel._user != null || document.body.dataset.signedIn === 'false') {
       return QPixel._user;
     }
     const resp = await fetch('/users/me', {
