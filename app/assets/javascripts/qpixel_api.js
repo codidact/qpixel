@@ -260,7 +260,7 @@ window.QPixel = {
     const id = document.body.dataset.userId;
     const key = `qpixel.user_${id}_preferences`;
     QPixel._preferencesLocalStorageKey = () => key;
-    return QPixel._preferencesLocalStorageKey();
+    return key;
   },
 
   /**
