@@ -158,7 +158,7 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user details
    */
   user: async () => {
-    if (QPixel._user != null || document.body.dataset.signedIn === 'false') {
+    if (QPixel._user != null || document.body.dataset.userId === 'none') {
       return QPixel._user;
     }
     const resp = await fetch('/users/me', {
@@ -180,7 +180,7 @@ window.QPixel = {
    */
   preferences: async () => {
     // Do not attempt to access preferences if user is not signed in
-    if (document.body.dataset.signedIn === 'false') {
+    if (document.body.dataset.userId === 'none') {
       return null;
     }
     // Early return for the most frequent case (local variable already contains the preferences)
