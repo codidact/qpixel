@@ -251,10 +251,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
     t.integer "min_answers"
     t.integer "max_answers"
     t.string "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "include_tags"
     t.string "exclude_tags"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_filters_on_user_id"
   end
 
