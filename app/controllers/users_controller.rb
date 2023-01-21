@@ -104,10 +104,7 @@ class UsersController < ApplicationController
     if user_signed_in? && params[:name]
       filter = Filter.find_or_create_by(user: current_user, name: params[:name])
 
-      filter.update(min_score: params[:min_score], max_score: params[:max_score],
-                    min_answers: params[:min_answers], max_answers: params[:max_answers],
-                    include_tags: params[:include_tags], exclude_tags: params[:exclude_tags],
-                    status: params[:status])
+      filter.update(filter_params)
 
       unless params[:category].nil? || params[:is_default].nil?
         helpers.set_filter_default(current_user.id, filter.id, params[:category].to_i, params[:is_default])
@@ -581,6 +578,11 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def filter_params
+    params.permit(:min_score, :max_score, :min_answers, :max_answers, :status, :include_tags, :exclude_tags,
+                  include_tags: [], exclude_tags: [])
+  end
 
   def set_user
     @user = user_scope.find_by(id: params[:id])
