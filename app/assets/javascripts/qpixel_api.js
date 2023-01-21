@@ -158,7 +158,7 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user details
    */
   user: async () => {
-    if (QPixel._user != null) {
+    if (QPixel._user != null || document.body.dataset.userId === 'none') {
       return QPixel._user;
     }
     const resp = await fetch('/users/me', {
@@ -180,8 +180,7 @@ window.QPixel = {
    */
   preferences: async () => {
     // Do not attempt to access preferences if user is not signed in
-    const user = await QPixel.user();
-    if ('error' in user) {
+    if (document.body.dataset.userId === 'none') {
       return null;
     }
     // Early return for the most frequent case (local variable already contains the preferences)
@@ -189,7 +188,7 @@ window.QPixel = {
       return QPixel._preferences;
     }
     // Early return the preferences from localStorage unless null or undefined
-    const key = await QPixel._preferencesLocalStorageKey();
+    const key = QPixel._preferencesLocalStorageKey();
     const localStoragePreferences = (key in localStorage)
                                     ? JSON.parse(localStorage[key])
                                     : null;
@@ -249,17 +248,19 @@ window.QPixel = {
       console.error(resp);
     }
     else {
-      await QPixel._updatePreferencesLocally(data.preferences);
+      QPixel._updatePreferencesLocally(data.preferences);
     }
   },
 
   /**
    * Get the key to use for storing user preferences in localStorage, to avoid conflating users
-   * @returns {Promise<string>} the localStorage key
+   * @returns string the localStorage key
    */
-  _preferencesLocalStorageKey: async () => {
-    const user = await QPixel.user();
-    return `qpixel.user_${user.id}_preferences`;
+  _preferencesLocalStorageKey: () => {
+    const id = document.body.dataset.userId;
+    const key = `qpixel.user_${id}_preferences`;
+    QPixel._preferencesLocalStorageKey = () => key;
+    return key;
   },
 
   /**
@@ -274,17 +275,16 @@ window.QPixel = {
       }
     });
     const data = await resp.json();
-    await QPixel._updatePreferencesLocally(data);
+    QPixel._updatePreferencesLocally(data);
   },
 
   /**
    * Set local variable _preferences and localStorage to new preferences data
    * @param data an object, containing the new preferences data
-   * @returns {Promise<void>}
    */
-  _updatePreferencesLocally: async data => {
+  _updatePreferencesLocally: data => {
     QPixel._preferences = data;
-    const key = await QPixel._preferencesLocalStorageKey();
+    const key = QPixel._preferencesLocalStorageKey();
     localStorage[key] = JSON.stringify(QPixel._preferences);
   },
 
