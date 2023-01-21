@@ -131,12 +131,12 @@ module SearchHelper
         { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
       when 'user'
         operator, val = if value.match?(valid_value[:numeric])
-          numeric_value_sql value
-        elsif value == 'me'
-          ['=', current_user.id]
-        else
-          next
-        end
+                          numeric_value_sql value
+                        elsif value == 'me'
+                          ['=', current_user.id]
+                        else
+                          next
+                        end
 
         { param: :user, operator: operator.presence || '=', user_id: val.to_i }
       when 'upvotes'
@@ -178,7 +178,7 @@ module SearchHelper
 
         { param: :status, value: value }
       end
-    end.reject(&:nil?)
+    end.compact
     # Consider partitioning and telling the user which filters were invalid
   end
 
