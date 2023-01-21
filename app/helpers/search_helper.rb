@@ -39,7 +39,7 @@ module SearchHelper
     qualifiers
   end
 
-  def active_filter()
+  def active_filter
     {
       default: false,
       name: params[:predefined_filter],
@@ -206,7 +206,6 @@ module SearchHelper
       when :include_tag
         query = query.where(posts: { id: PostsTag.where(tag_id: qualifier[:tag_id]).select(:post_id) })
       when :include_tags
-        # Efficiency is... questionable
         qualifier[:tag_ids].each do |id|
           query = query.where(id: PostsTag.where(tag_id: id).select(:post_id))
         end
