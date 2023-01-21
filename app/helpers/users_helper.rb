@@ -36,7 +36,8 @@ module UsersHelper
 
   def set_filter_default(user_id, filter_id, category_id, keep)
     if keep
-      CategoryFilterDefault.find_or_create_by(user_id: user_id, category_id: category_id)
+      CategoryFilterDefault.create_with(filter_id: filter_id)
+                           .find_or_create_by(user_id: user_id, category_id: category_id)
                            .update(filter_id: filter_id)
     else
       CategoryFilterDefault.where(user_id: user_id, category_id: category_id)
