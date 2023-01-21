@@ -1,8 +1,9 @@
 class Users::SessionsController < Devise::SessionsController
   protect_from_forgery except: [:create]
 
-  @@first_factor = []
+  mattr_accessor :first_factor, default: [], instance_writer: false, instance_reader: false
 
+  # Any changes made here should also be made to the Users::SamlSessionsController.
   def create
     super do |user|
       if user.deleted?
@@ -21,21 +22,17 @@ class Users::SessionsController < Devise::SessionsController
         return
       end
 
-      if user.present? && user.enabled_2fa
+      if user.present? && user.sso_profile.present?
         sign_out user
-        case user.two_factor_method
-        when 'app'
-          id = user.id
-          @@first_factor << id
-          redirect_to login_verify_2fa_path(uid: id)
-          return
-        when 'email'
-          TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
-          flash[:notice] = nil
-          flash[:info] = 'Please check your email inbox for a link to sign in.'
-          redirect_to root_path
-          return
-        end
+        flash[:notice] = nil
+        flash[:danger] = 'Please sign in using the Single Sign-On service of your institution.'
+        redirect_to new_saml_user_session_path
+        return
+      end
+
+      if user.present? && user.enabled_2fa
+        handle_2fa_login(user)
+        return
       end
     end
   end
@@ -60,12 +57,33 @@ class Users::SessionsController < Devise::SessionsController
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."
-        redirect_to new_session_path(target_user)
+        if devise_sign_in_enabled?
+          redirect_to new_session_path(target_user)
+        else
+          redirect_to new_saml_user_session_path(target_user)
+        end
       end
     else
       AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'wrong code')
       flash[:danger] = "That's not the right code."
       redirect_to login_verify_2fa_path(uid: params[:uid])
+    end
+  end
+
+  private
+
+  def handle_2fa_login(user)
+    sign_out user
+    case user.two_factor_method
+    when 'app'
+      id = user.id
+      @@first_factor << id
+      redirect_to login_verify_2fa_path(uid: id)
+    when 'email'
+      TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
+      flash[:notice] = nil
+      flash[:info] = 'Please check your email inbox for a link to sign in.'
+      redirect_to root_path
     end
   end
 end

@@ -2,10 +2,11 @@
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
   include ::UserMerge
+  include ::SamlInit
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :lockable, :omniauthable
+         :lockable, :omniauthable, :saml_authenticatable
 
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :destroy

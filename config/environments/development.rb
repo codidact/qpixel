@@ -24,7 +24,10 @@ Rails.application.configure do
   redis_config = YAML.safe_load(processed, permitted_classes: [], permitted_symbols: [], aliases: true)["redis_#{Rails.env}"]
   config.cache_store = QPixel::NamespacedEnvCache.new(
     ActiveSupport::Cache::RedisCacheStore.new(
-      url: "redis://#{redis_config['host']}:#{redis_config['port']}"
+      **redis_config.deep_symbolize_keys.merge(reconnect_attempts: 3),
+      error_handler: -> (method:, returning:, exception:) {
+        Rails.logger.error("Cache error: method=#{method} returning=#{returning} exception=#{exception.message}")
+      }
     )
   )
 
@@ -79,7 +82,7 @@ Rails.application.configure do
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true
     host_ip = `/sbin/ip route|awk '/default/ { print $3 }'`.strip
-    config.web_console.allowed_ips << host_ip
+    config.web_console.permissions = host_ip
 
     # ==> Configuration for :confirmable
     # A period that the user is allowed to access the website even without

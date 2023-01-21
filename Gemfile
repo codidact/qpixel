@@ -11,7 +11,7 @@ gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 5.6'
 gem 'rails', '~> 7.0.0'
 gem 'rails-html-sanitizer', '~> 1.4'
-gem 'redis', '~> 5.0'
+gem 'redis', '~> 4.8'
 gem 'rotp', '~> 6.2'
 gem 'sass-rails', '~> 6.0'
 gem 'sprockets', '~> 4.1'
@@ -21,6 +21,7 @@ gem 'tzinfo-data', '~> 1.2022.3'
 
 # Sign in
 gem 'devise', '~> 4.8'
+gem 'devise_saml_authenticatable', '~> 1.9'
 gem 'omniauth', '~> 2.1'
 
 # Markdown support in both directions.
