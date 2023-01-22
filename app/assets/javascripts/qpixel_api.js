@@ -178,7 +178,7 @@ window.QPixel = {
    * localStorage, or Redis via AJAX.
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
-  preferences: async () => {
+  _getPreferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
     if (QPixel._preferences != null) {
       return QPixel._preferences;
@@ -209,7 +209,7 @@ window.QPixel = {
     if (document.body.dataset.userId === 'none') {
       return null;
     }
-    let prefs = await QPixel.preferences();
+    let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
     // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
@@ -219,7 +219,7 @@ window.QPixel = {
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
     await QPixel._fetchPreferences();
 
-    prefs = await QPixel.preferences();
+    prefs = await QPixel._getPreferences();
     value = community ? prefs.community[name] : prefs.global[name];
     return value;
   },
