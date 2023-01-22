@@ -1,5 +1,6 @@
 $(() => {
-  $(".post--content pre").each((_, block) => {
+  $(".post--content pre > code").each((_, block) => {
+    const wrapper = block.parentElement;
     const copyButton = document.createElement('button');
     copyButton.classList.add('button', 'is-muted', 'is-outlined', 'has-float-right');
     copyButton.innerText = 'Copy';
@@ -11,6 +12,6 @@ $(() => {
       }, 2000);
     });
 
-    block.insertAdjacentElement('afterbegin', copyButton);
+    wrapper.insertAdjacentElement('afterbegin', copyButton);
   });
 });
