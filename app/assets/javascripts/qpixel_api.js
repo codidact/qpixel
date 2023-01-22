@@ -179,10 +179,6 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
   preferences: async () => {
-    // Do not attempt to access preferences if user is not signed in
-    if (document.body.dataset.userId === 'none') {
-      return null;
-    }
     // Early return for the most frequent case (local variable already contains the preferences)
     if (QPixel._preferences != null) {
       return QPixel._preferences;
@@ -209,6 +205,10 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
+    // Do not attempt to access preference if user is not signed in
+    if (document.body.dataset.userId === 'none') {
+      return null;
+    }
     let prefs = await QPixel.preferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
