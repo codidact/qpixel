@@ -95,6 +95,14 @@ pre.pre-wrap {
   white-space: pre-wrap !important;
 }
 
+.copy-button {
+  display: none;
+}
+
+div:hover > .copy-button {
+  display: block;
+}
+
 .stat-panel {
   flex: 1;
   border: 1px solid $muted-graphic;
