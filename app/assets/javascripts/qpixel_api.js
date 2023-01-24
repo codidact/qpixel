@@ -178,11 +178,7 @@ window.QPixel = {
    * localStorage, or Redis via AJAX.
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
-  preferences: async () => {
-    // Do not attempt to access preferences if user is not signed in
-    if (document.body.dataset.userId === 'none') {
-      return null;
-    }
+  _getPreferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
     if (QPixel._preferences != null) {
       return QPixel._preferences;
@@ -198,7 +194,7 @@ window.QPixel = {
     }
     // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
     // haven't loaded them for yet. Load from Redis via AJAX.
-    await QPixel._fetchPreferences();
+    await QPixel._cachedFetchPreferences();
     return QPixel._preferences;
   },
 
@@ -209,7 +205,11 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
-    let prefs = await QPixel.preferences();
+    // Do not attempt to access preference if user is not signed in
+    if (document.body.dataset.userId === 'none') {
+      return null;
+    }
+    let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
     // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
@@ -217,9 +217,9 @@ window.QPixel = {
       return value;
     }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
-    await QPixel._fetchPreferences();
+    await QPixel._cachedFetchPreferences();
 
-    prefs = await QPixel.preferences();
+    prefs = await QPixel._getPreferences();
     value = community ? prefs.community[name] : prefs.global[name];
     return value;
   },
@@ -261,6 +261,22 @@ window.QPixel = {
     const key = `qpixel.user_${id}_preferences`;
     QPixel._preferencesLocalStorageKey = () => key;
     return key;
+  },
+
+  /**
+   * Call _fetchPreferences but only the first time to prevent redundant HTTP requests
+   * @returns {Promise<void>}
+   */
+  _cachedFetchPreferences: async () => {
+    // No 'await' because we want the promise not its value
+    const cachedPromise = QPixel._fetchPreferences();
+    // Redefine this function to await this same initial promise on every subsequent call
+    // This prevents multiple calls from triggering multiple redundant '_fetchPreferences' calls
+    QPixel._cachedFetchPreferences = async () => {
+      await cachedPromise;
+    }
+    // Remember to await the promise so the very first call does not return before '_fetchPreferences' returns
+    await cachedPromise;
   },
 
   /**
