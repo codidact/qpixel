@@ -1,66 +1,94 @@
-<p>Codidact uses the <a href="https://commonmark.org">CommonMark implementation</a> of Markdown for formatting posts.</p>
-<h3 id="-italics-"><strong>Italics</strong></h3>
-<p>  You can <em>italicize</em> a word by placing a single asterisk (<code>*</code>) or single underscore (<code>_</code>) around a word. Either <code>*Codidact*</code> or <code>_Codidact_</code> will render as <em>Codidact</em>.</p>
-<h3 id="-bold-"><strong>Bold</strong></h3>
-<p>  You can <strong>bold</strong> a word by placing a double asterisk or double underscore around that word. Either <code>**Codidact**</code> or <code>__Codidact__</code> will render as <strong>Codidact</strong>.</p>
-<h3 id="-monospace-code-formatting-"><strong>Monospace / code formatting</strong></h3>
-<p>  To make a word monospace, you can surround it with a single backtick (<code>&#96;</code>). This is generally used for code formatting. (Some people use this for emphasis. Don&#39;t do that! Screen readers will read out words formatted as code character by character - use <em>italics</em> or <strong>bold</strong> for emphasis instead.)</p>
-<p>  To mark several lines as code, you can use a code fence. This is three backticks on a newline both on top and at the bottom of your lines of code. Don&#39;t use this for quotes - see below for guidance on quote formatting.</p>
-<h3 id="-links-"><strong>Links</strong></h3>
-<p>  You can generate a link using one of two methods. One way is to encase your link text in square brackets (<code>[ ]</code>) and then the target URL in parentheses (<code>( )</code>). <code>[Codidact](https://codidact.org)</code> will render as <a href="https://codidact.org">Codidact</a>.</p>
-<p>  You can also format a link with the inline text being <code>[Codidact][1]</code>, and then at the bottom of the post include the URL with the format <code>[1]: https://codidact.org</code>. This will look something like this:</p>
-<pre><code>
-  You can check out [<span class="hljs-string">Codidact</span>][<span class="hljs-symbol">1</span>] for an open-source, community-oriented Q&amp;A platform!
+Codidact uses the [CommonMark implementation](https://commonmark.org) of Markdown for formatting posts.
 
-  [1]: https://codidact.org`
-</code></pre><p>  Which will render like this:</p>
-<blockquote>
-    <p>You can check out [Codidact][1] for an open-source, community-oriented Q&amp;A platform!</p>
-    <p>[1]: <a href="https://codidact.org">https://codidact.org</a></p>
-</blockquote>
-<p>  If you&#39;d like to include rollover text for your link, you can put your text, surrounded by quote marks (<code>&quot;</code>), into the URL of your link. For instance, <code>[Codidact](https://codidact.org &quot;The open-source Q&amp;A platform&quot;)</code> will create a link with <code>The open-source Q&amp;A platform</code> as the rollover text.</p>
-<h3 id="-blockquotes-"><strong>Blockquotes</strong></h3>
-<p>  When quoting text from somewhere else, you can use a blockquote to signify that this is not your original text, but a quote from somewhere else. Put a greater than symbol (<code>&gt;</code>), followed by a space, before a paragraph to mark that quote as a blockquote. For instance, <code>&gt; This is a blockquote!</code> will render as a quote:</p>
-<blockquote>
-    <p>This is a blockquote!</p>
-</blockquote>
-<p>  If you want to include a second paragraph as part of the same quote, you have to include another <code>&gt;</code> before each line, like this:</p>
-<pre><code>  &gt; This <span class="hljs-keyword">is</span> a blockquote!
-  &gt;
-  &gt; This <span class="hljs-keyword">is</span> part <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> same <span class="hljs-literal">quote</span>!
-</code></pre><p>  This will render as a single blockquote:</p>
-<blockquote>
-    <p>This is a blockquote!</p>
-    <p>This is part of the same quote!</p>
-</blockquote>
-<p>  See also the <a href="/help/referencing">citation and referencing help</a> for guidelines on how to properly reference different quotes from various places.</p>
-<h3 id="-images-"><strong>Images</strong></h3>
-<p>  Embedding images in a post is very similar to the formatting for links (detailed above). The format <code>![alt text](image URL)</code> will embed an image in your post. Please remember to <a href="/help/alt-text">write alt text for your image</a>! Codidact allows you to upload an image directly, or you can embed an external image from image hosting sites such as Imgur.</p>
-<h3 id="-lists-"><strong>Lists</strong></h3>
-<p>  You can generate either an ordered list or a bullet list. For a bullet list, you can use either <code>*</code> or <code>-</code> to create your list.</p>
-<pre><code>* List <span class="hljs-keyword">item</span> <span class="hljs-literal">one</span>
-* List <span class="hljs-keyword">item</span> <span class="hljs-literal">two</span>
-</code></pre><p>  This will render like this:</p>
-<blockquote>
-    <ul>
-        <li>List item one</li>
-        <li>List item two</li>
-    </ul>
-</blockquote>
-<p>  If you want to create a numbered list, use <code>1.</code>, <code>2.</code>, etc instead of <code>*</code> or <code>-</code>. Note that the exact number you use, in most cases, is irrelevant - after the first number that you use, no matter what number you put in, Codidact will automatically number it in order. For instance, if you create a list and type <code>1. List item #1</code> for the first line, then <code>3. List item #2</code> for the second line, Codidact will automatically render the <code>3.</code> as a <code>2.</code>. If you begin your list at any other number, such as your first list item is numbered <code>5.</code>, Codidact will continue from that number onwards (with the next number automatically rendering as <code>6.</code>).</p>
-<h3 id="-horizontal-line-"><strong>Horizontal line</strong></h3>
-<p>  You can use a horizontal line for separating sections of your post. Use <code>---</code> on its own line to generate a horizontal line.</p>
-<h3 id="-headings-"><strong>Headings</strong></h3>
-<p>  You can include a heading in your post. Using a single hash symbol (<code>#</code>) before a line of your post will create a large heading, while adding another will create a slightly smaller heading (up to six different heading sizes).</p>
-<pre><code># Heading <span class="hljs-number">1</span>
+## Italics
+You can *italicize* a word by placing a single asterisk (`*`) or single underscore (`_`) around a word. Either `*Codidact*` or `_Codidact_` will render as *Codidact*.
 
-## Heading <span class="hljs-number">2</span>
+## Bold
+You can **bold** a word by placing a double asterisk or double underscore around that word. Either `**Codidact**` or `__Codidact__` will render as **Codidact**.
 
-###### Heading <span class="hljs-number">6</span>
-</code></pre><blockquote>
-    <h1 id="heading-1">Heading 1</h1>
-    <h2 id="heading-2">Heading 2</h2>
-    <h6 id="heading-6">Heading 6</h6>
-</blockquote>
-<h3 id="-footnotes-"><strong>Footnotes</strong></h3>
-<p>  To include a footnote in your post, you can use the syntax <code>[^1]</code>. In your main text, include <code>Text[^1] and more text</code>, and at the bottom (where you want to include your footnote), place a line resembling <code>[^1]: footnote text</code>.</p>
+## Monospace / code formatting
+To make a word monospace, you can surround it with a single backtick (`` ` ``). This is generally used for code formatting. (Some people use this for emphasis. Don't do that! Screen readers will read out words formatted as code character by character - use *italics* or **bold** for emphasis instead.)
+
+To mark several lines as code, you can use a code fence. This is three backticks on a newline both on top and at the bottom of your lines of code. Don't use this for quotes - see below for guidance on quote formatting.
+
+## Links
+You can generate a link using one of two methods. One way is to encase your link text in square brackets (`[ ]`) and then the target URL in parentheses (`( )`). `[Codidact](https://codidact.org)` will render as [Codidact](https://codidact.org).
+
+You can also format a link with the inline text being `[Codidact][1]`, and then at the bottom of the post include the URL with the format `[1]: https://codidact.org`. This will look something like this:
+
+```
+You can check out [Codidact][1]
+for an open-source,
+community-oriented Q&A platform!
+
+[1]: https://codidact.org
+```
+
+Which will render like this:
+
+> You can check out [Codidact](https://codidact.org) for an open-source, community-oriented Q&A platform!
+
+If you'd like to include rollover text for your link, you can put your text, surrounded by quote marks (`"`), into the URL of your link. For instance, `[Codidact](https://codidact.org "The open-source Q&A platform")` will create a link with `The open-source Q&A platform` as the rollover text.
+
+## Blockquotes
+When quoting text from somewhere else, you can use a blockquote to signify that this is not your original text, but a quote from somewhere else. Put a greater than symbol (`>`), followed by a space, before a paragraph to mark that quote as a blockquote. For instance, `> This is a blockquote!` will render as a quote:
+
+> This is a blockquote!
+
+If you want to include a second paragraph as part of the same quote, you have to include another `>` before each line, like this:
+
+```
+> This is a blockquote!
+>
+> This is part of the same quote!
+```
+
+This will render as a single blockquote:
+
+> This is a blockquote!
+>
+> This is part of the same quote!
+
+See also the [citation and referencing help](/help/referencing) for guidelines on how to properly reference different quotes from various places.
+
+## Images
+Embedding images in a post is very similar to the formatting for links (detailed above). The format `![alt text](image URL)` will embed an image in your post. Please remember to [write alt text for your image](/help/alt-text)! Codidact allows you to upload an image directly, or you can embed an external image from image hosting sites such as Imgur.
+
+## Lists
+You can generate either an ordered list or a bullet list. For a bullet list, you can use either `*` or `-` to create your list.
+
+```
+* List item one
+* List item two
+```
+
+This will render like this:
+
+> - List item one
+> - List item two
+
+If you want to create a numbered list, use `1.`, `2.`, etc instead of `*` or `-`. Note that the exact number you use, in most cases, is irrelevant - after the first number that you use, no matter what number you put in, Codidact will automatically number it in order. For instance, if you create a list and type `1. List item #1` for the first line, then `3. List item #2` for the second line, Codidact will automatically render the `3.` as a `2.`. If you begin your list at any other number, such as your first list item is numbered `5.`, Codidact will continue from that number onwards (with the next number automatically rendering as `6.`).
+
+## Horizontal line
+You can use a horizontal line for separating sections of your post. Use `---` on its own line to generate a horizontal line.
+
+## Headings
+You can include a heading in your post. Using a single hash symbol (`#`) before a line of your post will create a large heading, while adding another will create a slightly smaller heading (up to six different heading sizes).
+
+```
+# Heading 1
+
+## Heading 2
+
+###### Heading 6
+```
+
+> # Heading 1
+>
+> ## Heading 2
+>
+> ###### Heading 6
+
+## Footnotes
+To include a footnote in your post, you can use the syntax `[^1]`. In your main text, include `Text[^1] and more text`, and at the bottom (where you want to include your footnote), place a line resembling `[^1]: footnote text`.
+
