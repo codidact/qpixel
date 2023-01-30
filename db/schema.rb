@@ -398,8 +398,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.bigint "answer_type_id"
     t.boolean "has_reactions"
+    t.bigint "answer_type_id"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -720,8 +720,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_mod_messages_on_author_id"
-    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+    t.index ["author_id"], name: "index_warnings_on_author_id"
+    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
   end
 
   add_foreign_key "abilities", "communities"
