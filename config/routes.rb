@@ -37,6 +37,8 @@ Rails.application.routes.draw do
 
     get    'mod-email',                    to: 'admin#admin_email', as: :moderator_email
     post   'mod-email',                    to: 'admin#send_admin_email', as: :send_moderator_email
+    get    'email-all',                    to: 'admin#all_email', as: :email_all
+    post   'email-all',                    to: 'admin#send_all_email', as: :send_all_email
 
     get    'audits',                       to: 'admin#audit_log', as: :audit_log
 

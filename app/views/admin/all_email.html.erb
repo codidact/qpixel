@@ -1,0 +1,17 @@
+<%= render 'posts/markdown_script' %>
+
+<h1><%= t 'admin.tools.email_all' %></h1>
+<p><%= t 'admin.email_all_blurb' %></p>
+
+<%= form_with url: send_all_email_path do |f| %>
+  <div class="form-group">
+    <%= f.label :subject, t('g.subject').capitalize, class: 'form-element' %>
+    <%= f.text_field :subject,  class: 'form-element' %>
+  </div>
+
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('g.body').capitalize, post: nil %>
+
+  <div class="post-preview"></div>
+
+  <%= f.submit t('g.send').capitalize, class: 'button is-filled' %>
+<% end %>
