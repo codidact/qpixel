@@ -20,7 +20,7 @@
       <% if flag.message.present? %>
         <strong>response:</strong> <%= flag.message %>
       <% end %>
-      <% if flag.handled_by_id.present? %>
+      <% if flag.handled_by_id.present? && current_user.is_moderator %>
         &mdash;
         <%= link_to user_path(flag.handled_by) do %>
           <span dir="ltr"><%= rtl_safe_username(flag.handled_by) %></span>
