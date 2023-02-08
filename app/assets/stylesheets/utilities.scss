@@ -97,6 +97,8 @@ pre.pre-wrap {
 
 .copy-button {
   display: none;
+  position: absolute;
+  right: 0;
 }
 
 div:hover > .copy-button {
