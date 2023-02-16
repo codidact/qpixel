@@ -66,11 +66,11 @@ class CommentsController < ApplicationController
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
     unless @post.nil?
-      if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+      if !@post.can_access?(current_user)
+        return not_found
+      elsif @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
         render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
         return
-      elsif !@post.can_access?(current_user)
-        return not_found
       end
     end
 
