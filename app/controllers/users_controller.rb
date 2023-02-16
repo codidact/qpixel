@@ -196,7 +196,7 @@ class UsersController < ApplicationController
     @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                       posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).count
+    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -208,7 +208,7 @@ class UsersController < ApplicationController
                                                                     posts: { deleted: false })
             when 'edits'
               SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }, post_history_type: PostHistoryType.find_by(name: 'post_edited'))
             else
               Post.undeleted.where(user: @user) + \
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
