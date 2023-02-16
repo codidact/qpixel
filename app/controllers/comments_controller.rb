@@ -162,8 +162,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user.is_moderator
+    return not_found unless @comment_thread.can_access?(current_user) && current_user.is_moderator
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
