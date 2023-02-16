@@ -72,7 +72,7 @@ $(document).on('ready', function() {
 
     evt.target.classList.add("open");
     evt.stopPropagation();
-  })
+  });
 
   if (document.cookie.indexOf('dismiss_fvn') === -1 ) {
     $('#fvn-dismiss').on('click', () => {
