@@ -291,7 +291,7 @@ class ApplicationController < ActionController::Base
     return if current_user.nil?
 
     warning = ModWarning.where(community_user: current_user.community_user, active: true)
-                        .or(ModWarning.where(user: current_user, is_global: true, active: true).any?
+                        .or(ModWarning.where(user: current_user, is_global: true, active: true)).any?
     return unless warning
 
     # Ignore devise and warning routes
