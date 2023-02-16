@@ -8,6 +8,8 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  before_action :check_if_thread_is_private, only: [:update, :destroy, :undelete]
+  before_action :check_if_not_mod_and_thread_is_private, only: [:thread_rename, :thread_restrict, :thread_unrestrict]
 
   def create_thread
     @post = Post.find(params[:post_id])
@@ -107,12 +109,6 @@ class CommentsController < ApplicationController
   end
 
   def update
-    if @comment_thread&.is_private
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     before = @comment.content
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
@@ -129,12 +125,6 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    if @comment_thread&.is_private
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     if @comment.update(deleted: true)
       @comment_thread = @comment.comment_thread
       unless current_user.id == @comment.user_id
@@ -148,12 +138,6 @@ class CommentsController < ApplicationController
   end
 
   def undelete
-    if @comment_thread&.is_private
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     if @comment.update(deleted: false)
       @comment_thread = @comment.comment_thread
       unless current_user.id == @comment.user_id
@@ -200,23 +184,11 @@ class CommentsController < ApplicationController
       return
     end
 
-    if @comment_thread&.is_private && !current_user.is_moderator
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     @comment_thread.update title: params[:title]
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
   def thread_restrict
-    if @comment_thread&.is_private && !current_user.is_moderator
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     case params[:type]
     when 'lock'
       return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.locked?
@@ -247,12 +219,6 @@ class CommentsController < ApplicationController
   end
 
   def thread_unrestrict
-    if @comment_thread&.is_private && !current_user.is_moderator
-      flash[:danger] = 'This action is not permitted.'
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
-    end
-
     case params[:type]
     when 'lock'
       return not_found unless current_user.privilege?('flag_curate') && @comment_thread.locked?
@@ -385,6 +351,19 @@ class CommentsController < ApplicationController
       return true
     end
     false
+  end
+
+  def check_if_thread_is_private
+    if @comment_thread&.is_private
+      flash[:danger] = 'This action is not permitted.'
+      redirect_to comment_thread_path(@comment_thread.id)
+    end
+  end
+
+  def check_if_not_mod_and_thread_is_private
+    if !current_user.is_moderator
+      check_if_thread_is_private
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength
