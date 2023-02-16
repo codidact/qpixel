@@ -12,7 +12,7 @@ class ModWarning < ApplicationRecord
     active && is_suspension && !suspension_end.past?
   end
 
-  def global?
+  def global_suspension?
     is_suspension && is_global
   end
 
