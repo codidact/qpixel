@@ -18,41 +18,43 @@
     </div>
 
     <%= form_for @warning, url: create_mod_warning_path(@user.id), method: :post do |f| %>
-    <div class="widget">
-      <div class="widget--header h-bg-tertiary-050">
-        1. Choose a template
-      </div>
-      <div class="widget--body">
-        <div class="h-p-4">
-          <p class="is-lead">Choose a template, which explains, why you are contacting the user. If none is applicable, choose to send a custom message.</p>
-          <label class="form-element" for="template">Template</label>
-          <select id="template" class="form-element js--warning-template-selection">
-            <option value="">Send a custom message</option>
-            <% @templates.each do |t| %>
-              <option value="<%= t.body_as_b64 %>"><%= t.name %></option>
-            <% end %>
-          </select>
+      <div class="widget">
+        <div class="widget--header h-bg-tertiary-050">
+          1. Choose a template
         </div>
-      </div>
-      <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
-        2. Review the message
-      </div>
-      <div class="widget--body">
-        <div class="h-p-4">
-          <p class="is-lead">Review the generated message and add details. Do not add salutations or informations about possible suspensions, as they are generated automatically.</p>
-
-          <div class="js--warning-template-target">
-            <%= render 'shared/body_field', f: f, field_name: :body, field_label: 'Body' %>
-            <div class="post-preview"></div>
+        <div class="widget--body">
+          <div class="h-p-4">
+            <p class="is-lead">Choose a template, which explains, why you are contacting the user. If none is applicable, choose to send a custom message.</p>
+            <label class="form-element" for="template">Template</label>
+            <select id="template" class="form-element js--warning-template-selection">
+              <option value="">Send a custom message</option>
+              <% @templates.each do |t| %>
+                <option value="<%= t.body_as_b64 %>"><%= t.name %></option>
+              <% end %>
+            </select>
           </div>
         </div>
-      </div>
-      <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
-        3. Choose optional suspension
-      </div>
-      <div class="widget--body">
-        <div class="h-p-4">
-          <p class="is-lead">Decide, whether or not to suspend the user, and if, for how long. Choose an optional message shown publicly on the user profile.</p>
+        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
+          2. Review the message
+        </div>
+        <div class="widget--body">
+          <div class="h-p-4">
+            <p class="is-lead">Review the generated message and add details. Do not add salutations or informations about possible suspensions, as they are generated automatically.</p>
+
+            <div class="js--warning-template-target">
+              <%= render 'shared/body_field', f: f, field_name: :body, field_label: 'Body' %>
+              <div class="post-preview"></div>
+            </div>
+          </div>
+        </div>
+        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
+            3. Choose optional suspension
+        </div>
+        <div class="widget--body">
+          <div class="h-p-4">
+            <p class="is-lead">Decide whether or not to suspend the user, and if so for how long. Choose an optional message shown
+            publicly on the user profile.</p>
+          </div>
 
           <% if @prior_warning_count == 0 %>
             <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>no prior warnings</strong></a>. The system recommends issuing only a warning, unless the user is destructive and needs to be stopped immediately.</p>
@@ -80,11 +82,10 @@
             <%= f.select :suspension_public_notice, options_for_select([['for rule violations', 'for rule violations'], ['to cool down', 'to cool down']]), { include_blank: true }, class: 'form-element' %>
           </div>
         </div>
+        <div class="widget--footer">
+          <%= f.submit 'Warn (or suspend) user', class: 'button is-danger is-filled' %>
+        </div>
       </div>
-      <div class="widget--footer">
-        <%= f.submit 'Warn (or suspend) user', class: 'button is-danger is-filled' %>
-      </div>
-    </div>
     <% end %>
 
   </div>
