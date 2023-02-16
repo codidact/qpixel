@@ -54,7 +54,8 @@
         </div>
         <div class="widget--body">
             <div class="h-p-4">
-                <p class="is-lead">Decide, whether or not to suspend the user, and if, for how long. Choose an optional message shown publicly on the user profile.</p>
+                <p class="is-lead">Decide whether or not to suspend the user, and if so for how long. Choose an optional message shown
+                publicly on the user profile.</p>
 
                 <% if @prior_warning_count == 0 %>
                 <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>no prior warnings</strong></a>. The system recommends issuing only a warning, unless the user is destructive and needs to be stopped immediately.</p>
