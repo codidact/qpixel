@@ -34,10 +34,6 @@ class ModWarningController < ApplicationController
     @messages = @messages.filter { |m| m.comments.first.user&.id != @user&.id }
     @messages = @messages.map { |m| { type: :message, value: m } }
 
-    print "#{'*' * 50}\n"
-    print @messages
-    print "\n#{'*' * 50}"
-
     @entries = @warnings + @messages
     @entries = @entries.sort_by { |e| e[:value].created_at }.reverse
     render layout: 'without_sidebar'
