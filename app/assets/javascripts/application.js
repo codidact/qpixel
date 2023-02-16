@@ -66,7 +66,9 @@ $(document).on('ready', function() {
   });
 
   $(".is-partial-only:not(.open)").on("click", (evt) => {
-    if(evt.target.classList.contains("open")) return;
+    if (evt.target.classList.contains("open")) {
+      return;
+    }
 
     evt.target.classList.add("open");
     evt.stopPropagation();
