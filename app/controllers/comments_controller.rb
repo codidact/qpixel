@@ -13,7 +13,7 @@ class CommentsController < ApplicationController
 
   def create_thread
     @post = Post.find(params[:post_id])
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && !current_user.is_moderator
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -70,7 +70,7 @@ class CommentsController < ApplicationController
     unless @post.nil?
       if !@post.can_access?(current_user)
         return not_found
-      elsif @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+      elsif @post.comments_disabled && !current_user.is_moderator
         render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
         return
       end
@@ -163,7 +163,7 @@ class CommentsController < ApplicationController
 
   def thread_followers
     return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user.is_moderator || current_user.is_admin
+    return not_found unless current_user.is_moderator
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -293,7 +293,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
+    unless current_user.is_moderator || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
     end
   end
