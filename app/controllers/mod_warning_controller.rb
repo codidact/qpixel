@@ -104,10 +104,9 @@ class ModWarningController < ApplicationController
     return not_found if @warning.nil?
 
     if @warning.is_global && !current_user.is_global_moderator && !current_user.is_global_admin
-      flash[:error] = 'A network-wide suspension has been applied which may only be lifted ' \
-                      'by global moderators. Community-wide suspensions which have been imposed ' \
-                      'before that global suspensions cannot be lifted at this time (which is ' \
-                      'probably, why you are seeing this error).'
+      flash[:error] = 'A network-wide suspension has been applied which may only be lifted by global moderators. ' \
+                      'Community-wide suspensions which have been imposed before that global suspension cannot be ' \
+                      'lifted at this time (which is probably why you are seeing this error).'
       redirect_to mod_warning_log_path(@user)
     end
 
