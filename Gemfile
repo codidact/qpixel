@@ -70,7 +70,7 @@ gem 'net-smtp', '~> 0.3'
 gem 'ruby-progressbar', '~> 1.11'
 
 # Image generation
-gem 'rmagick'
+gem 'rmagick', '~> 5.0'
 
 # Payments. Kinda important, y'know.
 gem 'stripe', '~> 5.55'
