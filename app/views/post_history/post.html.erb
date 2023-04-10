@@ -24,15 +24,18 @@
           <br/><em><%= event.comment %></em>
         <% end %>
       </span>
+      <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
+        <span class="js-text">copy link</span>
+      <% end %>
     </summary>
     <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
-      <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
+      <%= render 'diff', index: index, before: event.before_title, after: event.after_title, post: @post %>
     <% end %>
     <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
-      <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
+      <%= render 'diff', index: index, before: event.before_state, after: event.after_state, post: @post %>
     <% end %>
     <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
-      <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
+      <%= render 'diff', index: index, before: event.before_tags, after: event.after_tags, post: @post %>
     <% end %>
   </details>
 <% end %>

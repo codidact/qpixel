@@ -1,4 +1,4 @@
-<div class="diff">
+<div class="diff" id="<%= @history.size - index %>">
   <% if before.present? && after.present? %>
     <% if before.is_a?(String) && after.is_a?(String) %>
       <% diff = Diffy::SplitDiff.new(before, after, format: :html) %>
