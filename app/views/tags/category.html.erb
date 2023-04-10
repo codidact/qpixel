@@ -34,4 +34,8 @@
 
 <%= render 'list' %>
 
+<% if @tags.size == 0 %>
+  <p class="has-color-tertiary"><em>No results for <strong><%= params[:q] %></strong></em></p>
+<% end %>
+
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
