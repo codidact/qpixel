@@ -8,7 +8,7 @@ $(() => {
                 <span data-livestamp="${notification.created_at}">${notification.created_at}</span>
             </div>
             <p><a href="${notification.link}" data-id="${notification.id}"
-                  class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''}">${notification.content}</a></p>
+                  class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''} notification-link">${notification.content}</a></p>
             <p class="has-font-size-caption"><a href="javascript:void(0)" data-notif-id="${notification.id}" class="js-notification-toggle">
                 <i class="fas fa-${notification.is_read ? 'envelope' : 'envelope-open'}"></i>
                 mark ${notification.is_read ? 'unread' : 'read'}
@@ -119,5 +119,9 @@ $(() => {
 
     const change = data.notification.is_read ? -1 : +1;
     changeInboxCount(change);
+  });
+
+  $(document).on('click', '.notification-link', async ev => {
+    $(ev.target).parents('.inbox').removeClass('is-active');
   });
 });
