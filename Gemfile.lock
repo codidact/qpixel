@@ -105,7 +105,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commonmarker (0.23.7)
+    commonmarker (0.23.9)
     concurrent-ruby (1.1.10)
     counter_culture (3.2.1)
       activerecord (>= 4.2)
