@@ -248,7 +248,7 @@
           <%= link_to suggested_edits_queue_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
             Edits
-            <% if pending_suggestions? %>
+            <% if pending_suggestions?  && check_your_privilege('edit_posts') %>
               <span class="badge is-status" title="Suggested edits pending"></span>
             <% end %>
           <% end %>
