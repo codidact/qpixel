@@ -38,44 +38,47 @@
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
     <% if post_type.has_votes %>
       <div>
-        <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
-          <% existing_vote = my_vote(post) %>
-          <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
-                    data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
-                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                  <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-                </svg>
-            </button>
-          <% end %>
-          <div class="score has-font-size-subheading js-upvote-count">
-            +<%= post.upvote_count %>
-          </div>
-          <div class="score has-font-size-subheading js-downvote-count">
-            &minus;<%= post.downvote_count %>
-          </div>
-          <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
-                    data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
-                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                  <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-                </svg>
-            </button>
-          <% end %>
-        </div>
-        <% if user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any? %>
-          <div class="post--react has-text-align-center">
+        <% sticky_votes = user_preference('sticky_vote_tool', community: false) == 'true' %>
+        <div <% if sticky_votes then %> class="sticky" <% end %>>
+          <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
+            <% existing_vote = my_vote(post) %>
             <% unless post.locked? %>
-              <button class="react-button button is-muted is-icon-only-button h-fw-bold"
-                      id="post-<%= post.id %>-react" aria-label="Add Reaction"
-                      data-drop="#post-<%= post.id %>-reactions-panel"
-                      data-drop-self-class-toggle="is-active"
-                      data-drop-force-dir="down">
-                  react
+              <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
+                      data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
+                  <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                    <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+                  </svg>
+              </button>
+            <% end %>
+            <div class="score has-font-size-subheading js-upvote-count">
+              +<%= post.upvote_count %>
+            </div>
+            <div class="score has-font-size-subheading js-downvote-count">
+              &minus;<%= post.downvote_count %>
+            </div>
+            <% unless post.locked? %>
+              <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
+                      data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
+                  <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                    <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+                  </svg>
               </button>
             <% end %>
           </div>
-        <% end %>
+          <% if user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any? %>
+            <div class="post--react has-text-align-center">
+              <% unless post.locked? %>
+                <button class="react-button button is-muted is-icon-only-button h-fw-bold"
+                        id="post-<%= post.id %>-react" aria-label="Add Reaction"
+                        data-drop="#post-<%= post.id %>-reactions-panel"
+                        data-drop-self-class-toggle="is-active"
+                        data-drop-force-dir="down">
+                    react
+                </button>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       </div>
     <% end %>
 
@@ -148,9 +151,10 @@
         <% end %>
       <% end %>
 
-      <div class="post--body">
+      <article class="post--body">
         <%= raw(sanitize(post.body, scrubber: scrubber)) %>
-
+      </article>
+      <div>
         <% been_edited = post.last_edited_by_id != nil %>
         <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
 
