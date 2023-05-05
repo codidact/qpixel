@@ -252,6 +252,95 @@ window.QPixel = {
     }
   },
 
+  filters: async () => {
+    if (this._filters == null && localStorage['qpixel.user_filters']) {
+      this._filters = JSON.parse(localStorage['qpixel.user_filters']);
+    }
+    else if (this._filters == null) {
+      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
+      // loaded them for yet. Load via AJAX.
+      const resp = await fetch('/users/me/filters', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await resp.json();
+      localStorage['qpixel.user_filters'] = JSON.stringify(data);
+      this._filters = data;
+    }
+
+    return this._filters;
+  },
+
+  defaultFilter: async categoryId => {
+    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    return data.name;
+  },
+
+  setFilterAsDefault: async (categoryId, name) => {
+    const resp = await fetch(`/categories/${categoryId}/filters/default`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    });
+  },
+
+  setFilter: async (name, filter, category, isDefault) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.assign(filter, { name, category, is_default: isDefault }))
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter persist failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
+  deleteFilter: async (name, system = false) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, system })
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter deletion failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
   /**
    * Get the key to use for storing user preferences in localStorage, to avoid conflating users
    * @returns string the localStorage key
