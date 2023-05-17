@@ -227,8 +227,7 @@ class CommentsController < ApplicationController
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
     when 'follow'
-      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf&.destroy
+      ThreadFollower.where(comment_thread: @comment_thread, user: current_user).destroy_all
     else
       return not_found
     end
