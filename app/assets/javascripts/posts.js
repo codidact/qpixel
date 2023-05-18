@@ -63,7 +63,7 @@ $(() => {
 
     const $postField = $('.js-post-field');
     const postText = $postField.val();
-    $postField.val(postText.replace(placeholder, `![Image alt text](${data.link})`));
+    $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
   });
 
