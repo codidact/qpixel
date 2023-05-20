@@ -37,7 +37,7 @@
     </div>
     <% if (SiteSetting['PostBodyListTruncateLength'] || 0) > 0 %>
       <p class="post-list--content">
-        <%= strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200) %>
+        <%= sanitize(strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200), scrubber: scrubber) %>
       </p>
     <% end %>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">
