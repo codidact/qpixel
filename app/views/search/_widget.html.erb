@@ -8,6 +8,20 @@
       <%= submit_tag 'Search', class: 'button is-medium is-outlined', name: nil %>
     </div>
   </div>
-  <h2>Filters</h2>
-  <%= render 'filters' %>
+
+  <div class="widget is-teal">
+    <div class="widget--header">
+      Advanced Search Options
+    </div>
+    <div class="widget--body">
+      <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
+      <p>Further help with searching is available <%= link_to 'in the help center', help_path('search') %>.</p>
+    </div>
+  </div>
+
+  <details>
+    <summary>Filters</summary>
+    <%= render 'filters' %>
+  </details>
+
 <% end %>

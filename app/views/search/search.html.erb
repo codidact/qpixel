@@ -4,16 +4,6 @@
 
 <%= render 'widget' %>
 
-<div class="widget is-teal">
-  <div class="widget--header">
-    Advanced Search Options
-  </div>
-  <div class="widget--body">
-    <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
-    <p>Further help with searching is available <%= link_to 'in the help center', help_path('search') %>.</p>
-  </div>
-</div>
-
 <% unless @posts.nil? %>
   <% post_count = @posts.count %>
   <div class="has-color-tertiary-500 flex-row jc-sb ai-c" title="<%= post_count %>">
