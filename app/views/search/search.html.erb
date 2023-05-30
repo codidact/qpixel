@@ -14,6 +14,11 @@
   </div>
 </div>
 
+  <details>
+    <summary>Filters</summary>
+    <%= render 'filters' %>
+  </details>
+
 <% unless @posts.nil? %>
   <% post_count = @posts.count %>
   <div class="has-color-tertiary-500 flex-row jc-sb ai-c" title="<%= post_count %>">
