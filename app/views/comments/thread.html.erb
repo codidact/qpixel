@@ -149,36 +149,35 @@
     <div class="droppanel--header">thread options</div>
     <div class="droppanel--menu">
       <% if current_user.is_moderator || !@comment_thread.read_only? %>
-        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
+        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
       <% end %>
 
       <% unless @comment_thread.archived || @comment_thread.deleted %>
         <% if @comment_thread.locked? %>
-          <a href="#" class="js--unrestrict-thread" data-action="lock" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> unlock</a>
+          <a href="#" class="js--unrestrict-thread" data-action="lock" data-thread="<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> unlock</a>
         <% else %>
-          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> lock</a>
+          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> lock</a>
         <% end %>
       <% end %>
       
       <% unless @comment_thread.locked? || @comment_thread.deleted %>
         <% if @comment_thread.archived %>
-          <a href="#" class="js--unrestrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> restore</a>
+          <a href="#" class="js--unrestrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> restore</a>
         <% else %>
-          <a href="#" class="js--restrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> archive</a>
+          <a href="#" class="js--restrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> archive</a>
         <% end %>
       <% end %>
 
       <% unless @comment_thread.locked? || @comment_thread.archived %>
         <% if @comment_thread.deleted %>
-          <a href="#" class="js--unrestrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> undelete</a>
+          <a href="#" class="js--unrestrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> undelete</a>
         <% else %>
-          <a href="#" class="js--restrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> delete</a>
+          <a href="#" class="js--restrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> delete</a>
         <% end %>
       <% end %>
 
       <% if current_user&.is_moderator || current_user&.is_admin %>
-        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>"
-           data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>">
+        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>">
           <i class="fas fa-users"></i> followers
         </a>
       <% end %>
