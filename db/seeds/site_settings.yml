@@ -550,3 +550,10 @@
   category: SignInAndSignUp
   description: >
     This setting only has an effect when SSO Sign In and Mixed Sign In are enabled. Allows users to disconnect their account from SSO and switch over to normal login.
+
+- name: LoadStripeEverywhere
+  value: false
+  value_type: boolean
+  category: Integrations
+  description: >
+    Load Stripe JS API on all pages instead of just donation pages. May improve security and fraud detection.

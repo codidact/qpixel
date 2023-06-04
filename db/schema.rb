@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -138,6 +138,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.bigint "tag_id"
   end
 
+  create_table "category_filter_defaults", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "filter_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id"], name: "index_category_filter_defaults_on_category_id"
+    t.index ["filter_id"], name: "index_category_filter_defaults_on_filter_id"
+    t.index ["user_id"], name: "index_category_filter_defaults_on_user_id"
+  end
+
   create_table "close_reasons", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.text "description", size: :medium
@@ -232,6 +241,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.string "user_agent"
     t.index ["community_id"], name: "index_error_logs_on_community_id"
     t.index ["user_id"], name: "index_error_logs_on_user_id"
+  end
+
+  create_table "filters", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.float "min_score"
+    t.float "max_score"
+    t.integer "min_answers"
+    t.integer "max_answers"
+    t.string "status"
+    t.string "include_tags"
+    t.string "exclude_tags"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_filters_on_user_id"
   end
 
   create_table "flags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -398,8 +422,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.bigint "answer_type_id"
     t.boolean "has_reactions"
+    t.bigint "answer_type_id"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -728,8 +752,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_mod_messages_on_author_id"
-    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+    t.index ["author_id"], name: "index_warnings_on_author_id"
+    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
   end
 
   add_foreign_key "abilities", "communities"
@@ -739,6 +763,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
+  add_foreign_key "category_filter_defaults", "categories"
+  add_foreign_key "category_filter_defaults", "filters"
+  add_foreign_key "category_filter_defaults", "users"
   add_foreign_key "comment_threads", "users", column: "archived_by_id"
   add_foreign_key "comment_threads", "users", column: "deleted_by_id"
   add_foreign_key "comment_threads", "users", column: "locked_by_id"
@@ -749,6 +776,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_15_181608) do
   add_foreign_key "community_users", "users", column: "deleted_by_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
+  add_foreign_key "filters", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "flags", "users", column: "escalated_by_id"
   add_foreign_key "micro_auth_apps", "users"

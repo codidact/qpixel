@@ -53,7 +53,7 @@
     <%= f.select :parent_id, options_for_select(@tag.parent.present? ? [[@tag.parent.name, @tag.parent_id]] : [],
                                                 selected: @tag.parent.present? ? @tag.parent_id : nil),
                  { include_blank: true }, class: "form-element js-tag-select",
-                 data: { tag_set: @category.tag_set_id, use_ids: true, placeholder: "None" } %>
+                 data: { tag_set: @category.tag_set_id, create: false, use_ids: true, placeholder: "None" } %>
   </div>
 
   <div class="form-group">

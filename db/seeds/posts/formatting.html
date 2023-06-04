@@ -64,3 +64,26 @@
 </blockquote>
 <h3 id="-footnotes-"><strong>Footnotes</strong></h3>
 <p>  To include a footnote in your post, you can use the syntax <code>[^1]</code>. In your main text, include <code>Text[^1] and more text</code>, and at the bottom (where you want to include your footnote), place a line resembling <code>[^1]: footnote text</code>.</p>
+
+<h3 id="-details-"><strong>Hidden Sections</strong></h3>
+<p>CommonMark does not support collapsible sections (sometimes called "spoiler blocks"), but you can use the HTML <code>details</code> and <code>summary</code> tags, like this:</p>
+<pre>&lt;details&gt;
+    &lt;summary&gt;Spoiler! Click here to reveal&lt;/summary&gt;
+    Secret details
+&lt;/details&gt;</pre>
+<p>Which renders like this:</p>
+<details>
+<summary>Spoiler! Click here to reveal</summary>
+Secret details
+</details>
+<p>If the details text uses any Markdown, you must add a blank line between the summary and the text:</p>
+<pre>&lt;details&gt;
+    &lt;summary&gt;Spoiler! Click here to reveal&lt;/summary&gt;
+
+    *Secret* details 
+&lt;/details&gt;</pre>
+<p>Renders:</p>
+<details>
+<summary>Spoiler! Click here to reveal</summary>
+<i>Secret</i> details
+</details>

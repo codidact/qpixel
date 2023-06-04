@@ -158,7 +158,9 @@ window.QPixel = {
    * @returns {Promise<Object>} a JSON object containing user details
    */
   user: async () => {
-    if (QPixel._user) return QPixel._user;
+    if (QPixel._user != null || document.body.dataset.userId === 'none') {
+      return QPixel._user;
+    }
     const resp = await fetch('/users/me', {
       credentials: 'include',
       headers: {
@@ -176,30 +178,24 @@ window.QPixel = {
    * localStorage, or Redis via AJAX.
    * @returns {Promise<Object>} a JSON object containing user preferences
    */
-  preferences: async () => {
-    if (this._preferences == null && !!localStorage['qpixel.user_preferences']) {
-      this._preferences = JSON.parse(localStorage['qpixel.user_preferences']);
-
-      // If we don't have the global key, we're probably using an old preferences schema.
-      if (!this._preferences.global) {
-        delete localStorage['qpixel.user_preferences'];
-        this._preferences = null;
-      }
+  _getPreferences: async () => {
+    // Early return for the most frequent case (local variable already contains the preferences)
+    if (QPixel._preferences != null) {
+      return QPixel._preferences;
     }
-    else if (this._preferences == null) {
-      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
-      // loaded them for yet. Load from Redis via AJAX.
-      const resp = await fetch('/users/me/preferences', {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      const data = await resp.json();
-      localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-      this._preferences = data;
+    // Early return the preferences from localStorage unless null or undefined
+    const key = QPixel._preferencesLocalStorageKey();
+    const localStoragePreferences = (key in localStorage)
+                                    ? JSON.parse(localStorage[key])
+                                    : null;
+    if (localStoragePreferences != null) {
+      QPixel._preferences = localStoragePreferences;
+      return QPixel._preferences;
     }
-    return this._preferences;
+    // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
+    // haven't loaded them for yet. Load from Redis via AJAX.
+    await QPixel._cachedFetchPreferences();
+    return QPixel._preferences;
   },
 
   /**
@@ -209,29 +205,23 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
-    let prefs = await QPixel.preferences();
+    // Do not attempt to access preference if user is not signed in
+    if (document.body.dataset.userId === 'none') {
+      return null;
+    }
+    let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
-    // Deliberate === here: null is a valid value for a preference, but undefined means we haven't fetched it.
+    // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
+    if (typeof(value) !== 'undefined') {
+      return value;
+    }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
-    if (value === undefined) {
-      const resp = await fetch('/users/me/preferences', {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      const data = await resp.json();
-      localStorage['qpixel.user_preferences'] = JSON.stringify(data);
-      this._preferences = data;
+    await QPixel._cachedFetchPreferences();
 
-      prefs = await QPixel.preferences();
-      value = community ? prefs.community[name] : prefs.global[name];
-      return value;
-    }
-    else {
-      return value;
-    }
+    prefs = await QPixel._getPreferences();
+    value = community ? prefs.community[name] : prefs.global[name];
+    return value;
   },
 
   /**
@@ -258,9 +248,149 @@ window.QPixel = {
       console.error(resp);
     }
     else {
-      this._preferences = data.preferences;
-      localStorage['qpixel.user_preferences'] = JSON.stringify(this._preferences);
+      QPixel._updatePreferencesLocally(data.preferences);
     }
+  },
+
+  filters: async () => {
+    if (this._filters == null && localStorage['qpixel.user_filters']) {
+      this._filters = JSON.parse(localStorage['qpixel.user_filters']);
+    }
+    else if (this._filters == null) {
+      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
+      // loaded them for yet. Load via AJAX.
+      const resp = await fetch('/users/me/filters', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await resp.json();
+      localStorage['qpixel.user_filters'] = JSON.stringify(data);
+      this._filters = data;
+    }
+
+    return this._filters;
+  },
+
+  defaultFilter: async categoryId => {
+    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    return data.name;
+  },
+
+  setFilterAsDefault: async (categoryId, name) => {
+    const resp = await fetch(`/categories/${categoryId}/filters/default`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    });
+  },
+
+  setFilter: async (name, filter, category, isDefault) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.assign(filter, { name, category, is_default: isDefault }))
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter persist failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
+  deleteFilter: async (name, system = false) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, system })
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter deletion failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
+  /**
+   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
+   * @returns string the localStorage key
+   */
+  _preferencesLocalStorageKey: () => {
+    const id = document.body.dataset.userId;
+    const key = `qpixel.user_${id}_preferences`;
+    QPixel._preferencesLocalStorageKey = () => key;
+    return key;
+  },
+
+  /**
+   * Call _fetchPreferences but only the first time to prevent redundant HTTP requests
+   * @returns {Promise<void>}
+   */
+  _cachedFetchPreferences: async () => {
+    // No 'await' because we want the promise not its value
+    const cachedPromise = QPixel._fetchPreferences();
+    // Redefine this function to await this same initial promise on every subsequent call
+    // This prevents multiple calls from triggering multiple redundant '_fetchPreferences' calls
+    QPixel._cachedFetchPreferences = async () => {
+      await cachedPromise;
+    }
+    // Remember to await the promise so the very first call does not return before '_fetchPreferences' returns
+    await cachedPromise;
+  },
+
+  /**
+   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
+   * @returns {Promise<void>}
+   */
+  _fetchPreferences: async () => {
+    const resp = await fetch('/users/me/preferences', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await resp.json();
+    QPixel._updatePreferencesLocally(data);
+  },
+
+  /**
+   * Set local variable _preferences and localStorage to new preferences data
+   * @param data an object, containing the new preferences data
+   */
+  _updatePreferencesLocally: data => {
+    QPixel._preferences = data;
+    const key = QPixel._preferencesLocalStorageKey();
+    localStorage[key] = JSON.stringify(QPixel._preferences);
   },
 
   /**

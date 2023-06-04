@@ -11,6 +11,10 @@ en:
       This tool allows you to send to the moderators' email distribution list, which will reach any current moderator
       who is subscribed to it. Use sparingly and non-spammily. Your email will be sent in both HTML (formatted)
       and plain text (unformatted) forms, so format in a way that will be legible when Markdown is removed.
+    email_all_blurb: >
+      This tool sends email to ALL registered users with a valid email address. Use very very rarely, usually only for
+      organisation-wide changes like privacy policy or TOS changes. Format in a way that will be legible when Markdown
+      is removed.
     error_search_uuid: 'Search for an error UUID'
     privileges_blurb: >
       Here you can define the reputation required to gain each available privilege. Click on a value to edit it.
@@ -18,6 +22,7 @@ en:
       g_site_settings: 'Global Site Settings'
       g_tag_sets: 'Global Tag Sets'
       email_moderators: 'Email Moderators'
+      email_all: 'Email All Users'
       error_reports: 'Error Reports'
       site_settings: 'Site Settings'
       tag_sets: 'Tag Sets'

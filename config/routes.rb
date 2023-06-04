@@ -35,6 +35,8 @@ Rails.application.routes.draw do
 
     get    'mod-email',                    to: 'admin#admin_email', as: :moderator_email
     post   'mod-email',                    to: 'admin#send_admin_email', as: :send_moderator_email
+    get    'email-all',                    to: 'admin#all_email', as: :email_all
+    post   'email-all',                    to: 'admin#send_all_email', as: :send_all_email
 
     get    'audits',                       to: 'admin#audit_log', as: :audit_log
 
@@ -179,6 +181,10 @@ Rails.application.routes.draw do
     get    '/me',                       to: 'users#me', as: :users_me
     get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
     post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
+    get    '/me/filters',               to: 'users#filters', as: :user_filters
+    get    '/me/filters/default/',      to: 'users#default_filter', as: :default_filter
+    post   '/me/filters',               to: 'users#set_filter', as: :set_user_filter
+    delete '/me/filters',               to: 'users#delete_filter', as: :delete_user_filter
     get    '/me/notifications',         to: 'notifications#index', as: :notifications
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
@@ -248,6 +254,7 @@ Rails.application.routes.draw do
     root                                   to: 'categories#index', as: :categories
     get    'new',                          to: 'categories#new', as: :new_category
     post   'new',                          to: 'categories#create', as: :create_category
+    post   ':id/filters/default',          to: 'categories#default_filter', as: :set_default_filter
     get    ':id',                          to: 'categories#show', as: :category
     get    ':id/edit',                     to: 'categories#edit', as: :edit_category
     post   ':id/edit',                     to: 'categories#update', as: :update_category

@@ -10,4 +10,12 @@ class AdminMailer < ApplicationMailer
     emails = ActiveRecord::Base.connection.execute(query).to_a.flatten
     mail subject: "Codidact Moderators: #{@subject}", to: 'moderators-noreply@codidact.org', bcc: emails
   end
+
+  def to_all_users
+    @subject = params[:subject]
+    @body_markdown = params[:body_markdown]
+    @users = User.where('email NOT LIKE ?', "%localhost").select(:email).map(&:email)
+    mail subject: @subject, to: 'allusers-noreply@codidact.org', from: 'Codidact Team <allusers-noreply@codidact.org>',
+         reply_to: 'info@codidact.org', bcc: @users
+  end
 end
