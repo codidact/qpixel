@@ -59,11 +59,12 @@ module UsersHelper
     deleted_user?(user) ? 'deleted user' : user.rtl_safe_username
   end
 
-  def user_link(user, **link_opts)
+  def user_link(user, url_opts, **link_opts)
+    url_opts ||= {}
     if deleted_user?(user)
       link_to 'deleted user', '#', { dir: 'ltr' }.merge(link_opts)
     else
-      link_to user.rtl_safe_username, user_url(user), { dir: 'ltr' }.merge(link_opts)
+      link_to user.rtl_safe_username, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
     end
   end
 
