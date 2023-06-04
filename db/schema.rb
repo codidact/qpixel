@@ -624,6 +624,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
     t.index ["community_id"], name: "index_tag_sets_on_community_id"
   end
 
+  create_table "tag_synonyms", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "tag_id"
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_tag_synonyms_on_tag_id"
+  end
+
   create_table "tags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -796,6 +804,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
   add_foreign_key "suggested_edits", "posts"
   add_foreign_key "suggested_edits", "users"
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
+  add_foreign_key "tag_synonyms", "tags"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "thread_followers", "posts"

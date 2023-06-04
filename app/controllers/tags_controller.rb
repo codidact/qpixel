@@ -13,10 +13,10 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.paginate(page: params[:page], per_page: 50)
+            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
-        render json: @tags
+        render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
       end
     end
   end
@@ -61,6 +61,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.tag_synonyms.build
   end
 
   def create
@@ -76,6 +77,7 @@ class TagsController < ApplicationController
 
   def edit
     check_your_privilege('edit_tags', nil, true)
+    @tag.tag_synonyms.build
   end
 
   def update
@@ -192,7 +194,8 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name,
+                                tag_synonyms_attributes: [:id, :name, :_destroy])
   end
 
   def exec(sql_array)
