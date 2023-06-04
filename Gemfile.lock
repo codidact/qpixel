@@ -211,6 +211,7 @@ GEM
     parallel (1.22.1)
     parser (3.1.2.1)
       ast (~> 2.4.1)
+    pkg-config (1.5.1)
     premailer (1.16.0)
       addressable
       css_parser (>= 1.6.0)
@@ -272,7 +273,8 @@ GEM
     reverse_markdown (2.1.1)
       nokogiri
     rexml (3.2.5)
-    rmagick (4.2.6)
+    rmagick (5.2.0)
+      pkg-config (~> 1.4)
     rotp (6.2.0)
     rqrcode (2.1.2)
       chunky_png (~> 1.0)
@@ -401,7 +403,7 @@ DEPENDENCIES
   rails-html-sanitizer (~> 1.4)
   redis (~> 4.8)
   reverse_markdown (~> 2.1)
-  rmagick
+  rmagick (~> 5.0)
   rotp (~> 6.2)
   rqrcode (~> 2.1)
   rubocop (~> 1)
@@ -426,4 +428,4 @@ RUBY VERSION
    ruby 2.7.6p219
 
 BUNDLED WITH
-   2.3.21
+   2.4.13
