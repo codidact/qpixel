@@ -1,7 +1,7 @@
 $(() => {
   const openRelevantEditOnly = () => {
-    $("details.history-event").attr('open', false);
-    $(location.hash).attr('open', true);
+    $("details.history-event").prop('open', false);
+    $(location.hash).prop('open', true);
   }
 
   window.addEventListener("hashchange", openRelevantEditOnly);
