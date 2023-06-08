@@ -5,7 +5,7 @@
 </div>
 
 <% @history.each.with_index do |event, index| %>
-  <details class="history-event">
+  <details class="history-event" id="<%= @history.size - index %>">
     <summary>
       <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
       <span class="has-color-tertiary-600 history-meta">
@@ -29,13 +29,13 @@
       <% end %>
     </summary>
     <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
-      <%= render 'diff', index: index, before: event.before_title, after: event.after_title, post: @post %>
+      <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
     <% end %>
     <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
-      <%= render 'diff', index: index, before: event.before_state, after: event.after_state, post: @post %>
+      <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
     <% end %>
     <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
-      <%= render 'diff', index: index, before: event.before_tags, after: event.after_tags, post: @post %>
+      <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
     <% end %>
   </details>
 <% end %>
