@@ -1,4 +1,14 @@
 <%= form_for @category, url: submit_path, method: :post do |f| %>
+  <% if @category.errors.any? %>
+    <div class="notice is-danger">
+      <ul>
+        <% @category.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <details open>
     <summary>
       Basic Information
