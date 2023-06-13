@@ -143,7 +143,7 @@ class CategoriesController < ApplicationController
     params.require(:category).permit(:name, :short_wiki, :tag_set_id, :is_homepage, :min_trust_level, :button_text,
                                      :color_code, :min_view_trust_level, :license_id, :sequence,
                                      :asking_guidance_override, :answering_guidance_override,
-                                     :use_for_hot_posts, :use_for_advertisement,
+                                     :use_for_hot_posts, :use_for_advertisement, :min_title_length, :min_body_length,
                                      display_post_types: [], post_type_ids: [], required_tag_ids: [],
                                      topic_tag_ids: [], moderator_tag_ids: [])
   end

@@ -61,6 +61,18 @@
       <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
                    { include_blank: true }, class: 'form-element js-category-tag-set-select' %>
     </div>
+
+    <div class="form-group">
+      <%= f.label :min_title_length, 'Minimum title length', class: 'form-element' %>
+      <span class="form-caption">Titles of posts in this category must be at least this many characters long.</span>
+      <%= f.number_field :min_title_length, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :min_body_length, 'Minimum body length', class: 'form-element' %>
+      <span class="form-caption">Posts in this category must be at least this many characters long.</span>
+      <%= f.number_field :min_body_length, class: 'form-element' %>
+    </div>
   </details>
 
   <details>

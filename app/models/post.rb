@@ -289,10 +289,12 @@ class Post < ApplicationRecord
   end
 
   def stripped_minimum
-    if (body&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 30
+    min_title = category.nil? ? 15 : category.min_title_length
+    min_body = category.nil? ? 30 : category.min_body_length
+    if (body&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < min_body
       errors.add(:body, 'must be more than 30 non-whitespace characters long')
     end
-    if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 15
+    if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < min_title
       errors.add(:title, 'must be more than 15 non-whitespace characters long')
     end
   end

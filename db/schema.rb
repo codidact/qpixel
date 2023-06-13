@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_13_205236) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -109,6 +109,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_02_043021) do
     t.integer "sequence"
     t.boolean "use_for_hot_posts", default: true
     t.boolean "use_for_advertisement", default: true
+    t.integer "min_title_length", default: 15, null: false
+    t.integer "min_body_length", default: 30, null: false
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["sequence"], name: "index_categories_on_sequence"
