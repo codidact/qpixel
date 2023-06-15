@@ -52,10 +52,14 @@ If you already have Node.JS installed, you can skip this step. If not,
 [download and install it](https://nodejs.org/en/download/) or for example
 `sudo apt install nodejs`.
 
+On Mac with homebrew, `brew install node` .
+
 ### Install Redis
 
 If you haven't already got it, [download and install Redis](https://redis.io/download)
 or for example `sudo apt install redis-server`.
+
+For mac with homebrew, `brew install redis` .
 
 ### Install Imagemagick
 
@@ -67,6 +71,8 @@ also install the `libmagickwand-dev` package.
 
 `sudo apt install libmagick++-dev` should also work.
 
+For Mac with homebrew, `brew install imagemagick` .
+
 ### Install Libvips
 
 If you haven't already installed Libvips, you'll need to [install it for
@@ -74,6 +80,8 @@ your system](https://www.libvips.org/).
 
 To install libvips from APT on a Debian-based system, use
 `sudo apt install libvips`
+
+For Mac with homebrew, `brew install vips` .
 
 ## Install QPixel
 
