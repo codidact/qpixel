@@ -121,7 +121,7 @@ setup you'll need to correct them.
 If you are using MariaDB instead of MySQL, you will need to replace all occurrences of
 `utf8mb4_0900_ai_ci` with `utf8mb4_unicode_ci` in `db/schema.rb`.
 
-You'll also need to copy the Active Storage configuration from config/storage.sample.yml to config/storage.yml.
+You'll also need to copy the Active Storage configuration from `config/storage.sample.yml` to `config/storage.yml`.
 
 Set up the database:
 
