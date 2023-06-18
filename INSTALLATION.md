@@ -114,12 +114,14 @@ Copy `config/database.sample.yml` to `config/database.yml` and fill in the corre
 username, and password for your environment. If you've followed these instructions (i.e. you
 have installed MySQL locally), the correct host is `localhost` or `127.0.0.1`.
 
-You'll also need to fill in details for the Redis connection. If you've followed these instructions,
+You will need to set the Redis connection details there too. If you've followed these instructions,
 the sample file should already contain the correct values for you, but if you've customised your
 setup you'll need to correct them.
 
 If you are using MariaDB instead of MySQL, you will need to replace all occurrences of
 `utf8mb4_0900_ai_ci` with `utf8mb4_unicode_ci` in `db/schema.rb`.
+
+You'll also need to copy the Active Storage configuration from `config/storage.sample.yml` to `config/storage.yml`.
 
 Set up the database:
 
