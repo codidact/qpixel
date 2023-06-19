@@ -11,9 +11,9 @@
             <p>Your account has been <strong>temporarily suspended</strong> (ends <span title="<%= current_user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(current_user.community_user.suspension_end) %></span>). We look forward to your return and continued contributions to the site after this period. In the event of continued rule violations after this period, your account may be suspended for longer periods. If you have any questions about this suspension or would like to dispute it, <a href="mailto:<%= SiteSetting['AdministratorContactEmail'] %>">contact us</a>.</p>
 
             <% if devise_sign_in_enabled? %>
-                <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
             <% else %>
-                <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
             <% end %>
         </div>
     <% else %>
@@ -32,9 +32,9 @@
 
                 <%= submit_tag 'Continue', class: 'button is-filled' %>
                 <% if devise_sign_in_enabled? %>
-                    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                    <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
                 <% else %>
-                    <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                    <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
                 <% end %>
             <% end %>
         </div>
@@ -55,9 +55,9 @@
 
             <%= submit_tag 'Continue', class: 'button is-filled' %>
             <% if devise_sign_in_enabled? %>
-                <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
             <% else %>
-                <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined' %>
+                <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-danger is-outlined', role: 'button' %>
             <% end %>
         <% end %>
     </div>
