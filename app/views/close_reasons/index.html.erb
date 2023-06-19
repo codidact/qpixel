@@ -33,7 +33,7 @@
       <td><%= reason.requires_other_post ? "yes" : "no" %></td>
       <td><%= reason.active ? "yes" : "no" %></td>
       <td>
-        <%= link_to "edit", close_reason_path(id: reason.id), class: "button is-outlined" %>
+        <%= link_to "edit", close_reason_path(id: reason.id), class: "button is-outlined", 'aria-label': "Edit close reason #{reason.name}" %>
       </td>
     </tr>
   <% end %>
@@ -46,5 +46,5 @@
     Do not add reasons where you're not sure that your community needs or wants them.
   </p>
   <p>It's not possible to remove reasons, once created. They can only be deactivated.</p>
-  <%= link_to "add reason", new_close_reason_path(global: params[:global]), class: "button is-outlined" %>
+  <%= link_to "add reason", new_close_reason_path(global: params[:global]), class: "button is-outlined", 'aria-label': 'Add new close reason' %>
 </div>
