@@ -62,7 +62,7 @@
                     <% working_title = i.answer? ? "A: #{i.parent.title}" : i.title %>
                     <strong><%= working_title %></strong><br>
                     <%= i.body_plain[0..300] + ((i.body_plain.length > 300) ? "..." : "") %><br>
-                    <%= link_to '(more)', generic_share_link(i), 'aria-label': "More information about #{type} #{working_title}" %>
+                    <%= link_to '(more)', generic_share_link(i), 'aria-label': "More information about #{type_name} #{working_title}" %>
                 </td>
                 <td>&mdash;</td>
             <% elsif i.class == Comment %>

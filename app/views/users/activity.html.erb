@@ -7,20 +7,20 @@
 <h1>Activity for <%= user_link @user %></h1>
 
 <div class="button-list is-gutterless h-m-v-4">
-  <a class="button is-muted is-outlined" href="?">
+  <a class="button is-muted is-outlined" href="?" role="button">
     Show all events
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts">
+  <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts" role="button">
     Posts
     <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span>
     <% end %>
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments">
+  <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments" role="button">
     Comments
     <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span>
     <% end %>
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits">
+  <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits" role="button">
     Edits
     <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span>
     <% end %>
@@ -38,20 +38,18 @@
   <% @items.each do |i| %>
     <tr class="<%= deleted_item?(i) ? 'deleted-content' : '' %>">
       <% if i.class == Post %>
+        <% type_name = (i.question? ? 'Question' : (i.article? ? 'Article' : 'Answer')) %>
         <td>
-                    <span class="h-fw-bold">
-                        <%= (i.question? ? "Question" : (i.article? ? "Article" : "Answer")) %>
-                    </span>
+          <span class="h-fw-bold">
+            <%= type_name %>
+          </span>
         </td>
         <td>&mdash;</td>
         <td class="h-fs-caption">
-          <% if !i.answer? %>
-            <strong><%= i.title %></strong><br>
-          <% else %>
-            <strong>A: <%= i.parent.title %></strong><br>
-          <% end %>
+          <% working_title = i.answer? ? "A: #{i.parent.title}" : i.title %>
+          <strong><%= working_title %></strong><br>
           <%= i.body_plain[0..300] + ((i.body_plain.length > 300) ? "..." : "") %><br>
-          <%= link_to '(more)', generic_share_link(i) %>
+          <%= link_to '(more)', generic_share_link(i), 'aria-label': "More information about #{type_name} #{working_title}" %>
         </td>
         <td>&mdash;</td>
       <% elsif i.class == Comment %>
@@ -89,7 +87,8 @@
           <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
         </td>
         <td class="h-fs-caption">
-          <em>Suggested edit</em>:<br><%= i.comment %><br><%= link_to '(more)', suggested_edit_url(i.id) %>
+          <em>Suggested edit</em>:<br><%= i.comment %><br>
+          <%= link_to '(more)', suggested_edit_url(i.id), 'aria-label': "More information about suggested edit #{i.comment}" %>
         </td>
         <td>
           <%= (i.pending? ? "pending" : (i.approved? ? "helpful" : "declined")) %>
