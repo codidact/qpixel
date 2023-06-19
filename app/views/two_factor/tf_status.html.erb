@@ -21,9 +21,9 @@
 <% if current_user.enabled_2fa %>
   <p>
     <% if current_user.two_factor_method == 'app' %>
-      <%= link_to 'Turn off', two_factor_disable_code_path, class: 'button is-outlined' %>
+      <%= link_to 'Turn off', two_factor_disable_code_path, class: 'button is-outlined', 'aria-label': 'Turn off 2FA using an app' %>
     <% elsif current_user.two_factor_method == 'email' %>
-      <%= link_to 'Turn off', two_factor_send_disable_email_path, method: :post, class: 'button is-outlined' %>
+      <%= link_to 'Turn off', two_factor_send_disable_email_path, method: :post, class: 'button is-outlined', 'aria-label': 'Turn off 2FA using email' %>
     <% end %>
   </p>
 <% else %>
@@ -41,7 +41,7 @@
                          { class: 'form-element' } %>
         </div>
 
-        <%= submit_tag 'Enable', class: 'button is-filled' %>
+        <%= submit_tag 'Enable', class: 'button is-filled', 'aria-label': 'Enable 2FA' %>
       <% end %>
     <% end %>
   </div>
