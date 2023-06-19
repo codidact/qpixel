@@ -1,8 +1,8 @@
-<%= form_tag search_path, method: :get do %>
+<%= form_tag search_path, method: :get, role: 'search' do %>
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= label_tag :search, 'Search term', class: "form-element" %>
-      <%= text_field_tag :search, params[:search], class: 'form-element' %>
+      <%= search_field_tag :search, params[:search], class: 'form-element' %>
     </div>
     <div class="actions has-padding-bottom-1">
       <%= submit_tag 'Search', class: 'button is-medium is-outlined', name: nil %>

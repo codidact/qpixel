@@ -148,9 +148,9 @@
     </div>
   </div>
 
-  <%= form_tag search_path, method: :get do %>
+  <%= form_tag search_path, method: :get, role: 'search' do %>
     <div class="grid is-nowrap">
-        <%= text_field_tag :search, params[:search], class: 'form-element' %>
+        <%= search_field_tag :search, params[:search], class: 'form-element' %>
         <div class="h-m-1">
           <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
             <i class="fa fa-search"></i>
