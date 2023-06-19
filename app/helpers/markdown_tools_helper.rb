@@ -19,7 +19,8 @@ module MarkdownToolsHelper
                    class: "#{attribs[:class] || ''}js-markdown-tool",
                    data_action: action,
                    aria_label: label,
-                   title: label
+                   title: label,
+                   role: 'button'
     attribs.transform_keys! { |k| k.to_s.tr('_', '-') }.symbolize_keys!
     if name.nil? && block_given?
       tag.a(**attribs, &block)
