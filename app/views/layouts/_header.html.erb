@@ -94,9 +94,9 @@
 <div class="header-slide" id="communities-slide">
   <% if user_signed_in? %>
     <% if devise_sign_in_enabled? %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
     <% else %>
-      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
     <% end %>
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
@@ -148,9 +148,9 @@
     </div>
   </div>
 
-  <%= form_tag search_path, method: :get do %>
+  <%= form_tag search_path, method: :get, role: 'search' do %>
     <div class="grid is-nowrap">
-        <%= text_field_tag :search, params[:search], class: 'form-element' %>
+        <%= search_field_tag :search, params[:search], class: 'form-element' %>
         <div class="h-m-1">
           <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
             <i class="fa fa-search"></i>
@@ -193,9 +193,9 @@
         <% end %>
       <% end %>
       <% if devise_sign_in_enabled? %>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
       <% else %>
-        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item' %>
+        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
       <% end %>
     <% else %>
       <% if sso_sign_in_enabled? %>
@@ -248,7 +248,7 @@
           <%= link_to suggested_edits_queue_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
             Edits
-            <% if pending_suggestions? %>
+            <% if pending_suggestions?  && check_your_privilege('edit_posts') %>
               <span class="badge is-status" title="Suggested edits pending"></span>
             <% end %>
           <% end %>

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+main_default_filter:
+  user: standard_user
+  filter: one
+  category: main
+
+meta_default_filter:
+  user: standard_user
+  filter: one
+  category: meta

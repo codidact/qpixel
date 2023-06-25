@@ -5,7 +5,7 @@
 </div>
 
 <% @history.each.with_index do |event, index| %>
-  <details class="history-event">
+  <details class="history-event" id="<%= @history.size - index %>">
     <summary>
       <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
       <span class="has-color-tertiary-600 history-meta">
@@ -24,6 +24,9 @@
           <br/><em><%= event.comment %></em>
         <% end %>
       </span>
+      <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
+        <span class="js-text">copy link</span>
+      <% end %>
     </summary>
     <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
       <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>

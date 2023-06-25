@@ -55,27 +55,27 @@
       <% end %>
     </div>
     <div class="comment--links">
-      <%= link_to comment_link(comment), class: 'js-comment-permalink' do %>
+      <%= link_to comment_link(comment), class: 'js-comment-permalink', role: 'button' do %>
         <span class="js-text">copy link</span>
       <% end %>
       <% if with_post_link && comment.post.present? %>
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
       <% if user_signed_in? && !comment.comment_thread.is_private && (comment.user == current_user || current_user.is_moderator) && params[:inline] != 'true' %>
-        <a href="#" class="js-comment-edit">edit</a>
+        <a href="#" class="js-comment-edit" role="button" aria-label="Edit comment">edit</a>
         <% if comment.deleted %>
-          <a href="#" class="is-red js-comment-undelete">undelete</a>
+          <a href="#" class="is-red js-comment-undelete" role="button" aria-label="Undelete comment">undelete</a>
         <% else %>
-          <a href="#" class="is-red js-comment-delete">delete</a>
+          <a href="#" class="is-red js-comment-delete" role="button" aria-label="Delete comment">delete</a>
         <% end %>
       <% end %>
       <% if user_signed_in? && params[:inline] != 'true' %>
-        <a href="javascript:void(0)" data-drop="#flag-comment-<%= comment.id %>">flag</a>
+        <a href="javascript:void(0)" data-drop="#flag-comment-<%= comment.id %>" role="button" aria-label="Flag comment">flag</a>
         <div class="droppanel is-large h-c-black" id="flag-comment-<%= comment.id %>">
           <label for="flag-post-<%= comment.id %>">Flag reason</label>
           <input type="text" id="flag-post-<%= comment.id %>" class="form-element" />
           <a href="javascript:void(0)" class="flag-link js-comment-flag button is-danger" data-post-id="<%= comment.id %>"
-             data-requires-details="true">Flag</a>
+             data-requires-details="true" role="button" aria-label="Flag comment">Flag</a>
         </div>
       <% end %>
     </div>

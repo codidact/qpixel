@@ -73,6 +73,97 @@ class UsersController < ApplicationController
     end
   end
 
+  # Helper method to convert it to the form expected by the client
+  def filter_json(filter)
+    {
+      min_score: filter.min_score,
+      max_score: filter.max_score,
+      min_answers: filter.min_answers,
+      max_answers: filter.max_answers,
+      include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
+      exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
+      status: filter.status,
+      system: filter.user_id == -1
+    }
+  end
+
+  def filters_json
+    system_filters = Rails.cache.fetch 'system_filters' do
+      User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
+    end
+
+    if user_signed_in?
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
+                  .merge(system_filters)
+    else
+      system_filters
+    end
+  end
+
+  def filters
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: filters_json
+      end
+    end
+  end
+
+  def set_filter
+    if user_signed_in? && params[:name]
+      filter = Filter.find_or_create_by(user: current_user, name: params[:name])
+
+      filter.update(filter_params)
+
+      unless params[:category].nil? || params[:is_default].nil?
+        helpers.set_filter_default(current_user.id, filter.id, params[:category].to_i, params[:is_default])
+      end
+
+      render json: { status: 'success', success: true, filters: filters_json },
+             status: 200
+    else
+      render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+             status: 400
+    end
+  end
+
+  def delete_filter
+    unless params[:name]
+      return render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+                    status: 400
+    end
+
+    as_user = current_user
+
+    if params[:system] == true
+      if current_user&.is_global_admin
+        as_user = User.find(-1)
+      else
+        return render json: { status: 'failed', success: false, errors: ['You do not have permission to delete'] },
+                      status: 400
+      end
+    end
+
+    filter = Filter.find_by(user: as_user, name: params[:name])
+    if filter.destroy
+      render json: { status: 'success', success: true, filters: filters_json }
+    else
+      render json: { status: 'failed', success: false, errors: ['Failed to delete'] },
+             status: 400
+    end
+  end
+
+  def default_filter
+    if user_signed_in? && params[:category]
+      default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
+      render json: { status: 'success', success: true, name: default_filter&.name },
+             status: 200
+    else
+      render json: { status: 'failed', success: false },
+             status: 400
+    end
+  end
+
   def set_preference
     if !params[:name].nil? && !params[:value].nil?
       global_key = "prefs.#{current_user.id}"
@@ -645,6 +736,11 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def filter_params
+    params.permit(:min_score, :max_score, :min_answers, :max_answers, :status, :include_tags, :exclude_tags,
+                  include_tags: [], exclude_tags: [])
+  end
 
   def set_user
     @user = user_scope.find_by(id: params[:id])

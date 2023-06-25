@@ -1,0 +1,75 @@
+<% allow_delete ||= false %>
+<% allow_apply = true if allow_apply.nil? %>
+<% @active_filter ||= {} %>
+
+<div class="form-group">
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
+      <%= select_tag :predefined_filter, options_for_select([@active_filter[:name]],
+                                                            selected: @active_filter[:name]),
+          include_blank: true, class: "form-element js-filter-select", id: nil,
+          data: { placeholder: "" } %>
+    </div>
+    <button type="button" class="filter-clear button is-medium is-danger">Clear</button>
+    <% if allow_apply %>
+      <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+    <% end %>
+    <% if user_signed_in? %>
+      <button type="button" class="filter-save button is-medium is-filled">Save</button>
+    <% end %>
+    <% if allow_delete %>
+      <button type="button" class="filter-delete button is-medium is-filled is-danger">Delete</button>
+    <% end %>
+  </div>
+  <% if user_signed_in? && defined? @category %>
+    <%= label_tag :save_as_default, 'Is default for this category?' %>
+    <%= check_box_tag :save_as_default, @category.id, false, { class: 'filter-is-default form-checkbox-element' } %>
+  <% end %>
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :min_score, 'Min Score', class: "form-element" %>
+      <%= number_field_tag :min_score, @active_filter[:min_score],
+          min: 0, max: 1, step: 0.01, class: 'form-element form--filter',
+          data: { name: 'min_score' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :max_score, 'Max Score', class: "form-element" %>
+      <%= number_field_tag :max_score, @active_filter[:max_score],
+          min: 0, max: 1, step: 0.01, class: 'form-element form--filter',
+          data: { name: 'max_score' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :min_answers, 'Min Answers', class: "form-element" %>
+      <%= number_field_tag :min_answers, @active_filter[:min_answers],
+          min: 0, step: 1, class: 'form-element form--filter',
+          data: { name: 'min_answers' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :max_answers, 'Max Answers', class: "form-element" %>
+      <%= number_field_tag :max_answers, @active_filter[:max_answers],
+          min: 0, step: 1, class: 'form-element form--filter',
+          data: { name: 'max_answers' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :status, 'Status', class: "form-element" %>
+      <%= select_tag :status, options_for_select(['any', 'open', 'closed'], selected: @active_filter[:status] || 'any'),
+        min: 0, step: 1, class: 'form-element form--filter',
+        data: { name: 'status' } %>
+    </div>
+  </div>
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :include_tags, 'Include Tags', class: "form-element" %>
+      <%= select_tag :include_tags, options_for_select(Tag.where(id: @active_filter[:include_tags]).map { |tag| [tag.name, tag.id] },
+                   selected: @active_filter[:include_tags] || []), multiple: true, class: 'form-element form--filter js-tag-select',
+                   data: { name: 'include_tags', tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :exclude_tags, 'Exclude Tags', class: "form-element" %>
+      <%= select_tag :exclude_tags, options_for_select(Tag.where(id: @active_filter[:exclude_tags]).map { |tag| [tag.name, tag.id] },
+                   selected: @active_filter[:exclude_tags]|| []), multiple: true, class: 'form-element form--filter js-tag-select',
+                   data: { name: 'exclude_tags', tag_set: @category&.tag_set_id, create: 'false', use_ids: 'true', placeholder: '' } %>
+    </div>
+  </div>
+</div>

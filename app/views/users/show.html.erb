@@ -33,12 +33,14 @@
       <p>
         <% if @user.website.present? %>
           <span class="h-m-r-4">
-            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
+            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
+                                                    'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
           </span>
         <% end %>
         <% if @user.twitter.present? %>
           <span class="h-m-r-4">
-            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
+            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}",
+                                                       'aria-label': "Visit twitter account of #{rtl_safe_username(@user)}" %>
           </span>
         <% end %>
         <% if @user.discord.present? %>
@@ -77,7 +79,7 @@
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
           <% end %>
         </div>
-        <%= link_to user_posts_path(@user), class: "button is-muted" do %>
+        <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
           See all &raquo;
         <% end %>
       <% end %>
@@ -142,11 +144,11 @@
         <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
-           <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
+           <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
              Abilities &raquo;
            <% end %>
           <% else %>
-           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold' do %>
+           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold', 'aria-label': "View abilities of #{rtl_safe_username(@user)}" do %>
              Abilities &raquo;
            <% end %>
           <% end %>
@@ -249,7 +251,8 @@
         <td colspan="2">Count</td>
         <td>
           <% if current_user&.id == @user.id || moderator? %>
-            <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted' %>
+            <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
+                        'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>
             <%= @user.flags.count %>
           <% end %>

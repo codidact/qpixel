@@ -37,7 +37,7 @@
         </td>
         <td>
             <div class="h-d-flex">
-                <%= link_to "edit", edit_reaction_path(rt.id), class: "button is-outlined" %>
+                <%= link_to "edit", edit_reaction_path(rt.id), class: "button is-outlined", 'aria-label': "Edit #{rt.name}" %>
             </div>
         </td>
     </tr>

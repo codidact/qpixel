@@ -38,3 +38,8 @@ child:
   community: sample
   tag_set: main
   parent: topic
+
+base:
+  name: base
+  community: sample
+  tag_set: main

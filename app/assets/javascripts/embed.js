@@ -10,9 +10,11 @@ $(() => {
     // Only embed raw YT links, i.e. not [text](link), only [link](link)
     if ((href.startsWith('https://youtube.com') || href.startsWith('https://www.youtube.com')) && $tgt.text() === href) {
       const videoId = /v=([^$&]+)/.exec(href);
-      $tgt.after(`<iframe width="100%" height="380" src="https://www.youtube-nocookie.com/embed/${videoId[1]}" frameborder="0" allowfullscreen
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`);
-      $tgt.remove();
+      if (videoId) {
+        $tgt.after(`<iframe width="100%" height="380" src="https://www.youtube-nocookie.com/embed/${videoId[1]}" frameborder="0" allowfullscreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`);
+        $tgt.remove();
+      }
     }
 
     // Likewise, only raw Spotify links

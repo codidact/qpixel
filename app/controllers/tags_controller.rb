@@ -13,10 +13,10 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.paginate(page: params[:page], per_page: 50)
+            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
-        render json: @tags
+        render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
       end
     end
   end
@@ -49,8 +49,10 @@ class TagsController < ApplicationController
               else
                 @tag.all_children + [@tag.id]
               end
+    displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
     post_ids = helpers.post_ids_for_tags(tag_ids)
-    @posts = Post.where(id: post_ids).undeleted.where(post_type_id: @category.display_post_types)
+    @posts = Post.joins(:tags).where(tags: { id: tag_ids })
+                 .undeleted.where(post_type_id: displayed_post_types)
                  .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                  .order(sort_param)
     respond_to do |format|
@@ -61,6 +63,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.tag_synonyms.build
   end
 
   def create
@@ -76,6 +79,7 @@ class TagsController < ApplicationController
 
   def edit
     check_your_privilege('edit_tags', nil, true)
+    @tag.tag_synonyms.build
   end
 
   def update
@@ -192,7 +196,8 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name,
+                                tag_synonyms_attributes: [:id, :name, :_destroy])
   end
 
   def exec(sql_array)

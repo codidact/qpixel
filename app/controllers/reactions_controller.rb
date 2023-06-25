@@ -33,13 +33,19 @@ class ReactionsController < ApplicationController
 
     reaction = Reaction.new(user: current_user, post: @post, reaction_type: reaction_type, comment: comment)
 
-    ActiveRecord::Base.transaction do
-      thread&.save!
-      comment&.save!
-      reaction.save!
-    end
+    begin 
+      ActiveRecord::Base.transaction do
+        thread&.save!
+        comment&.save!
+        reaction.save!
+      end
 
-    render json: { status: 'success' }
+      render json: { status: 'success' }
+    rescue
+      render json: { status: 'failed', message: "Could not create comment thread: #{(thread&.errors&.full_messages \
+                                                        + comment&.errors&.full_messages \
+                                                        + reaction.errors.full_messages).join(', ')}" }
+    end
   end
 
   def retract

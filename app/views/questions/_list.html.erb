@@ -1,10 +1,14 @@
 <div class="button-list is-gutterless has-float-right has-margin-2">
   <%= link_to 'Activity', query_url(root_url, sort: 'activity'),
               class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) || params[:sort] == 'activity' ?
-                                      'is-active' : ''}" %>
-  <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
-  <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}" %>
-  <%= link_to 'Random', questions_lottery_path, class: "button is-muted is-outlined #{current_page?(questions_lottery_path) ? 'is-active' : ''}" %>
+                                      'is-active' : ''}",
+              role: 'button', 'aria-label': 'Sort by activity' %>
+  <%= link_to 'Age', query_url(root_url, sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
+              role: 'button', 'aria-label': 'Sort by age' %>
+  <%= link_to 'Score', query_url(root_url, sort: 'score'), class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}",
+              role: 'button', 'aria-label': 'Sort by score' %>
+  <%= link_to 'Random', questions_lottery_path, class: "button is-muted is-outlined #{current_page?(questions_lottery_path) ? 'is-active' : ''}",
+              role: 'button', 'aria-label': 'Order randomly' %>
 </div>
 <div class="has-clear-clear">&nbsp;</div>
 

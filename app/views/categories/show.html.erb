@@ -50,6 +50,18 @@
   </div>
 </div>
 
+<details>
+  <summary>Filters (<%= @filtered ? @active_filter[:name] || 'Custom' : 'None' %>)</summary>
+  <% if @active_filter[:default] == true %>
+    <div class="notice is-info">
+      You are currently filtering by <strong><%= @active_filter[:name] %></strong> because it is set as your default for this category
+    </div>
+  <% end %>
+  <%= form_tag request.original_url, method: :get do %>
+    <%= render 'search/filters' %>
+  <% end %>
+</details>
+
 <div class="item-list">
   <% @posts.each do |post| %>
     <%= render 'posts/type_agnostic', post: post %>

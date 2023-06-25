@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyFilterOne
+  user: standard_user
+  min_score: 1.5
+  max_score: 1.5
+  min_answers: 1
+  max_answers: 1
+  status: MyString
+
+two:
+  name: MyFilterTwo
+  user: standard_user
+  min_score: 1.5
+  max_score: 1.5
+  min_answers: 1
+  max_answers: 1
+  status: MyString

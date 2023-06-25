@@ -4,19 +4,32 @@
   Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span>
   <% if moderator? %>
     <a href="#" class="has-font-size-caption js-rename-tag h-m-r-2"
-       data-category="<%= @category.id %>" data-tag="<%= @tag.id %>" data-name="<%= @tag.name %>">
+       data-category="<%= @category.id %>" data-tag="<%= @tag.id %>" data-name="<%= @tag.name %>"
+       aria-label="Rename this tag">
       <i class="fas fa-pencil-alt" aria-label="Rename" title="Rename"></i>
     </a>
-    <%= link_to select_tag_merge_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2' do %>
+    <%= link_to select_tag_merge_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2',
+                'aria-label': 'Merge this tag with other tags' do %>
       <i class="fas fa-project-diagram" aria-label="Merge" title="Merge"></i>
     <% end %>
   <% end %>
   <% if admin? %>
-    <%= link_to nuke_tag_warning_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2 is-red' do %>
+    <%= link_to nuke_tag_warning_path(id: @category.id, tag_id: @tag.id), class: 'has-font-size-caption h-m-r-2 is-red',
+                'aria-label': 'Nuke this tag' do %>
       <i class="fas fa-trash" aria-label="Nuke" title="Nuke"></i>
     <% end %>
   <% end %>
 </h1>
+
+<% if @tag.tag_synonyms.any? %>
+  <h3 class="has-margin-0" role="list">
+    Synonyms:
+    <% @tag.tag_synonyms.each do |synonym| %>
+      <span class="badge is-tag is-teal" role="listitem"><%= synonym.name %></span>
+    <% end %>
+  </h3>
+<% end %>
+
 <p class="has-color-tertiary-900 has-font-weight-normal has-margin-0 has-font-family-brand">
   <% if @tag.parent_id.present? %>
       Subtag of <%= link_to @tag.parent.name, tag_path(id: @category.id, tag_id: @tag.parent_id),
@@ -39,7 +52,8 @@
         <em>
           This tag doesn't have any usage information yet.
           <% if current_user&.privilege?('edit_tags') %>
-            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
+            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id),
+                        'aria-label': 'Help us create usage information for this tag' %>.
           <% end %>
         </em>
       </p>
@@ -61,7 +75,8 @@
         <em>
           This tag doesn't have a detailed wiki yet.
           <% if current_user&.privilege?('edit_tags') %>
-            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id) %>.
+            <%= link_to 'Help us create it', edit_tag_path(id: @category.id, tag_id: @tag.id),
+                        'aria-label': 'Help us create a detailed wiki for this tag' %>.
           <% end %>
         </em>
       </p>
@@ -70,7 +85,8 @@
 </div>
 
 <% if current_user&.privilege?('edit_tags') %>
-  <%= link_to 'Edit', edit_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-muted is-outlined' %>
+  <%= link_to 'Edit', edit_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-muted is-outlined',
+              'aria-label': "Edit tag #{@tag.name}" %>
 <% end %>
 
 <% post_count = @posts.count %>
@@ -80,14 +96,16 @@
     <%= 'post'.pluralize(post_count) %>
     <%= link_to 'Subscribe',
                 new_subscription_path(type: 'tag', qualifier: @tag.name, return_to: request.path),
-                class: 'button is-outlined' %>
+                class: 'button is-outlined', 'aria-label': "Subscribe to tag #{@tag.name}" %>
   </div>
 
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Tag Only', query_url(self: 1),
-                class: "button is-muted is-outlined #{params[:self].present? ? 'is-active' : ''}" %>
+                class: "button is-muted is-outlined #{params[:self].present? ? 'is-active' : ''}",
+                role: 'button', 'aria-label': 'View this tag only, without showing its children' %>
     <%= link_to 'Tag + Children', tag_path(id: @category.id, tag_id: @tag.id),
-                class: "button is-muted is-outlined #{params[:self].nil? ? 'is-active' : ''}" %>
+                class: "button is-muted is-outlined #{params[:self].nil? ? 'is-active' : ''}",
+                role: 'button', 'aria-label': 'View this tag and its children'%>
   </div>
 </div>
 
