@@ -52,3 +52,6 @@ qpixel-import.tar.gz
 *.swp
 
 dump.rdb
+
+# Ignore rbenv local file
+.ruby-version
