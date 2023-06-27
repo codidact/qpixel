@@ -145,6 +145,13 @@
     </span>
       <%= f.number_field :sequence, class: 'form-element' %>
     </div>
+
+    <div class="form-group">
+      <%= f.label :default_filter_id, class: 'form-element' %>
+      <span class="form-caption">The default filter for this category, used for anonymous users.</span>
+      <% system_filters = User.find(-1).filters.to_h { |filter| [filter.name, filter.id] } %>
+      <%= f.select :default_filter_id, options_for_select(system_filters, selected: @category.default_filter_id), { include_blank: true } %>
+    </div>
   </details>
 
   <details>
