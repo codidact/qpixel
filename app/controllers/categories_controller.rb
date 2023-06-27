@@ -169,14 +169,18 @@ class CategoriesController < ApplicationController
       if user_signed_in?
         default_filter_id = helpers.default_filter(current_user.id, @category.id)
         default_filter = Filter.find_by(id: default_filter_id)
+        default = :user if default_filter.present?
       end
 
-      default_filter ||=  @category.default_filter
+      if default_filter.nil?
+        default_filter = @category.default_filter
+        default = :category if default_filter.present?
+      end
       
       unless default_filter.nil?
         filter_qualifiers = helpers.filter_to_qualifiers default_filter
         @active_filter = {
-          default: true,
+          default: default,
           name: default_filter.name,
           min_score: default_filter.min_score,
           max_score: default_filter.max_score,
