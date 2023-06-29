@@ -1,0 +1,27 @@
+<% if post && post.post_type.name == 'Question' %>
+  <% suggested_answers = @children.filter { |answer| answer.score > 0.5 } %>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+        "@type": "QAPage",
+        "mainEntity": {
+        "@type": "Question",
+        "name": "<%= @post.title %>",
+        "text": "<%= strip_tags(@post.body).gsub(/\r?\n/, '\n') %>",
+        "answerCount": <%= @children&.length || 0 %>,
+        "upvoteCount": <%= @post.upvote_count %>,
+        "suggestedAnswer": [
+        <% suggested_answers.each_with_index do |answer, i| %>
+          <% if i > 0 then %>,<% end %>
+          {
+          "@type": "Answer",
+          "text": "<%= strip_tags(answer.body).gsub(/\r?\n/, '\n') %>",
+          "upvoteCount": <%= answer.upvote_count %>,
+          "url": "<%= post_url(answer) %>"
+          }
+        <% end %>
+        ]
+      }
+    }
+  </script>
+<% end %>

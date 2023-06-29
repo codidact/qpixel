@@ -17,6 +17,10 @@
   <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
+<% content_for :schema do %>
+  <%= render 'posts/schema', post: @post %>
+<% end %>
+
 <%= render 'posts/expanded', post: @post, float_notice: false %>
 
 <% if @post.post_type.has_answers %>
