@@ -68,6 +68,6 @@
   <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
-<% if @post %>
-  <%= render 'posts/schema', post: @post %>
+<% if content_for? :schema %>
+  <%= yield :schema %>
 <% end %>
