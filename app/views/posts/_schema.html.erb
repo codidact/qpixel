@@ -7,7 +7,7 @@
         "mainEntity": {
         "@type": "Question",
         "name": "<%= @post.title %>",
-        "text": "<%= @post.body.gsub(/\r?\n/, '') %>",
+        "text": "<%= strip_tags(@post.body).gsub(/\r?\n/, '\n') %>",
         "answerCount": <%= @children&.length || 0 %>,
         "upvoteCount": <%= @post.upvote_count %>,
         "suggestedAnswer": [
@@ -15,7 +15,7 @@
           <% if i > 0 then %>,<% end %>
           {
           "@type": "Answer",
-          "text": "<%= answer.body.gsub(/\r?\n/, '') %>",
+          "text": "<%= strip_tags(answer.body).gsub(/\r?\n/, '\n') %>",
           "upvoteCount": <%= answer.upvote_count %>,
           "url": "<%= post_url(answer) %>"
           }
