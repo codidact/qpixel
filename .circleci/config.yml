@@ -22,7 +22,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby27-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -30,7 +30,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby27-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -85,7 +85,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby30-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -93,7 +93,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby30-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -148,7 +148,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby31-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -156,7 +156,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby31-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -211,7 +211,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby27-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -219,7 +219,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby27-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -269,7 +269,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby30-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -277,7 +277,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby30-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -327,7 +327,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby31-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -335,7 +335,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby31-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
@@ -378,7 +378,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - qpixel-{{ checksum "Gemfile.lock" }}
+            - qpixel-ruby31-{{ checksum "Gemfile.lock" }}
             - qpixel-
       - run:
           name: Install Bundler & gems
@@ -386,7 +386,7 @@ jobs:
             gem install bundler
             bundle install --path=~/gems
       - save_cache:
-          key: qpixel-{{ checksum "Gemfile.lock" }}
+          key: qpixel-ruby31-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/gems
       - run:
