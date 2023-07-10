@@ -14,7 +14,7 @@
       <%= 'post'.pluralize(post_count) %> &middot;
     </div>
 
-  <div class="button-list is-gutterless">
+  <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Score', query_url(sort: 'score'), class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : ''),
                 role: 'button', 'aria-label': 'Sort by score' %>
     <%= link_to 'Age', query_url(sort: 'age'), class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : ''),
