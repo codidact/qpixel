@@ -270,13 +270,25 @@ window.QPixel = {
     return this._filters;
   },
 
-  defaultFilter: async categoryId => {
+  /**
+   * Fetches default user filter for a given category
+   * @param categoryId id of the category to fetch
+   * @returns {Promise<string>}
+   */
+  defaultFilter: async (categoryId) => {
+    const user = await QPixel.user();
+
+    if(!user) {
+        return '';
+    }
+
     const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
       credentials: 'include',
       headers: {
         'Accept': 'application/json'
       }
     });
+
     const data = await resp.json();
     return data.name;
   },
