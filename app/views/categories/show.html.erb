@@ -12,22 +12,21 @@
 
 <% post_count = @posts.count %>
 <div class="has-color-tertiary-500 category-meta">
-  <div title="<%= post_count %> posts">
+  <span title="<%= post_count %> posts">
     <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %> 
-  </div>
-  <div>
-    <% if current_user&.is_admin %>
-      <%= link_to 'Edit Category', edit_category_path(@category) %>
-      &middot;
-      <% end %>
-  </div>
-  <div title="Get email notifications for new top-level posts">
-    <%= link_to 'Subscribe',
-                new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
-                class: 'button is-outlined' %>
-  </div>
+    <%= 'post'.pluralize(post_count) %> &nbsp;
 
+  <% if current_user&.is_admin %>
+  <%= link_to 'Edit Category', edit_category_path(@category) %>
+  <% end %>
+
+
+  <%= link_to 'Subscribe',
+      new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
+      class: 'button is-outlined',
+      title: 'Get email notifications for new top-level posts' %>
+  </span>
+      
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Activity', query_url(sort: 'activity'),
                 class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
