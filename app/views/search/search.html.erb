@@ -7,10 +7,10 @@
 <% unless @posts.nil? %>
   <% post_count = @posts.count %>
   <div class="has-color-tertiary-500 flex-row jc-sb ai-c">
-    <div  title="<%= post_count %> posts">
+    <span  title="<%= post_count %> posts">
      <%= short_number_to_human post_count, precision: 1, significant: false %>
      <%= 'post'.pluralize(post_count) %>
-    </div>
+    </span>
     <div class="button-list is-gutterless has-margin-2">
       <%= link_to 'Relevance', query_url(sort: 'relevance'), class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}",
                   role: 'button', 'aria-label': 'Sort by relevance' %>
