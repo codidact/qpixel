@@ -12,19 +12,20 @@
 
 <% post_count = @posts.count %>
 <div class="has-color-tertiary-500 category-meta">
-  <span title="<%= post_count %> posts">
-    <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %> &nbsp;
+  <span>
+    <span title="<%= post_count %> posts">
+      <%= short_number_to_human post_count, precision: 1, significant: false %>
+      <%= 'post'.pluralize(post_count) %> &nbsp;
+    </span>
 
-  <% if current_user&.is_admin %>
-  <%= link_to 'Edit Category', edit_category_path(@category) %>
-  <% end %>
+    <% if current_user&.is_admin %>
+    <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
+    <% end %>
 
-
-  <%= link_to 'Subscribe',
-      new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
-      class: 'button is-outlined',
-      title: 'Get email notifications for new top-level posts' %>
+    <%= link_to 'Subscribe',
+	new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
+	class: 'button is-outlined',
+	title: 'Get email notifications for new top-level posts' %>
   </span>
       
   <div class="button-list is-gutterless has-margin-2">
