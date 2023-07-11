@@ -165,7 +165,7 @@ class CategoriesController < ApplicationController
     filter_qualifiers = helpers.params_to_qualifiers
     @active_filter = helpers.active_filter
 
-    if filter_qualifiers.blank?
+    if filter_qualifiers.blank? && @active_filter[:name].blank?
       if user_signed_in?
         default_filter_id = helpers.default_filter(current_user.id, @category.id)
         default_filter = Filter.find_by(id: default_filter_id)
