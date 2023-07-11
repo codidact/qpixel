@@ -7,8 +7,8 @@
 <h1>Posts by <%= user_link @user %></h1>
 
 <% post_count = @posts.count %>
-<div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
-  <div>
+<div class="has-color-tertiary-500 category-meta">
+  <div title="<%= post_count %> posts">
     <%= short_number_to_human post_count, precision: 1, significant: false %>
     <%= 'post'.pluralize(post_count) %> 
   </div>
