@@ -70,8 +70,9 @@
     </div>
   </div>
   <div class="widget--body">
-    <p class="h-m-0">Suggested <%= time_ago_in_words(@edit.created_at) %> ago by
-      <%= user_link @edit.user %></p>
+    <p class="h-m-0">Suggested
+      <span title="<%= @edit.created_at.iso8601 %>" ><%= time_ago_in_words(@edit.created_at) %> ago</span>
+      by <%= user_link @edit.user %></p>
   </div>
   <% if @edit.active? && may_decide %>
     <div class="widget--footer">
