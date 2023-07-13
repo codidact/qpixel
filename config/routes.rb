@@ -357,4 +357,8 @@ Rails.application.routes.draw do
   scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
+
+  # Communities can have custom js or css defined (placed in public/assets/community).
+  # If these are not defined for a community, respond with 204 (ok but empty)
+  get '/assets/community/*path', to: ->(env) { [204, {}, ['']] }
 end
