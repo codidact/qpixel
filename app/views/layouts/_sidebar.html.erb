@@ -106,14 +106,20 @@
 
   <div class="widget has-margin-4">
     <div class="widget--header">
-      <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
+      <% if codidact? %>
+        <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
+      <% else %>
+        <img src="<%= SiteSetting['SiteLogoPath'] %>" alt="Logo" class="codidact-logo" />
+      <% end %>
     </div>
     <div class="widget--body">
       <% chat = SiteSetting['ChatLink'] %>
-      <p>
-        This community is part of the <a href="https://codidact.com">Codidact network</a>.
-        We have other communities too &mdash; take a look!
-      </p>
+      <% if codidact? %>
+        <p>
+          This community is part of the <a href="https://codidact.com">Codidact network</a>.
+          We have other communities too &mdash; take a look!
+        </p>
+      <% end %>
       <% if chat.present? %>
         <p>
           You can also <%= link_to 'join us in chat', chat %>!

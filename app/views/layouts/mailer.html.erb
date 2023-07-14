@@ -10,8 +10,8 @@
 <div class="header">
   <div class="container header--container">
     <%= link_to root_url, class: 'header--site-name' do %>
-      <%= image_tag asset_path('codidact.png', host: 'meta.codidact.com', protocol: 'https'), height: 40, width: 167,
-                    alt: 'Codidact logo' %>
+      <%= image_tag "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}", height: 40, width: 167,
+                    alt: "#{SiteSetting['SiteName']} logo" %>
     <% end %>
   </div>
 </div>

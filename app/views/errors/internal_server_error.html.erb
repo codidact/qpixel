@@ -12,11 +12,13 @@
 </p>
 
 <p>This error has been logged. We even look at them sometimes.</p>
-<p>
-  You can also report this
-  <a href="https://meta.codidact.com/" target="_blank" rel="noopener noreferrer">on Meta</a>
-  to help us keep track of what's going wrong &mdash; quote error ID <code><%= @log.uuid %></code>.
-</p>
+<% if codidact? %>
+  <p>
+    You can also report this
+    <a href="https://meta.codidact.com/" target="_blank" rel="noopener noreferrer">on Meta</a>
+    to help us keep track of what's going wrong &mdash; quote error ID <code><%= @log.uuid %></code>.
+  </p>
+<% end %>
 
 <p>
   <%= link_to 'Go back', :back, class: 'button is-outlined' %>

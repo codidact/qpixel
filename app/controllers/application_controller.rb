@@ -369,4 +369,9 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  # Whether this host is on the codidact network
+  def codidact?
+    helpers.codidact?
+  end
 end
