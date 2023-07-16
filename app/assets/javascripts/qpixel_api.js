@@ -165,6 +165,12 @@ window.QPixel = {
   },
 
   /**
+   * Used to prevent launching multiple requests to /users/me
+   * @type {Promise<User>|null}
+   */
+  _pendingUser: null,
+
+  /**
    * @type {User|null}
    */
   _user: null,
@@ -177,13 +183,31 @@ window.QPixel = {
     if (QPixel._user != null || document.body.dataset.userId === 'none') {
       return QPixel._user;
     }
-    const resp = await fetch('/users/me', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    QPixel._user = await resp.json();
+
+    if(QPixel._pendingUser) {
+        return QPixel._pendingUser
+    }
+
+    try {
+        const myselfPromise = fetch('/users/me', {
+            credentials: 'include',
+            headers: {
+              'Accept': 'application/json'
+            }
+        });
+
+        QPixel._pendingUser = myselfPromise;
+
+        const resp = await myselfPromise;
+
+        QPixel._user = await resp.json();
+    } catch(error) {
+        throw error
+    } finally {
+        // ensures pending user is cleared regardless of network errors
+        QPixel._pendingUser = null;
+    }
+
     return QPixel._user;
   },
 
