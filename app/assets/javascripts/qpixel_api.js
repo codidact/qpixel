@@ -3,6 +3,19 @@ const validators = [];
 /** Counts notifications popped up at any time. */
 let popped_modals_ct = 0;
 
+/**
+ * @typedef {{
+ *  id: number,
+ *  username: string,
+ *  is_moderator: boolean,
+ *  is_admin: boolean,
+ *  is_global_moderator: boolean,
+ *  is_global_admin: boolean,
+ *  trust_level: number,
+ *  se_acct_id: string | null,
+ * }} User
+ */
+
 window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
@@ -151,11 +164,14 @@ window.QPixel = {
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   },
 
+  /**
+   * @type {User|null}
+   */
   _user: null,
 
   /**
    * Get the user object for the current user.
-   * @returns {Promise<Object>} a JSON object containing user details
+   * @returns {Promise<User>} a JSON object containing user details
    */
   user: async () => {
     if (QPixel._user != null || document.body.dataset.userId === 'none') {
