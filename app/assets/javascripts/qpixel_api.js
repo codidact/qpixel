@@ -5,6 +5,17 @@ let popped_modals_ct = 0;
 
 /**
  * @typedef {{
+ *  min_score: number | null,
+ *  max_score: number | null,
+ *  min_answers: number | null,
+ *  max_answers: number | null,
+ *  include_tags: [string, number][],
+ *  exclude_tags: [string, number][],
+ *  status: 'any' | 'closed' | 'open',
+ *  system: boolean,
+ * }} Filter
+ *
+ * @typedef {{
  *  id: number,
  *  username: string,
  *  is_moderator: boolean,
@@ -294,6 +305,9 @@ window.QPixel = {
     }
   },
 
+  /**
+   * @returns {Promise<Record<string, Filter>>}
+   */
   filters: async () => {
     if (this._filters == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
