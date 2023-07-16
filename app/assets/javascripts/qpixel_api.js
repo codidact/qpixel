@@ -205,10 +205,12 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
-    // Do not attempt to access preference if user is not signed in
-    if (document.body.dataset.userId === 'none') {
-      return null;
+    const user = await QPixel.user();
+
+    if(!user) {
+        return null
     }
+
     let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
