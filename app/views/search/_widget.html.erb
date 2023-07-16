@@ -16,6 +16,7 @@
     <div class="widget--body">
       <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
       <p>Further help with searching is available <%= link_to 'in the help center', help_path('search') %>.</p>
+      <p>Quick hints: <code>tag:tagname</code>, <code>user:xxx</code>, <code>"exact phrase"</code>, <code>post_type:xxx</code>, <code>created:&lt;N{d,w,m}</code></p>
     </div>
   </div>
 
