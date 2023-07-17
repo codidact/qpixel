@@ -171,7 +171,8 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # @param user [User]
   def encrypt_user_info(user)
     len = ActiveSupport::MessageEncryptor.key_len - 1
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..len])
+    key = Rails.application.secrets.secret_key_base || Rails.application.credentials.secret_key_base
+    crypt = ActiveSupport::MessageEncryptor.new(key[0..len])
     crypt.encrypt_and_sign(user.id, expires_in: 1.minute)
   end
 
@@ -179,7 +180,8 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # @param data
   def decrypt_user_info(data)
     len = ActiveSupport::MessageEncryptor.key_len - 1
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..len])
+    key = Rails.application.secrets.secret_key_base || Rails.application.credentials.secret_key_base
+    crypt = ActiveSupport::MessageEncryptor.new(key[0..len])
     crypt.decrypt_and_verify(data)
   end
 
