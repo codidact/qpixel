@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   devise_scope :user do
     get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
+    get  'users/saml/sign_in_request_from_other/:id', to: 'users/saml_sessions#sign_in_request_from_other', as: :sign_in_request_from_other
+    get  'users/saml/sign_in_return_from_base',       to: 'users/saml_sessions#sign_in_return_from_base', as: :sign_in_return_from_base
+    get  'users/saml/after_sign_in_check',            to: 'users/saml_sessions#after_sign_in_check', as: :after_sign_in_check
   end
 
   root                                     to: 'categories#homepage'
