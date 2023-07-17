@@ -36,7 +36,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
       return
     end
 
-    return unless post_sign_in(user, true)
+    return unless post_sign_in(current_user, true)
 
     redirect_to after_sign_in_path_for(current_user)
   end
