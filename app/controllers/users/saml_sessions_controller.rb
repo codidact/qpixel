@@ -18,7 +18,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # made here should probably also be applied over there.
   def create
     super do |user|
-      return unless post_sign_in(user)
+      return unless post_sign_in(user, false)
 
       # SSO Only - Redirect to filler endpoint to actually get the clients cookie values (not sent to us here).
       # We need to check cookies because we may be signing in for another community.
@@ -36,6 +36,8 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
       handle_sign_in_for_other_community(current_user)
       return
     end
+
+    return unless post_sign_in(user, true)
 
     redirect_to after_sign_in_path_for(current_user)
   end
@@ -83,7 +85,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
 
     # Actually sign in the user and handle the post-sign-in behavior
     sign_in(user)
-    return unless post_sign_in(user)
+    return unless post_sign_in(user, true)
 
     # Finish with default devise behavior for sign ins
     redirect_to after_sign_in_path_for(user)
@@ -98,8 +100,9 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # If you make changes here, you may also have to update that method.
   #
   # @param user [User]
+  # @param final_destination [Boolean] whether the current community is the one the user is trying to sign into
   # @return [Boolean] false if the user was redirected by this
-  def post_sign_in(user)
+  def post_sign_in(user, final_destination = false)
     # If the user was banished, let them know non-specifically.
     if user.deleted? || user.community_user&.deleted?
       # The IDP already confirmed the sign in, so we can't fool the user any more that their credentials were incorrect.
@@ -112,8 +115,15 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
 
     # Enforce 2fa if enabled for SSO users
     if SiteSetting['Enable2FAForSsoUsers'] && user.enabled_2fa
-      handle_2fa_login(user)
-      return false
+      if final_destination
+        handle_2fa_login(user)
+        return false
+      else
+        # User needs to do 2FA, but we are (potentially) signing in for a different community.
+        # Sign them out and continue the sign in process, when they reach the final destination we will do 2FA there.
+        sign_out user
+        return true
+      end
     end
 
     true
