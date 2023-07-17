@@ -4,8 +4,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
     # If this is not the base community, then redirect them there for the sign in
     base = base_community
     if base.id != RequestContext.community_id
-      redirect_to "http#{'s' if Rails.env.production?}://#{base.host}" \
-                  "#{sign_in_request_from_other_path(RequestContext.community_id)}",
+      redirect_to "//#{base.host}#{sign_in_request_from_other_path(RequestContext.community_id)}",
                   allow_other_host: true
       return
     end
@@ -164,8 +163,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
     # We signed in for a different community, we need to send them back to the original community with encrypted
     # info about who signed in.
     encrypted_user_info = encrypt_user_info(user)
-    redirect_to "http#{'s' if Rails.env.production?}://#{community.host}#{sign_in_return_from_base_path}" \
-                "?message=#{CGI.escape(encrypted_user_info)}",
+    redirect_to "//#{community.host}#{sign_in_return_from_base_path}?message=#{CGI.escape(encrypted_user_info)}",
                 allow_other_host: true
   end
 
