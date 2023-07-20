@@ -383,11 +383,14 @@ class ApplicationController < ActionController::Base
   #    infinite redirect loop.
   # - The request is an Ajax request as this can lead to very unexpected behaviour.
   # - The request is to a location we dont want to store, such as:
-  #   - Anything trying to fetch for the current user (filters, preferences, etc)
-  #   - Uploaded files (these appear in posts and are not the main route we would want to store)
+  #   - Anything trying to fetch for the current user (filters, preferences, etc) as it is not the actual page
+  #   - The mobile login, as it would redirect to the code url after the sign in
+  #   - Uploaded files, as these appear in posts and are not the main route we would want to store
   def storable_location?
     request.get? && is_navigational_format? && !devise_controller? && !request.xhr? &&
-      !request.path.start_with?('/users/me') && !request.path.start_with?('/uploads/')
+      !request.path.start_with?('/users/me') &&
+      !request.path.start_with?('/users/mobile-login') &&
+      !request.path.start_with?('/uploads/')
   end
 
   # Stores the location in the system for the current session, such that after login we send them back to the same page.
