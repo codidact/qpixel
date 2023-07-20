@@ -83,6 +83,10 @@ group :test do
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'term-ansicolor', '~> 1.7'
+
+  gem 'capybara', '~> 3.38'
+  gem 'selenium-webdriver', '~> 4.7'
+  gem 'webdrivers', '~> 5.2'
 end
 
 group :development, :test do
