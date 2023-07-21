@@ -66,6 +66,64 @@ jobs:
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
+  system-test-ruby27:
+    docker:
+      - image: cimg/ruby:2.7-browsers
+      - image: cimg/mysql:8.0
+        command: [--default-authentication-plugin=mysql_native_password]
+        environment:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: 'qpixel_test'
+      - image: cimg/redis:7.0
+
+    working_directory: ~/qpixel
+
+    steps:
+      - run:
+          name: Install packages
+          command: |
+            sudo apt-get --allow-releaseinfo-change -qq update
+            sudo apt-get -y install git libmariadb-dev libmagickwand-dev
+      - checkout
+      - restore_cache:
+          keys:
+            - qpixel-ruby27-{{ checksum "Gemfile.lock" }}
+            - qpixel-
+      - run:
+          name: Install Bundler & gems
+          command: |
+            gem install bundler
+            bundle install --path=~/gems
+      - save_cache:
+          key: qpixel-ruby27-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/gems
+      - run:
+          name: Copy key
+          command: |
+            if [ -z "$MASTER_KEY" ]; then rm config/credentials.yml.enc; else echo "$MASTER_KEY" > config/master.key; fi
+      - run:
+          name: Prepare config & database
+          environment:
+            RAILS_ENV: test
+          command: |
+            cp config/database.sample.yml config/database.yml
+            cp config/storage.sample.yml config/storage.yml
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
+            bundle exec rails db:migrate
+            bundle exec rails test:prepare
+      - run:
+          name: Current revision
+          command: |
+            git rev-parse $(git rev-parse --abbrev-ref HEAD)
+      - run:
+          name: Test
+          command: |
+            bundle exec rails test:system
+      - store_test_results:
+          path: "~/qpixel/test/reports"
 
   test-ruby31:
     docker:
@@ -133,6 +191,64 @@ jobs:
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
+  system-test-ruby31:
+    docker:
+      - image: cimg/ruby:3.1-browsers
+      - image: cimg/mysql:8.0
+        command: [ --default-authentication-plugin=mysql_native_password ]
+        environment:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: 'qpixel_test'
+      - image: cimg/redis:7.0
+
+    working_directory: ~/qpixel
+
+    steps:
+      - run:
+          name: Install packages
+          command: |
+            sudo apt-get --allow-releaseinfo-change -qq update
+            sudo apt-get -y install git libmariadb-dev libmagickwand-dev
+      - checkout
+      - restore_cache:
+          keys:
+            - qpixel-ruby31-{{ checksum "Gemfile.lock" }}
+            - qpixel-
+      - run:
+          name: Install Bundler & gems
+          command: |
+            gem install bundler
+            bundle install --path=~/gems
+      - save_cache:
+          key: qpixel-ruby31-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/gems
+      - run:
+          name: Copy key
+          command: |
+            if [ -z "$MASTER_KEY" ]; then rm config/credentials.yml.enc; else echo "$MASTER_KEY" > config/master.key; fi
+      - run:
+          name: Prepare config & database
+          environment:
+            RAILS_ENV: test
+          command: |
+            cp config/database.sample.yml config/database.yml
+            cp config/storage.sample.yml config/storage.yml
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
+            bundle exec rails db:migrate
+            bundle exec rails test:prepare
+      - run:
+          name: Current revision
+          command: |
+            git rev-parse $(git rev-parse --abbrev-ref HEAD)
+      - run:
+          name: Test
+          command: |
+            bundle exec rails test:system
+      - store_test_results:
+          path: "~/qpixel/test/reports"
 
   rubocop:
     docker:
@@ -191,11 +307,15 @@ workflows:
     jobs:
       - test-ruby27
       - test-ruby31
+      - system-test-ruby27
+      - system-test-ruby31
       - rubocop
       - deploy:
           requires:
             - test-ruby27
             - test-ruby31
+            - system-test-ruby27
+            - system-test-ruby31
             - rubocop
           filters:
             branches:
