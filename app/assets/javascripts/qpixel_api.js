@@ -177,9 +177,9 @@ window.QPixel = {
 
   /**
    * Used to prevent launching multiple requests to /users/me
-   * @type {Promise<User>|null}
+   * @type {Promise<Response>|null}
    */
-  _pendingUser: null,
+  _pendingUserResponse: null,
 
   /**
    * @type {User|null}
@@ -195,8 +195,8 @@ window.QPixel = {
       return QPixel._user;
     }
 
-    if(QPixel._pendingUser) {
-        return QPixel._pendingUser
+    if(QPixel._pendingUserResponse) {
+        return QPixel._pendingUserResponse
     }
 
     try {
@@ -207,14 +207,14 @@ window.QPixel = {
             }
         });
 
-        QPixel._pendingUser = myselfPromise;
+        QPixel._pendingUserResponse = myselfPromise;
 
         const resp = await myselfPromise;
 
         QPixel._user = await resp.json();
     } finally {
         // ensures pending user is cleared regardless of network errors
-        QPixel._pendingUser = null;
+        QPixel._pendingUserResponse = null;
     }
 
     return QPixel._user;
