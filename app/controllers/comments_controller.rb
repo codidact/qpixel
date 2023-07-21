@@ -102,11 +102,16 @@ class CommentsController < ApplicationController
 
   def update
     before = @comment.content
+    before_pings = check_for_pings @comment_thread, before
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
         AuditLog.moderator_audit(event_type: 'comment_update', related: @comment, user: current_user,
                                  comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
+
+      after_pings = check_for_pings @comment_thread, params[:content]
+      apply_pings(after_pings - before_pings)
+
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
     else
