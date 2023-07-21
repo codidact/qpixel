@@ -24,14 +24,15 @@ class PostHistoryController < ApplicationController
     end
 
     # TODO Remove from the hash the elements that we did not change (the ones that are nil)?
-    opts = { before: @post.body_markdown, after: @history.before_state,
-             before_title: @post.title, after_title: @history.before_title,
-             before_tags: @post.tags.to_a, after_tags: @history.before_tags.to_a,
-             comment: "Rollback of [##{index} (#{@history.id})](#{post_history_url(@post, anchor: index)})"
+    opts = {
+      before: @post.body_markdown, after: @history.before_state,
+      before_title: @post.title, after_title: @history.before_title,
+      before_tags: @post.tags.to_a, after_tags: @history.before_tags.to_a,
+      comment: "Rollback of [##{index}: #{@history.post_history_type.name}](#{post_history_url(@post, anchor: index)})"
     }
 
     # Do the actual rollback
-    if true #rollback_post_history
+    if rollback_post_history
       Rails.logger.info("\n\n\nSuccessfull rollback!")
     else
       flash[:danger] = 'Unable to rollback revision! #{@post.errors.full_messages.join(', ')}'
@@ -61,15 +62,17 @@ class PostHistoryController < ApplicationController
       @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_undeleted'
-      # TODO We need to find the last deleting history element
-      @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
+      predecessor = find_predecessor('post_deleted')
+      @post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'question_closed'
       @post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'question_reopened'
-      # TODO We need to find the last closing history element
-      @post.update(closed: true, closed_by: current_user, closed_at: DateTime.now, close_reason: '', duplicate_post: nil,
+      predecessor = find_predecessor('question_closed')
+      # TODO We need to find the close reason properly, this doesn't exist
+      @post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
+                   close_reason: predecessor.close_reason, duplicate_post: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_edited'
       @post.title = @history.before_title if @history.before_title
@@ -77,9 +80,20 @@ class PostHistoryController < ApplicationController
       @post.body = ApplicationController.helpers.render_markdown(@history.before_state) if @history.before_state
       @post.tags_cache += @history.tags_removed.map(&:name)
       @post.tags_cache -= @history.tags_added.map(&:name)
+      @post.last_activity = DateTime.now
+      @post.last_activity_by = current_user
       @post.save
     else
       false
     end
+  end
+
+  def find_predecessor(type)
+    # TODO Test if correct
+    @post.post_histories
+         .where(post_history_type: PostHistoryType.find(name: type).id)
+         .where(created_at: ..@history.created_at)
+         .order(created_at: :desc)
+         .first
   end
 end
