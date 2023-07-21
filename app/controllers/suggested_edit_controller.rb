@@ -31,10 +31,10 @@ class SuggestedEditController < ApplicationController
     end
 
     opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: @edit.comment,
-             before_title: @post.title, after_title: @edit.title, before_tags: @post.tags, after_tags: @edit.tags }
+             before_title: @post.title, after_title: @edit.title, before_tags: @post.tags.to_a, after_tags: @edit.tags }
 
-    before = { before_body: @post.body, before_body_markdown: @post.body_markdown, before_tags_cache: @post.tags_cache,
-               before_tags: @post.tags.to_a, before_title: @post.title }
+    before = { before_body: @post.body, before_body_markdown: @post.body_markdown,
+               before_tags_cache: @post.tags_cache.dup, before_tags: @post.tags.to_a, before_title: @post.title }
 
     if @post.update(applied_details)
       @edit.update(before.merge(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
