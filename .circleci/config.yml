@@ -124,6 +124,9 @@ jobs:
             bundle exec rails test:system
       - store_test_results:
           path: "~/qpixel/test/reports"
+      - store_artifacts:
+          path: "~/qpixel/tmp/screenshots"
+          when: on_fail
 
   test-ruby31:
     docker:
@@ -249,6 +252,9 @@ jobs:
             bundle exec rails test:system
       - store_test_results:
           path: "~/qpixel/test/reports"
+      - store_artifacts:
+          path: "~/qpixel/tmp/screenshots"
+          when: on_fail
 
   rubocop:
     docker:
