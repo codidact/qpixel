@@ -331,17 +331,17 @@ class ApplicationController < ActionController::Base
   # - /help, /policy, /help/* and /policy/*
   def enforce_signed_in
     if SiteSetting['RestrictedAccess'] &&
-      !user_signed_in? &&
-      !Rails.env.test? &&
-      !request.fullpath.start_with?('/4') &&
-      request.fullpath != '/500' &&
-      !request.fullpath.end_with?('.css') &&
-      !request.fullpath.end_with?('.js') &&
-      !request.fullpath.start_with?('/assets/') &&
-      (
-        controller_name != 'posts' ||
-          (!request.fullpath.start_with?('/help') && !request.fullpath.start_with?('/policy'))
-      )
+       !user_signed_in? &&
+       !Rails.env.test? &&
+       !request.fullpath.start_with?('/4') &&
+       request.fullpath != '/500' &&
+       !request.fullpath.end_with?('.css') &&
+       !request.fullpath.end_with?('.js') &&
+       !request.fullpath.start_with?('/assets/') &&
+       (
+         controller_name != 'posts' ||
+           (!request.fullpath.start_with?('/help') && !request.fullpath.start_with?('/policy'))
+       )
 
       store_location_for(:user, request.fullpath) if storable_location?
 
