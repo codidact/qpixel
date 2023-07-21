@@ -13,6 +13,16 @@ class PostHistory < ApplicationRecord
     tags.where(post_history_tags: { relationship: 'after' })
   end
 
+  # @return [Array] the tags that were removed in this history step
+  def tags_removed
+    before_tags - after_tags
+  end
+
+  # @return [Array] the tags that were added in this history step
+  def tags_added
+    after_tags - before_tags
+  end
+
   def self.method_missing(name, *args, **opts)
     unless args.length >= 2
       raise NoMethodError
@@ -54,5 +64,29 @@ class PostHistory < ApplicationRecord
 
   def self.respond_to_missing?(method_name, include_private = false)
     PostHistoryType.exists?(name: method_name.to_s) || super
+  end
+
+  def can_rollback?
+    case post_history_type.name
+    when 'post_deleted'
+      post.deleted?
+    when 'post_undeleted'
+      !post.deleted?
+    when 'question_closed'
+      post.closed?
+    when 'question_reopened'
+      !post.closed?
+    when 'post_edited'
+      # Post title must be still what it was after the edit
+      (after_title.nil? || after_title == before_title || after_title == post.title) &&
+        # Post body must be still the same
+        (after_state.nil? || after_state == before_state || after_state == post.body_markdown) &&
+        # Post tags that were removed must not have been re-added
+        (tags_removed & post.tags == []) &&
+        # Post tags that were added must not have been removed
+        (tags_added - post.tags == [])
+    else
+      false
+    end
   end
 end

@@ -27,6 +27,15 @@
       <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
         <span class="js-text">copy link</span>
       <% end %>
+      <% if event.can_rollback? %>
+        <%= link_to 'Rollback',
+                    rollback_post_history_url(@post, event),
+                    class: 'button is-filled',
+                    role: 'button',
+                    'aria-label': "Rollback change ##{index}",
+                    method: :post
+        %>
+      <% end %>
     </summary>
     <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
       <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
