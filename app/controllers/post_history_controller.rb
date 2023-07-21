@@ -23,33 +23,27 @@ class PostHistoryController < ApplicationController
       return
     end
 
-    # TODO Remove from the hash the elements that we did not change (the ones that are nil)?
     opts = {
-      before: @post.body_markdown, after: @history.before_state,
-      before_title: @post.title, after_title: @history.before_title,
-      before_tags: @post.tags.to_a, after_tags: @history.before_tags.to_a,
+      before: @post.body_markdown, before_title: @post.title, before_tags: @post.tags.to_a,
       comment: "Rollback of [##{index}: #{@history.post_history_type.name}](#{post_history_url(@post, anchor: index)})"
     }
 
     # Do the actual rollback
-    if rollback_post_history
-      Rails.logger.info("\n\n\nSuccessfull rollback!")
-    else
-      flash[:danger] = 'Unable to rollback revision! #{@post.errors.full_messages.join(', ')}'
+    unless rollback_post_history
+      flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
       redirect_to post_history_path(@post)
       return
     end
+
+    opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
 
     # Record in the history that this element was rolled back
     new_history = PostHistory.history_rolled_back(@post, current_user, **opts)
 
     # Store that the previous history was rolled back
     # TODO Add migration
-    @history.update(rolled_back_with: new_history)
+    # @history.update(rolled_back_with: new_history)
 
-    Rails.logger.info("\n\n\n #{@history.id} #{@history}")
-
-    nops
     flash[:success] = 'History successfully rolled back'
     redirect_to post_history_path(@post)
   end
@@ -75,9 +69,11 @@ class PostHistoryController < ApplicationController
                    close_reason: predecessor.close_reason, duplicate_post: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_edited'
-      @post.title = @history.before_title if @history.before_title
-      @post.body_markdown = @history.before_state if @history.before_state
-      @post.body = ApplicationController.helpers.render_markdown(@history.before_state) if @history.before_state
+      @post.title = @history.before_title if @history.before_title && @history.before_title != @history.after_title
+      if @history.before_state && @history.before_state != @history.after_state
+        @post.body_markdown = @history.before_state
+        @post.body = ApplicationController.helpers.render_markdown(@history.before_state)
+      end
       @post.tags_cache += @history.tags_removed.map(&:name)
       @post.tags_cache -= @history.tags_added.map(&:name)
       @post.last_activity = DateTime.now
