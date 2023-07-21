@@ -35,7 +35,9 @@ class Post < ApplicationRecord
 
   validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_valid, if: -> { post_type.has_license }
-  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
+  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category && tags_cache_changed? }
+
+  # Other validations (shared with suggested edits) are in concerns/PostValidations
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
