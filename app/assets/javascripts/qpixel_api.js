@@ -212,8 +212,6 @@ window.QPixel = {
         const resp = await myselfPromise;
 
         QPixel._user = await resp.json();
-    } catch(error) {
-        throw error
     } finally {
         // ensures pending user is cleared regardless of network errors
         QPixel._pendingUser = null;
