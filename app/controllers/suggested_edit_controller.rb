@@ -30,6 +30,9 @@ class SuggestedEditController < ApplicationController
       return
     end
 
+    # The to_a / dup methods called on the tags for `opts` and `before` are necessary.
+    # We need to work on a copy of them, because we update the post before the edit, which will change their values.
+    # (We would otherwise be pointing to the same instance, and only see the updated version).
     opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: @edit.comment,
              before_title: @post.title, after_title: @edit.title, before_tags: @post.tags.to_a, after_tags: @edit.tags }
 
