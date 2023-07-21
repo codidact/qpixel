@@ -101,6 +101,8 @@ class CommentsController < ApplicationController
   end
 
   def update
+    @post = @comment.post
+    @comment_thread = @comment.comment_thread
     before = @comment.content
     before_pings = check_for_pings @comment_thread, before
     if @comment.update comment_params
@@ -109,8 +111,8 @@ class CommentsController < ApplicationController
                                  comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
-      after_pings = check_for_pings @comment_thread, params[:content]
-      apply_pings(after_pings - before_pings)
+      after_pings = check_for_pings @comment_thread, @comment.content
+      apply_pings(after_pings - before_pings - @comment_thread.thread_follower.to_a)
 
       render json: { status: 'success',
                      comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
