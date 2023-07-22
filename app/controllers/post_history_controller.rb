@@ -25,10 +25,18 @@ class PostHistoryController < ApplicationController
 
     opts = {
       before: @post.body_markdown, before_title: @post.title, before_tags: @post.tags.to_a,
-      comment: "Rollback of [##{index}: #{@history.post_history_type.name}](#{post_history_url(@post, anchor: index)})"
+      comment: "Rollback of [##{index}: #{@history.post_history_type.name.humanize}]" \
+               "(#{post_history_url(@post, anchor: index)})",
+      extra: { rollback_of_id: @history.id, rollback_index: index }
     }
 
-    # Do the actual rollback within a transaction with the history to ensure we don't end up in inconsistent states
+    # If we are closing a question, also record the close reason from the original history item
+    rollback_type = @history.post_history_type.name_inverted
+    if rollback_type == 'question_closed'
+      opts[:extra][:close_reason_id] = @history.extra&.fetch('close_reason_id', nil)
+      opts[:extra][:duplicate_post_id] = @history.extra&.fetch('duplicate_post_id', nil)
+    end
+
     PostHistory.transaction do
       unless rollback_post_history
         flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
@@ -36,10 +44,10 @@ class PostHistoryController < ApplicationController
         return
       end
 
-      opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
+      opts = opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
 
       # Record in the history that this element was rolled back
-      new_history = PostHistory.history_rolled_back(@post, current_user, **opts)
+      new_history = PostHistory.send(rollback_type, @post, current_user, **opts)
 
       # Set the original to be rolled back
       @history.extra = {} unless @history.extra
