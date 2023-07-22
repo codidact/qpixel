@@ -5,6 +5,22 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
+  # Unfortunately there is a difference between how MySQL and MariaDB handle JSON fields. MySQL regards JSON as a
+  # special data type and stores it in a special format. MariaDB considers JSON as an alias for longtext, which would
+  # rely on proper serialization in Rails to parse back into JSON data. To support both, we have this method here.
+  attribute(:extra) do |cast_type|
+    # rubocop:disable Style/CaseEquality - The original code in ActiveRecord also uses a triple equals
+    if cast_type.is_a?(ActiveRecord::Type::Json)
+      # Database wants a JSON object, no serialization necessary (MySQL)
+      cast_type
+    else
+      # Database doesn't want JSON, convert it into a string with JSON in it (MariaDB)
+      cast_type = cast_type.subtype if ActiveRecord::Type::Serialized === cast_type
+      ActiveRecord::Type::Serialized.new(cast_type, ActiveRecord::Coders::JSON)
+    end
+    # rubocop:enable Style/CaseEquality
+  end
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
@@ -29,7 +45,7 @@ class PostHistory < ApplicationRecord
     end
 
     object, user = args
-    fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags]
+    fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags, :extra]
     values = fields.to_h { |f| [f, nil] }.merge(opts)
 
     history_type_name = name.to_s
@@ -41,7 +57,7 @@ class PostHistory < ApplicationRecord
 
     params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     { before: :before_state, after: :after_state, comment: :comment, before_title: :before_title,
-      after_title: :after_title }.each do |arg, attr|
+      after_title: :after_title, extra: :extra }.each do |arg, attr|
       next if values[arg].nil?
 
       params = params.merge(attr => values[arg])
