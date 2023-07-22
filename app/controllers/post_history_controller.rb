@@ -12,6 +12,7 @@ class PostHistoryController < ApplicationController
   end
 
   def rollback
+    # TODO: Authentication
     @post = Post.find(params[:post_id])
     @history = PostHistory.find(params[:id])
     histories = @post.post_histories.order(created_at: :asc).ids
