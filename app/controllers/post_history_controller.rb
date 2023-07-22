@@ -51,6 +51,37 @@ class PostHistoryController < ApplicationController
     redirect_to post_history_path(@post)
   end
 
+  # Creats a message for the extra information from the post.
+  def construct_extra_message(post_history)
+    return nil unless extra.present?
+
+    # Note that we must use strings as indices for the hash since we are working with a JSON object.
+    case post_history.post_history_type.name
+    when 'question_closed'
+      # Some question closed will not have a close reason, use fetch and find_by.
+      close_reason_id = post_history.extra.fetch('close_reason_id', nil)
+      return nil unless close_reason_id
+
+      close_reason = CloseReason.find_by(id: close_reason_id)
+      base = "Closed as #{close_reason&.name || '<DELETED CLOSE REASON>'}"
+      duplicate_post_id = post_history.extra.fetch('duplicate_post_id', nil)
+      if duplicate_post_id
+        safe_join([base, raw(" of <a href=\"#{post_path(duplicate_post_id)}\">Question ##{duplicate_post_id}</a>")])
+      else
+        base
+      end
+    when 'history_rolled_back'
+      # History rollbacks always have an index and rollback_of_id, but be resilient against missing history item.
+      index = post_history.extra['index']
+      rolled_back = PostHistory.find_by(id: post_history.extra['rollback_of_id'])
+
+      return 'Rollback of <DELETED HISTORY ITEM>' unless rolled_back
+
+      raw("Rollback of <a href=\"#{post_history_url(post_history.post_id, anchor: index)}\">" \
+          "##{index}: #{rolled_back.post_history_type.name}</a>")
+    end
+  end
+
   private
 
   def rollback_post_history
