@@ -187,6 +187,27 @@ window.QPixel = {
   _user: null,
 
   /**
+   * FIFO-style fetch wrapper for /users/me requests
+   * @returns {Promise<Response>}
+   */
+  _fetchUser() {
+    if(QPixel._pendingUserResponse) {
+        return QPixel._pendingUserResponse
+    }
+
+    const myselfPromise = fetch('/users/me', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+    });
+
+    QPixel._pendingUserResponse = myselfPromise;
+
+    return myselfPromise
+  },
+
+  /**
    * Get the user object for the current user.
    * @returns {Promise<User>} a JSON object containing user details
    */
@@ -195,23 +216,12 @@ window.QPixel = {
       return QPixel._user;
     }
 
-    if(QPixel._pendingUserResponse) {
-        return QPixel._pendingUserResponse
-    }
-
     try {
-        const myselfPromise = fetch('/users/me', {
-            credentials: 'include',
-            headers: {
-              'Accept': 'application/json'
-            }
-        });
+        const resp = await QPixel._fetchUser();
 
-        QPixel._pendingUserResponse = myselfPromise;
-
-        const resp = await myselfPromise;
-
-        QPixel._user = await resp.json();
+        if(!resp.bodyUsed) {
+            QPixel._user = await resp.json();
+        }
     } finally {
         // ensures pending user is cleared regardless of network errors
         QPixel._pendingUserResponse = null;
