@@ -85,9 +85,8 @@ class PostHistoryController < ApplicationController
   end
 
   def find_predecessor(type)
-    # TODO Test if correct
     @post.post_histories
-         .where(post_history_type: PostHistoryType.find(name: type).id)
+         .where(post_history_type: PostHistoryType.find_by(name: type).id)
          .where(created_at: ..@history.created_at)
          .order(created_at: :desc)
          .first
