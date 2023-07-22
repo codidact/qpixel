@@ -39,6 +39,11 @@ class PostHistory < ApplicationRecord
     after_tags - before_tags
   end
 
+  # @return [Boolean] whether this history item was rolled back
+  def rolled_back?
+    extra.present? && !!extra.fetch('rolled_back_with', nil)
+  end
+
   def self.method_missing(name, *args, **opts)
     unless args.length >= 2
       raise NoMethodError

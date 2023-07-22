@@ -28,21 +28,24 @@ class PostHistoryController < ApplicationController
       comment: "Rollback of [##{index}: #{@history.post_history_type.name}](#{post_history_url(@post, anchor: index)})"
     }
 
-    # Do the actual rollback
-    unless rollback_post_history
-      flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
-      redirect_to post_history_path(@post)
-      return
+    # Do the actual rollback within a transaction with the history to ensure we don't end up in inconsistent states
+    PostHistory.transaction do
+      unless rollback_post_history
+        flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
+        redirect_to post_history_path(@post)
+        return
+      end
+
+      opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
+
+      # Record in the history that this element was rolled back
+      new_history = PostHistory.history_rolled_back(@post, current_user, **opts)
+
+      # Set the original to be rolled back
+      @history.extra = {} unless @history.extra
+      @history.extra[:rolled_back_with] = new_history.id
+      @history.save!
     end
-
-    opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
-
-    # Record in the history that this element was rolled back
-    new_history = PostHistory.history_rolled_back(@post, current_user, **opts)
-
-    # Store that the previous history was rolled back
-    # TODO Add migration
-    # @history.update(rolled_back_with: new_history)
 
     flash[:success] = 'History successfully rolled back'
     redirect_to post_history_path(@post)
@@ -64,9 +67,9 @@ class PostHistoryController < ApplicationController
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'question_reopened'
       predecessor = find_predecessor('question_closed')
-      # TODO We need to find the close reason properly, this doesn't exist
       @post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
-                   close_reason: predecessor.close_reason, duplicate_post: nil,
+                   close_reason_id: predecessor.extra&.fetch('close_reason_id', nil),
+                   duplicate_post_id: predecessor.extra&.fetch('duplicate_post_id', nil),
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_edited'
       @post.title = @history.before_title if @history.before_title && @history.before_title != @history.after_title

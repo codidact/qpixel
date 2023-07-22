@@ -7,7 +7,13 @@
 <% @history.each.with_index do |event, index| %>
   <details class="history-event" id="<%= @history.size - index %>">
     <summary>
-      <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
+      <strong>
+        <% if event.rolled_back? %>
+          <del>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></del>
+        <% else %>
+          #<%= @history.size - index %>: <%= event.post_history_type.name.humanize %>
+        <% end %>
+      </strong>
       <span class="has-color-tertiary-600 history-meta">
         <span>
           by
