@@ -88,7 +88,19 @@ class PostHistory < ApplicationRecord
   end
 
   def can_rollback?
-    case post_history_type.name
+    base_rollback_possible?(post_history_type.name) && !rolled_back?
+  end
+
+  def can_reapply?
+    rolled_back? && base_rollback_possible?(post_history_type.name_inverted)
+  end
+
+  private
+
+  # @param type [String] the name of a PostHistoryType
+  # @return [Boolean] whether rollback is possible if this history item is of the given post history type
+  def base_rollback_possible?(type)
+    case type
     when 'post_deleted'
       post.deleted?
     when 'post_undeleted'
