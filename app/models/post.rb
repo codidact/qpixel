@@ -55,7 +55,7 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_category_activity, if: -> { post_type.has_category }
+  after_save :update_category_activity, if: -> { post_type.has_category && !destroyed? }
   after_save :recalc_score
 
   def self.search(term)
