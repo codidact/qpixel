@@ -21,7 +21,8 @@
           <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
         </span>
         <% if event.comment.present? %>
-          <br/><em><%= event.comment %></em>
+          <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
+          &mdash;
         <% end %>
       </span>
       <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
