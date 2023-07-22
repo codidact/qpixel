@@ -2,7 +2,7 @@ class PostHistory < ApplicationRecord
   include PostRelated
   belongs_to :post_history_type
   belongs_to :user
-  has_many :post_history_tags
+  has_many :post_history_tags, dependent: :destroy
   has_many :tags, through: :post_history_tags
 
   # Unfortunately there is a difference between how MySQL and MariaDB handle JSON fields. MySQL regards JSON as a
