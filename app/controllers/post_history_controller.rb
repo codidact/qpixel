@@ -66,6 +66,39 @@ class PostHistoryController < ApplicationController
     redirect_to post_history_path(@post)
   end
 
+  def revert_to
+    @post = Post.find(params[:post_id])
+    @history = PostHistory.find(params[:id])
+    after_histories = @post.post_histories
+                           .where(created_at: @history.created_at..)
+                           .includes(:post_history_type)
+                           .order(created_at: :desc)
+    before_histories = @post.post_histories.where(created_at: ..@history.created_at).order(created_at: :asc)
+
+    to_change = {}
+    # Option 1: Build up again from the before histories
+    # Option 2: Determine reversion from the after histories
+    after_histories.each do |ph|
+      # We invert the name to show the action that we are performing to roll back the current item
+      case ph.post_history_type.name_inverted
+      when 'post_deleted'
+        to_change[:deleted] = true
+      when 'post_undeleted'
+        to_change[:deleted] = false
+      when 'question_closed'
+        # We need to get this info from the predecessor that closed the post
+        to_change[:closed] = true
+
+      when 'question_reopened'
+        to_change[:closed] = false
+        to_change[:close_reason_id] ||= ph.extra&.fetch('close_reason_id', nil)
+        to_change[:duplicate_post_id] ||= ph.extra&.fetch('duplicate_post_id', nil)
+      end
+    end
+
+    # Recover post close reason from predecessor of last reopened
+  end
+
   private
 
   def rollback_post_history
@@ -74,14 +107,14 @@ class PostHistoryController < ApplicationController
       @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_undeleted'
-      predecessor = find_predecessor('post_deleted')
+      predecessor = find_predecessor('post_deleted', @history)
       @post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'question_closed'
       @post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'question_reopened'
-      predecessor = find_predecessor('question_closed')
+      predecessor = find_predecessor('question_closed', @history)
       @post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
                    close_reason_id: predecessor.extra&.fetch('close_reason_id', nil),
                    duplicate_post_id: predecessor.extra&.fetch('duplicate_post_id', nil),
@@ -102,10 +135,10 @@ class PostHistoryController < ApplicationController
     end
   end
 
-  def find_predecessor(type)
+  def find_predecessor(type, history)
     @post.post_histories
          .where(post_history_type: PostHistoryType.find_by(name: type).id)
-         .where(created_at: ..@history.created_at)
+         .where(created_at: ..history.created_at)
          .order(created_at: :desc)
          .first
   end
