@@ -5,7 +5,8 @@
 </div>
 
 <% @history.each.with_index do |event, index| %>
-  <details class="history-event" id="<%= @history.size - index %>">
+  <% revision = @history.size - index %>
+  <details class="history-event" id="<%= revision %>">
     <summary>
       <strong>
         <% if event.rolled_back? %>
@@ -28,18 +29,19 @@
         </span>
         <% if event.comment.present? %>
           <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
-          &mdash;
+          &middot;
         <% end %>
       </span>
-      <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
+      <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
         <span class="js-text">copy link</span>
       <% end %>
-      <% if event.can_rollback? %>
-        <%= link_to 'Rollback',
-                    rollback_post_history_url(@post, event),
-                    class: 'button is-filled',
-                    role: 'button',
-                    'aria-label': "Rollback change ##{index}",
+      <% if event.can_rollback? && allow_rollback?(event, current_user) %>
+        <%= link_to 'Undo', rollback_post_history_url(@post, event),
+                    class: 'button is-outlined', role: 'button',
+                    'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
+                    data: {
+                      confirm: "Undo change ##{revision}: #{event.post_history_type.name.humanize}?"
+                    },
                     method: :post
         %>
       <% end %>

@@ -12,7 +12,6 @@ class PostHistoryController < ApplicationController
   end
 
   def rollback
-    # TODO: Authentication
     @post = Post.find(params[:post_id])
     @history = PostHistory.find(params[:id])
     histories = @post.post_histories.order(created_at: :asc).ids
@@ -20,6 +19,13 @@ class PostHistoryController < ApplicationController
 
     unless @history.can_rollback?
       flash[:danger] = 'You cannot rollback this particular history element.'
+      redirect_to post_history_url(@post)
+      return
+    end
+
+    msg = helpers.disallow_rollback(@history, current_user)
+    if msg.present?
+      flash[:danger] = "You are not allowed to rollback this history element: #{msg}"
       redirect_to post_history_url(@post)
       return
     end
