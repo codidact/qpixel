@@ -191,18 +191,18 @@ class PostsController < ApplicationController
         if @post.update(edit_post_params.merge(body: body_rendered,
                                                last_edited_at: DateTime.now, last_edited_by: current_user,
                                                last_activity: DateTime.now, last_activity_by: current_user))
+
+          PostHistory.post_edited(@post, current_user, before: before[:body],
+                                  after: @post.body_markdown, comment: params[:edit_comment],
+                                  before_title: before[:title], after_title: @post.title,
+                                  before_tags: before[:tags], after_tags: @post.tags)
+
           if params[:redact]
-            PostHistory.post_redacted(@post, current_user, before: before[:body],
-                                      after: @post.body_markdown, comment: params[:edit_comment],
-                                      before_title: before[:title], after_title: @post.title,
-                                      before_tags: before[:tags], after_tags: @post.tags)
+            # Hide all previous history
+            PostHistory.where(post: @post).update_all(hidden: true)
             PostHistory.history_hidden(@post, current_user, after: @post.body_markdown,
-                                       after_title: @post.title, after_tags: @post.tags)
-          else
-            PostHistory.post_edited(@post, current_user, before: before[:body],
-                                    after: @post.body_markdown, comment: params[:edit_comment],
-                                    before_title: before[:title], after_title: @post.title,
-                                    before_tags: before[:tags], after_tags: @post.tags)
+                                       after_title: @post.title, after_tags: @post.tags,
+                                       comment: 'Detailed history before this event is hidden because of a redaction.')
           end
           Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
           do_draft_delete(URI(request.referer || '').path)

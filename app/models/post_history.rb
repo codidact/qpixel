@@ -5,30 +5,6 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
-  # Limits the history (across multiple posts) which should be visible for the given user.
-  # @param user [User, Nil]
-  scope :visible, lambda { |user|
-    unless user&.is_admin
-      # This collects for each post the last time that the post was redacted.
-      subquery = where(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
-                 .group(:post_id)
-                 .select(Arel.sql('post_id, IFNULL(MAX(post_histories.created_at), 0) target_created_at'))
-
-      # Do include history where the current user is the redactor or the poster
-      unless user.nil?
-        subquery = subquery.where.not(user: user)
-                           .joins(:post)
-                           .where.not(posts: { user: user })
-      end
-
-      # Show only history after the last redaction for each post
-      joins(Arel.sql("LEFT OUTER JOIN (#{subquery.to_sql}) sub ON post_histories.post_id = sub.post_id"))
-        .where.not(post_history_type_id: PostHistoryType.find_by(name: 'post_redacted').id)
-        .where(arel_table[:created_at].gteq(Arel.sql('sub.target_created_at'))
-                                      .or(Arel.sql('sub.target_created_at IS NULL')))
-    end
-  }
-
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
@@ -37,13 +13,19 @@ class PostHistory < ApplicationRecord
     tags.where(post_history_tags: { relationship: 'after' })
   end
 
+  # @param user [User]
+  # @return [Boolean] whether the given user is allowed to see the details of this history item
+  def allowed_to_see_details?(user)
+    !hidden || user.is_admin || user_id == user.id || post.user_id == user.id
+  end
+
   def self.method_missing(name, *args, **opts)
     unless args.length >= 2
       raise NoMethodError
     end
 
     object, user = args
-    fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags]
+    fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags, :hidden]
     values = fields.to_h { |f| [f, nil] }.merge(opts)
 
     history_type_name = name.to_s
@@ -55,7 +37,7 @@ class PostHistory < ApplicationRecord
 
     params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     { before: :before_state, after: :after_state, comment: :comment, before_title: :before_title,
-      after_title: :after_title }.each do |arg, attr|
+      after_title: :after_title, hidden: :hidden }.each do |arg, attr|
       next if values[arg].nil?
 
       params = params.merge(attr => values[arg])
