@@ -5,6 +5,8 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags, dependent: :destroy
   has_many :tags, through: :post_history_tags
 
+  # Extra values: close_reason_id, duplicate_post_id, rolled_back_with, rollback_of_id, rollback_index
+
   # Unfortunately there is a difference between how MySQL and MariaDB handle JSON fields. MySQL regards JSON as a
   # special data type and stores it in a special format. MariaDB considers JSON as an alias for longtext, which would
   # rely on proper serialization in Rails to parse back into JSON data. To support both, we have this method here.

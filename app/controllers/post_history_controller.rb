@@ -71,32 +71,92 @@ class PostHistoryController < ApplicationController
     @history = PostHistory.find(params[:id])
     after_histories = @post.post_histories
                            .where(created_at: @history.created_at..)
+                           .where.not(id: @history.id)
                            .includes(:post_history_type)
-                           .order(created_at: :desc)
-    before_histories = @post.post_histories.where(created_at: ..@history.created_at).order(created_at: :asc)
+                           .order(created_at: :desc, id: :desc)
 
     to_change = {}
-    # Option 1: Build up again from the before histories
-    # Option 2: Determine reversion from the after histories
     after_histories.each do |ph|
-      # We invert the name to show the action that we are performing to roll back the current item
-      case ph.post_history_type.name_inverted
-      when 'post_deleted'
-        to_change[:deleted] = true
+      case ph.post_history_type.name
       when 'post_undeleted'
+        to_change[:deleted] = true
+      when 'post_deleted'
         to_change[:deleted] = false
-      when 'question_closed'
-        # We need to get this info from the predecessor that closed the post
-        to_change[:closed] = true
-
       when 'question_reopened'
+        to_change[:closed] = true
+      when 'question_closed'
         to_change[:closed] = false
-        to_change[:close_reason_id] ||= ph.extra&.fetch('close_reason_id', nil)
-        to_change[:duplicate_post_id] ||= ph.extra&.fetch('duplicate_post_id', nil)
+      when 'post_edited'
+        to_change[:title] = ph.before_title if ph.before_title.present?
+        to_change[:body] = ph.before_state if ph.before_state.present?
+        to_change[:tags] = ph.before_tags if ph.before_tags.present?
       end
     end
 
     # Recover post close reason from predecessor of last reopened
+    if to_change[:closed]
+      ph = find_predecessor('question_closed', after_histories.last)
+      to_change[:close_reason_id] ||= ph.extra&.fetch('close_reason_id', nil)
+      to_change[:duplicate_post_id] ||= ph.extra&.fetch('duplicate_post_id', nil)
+    end
+
+    revert_comment = "Reverting to [##{index}: #{@history.post_history_type.name.humanize}]" \
+                     "(#{post_history_url(@post, anchor: index)})"
+
+    # Perform edit
+    if to_change[:title].present? || to_change[:body].present? || to_change[:tags].present?
+      opts = {
+        before: @post.body_markdown, before_title: @post.title, before_tags: @post.tags.to_a,
+        comment: revert_comment
+      }
+
+      @post.title = to_change[:title] if to_change[:title].present?
+      if to_change[:body].present?
+        @post.body_markdown = to_change[:body]
+        @post.body = ApplicationController.helpers.render_markdown(to_change[:body])
+      end
+      @post.tags_cache = to_change[:tags].map(&:name) if to_change[:tags].present?
+      @post.last_activity = DateTime.now
+      @post.last_activity_by = current_user
+      @post.save
+
+      opts = opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
+
+      PostHistory.post_edited(@post, current_user, **opts)
+    end
+
+    # Perform reopen
+    unless to_change[:closed].nil?
+      if to_change[:closed]
+        # Close
+        @post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
+                     close_reason_id: to_change[:close_reason_id],
+                     duplicate_post_id: to_change[:duplicate_post_id],
+                     last_activity: DateTime.now, last_activity_by: current_user)
+        PostHistory.question_closed(@post, current_user, comment: revert_comment,
+                                    extra: {
+                                      close_reason_id: to_change[:close_reason_id],
+                                      duplicate_post_id: to_change[:duplicate_post_id]
+                                    })
+      else
+        # Reopen
+        @post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
+                     last_activity: DateTime.now, last_activity_by: current_user)
+        PostHistory.question_reopened(@post, current_user, comment: revert_comment)
+      end
+    end
+
+    unless to_change[:deleted].nil?
+      if to_change[:deleted]
+        @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
+                     last_activity: DateTime.now, last_activity_by: current_user)
+        PostHistory.post_deleted(@post, current_user, comment: revert_comment)
+      else
+        @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
+                     last_activity: DateTime.now, last_activity_by: current_user)
+        PostHistory.post_undeleted(@post, current_user, comment: revert_comment)
+      end
+    end
   end
 
   private
