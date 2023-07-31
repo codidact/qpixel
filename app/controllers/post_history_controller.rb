@@ -269,11 +269,15 @@ class PostHistoryController < ApplicationController
     end
   end
 
+  # @param type [String] the name of the history type
+  # @param history [PostHistory]
+  # @return [PostHistory, Nil] the history item of the given type that came before the given history item
   def find_predecessor(type, history)
-    @post.post_histories
-         .where(post_history_type: PostHistoryType.find_by(name: type).id)
-         .where(created_at: ..history.created_at)
-         .order(created_at: :desc)
-         .first
+    history.post.post_histories
+           .where(post_history_type: PostHistoryType.find_by(name: type).id)
+           .where(created_at: ..history.created_at)
+           .where.not(id: history.id)
+           .order(created_at: :desc, id: :desc)
+           .first
   end
 end
