@@ -6,8 +6,9 @@ class PostHistoryController < ApplicationController
       return not_found
     end
 
-    @history = PostHistory.where(post_id: params[:id]).includes(:post_history_type, :user, post_history_tags: [:tag])
-                          .order(created_at: :desc).paginate(per_page: 20, page: params[:page])
+    @history = PostHistory.where(post_id: params[:id])
+                          .includes(:post_history_type, :user, post_history_tags: [:tag])
+                          .order(created_at: :desc, id: :desc).paginate(per_page: 20, page: params[:page])
     render layout: 'without_sidebar'
   end
 

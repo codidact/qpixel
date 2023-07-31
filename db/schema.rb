@@ -386,7 +386,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_26_143348) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
-    t.json "extra"
     t.boolean "hidden", default: false, null: false
     t.bigint "close_reason_id"
     t.bigint "duplicate_post_id"

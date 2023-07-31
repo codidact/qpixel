@@ -27,6 +27,12 @@ class PostHistory < ApplicationRecord
     !reverted_with_id.nil?
   end
 
+  # @param user [User]
+  # @return [Boolean] whether the given user is allowed to see the details of this history item
+  def allowed_to_see_details?(user)
+    !hidden || user.is_admin || user_id == user.id || post.user_id == user.id
+  end
+
   def self.method_missing(name, *args, **opts)
     unless args.length >= 2
       raise NoMethodError
@@ -34,7 +40,7 @@ class PostHistory < ApplicationRecord
 
     object, user = args
     fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags, :close_reason_id,
-              :duplicate_post_id]
+              :duplicate_post_id, :hidden]
     values = fields.to_h { |f| [f, nil] }.merge(opts)
 
     history_type_name = name.to_s
@@ -46,8 +52,8 @@ class PostHistory < ApplicationRecord
 
     params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     { before: :before_state, after: :after_state, comment: :comment, before_title: :before_title,
-      after_title: :after_title, close_reason_id: :close_reason_id, duplicate_post_id: :duplicate_post_id }
-      .each do |arg, attr|
+      after_title: :after_title, close_reason_id: :close_reason_id, duplicate_post_id: :duplicate_post_id,
+      hidden: :hidden }.each do |arg, attr|
       next if values[arg].nil?
 
       params = params.merge(attr => values[arg])

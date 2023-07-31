@@ -214,7 +214,7 @@ class UsersController < ApplicationController
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                     posts: { deleted: false }) + \
               SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
     @items = items.sort_by(&:created_at).reverse
