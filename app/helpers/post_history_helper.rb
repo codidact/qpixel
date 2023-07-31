@@ -1,48 +1,100 @@
 module PostHistoryHelper
-  def allow_rollback?(history, user)
-    !disallow_rollback(history, user)
+  # @param history [PostHistory]
+  # @param user [User, Nil]
+  # @return [Boolean] whether the given user is allowed to rollback the given history item
+  def allow_rollback_history?(history, user)
+    user.present? && !disallow_rollback_history(history, user)
   end
 
   # @param history [PostHistory]
   # @param user [User]
-  # @return [String] the error message if disallowed, or nil if allowed
-  def disallow_rollback(history, user)
-    # Invert the post name such that whatever is written for the when cases is the action we are trying to perform with
-    # the rollback.
-    case history.post_history_type.name_inverted
-    when 'post_deleted'
-      if !check_your_privilege('flag_curate') && !check_your_post_privilege(history.post, 'flag_curate')
-        return ability_err_msg(:flag_curate, 'delete this post')
-      end
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_rollback_history(history, user)
+    if history.hidden? && history.user_id != user.id && !user.is_admin
+      return i18ns('post_histories.cant_rollback_hidden')
+    end
 
-      if history.post.children.any? { |a| !a.deleted? && a.score >= 0.5 } && !user.is_moderator
-        i18ns('posts.cant_delete_responded')
-      end
+    case history.post_history_type.name
     when 'post_undeleted'
-      if !check_your_privilege('flag_curate') && !check_your_post_privilege(history.post, 'flag_curate')
-        ability_err_msg(:flag_curate, 'restore this post')
-      end
-
-      # Note, the history is for a post deletion, so the user linked to the history is the deleter.
-      if history.user.is_moderator && !user.is_moderator
-        i18ns('posts.cant_restore_deleted_by_moderator')
-      end
-    when 'question_closed'
-      unless check_your_privilege('flag_close') || history.post.user_id == user.id
-        ability_err_msg(:flag_close, 'close this post')
-      end
+      disallow_delete(history.post, user)
+    when 'post_deleted'
+      disallow_undelete(history.post, user)
     when 'question_reopened'
-      if !check_your_privilege('flag_close') || @post.user.id == user.id
-        ability_err_msg(:flag_close, 'reopen this post')
-      end
+      disallow_close(history.post, user)
+    when 'question_closed'
+      disallow_reopen(history.post, user)
     when 'post_edited'
-      if !user.privilege?('edit_posts') && !user.is_moderator && user != history.post.user && \
-         (!history.post.post_type.is_freely_editable || !user.privilege?('unrestricted'))
-        ability_err_msg(:edit_posts, 'edit this post')
-      end
+      disallow_edit(history.post, user)
+    when 'history_hidden'
+      disallow_reveal_history(history, user)
+    end
+  end
+
+  # @param post [Post]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_delete(post, user)
+    if !user.privilege?('flag_curate') && !user.has_post_privilege?(post, 'flag_curate')
+      return ability_err_msg(:flag_curate, 'delete this post')
+    end
+
+    if post.children.any? { |a| !a.deleted? && a.score >= 0.5 } && !user.is_moderator
+      i18ns('posts.cant_delete_responded')
+    end
+  end
+
+  # @param post [Post]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_undelete(post, user)
+    if !user.privilege?('flag_curate') && !user.has_post_privilege?(post, 'flag_curate')
+      ability_err_msg(:flag_curate, 'restore this post')
+    end
+
+    # It could be the case that the post is already no longer deleted, which is why we need the safety &.
+    if post.deleted_by&.is_moderator && !user.is_moderator
+      i18ns('posts.cant_restore_deleted_by_moderator')
+    end
+  end
+
+  # @param post [Post]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_close(post, user)
+    unless check_your_privilege('flag_close') || post.user_id == user.id
+      ability_err_msg(:flag_close, 'close this post')
+    end
+  end
+
+  # @param post [Post]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_reopen(post, user)
+    if !user.privilege?('flag_close') || post.user_id == user.id
+      ability_err_msg(:flag_close, 'reopen this post')
+    end
+  end
+
+  # @param post [Post]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_edit(post, user)
+    if !user.privilege?('edit_posts') && !user.is_moderator && user.id != post.user_id && \
+       (!post.post_type.is_freely_editable || !user.privilege?('unrestricted'))
+      ability_err_msg(:edit_posts, 'edit this post')
+    end
+  end
+
+  # @param history [PostHistory]
+  # @param user [User]
+  # @return [String, Nil] the error message if disallowed, or nil if allowed
+  def disallow_reveal_history(history, user)
+    unless user.is_admin || history.user_id == user.id
+      i18ns('post_histories.cant_reveal')
     end
   end
 end
+
 class PostHistoryScrubber < Rails::Html::PermitScrubber
   def initialize
     super
