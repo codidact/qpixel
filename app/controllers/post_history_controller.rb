@@ -249,6 +249,21 @@ class PostHistoryController < ApplicationController
       @post.last_activity = DateTime.now
       @post.last_activity_by = current_user
       @post.save
+    when 'history_hidden'
+      # We need to reveal history for all events that were hidden by this action
+      histories_to_reveal = @post.post_histories
+                                 .where(created_at: ..@history.created_at)
+                                 .where(hidden: true)
+                                 .includes(:post_history_type)
+                                 .order(created_at: :desc, id: :desc)
+
+      # If there are more history hiding events, only hide until the previous one.
+      # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
+      # will have occurred in the same second.
+      predecessor = find_predecessor('history_hidden', @history)
+      histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
+
+      histories_to_reveal.update_all(hidden: false)
     else
       false
     end

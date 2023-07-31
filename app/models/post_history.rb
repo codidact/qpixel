@@ -100,6 +100,8 @@ class PostHistory < ApplicationRecord
         (tags_removed & post.tags == []) &&
         # Post tags that were added must not have been removed
         (tags_added - post.tags == [])
+    when 'history_hidden'
+      true
     else
       false
     end
