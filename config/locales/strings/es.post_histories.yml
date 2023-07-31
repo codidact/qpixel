@@ -1,0 +1,6 @@
+es:
+  post_histories:
+    cant_reveal: >
+      No puedes revelar la historia que estaba escondida. Póngase en contacto con un administrador si cree que necesita revelarlo.
+    cant_rollback_hidden: >
+      No puede deshacer los cambios cuyos detalles están ocultos. Comuníquese con un administrador si cree que deben deshacerse.
