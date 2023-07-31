@@ -33,15 +33,14 @@ class PostHistoryController < ApplicationController
     opts = {
       before: @post.body_markdown, before_title: @post.title, before_tags: @post.tags.to_a,
       comment: "Rollback of [##{index}: #{@history.post_history_type.name.humanize}]" \
-               "(#{post_history_url(@post, anchor: index)})",
-      extra: { rollback_of_id: @history.id, rollback_index: index }
+               "(#{post_history_url(@post, anchor: index)})"
     }
 
     # If we are closing a question, also record the close reason from the original history item
     rollback_type = @history.post_history_type.name_inverted
     if rollback_type == 'question_closed'
-      opts[:extra][:close_reason_id] = @history.extra&.fetch('close_reason_id', nil)
-      opts[:extra][:duplicate_post_id] = @history.extra&.fetch('duplicate_post_id', nil)
+      opts[:close_reason_id] = @history.close_reason_id
+      opts[:duplicate_post_id] = @history.duplicate_post_id
     end
 
     PostHistory.transaction do
@@ -57,8 +56,7 @@ class PostHistoryController < ApplicationController
       new_history = PostHistory.send(rollback_type, @post, current_user, **opts)
 
       # Set the original to be rolled back
-      @history.extra = {} unless @history.extra
-      @history.extra[:rolled_back_with] = new_history.id
+      @history.reverted_with_id = new_history.id
       @history.save!
     end
 
@@ -176,8 +174,8 @@ class PostHistoryController < ApplicationController
     when 'question_reopened'
       predecessor = find_predecessor('question_closed', @history)
       @post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
-                   close_reason_id: predecessor.extra&.fetch('close_reason_id', nil),
-                   duplicate_post_id: predecessor.extra&.fetch('duplicate_post_id', nil),
+                   close_reason_id: predecessor.close_reason_id,
+                   duplicate_post_id: predecessor.duplicate_post_id,
                    last_activity: DateTime.now, last_activity_by: current_user)
     when 'post_edited'
       @post.title = @history.before_title if @history.before_title && @history.before_title != @history.after_title

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_22_161509) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_26_143348) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -387,9 +387,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_22_161509) do
     t.string "before_title"
     t.string "after_title"
     t.json "extra"
+    t.boolean "hidden", default: false, null: false
+    t.bigint "close_reason_id"
+    t.bigint "duplicate_post_id"
+    t.bigint "reverted_with_id"
+    t.index ["close_reason_id"], name: "index_post_histories_on_close_reason_id"
     t.index ["community_id"], name: "index_post_histories_on_community_id"
+    t.index ["duplicate_post_id"], name: "index_post_histories_on_duplicate_post_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
+    t.index ["reverted_with_id"], name: "index_post_histories_on_reverted_with_id"
     t.index ["user_id"], name: "index_post_histories_on_user_id"
   end
 
@@ -789,7 +796,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_22_161509) do
   add_foreign_key "notifications", "communities"
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"
+  add_foreign_key "post_histories", "close_reasons"
   add_foreign_key "post_histories", "communities"
+  add_foreign_key "post_histories", "post_histories", column: "reverted_with_id"
+  add_foreign_key "post_histories", "posts", column: "duplicate_post_id"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"
   add_foreign_key "post_types", "post_types", column: "answer_type_id"

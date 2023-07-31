@@ -9,7 +9,7 @@
   <details class="history-event" id="<%= revision %>">
     <summary>
       <strong>
-        <% if event.rolled_back? %>
+        <% if event.reverted? %>
           <del>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></del>
         <% else %>
           #<%= @history.size - index %>: <%= event.post_history_type.name.humanize %>
@@ -35,7 +35,7 @@
       <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
         <span class="js-text">copy link</span>
       <% end %>
-      <% if event.can_rollback? && allow_rollback?(event, current_user) %>
+      <% if event.can_rollback? && allow_rollback_history?(event, current_user) %>
         <%= link_to 'Undo', rollback_post_history_url(@post, event),
                     class: 'button is-outlined', role: 'button',
                     'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
