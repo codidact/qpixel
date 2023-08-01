@@ -23,3 +23,19 @@
   use_for_advertisement: false
   color_code: bluegray
   license_id: <%= License.unscoped.first.id %>
+
+- name: Templates
+  short_wiki: Templates
+  # Default to moderators-only
+  min_trust_level: 4
+  min_title_length: 1
+  display_post_types:
+    - <%= PostType['PostTemplate'].id %>
+  post_type_ids:
+    - <%= PostType['PostTemplate'].id %>
+  tag_set_id: <%= TagSet.unscoped.where(name: 'Meta').first.id %>
+  use_for_hot_posts: false
+  use_for_advertisement: false
+  color_code: bluegray
+  # The PostTemplate actually has has_license: false, but just in case
+  license_id: <%= License.unscoped.where(name: 'CC0').first.id %>
