@@ -10,7 +10,7 @@
     <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits because you haven't
     yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
   </div>
-  <% end %>
+<% end %>
 
 <% if @edit.active? && may_decide %>
   <div class="notice is-info">
