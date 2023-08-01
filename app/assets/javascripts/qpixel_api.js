@@ -3,6 +3,30 @@ const validators = [];
 /** Counts notifications popped up at any time. */
 let popped_modals_ct = 0;
 
+/**
+ * @typedef {{
+ *  min_score: number | null,
+ *  max_score: number | null,
+ *  min_answers: number | null,
+ *  max_answers: number | null,
+ *  include_tags: [string, number][],
+ *  exclude_tags: [string, number][],
+ *  status: 'any' | 'closed' | 'open',
+ *  system: boolean,
+ * }} Filter
+ *
+ * @typedef {{
+ *  id: number,
+ *  username: string,
+ *  is_moderator: boolean,
+ *  is_admin: boolean,
+ *  is_global_moderator: boolean,
+ *  is_global_admin: boolean,
+ *  trust_level: number,
+ *  se_acct_id: string | null,
+ * }} User
+ */
+
 window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
@@ -151,23 +175,58 @@ window.QPixel = {
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   },
 
+  /**
+   * Used to prevent launching multiple requests to /users/me
+   * @type {Promise<Response>|null}
+   */
+  _pendingUserResponse: null,
+
+  /**
+   * @type {User|null}
+   */
   _user: null,
 
   /**
+   * FIFO-style fetch wrapper for /users/me requests
+   * @returns {Promise<Response>}
+   */
+  _fetchUser() {
+    if(QPixel._pendingUserResponse) {
+        return QPixel._pendingUserResponse
+    }
+
+    const myselfPromise = fetch('/users/me', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+    });
+
+    QPixel._pendingUserResponse = myselfPromise;
+
+    return myselfPromise
+  },
+
+  /**
    * Get the user object for the current user.
-   * @returns {Promise<Object>} a JSON object containing user details
+   * @returns {Promise<User>} a JSON object containing user details
    */
   user: async () => {
     if (QPixel._user != null || document.body.dataset.userId === 'none') {
       return QPixel._user;
     }
-    const resp = await fetch('/users/me', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    QPixel._user = await resp.json();
+
+    try {
+        const resp = await QPixel._fetchUser();
+
+        if(!resp.bodyUsed) {
+            QPixel._user = await resp.json();
+        }
+    } finally {
+        // ensures pending user is cleared regardless of network errors
+        QPixel._pendingUserResponse = null;
+    }
+
     return QPixel._user;
   },
 
@@ -205,10 +264,12 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
-    // Do not attempt to access preference if user is not signed in
-    if (document.body.dataset.userId === 'none') {
-      return null;
+    const user = await QPixel.user();
+
+    if(!user) {
+        return null
     }
+
     let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
@@ -252,6 +313,9 @@ window.QPixel = {
     }
   },
 
+  /**
+   * @returns {Promise<Record<string, Filter>>}
+   */
   filters: async () => {
     if (this._filters == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
@@ -270,13 +334,25 @@ window.QPixel = {
     return this._filters;
   },
 
-  defaultFilter: async categoryId => {
+  /**
+   * Fetches default user filter for a given category
+   * @param categoryId id of the category to fetch
+   * @returns {Promise<string>}
+   */
+  defaultFilter: async (categoryId) => {
+    const user = await QPixel.user();
+
+    if(!user) {
+        return '';
+    }
+
     const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
       credentials: 'include',
       headers: {
         'Accept': 'application/json'
       }
     });
+
     const data = await resp.json();
     return data.name;
   },

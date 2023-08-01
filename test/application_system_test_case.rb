@@ -17,7 +17,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: DRIVER, screen_size: [1920, 1080]
 
   setup do
-    Community.first.update(host: root_url.gsub(/https?:\/\//, '').gsub(/\//, ''))
+    Community.first.update(host: root_url.gsub(/https?:\/\//, '').gsub('/', ''))
   end
 
   # Logs in as the specified user

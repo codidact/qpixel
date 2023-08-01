@@ -34,7 +34,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
       TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
       flash[:notice] = nil
       flash[:info] = 'Please check your email inbox for a link to sign in.'
-      redirect_to root_path
+      redirect_to after_sign_in_path_for(user)
     end
   end
 end

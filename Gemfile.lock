@@ -435,7 +435,7 @@ DEPENDENCIES
   sass-rails (~> 6.0)
   selenium-webdriver (~> 4.7)
   spring (~> 4.0)
-  sprockets (~> 4.1)
+  sprockets (~> 4.1.0)
   sprockets-rails (~> 3.4)
   stackprof (~> 0.2)
   stripe (~> 5.55)
@@ -453,4 +453,4 @@ RUBY VERSION
    ruby 2.7.6p219
 
 BUNDLED WITH
-   2.4.13
+   2.4.15
