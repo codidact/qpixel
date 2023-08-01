@@ -6,7 +6,7 @@ class Users::SessionsController < Devise::SessionsController
   # Any changes made here may also require changes to Users::SamlSessionsController#create.
   def create
     super do |user|
-      return if post_sign_in(user)
+      return unless post_sign_in(user)
     end
   end
 
