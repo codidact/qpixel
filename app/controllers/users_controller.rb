@@ -518,7 +518,7 @@ class UsersController < ApplicationController
       sign_in user
       remember_me user
       AuditLog.user_history(event_type: 'mobile_login', related: user)
-      redirect_to root_path
+      redirect_to after_sign_in_path_for(user)
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'

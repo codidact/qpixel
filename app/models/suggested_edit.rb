@@ -1,5 +1,6 @@
 class SuggestedEdit < ApplicationRecord
   include PostRelated
+  include PostValidations
 
   belongs_to :user
 
@@ -10,7 +11,10 @@ class SuggestedEdit < ApplicationRecord
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :before_tags, class_name: 'Tag', join_table: 'suggested_edits_before_tags'
 
-  after_save :clear_pending_cache, if: Proc.new { saved_change_to_attribute?(:active) }
+  has_one :post_type, through: :post
+  has_one :category, through: :post
+
+  after_save :clear_pending_cache, if: proc { saved_change_to_attribute?(:active) }
 
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"

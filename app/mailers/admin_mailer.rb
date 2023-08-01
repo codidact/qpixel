@@ -14,7 +14,7 @@ class AdminMailer < ApplicationMailer
   def to_all_users
     @subject = params[:subject]
     @body_markdown = params[:body_markdown]
-    @users = User.where('email NOT LIKE ?', "%localhost").select(:email).map(&:email)
+    @users = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
     mail subject: @subject, to: 'allusers-noreply@codidact.org', from: 'Codidact Team <allusers-noreply@codidact.org>',
          reply_to: 'info@codidact.org', bcc: @users
   end
