@@ -15,6 +15,18 @@ module PostsHelper
     end
   end
 
+  # @param category [Category, Nil]
+  # @return [Integer] the minimum length for post titles
+  def min_title_length(category)
+    category&.min_title_length || 15
+  end
+
+  # @param _category [Category, Nil]
+  # @return [Integer] the maximum length for post titles
+  def max_title_length(_category)
+    [SiteSetting['MaxTitleLength'] || 255, 255].min
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     def initialize
       super
