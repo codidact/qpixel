@@ -11,3 +11,4 @@
 - name: nominated_for_promotion
 - name: promotion_removed
 - name: history_hidden
+- name: history_revealed

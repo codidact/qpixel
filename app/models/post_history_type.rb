@@ -7,7 +7,9 @@ class PostHistoryType < ApplicationRecord
     'attribution_notice_added' => 'attribution_notice_removed',
     'attribution_notice_removed' => 'attribution_notice_added',
     'nominated_for_promotion' => 'promotion_removed',
-    'promotion_removed' => 'nominated_for_promotion'
+    'promotion_removed' => 'nominated_for_promotion',
+    'history_hidden' => 'history_revealed',
+    'history_revealed' => 'history_hidden'
   }.freeze
 
   has_many :post_histories
