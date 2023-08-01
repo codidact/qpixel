@@ -13,8 +13,8 @@ class PostHistoryController < ApplicationController
   end
 
   def rollback
-    @post = Post.find(params[:post_id])
     @history = PostHistory.find(params[:id])
+    @post = @history.post
     histories = @post.post_histories.order(created_at: :asc).ids
     index = histories.index(@history.id) + 1
 
@@ -66,8 +66,8 @@ class PostHistoryController < ApplicationController
   end
 
   def revert_to
-    @post = Post.find(params[:post_id])
     @history = PostHistory.find(params[:id])
+    @post = @history.post
 
     msg = disallowed_to_restore(@post, @history, current_user)
     if msg.present?
