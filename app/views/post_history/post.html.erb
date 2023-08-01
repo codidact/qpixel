@@ -44,6 +44,15 @@
                     },
                     method: :post
         %>
+        <%= link_to 'Revert to', revert_to_post_history_url(@post, event),
+                    class: 'button is-outlined', role: 'button',
+                    'aria-label': "Revert post to ##{revision} #{event.post_history_type.name.humanize}",
+                    data: {
+                      confirm: "Are you sure you want to revert the state of this post to what it was at revision " \
+                               "##{revision}: #{event.post_history_type.name.humanize}?"
+                    },
+                    method: :post
+        %>
       <% end %>
     </summary>
     <% if event.allowed_to_see_details?(current_user) %>
