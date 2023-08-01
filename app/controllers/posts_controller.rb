@@ -232,7 +232,7 @@ class PostsController < ApplicationController
           do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
-          @post.errors = edit.errors
+          @post.errors.copy!(edit.errors)
           render :edit, status: :bad_request
         end
       end
