@@ -44,11 +44,9 @@
                   class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}",
                   title: 'exclude imported posts' %>
     <% end %>
-    <% if @category.name == 'Q&A' %>
-      <%= link_to 'Random', request.params.merge(sort: 'lottery'),
-                  class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
-                  title: 'random set of questions, usually older ones' %>
-    <% end %>
+    <%= link_to 'Random', request.params.merge(sort: 'lottery'),
+        class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
+        title: 'random set of questions, usually older ones' %>
   </div>
 </div>
 
