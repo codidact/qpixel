@@ -315,7 +315,7 @@ class Post < ApplicationRecord
 
   def required_tags?
     required = category&.required_tag_ids
-    return unless required.present? && !required.empty?
+    return true unless required.present? && !required.empty?
 
     unless tag_ids.any? { |t| required.include? t }
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
