@@ -89,6 +89,10 @@ class PostHistoryController < ApplicationController
     revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
                      "(#{post_history_url(post, anchor: index)})"
 
+    edit_event = nil
+    close_event = nil
+    delete_event = nil
+
     # Perform edit
     if to_change[:title].present? || to_change[:body].present? || to_change[:tags].present?
       opts = {
@@ -108,7 +112,7 @@ class PostHistoryController < ApplicationController
 
       opts = opts.merge(after: post.body_markdown, after_title: post.title, after_tags: post.tags.to_a)
 
-      PostHistory.post_edited(post, current_user, **opts)
+      edit_event = PostHistory.post_edited(post, current_user, **opts)
     end
 
     # Perform close/reopen
@@ -118,13 +122,12 @@ class PostHistoryController < ApplicationController
                     close_reason_id: to_change[:close_reason_id],
                     duplicate_post_id: to_change[:duplicate_post_id],
                     last_activity: DateTime.now, last_activity_by: current_user)
-        PostHistory.question_closed(post, current_user, comment: revert_comment,
-                                    close_reason_id: to_change[:close_reason_id],
-                                    duplicate_post_id: to_change[:duplicate_post_id])
+        close_event = PostHistory.question_closed(post, current_user, comment: revert_comment,
+                                                  close_reason_id: to_change[:close_reason_id],
+                                                  duplicate_post_id: to_change[:duplicate_post_id])
       else
-        post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
-                    last_activity: DateTime.now, last_activity_by: current_user)
-        PostHistory.question_reopened(post, current_user, comment: revert_comment)
+        rollback_post_closed(post)
+        close_event = PostHistory.question_reopened(post, current_user, comment: revert_comment)
       end
     end
 
@@ -133,11 +136,36 @@ class PostHistoryController < ApplicationController
       if to_change[:deleted]
         post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
                     last_activity: DateTime.now, last_activity_by: current_user)
-        PostHistory.post_deleted(post, current_user, comment: revert_comment)
+        delete_event = PostHistory.post_deleted(post, current_user, comment: revert_comment)
       else
-        post.update(deleted: false, deleted_at: nil, deleted_by: nil,
-                    last_activity: DateTime.now, last_activity_by: current_user)
-        PostHistory.post_undeleted(post, current_user, comment: revert_comment)
+        rollback_post_deleted(post)
+        delete_event = PostHistory.post_undeleted(post, current_user, comment: revert_comment)
+      end
+    end
+
+    revert_history_items(history, edit_event, close_event, delete_event)
+  end
+
+  # Updates the post histories by setting by which event they were reverted.
+  # @param history [PostHistory]
+  # @param edit_event [PostHistory, Nil]
+  # @param close_event [PostHistory, Nil]
+  # @param delete_event [PostHistory, Nil]
+  def revert_history_items(history, edit_event, close_event, delete_event)
+    after_histories = history.post.post_histories
+                             .where(created_at: history.created_at..)
+                             .where.not(id: history.id)
+                             .includes(:post_history_type)
+                             .order(created_at: :desc, id: :desc)
+
+    after_histories.each do |ph|
+      case ph.post_history_type.name
+      when 'post_deleted', 'post_undeleted'
+        ph.update(reverted_with_id: delete_event)
+      when 'question_closed', 'question_reopened'
+        ph.update(reverted_with_id: close_event)
+      when 'post_edited'
+        ph.update(reverted_with_id: edit_event)
       end
     end
   end
