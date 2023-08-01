@@ -45,7 +45,7 @@ class PostHistoryController < ApplicationController
     end
 
     PostHistory.transaction do
-      unless rollback_post_history
+      unless rollback_post_history(@history)
         flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
         redirect_to post_history_path(@post)
         return
@@ -220,53 +220,97 @@ class PostHistoryController < ApplicationController
 
   private
 
-  def rollback_post_history
-    case @history.post_history_type.name
+  # Rolls back the given history item.
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_history(history)
+    post = history.post
+    case history.post_history_type.name
     when 'post_deleted'
-      @post.update(deleted: false, deleted_at: nil, deleted_by: nil,
-                   last_activity: DateTime.now, last_activity_by: current_user)
+      rollback_post_deleted(post)
     when 'post_undeleted'
-      predecessor = find_predecessor('post_deleted', @history)
-      @post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
-                   last_activity: DateTime.now, last_activity_by: current_user)
+      rollback_post_undeleted(post, history)
     when 'question_closed'
-      @post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
-                   last_activity: DateTime.now, last_activity_by: current_user)
+      rollback_post_closed(post)
     when 'question_reopened'
-      predecessor = find_predecessor('question_closed', @history)
-      @post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
-                   close_reason_id: predecessor.close_reason_id,
-                   duplicate_post_id: predecessor.duplicate_post_id,
-                   last_activity: DateTime.now, last_activity_by: current_user)
+      rollback_post_reopen(post, history)
     when 'post_edited'
-      @post.title = @history.before_title if @history.before_title && @history.before_title != @history.after_title
-      if @history.before_state && @history.before_state != @history.after_state
-        @post.body_markdown = @history.before_state
-        @post.body = ApplicationController.helpers.render_markdown(@history.before_state)
-      end
-      @post.tags_cache += @history.tags_removed.map(&:name)
-      @post.tags_cache -= @history.tags_added.map(&:name)
-      @post.last_activity = DateTime.now
-      @post.last_activity_by = current_user
-      @post.save
+      rollback_post_edit(post, history)
     when 'history_hidden'
-      # We need to reveal history for all events that were hidden by this action
-      histories_to_reveal = @post.post_histories
-                                 .where(created_at: ..@history.created_at)
-                                 .where(hidden: true)
-                                 .includes(:post_history_type)
-                                 .order(created_at: :desc, id: :desc)
-
-      # If there are more history hiding events, only hide until the previous one.
-      # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
-      # will have occurred in the same second.
-      predecessor = find_predecessor('history_hidden', @history)
-      histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
-
-      histories_to_reveal.update_all(hidden: false)
+      rollback_hide_history(post, history)
     else
       false
     end
+  end
+
+  # @param post [Post]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_deleted(post)
+    post.update(deleted: false, deleted_at: nil, deleted_by: nil,
+                last_activity: DateTime.now, last_activity_by: current_user)
+  end
+
+  # @param post [Post]
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_undeleted(post, history)
+    predecessor = find_predecessor('post_deleted', history)
+    post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
+                last_activity: DateTime.now, last_activity_by: current_user)
+  end
+
+  # @param post [Post]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_closed(post)
+    post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
+                last_activity: DateTime.now, last_activity_by: current_user)
+  end
+
+  # @param post [Post]
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_reopen(post, history)
+    predecessor = find_predecessor('question_closed', history)
+    post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
+                close_reason_id: predecessor.close_reason_id,
+                duplicate_post_id: predecessor.duplicate_post_id,
+                last_activity: DateTime.now, last_activity_by: current_user)
+  end
+
+  # @param post [Post]
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_post_edit(post, history)
+    post.title = history.before_title if history.before_title && history.before_title != history.after_title
+    if history.before_state && history.before_state != history.after_state
+      post.body_markdown = history.before_state
+      post.body = ApplicationController.helpers.render_markdown(history.before_state)
+    end
+    post.tags_cache += history.tags_removed.map(&:name)
+    post.tags_cache -= history.tags_added.map(&:name)
+    post.last_activity = DateTime.now
+    post.last_activity_by = current_user
+    post.save
+  end
+
+  # @param post [Post]
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_hide_history(post, history)
+    # We need to reveal history for all events that were hidden by this action
+    histories_to_reveal = post.post_histories
+                              .where(created_at: ..history.created_at)
+                              .where(hidden: true)
+                              .includes(:post_history_type)
+                              .order(created_at: :desc, id: :desc)
+
+    # If there are more history hiding events, only hide until the previous one.
+    # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
+    # will have occurred in the same second.
+    predecessor = find_predecessor('history_hidden', history)
+    histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
+
+    histories_to_reveal.update_all(hidden: false, updated_at: DateTime.now).positive?
   end
 
   # @param type [String] the name of the history type
