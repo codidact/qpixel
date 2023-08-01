@@ -12,11 +12,11 @@
      <%= 'post'.pluralize(post_count) %>
     </span>
     <div class="button-list is-gutterless has-margin-2">
-      <%= link_to 'Relevance', query_url(sort: 'relevance'), class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}",
+      <%= link_to 'Relevance', request.params.merge(sort: 'relevance'), class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}",
                   role: 'button', 'aria-label': 'Sort by relevance' %>
-      <%= link_to 'Score', query_url(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}",
+      <%= link_to 'Score', request.params.merge(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}",
                   role: 'button', 'aria-label': 'Sort by score' %>
-      <%= link_to 'Age', query_url(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}",
+      <%= link_to 'Age', request.params.merge(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}",
                   role: 'button', 'aria-label': 'Sort by age' %>
     </div>
   </div>
