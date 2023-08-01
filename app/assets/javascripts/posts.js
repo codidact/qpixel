@@ -10,7 +10,6 @@ $(() => {
     const $postField = $('.js-post-field');
     $tgt = $(ev.target);
     const content = $('#template-md-' + $tgt.attr('data-template-id')).val();
-    console.log($postField, content)
     $postField.val(content);
   });
 
