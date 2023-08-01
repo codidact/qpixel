@@ -48,6 +48,8 @@ en:
       Edit Comment
     licence_label: >
       License
+    template_post_type_label: >
+      For Post Type
     unsaved_changes_confirmation: >
       Any unsaved changes will be lost. Are you sure?
     category_label: >

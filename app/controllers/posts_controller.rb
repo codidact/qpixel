@@ -525,7 +525,7 @@ class PostsController < ApplicationController
 
   def permitted
     [:post_type_id, :category_id, :parent_id, :title, :body_markdown, :license_id,
-     :doc_slug, :help_category, :help_ordering]
+     :doc_slug, :help_category, :help_ordering, :template_post_type_id]
   end
 
   def post_params

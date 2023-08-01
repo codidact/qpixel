@@ -54,7 +54,7 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post, post_type: post_type %>
 
   <div class="post-preview"></div>
 
@@ -168,6 +168,13 @@
         </div>
       <% end %>
     <% end %>
+  <% end %>
+
+  <% if post_type.id == PostTemplate.post_type_id %>
+    <div class="form-group">
+      <%= f.label :template_post_type_id, t('posts.template_post_type_label'), class: "form-element" %>
+      <%= f.select :template_post_type_id, options_for_select(PostType.all.map { |pt| [pt.name.underscore.humanize, pt.id] }), {}, { class: "form-element" } %>
+    </div>
   <% end %>
 
   <% if edit_comment %>

@@ -1,5 +1,5 @@
 <h1 class="has-margin-bottom-2">
-  New Post
+  New <%= @post_type.name.underscore.humanize.titleize %>
   <% if @category.present? %>
     in <%= @category.name %>
   <% end %>

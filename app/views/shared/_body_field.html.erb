@@ -19,7 +19,7 @@
         end[1]
       %>
     <% end %>
-    <%= render 'shared/markdown_tools' %>
+    <%= render 'shared/markdown_tools', post_type: post_type %>
     <%= f.text_area field_name, **({ class: classes, rows: 15, placeholder: 'Start typing your post...' }).merge(value), 
                                 data: { character_count: ".js-character-count-post-body" } %>
     <%= render 'posts/mdhint' %>

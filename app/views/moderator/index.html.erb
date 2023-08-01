@@ -42,6 +42,15 @@
   <div class="grid--cell is-4-lg is-6-md is-12-sm">
     <div class="widget">
       <div class="widget--body">
+        <i class="fas fa-file-alt"></i>
+        <%= link_to 'Create Post Template', new_post_path(post_type: PostTemplate.post_type_id) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid--cell is-4-lg is-6-md is-12-sm">
+    <div class="widget">
+      <div class="widget--body">
         <i class="fas fa-chart-line"></i>
         <%= link_to 'Reports', users_report_path %>
       </div>

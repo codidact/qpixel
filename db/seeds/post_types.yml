@@ -75,3 +75,18 @@
   is_freely_editable: false
   has_reactions: false
   has_only_specific_reactions: false
+
+- name: PostTemplate
+  description: ~
+  has_answers: false
+  has_votes: false
+  has_tags: false
+  has_parent: false
+  has_category: false
+  has_license: false
+  is_public_editable: false
+  is_closeable: false
+  is_top_level: false
+  is_freely_editable: false
+  has_reactions: false
+  has_only_specific_reactions: false
