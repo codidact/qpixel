@@ -1,9 +1,24 @@
+<%#
+  Widget displaying that we support markdown, linking to the help article. This also applies the min/max length for the
+  post body.
+
+  Variables:
+    min_length    : [Integer, Nil] optional, the minimum allowed length (default 30)
+    max_length    : [Integer, Nil] optional, the maximum allowed length (default 30_000)
+%>
+
+<%
+  # Defaults
+  min_length = (defined?(min_length) ? min_length : nil) || 30
+  max_length = (defined?(max_length) ? max_length : nil) || 30_000
+%>
+
 <div class="form-caption widget--footer js-post-field-footer">
   We <a href="/help/formatting">support Markdown</a> for posts:
   <strong>**bold**</strong>, <em>*italics*</em>, <code>`code`</code>, two newlines for paragraphs
   <span class="has-float-right has-font-size-caption js-character-count-post-body hide"
-        data-max="30000" data-min="30" data-display-at="0.75">
+        data-max="<%= max_length %>" data-min="<%= min_length %>" data-display-at="0.75">
     <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-    <span class="js-character-count__count">0 / 30000</span>
+    <span class="js-character-count__count">0 / <%= max_length %></span>
   </span>
 </div>
