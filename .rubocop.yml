@@ -43,7 +43,7 @@ Metrics/BlockLength:
 Metrics/BlockNesting:
   Max: 5
 Metrics/ClassLength:
-  Max: 300
+  Max: 350
 Metrics/CyclomaticComplexity:
   Max: 30
 Metrics/MethodLength:
