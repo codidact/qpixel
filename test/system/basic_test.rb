@@ -23,4 +23,13 @@ class BasicTest < ApplicationSystemTestCase
     log_in user, password
     assert_selector '.notice', text: 'Signed in successfully.'
   end
+
+  test 'After sign in, user is redirected to the page they attempted to visit' do
+    visit users_url
+
+    click_on 'Sign In'
+    log_in :standard_user, 'test123'
+    assert_selector '.notice', text: 'Signed in successfully.'
+    assert_redirected_to users_url
+  end
 end
