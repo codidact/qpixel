@@ -28,14 +28,22 @@
         <span class="js-text">copy link</span>
       <% end %>
     </summary>
-    <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
-      <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
-    <% end %>
-    <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
-      <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
-    <% end %>
-    <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
-      <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
+    <% if event.allowed_to_see_details?(current_user) %>
+      <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
+        <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
+      <% end %>
+      <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
+        <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
+      <% end %>
+      <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
+        <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
+      <% end %>
+    <% elsif [event.before_title, event.after_title,
+              event.before_state, event.after_state,
+              event.before_tags, event.after_tags].any?(&:present?) %>
+      <p>
+        <em>The detailed changes of this event are hidden because of a redaction.</em>
+      </p>
     <% end %>
   </details>
 <% end %>

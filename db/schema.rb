@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_13_205236) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_26_143348) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -386,6 +386,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_13_205236) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
+    t.boolean "hidden", default: false, null: false
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
