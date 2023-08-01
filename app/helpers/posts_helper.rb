@@ -16,6 +16,18 @@ module PostsHelper
   end
 
   # @param category [Category, Nil]
+  # @return [Integer] the minimum length for post bodies
+  def min_body_length(category)
+    category&.min_body_length || 30
+  end
+
+  # @param _category [Category, Nil]
+  # @return [Integer] the maximum length for post bodies
+  def max_body_length(_category)
+    30_000
+  end
+
+  # @param category [Category, Nil]
   # @return [Integer] the minimum length for post titles
   def min_title_length(category)
     category&.min_title_length || 15
