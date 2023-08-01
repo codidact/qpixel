@@ -22,39 +22,43 @@
 </div>
 
 <div class="markdown-tools widget--header js-markdown-tools">
-  <div class="button-list is-gutterless">
-    <a href="javascript:void(0)" class="button is-outlined is-muted is-icon-only" data-drop="#templates"
-       data-drop-self-class-toggle="is-active" aria-label="Templates" title="Templates" role="button">
-      <i class="fas fa-copy"></i>
-    </a>
-    <div class="droppanel" id="templates">
-      <% post_type.templates.each do |template| %>
-        <a href="javascript:void(0)" class="js-template" aria-label="<%= template.title %>"
-          title="<%= template.title %>" role="button" data-template-id="<%= template.id %>">
-          <%= template.title %>
-        </a>
-        <a href="javascript:void(0)" data-modal="#template-<%= template.id %>"><i class="fas fa-fw fa-question-circle"></i></a>
-      <% end %>
-    </div>
-    <% post_type.templates.each do |template| %>
-      <div class="modal" id="template-<%= template.id %>">
-        <div class="modal--container">
-          <div class="modal--header">
-            <button class="button is-close-button modal--header-button" data-modal="#template-<%= template.id %>">&times;</button>
+  <% templates = post_type.templates %>
+  <% if templates.any? %>
+    <div class="button-list is-gutterless">
+      <a href="javascript:void(0)" class="button is-outlined is-muted is-icon-only" data-drop="#templates"
+        data-drop-self-class-toggle="is-active" aria-label="Templates" title="Templates" role="button">
+        <i class="fas fa-copy"></i>
+      </a>
+      <div class="droppanel" id="templates">
+        <% templates.each do |template| %>
+          <a href="javascript:void(0)" class="js-template" aria-label="<%= template.title %>"
+            title="<%= template.title %>" role="button" data-template-id="<%= template.id %>">
             <%= template.title %>
-          </div>
-          <div class="modal--body">
-          <textarea disabled id="template-md-<%= template.id %>"
-            class='form-element post-field widget--body h-b-0 h-m-0'><%= template.body_markdown %></textarea>
-          <%= sanitize(template.body) %>        
-          </div>
-          <div class="modal--footer">
-            <a href="javascript:void(0)" class="js-template" aria-label="<%= template.title %>" title="<%= template.title %>" role="button">Apply</a>
+          </a>
+          <a href="javascript:void(0)" data-modal="#template-<%= template.id %>"><i class="fas fa-fw fa-question-circle"></i></a>
+        <% end %>
+      </div>
+      <% templates.each do |template| %>
+        <div class="modal" id="template-<%= template.id %>">
+          <div class="modal--container">
+            <div class="modal--header">
+              <button class="button is-close-button modal--header-button" data-modal="#template-<%= template.id %>">&times;</button>
+              <%= template.title %>
+            </div>
+            <div class="modal--body">
+              <textarea disabled id="template-md-<%= template.id %>"
+                class='form-element post-field widget--body h-b-0 h-m-0'><%= template.body_markdown %></textarea>
+              <%= sanitize(template.body) %>        
+            </div>
+            <div class="modal--footer">
+              <a href="javascript:void(0)" class="js-template" aria-label="<%= template.title %>"
+                title="<%= template.title %>" role="button" data-template-id="<%= template.id %>">Apply</a>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% end %>
   <div class="button-list is-gutterless">
     <%= md_button action: 'bold', label: 'Bold', class: 'is-icon-only' do %>
       <i class="fas fa-fw fa-bold"></i>
