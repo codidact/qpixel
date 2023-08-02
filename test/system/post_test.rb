@@ -31,5 +31,31 @@ class PostTest < ApplicationSystemTestCase
 
   # TODO: Post validations
 
-  # TODO: Sort urls
+  # -------------------------------------------------------
+  # Show
+  # -------------------------------------------------------
+
+  test 'User can view post' do
+    post = posts(:question_one)
+    visit post_url(post)
+
+    # Check that the post is displayed somewhere on the page
+    assert_text post.title
+    assert_text post.body
+
+    # Check that answers are displayed somewhere on the page
+    assert post.children.any?, 'The post for this system test should have answers'
+    post.children.where(deleted: false).each do |child|
+      assert_text child.body
+    end
+  end
+
+  test 'User can sort answers' do
+    post = posts(:question_one)
+    visit post_url(post)
+
+    click_on 'Active'
+
+    assert_current_path post_url(post, sort: 'active')
+  end
 end
