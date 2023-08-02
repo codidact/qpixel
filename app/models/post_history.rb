@@ -16,7 +16,7 @@ class PostHistory < ApplicationRecord
   # @param user [User]
   # @return [Boolean] whether the given user is allowed to see the details of this history item
   def allowed_to_see_details?(user)
-    !hidden || user.is_admin || user_id == user.id || post.user_id == user.id
+    !hidden || user&.is_admin || user_id == user&.id || post.user_id == user&.id
   end
 
   def self.method_missing(name, *args, **opts)
