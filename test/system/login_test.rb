@@ -14,6 +14,7 @@ class LoginTest < ApplicationSystemTestCase
     fill_in 'Password', with: password
     fill_in 'Password confirmation', with: password
 
+    # Check that the user is created in the DB
     assert_difference 'User.count' do
       click_on 'Sign up'
     end
