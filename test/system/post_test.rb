@@ -1,6 +1,10 @@
 require 'application_system_test_case'
 
 class PostTest < ApplicationSystemTestCase
+  # -------------------------------------------------------
+  # Create
+  # -------------------------------------------------------
+
   test 'Not-signed in user cannot create a post' do
     visit root_url
     click_on 'Create Post'
@@ -18,7 +22,11 @@ class PostTest < ApplicationSystemTestCase
                           'Does that actually work?'
     fill_in 'Summarize your post with a title:', with: 'Can a signed-in user create a post?'
     post_form_select_tag tags(:faq).name
-    click_on "Save Post in #{category.name}a"
+
+    # Check that the post is actually created
+    assert_difference 'Post.count' do
+      click_on "Save Post in #{category.name}"
+    end
   end
 
   # TODO: Post validations
