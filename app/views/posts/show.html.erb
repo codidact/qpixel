@@ -23,8 +23,10 @@
   <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
 
   <div class="button-list is-gutterless has-float-right">
-    <a href="<%= request.params.merge(sort: 'score') %>" class="button is-muted is-outlined <%= params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : '' %>">Score</a>
-    <a href="<%= request.params.merge(sort: 'active') %>" class="button is-muted is-outlined <%= params[:sort] == 'active' ? 'is-active' : '' %>">Active</a>
+    <%= link_to 'Score', request.params.merge(sort: 'score'),
+                class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}" %>
+    <%= link_to 'Active', request.params.merge(sort: 'active'),
+                class: "button is-muted is-outlined #{params[:sort] == 'active' ? 'is-active' : ''}" %>
   </div>
 
   <div class="has-clear-clear"></div>
