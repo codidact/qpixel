@@ -227,9 +227,8 @@ high_trust:
 
 answer_one:
   post_type: answer
-  title: A1 ABCDEF GHIJKL MNOPQR
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A1 MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0.5
   parent: question_one
   user: standard_user
@@ -241,9 +240,8 @@ answer_one:
 
 answer_two:
   post_type: answer
-  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A2 MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0.5
   parent: question_one
   user: editor
@@ -255,9 +253,8 @@ answer_two:
 
 comments_disabled:
   post_type: answer
-  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A2 MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0.5
   parent: question_one
   user: closer
@@ -270,9 +267,8 @@ comments_disabled:
 
 bad_answer:
   post_type: answer
-  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A2 MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0.4
   parent: question_one
   user: editor
@@ -284,9 +280,8 @@ bad_answer:
 
 really_old_answer:
   post_type: answer
-  title: A3RO ABCDEF GHIJKL MNOPQR
   body: A3RO ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A3RO MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 2
   parent: question_one
   user: standard_user
@@ -299,9 +294,8 @@ really_old_answer:
 
 deleted_answer:
   post_type: answer
-  title: A4D ABCDEF GHIJKL MNOPQR
   body: A4D ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
+  body_markdown: A4D MARKDOWN ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   score: 0.5
   parent: question_one
   user: closer
