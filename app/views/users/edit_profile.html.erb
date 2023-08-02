@@ -37,7 +37,8 @@
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user %>
+  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
+             min_length: 0 %>
 
   <div class="post-preview"></div>
 

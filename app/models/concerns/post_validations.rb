@@ -41,14 +41,14 @@ module PostValidations
   def stripped_minimum_body
     min_body = category.nil? ? 30 : category.min_body_length
     if (body_markdown&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < min_body
-      errors.add(:body, 'must be more than 30 non-whitespace characters long')
+      errors.add(:body, "must be more than #{min_body} non-whitespace characters long")
     end
   end
 
   def stripped_minimum_title
     min_title = category.nil? ? 15 : category.min_title_length
     if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < min_title
-      errors.add(:title, 'must be more than 15 non-whitespace characters long')
+      errors.add(:title, "must be more than #{min_title} non-whitespace characters long")
     end
   end
 

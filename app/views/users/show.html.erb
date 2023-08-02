@@ -44,10 +44,11 @@
         <% end %>
       </p>
 
-      <% if @user.profile.nil? || @user.profile.blank? %>
+      <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
+      <% if effective_profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
       <% else %>
-        <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
+        <%= effective_profile %>
       <% end %>
       </div>
 
