@@ -4,8 +4,9 @@ class LoginTest < ApplicationSystemTestCase
   test 'User can register a new account and sign-in to it after confirming their email' do
     email = 'test@test.com'
     username = 'Test User'
-    password = 'test123'
+    password = 'login_test_1'
 
+    # Sign up for an account
     visit root_url
     click_on 'Sign Up'
     fill_in 'Email', with: email
@@ -19,6 +20,11 @@ class LoginTest < ApplicationSystemTestCase
 
     user = User.last
 
+    # Try logging in directly, this should fail because not confirmed yet
+    log_in user, password
+    assert_selector '.notice', text: 'You have to confirm your email address before continuing.'
+
+    # Confirm email and sign in again, should succeed this time
     confirm_email user
     log_in user, password
     assert_selector '.notice', text: 'Signed in successfully.'
