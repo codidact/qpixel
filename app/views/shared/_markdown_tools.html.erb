@@ -43,7 +43,7 @@
           <div class="modal--container">
             <div class="modal--header">
               <button class="button is-close-button modal--header-button" data-modal="#template-<%= template.id %>">&times;</button>
-              <%= template.title %>
+              <%= link_to template.title, generic_share_link(template) %>
             </div>
             <div class="modal--body">
               <textarea disabled id="template-md-<%= template.id %>"
