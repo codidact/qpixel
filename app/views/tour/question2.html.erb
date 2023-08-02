@@ -28,7 +28,7 @@
     <div class="form-group">
       <label for="tour-post-body" class="form-element">Body</label>
       <div class="widget">
-        <%= render 'shared/markdown_tools' %>
+        <%= render 'shared/markdown_tools', post_type: nil %>
         <textarea class="form-element post-field js-post-field widget--body h-b-0 h-m-0" rows=15 placeholder="Start typing your post..." id="tour-post-body"></textarea>
         <%= render 'posts/mdhint' %>
       </div>

@@ -22,7 +22,7 @@
 </div>
 
 <div class="markdown-tools widget--header js-markdown-tools">
-  <% templates = post_type.templates %>
+  <% templates = post_type&.templates || [] %>
   <% if templates.any? %>
     <div class="button-list is-gutterless">
       <a href="javascript:void(0)" class="button is-outlined is-muted is-icon-only" data-drop="#templates"
