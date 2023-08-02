@@ -37,8 +37,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def log_out
     within :css, '.header' do
       find(:css, 'i.far.fa-caret-square-down').find(:xpath, '..').click
-      click_on 'Sign Out'
     end
+
+    find_link('Sign Out').click
   end
 
   # Pretends the user has clicked the confirmation link in the email they received.
