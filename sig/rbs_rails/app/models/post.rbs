@@ -1444,12 +1444,6 @@ class Post < ::ApplicationRecord
   end
   include GeneratedAttributeMethods
 
-  # Manually added
-  def meta?: () -> bool
-  def reassign_user: (User) -> void
-  def tag_set: () -> TagSet
-
-  # Auto generated
   def votes: () -> Vote::ActiveRecord_Associations_CollectionProxy
   def votes=: (Vote::ActiveRecord_Associations_CollectionProxy | Array[Vote]) -> (Vote::ActiveRecord_Associations_CollectionProxy | Array[Vote])
   def vote_ids: () -> Array[Integer]
