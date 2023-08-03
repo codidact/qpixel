@@ -100,5 +100,5 @@ group :development do
   gem 'web-console', '~> 4.2'
 
   gem 'rbs_rails', require: false
-  gem 'typeprof', require: false
+  gem 'typeprof', require: false, git: 'git@github.com:ruby/typeprof.git', branch: 'master'
 end
