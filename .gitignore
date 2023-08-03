@@ -52,3 +52,6 @@ qpixel-import.tar.gz
 *.swp
 
 dump.rdb
+
+# RBS related
+/.gem_rbs_collection/
