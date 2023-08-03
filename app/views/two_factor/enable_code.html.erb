@@ -4,11 +4,11 @@
   two-factor authentication if you lose access to your app.
 </p>
 
-<div class="notice is-danger has-color-red-900">
-  <p><i class="fas fa-exclamation-triangle"></i> You will not be shown this code again once you leave this page &mdash; save it somewhere safe now.</p>
-
-  <input class="form-element" type="text" readonly value="<%= current_user.backup_2fa_code %>" />
-</div>
+<details>
+  <summary>Show code</summary>
+  <label for="backup-code" class="form-element">2FA backup code</label>
+  <input class="form-element" type="text" readonly name="backup-code" id="backup-code" value="<%= current_user.backup_2fa_code %>" />
+</details>
 
 <p>Last step: to confirm that you're all correctly set up, enter the code shown in your authenticator app below.</p>
 
