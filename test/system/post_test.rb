@@ -107,7 +107,7 @@ class PostTest < ApplicationSystemTestCase
   # Show
   # -------------------------------------------------------
 
-  test 'User can view post' do
+  test 'Anyone can view question' do
     post = posts(:question_one)
     visit post_url(post)
 
@@ -122,12 +122,36 @@ class PostTest < ApplicationSystemTestCase
     end
   end
 
-  test 'User can sort answers' do
+  test 'Anyone can sort answers' do
     post = posts(:question_one)
     visit post_url(post)
 
     click_on 'Active'
 
     assert_current_path post_url(post, sort: 'active')
+  end
+
+  # -------------------------------------------------------
+  # Edit
+  # -------------------------------------------------------
+
+  test 'User with edit permissions can directly edit question' do
+    log_in :editor
+    post = posts(:question_two)
+    visit post_url(post)
+
+    within ".post[data-post-id=\"#{post.id}\"]" do
+      click_on 'Edit'
+    end
+
+    updated_text = 'This is the updated body text, which should be quite different from the original text!'
+    fill_in 'Body', with: updated_text
+    fill_in 'Edit Comment', with: 'Major Rewrite for Tests'
+
+    click_on "Save Post in #{post.category.name}"
+    assert_current_path post_url(post)
+
+    # Check that the page shows the updated text
+    assert_text updated_text
   end
 end
