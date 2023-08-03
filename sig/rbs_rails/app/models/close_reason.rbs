@@ -1,0 +1,249 @@
+class CloseReason < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[CloseReason, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def name: () -> String?
+
+    def name=: (String?) -> String?
+
+    def name?: () -> bool
+
+    def name_changed?: () -> bool
+
+    def name_change: () -> [ String?, String? ]
+
+    def name_will_change!: () -> void
+
+    def name_was: () -> String?
+
+    def name_previously_changed?: () -> bool
+
+    def name_previous_change: () -> Array[String?]?
+
+    def name_previously_was: () -> String?
+
+    def name_before_last_save: () -> String?
+
+    def name_change_to_be_saved: () -> Array[String?]?
+
+    def name_in_database: () -> String?
+
+    def saved_change_to_name: () -> Array[String?]?
+
+    def saved_change_to_name?: () -> bool
+
+    def will_save_change_to_name?: () -> bool
+
+    def restore_name!: () -> void
+
+    def clear_name_change: () -> void
+
+    def description: () -> String?
+
+    def description=: (String?) -> String?
+
+    def description?: () -> bool
+
+    def description_changed?: () -> bool
+
+    def description_change: () -> [ String?, String? ]
+
+    def description_will_change!: () -> void
+
+    def description_was: () -> String?
+
+    def description_previously_changed?: () -> bool
+
+    def description_previous_change: () -> Array[String?]?
+
+    def description_previously_was: () -> String?
+
+    def description_before_last_save: () -> String?
+
+    def description_change_to_be_saved: () -> Array[String?]?
+
+    def description_in_database: () -> String?
+
+    def saved_change_to_description: () -> Array[String?]?
+
+    def saved_change_to_description?: () -> bool
+
+    def will_save_change_to_description?: () -> bool
+
+    def restore_description!: () -> void
+
+    def clear_description_change: () -> void
+
+    def active: () -> bool?
+
+    def active=: (bool?) -> bool?
+
+    def active?: () -> bool
+
+    def active_changed?: () -> bool
+
+    def active_change: () -> [ bool?, bool? ]
+
+    def active_will_change!: () -> void
+
+    def active_was: () -> bool?
+
+    def active_previously_changed?: () -> bool
+
+    def active_previous_change: () -> Array[bool?]?
+
+    def active_previously_was: () -> bool?
+
+    def active_before_last_save: () -> bool?
+
+    def active_change_to_be_saved: () -> Array[bool?]?
+
+    def active_in_database: () -> bool?
+
+    def saved_change_to_active: () -> Array[bool?]?
+
+    def saved_change_to_active?: () -> bool
+
+    def will_save_change_to_active?: () -> bool
+
+    def restore_active!: () -> void
+
+    def clear_active_change: () -> void
+
+    def requires_other_post: () -> bool?
+
+    def requires_other_post=: (bool?) -> bool?
+
+    def requires_other_post?: () -> bool
+
+    def requires_other_post_changed?: () -> bool
+
+    def requires_other_post_change: () -> [ bool?, bool? ]
+
+    def requires_other_post_will_change!: () -> void
+
+    def requires_other_post_was: () -> bool?
+
+    def requires_other_post_previously_changed?: () -> bool
+
+    def requires_other_post_previous_change: () -> Array[bool?]?
+
+    def requires_other_post_previously_was: () -> bool?
+
+    def requires_other_post_before_last_save: () -> bool?
+
+    def requires_other_post_change_to_be_saved: () -> Array[bool?]?
+
+    def requires_other_post_in_database: () -> bool?
+
+    def saved_change_to_requires_other_post: () -> Array[bool?]?
+
+    def saved_change_to_requires_other_post?: () -> bool
+
+    def will_save_change_to_requires_other_post?: () -> bool
+
+    def restore_requires_other_post!: () -> void
+
+    def clear_requires_other_post_change: () -> void
+
+    def community_id: () -> Integer?
+
+    def community_id=: (Integer?) -> Integer?
+
+    def community_id?: () -> bool
+
+    def community_id_changed?: () -> bool
+
+    def community_id_change: () -> [ Integer?, Integer? ]
+
+    def community_id_will_change!: () -> void
+
+    def community_id_was: () -> Integer?
+
+    def community_id_previously_changed?: () -> bool
+
+    def community_id_previous_change: () -> Array[Integer?]?
+
+    def community_id_previously_was: () -> Integer?
+
+    def community_id_before_last_save: () -> Integer?
+
+    def community_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def community_id_in_database: () -> Integer?
+
+    def saved_change_to_community_id: () -> Array[Integer?]?
+
+    def saved_change_to_community_id?: () -> bool
+
+    def will_save_change_to_community_id?: () -> bool
+
+    def restore_community_id!: () -> void
+
+    def clear_community_id_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def community: () -> Community?
+  def community=: (Community?) -> Community?
+  def reload_community: () -> Community?
+  def build_community: (untyped) -> Community
+  def create_community: (untyped) -> Community
+  def create_community!: (untyped) -> Community
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  def self.active: () -> ActiveRecord_Relation
+
+  module GeneratedRelationMethods
+    def active: () -> ActiveRecord_Relation
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[CloseReason, Integer]
+    include Enumerable[CloseReason]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[CloseReason, Integer]
+  end
+end

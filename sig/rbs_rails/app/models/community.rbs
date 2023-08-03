@@ -1,0 +1,284 @@
+class Community < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[Community, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def name: () -> String
+
+    def name=: (String) -> String
+
+    def name?: () -> bool
+
+    def name_changed?: () -> bool
+
+    def name_change: () -> [ String?, String? ]
+
+    def name_will_change!: () -> void
+
+    def name_was: () -> String?
+
+    def name_previously_changed?: () -> bool
+
+    def name_previous_change: () -> Array[String?]?
+
+    def name_previously_was: () -> String?
+
+    def name_before_last_save: () -> String?
+
+    def name_change_to_be_saved: () -> Array[String?]?
+
+    def name_in_database: () -> String?
+
+    def saved_change_to_name: () -> Array[String?]?
+
+    def saved_change_to_name?: () -> bool
+
+    def will_save_change_to_name?: () -> bool
+
+    def restore_name!: () -> void
+
+    def clear_name_change: () -> void
+
+    def host: () -> String
+
+    def host=: (String) -> String
+
+    def host?: () -> bool
+
+    def host_changed?: () -> bool
+
+    def host_change: () -> [ String?, String? ]
+
+    def host_will_change!: () -> void
+
+    def host_was: () -> String?
+
+    def host_previously_changed?: () -> bool
+
+    def host_previous_change: () -> Array[String?]?
+
+    def host_previously_was: () -> String?
+
+    def host_before_last_save: () -> String?
+
+    def host_change_to_be_saved: () -> Array[String?]?
+
+    def host_in_database: () -> String?
+
+    def saved_change_to_host: () -> Array[String?]?
+
+    def saved_change_to_host?: () -> bool
+
+    def will_save_change_to_host?: () -> bool
+
+    def restore_host!: () -> void
+
+    def clear_host_change: () -> void
+
+    def created_at: () -> ActiveSupport::TimeWithZone
+
+    def created_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def created_at?: () -> bool
+
+    def created_at_changed?: () -> bool
+
+    def created_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def created_at_will_change!: () -> void
+
+    def created_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_previously_changed?: () -> bool
+
+    def created_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_created_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_created_at?: () -> bool
+
+    def will_save_change_to_created_at?: () -> bool
+
+    def restore_created_at!: () -> void
+
+    def clear_created_at_change: () -> void
+
+    def updated_at: () -> ActiveSupport::TimeWithZone
+
+    def updated_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def updated_at?: () -> bool
+
+    def updated_at_changed?: () -> bool
+
+    def updated_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def updated_at_will_change!: () -> void
+
+    def updated_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_previously_changed?: () -> bool
+
+    def updated_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_updated_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_updated_at?: () -> bool
+
+    def will_save_change_to_updated_at?: () -> bool
+
+    def restore_updated_at!: () -> void
+
+    def clear_updated_at_change: () -> void
+
+    def is_fake: () -> bool?
+
+    def is_fake=: (bool?) -> bool?
+
+    def is_fake?: () -> bool
+
+    def is_fake_changed?: () -> bool
+
+    def is_fake_change: () -> [ bool?, bool? ]
+
+    def is_fake_will_change!: () -> void
+
+    def is_fake_was: () -> bool?
+
+    def is_fake_previously_changed?: () -> bool
+
+    def is_fake_previous_change: () -> Array[bool?]?
+
+    def is_fake_previously_was: () -> bool?
+
+    def is_fake_before_last_save: () -> bool?
+
+    def is_fake_change_to_be_saved: () -> Array[bool?]?
+
+    def is_fake_in_database: () -> bool?
+
+    def saved_change_to_is_fake: () -> Array[bool?]?
+
+    def saved_change_to_is_fake?: () -> bool
+
+    def will_save_change_to_is_fake?: () -> bool
+
+    def restore_is_fake!: () -> void
+
+    def clear_is_fake_change: () -> void
+
+    def hidden: () -> bool?
+
+    def hidden=: (bool?) -> bool?
+
+    def hidden?: () -> bool
+
+    def hidden_changed?: () -> bool
+
+    def hidden_change: () -> [ bool?, bool? ]
+
+    def hidden_will_change!: () -> void
+
+    def hidden_was: () -> bool?
+
+    def hidden_previously_changed?: () -> bool
+
+    def hidden_previous_change: () -> Array[bool?]?
+
+    def hidden_previously_was: () -> bool?
+
+    def hidden_before_last_save: () -> bool?
+
+    def hidden_change_to_be_saved: () -> Array[bool?]?
+
+    def hidden_in_database: () -> bool?
+
+    def saved_change_to_hidden: () -> Array[bool?]?
+
+    def saved_change_to_hidden?: () -> bool
+
+    def will_save_change_to_hidden?: () -> bool
+
+    def restore_hidden!: () -> void
+
+    def clear_hidden_change: () -> void
+  end
+  include GeneratedAttributeMethods
+  def community_users: () -> CommunityUser::ActiveRecord_Associations_CollectionProxy
+  def community_users=: (CommunityUser::ActiveRecord_Associations_CollectionProxy | Array[CommunityUser]) -> (CommunityUser::ActiveRecord_Associations_CollectionProxy | Array[CommunityUser])
+  def community_user_ids: () -> Array[Integer]
+  def community_user_ids=: (Array[Integer]) -> Array[Integer]
+  def site_settings: () -> SiteSetting::ActiveRecord_Associations_CollectionProxy
+  def site_settings=: (SiteSetting::ActiveRecord_Associations_CollectionProxy | Array[SiteSetting]) -> (SiteSetting::ActiveRecord_Associations_CollectionProxy | Array[SiteSetting])
+  def site_setting_ids: () -> Array[Integer]
+  def site_setting_ids=: (Array[Integer]) -> Array[Integer]
+
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[Community, Integer]
+    include Enumerable[Community]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[Community, Integer]
+  end
+end

@@ -1,0 +1,462 @@
+class Ability < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[Ability, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def community_id: () -> Integer?
+
+    def community_id=: (Integer?) -> Integer?
+
+    def community_id?: () -> bool
+
+    def community_id_changed?: () -> bool
+
+    def community_id_change: () -> [ Integer?, Integer? ]
+
+    def community_id_will_change!: () -> void
+
+    def community_id_was: () -> Integer?
+
+    def community_id_previously_changed?: () -> bool
+
+    def community_id_previous_change: () -> Array[Integer?]?
+
+    def community_id_previously_was: () -> Integer?
+
+    def community_id_before_last_save: () -> Integer?
+
+    def community_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def community_id_in_database: () -> Integer?
+
+    def saved_change_to_community_id: () -> Array[Integer?]?
+
+    def saved_change_to_community_id?: () -> bool
+
+    def will_save_change_to_community_id?: () -> bool
+
+    def restore_community_id!: () -> void
+
+    def clear_community_id_change: () -> void
+
+    def name: () -> String?
+
+    def name=: (String?) -> String?
+
+    def name?: () -> bool
+
+    def name_changed?: () -> bool
+
+    def name_change: () -> [ String?, String? ]
+
+    def name_will_change!: () -> void
+
+    def name_was: () -> String?
+
+    def name_previously_changed?: () -> bool
+
+    def name_previous_change: () -> Array[String?]?
+
+    def name_previously_was: () -> String?
+
+    def name_before_last_save: () -> String?
+
+    def name_change_to_be_saved: () -> Array[String?]?
+
+    def name_in_database: () -> String?
+
+    def saved_change_to_name: () -> Array[String?]?
+
+    def saved_change_to_name?: () -> bool
+
+    def will_save_change_to_name?: () -> bool
+
+    def restore_name!: () -> void
+
+    def clear_name_change: () -> void
+
+    def description: () -> String?
+
+    def description=: (String?) -> String?
+
+    def description?: () -> bool
+
+    def description_changed?: () -> bool
+
+    def description_change: () -> [ String?, String? ]
+
+    def description_will_change!: () -> void
+
+    def description_was: () -> String?
+
+    def description_previously_changed?: () -> bool
+
+    def description_previous_change: () -> Array[String?]?
+
+    def description_previously_was: () -> String?
+
+    def description_before_last_save: () -> String?
+
+    def description_change_to_be_saved: () -> Array[String?]?
+
+    def description_in_database: () -> String?
+
+    def saved_change_to_description: () -> Array[String?]?
+
+    def saved_change_to_description?: () -> bool
+
+    def will_save_change_to_description?: () -> bool
+
+    def restore_description!: () -> void
+
+    def clear_description_change: () -> void
+
+    def internal_id: () -> String?
+
+    def internal_id=: (String?) -> String?
+
+    def internal_id?: () -> bool
+
+    def internal_id_changed?: () -> bool
+
+    def internal_id_change: () -> [ String?, String? ]
+
+    def internal_id_will_change!: () -> void
+
+    def internal_id_was: () -> String?
+
+    def internal_id_previously_changed?: () -> bool
+
+    def internal_id_previous_change: () -> Array[String?]?
+
+    def internal_id_previously_was: () -> String?
+
+    def internal_id_before_last_save: () -> String?
+
+    def internal_id_change_to_be_saved: () -> Array[String?]?
+
+    def internal_id_in_database: () -> String?
+
+    def saved_change_to_internal_id: () -> Array[String?]?
+
+    def saved_change_to_internal_id?: () -> bool
+
+    def will_save_change_to_internal_id?: () -> bool
+
+    def restore_internal_id!: () -> void
+
+    def clear_internal_id_change: () -> void
+
+    def icon: () -> String?
+
+    def icon=: (String?) -> String?
+
+    def icon?: () -> bool
+
+    def icon_changed?: () -> bool
+
+    def icon_change: () -> [ String?, String? ]
+
+    def icon_will_change!: () -> void
+
+    def icon_was: () -> String?
+
+    def icon_previously_changed?: () -> bool
+
+    def icon_previous_change: () -> Array[String?]?
+
+    def icon_previously_was: () -> String?
+
+    def icon_before_last_save: () -> String?
+
+    def icon_change_to_be_saved: () -> Array[String?]?
+
+    def icon_in_database: () -> String?
+
+    def saved_change_to_icon: () -> Array[String?]?
+
+    def saved_change_to_icon?: () -> bool
+
+    def will_save_change_to_icon?: () -> bool
+
+    def restore_icon!: () -> void
+
+    def clear_icon_change: () -> void
+
+    def post_score_threshold: () -> BigDecimal?
+
+    def post_score_threshold=: (BigDecimal?) -> BigDecimal?
+
+    def post_score_threshold?: () -> bool
+
+    def post_score_threshold_changed?: () -> bool
+
+    def post_score_threshold_change: () -> [ BigDecimal?, BigDecimal? ]
+
+    def post_score_threshold_will_change!: () -> void
+
+    def post_score_threshold_was: () -> BigDecimal?
+
+    def post_score_threshold_previously_changed?: () -> bool
+
+    def post_score_threshold_previous_change: () -> Array[BigDecimal?]?
+
+    def post_score_threshold_previously_was: () -> BigDecimal?
+
+    def post_score_threshold_before_last_save: () -> BigDecimal?
+
+    def post_score_threshold_change_to_be_saved: () -> Array[BigDecimal?]?
+
+    def post_score_threshold_in_database: () -> BigDecimal?
+
+    def saved_change_to_post_score_threshold: () -> Array[BigDecimal?]?
+
+    def saved_change_to_post_score_threshold?: () -> bool
+
+    def will_save_change_to_post_score_threshold?: () -> bool
+
+    def restore_post_score_threshold!: () -> void
+
+    def clear_post_score_threshold_change: () -> void
+
+    def edit_score_threshold: () -> BigDecimal?
+
+    def edit_score_threshold=: (BigDecimal?) -> BigDecimal?
+
+    def edit_score_threshold?: () -> bool
+
+    def edit_score_threshold_changed?: () -> bool
+
+    def edit_score_threshold_change: () -> [ BigDecimal?, BigDecimal? ]
+
+    def edit_score_threshold_will_change!: () -> void
+
+    def edit_score_threshold_was: () -> BigDecimal?
+
+    def edit_score_threshold_previously_changed?: () -> bool
+
+    def edit_score_threshold_previous_change: () -> Array[BigDecimal?]?
+
+    def edit_score_threshold_previously_was: () -> BigDecimal?
+
+    def edit_score_threshold_before_last_save: () -> BigDecimal?
+
+    def edit_score_threshold_change_to_be_saved: () -> Array[BigDecimal?]?
+
+    def edit_score_threshold_in_database: () -> BigDecimal?
+
+    def saved_change_to_edit_score_threshold: () -> Array[BigDecimal?]?
+
+    def saved_change_to_edit_score_threshold?: () -> bool
+
+    def will_save_change_to_edit_score_threshold?: () -> bool
+
+    def restore_edit_score_threshold!: () -> void
+
+    def clear_edit_score_threshold_change: () -> void
+
+    def flag_score_threshold: () -> BigDecimal?
+
+    def flag_score_threshold=: (BigDecimal?) -> BigDecimal?
+
+    def flag_score_threshold?: () -> bool
+
+    def flag_score_threshold_changed?: () -> bool
+
+    def flag_score_threshold_change: () -> [ BigDecimal?, BigDecimal? ]
+
+    def flag_score_threshold_will_change!: () -> void
+
+    def flag_score_threshold_was: () -> BigDecimal?
+
+    def flag_score_threshold_previously_changed?: () -> bool
+
+    def flag_score_threshold_previous_change: () -> Array[BigDecimal?]?
+
+    def flag_score_threshold_previously_was: () -> BigDecimal?
+
+    def flag_score_threshold_before_last_save: () -> BigDecimal?
+
+    def flag_score_threshold_change_to_be_saved: () -> Array[BigDecimal?]?
+
+    def flag_score_threshold_in_database: () -> BigDecimal?
+
+    def saved_change_to_flag_score_threshold: () -> Array[BigDecimal?]?
+
+    def saved_change_to_flag_score_threshold?: () -> bool
+
+    def will_save_change_to_flag_score_threshold?: () -> bool
+
+    def restore_flag_score_threshold!: () -> void
+
+    def clear_flag_score_threshold_change: () -> void
+
+    def created_at: () -> ActiveSupport::TimeWithZone
+
+    def created_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def created_at?: () -> bool
+
+    def created_at_changed?: () -> bool
+
+    def created_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def created_at_will_change!: () -> void
+
+    def created_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_previously_changed?: () -> bool
+
+    def created_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_created_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_created_at?: () -> bool
+
+    def will_save_change_to_created_at?: () -> bool
+
+    def restore_created_at!: () -> void
+
+    def clear_created_at_change: () -> void
+
+    def updated_at: () -> ActiveSupport::TimeWithZone
+
+    def updated_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def updated_at?: () -> bool
+
+    def updated_at_changed?: () -> bool
+
+    def updated_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def updated_at_will_change!: () -> void
+
+    def updated_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_previously_changed?: () -> bool
+
+    def updated_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_updated_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_updated_at?: () -> bool
+
+    def will_save_change_to_updated_at?: () -> bool
+
+    def restore_updated_at!: () -> void
+
+    def clear_updated_at_change: () -> void
+
+    def summary: () -> String?
+
+    def summary=: (String?) -> String?
+
+    def summary?: () -> bool
+
+    def summary_changed?: () -> bool
+
+    def summary_change: () -> [ String?, String? ]
+
+    def summary_will_change!: () -> void
+
+    def summary_was: () -> String?
+
+    def summary_previously_changed?: () -> bool
+
+    def summary_previous_change: () -> Array[String?]?
+
+    def summary_previously_was: () -> String?
+
+    def summary_before_last_save: () -> String?
+
+    def summary_change_to_be_saved: () -> Array[String?]?
+
+    def summary_in_database: () -> String?
+
+    def saved_change_to_summary: () -> Array[String?]?
+
+    def saved_change_to_summary?: () -> bool
+
+    def will_save_change_to_summary?: () -> bool
+
+    def restore_summary!: () -> void
+
+    def clear_summary_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def community: () -> Community
+  def community=: (Community?) -> Community?
+  def reload_community: () -> Community?
+  def build_community: (untyped) -> Community
+  def create_community: (untyped) -> Community
+  def create_community!: (untyped) -> Community
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[Ability, Integer]
+    include Enumerable[Ability]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[Ability, Integer]
+  end
+end

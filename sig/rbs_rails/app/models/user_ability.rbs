@@ -1,0 +1,324 @@
+class UserAbility < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[UserAbility, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def community_user_id: () -> Integer?
+
+    def community_user_id=: (Integer?) -> Integer?
+
+    def community_user_id?: () -> bool
+
+    def community_user_id_changed?: () -> bool
+
+    def community_user_id_change: () -> [ Integer?, Integer? ]
+
+    def community_user_id_will_change!: () -> void
+
+    def community_user_id_was: () -> Integer?
+
+    def community_user_id_previously_changed?: () -> bool
+
+    def community_user_id_previous_change: () -> Array[Integer?]?
+
+    def community_user_id_previously_was: () -> Integer?
+
+    def community_user_id_before_last_save: () -> Integer?
+
+    def community_user_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def community_user_id_in_database: () -> Integer?
+
+    def saved_change_to_community_user_id: () -> Array[Integer?]?
+
+    def saved_change_to_community_user_id?: () -> bool
+
+    def will_save_change_to_community_user_id?: () -> bool
+
+    def restore_community_user_id!: () -> void
+
+    def clear_community_user_id_change: () -> void
+
+    def ability_id: () -> Integer?
+
+    def ability_id=: (Integer?) -> Integer?
+
+    def ability_id?: () -> bool
+
+    def ability_id_changed?: () -> bool
+
+    def ability_id_change: () -> [ Integer?, Integer? ]
+
+    def ability_id_will_change!: () -> void
+
+    def ability_id_was: () -> Integer?
+
+    def ability_id_previously_changed?: () -> bool
+
+    def ability_id_previous_change: () -> Array[Integer?]?
+
+    def ability_id_previously_was: () -> Integer?
+
+    def ability_id_before_last_save: () -> Integer?
+
+    def ability_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def ability_id_in_database: () -> Integer?
+
+    def saved_change_to_ability_id: () -> Array[Integer?]?
+
+    def saved_change_to_ability_id?: () -> bool
+
+    def will_save_change_to_ability_id?: () -> bool
+
+    def restore_ability_id!: () -> void
+
+    def clear_ability_id_change: () -> void
+
+    def is_suspended: () -> bool?
+
+    def is_suspended=: (bool?) -> bool?
+
+    def is_suspended?: () -> bool
+
+    def is_suspended_changed?: () -> bool
+
+    def is_suspended_change: () -> [ bool?, bool? ]
+
+    def is_suspended_will_change!: () -> void
+
+    def is_suspended_was: () -> bool?
+
+    def is_suspended_previously_changed?: () -> bool
+
+    def is_suspended_previous_change: () -> Array[bool?]?
+
+    def is_suspended_previously_was: () -> bool?
+
+    def is_suspended_before_last_save: () -> bool?
+
+    def is_suspended_change_to_be_saved: () -> Array[bool?]?
+
+    def is_suspended_in_database: () -> bool?
+
+    def saved_change_to_is_suspended: () -> Array[bool?]?
+
+    def saved_change_to_is_suspended?: () -> bool
+
+    def will_save_change_to_is_suspended?: () -> bool
+
+    def restore_is_suspended!: () -> void
+
+    def clear_is_suspended_change: () -> void
+
+    def suspension_end: () -> ActiveSupport::TimeWithZone?
+
+    def suspension_end=: (ActiveSupport::TimeWithZone?) -> ActiveSupport::TimeWithZone?
+
+    def suspension_end?: () -> bool
+
+    def suspension_end_changed?: () -> bool
+
+    def suspension_end_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def suspension_end_will_change!: () -> void
+
+    def suspension_end_was: () -> ActiveSupport::TimeWithZone?
+
+    def suspension_end_previously_changed?: () -> bool
+
+    def suspension_end_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def suspension_end_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def suspension_end_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def suspension_end_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def suspension_end_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_suspension_end: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_suspension_end?: () -> bool
+
+    def will_save_change_to_suspension_end?: () -> bool
+
+    def restore_suspension_end!: () -> void
+
+    def clear_suspension_end_change: () -> void
+
+    def suspension_message: () -> String?
+
+    def suspension_message=: (String?) -> String?
+
+    def suspension_message?: () -> bool
+
+    def suspension_message_changed?: () -> bool
+
+    def suspension_message_change: () -> [ String?, String? ]
+
+    def suspension_message_will_change!: () -> void
+
+    def suspension_message_was: () -> String?
+
+    def suspension_message_previously_changed?: () -> bool
+
+    def suspension_message_previous_change: () -> Array[String?]?
+
+    def suspension_message_previously_was: () -> String?
+
+    def suspension_message_before_last_save: () -> String?
+
+    def suspension_message_change_to_be_saved: () -> Array[String?]?
+
+    def suspension_message_in_database: () -> String?
+
+    def saved_change_to_suspension_message: () -> Array[String?]?
+
+    def saved_change_to_suspension_message?: () -> bool
+
+    def will_save_change_to_suspension_message?: () -> bool
+
+    def restore_suspension_message!: () -> void
+
+    def clear_suspension_message_change: () -> void
+
+    def created_at: () -> ActiveSupport::TimeWithZone
+
+    def created_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def created_at?: () -> bool
+
+    def created_at_changed?: () -> bool
+
+    def created_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def created_at_will_change!: () -> void
+
+    def created_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_previously_changed?: () -> bool
+
+    def created_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def created_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def created_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_created_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_created_at?: () -> bool
+
+    def will_save_change_to_created_at?: () -> bool
+
+    def restore_created_at!: () -> void
+
+    def clear_created_at_change: () -> void
+
+    def updated_at: () -> ActiveSupport::TimeWithZone
+
+    def updated_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+    def updated_at?: () -> bool
+
+    def updated_at_changed?: () -> bool
+
+    def updated_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+    def updated_at_will_change!: () -> void
+
+    def updated_at_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_previously_changed?: () -> bool
+
+    def updated_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+    def updated_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def updated_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+    def saved_change_to_updated_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_updated_at?: () -> bool
+
+    def will_save_change_to_updated_at?: () -> bool
+
+    def restore_updated_at!: () -> void
+
+    def clear_updated_at_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def community_user: () -> CommunityUser
+  def community_user=: (CommunityUser?) -> CommunityUser?
+  def reload_community_user: () -> CommunityUser?
+  def build_community_user: (untyped) -> CommunityUser
+  def create_community_user: (untyped) -> CommunityUser
+  def create_community_user!: (untyped) -> CommunityUser
+  def ability: () -> Ability
+  def ability=: (Ability?) -> Ability?
+  def reload_ability: () -> Ability?
+  def build_ability: (untyped) -> Ability
+  def create_ability: (untyped) -> Ability
+  def create_ability!: (untyped) -> Ability
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[UserAbility, Integer]
+    include Enumerable[UserAbility]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[UserAbility, Integer]
+  end
+end

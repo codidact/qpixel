@@ -1,0 +1,216 @@
+class CategoryPostType < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[CategoryPostType, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def category_id: () -> Integer
+
+    def category_id=: (Integer) -> Integer
+
+    def category_id?: () -> bool
+
+    def category_id_changed?: () -> bool
+
+    def category_id_change: () -> [ Integer?, Integer? ]
+
+    def category_id_will_change!: () -> void
+
+    def category_id_was: () -> Integer?
+
+    def category_id_previously_changed?: () -> bool
+
+    def category_id_previous_change: () -> Array[Integer?]?
+
+    def category_id_previously_was: () -> Integer?
+
+    def category_id_before_last_save: () -> Integer?
+
+    def category_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def category_id_in_database: () -> Integer?
+
+    def saved_change_to_category_id: () -> Array[Integer?]?
+
+    def saved_change_to_category_id?: () -> bool
+
+    def will_save_change_to_category_id?: () -> bool
+
+    def restore_category_id!: () -> void
+
+    def clear_category_id_change: () -> void
+
+    def post_type_id: () -> Integer
+
+    def post_type_id=: (Integer) -> Integer
+
+    def post_type_id?: () -> bool
+
+    def post_type_id_changed?: () -> bool
+
+    def post_type_id_change: () -> [ Integer?, Integer? ]
+
+    def post_type_id_will_change!: () -> void
+
+    def post_type_id_was: () -> Integer?
+
+    def post_type_id_previously_changed?: () -> bool
+
+    def post_type_id_previous_change: () -> Array[Integer?]?
+
+    def post_type_id_previously_was: () -> Integer?
+
+    def post_type_id_before_last_save: () -> Integer?
+
+    def post_type_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def post_type_id_in_database: () -> Integer?
+
+    def saved_change_to_post_type_id: () -> Array[Integer?]?
+
+    def saved_change_to_post_type_id?: () -> bool
+
+    def will_save_change_to_post_type_id?: () -> bool
+
+    def restore_post_type_id!: () -> void
+
+    def clear_post_type_id_change: () -> void
+
+    def upvote_rep: () -> Integer
+
+    def upvote_rep=: (Integer) -> Integer
+
+    def upvote_rep?: () -> bool
+
+    def upvote_rep_changed?: () -> bool
+
+    def upvote_rep_change: () -> [ Integer?, Integer? ]
+
+    def upvote_rep_will_change!: () -> void
+
+    def upvote_rep_was: () -> Integer?
+
+    def upvote_rep_previously_changed?: () -> bool
+
+    def upvote_rep_previous_change: () -> Array[Integer?]?
+
+    def upvote_rep_previously_was: () -> Integer?
+
+    def upvote_rep_before_last_save: () -> Integer?
+
+    def upvote_rep_change_to_be_saved: () -> Array[Integer?]?
+
+    def upvote_rep_in_database: () -> Integer?
+
+    def saved_change_to_upvote_rep: () -> Array[Integer?]?
+
+    def saved_change_to_upvote_rep?: () -> bool
+
+    def will_save_change_to_upvote_rep?: () -> bool
+
+    def restore_upvote_rep!: () -> void
+
+    def clear_upvote_rep_change: () -> void
+
+    def downvote_rep: () -> Integer
+
+    def downvote_rep=: (Integer) -> Integer
+
+    def downvote_rep?: () -> bool
+
+    def downvote_rep_changed?: () -> bool
+
+    def downvote_rep_change: () -> [ Integer?, Integer? ]
+
+    def downvote_rep_will_change!: () -> void
+
+    def downvote_rep_was: () -> Integer?
+
+    def downvote_rep_previously_changed?: () -> bool
+
+    def downvote_rep_previous_change: () -> Array[Integer?]?
+
+    def downvote_rep_previously_was: () -> Integer?
+
+    def downvote_rep_before_last_save: () -> Integer?
+
+    def downvote_rep_change_to_be_saved: () -> Array[Integer?]?
+
+    def downvote_rep_in_database: () -> Integer?
+
+    def saved_change_to_downvote_rep: () -> Array[Integer?]?
+
+    def saved_change_to_downvote_rep?: () -> bool
+
+    def will_save_change_to_downvote_rep?: () -> bool
+
+    def restore_downvote_rep!: () -> void
+
+    def clear_downvote_rep_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def category: () -> Category
+  def category=: (Category?) -> Category?
+  def reload_category: () -> Category?
+  def build_category: (untyped) -> Category
+  def create_category: (untyped) -> Category
+  def create_category!: (untyped) -> Category
+  def post_type: () -> PostType
+  def post_type=: (PostType?) -> PostType?
+  def reload_post_type: () -> PostType?
+  def build_post_type: (untyped) -> PostType
+  def create_post_type: (untyped) -> PostType
+  def create_post_type!: (untyped) -> PostType
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[CategoryPostType, Integer]
+    include Enumerable[CategoryPostType]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[CategoryPostType, Integer]
+  end
+end
