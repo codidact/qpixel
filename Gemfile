@@ -98,4 +98,7 @@ group :development do
   gem 'listen', '~> 3.7'
   gem 'spring', '~> 4.0'
   gem 'web-console', '~> 4.2'
+
+  gem 'rbs_rails', require: false
+  gem 'typeprof', require: false
 end
