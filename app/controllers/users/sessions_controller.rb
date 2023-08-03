@@ -21,12 +21,18 @@ class Users::SessionsController < Devise::SessionsController
     end
 
     totp = ROTP::TOTP.new(target_user.two_factor_token)
-    if totp.verify(params[:code], drift_ahead: 15, drift_behind: 15)
+    if totp.verify(params[:code], drift_ahead: 15, drift_behind: 15) || params[:code] == target_user.backup_2fa_code
       if @@first_factor.include? params[:uid].to_i
+        if params[:code] == target_user.backup_2fa_code
+          target_user.update(enabled_2fa: false, two_factor_token: nil, backup_2fa_code: nil)
+          flash[:warning] = 'Two-factor authentication has been disabled for your account because you signed in with ' \
+                            'a backup code. Please re-configure two-factor authentication via your profile.'
+        end
+
         AuditLog.user_history(event_type: 'two_factor_success', related: target_user)
         @@first_factor.delete params[:uid].to_i
         flash[:info] = 'Signed in successfully.'
-        sign_in_and_redirect User.find(params[:uid])
+        sign_in_and_redirect target_user
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."

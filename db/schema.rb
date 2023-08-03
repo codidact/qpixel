@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_26_143348) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -715,6 +715,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_26_143348) do
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
+    t.string "backup_2fa_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true

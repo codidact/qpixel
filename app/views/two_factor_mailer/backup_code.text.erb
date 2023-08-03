@@ -1,0 +1,17 @@
+Hi <%= @user&.username %>,
+
+Re: Your two-factor authentication backup code
+
+
+You're receiving this email because you have two-factor authentication enabled on your Codidact network account. We've
+recently added backup codes for every account using 2FA, so that you can still log in if you lose access to your
+authenticator app.
+
+Your backup code is shown below. Please save it somewhere safe. Please note that logging in using this backup code
+will disable 2FA on your account so that you can reconfigure it using a new app or device - this will also
+reset your backup code.
+
+Your backup code: <%= @user&.backup_2fa_code %>
+
+Thanks,
+The Codidact Team

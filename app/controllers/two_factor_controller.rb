@@ -14,7 +14,8 @@ class TwoFactorController < ApplicationController
     case params[:method]
     when 'app'
       @secret = ROTP::Base32.random
-      current_user.update(two_factor_token: @secret, two_factor_method: 'app')
+      current_user.update(two_factor_token: @secret, two_factor_method: 'app',
+                          backup_2fa_code: SecureRandom.alphanumeric(24))
       totp = ROTP::TOTP.new(@secret, issuer: 'codidact.com')
       uri = totp.provisioning_uri("#{current_user.id}@users-2fa.codidact.com")
       qr_svg = RQRCode::QRCode.new(uri).as_svg
@@ -58,7 +59,7 @@ class TwoFactorController < ApplicationController
 
     totp = ROTP::TOTP.new(current_user.two_factor_token)
     if totp.verify(params[:code], drift_behind: 15, drift_ahead: 15)
-      current_user.update(two_factor_token: nil, enabled_2fa: false)
+      current_user.update(two_factor_token: nil, enabled_2fa: false, backup_2fa_code: nil)
       AuditLog.user_history(event_type: 'two_factor_disabled', related: current_user)
       flash[:success] = 'Success! 2FA has been disabled on your account.'
       redirect_to two_factor_status_path
