@@ -346,4 +346,6 @@ class PostHistoryController < ApplicationController
 
     histories_to_reveal.update_all(hidden: false, updated_at: DateTime.now).positive?
   end
+
+  # TODO: rollback reveal history
 end
