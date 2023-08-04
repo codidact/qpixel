@@ -20,7 +20,7 @@ class PostType < ApplicationRecord
   end
 
   def templates
-    Post.undeleted.where(post_type_id: PostTemplate.post_type_id).where(template_post_type_id: self).to_a
+    Post.undeleted.where(post_type_id: PostTemplate.post_type_id).where(template_post_type_id: self.id).to_a
   end
 
   def self.mapping
