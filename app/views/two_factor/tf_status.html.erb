@@ -47,7 +47,7 @@
   </div>
 <% end %>
 
-<% if current_user.enabled_2fa %>
+<% if current_user.enabled_2fa && current_user.two_factor_method == 'app' %>
   <h3>Recovery</h3>
   <p>
     Your <strong>backup code</strong> for two-factor authentication can be found below. You should save this somewhere
