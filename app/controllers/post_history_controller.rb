@@ -280,11 +280,11 @@ class PostHistoryController < ApplicationController
   end
 
   # @param post [Post]
-  # @param history [PostHistory]
+  # @param _history [PostHistory]
   # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_undeleted(post, history)
-    predecessor = history.find_predecessor('post_deleted')
-    post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
+  def rollback_post_undeleted(post, _history)
+    # predecessor = history.find_predecessor('post_deleted')
+    post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
                 last_activity: DateTime.now, last_activity_by: current_user)
   end
 
@@ -300,7 +300,8 @@ class PostHistoryController < ApplicationController
   # @return [Boolean] whether the rollback was successfully applied
   def rollback_post_reopen(post, history)
     predecessor = history.find_predecessor('question_closed')
-    post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
+
+    post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
                 close_reason_id: predecessor.close_reason_id,
                 duplicate_post_id: predecessor.duplicate_post_id,
                 last_activity: DateTime.now, last_activity_by: current_user)
@@ -335,7 +336,7 @@ class PostHistoryController < ApplicationController
 
     # If there are more history hiding events, only hide until the previous one.
     # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
-    # will have occurred in the same second.
+    # will have likely occurred in the same second.
     predecessor = history.find_predecessor('history_hidden')
     histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
 
