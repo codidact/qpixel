@@ -1,6 +1,3 @@
-# TypeProf 0.21.7
-
-# Classes
 module SeedsHelper
-  def update_from_seeds: (untyped `type`, untyped unique_key, untyped value_attribute) -> untyped
+  def update_from_seeds: (Symbol `type`, Symbol unique_key, Symbol value_attribute) -> void
 end

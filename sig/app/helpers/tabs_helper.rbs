@@ -1,9 +1,6 @@
-# TypeProf 0.21.7
-
-# Classes
 module TabsHelper
-  @building_tabs: Array[untyped]
+  @building_tabs: Array[ActiveSupport::SafeBuffer]
 
-  def tabs: -> untyped
-  def tab: (untyped text, untyped link_url, **untyped) -> Array[untyped]
+  def tabs: -> ActiveSupport::SafeBuffer
+  def tab: (String text, String link_url, **untyped) -> Array[ActiveSupport::SafeBuffer]
 end

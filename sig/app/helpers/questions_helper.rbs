@@ -1,6 +1,3 @@
-# TypeProf 0.21.7
-
-# Classes
 module QuestionsHelper
-  def my_vote: (untyped question) -> nil
+  def my_vote: (Post question) -> Vote?
 end

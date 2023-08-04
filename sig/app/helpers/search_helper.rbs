@@ -1,14 +1,11 @@
-# TypeProf 0.21.7
-
-# Classes
 module SearchHelper
-  def search_posts: -> untyped
-  def filter_to_qualifiers: (untyped filter) -> Array[untyped]
-  def active_filter: -> {default: false, name: untyped, min_score: untyped, max_score: untyped, min_answers: untyped, max_answers: untyped, include_tags: untyped, exclude_tags: untyped, status: untyped}
-  def params_to_qualifiers: -> Array[untyped]
-  def parse_search: (untyped raw_search) -> {qualifiers: untyped, search: untyped}
-  def parse_qualifier_strings: (untyped qualifiers) -> untyped
-  def qualifiers_to_sql: (Array[untyped] qualifiers, untyped query) -> untyped
-  def numeric_value_sql: (untyped value) -> [String, untyped]
-  def date_value_sql: (untyped value) -> [String, String, String]
+  def search_posts: -> _ActiveRecord_Relation[Post, Integer]
+  def filter_to_qualifiers: (Filter filter) -> Array[Hash[Symbol, untyped]]
+  def active_filter: -> {default: bool, name: String?, min_score: Integer?, max_score: Integer?, min_answers: Integer?, max_answers: Integer?, include_tags: String?, exclude_tags: String?, status: String?}
+  def params_to_qualifiers: -> Array[Hash[Symbol, untyped]]
+  def parse_search: (String raw_search) -> {qualifiers: Array[String], search: String}
+  def parse_qualifier_strings: (Array[String] qualifiers) -> Array[Hash[Symbol, untyped]]
+  def qualifiers_to_sql: [T, PK] (Array[Hash[Symbol, untyped]] qualifiers, _ActiveRecord_Relation[T, PK] query) -> _ActiveRecord_Relation[T, PK]
+  def numeric_value_sql: (String value) -> [String, String]
+  def date_value_sql: (String value) -> [String, String, String]
 end

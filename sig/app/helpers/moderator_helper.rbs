@@ -1,6 +1,3 @@
-# TypeProf 0.21.7
-
-# Classes
 module ModeratorHelper
-  def text_bg: (untyped cls, ?nil content, **untyped) -> untyped
+  def text_bg: (String cls, ?String? content, **untyped) -> ActiveSupport::SafeBuffer
 end
