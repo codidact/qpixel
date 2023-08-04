@@ -1,0 +1,6 @@
+# TypeProf 0.21.7
+
+# Classes
+module ModeratorHelper
+  def text_bg: (untyped cls, ?nil content, **untyped) -> untyped
+end

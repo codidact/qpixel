@@ -1,0 +1,8 @@
+module CategoriesHelper
+  @current_category: Category?
+
+  def active?: (Category category) -> bool?
+  def expandable?: -> bool
+  def current_category: -> Category?
+  def pending_suggestions?: -> bool
+end

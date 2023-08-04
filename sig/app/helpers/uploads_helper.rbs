@@ -1,0 +1,7 @@
+# TypeProf 0.21.7
+
+# Classes
+module UploadsHelper
+  def upload_remote_url: (untyped blob) -> String
+  def valid_image?: (untyped io) -> untyped
+end

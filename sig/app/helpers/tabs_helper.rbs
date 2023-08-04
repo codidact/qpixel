@@ -1,0 +1,9 @@
+# TypeProf 0.21.7
+
+# Classes
+module TabsHelper
+  @building_tabs: Array[untyped]
+
+  def tabs: -> untyped
+  def tab: (untyped text, untyped link_url, **untyped) -> Array[untyped]
+end

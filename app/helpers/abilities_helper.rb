@@ -10,7 +10,7 @@ module AbilitiesHelper
   # to x=(4y-2)/(1-y) and use that for the progress bar.
   def linearize_progress(score)
     linear_score = ((4 * score) - 2) / (1 - score)
-    [0, linear_score].max
+    [0.0, linear_score].max
   end
 
   def ability_err_msg(internal_id, action = nil)

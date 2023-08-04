@@ -169,7 +169,7 @@ module ApplicationHelper
   end
 
   # Check if the current request is a direct user request, or a resource load.
-  # @return true if the request is direct, false if not, or nil if it cannot be determined
+  # @return [Boolean, Nil] true if the request is direct, false if not, or nil if it cannot be determined
   def direct_request?
     if request.headers['Sec-Fetch-Mode'].present? && request.headers['Sec-Fetch-Mode'] == 'navigate'
       true

@@ -1,0 +1,14 @@
+# TypeProf 0.21.7
+
+# Classes
+module SearchHelper
+  def search_posts: -> untyped
+  def filter_to_qualifiers: (untyped filter) -> Array[untyped]
+  def active_filter: -> {default: false, name: untyped, min_score: untyped, max_score: untyped, min_answers: untyped, max_answers: untyped, include_tags: untyped, exclude_tags: untyped, status: untyped}
+  def params_to_qualifiers: -> Array[untyped]
+  def parse_search: (untyped raw_search) -> {qualifiers: untyped, search: untyped}
+  def parse_qualifier_strings: (untyped qualifiers) -> untyped
+  def qualifiers_to_sql: (Array[untyped] qualifiers, untyped query) -> untyped
+  def numeric_value_sql: (untyped value) -> [String, untyped]
+  def date_value_sql: (untyped value) -> [String, String, String]
+end

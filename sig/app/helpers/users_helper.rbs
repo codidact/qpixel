@@ -1,0 +1,17 @@
+# TypeProf 0.21.7
+
+# Classes
+module UsersHelper
+  def avatar_url: (untyped user, ?Integer size) -> untyped
+  def stack_oauth_url: -> String
+  def can_change_category: (untyped user, untyped target) -> untyped
+  def preference_choice: (untyped pref_config) -> untyped
+  def default_filter: (untyped user_id, untyped category_id) -> untyped
+  def set_filter_default: (untyped user_id, untyped filter_id, untyped category_id, untyped keep) -> untyped
+  def user_preference: (untyped name, ?community: false) -> nil
+  def deleted_user?: (untyped user) -> untyped
+  def rtl_safe_username: (untyped user) -> String
+  def user_link: (untyped user, ?nil url_opts, **untyped) -> untyped
+  def sso_sign_in_enabled?: -> untyped
+  def devise_sign_in_enabled?: -> untyped
+end

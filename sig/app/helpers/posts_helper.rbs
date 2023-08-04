@@ -1,0 +1,17 @@
+# TypeProf 0.21.7
+
+# Classes
+module PostsHelper
+  def post_markdown: (untyped scope, untyped field_name) -> untyped
+  def cancel_redirect_path: (untyped post) -> untyped
+  def min_body_length: (untyped category) -> Integer
+  def max_body_length: (untyped _category) -> Integer
+  def min_title_length: (untyped category) -> Integer
+  def max_title_length: (untyped _category) -> Integer?
+  def scrubber: -> PostScrubber
+
+  class PostScrubber
+    def initialize: -> void
+    def skip_node?: (untyped node) -> untyped
+  end
+end

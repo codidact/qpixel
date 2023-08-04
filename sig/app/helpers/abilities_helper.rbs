@@ -1,0 +1,4 @@
+module AbilitiesHelper
+  def linearize_progress: (Float score) -> Float
+  def ability_err_msg: ((Symbol | String) internal_id, ?(Symbol | String)? action) -> String
+end
