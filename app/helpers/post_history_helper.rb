@@ -34,7 +34,7 @@ module PostHistoryHelper
   # @param user [User]
   # @return [String, Nil] the error message if disallowed, or nil if allowed
   def disallow_delete(post, user)
-    if !user.privilege?('flag_curate') && !user.has_post_privilege?(post, 'flag_curate')
+    if !user.privilege?('flag_curate') && !user.has_post_privilege?('flag_curate', post)
       return ability_err_msg(:flag_curate, 'delete this post')
     end
 
@@ -47,7 +47,7 @@ module PostHistoryHelper
   # @param user [User]
   # @return [String, Nil] the error message if disallowed, or nil if allowed
   def disallow_undelete(post, user)
-    if !user.privilege?('flag_curate') && !user.has_post_privilege?(post, 'flag_curate')
+    if !user.privilege?('flag_curate') && !user.has_post_privilege?('flag_curate', post)
       ability_err_msg(:flag_curate, 'restore this post')
     end
 
