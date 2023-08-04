@@ -54,9 +54,14 @@ class PostHistoryTest < ActiveSupport::TestCase
     assert_not event.can_rollback?
   end
 
-  test 'if after tags are missing on post, edit event cannot be rolled back' do
+  test 'if an added tag is missing, edit event cannot be rolled back' do
     event = post_histories(:q1_edit)
-    event.post_history_tags.where(relationship: 'after').first.destroy!
+
+    # Delete the tag that the event adds from the post
+    post = event.post
+    post.tags_cache.delete(event.tags_added.first.name)
+    post.save!
+
     assert_not event.can_rollback?
   end
 
