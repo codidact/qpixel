@@ -47,15 +47,17 @@
   </div>
 <% end %>
 
-<h3>Recovery</h3>
-<p>
-  Your <strong>backup code</strong> for two-factor authentication can be found below. You should save this somewhere
-  safe &mdash; if you lose access to your authenticator app, you can sign in using this code to get back into your
-  account and reconfigure 2FA.
-</p>
+<%# if current_user.enabled_2fa %>
+  <h3>Recovery</h3>
+  <p>
+    Your <strong>backup code</strong> for two-factor authentication can be found below. You should save this somewhere
+    safe &mdash; if you lose access to your authenticator app, you can sign in using this code to get back into your
+    account and reconfigure 2FA.
+  </p>
 
-<details>
-  <summary>Show code</summary>
-  <label for="backup-code" class="form-element">2FA backup code</label>
-  <input class="form-element" type="text" readonly name="backup-code" id="backup-code" value="<%= current_user.backup_2fa_code %>" />
-</details>
+  <%= form_tag two_factor_backup_code_path, class: 'js-backup-code-form' do %>
+    <%= label_tag :code, 'Enter a 2FA code to access your backup code', class: 'form-element' %>
+    <%= text_field_tag :code, nil, class: 'form-element' %>
+    <%= submit_tag 'Show backup code', class: 'button is-filled' %>
+  <% end %>
+<%# end %>

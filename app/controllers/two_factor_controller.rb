@@ -88,4 +88,13 @@ class TwoFactorController < ApplicationController
     flash[:success] = 'Success! 2FA has been disabled on your account.'
     redirect_to two_factor_status_path
   end
+
+  def show_backup_code
+    totp = ROTP::TOTP.new(current_user.two_factor_token)
+    if totp.verify(params[:code], drift_behind: 15, drift_ahead: 15)
+      render json: { status: 'success', code: current_user.backup_2fa_code }
+    else
+      render json: { status: 'error', message: 'Wrong code - please try again.' }, status: 401
+    end
+  end
 end
