@@ -298,8 +298,18 @@ class BlockedItem < ::ApplicationRecord
 
   def self.active: () -> ActiveRecord_Relation
 
+  # Manually added (dynamically created)
+  def self.ips: () -> ActiveRecord_Relation
+  def self.emails: () -> ActiveRecord_Relation
+  def self.email_hosts: () -> ActiveRecord_Relation
+
   module GeneratedRelationMethods
     def active: () -> ActiveRecord_Relation
+
+    # Manually added (dynamically created)
+    def ips: () -> ActiveRecord_Relation
+    def emails: () -> ActiveRecord_Relation
+    def email_hosts: () -> ActiveRecord_Relation
   end
 
   class ActiveRecord_Relation < ::ActiveRecord::Relation
