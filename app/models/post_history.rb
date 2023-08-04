@@ -5,6 +5,9 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags, dependent: :destroy
   has_many :tags, through: :post_history_tags
 
+  belongs_to :close_reason, optional: true
+  belongs_to :duplicate_post, class_name: 'Post', optional: true
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
