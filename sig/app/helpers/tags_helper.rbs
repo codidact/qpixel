@@ -1,8 +1,4 @@
-# TypeProf 0.21.7
-
-# Classes
 module TagsHelper
-  def category_sort_tags: (untyped tags, untyped required_ids, untyped topic_ids, untyped moderator_ids) -> untyped
-  def tag_classes: (untyped tag, untyped category) -> String
-  def post_ids_for_tags: (untyped tag_ids) -> untyped
+  def category_sort_tags: (Enumerable[Tag] tags, Enumerable[Integer] required_ids, Enumerable[Integer] topic_ids, Enumerable[Integer] moderator_ids) -> Array[Tag]
+  def tag_classes: (Tag tag, Category? category) -> String
 end
