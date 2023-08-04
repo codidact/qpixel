@@ -337,8 +337,12 @@ class PostHistoryController < ApplicationController
     # If there are more history hiding events, only hide until the previous one.
     # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
     # will have likely occurred in the same second.
+    # Note that we do want to include the history_hidden item itself, so we add that with or.
     predecessor = history.find_predecessor('history_hidden')
-    histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
+    if predecessor
+      histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..)
+                                               .or(PostHistory.where(id: predecessor))
+    end
 
     histories_to_reveal.update_all(hidden: false, updated_at: DateTime.now).positive?
   end
