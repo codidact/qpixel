@@ -47,7 +47,7 @@
   </div>
 <% end %>
 
-<%# if current_user.enabled_2fa %>
+<% if current_user.enabled_2fa %>
   <h3>Recovery</h3>
   <p>
     Your <strong>backup code</strong> for two-factor authentication can be found below. You should save this somewhere
@@ -60,4 +60,4 @@
     <%= text_field_tag :code, nil, class: 'form-element' %>
     <%= submit_tag 'Show backup code', class: 'button is-filled' %>
   <% end %>
-<%# end %>
+<% end %>
