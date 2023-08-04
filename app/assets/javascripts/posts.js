@@ -9,7 +9,7 @@ $(() => {
   $('.js-template').on('click', async ev => {
     const $postField = $('.js-post-field');
     $tgt = $(ev.target);
-    const content = $('#template-md-' + $tgt.attr('data-template-id')).val();
+    const content = $(`#template-md-${$tgt.attr('data-template-id')}`).val();
     $postField.val(content);
   });
 
