@@ -175,6 +175,8 @@ class Post < ApplicationRecord
     if locked
       update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
     end
+
+    false
   end
 
   # @param user [User, Nil]
