@@ -70,4 +70,9 @@ class PostHistoryTest < ActiveSupport::TestCase
     event = PostHistory.find(event.id)
     assert event.can_rollback?
   end
+
+  test 'predecessor of event finds closest predecessor' do
+    event = post_histories(:q1_reopen2)
+    assert_equal post_histories(:q1_close2), event.find_predecessor('question_closed')
+  end
 end

@@ -4,3 +4,21 @@ initial_revision:
 post_edited:
   name: post_edited
   description: post edited
+post_deleted:
+  name: post_deleted
+  description: post deleted
+post_undeleted:
+  name: post_undeleted
+  description: post restored
+question_closed:
+  name: question_closed
+  description: question closed
+question_reopened:
+  name: question_reopened
+  description: question reopened
+history_hidden:
+  name: history_hidden
+  description: history hidden
+history_revealed:
+  name: history_revealed
+  description: history revealed

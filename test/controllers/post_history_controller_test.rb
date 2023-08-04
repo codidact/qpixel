@@ -29,4 +29,121 @@ class PostHistoryControllerTest < ActionController::TestCase
     assert_not_nil assigns(:history)
     assert_not_nil assigns(:post)
   end
+
+  # -----------------------------------------------------------------------------------------------
+  # Rollbacks
+  # -----------------------------------------------------------------------------------------------
+
+  test 'user without edit permissions cannot rollback post edit' do
+    event = post_histories(:q1_edit)
+    sign_in users(:standard_user2)
+
+    assert_no_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    # Verify no changes were made
+    assert_not_equal event.before_state, assigns(:post).body_markdown
+  end
+
+  test 'privileged user can rollback post edit' do
+    event = post_histories(:q1_edit)
+    user = users(:editor)
+
+    sign_in user
+
+    # Rollback and check success, a new history event should be created
+    assert_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:success]
+    end
+
+    # New edit event should have been made, which should be the reverse of our event
+    new_event = PostHistory.last
+    assert_equal 'post_edited', new_event.post_history_type.name
+    assert_equal user.id, new_event.user_id
+    assert_equal event.before_state, new_event.after_state
+    assert_equal event.after_state, new_event.before_state
+    assert_equal event.before_title, new_event.after_title
+    assert_equal event.after_title, new_event.before_title
+    # The following doesn't always hold for a rollback, but should hold for this particular event
+    assert_equal event.before_tags.to_a.sort_by(&:id), new_event.after_tags.to_a.sort_by(&:id)
+    assert_equal event.after_tags.to_a.sort_by(&:id), new_event.before_tags.to_a.sort_by(&:id)
+
+    # Verify that the post was restored
+    post = assigns(:post)
+    assert_equal event.before_state, post.body_markdown
+    assert_equal event.before_title, post.title
+
+    # Verify that all the tags that were there before are now again present on the post
+    assert_equal event.before_tags.to_a.sort_by(&:id), (post.tags & event.before_tags).sort_by(&:id)
+  end
+
+  test 'user without delete permissions cannot rollback undelete' do
+    event = post_histories(:q2_undelete)
+
+    sign_in users(:standard_user2)
+    assert_no_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    assert_not assigns(:post).deleted
+  end
+
+  test 'privileged user can rollback undelete' do
+    event = post_histories(:q2_undelete)
+    user = users(:deleter)
+
+    sign_in user
+    assert_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:success]
+    end
+
+    # Verify that a new event was created
+    new_event = PostHistory.last
+    assert_equal 'post_deleted', new_event.post_history_type.name
+    assert_equal user.id, new_event.user_id
+
+    # Verify that the post is now deleted
+    assert assigns(:post).deleted
+  end
+
+  test 'user without close permissions cannot rollback reopen' do
+    event = post_histories(:q1_reopen)
+
+    sign_in users(:standard_user2)
+    assert_no_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    assert_not assigns(:post).closed
+  end
+
+  test 'privileged user can rollback reopen' do
+    event = post_histories(:q1_reopen)
+    user = users(:moderator)
+
+    sign_in user
+    assert_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:success]
+    end
+
+    # Verify that a new event was created
+    new_event = PostHistory.last
+    assert_equal 'question_closed', new_event.post_history_type.name
+    assert_equal user.id, new_event.user_id
+    assert_equal close_reasons(:duplicate).id, new_event.close_reason_id
+    assert_equal posts(:question_two).id, new_event.duplicate_post_id
+
+    # Verify that the post is now closed
+    post = assigns(:post)
+    assert post.closed
+    assert_equal close_reasons(:duplicate).id, post.close_reason_id
+    assert_equal posts(:question_two).id, post.duplicate_post_id
+  end
 end

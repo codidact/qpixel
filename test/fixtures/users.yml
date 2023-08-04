@@ -111,3 +111,12 @@ deleted_profile:
   sign_in_count: 1337
   username: deleted_profile
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+standard_user2:
+  email: standard2@qpixel-test.net
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: standard_user_2
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2023-01-01T00:00:00.000000Z

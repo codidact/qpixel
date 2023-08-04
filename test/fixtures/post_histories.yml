@@ -11,4 +11,68 @@ q1_edit:
   after_state: This is the body of test question one. Note that we did not include any markdown or HTML in here.
   before_title: Q1 - Updated title for question nr one
   after_title: Q1 - This is test question number one
+  created_at: 2023-01-01T00:00:00.000000Z
 
+q1_close:
+  post_history_type: question_closed
+  user: moderator
+  post: question_one
+  community: sample
+  close_reason: duplicate
+  duplicate_post: question_two
+  created_at: 2023-01-02T00:00:00.000000Z
+
+q1_reopen:
+  post_history_type: question_reopened
+  user: moderator
+  post: question_one
+  community: sample
+  created_at: 2023-01-03T00:00:00.000000Z
+
+q1_close2:
+  post_history_type: question_closed
+  user: moderator
+  post: question_one
+  community: sample
+  close_reason: duplicate
+  duplicate_post: question_two
+  created_at: 2023-01-04T00:00:00.000000Z
+
+q1_reopen2:
+  post_history_type: question_reopened
+  user: moderator
+  post: question_one
+  community: sample
+  created_at: 2023-01-05T00:00:00.000000Z
+
+q2_delete:
+  post_history_type: post_deleted
+  user: standard_user
+  post: question_two
+  community: sample
+  created_at: 2023-01-01T00:00:00.000000Z
+
+q2_undelete:
+  post_history_type: post_undeleted
+  user: standard_user
+  post: question_two
+  community: sample
+  created_at: 2023-01-02T00:00:00.000000Z
+
+# Do redaction for Q2
+q2_edit:
+  post_history_type: post_edited
+  user: editor
+  post: question_two
+  community: sample
+  before_title: Q2 - This is test@test.nl question number two
+  after_title: Q2 - This is test question number two
+  comment: Remove PII
+  created_at: 2023-01-02T00:00:00.000000Z
+
+q2_hidden:
+  post_history_type: history_hidden
+  user: standard_user
+  post: question_two
+  community: sample
+  created_at: 2023-01-03T00:00:00.000000Z
