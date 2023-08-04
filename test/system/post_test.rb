@@ -18,15 +18,24 @@ class PostTest < ApplicationSystemTestCase
     visit category_path(category)
     click_on 'Create Post'
 
-    fill_in 'Body', with: "When running QPixel, users are generally supposed to be able to create posts.\n" \
-                          'Does that actually work?'
-    fill_in 'Summarize your post with a title:', with: 'Can a signed-in user create a post?'
+    body_text = "When running QPixel, users are generally supposed to be able to create posts. " \
+                'Does that actually work?'
+    title_text = 'Can a signed-in user create a post?'
+
+    fill_in 'Body', with: body_text
+    fill_in 'Summarize your post with a title:', with: title_text
     post_form_select_tag tags(:faq).name
 
     # Check that the post is actually created
     assert_difference 'Post.count' do
       click_on "Save Post in #{category.name}"
     end
+
+    # Verify that the post is correctly created
+    new_post = Post.last
+    assert_equal body_text, new_post.body_markdown
+    assert_equal title_text, new_post.title
+    assert_equal [tags(:faq)], new_post.tags
   end
 
   test 'Creating a question is blocked when body is too short' do
