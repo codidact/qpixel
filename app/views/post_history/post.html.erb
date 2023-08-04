@@ -10,9 +10,9 @@
     <summary>
       <strong>
         <% if event.reverted? %>
-          <del>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></del>
+          <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
         <% else %>
-          #<%= @history.size - index %>: <%= event.post_history_type.name.humanize %>
+          #<%= revision %>: <%= event.post_history_type.name.humanize %>
         <% end %>
       </strong>
       <span class="has-color-tertiary-600 history-meta">
