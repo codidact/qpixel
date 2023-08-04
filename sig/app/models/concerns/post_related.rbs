@@ -1,0 +1,12 @@
+module PostRelated
+  extend ActiveSupport::Concern
+
+  include CommunityRelated
+
+  def post: () -> Post
+  def post=: (Post?) -> Post?
+  def reload_post: () -> Post?
+  def build_post: (untyped) -> Post
+  def create_post: (untyped) -> Post
+  def create_post!: (untyped) -> Post
+end
