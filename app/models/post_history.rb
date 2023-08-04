@@ -106,4 +106,24 @@ class PostHistory < ApplicationRecord
       false
     end
   end
+
+  # Attempts to find a predecessor event (event that came before) of the given type.
+  # This method will return the predecessor with the greatest created_at timestamp.
+  #
+  # @param type [PostHistoryType, String]
+  # @return [PostHistoryType, Nil] the predecessor of this event of the given type, if any exists
+  def find_predecessor(type)
+    type = if type.is_a?(PostHistoryType)
+             type
+           else
+             PostHistoryType.find_by(name: type)
+           end
+
+    post.post_histories
+        .where(post_history_type: type)
+        .where(created_at: ..created_at)
+        .where.not(id: id)
+        .order(created_at: :desc, id: :desc)
+        .first
+  end
 end

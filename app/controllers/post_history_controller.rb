@@ -239,7 +239,7 @@ class PostHistoryController < ApplicationController
 
     # Recover post close reason from predecessor of last reopened
     if to_change[:closed]
-      ph = find_predecessor('question_closed', after_histories.last)
+      ph = after_histories.last.find_predecessor('question_closed')
       to_change[:close_reason_id] = ph&.close_reason_id
       to_change[:duplicate_post_id] = ph&.duplicate_post_id
     end
@@ -282,7 +282,7 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @return [Boolean] whether the rollback was successfully applied
   def rollback_post_undeleted(post, history)
-    predecessor = find_predecessor('post_deleted', history)
+    predecessor = history.find_predecessor('post_deleted')
     post.update(deleted: true, deleted_at: predecessor.created_at, deleted_by: predecessor.user,
                 last_activity: DateTime.now, last_activity_by: current_user)
   end
@@ -298,7 +298,7 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @return [Boolean] whether the rollback was successfully applied
   def rollback_post_reopen(post, history)
-    predecessor = find_predecessor('question_closed', history)
+    predecessor = history.find_predecessor('question_closed')
     post.update(closed: true, closed_by: predecessor.user, closed_at: predecessor.created_at,
                 close_reason_id: predecessor.close_reason_id,
                 duplicate_post_id: predecessor.duplicate_post_id,
@@ -335,21 +335,9 @@ class PostHistoryController < ApplicationController
     # If there are more history hiding events, only hide until the previous one.
     # We need to add one second because we don't want to reveal the edit before the history_hidden event, which
     # will have occurred in the same second.
-    predecessor = find_predecessor('history_hidden', history)
+    predecessor = history.find_predecessor('history_hidden')
     histories_to_reveal = histories_to_reveal.where(created_at: (predecessor.created_at + 1.second)..) if predecessor
 
     histories_to_reveal.update_all(hidden: false, updated_at: DateTime.now).positive?
-  end
-
-  # @param type [String] the name of the history type
-  # @param history [PostHistory]
-  # @return [PostHistory, Nil] the history item of the given type that came before the given history item
-  def find_predecessor(type, history)
-    history.post.post_histories
-           .where(post_history_type: PostHistoryType.find_by(name: type).id)
-           .where(created_at: ..history.created_at)
-           .where.not(id: history.id)
-           .order(created_at: :desc, id: :desc)
-           .first
   end
 end
