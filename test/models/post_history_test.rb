@@ -37,8 +37,37 @@ class PostHistoryTest < ActiveSupport::TestCase
     assert_nil event.before_state
   end
 
-  test 'compatible event should be rollbackable' do
+  test 'edit event matching current post can be rolled back' do
     event = post_histories(:q1_edit)
+    assert event.can_rollback?
+  end
+
+  test 'if body does not match, edit event cannot be rolled back' do
+    event = post_histories(:q1_edit)
+    event.update!(after_state: "#{event.after_state} - not matching")
+    assert_not event.can_rollback?
+  end
+
+  test 'if title does not match, edit event cannot be rolled back' do
+    event = post_histories(:q1_edit)
+    event.update!(after_title: "#{event.after_title} - not matching")
+    assert_not event.can_rollback?
+  end
+
+  test 'if after tags are missing on post, edit event cannot be rolled back' do
+    event = post_histories(:q1_edit)
+    event.post_history_tags.where(relationship: 'after').first.destroy!
+    assert_not event.can_rollback?
+  end
+
+  test 'if additional unrelated tags are on post, edit event can still be rolled back' do
+    event = post_histories(:q1_edit)
+    post = event.post
+    post.tags_cache << tags(:child).name
+    post.save!
+
+    # Refresh event, should still be allowed to rollback
+    event = PostHistory.find(event.id)
     assert event.can_rollback?
   end
 end
