@@ -18,7 +18,7 @@ class PostTest < ApplicationSystemTestCase
     visit category_path(category)
     click_on 'Create Post'
 
-    body_text = "When running QPixel, users are generally supposed to be able to create posts. " \
+    body_text = 'When running QPixel, users are generally supposed to be able to create posts. ' \
                 'Does that actually work?'
     title_text = 'Can a signed-in user create a post?'
 
