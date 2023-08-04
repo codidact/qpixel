@@ -1,0 +1,3 @@
+class MicroAuth::App < ApplicationRecord
+  def valid_redirect?: (String redirect_uri) -> bool
+end

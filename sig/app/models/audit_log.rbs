@@ -1,0 +1,13 @@
+class AuditLog < ApplicationRecord
+  include CommunityRelated
+
+  # These are defined dynamically
+  def admin_audit: (**untyped values) -> AuditLog
+  def moderator_audit: (**untyped values) -> AuditLog
+  def action_audit: (**untyped values) -> AuditLog
+  def user_annotation: (**untyped values) -> AuditLog
+  def user_history: (**untyped values) -> AuditLog
+  def pii_history: (**untyped values) -> AuditLog
+  def block_log: (**untyped values) -> AuditLog
+  def rate_limit_log: (**untyped values) -> AuditLog
+end

@@ -1,0 +1,11 @@
+class Category < ApplicationRecord
+  include CommunityRelated
+
+  def new_posts_for?: (User user) -> bool
+
+  def update_activity: (ActiveSupport::TimeWithZone last_activity) -> void
+
+  def self.by_lowercase_name: (String name) -> Category?
+
+  def self.by_id: (Integer id) -> Category?
+end

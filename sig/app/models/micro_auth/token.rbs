@@ -1,0 +1,3 @@
+class MicroAuth::Token < ApplicationRecord
+  def active?: () -> bool
+end

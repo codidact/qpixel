@@ -1,0 +1,5 @@
+class BlockedItem < ApplicationRecord
+  def ip?: -> bool
+  def email?: -> bool
+  def email_host?: -> bool
+end

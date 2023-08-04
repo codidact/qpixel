@@ -1,75 +1,35 @@
 class Post < ApplicationRecord
   include CommunityRelated
-
   include PostValidations
 
   def self.search: (String term) -> _ActiveRecord_Relation[Post, Integer]
-
-  # @return [TagSet]
   def tag_set: () -> TagSet
-
-  # @return [Boolean]
   def meta?: () -> bool
-
-  # Used in the transfer of content from SE to reassign the owner of a post to the given user.
-  # @param new_user [User]
   def reassign_user: (User new_user) -> untyped
-
-  # Removes the attribution notice from this post
-  # @return [Boolean] whether the action was successful
   def remove_attribution_notice!: () -> bool
-
-  # @return [String] the type of the last activity on this post
   def last_activity_type: () -> String
-
-  # @return [String] the body with all markdown stripped
   def body_plain: () -> String
-
-  # @return [Boolean] whether this post is a question
   def question?: () -> bool
-
-  # @return [Boolean] whether this post is an answer
   def answer?: () -> bool
-
-  # @return [Boolean] whether this post is an article
   def article?: () -> bool
-
-  # @return [Boolean] whether there is a suggested edit pending for this post
   def pending_suggested_edit?: () -> bool
-
-  # @return [SuggestedEdit, Nil] the suggested edit pending for this post (if any)
   def pending_suggested_edit: () -> SuggestedEdit?
-
-  # Recalculates the score of this post based on its up and downvotes
   def recalc_score: () -> void
-
   def locked?: () -> bool
-
   def can_access?: (User? user) -> bool
-
   def reaction_list: () -> Hash[ReactionType, Integer]
 
   private
 
   def update_tag_associations: () -> void
-
   def attribution_text: (?String? source, ?String? name, ?String? url) -> ::String
-
   def check_attribution_notice: () -> void
-
   def copy_last_activity_to_parent: () -> void
-
   def modify_author_reputation: () -> void
-
   def create_initial_revision: () -> PostHistory
-
   def category_allows_post_type: () -> void
-
   def break_description_cache: () -> void
-
   def license_valid: () -> void
-
   def moderator_tags: () -> void
-
   def update_category_activity: () -> void
 end
