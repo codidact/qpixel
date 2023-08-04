@@ -111,6 +111,43 @@ class PostHistoryControllerTest < ActionController::TestCase
     assert assigns(:post).deleted
   end
 
+  test 'user without delete permissions cannot rollback delete' do
+    event = post_histories(:q2_delete)
+
+    # Ensure the post is deleted
+    event.post.update!(deleted: true, deleted_by: users(:system), deleted_at: DateTime.now)
+
+    sign_in users(:standard_user2)
+    assert_no_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    assert event.post.deleted
+  end
+
+  test 'privileged user can rollback delete' do
+    event = post_histories(:q2_delete)
+    user = users(:deleter)
+
+    # Ensure the post is deleted
+    event.post.update!(deleted: true, deleted_by: users(:standard_user), deleted_at: DateTime.now)
+
+    sign_in user
+    assert_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:success]
+    end
+
+    # Verify that a new event was created
+    new_event = PostHistory.last
+    assert_equal 'post_undeleted', new_event.post_history_type.name
+    assert_equal user.id, new_event.user_id
+
+    # Verify that the post is no longer deleted
+    assert_not assigns(:post).deleted
+  end
+
   test 'user without close permissions cannot rollback reopen' do
     event = post_histories(:q1_reopen)
 
@@ -145,5 +182,45 @@ class PostHistoryControllerTest < ActionController::TestCase
     assert post.closed
     assert_equal close_reasons(:duplicate).id, post.close_reason_id
     assert_equal posts(:question_two).id, post.duplicate_post_id
+  end
+
+  test 'user without close permissions cannot rollback close' do
+    event = post_histories(:q1_close)
+
+    # Ensure the post is closed
+    event.post.update!(closed: true, closed_by: users(:standard_user2), closed_at: DateTime.now,
+                       close_reason_id: close_reasons(:duplicate), duplicate_post_id: posts(:question_two))
+
+    sign_in users(:standard_user2)
+    assert_no_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    assert assigns(:post).closed
+  end
+
+  test 'privileged user can rollback close' do
+    event = post_histories(:q1_close)
+    user = users(:moderator)
+
+    # Ensure the post is closed
+    event.post.update!(closed: true, closed_by: users(:standard_user2), closed_at: DateTime.now,
+                       close_reason_id: close_reasons(:duplicate), duplicate_post_id: posts(:question_two))
+
+    sign_in user
+    assert_difference 'PostHistory.count' do
+      post :rollback, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:success]
+    end
+
+    # Verify that a new event was created
+    new_event = PostHistory.last
+    assert_equal 'question_reopened', new_event.post_history_type.name
+    assert_equal user.id, new_event.user_id
+
+    # Verify that the post is no longer closed
+    post = assigns(:post)
+    assert_not post.closed
   end
 end
