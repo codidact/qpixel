@@ -54,7 +54,8 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
+             min_length: min_body_length(category), max_length: max_body_length(category) %>
 
   <div class="post-preview"></div>
 
@@ -65,9 +66,11 @@
     </div>
     <div>
       <span class="has-float-right has-font-size-caption js-character-count-post-title hide"
-            data-max="255" data-min="15" data-display-at="0.75">
+            data-min="<%= min_title_length(category) %>"
+            data-max="<%= max_title_length(category) %>"
+            data-display-at="0.75">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / 255</span>
+        <span class="js-character-count__count">0 / <%= max_title_length(category) %></span>
       </span>
     </div>
   <% end %>

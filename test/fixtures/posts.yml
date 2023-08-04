@@ -227,6 +227,7 @@ high_trust:
 
 answer_one:
   post_type: answer
+  title: A1 ABCDEF GHIJKL MNOPQR
   body: A1 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0.5
@@ -240,6 +241,7 @@ answer_one:
 
 answer_two:
   post_type: answer
+  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0.5
@@ -253,6 +255,7 @@ answer_two:
 
 comments_disabled:
   post_type: answer
+  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0.5
@@ -267,6 +270,7 @@ comments_disabled:
 
 bad_answer:
   post_type: answer
+  title: A2 ABCDEF GHIJKL MNOPQR
   body: A2 ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0.4
@@ -280,6 +284,7 @@ bad_answer:
 
 really_old_answer:
   post_type: answer
+  title: A3RO ABCDEF GHIJKL MNOPQR
   body: A3RO ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 2
@@ -294,6 +299,7 @@ really_old_answer:
 
 deleted_answer:
   post_type: answer
+  title: A4D ABCDEF GHIJKL MNOPQR
   body: A4D ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
   body_markdown: ZY XWVUTS RQPONM LKJIHG FEDCBA ZY XWVUTS RQPONM LKJIHG FEDCBA
   score: 0.5

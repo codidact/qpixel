@@ -1,3 +1,19 @@
+<%#
+  Adds a markdown body form textarea.
+  Variables:
+    post          : [ApplicationRecord, Nil] the entity to which this body field belongs (a post, a tag, a user, ...)
+    field_name    : [Symbol] the name of the body field (for the given entity)
+    field_label   : [String] the label for the field
+    min_length    : [Integer, Nil] optional, the minimum allowed length
+    max_length    : [Integer, Nil] optional, the maximum allowed length
+%>
+
+<%
+  # Defaults
+  min_length = defined?(min_length) ? min_length : nil
+  max_length = defined?(max_length) ? max_length : nil
+%>
+
 <div class="form-group">
   <%= f.label field_name, field_label, class: "form-element" %>
   <% if block_given? %>
@@ -22,7 +38,7 @@
     <%= render 'shared/markdown_tools' %>
     <%= f.text_area field_name, **({ class: classes, rows: 15, placeholder: 'Start typing your post...' }).merge(value), 
                                 data: { character_count: ".js-character-count-post-body" } %>
-    <%= render 'posts/mdhint' %>
+    <%= render 'posts/mdhint', min_length: min_length, max_length: max_length %>
   </div>
   <%= hidden_field_tag "__html", nil, class: 'js-post-html' %>
 </div>
