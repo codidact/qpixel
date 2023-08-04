@@ -40,8 +40,9 @@ class PostHistoryController < ApplicationController
     # If we are closing a question, also record the close reason from the original history item
     rollback_type = @history.post_history_type.name_inverted
     if rollback_type == 'question_closed'
-      opts[:close_reason_id] = @history.close_reason_id
-      opts[:duplicate_post_id] = @history.duplicate_post_id
+      predecessor = @history.find_predecessor('question_closed')
+      opts[:close_reason_id] = predecessor&.close_reason_id
+      opts[:duplicate_post_id] = predecessor&.duplicate_post_id
     end
 
     PostHistory.transaction do
