@@ -1,8 +1,8 @@
 question_one:
   post_type: question
-  title: Q1 ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
-  body_markdown: ABCDEF GHIJKL MNOPQR STUVWX YZ ABCDEF GHIJKL MNOPQR STUVWX YZ
+  title: Q1 - This is test question number one
+  body: This is the body of test question one. Note that we did not include any markdown or HTML in here.
+  body_markdown: This is the body of test question one. Note that we did not include any markdown or HTML in here.
   tags_cache:
     - discussion
     - support

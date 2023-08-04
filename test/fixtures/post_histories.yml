@@ -1,0 +1,14 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# There are tags updated too
+q1_edit:
+  post_history_type: post_edited
+  user: editor
+  post: question_one
+  comment: Fixed incorrect information
+  community: sample
+  before_state: This is the updated body of test question one. We made some major changes to the content!
+  after_state: This is the body of test question one. Note that we did not include any markdown or HTML in here.
+  before_title: Q1 - Updated title for question nr one
+  after_title: Q1 - This is test question number one
+

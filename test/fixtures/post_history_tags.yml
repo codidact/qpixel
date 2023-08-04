@@ -1,11 +1,29 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  post_history: one
-  tag: one
-  relationship: MyString
+q1_edit_before_t1:
+  post_history: q1_edit
+  tag: discussion
+  relationship: 'before'
 
-two:
-  post_history: two
-  tag: two
-  relationship: MyString
+q1_edit_before_t2:
+  post_history: q1_edit
+  tag: feature-request
+  relationship: 'before'
+
+# Leave tag "discussion" unchanged
+q1_edit_after_t1:
+  post_history: q1_edit
+  tag: discussion
+  relationship: 'after'
+
+# Add tag "support"
+q1_edit_after_t2:
+  post_history: q1_edit
+  tag: support
+  relationship: 'after'
+
+# Replace feature-request with bug
+q1_edit_after_t3:
+  post_history: q1_edit
+  tag: bug
+  relationship: 'after'

@@ -36,4 +36,9 @@ class PostHistoryTest < ActiveSupport::TestCase
     assert_equal post.body_markdown, event.after_state
     assert_nil event.before_state
   end
+
+  test 'compatible event should be rollbackable' do
+    event = post_histories(:q1_edit)
+    assert event.can_rollback?
+  end
 end
