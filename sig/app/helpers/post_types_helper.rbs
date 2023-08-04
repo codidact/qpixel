@@ -1,8 +1,5 @@
-# TypeProf 0.21.7
-
-# Classes
 module PostTypesHelper
-  def post_type_badge: (untyped `type`) -> untyped
-  def post_type_criteria: -> untyped
-  def post_type_ids: (**untyped) -> untyped
+  def post_type_badge: (PostType `type`) -> ActiveSupport::SafeBuffer
+  def post_type_criteria: -> Array[Symbol]
+  def post_type_ids: (**untyped) -> Array[Integer]
 end
