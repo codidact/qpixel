@@ -150,7 +150,6 @@ locked:
   locked: true
   locked_by: deleter
   locked_at: 2019-01-01T00:00:00.000000Z
-  locked_until: 2020-01-01T00:00:00.000000Z
   user: standard_user
   community: sample
   category: main
@@ -175,7 +174,6 @@ locked_mod:
   locked: true
   locked_by: moderator
   locked_at: 2019-01-01T00:00:00.000000Z
-  locked_until: 2020-01-01T00:00:00.000000Z
   user: standard_user
   community: sample
   category: main
