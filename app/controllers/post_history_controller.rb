@@ -24,7 +24,7 @@ class PostHistoryController < ApplicationController
       return
     end
 
-    msg = helpers.disallow_rollback_history(@history, current_user)
+    msg = helpers.disallow_undo_history(@history, current_user)
     if msg.present?
       flash[:danger] = "You are not allowed to undo this history element: #{msg}"
       redirect_to post_history_url(@post)
