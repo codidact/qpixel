@@ -99,6 +99,13 @@ class PostHistoryController < ApplicationController
     @history = PostHistory.find(params[:id])
     @post = @history.post
 
+    comment = params[:edit_comment]
+    if comment.blank?
+      flash[:danger] = 'You need to provide a comment for why you are making this revertion'
+      redirect_to revert_overview_post_history_path(@post, @history)
+      return
+    end
+
     # Determine the changes that we need to make
     to_change = determine_changes_to_restore(@post, @history)
 
