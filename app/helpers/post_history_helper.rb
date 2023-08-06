@@ -1,4 +1,20 @@
 module PostHistoryHelper
+  # @param closed [Boolean] whether this post will be closed (true) or reopened (false)
+  # @param close_reason [CloseReason, Nil] the close reason for this post (if present)
+  # @param duplicate_post [Post, Nil] the post which is linked as duplicate (if present)
+  def close_description(closed, close_reason, duplicate_post)
+    base = "<strong>#{closed ? 'close' : 'reopen'}</strong> it".html_safe
+    if closed && close_reason
+      base += " as #{close_reason.name}"
+      if duplicate_post
+        base += " of <a href=\"#{post_url(duplicate_post)}\" target=\"_blank\">".html_safe
+        base += "##{duplicate_post.id} (#{duplicate_post.title})"
+        base += '</a>'.html_safe
+      end
+    end
+    base
+  end
+
   # @param history [PostHistory]
   # @param user [User, Nil]
   # @return [Boolean] whether the given user is allowed to rollback the given history item

@@ -66,6 +66,25 @@ class PostHistoryController < ApplicationController
     redirect_to post_history_path(@post)
   end
 
+  def revert_overview
+    @history = PostHistory.find(params[:id])
+    @post = @history.post
+
+    msg = disallowed_to_restore(@post, @history, current_user)
+    if msg.present?
+      flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
+      redirect_to post_history_url(@post)
+      return
+    end
+
+    @full_history = @post.post_histories
+                         .includes(:post_history_type, :user, post_history_tags: [:tag])
+                         .order(created_at: :desc, id: :desc)
+    @rollback_history_ids = determine_events_to_rollback(@post, @history).ids
+    @changes = determine_changes_to_restore(@post, @history)
+    render layout: 'without_sidebar'
+  end
+
   def revert_to
     @history = PostHistory.find(params[:id])
     @post = @history.post
@@ -120,12 +139,12 @@ class PostHistoryController < ApplicationController
     unless to_change[:closed].nil?
       if to_change[:closed]
         post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
-                    close_reason_id: to_change[:close_reason_id],
-                    duplicate_post_id: to_change[:duplicate_post_id],
+                    close_reason_id: to_change[:close_reason],
+                    duplicate_post_id: to_change[:duplicate_post],
                     last_activity: DateTime.now, last_activity_by: current_user)
         close_event = PostHistory.question_closed(post, current_user, comment: revert_comment,
-                                                  close_reason_id: to_change[:close_reason_id],
-                                                  duplicate_post_id: to_change[:duplicate_post_id])
+                                                  close_reason_id: to_change[:close_reason],
+                                                  duplicate_post_id: to_change[:duplicate_post])
       else
         rollback_post_closed(post)
         close_event = PostHistory.question_reopened(post, current_user, comment: revert_comment)
@@ -197,6 +216,19 @@ class PostHistoryController < ApplicationController
     nil
   end
 
+  # Determines the events to rollback to revert to the given history item.
+  #
+  # @param post [Post]
+  # @param history [PostHistory] the history item to revert the state to
+  def determine_events_to_rollback(post, history)
+    revertable_types = %w[post_edited post_deleted post_undeleted question_closed question_reopened]
+    post.post_histories
+        .where(created_at: (history.created_at + 1.second)..)
+        .where(post_history_type: PostHistoryType.where(name: revertable_types))
+        .includes(:post_history_type)
+        .order(created_at: :desc, id: :desc)
+  end
+
   # Determines the set of changes to apply to the post to revert back to the state it had at the given history item.
   #
   # The returned hash can contain:
@@ -205,18 +237,14 @@ class PostHistoryController < ApplicationController
   #   title [String] - the title the post should be updated to have
   #   body [String] - the body the post should be updated to have
   #   tags [Array<Tag>] - the tags the post should be updated to have
-  #   close_reason_id [Integer] - the close reason that should be set
-  #   duplicate_post_id [Integer] - the id of the post of which this post is a duplicate that should be set
+  #   close_reason [CloseReason] - the close reason that should be set
+  #   duplicate_post [Post] - the post of which this post is a duplicate that should be set
   #
   # @param post [Post]
   # @param history [PostHistory]
   # @return [Hash]
   def determine_changes_to_restore(post, history)
-    after_histories = post.post_histories
-                          .where(created_at: history.created_at..)
-                          .where.not(id: history.id)
-                          .includes(:post_history_type)
-                          .order(created_at: :desc, id: :desc)
+    after_histories = determine_events_to_rollback(post, history)
 
     to_change = {}
     after_histories.each do |ph|
@@ -241,8 +269,8 @@ class PostHistoryController < ApplicationController
     # Recover post close reason from predecessor of last reopened
     if to_change[:closed]
       ph = after_histories.last.find_predecessor('question_closed')
-      to_change[:close_reason_id] = ph&.close_reason_id
-      to_change[:duplicate_post_id] = ph&.duplicate_post_id
+      to_change[:close_reason] = ph&.close_reason
+      to_change[:duplicate_post] = ph&.duplicate_post
     end
     to_change
   end
