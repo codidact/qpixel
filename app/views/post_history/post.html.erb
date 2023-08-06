@@ -45,16 +45,15 @@
                       method: :post
           %>
           &mdash;
-        <% end %>
-        <% if false && event.can_undo? && allow_undo_history?(event, current_user) %>
+        <% elsif event.can_undo? && allow_undo_history?(event, current_user) %>
           <%= link_to 'Undo', undo_post_history_url(@post, event),
-                      class: 'button is-outlined', role: 'button',
                       'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
                       data: {
                         confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
                       },
                       method: :post
           %>
+          &mdash;
         <% end %>
 
         <%# TODO: allow undo should consider the predecessor events %>
