@@ -97,11 +97,11 @@ module PostHistoryHelper
     end
   end
 
-  # @param post [Post]
+  # @param _post [Post]
   # @param user [User]
   # @return [String, Nil] the error message if disallowed, or nil if allowed
-  def disallow_reopen(post, user)
-    if !user.privilege?('flag_close') || post.user_id == user.id
+  def disallow_reopen(_post, user)
+    unless user.privilege?('flag_close')
       ability_err_msg(:flag_close, 'reopen this post')
     end
   end
