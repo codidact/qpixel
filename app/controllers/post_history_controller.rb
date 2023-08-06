@@ -283,6 +283,7 @@ class PostHistoryController < ApplicationController
   def determine_changes_to_restore(post, history)
     events_to_undo = determine_events_to_undo(post, history)
 
+    # Aggregate changes from events
     to_change = {}
     events_to_undo.each do |ph|
       case ph.post_history_type.name
@@ -309,6 +310,19 @@ class PostHistoryController < ApplicationController
       to_change[:close_reason] = ph&.close_reason
       to_change[:duplicate_post] = ph&.duplicate_post
     end
+
+    # Cleanup changes that are already present
+    to_change.delete(:title) if to_change[:title] == post.title
+    to_change.delete(:body) if to_change[:body] == post.body_markdown
+    to_change.delete(:tags) if to_change[:tags].map(&:id).sort == post.tags.ids.sort
+    to_change.delete(:deleted) if to_change[:deleted] == post.deleted
+
+    if to_change[:closed] == post.closed &&
+       to_change[:close_reason] == post.close_reason &&
+       to_change[:duplicate_post]&.id == post.duplicate_post_id
+      to_change.delete(:closed)
+    end
+
     to_change
   end
 
