@@ -90,14 +90,6 @@ class PostHistory < ApplicationRecord
     return false if reverted? || hidden
 
     case post_history_type.name
-    when 'post_deleted'
-      post.deleted?
-    when 'post_undeleted'
-      !post.deleted?
-    when 'question_closed'
-      post.closed?
-    when 'question_reopened'
-      !post.closed?
     when 'post_edited'
       # Post title must be still what it was after the edit
       (after_title.nil? || after_title == before_title || after_title == post.title) &&

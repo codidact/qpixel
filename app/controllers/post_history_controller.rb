@@ -37,14 +37,6 @@ class PostHistoryController < ApplicationController
                "(#{post_history_url(@post, anchor: index)})"
     }
 
-    # If we are closing a question, also record the close reason from the original history item
-    undo_type = @history.post_history_type.name_inverted
-    if undo_type == 'question_closed'
-      predecessor = @history.find_predecessor('question_closed')
-      opts[:close_reason_id] = predecessor&.close_reason_id
-      opts[:duplicate_post_id] = predecessor&.duplicate_post_id
-    end
-
     PostHistory.transaction do
       unless undo_post_history(@history)
         flash[:danger] = "Unable to undo revision: #{@post.errors.full_messages.join(', ')}"
@@ -92,7 +84,7 @@ class PostHistoryController < ApplicationController
                          .order(created_at: :desc, id: :desc)
     # We use map id here over .ids to reuse the cached database result from this method getting called earlier
     # (in determine_changes_to_restore)
-    @undo_history_ids = determine_events_to_undo(@post, @history).map(&:id)
+    @undo_history_ids = determine_edit_events_to_undo(@post, @history).map(&:id)
 
     render layout: 'without_sidebar'
   end
@@ -145,75 +137,34 @@ class PostHistoryController < ApplicationController
     revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
                      "(#{post_history_url(post, anchor: index)}): #{comment}"
 
-    edit_event = nil
-    close_event = nil
-    delete_event = nil
+    opts = {
+      before: post.body_markdown, before_title: post.title, before_tags: post.tags.to_a,
+      comment: revert_comment
+    }
 
-    # Perform edit
-    if to_change[:title].present? || to_change[:body].present? || to_change[:tags].present?
-      opts = {
-        before: post.body_markdown, before_title: post.title, before_tags: post.tags.to_a,
-        comment: revert_comment
-      }
-
-      post.title = to_change[:title] if to_change[:title].present?
-      if to_change[:body].present?
-        post.body_markdown = to_change[:body]
-        post.body = ApplicationController.helpers.render_markdown(to_change[:body])
-      end
-      post.tags_cache = to_change[:tags].map(&:name) if to_change[:tags].present?
-      post.last_activity = DateTime.now
-      post.last_activity_by = current_user
-      post.save
-
-      opts = opts.merge(after: post.body_markdown, after_title: post.title, after_tags: post.tags.to_a)
-      edit_event = PostHistory.post_edited(post, current_user, **opts)
+    post.title = to_change[:title] if to_change[:title].present?
+    if to_change[:body].present?
+      post.body_markdown = to_change[:body]
+      post.body = ApplicationController.helpers.render_markdown(to_change[:body])
     end
+    post.tags_cache = to_change[:tags].map(&:name) if to_change[:tags].present?
+    post.last_activity = DateTime.now
+    post.last_activity_by = current_user
+    post.save
 
-    # Perform close/reopen
-    unless to_change[:closed].nil?
-      if to_change[:closed]
-        post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
-                    close_reason_id: to_change[:close_reason],
-                    duplicate_post_id: to_change[:duplicate_post],
-                    last_activity: DateTime.now, last_activity_by: current_user)
-        close_event = PostHistory.question_closed(post, current_user, comment: revert_comment,
-                                                  close_reason_id: to_change[:close_reason],
-                                                  duplicate_post_id: to_change[:duplicate_post])
-      else
-        undo_post_close(post)
-        close_event = PostHistory.question_reopened(post, current_user, comment: revert_comment)
-      end
-    end
+    opts = opts.merge(after: post.body_markdown, after_title: post.title, after_tags: post.tags.to_a)
+    edit_event = PostHistory.post_edited(post, current_user, **opts)
 
-    # Perform deletion / undeletion
-    unless to_change[:deleted].nil?
-      if to_change[:deleted]
-        post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
-                    last_activity: DateTime.now, last_activity_by: current_user)
-        delete_event = PostHistory.post_deleted(post, current_user, comment: revert_comment)
-      else
-        undo_post_delete(post)
-        delete_event = PostHistory.post_undeleted(post, current_user, comment: revert_comment)
-      end
-    end
-
-    revert_history_items(history, edit_event, close_event, delete_event)
+    revert_history_items(history, edit_event)
   end
 
   # Updates the post histories by setting by which event they were reverted.
   # @param history [PostHistory]
   # @param edit_event [PostHistory, Nil]
-  # @param close_event [PostHistory, Nil]
-  # @param delete_event [PostHistory, Nil]
-  def revert_history_items(history, edit_event, close_event, delete_event)
-    events_to_undo = determine_events_to_undo(history.post, history)
+  def revert_history_items(history, edit_event)
+    events_to_undo = determine_edit_events_to_undo(history.post, history)
     events_to_undo.each do |ph|
       case ph.post_history_type.name
-      when 'post_deleted', 'post_undeleted'
-        ph.update(reverted_with_id: delete_event)
-      when 'question_closed', 'question_reopened'
-        ph.update(reverted_with_id: close_event)
       when 'post_edited'
         ph.update(reverted_with_id: edit_event)
       end
@@ -228,24 +179,6 @@ class PostHistoryController < ApplicationController
   # @param user [User]
   # @return [String, Nil] if the user is not allowed to restore, the message why not. Nil if the user is allowed to.
   def disallowed_to_restore(to_change, post, user)
-    if to_change.include?(:deleted)
-      msg = if to_change[:deleted]
-              helpers.disallow_delete(post, user)
-            else
-              helpers.disallow_undelete(post, user)
-            end
-      return msg if msg
-    end
-
-    if to_change.include?(:closed)
-      msg = if to_change[:closed]
-              helpers.disallow_close(post, user)
-            else
-              helpers.disallow_reopen(post, user)
-            end
-      return msg if msg
-    end
-
     if to_change[:title] || to_change[:body] || to_change[:tags]
       msg = helpers.disallow_edit(post, user)
       return msg if msg
@@ -254,16 +187,15 @@ class PostHistoryController < ApplicationController
     nil
   end
 
-  # Determines the events to undo to revert to the given history item.
+  # Determines the edit events to undo to revert to the given history item.
   # Events are ordered in the order in which they need to be undone (newest to oldest).
   #
   # @param post [Post]
   # @param history [PostHistory] the history item to revert the state to
-  def determine_events_to_undo(post, history)
-    revertable_types = %w[post_edited post_deleted post_undeleted question_closed question_reopened]
+  def determine_edit_events_to_undo(post, history)
     post.post_histories
         .where(created_at: (history.created_at + 1.second)..)
-        .where(post_history_type: PostHistoryType.where(name: revertable_types))
+        .where(post_history_type: PostHistoryType.where(name: 'post_edited'))
         .includes(:post_history_type)
         .order(created_at: :desc, id: :desc)
   end
@@ -283,47 +215,23 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @return [Hash]
   def determine_changes_to_restore(post, history)
-    events_to_undo = determine_events_to_undo(post, history)
+    events_to_undo = determine_edit_events_to_undo(post, history)
 
     # Aggregate changes from events
     to_change = {}
     events_to_undo.each do |ph|
       case ph.post_history_type.name
-      when 'post_undeleted'
-        to_change[:deleted] = true
-      when 'post_deleted'
-        to_change[:deleted] = false
-      when 'question_reopened'
-        to_change[:closed] = true
-      when 'question_closed'
-        to_change[:closed] = false
       when 'post_edited'
         to_change[:title] = ph.before_title if ph.before_title.present?
         to_change[:body] = ph.before_state if ph.before_state.present?
         to_change[:tags] = ph.before_tags if ph.before_tags.present?
-      when 'imported_from_external_source', 'initial_revision'
-        raise ArgumentError('Unexpected event in history revert request!')
       end
-    end
-
-    # Recover post close reason from predecessor of last reopened
-    if to_change[:closed]
-      ph = events_to_undo.last.find_predecessor('question_closed')
-      to_change[:close_reason] = ph&.close_reason
-      to_change[:duplicate_post] = ph&.duplicate_post
     end
 
     # Cleanup changes that are already present
     to_change.delete(:title) if to_change[:title] == post.title
     to_change.delete(:body) if to_change[:body] == post.body_markdown
     to_change.delete(:tags) if to_change[:tags]&.map(&:id)&.sort == post.tags.ids.sort
-    to_change.delete(:deleted) if to_change[:deleted] == post.deleted
-
-    if to_change[:closed] == post.closed &&
-       to_change[:close_reason] == post.close_reason &&
-       to_change[:duplicate_post]&.id == post.duplicate_post_id
-      to_change.delete(:closed)
-    end
 
     to_change
   end
@@ -336,14 +244,6 @@ class PostHistoryController < ApplicationController
   def undo_post_history(history)
     post = history.post
     case history.post_history_type.name
-    when 'post_deleted'
-      undo_post_delete(post)
-    when 'post_undeleted'
-      undo_post_undelete(post, history)
-    when 'question_closed'
-      undo_post_close(post)
-    when 'question_reopened'
-      undo_post_reopen(post, history)
     when 'post_edited'
       undo_post_edit(post, history)
     when 'history_hidden'
@@ -353,41 +253,6 @@ class PostHistoryController < ApplicationController
     else
       false
     end
-  end
-
-  # @param post [Post]
-  # @return [Boolean] whether the undo was successfully applied
-  def undo_post_delete(post)
-    post.update(deleted: false, deleted_at: nil, deleted_by: nil,
-                last_activity: DateTime.now, last_activity_by: current_user)
-  end
-
-  # @param post [Post]
-  # @param _history [PostHistory]
-  # @return [Boolean] whether the undo was successfully applied
-  def undo_post_undelete(post, _history)
-    # predecessor = history.find_predecessor('post_deleted')
-    post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
-                last_activity: DateTime.now, last_activity_by: current_user)
-  end
-
-  # @param post [Post]
-  # @return [Boolean] whether the undo was successfully applied
-  def undo_post_close(post)
-    post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
-                last_activity: DateTime.now, last_activity_by: current_user)
-  end
-
-  # @param post [Post]
-  # @param history [PostHistory]
-  # @return [Boolean] whether the undo was successfully applied
-  def undo_post_reopen(post, history)
-    predecessor = history.find_predecessor('question_closed')
-
-    post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
-                close_reason_id: predecessor.close_reason_id,
-                duplicate_post_id: predecessor.duplicate_post_id,
-                last_activity: DateTime.now, last_activity_by: current_user)
   end
 
   # @param post [Post]

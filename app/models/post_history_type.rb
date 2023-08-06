@@ -12,10 +12,6 @@ class PostHistoryType < ApplicationRecord
     'history_revealed' => 'history_hidden'
   }.freeze
   REVERT_TO_TYPES = %w[
-    post_deleted
-    post_undeleted
-    question_closed
-    question_reopened
     post_edited
     initial_revision
     imported_from_external_source

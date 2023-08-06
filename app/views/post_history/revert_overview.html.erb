@@ -1,4 +1,4 @@
-<h1>Rolling back Post History</h1>
+<h1>Rolling back post to previous state</h1>
 
 <div class="item-list">
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
@@ -75,24 +75,6 @@
   <% if @changes.include?(:tags) %>
     <%= render 'diff', before: @post.tags, after: @changes[:tags], post: @post %>
   <% end %>
-
-  <ul>
-    <% if @changes.include?(:deleted) %>
-      <li>
-        This post is <strong><%= @post.deleted ? 'deleted' : 'live' %></strong>
-        &mdash; this action will
-        <strong><%= @changes[:deleted] ? 'delete' : 'restore' %></strong> it.
-      </li>
-    <% end %>
-    <% if @changes.include?(:closed) %>
-      <li>
-        This post is <strong><%= @post.closed ? 'closed' : 'open' %></strong>
-        <%= close_description(@post.closed, @post.close_reason, @post.duplicate_post) %>
-        &mdash; this action will <strong><%= @changes[:closed] ? 'close' : 'reopen' %></strong> it
-        <%= close_description(@changes[:closed], @changes[:close_reason], @changes[:duplicate_post]) %>.
-    <% end %>
-  </ul>
-
 </div>
 
 <%= form_for @history, url: revert_to_post_history_path(@post, @history), method: :post, html: { class: 'has-margin-top-4' } do |f| %>
