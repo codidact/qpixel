@@ -295,6 +295,8 @@ class PostHistoryController < ApplicationController
       rollback_post_edit(post, history)
     when 'history_hidden'
       rollback_hide_history(post, history)
+    when 'history_revealed'
+      rollback_reveal_history(post, history)
     else
       false
     end
@@ -373,6 +375,31 @@ class PostHistoryController < ApplicationController
     end
 
     histories_to_reveal.update_all(hidden: false, updated_at: DateTime.now).positive?
+  end
+
+  # @param post [Post]
+  # @param history [PostHistory]
+  # @return [Boolean] whether the rollback was successfully applied
+  def rollback_reveal_history(post, history)
+    # We need to hide history for all events that were revealed by this action
+    histories_to_hide = post.post_histories
+                            .where(created_at: ..history.created_at)
+                            .where(hidden: true)
+                            .includes(:post_history_type)
+                            .order(created_at: :desc, id: :desc)
+
+    # If there are more history hiding events, only reveal until the previous previous hiding.
+    # That is, we revealed hiding 1, now we are hiding again (confusing I know).
+    # We need to add one second because we don't want to hide the edit before the history_hidden event, which
+    # will have likely occurred in the same second.
+    # Note that we do want to include the history_hidden item itself, so we add that with or.
+    predecessor = history.find_predecessor('history_hidden')&.find_predecessor('history_hidden')
+    if predecessor
+      histories_to_hide = histories_to_hide.where(created_at: (predecessor.created_at + 1.second)..)
+                                               .or(PostHistory.where(id: predecessor))
+    end
+
+    histories_to_hide.update_all(hidden: true, updated_at: DateTime.now).positive?
   end
 
   # TODO: rollback reveal history
