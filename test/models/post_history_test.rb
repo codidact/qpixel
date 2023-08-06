@@ -39,19 +39,19 @@ class PostHistoryTest < ActiveSupport::TestCase
 
   test 'edit event matching current post can be rolled back' do
     event = post_histories(:q1_edit)
-    assert event.can_rollback?
+    assert event.can_undo?
   end
 
   test 'if body does not match, edit event cannot be rolled back' do
     event = post_histories(:q1_edit)
     event.update!(after_state: "#{event.after_state} - not matching")
-    assert_not event.can_rollback?
+    assert_not event.can_undo?
   end
 
   test 'if title does not match, edit event cannot be rolled back' do
     event = post_histories(:q1_edit)
     event.update!(after_title: "#{event.after_title} - not matching")
-    assert_not event.can_rollback?
+    assert_not event.can_undo?
   end
 
   test 'if an added tag is missing, edit event cannot be rolled back' do
@@ -62,7 +62,7 @@ class PostHistoryTest < ActiveSupport::TestCase
     post.tags_cache.delete(event.tags_added.first.name)
     post.save!
 
-    assert_not event.can_rollback?
+    assert_not event.can_undo?
   end
 
   test 'if additional unrelated tags are on post, edit event can still be rolled back' do
@@ -73,7 +73,7 @@ class PostHistoryTest < ActiveSupport::TestCase
 
     # Refresh event, should still be allowed to rollback
     event = PostHistory.find(event.id)
-    assert event.can_rollback?
+    assert event.can_undo?
   end
 
   test 'predecessor of event finds closest predecessor' do

@@ -12,42 +12,42 @@ class PostHistoryController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def rollback
+  def undo
     @history = PostHistory.find(params[:id])
     @post = @history.post
     histories = @post.post_histories.order(created_at: :asc).ids
     index = histories.index(@history.id) + 1
 
-    unless @history.can_rollback?
-      flash[:danger] = 'You cannot rollback this particular history element.'
+    unless @history.can_undo?
+      flash[:danger] = 'You cannot undo this particular history element.'
       redirect_to post_history_url(@post)
       return
     end
 
     msg = helpers.disallow_rollback_history(@history, current_user)
     if msg.present?
-      flash[:danger] = "You are not allowed to rollback this history element: #{msg}"
+      flash[:danger] = "You are not allowed to undo this history element: #{msg}"
       redirect_to post_history_url(@post)
       return
     end
 
     opts = {
       before: @post.body_markdown, before_title: @post.title, before_tags: @post.tags.to_a,
-      comment: "Rollback of [##{index}: #{@history.post_history_type.name.humanize}]" \
+      comment: "Undo of [##{index}: #{@history.post_history_type.name.humanize}]" \
                "(#{post_history_url(@post, anchor: index)})"
     }
 
     # If we are closing a question, also record the close reason from the original history item
-    rollback_type = @history.post_history_type.name_inverted
-    if rollback_type == 'question_closed'
+    undo_type = @history.post_history_type.name_inverted
+    if undo_type == 'question_closed'
       predecessor = @history.find_predecessor('question_closed')
       opts[:close_reason_id] = predecessor&.close_reason_id
       opts[:duplicate_post_id] = predecessor&.duplicate_post_id
     end
 
     PostHistory.transaction do
-      unless rollback_post_history(@history)
-        flash[:danger] = "Unable to rollback revision: #{@post.errors.full_messages.join(', ')}"
+      unless undo_post_history(@history)
+        flash[:danger] = "Unable to undo revision: #{@post.errors.full_messages.join(', ')}"
         redirect_to post_history_path(@post)
         return
       end
@@ -55,7 +55,7 @@ class PostHistoryController < ApplicationController
       opts = opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
 
       # Record in the history that this element was rolled back
-      new_history = PostHistory.send(rollback_type, @post, current_user, **opts)
+      new_history = PostHistory.send(undo_type, @post, current_user, **opts)
 
       # Set the original to be rolled back
       @history.reverted_with_id = new_history.id
@@ -80,7 +80,7 @@ class PostHistoryController < ApplicationController
     @full_history = @post.post_histories
                          .includes(:post_history_type, :user, post_history_tags: [:tag])
                          .order(created_at: :desc, id: :desc)
-    @rollback_history_ids = determine_events_to_rollback(@post, @history).ids
+    @undo_history_ids = determine_events_to_undo(@post, @history).ids
     @changes = determine_changes_to_restore(@post, @history)
     render layout: 'without_sidebar'
   end
@@ -146,7 +146,7 @@ class PostHistoryController < ApplicationController
                                                   close_reason_id: to_change[:close_reason],
                                                   duplicate_post_id: to_change[:duplicate_post])
       else
-        rollback_post_closed(post)
+        undo_post_close(post)
         close_event = PostHistory.question_reopened(post, current_user, comment: revert_comment)
       end
     end
@@ -158,7 +158,7 @@ class PostHistoryController < ApplicationController
                     last_activity: DateTime.now, last_activity_by: current_user)
         delete_event = PostHistory.post_deleted(post, current_user, comment: revert_comment)
       else
-        rollback_post_deleted(post)
+        undo_post_delete(post)
         delete_event = PostHistory.post_undeleted(post, current_user, comment: revert_comment)
       end
     end
@@ -205,7 +205,7 @@ class PostHistoryController < ApplicationController
                           .order(created_at: :desc, id: :desc)
 
     after_histories.each do |ph|
-      msg = helpers.disallow_rollback_history(ph, user)
+      msg = helpers.disallow_undo_history(ph, user)
       return msg if msg
 
       if ['imported_from_external_source', 'initial_revision'].include?(ph.post_history_type.name)
@@ -216,11 +216,11 @@ class PostHistoryController < ApplicationController
     nil
   end
 
-  # Determines the events to rollback to revert to the given history item.
+  # Determines the events to undo to revert to the given history item.
   #
   # @param post [Post]
   # @param history [PostHistory] the history item to revert the state to
-  def determine_events_to_rollback(post, history)
+  def determine_events_to_undo(post, history)
     revertable_types = %w[post_edited post_deleted post_undeleted question_closed question_reopened]
     post.post_histories
         .where(created_at: (history.created_at + 1.second)..)
@@ -244,7 +244,7 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @return [Hash]
   def determine_changes_to_restore(post, history)
-    after_histories = determine_events_to_rollback(post, history)
+    after_histories = determine_events_to_undo(post, history)
 
     to_change = {}
     after_histories.each do |ph|
@@ -277,58 +277,58 @@ class PostHistoryController < ApplicationController
 
   private
 
-  # Rolls back the given history item.
+  # Undoes the given history item.
   # @param history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_history(history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_history(history)
     post = history.post
     case history.post_history_type.name
     when 'post_deleted'
-      rollback_post_deleted(post)
+      undo_post_delete(post)
     when 'post_undeleted'
-      rollback_post_undeleted(post, history)
+      undo_post_undelete(post, history)
     when 'question_closed'
-      rollback_post_closed(post)
+      undo_post_close(post)
     when 'question_reopened'
-      rollback_post_reopen(post, history)
+      undo_post_reopen(post, history)
     when 'post_edited'
-      rollback_post_edit(post, history)
+      undo_post_edit(post, history)
     when 'history_hidden'
-      rollback_hide_history(post, history)
+      undo_hide_history(post, history)
     when 'history_revealed'
-      rollback_reveal_history(post, history)
+      undo_reveal_history(post, history)
     else
       false
     end
   end
 
   # @param post [Post]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_deleted(post)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_delete(post)
     post.update(deleted: false, deleted_at: nil, deleted_by: nil,
                 last_activity: DateTime.now, last_activity_by: current_user)
   end
 
   # @param post [Post]
   # @param _history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_undeleted(post, _history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_undelete(post, _history)
     # predecessor = history.find_predecessor('post_deleted')
     post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
                 last_activity: DateTime.now, last_activity_by: current_user)
   end
 
   # @param post [Post]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_closed(post)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_close(post)
     post.update(closed: false, closed_by: nil, closed_at: nil, close_reason: nil, duplicate_post: nil,
                 last_activity: DateTime.now, last_activity_by: current_user)
   end
 
   # @param post [Post]
   # @param history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_reopen(post, history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_reopen(post, history)
     predecessor = history.find_predecessor('question_closed')
 
     post.update(closed: true, closed_by: current_user, closed_at: DateTime.now,
@@ -339,8 +339,8 @@ class PostHistoryController < ApplicationController
 
   # @param post [Post]
   # @param history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_post_edit(post, history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_post_edit(post, history)
     post.title = history.before_title if history.before_title && history.before_title != history.after_title
     if history.before_state && history.before_state != history.after_state
       post.body_markdown = history.before_state
@@ -355,8 +355,8 @@ class PostHistoryController < ApplicationController
 
   # @param post [Post]
   # @param history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_hide_history(post, history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_hide_history(post, history)
     # We need to reveal history for all events that were hidden by this action
     histories_to_reveal = post.post_histories
                               .where(created_at: ..history.created_at)
@@ -379,8 +379,8 @@ class PostHistoryController < ApplicationController
 
   # @param post [Post]
   # @param history [PostHistory]
-  # @return [Boolean] whether the rollback was successfully applied
-  def rollback_reveal_history(post, history)
+  # @return [Boolean] whether the undo was successfully applied
+  def undo_reveal_history(post, history)
     # We need to hide history for all events that were revealed by this action
     histories_to_hide = post.post_histories
                             .where(created_at: ..history.created_at)
@@ -401,6 +401,4 @@ class PostHistoryController < ApplicationController
 
     histories_to_hide.update_all(hidden: true, updated_at: DateTime.now).positive?
   end
-
-  # TODO: rollback reveal history
 end

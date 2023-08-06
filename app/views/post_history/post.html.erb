@@ -8,67 +8,67 @@
   <% revision = @history.size - index %>
   <details class="history-event" id="<%= revision %>">
     <summary>
-      <strong>
-        <% if event.reverted? %>
-          <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
-        <% else %>
-          #<%= revision %>: <%= event.post_history_type.name.humanize %>
-        <% end %>
-      </strong>
-      <span class="has-color-tertiary-600 history-meta">
-        <span>
-          by
-          <% if deleted_user? event.user %>
-            (deleted user)
+      <div>
+        <strong>
+          <% if event.reverted? %>
+            <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
           <% else %>
-            <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-            <%= user_link event.user %>
+            #<%= revision %>: <%= event.post_history_type.name.humanize %>
           <% end %>
-          &middot;
-          <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
-        </span>
-      </span>
-
-      <div style="align: right; float: right;">
-      <% if event.post_history_type.history_hiding_related? && allow_rollback_history?(event, current_user) %>
-        <% name = event.post_history_type.name == 'history_hidden' ? 'Reveal history' : 'Re-hide history' %>
-        <%= link_to name, rollback_post_history_url(@post, event),
-                    'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
-                    data: {
-                      confirm: "Are you sure you want to undo ##{revision} #{event.post_history_type.name.humanize}?"
-                    },
-                    method: :post
-        %>
-        &mdash;
-      <% end %>
-      <% if false && event.can_rollback? && allow_rollback_history?(event, current_user) %>
-        <%= link_to 'Undo', rollback_post_history_url(@post, event),
-                    class: 'button is-outlined', role: 'button',
-                    'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
-                    data: {
-                      confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
-                    },
-                    method: :post
-        %>
-      <% end %>
-      <%# TODO: allow rollback should consider the predecessor events %>
-      <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_rollback_history?(event, current_user) %>
-
-        <%= link_to 'Roll back to this version', revert_overview_post_history_path(@post, event),
-                    # class: 'button is-outlined', role: 'button',
-                    'aria-label': "Roll back to version ##{revision} #{event.post_history_type.name.humanize}"
-        %>
-        &mdash;
-      <% end %>
-      <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
-        <span class="js-text">copy link</span>
-      <% end %>
-      </div>
-      <% if event.comment.present? %>
+        </strong>
         <span class="has-color-tertiary-600 history-meta">
-        <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
+          <span>
+            by
+            <% if deleted_user? event.user %>
+              (deleted user)
+            <% else %>
+              <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+              <%= user_link event.user %>
+            <% end %>
+            &middot;
+            <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+          </span>
+        <% if event.comment.present? %>
+          <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
+        <% end %>
         </span>
-      <% end %>
+      </div>
+
+      <div>
+        <% if event.post_history_type.history_hiding_related? && allow_undo_history?(event, current_user) %>
+          <% name = event.post_history_type.name == 'history_hidden' ? 'Reveal history' : 'Re-hide history' %>
+          <%= link_to name, undo_post_history_url(@post, event),
+                      'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
+                      data: {
+                        confirm: "Are you sure you want to undo ##{revision} #{event.post_history_type.name.humanize}?"
+                      },
+                      method: :post
+          %>
+          &mdash;
+        <% end %>
+        <% if false && event.can_undo? && allow_undo_history?(event, current_user) %>
+          <%= link_to 'Undo', undo_post_history_url(@post, event),
+                      class: 'button is-outlined', role: 'button',
+                      'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
+                      data: {
+                        confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
+                      },
+                      method: :post
+          %>
+        <% end %>
+
+        <%# TODO: allow undo should consider the predecessor events %>
+        <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_roll_back_to_history?(event, current_user) %>
+          <%= link_to 'Roll back to this version', revert_overview_post_history_path(@post, event),
+                      'aria-label': "Roll back to version ##{revision} #{event.post_history_type.name.humanize}"
+          %>
+          &mdash;
+        <% end %>
+
+        <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
+          <span class="js-text">copy link</span>
+        <% end %>
+      </div>
     </summary>
     <% if event.allowed_to_see_details?(current_user) %>
       <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>

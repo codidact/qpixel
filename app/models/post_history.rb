@@ -81,8 +81,8 @@ class PostHistory < ApplicationRecord
     PostHistoryType.exists?(name: method_name.to_s) || super
   end
 
-  # @return [Boolean] whether this history item can be rolled back
-  def can_rollback?
+  # @return [Boolean] whether this history item can be undone
+  def can_undo?
     return false if reverted? || hidden
 
     case post_history_type.name

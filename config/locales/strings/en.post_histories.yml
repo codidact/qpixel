@@ -2,5 +2,5 @@ en:
   post_histories:
     cant_reveal: >
       You cannot reveal history that was hidden. Contact an administrator if you believe you need to.
-    cant_rollback_hidden: >
+    cant_undo_hidden: >
       You cannot undo changes whose details are hidden. Contact an administrator if you believe you need to.
