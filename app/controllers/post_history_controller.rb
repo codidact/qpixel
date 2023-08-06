@@ -127,6 +127,9 @@ class PostHistoryController < ApplicationController
     Post.transaction do
       revert_to_state(to_change, @post, @history, comment)
     end
+
+    flash[:success] = 'Successfully rolled back.'
+    redirect_to post_history_url(@post)
   end
 
   protected

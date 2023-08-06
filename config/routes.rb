@@ -142,8 +142,8 @@ Rails.application.routes.draw do
     get    ':id',                          to: 'posts#show', as: :post
     get    ':id/history',                  to: 'post_history#post', as: :post_history
     post   ':post_id/history_undo/:id',    to: 'post_history#undo', as: :undo_post_history
-    post   ':post_id/history_revert/:id',  to: 'post_history#revert_to', as: :revert_to_post_history
     get    ':post_id/history_revert/:id',  to: 'post_history#revert_overview', as: :revert_overview_post_history
+    post   ':post_id/history_revert/:id',  to: 'post_history#revert_to', as: :revert_to_post_history
     get    ':id/edit',                     to: 'posts#edit', as: :edit_post
     patch  ':id/edit',                     to: 'posts#update', as: :update_post
     post   ':id/close',                    to: 'posts#close', as: :close_post
