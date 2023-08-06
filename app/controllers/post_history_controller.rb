@@ -70,7 +70,9 @@ class PostHistoryController < ApplicationController
     @history = PostHistory.find(params[:id])
     @post = @history.post
 
-    msg = disallowed_to_restore(@post, @history, current_user)
+    @changes = determine_changes_to_restore(@post, @history)
+
+    msg = disallowed_to_restore(@changes, @post, current_user)
     if msg.present?
       flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
       redirect_to post_history_url(@post)
@@ -80,8 +82,10 @@ class PostHistoryController < ApplicationController
     @full_history = @post.post_histories
                          .includes(:post_history_type, :user, post_history_tags: [:tag])
                          .order(created_at: :desc, id: :desc)
-    @undo_history_ids = determine_events_to_undo(@post, @history).ids
-    @changes = determine_changes_to_restore(@post, @history)
+    # We use map id here over .ids to reuse the cached database result from this method getting called earlier
+    # (in determine_changes_to_restore)
+    @undo_history_ids = determine_events_to_undo(@post, @history).map(&:id)
+
     render layout: 'without_sidebar'
   end
 
@@ -89,23 +93,30 @@ class PostHistoryController < ApplicationController
     @history = PostHistory.find(params[:id])
     @post = @history.post
 
-    msg = disallowed_to_restore(@post, @history, current_user)
-    if msg.present?
+    # Determine the changes that we need to make
+    to_change = determine_changes_to_restore(@post, @history)
+
+    # Check whether the user is allowed to make those changes
+    msg = disallowed_to_restore(to_change, @post, current_user)
+    unless msg.nil?
       flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
       redirect_to post_history_url(@post)
       return
     end
 
-    revert_to_state(@post, @history)
+    # Actually apply the changes
+    Post.transaction do
+      revert_to_state(to_change, @post, @history)
+    end
   end
 
   protected
 
   # Reverts the given post to the state of the given history item by using the aggregated changes from to_change
+  # @param to_change [Hash] the changes to make, output of `determine_changes_to_restore`
   # @param post [Post]
   # @param history [PostHistory]
-  def revert_to_state(post, history)
-    to_change = determine_changes_to_restore(post, history)
+  def revert_to_state(to_change, post, history)
     revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
                      "(#{post_history_url(post, anchor: index)})"
 
@@ -131,7 +142,6 @@ class PostHistoryController < ApplicationController
       post.save
 
       opts = opts.merge(after: post.body_markdown, after_title: post.title, after_tags: post.tags.to_a)
-
       edit_event = PostHistory.post_edited(post, current_user, **opts)
     end
 
@@ -172,13 +182,8 @@ class PostHistoryController < ApplicationController
   # @param close_event [PostHistory, Nil]
   # @param delete_event [PostHistory, Nil]
   def revert_history_items(history, edit_event, close_event, delete_event)
-    after_histories = history.post.post_histories
-                             .where(created_at: history.created_at..)
-                             .where.not(id: history.id)
-                             .includes(:post_history_type)
-                             .order(created_at: :desc, id: :desc)
-
-    after_histories.each do |ph|
+    events_to_undo = determine_events_to_undo(history.post, history)
+    events_to_undo.each do |ph|
       case ph.post_history_type.name
       when 'post_deleted', 'post_undeleted'
         ph.update(reverted_with_id: delete_event)
@@ -193,30 +198,39 @@ class PostHistoryController < ApplicationController
   # This check is based on checking whether the user would be allowed to undo each of the history items that came after
   # the given one.
   #
+  # @param to_change [Hash] output of `determine_changes_to_restore`
   # @param post [Post]
-  # @param history [PostHistory]
   # @param user [User]
   # @return [String, Nil] if the user is not allowed to restore, the message why not. Nil if the user is allowed to.
-  def disallowed_to_restore(post, history, user)
-    after_histories = post.post_histories
-                          .where(created_at: history.created_at..)
-                          .where.not(id: history.id)
-                          .includes(:post_history_type)
-                          .order(created_at: :desc, id: :desc)
-
-    after_histories.each do |ph|
-      msg = helpers.disallow_undo_history(ph, user)
+  def disallowed_to_restore(to_change, post, user)
+    if to_change.include?(:deleted)
+      msg = if to_change[:deleted]
+              helpers.disallow_delete(post, user)
+            else
+              helpers.disallow_undelete(post, user)
+            end
       return msg if msg
+    end
 
-      if ['imported_from_external_source', 'initial_revision'].include?(ph.post_history_type.name)
-        return "Events of the type #{ph.post_history_type.name.humanize} cannot be rolled back"
-      end
+    if to_change.include?(:closed)
+      msg = if to_change[:closed]
+              helpers.disallow_close(post, user)
+            else
+              helpers.disallow_reopen(post, user)
+            end
+      return msg if msg
+    end
+
+    if to_change[:title] || to_change[:body] || to_change[:tags]
+      msg = helpers.disallow_edit(post, user)
+      return msg if msg
     end
 
     nil
   end
 
   # Determines the events to undo to revert to the given history item.
+  # Events are ordered in the order in which they need to be undone (newest to oldest).
   #
   # @param post [Post]
   # @param history [PostHistory] the history item to revert the state to
@@ -244,10 +258,10 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @return [Hash]
   def determine_changes_to_restore(post, history)
-    after_histories = determine_events_to_undo(post, history)
+    events_to_undo = determine_events_to_undo(post, history)
 
     to_change = {}
-    after_histories.each do |ph|
+    events_to_undo.each do |ph|
       case ph.post_history_type.name
       when 'post_undeleted'
         to_change[:deleted] = true
@@ -268,7 +282,7 @@ class PostHistoryController < ApplicationController
 
     # Recover post close reason from predecessor of last reopened
     if to_change[:closed]
-      ph = after_histories.last.find_predecessor('question_closed')
+      ph = events_to_undo.last.find_predecessor('question_closed')
       to_change[:close_reason] = ph&.close_reason
       to_change[:duplicate_post] = ph&.duplicate_post
     end

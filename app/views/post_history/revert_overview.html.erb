@@ -6,7 +6,7 @@
 
 <% @full_history.each.with_index do |event, index| %>
   <% revision = @full_history.size - index %>
-  <% rolling_back = @rollback_history_ids.include?(event.id) %>
+  <% rolling_back = @undo_history_ids.include?(event.id) %>
   <details class="history-event" id="<%= revision %>">
     <summary>
       <strong>
