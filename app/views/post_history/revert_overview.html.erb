@@ -11,31 +11,33 @@
   <% rolling_back = @undo_history_ids.include?(event.id) %>
   <details class="history-event" id="<%= revision %>">
     <summary>
-      <strong>
-        <% if rolling_back %>
-          <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
-        <% elsif event.id == @history.id %>
-          <ins>#<%= revision %>: <%= event.post_history_type.name.humanize %></ins>
-        <% else %>
-          #<%= revision %>: <%= event.post_history_type.name.humanize %>
-        <% end %>
-      </strong>
-      <span class="has-color-tertiary-600 history-meta">
-        <span>
-          by
-          <% if deleted_user? event.user %>
-            (deleted user)
+      <div>
+        <strong>
+          <% if rolling_back %>
+            <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
+          <% elsif event.id == @history.id %>
+            <ins>#<%= revision %>: <%= event.post_history_type.name.humanize %></ins>
           <% else %>
-            <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-            <%= user_link event.user %>
+            #<%= revision %>: <%= event.post_history_type.name.humanize %>
           <% end %>
-          &middot;
-          <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+        </strong>
+        <span class="has-color-tertiary-600 history-meta">
+          <span>
+            by
+            <% if deleted_user? event.user %>
+              (deleted user)
+            <% else %>
+              <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+              <%= user_link event.user %>
+            <% end %>
+            &middot;
+            <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+          </span>
+          <% if event.comment.present? %>
+            <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
+          <% end %>
         </span>
-        <% if event.comment.present? %>
-          <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
-        <% end %>
-      </span>
+      </div>
     </summary>
     <% if event.allowed_to_see_details?(current_user) %>
       <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
@@ -59,31 +61,34 @@
 
 <hr/>
 
-<div class="">
-  You will be changing the post as follows:
+<div>
+  <p>
+    You will be changing the post as follows:
+  </p>
 
-  <% if @changes.include?(:title) && @changes[:title] != @post.title %>
+  <% if @changes.include?(:title) %>
     <%= render 'diff', before: @post.title, after: @changes[:title], post: @post %>
   <% end %>
-  <% if @changes.include?(:body) && @changes[:body] != @post.body_markdown %>
+  <% if @changes.include?(:body) %>
     <%= render 'diff', before: @post.body_markdown, after: @changes[:body], post: @post %>
   <% end %>
-  <% if @changes.include?(:tags) && @changes[:tags] != @post.tags %>
+  <% if @changes.include?(:tags) %>
     <%= render 'diff', before: @post.tags, after: @changes[:tags], post: @post %>
   <% end %>
 
   <ul>
-    <% if @changes.include?(:deleted) && @changes[:deleted] != @post.deleted %>
+    <% if @changes.include?(:deleted) %>
       <li>
-        This post is
-        <strong><%= @post.deleted ? 'deleted' : 'live' %></strong> &mdash; this action will
+        This post is <strong><%= @post.deleted ? 'deleted' : 'live' %></strong>
+        &mdash; this action will
         <strong><%= @changes[:deleted] ? 'delete' : 'restore' %></strong> it.
       </li>
     <% end %>
-    <% if @changes.include?(:closed) && @changes[:closed] != @post.closed %>
+    <% if @changes.include?(:closed) %>
       <li>
-        This post is
-        <strong><%= @post.closed ? 'closed' : 'open' %></strong> &mdash; this action will
+        This post is <strong><%= @post.closed ? 'closed' : 'open' %></strong>
+        <%= close_description(@post.closed, @post.close_reason, @post.duplicate_post) %>
+        &mdash; this action will <strong><%= @changes[:closed] ? 'close' : 'reopen' %></strong> it
         <%= close_description(@changes[:closed], @changes[:close_reason], @changes[:duplicate_post]) %>.
     <% end %>
   </ul>

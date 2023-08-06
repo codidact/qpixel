@@ -3,7 +3,7 @@ module PostHistoryHelper
   # @param close_reason [CloseReason, Nil] the close reason for this post (if present)
   # @param duplicate_post [Post, Nil] the post which is linked as duplicate (if present)
   def close_description(closed, close_reason, duplicate_post)
-    base = "<strong>#{closed ? 'close' : 'reopen'}</strong> it".html_safe
+    base = ''.html_safe
     if closed && close_reason
       base += " as #{close_reason.name}"
       if duplicate_post
