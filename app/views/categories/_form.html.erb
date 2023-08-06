@@ -141,7 +141,8 @@
       <%= f.label :sequence, class: 'form-element' %>
       <span class="form-caption">
       The order in which this category will appear in the header and on the category list page. Higher numbers
-      appear later.
+      appear later. Set to empty to prevent the category from being listed. Note that users will still be able
+      to access it even when not listed; to change who can access it, change the minimum trust level instead.
     </span>
       <%= f.number_field :sequence, class: 'form-element' %>
     </div>

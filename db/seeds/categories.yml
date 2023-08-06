@@ -1,4 +1,5 @@
 - name: Q&A
+  sequence: 1
   short_wiki: General Q&A on the topic of the site.
   display_post_types:
     - <%= PostType['Question'].id %>
@@ -12,6 +13,7 @@
   license_id: <%= License.unscoped.first.id %>
 
 - name: Meta
+  sequence: 2
   short_wiki: Discussions and feedback about the site itself in Q&A format.
   display_post_types:
     - <%= PostType['Question'].id %>
@@ -25,6 +27,7 @@
   license_id: <%= License.unscoped.first.id %>
 
 - name: Templates
+  sequence: null
   short_wiki: Templates
   # Default to moderators-only
   min_trust_level: 4
