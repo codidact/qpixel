@@ -8,6 +8,8 @@ class PostHistory < ApplicationRecord
   belongs_to :close_reason, optional: true
   belongs_to :duplicate_post, class_name: 'Post', optional: true
 
+  has_many :revertions, class_name: 'PostHistory', foreign_key: :reverted_with_id, dependent: :nullify
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
