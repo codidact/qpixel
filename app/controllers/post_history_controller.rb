@@ -125,7 +125,7 @@ class PostHistoryController < ApplicationController
 
     # Actually apply the changes
     Post.transaction do
-      revert_to_state(to_change, @post, @history)
+      revert_to_state(to_change, @post, @history, comment)
     end
   end
 
@@ -135,9 +135,10 @@ class PostHistoryController < ApplicationController
   # @param to_change [Hash] the changes to make, output of `determine_changes_to_restore`
   # @param post [Post]
   # @param history [PostHistory]
-  def revert_to_state(to_change, post, history)
+  def revert_to_state(to_change, post, history, comment)
+    index = post.post_histories.order(created_at: :desc, id: :desc).ids.index(history.id)
     revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
-                     "(#{post_history_url(post, anchor: index)})"
+                     "(#{post_history_url(post, anchor: index)}): #{comment}"
 
     edit_event = nil
     close_event = nil

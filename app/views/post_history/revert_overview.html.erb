@@ -4,8 +4,10 @@
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
 
+<% revertion_revision = nil %>
 <% @full_history.each.with_index do |event, index| %>
   <% revision = @full_history.size - index %>
+  <% revertion_revision = revision if event == @history %>
   <% rolling_back = @undo_history_ids.include?(event.id) %>
   <details class="history-event" id="<%= revision %>">
     <summary>
@@ -88,10 +90,13 @@
 
 </div>
 
-<%= form_for @history, url: revert_to_post_history_path(@post, @history), html: { class: 'has-margin-top-4' } do |f| %>
+<%= form_for @history, url: revert_to_post_history_path(@post, @history), method: :post, html: { class: 'has-margin-top-4' } do |f| %>
   <div class="form-group">
-    <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element', required: true %>
-    <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
+    <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
+    <%= text_field_tag :pre_comment,
+                       "Reverting to ##{revertion_revision} - #{@history.post_history_type.name.humanize}:",
+                       class: 'form-element', disabled: true %>
+    <%= text_field_tag :edit_comment, nil, class: 'form-element', required: true %>
   </div>
 
   <div class="actions">
