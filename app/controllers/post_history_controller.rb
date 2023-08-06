@@ -72,6 +72,12 @@ class PostHistoryController < ApplicationController
 
     @changes = determine_changes_to_restore(@post, @history)
 
+    if @changes.empty?
+      flash[:warning] = 'You cannot revert to this history element: no changes would be made.'
+      redirect_to post_history_url(@post)
+      return
+    end
+
     msg = disallowed_to_restore(@changes, @post, current_user)
     if msg.present?
       flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
@@ -95,6 +101,12 @@ class PostHistoryController < ApplicationController
 
     # Determine the changes that we need to make
     to_change = determine_changes_to_restore(@post, @history)
+
+    if to_change.empty?
+      flash[:warning] = 'You cannot revert to this history element: no changes would be made.'
+      redirect_to post_history_url(@post)
+      return
+    end
 
     # Check whether the user is allowed to make those changes
     msg = disallowed_to_restore(to_change, @post, current_user)
