@@ -8,7 +8,9 @@ class PostHistory < ApplicationRecord
   belongs_to :close_reason, optional: true
   belongs_to :duplicate_post, class_name: 'Post', optional: true
 
-  has_many :revertions, class_name: 'PostHistory', foreign_key: :reverted_with_id, dependent: :nullify
+  # This relation must be present to ensure that deletions of post histories always work. It will cause the reverted
+  # items to no longer appear as reverted.
+  has_many :reverts_post_histories, class_name: 'PostHistory', foreign_key: :reverted_with_id, dependent: :nullify
 
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })

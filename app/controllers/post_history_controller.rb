@@ -72,12 +72,14 @@ class PostHistoryController < ApplicationController
 
     @changes = determine_changes_to_restore(@post, @history)
 
+    # Check whether we would actually be making changes
     if @changes.empty?
       flash[:warning] = 'You cannot revert to this history element: no changes would be made.'
       redirect_to post_history_url(@post)
       return
     end
 
+    # Check permission for making these changes
     msg = disallowed_to_restore(@changes, @post, current_user)
     if msg.present?
       flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
@@ -314,7 +316,7 @@ class PostHistoryController < ApplicationController
     # Cleanup changes that are already present
     to_change.delete(:title) if to_change[:title] == post.title
     to_change.delete(:body) if to_change[:body] == post.body_markdown
-    to_change.delete(:tags) if to_change[:tags].map(&:id).sort == post.tags.ids.sort
+    to_change.delete(:tags) if to_change[:tags]&.map(&:id)&.sort == post.tags.ids.sort
     to_change.delete(:deleted) if to_change[:deleted] == post.deleted
 
     if to_change[:closed] == post.closed &&
