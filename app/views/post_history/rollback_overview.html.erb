@@ -81,7 +81,7 @@
   <div class="form-group">
     <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
     <%= text_field_tag :pre_comment,
-                       "Reverting to ##{revertion_revision} - #{@history.post_history_type.name.humanize}:",
+                       "Rolling back to ##{revertion_revision} - #{@history.post_history_type.name.humanize}:",
                        class: 'form-element', disabled: true %>
     <%= text_field_tag :edit_comment, nil, class: 'form-element', required: true %>
   </div>

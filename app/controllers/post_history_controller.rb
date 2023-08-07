@@ -133,7 +133,7 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   def revert_to_state(to_change, post, history, comment)
     index = post.post_histories.order(created_at: :desc, id: :desc).ids.index(history.id)
-    revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
+    revert_comment = "Rolling back to [##{index}: #{history.post_history_type.name.humanize}]" \
                      "(#{post_history_url(post, anchor: index)}): #{comment}"
 
     change_params = {}

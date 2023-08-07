@@ -59,7 +59,7 @@
         <% end %>
 
         <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_roll_back_to_history?(event, current_user) %>
-          <%= link_to 'Roll back to this version', rollback_overview_post_history_path(@post, event),
+          <%= link_to 'Roll back to this Version', rollback_overview_post_history_path(@post, event),
                       'aria-label': "Roll back to version ##{revision} #{event.post_history_type.name.humanize}"
           %>
           &mdash;
