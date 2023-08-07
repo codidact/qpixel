@@ -48,6 +48,8 @@ class PostHistoryController < ApplicationController
 
       opts = opts.merge(after: @post.body_markdown, after_title: @post.title, after_tags: @post.tags.to_a)
 
+      undo_type = @history.post_history_type.name_inverted
+
       # Record in the history that this element was rolled back
       new_history = PostHistory.send(undo_type, @post, current_user, **opts)
 
