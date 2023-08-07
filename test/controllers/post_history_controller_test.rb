@@ -79,4 +79,38 @@ class PostHistoryControllerTest < ActionController::TestCase
     # Verify that all the tags that were there before are now again present on the post
     assert_equal event.before_tags.to_a.sort_by(&:id), (post.tags & event.before_tags).sort_by(&:id)
   end
+
+  test 'unprivileged user cannot rollback to state' do
+    event = posts(:question_one).post_histories.first
+    user = users(:standard_user2)
+
+    sign_in user
+    assert_no_difference 'PostHistory.count' do
+      post :rollback_to, params: { post_id: event.post_id, id: event.id }
+      assert_not_nil flash[:danger]
+    end
+
+    # Assert no changes were made
+    assert_not_equal event.before_state, assigns(:post).body_markdown
+  end
+
+  test 'privileged user can rollback to initial state if no hiding is involved' do
+    event = posts(:question_one).post_histories
+                                .where(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
+                                .first
+    user = users(:moderator)
+
+    sign_in user
+    assert_difference 'PostHistory.count' do
+      post :rollback_to, params: { post_id: event.post_id, id: event.id, edit_comment: 'Suffs' }
+      assert_not_nil flash[:success]
+    end
+
+    post = Post.find(assigns(:post).id)
+
+    # Assert post was rolled back to state of initial
+    assert_equal event.after_title, post.title
+    assert_equal event.after_state, post.body_markdown
+    assert_equal event.after_tags.ids.sort, post.tags.ids.sort
+  end
 end

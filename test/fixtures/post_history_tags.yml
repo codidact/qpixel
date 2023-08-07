@@ -1,5 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+q1_initial_discussion:
+  post_history: q1_initial
+  tag: discussion
+  relationship: 'after'
+
+q1_initial_fr:
+  post_history: q1_initial
+  tag: feature-request
+  relationship: 'after'
+
 q1_edit_before_t1:
   post_history: q1_edit
   tag: discussion
