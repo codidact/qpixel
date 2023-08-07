@@ -68,6 +68,10 @@
       You are rolling back changes to a point in history before a redaction was made.<br>
       Please carefully review the changes to see that you do not add back any information which should remain redacted.
     </p>
+    <p>
+      You may also want to look at the detailed changes of the individual events above to see which ones are
+      redactions.
+    </p>
   </div>
 <% end %>
 
@@ -87,7 +91,8 @@
   <% end %>
 </div>
 
-<%= form_for @history, url: rollback_to_post_history_path(@post, @history), method: :post, html: { class: 'has-margin-top-4' } do |f| %>
+<%= form_for @history, url: rollback_to_post_history_path(@post, @history), method: :post,
+             html: { class: 'has-margin-top-4' } do |f| %>
   <div class="form-group">
     <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
     <%= text_field_tag :pre_comment,
@@ -95,6 +100,13 @@
                        class: 'form-element', disabled: true %>
     <%= text_field_tag :edit_comment, nil, class: 'form-element', required: true %>
   </div>
+
+  <% if @any_hidden %>
+    <div class="form-group">
+      <%= check_box_tag :confirm, true, false, class: 'form-checkbox-element', required: true %>
+      <%= label_tag :confirm, 'I have carefully reviewed history and confirm I want to rollback post content to a point in time which was hidden.' %>
+    </div>
+  <% end %>
 
   <div class="actions">
     <%= f.submit 'Confirm Rollback', class: 'button is-filled' %>
