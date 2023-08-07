@@ -12,6 +12,10 @@ module PostHistoryHelper
   # @param user [User]
   # @return [String, Nil] whether the given user is allowed to roll back to the given history item
   def disallow_roll_back_to_history(history, user)
+    if history.hidden? && history.user_id != user.id && !user.is_admin
+      return i18ns('post_histories.cant_undo_hidden')
+    end
+
     case history.post_history_type.name
     when 'post_edited', 'initial_revision', 'imported_from_external_source'
       disallow_edit(history.post, user)
