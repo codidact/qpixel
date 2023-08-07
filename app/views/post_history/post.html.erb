@@ -36,11 +36,11 @@
 
       <div>
         <% if event.post_history_type.history_hiding_related? && allow_undo_history?(event, current_user) %>
-          <% name = event.post_history_type.name == 'history_hidden' ? 'Reveal history' : 'Re-hide history' %>
-          <%= link_to name, undo_post_history_url(@post, event),
+          <% name = event.post_history_type.name == 'history_hidden' ? 'reveal history' : 're-hide history' %>
+          <%= link_to name.titlecase, undo_post_history_url(@post, event),
                       'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
                       data: {
-                        confirm: "Are you sure you want to undo ##{revision} #{event.post_history_type.name.humanize}?"
+                        confirm: "Are you sure you want to #{name} at ##{revision} #{event.post_history_type.name.humanize}?"
                       },
                       method: :post
           %>
@@ -56,9 +56,8 @@
           &mdash;
         <% end %>
 
-        <%# TODO: allow undo should consider the predecessor events %>
         <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_roll_back_to_history?(event, current_user) %>
-          <%= link_to 'Roll back to this version', revert_overview_post_history_path(@post, event),
+          <%= link_to 'Roll back to this version', rollback_overview_post_history_path(@post, event),
                       'aria-label': "Roll back to version ##{revision} #{event.post_history_type.name.humanize}"
           %>
           &mdash;

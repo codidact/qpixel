@@ -1,4 +1,6 @@
 class PostHistoryController < ApplicationController
+  include PostActions
+
   def post
     @post = Post.find(params[:id])
 
@@ -58,7 +60,7 @@ class PostHistoryController < ApplicationController
     redirect_to post_history_path(@post)
   end
 
-  def revert_overview
+  def rollback_overview
     @history = PostHistory.find(params[:id])
     @post = @history.post
 
@@ -66,15 +68,14 @@ class PostHistoryController < ApplicationController
 
     # Check whether we would actually be making changes
     if @changes.empty?
-      flash[:warning] = 'You cannot revert to this history element: no changes would be made.'
+      flash[:warning] = 'You cannot rollback to this history element: no changes would be made.'
       redirect_to post_history_url(@post)
       return
     end
 
-    # Check permission for making these changes
-    msg = disallowed_to_restore(@changes, @post, current_user)
-    if msg.present?
-      flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
+    # Check whether the user is allowed to make those changes
+    unless can_update_post?(current_user, @post, @post.post_type)
+      flash[:danger] = ability_err_msg(:edit_posts, 'edit this post')
       redirect_to post_history_url(@post)
       return
     end
@@ -89,14 +90,14 @@ class PostHistoryController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def revert_to
+  def rollback_to
     @history = PostHistory.find(params[:id])
     @post = @history.post
 
     comment = params[:edit_comment]
     if comment.blank?
-      flash[:danger] = 'You need to provide a comment for why you are making this revertion'
-      redirect_to revert_overview_post_history_path(@post, @history)
+      flash[:danger] = 'You need to provide a comment for why you are rolling back.'
+      redirect_to rollback_overview_post_history_path(@post, @history)
       return
     end
 
@@ -110,17 +111,15 @@ class PostHistoryController < ApplicationController
     end
 
     # Check whether the user is allowed to make those changes
-    msg = disallowed_to_restore(to_change, @post, current_user)
-    unless msg.nil?
-      flash[:danger] = "You are not allowed to revert to this history element: #{msg}"
+    msg = helpers.disallow_roll_back_to_history(@history, current_user)
+    if msg
+      flash[:danger] = msg
       redirect_to post_history_url(@post)
       return
     end
 
     # Actually apply the changes
-    Post.transaction do
-      revert_to_state(to_change, @post, @history, comment)
-    end
+    revert_to_state(to_change, @post, @history, comment)
 
     flash[:success] = 'Successfully rolled back.'
     redirect_to post_history_url(@post)
@@ -137,23 +136,17 @@ class PostHistoryController < ApplicationController
     revert_comment = "Reverting to [##{index}: #{history.post_history_type.name.humanize}]" \
                      "(#{post_history_url(post, anchor: index)}): #{comment}"
 
-    opts = {
-      before: post.body_markdown, before_title: post.title, before_tags: post.tags.to_a,
-      comment: revert_comment
-    }
+    change_params = {}
+    change_params[:title] = to_change[:title] if to_change[:title].present?
+    change_params[:tags_cache] = to_change[:tags].map(&:name) if to_change[:tags].present?
 
-    post.title = to_change[:title] if to_change[:title].present?
+    body_rendered = nil
     if to_change[:body].present?
-      post.body_markdown = to_change[:body]
-      post.body = ApplicationController.helpers.render_markdown(to_change[:body])
+      change_params[:body_markdown] = to_change[:body]
+      body_rendered = ApplicationController.helpers.render_markdown(to_change[:body])
     end
-    post.tags_cache = to_change[:tags].map(&:name) if to_change[:tags].present?
-    post.last_activity = DateTime.now
-    post.last_activity_by = current_user
-    post.save
 
-    opts = opts.merge(after: post.body_markdown, after_title: post.title, after_tags: post.tags.to_a)
-    edit_event = PostHistory.post_edited(post, current_user, **opts)
+    edit_event = update_post(post, current_user, change_params, body_rendered, comment: revert_comment)
 
     revert_history_items(history, edit_event)
   end
@@ -162,29 +155,8 @@ class PostHistoryController < ApplicationController
   # @param history [PostHistory]
   # @param edit_event [PostHistory, Nil]
   def revert_history_items(history, edit_event)
-    events_to_undo = determine_edit_events_to_undo(history.post, history)
-    events_to_undo.each do |ph|
-      case ph.post_history_type.name
-      when 'post_edited'
-        ph.update(reverted_with_id: edit_event)
-      end
-    end
-  end
-
-  # This check is based on checking whether the user would be allowed to undo each of the history items that came after
-  # the given one.
-  #
-  # @param to_change [Hash] output of `determine_changes_to_restore`
-  # @param post [Post]
-  # @param user [User]
-  # @return [String, Nil] if the user is not allowed to restore, the message why not. Nil if the user is allowed to.
-  def disallowed_to_restore(to_change, post, user)
-    if to_change[:title] || to_change[:body] || to_change[:tags]
-      msg = helpers.disallow_edit(post, user)
-      return msg if msg
-    end
-
-    nil
+    determine_edit_events_to_undo(history.post, history)
+      .update_all(reverted_with_id: edit_event, edited_at: DateTime.now)
   end
 
   # Determines the edit events to undo to revert to the given history item.

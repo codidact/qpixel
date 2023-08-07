@@ -77,7 +77,7 @@
   <% end %>
 </div>
 
-<%= form_for @history, url: revert_to_post_history_path(@post, @history), method: :post, html: { class: 'has-margin-top-4' } do |f| %>
+<%= form_for @history, url: rollback_to_post_history_path(@post, @history), method: :post, html: { class: 'has-margin-top-4' } do |f| %>
   <div class="form-group">
     <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
     <%= text_field_tag :pre_comment,

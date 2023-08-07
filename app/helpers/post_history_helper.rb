@@ -1,4 +1,6 @@
 module PostHistoryHelper
+  include PostActions
+
   # @param history [PostHistory]
   # @param user [User, Nil]
   # @return [Boolean] whether the given user is allowed to roll back to the given history item
@@ -6,8 +8,16 @@ module PostHistoryHelper
     user.present? && !disallow_roll_back_to_history(history, user)
   end
 
+  # @param history [PostHistory]
+  # @param user [User]
+  # @return [String, Nil] whether the given user is allowed to roll back to the given history item
   def disallow_roll_back_to_history(history, user)
-    # TODO
+    case history.post_history_type.name
+    when 'post_edited'
+      disallow_edit(history.post, user)
+    else
+      'Unsupported history type'
+    end
   end
 
   # @param history [PostHistory]
@@ -41,8 +51,7 @@ module PostHistoryHelper
   # @param user [User]
   # @return [String, Nil] the error message if disallowed, or nil if allowed
   def disallow_edit(post, user)
-    if !user.privilege?('edit_posts') && !user.is_moderator && user.id != post.user_id && \
-       (!post.post_type.is_freely_editable || !user.privilege?('unrestricted'))
+    unless can_update_post?(user, post, post.post_type)
       ability_err_msg(:edit_posts, 'edit this post')
     end
   end

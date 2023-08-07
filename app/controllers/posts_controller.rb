@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
+  include PostActions
+
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
@@ -169,8 +171,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
-       (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
+    if can_update_post?(current_user, @post, @post_type)
       if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
          current_user.is_global_admin) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
@@ -188,15 +189,7 @@ class PostsController < ApplicationController
         flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
       else
-        if @post.update(edit_post_params.merge(body: body_rendered,
-                                               last_edited_at: DateTime.now, last_edited_by: current_user,
-                                               last_activity: DateTime.now, last_activity_by: current_user))
-
-          PostHistory.post_edited(@post, current_user, before: before[:body],
-                                  after: @post.body_markdown, comment: params[:edit_comment],
-                                  before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
-
+        if update_post(@post, current_user, edit_post_params, body_rendered, comment: params[:edit_comment])
           if params[:redact]
             # Hide all previous history
             PostHistory.where(post: @post).update_all(hidden: true)
