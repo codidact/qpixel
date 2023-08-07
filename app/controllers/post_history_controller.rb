@@ -288,7 +288,7 @@ class PostHistoryController < ApplicationController
     predecessor = history.find_predecessor('history_hidden')&.find_predecessor('history_hidden')
     if predecessor
       histories_to_hide = histories_to_hide.where(created_at: (predecessor.created_at + 1.second)..)
-                                               .or(PostHistory.where(id: predecessor))
+                                           .or(PostHistory.where(id: predecessor))
     end
 
     histories_to_hide.update_all(hidden: true, updated_at: DateTime.now).positive?
