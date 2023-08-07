@@ -35,25 +35,27 @@
       </div>
 
       <div>
-        <% if event.post_history_type.history_hiding_related? && allow_undo_history?(event, current_user) %>
-          <% name = event.post_history_type.name == 'history_hidden' ? 'reveal history' : 're-hide history' %>
-          <%= link_to name.titlecase, undo_post_history_url(@post, event),
-                      'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
-                      data: {
-                        confirm: "Are you sure you want to #{name} at ##{revision} #{event.post_history_type.name.humanize}?"
-                      },
-                      method: :post
-          %>
-          &mdash;
-        <% elsif event.can_undo? && allow_undo_history?(event, current_user) %>
-          <%= link_to 'Undo', undo_post_history_url(@post, event),
-                      'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
-                      data: {
-                        confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
-                      },
-                      method: :post
-          %>
-          &mdash;
+        <% if event.can_undo? && allow_undo_history?(event, current_user) %>
+          <% if event.post_history_type.history_hiding_related? %>
+            <% name = event.post_history_type.name == 'history_hidden' ? 'reveal history' : 're-hide history' %>
+            <%= link_to name.titlecase, undo_post_history_url(@post, event),
+                        'aria-label': "#{name.titlecase} at ##{revision}",
+                        data: {
+                          confirm: "Are you sure you want to #{name} at ##{revision}?"
+                        },
+                        method: :post
+            %>
+            &mdash;
+          <% else %>
+            <%= link_to 'Undo', undo_post_history_url(@post, event),
+                        'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
+                        data: {
+                          confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
+                        },
+                        method: :post
+            %>
+            &mdash;
+          <% end %>
         <% end %>
 
         <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_roll_back_to_history?(event, current_user) %>
@@ -64,7 +66,7 @@
         <% end %>
 
         <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
-          <span class="js-text">copy link</span>
+          <span class="js-text">Copy Link</span>
         <% end %>
       </div>
     </summary>
