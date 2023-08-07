@@ -96,8 +96,7 @@ class PostHistoryControllerTest < ActionController::TestCase
 
   test 'privileged user can rollback to initial state if no hiding is involved' do
     event = posts(:question_one).post_histories
-                                .where(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
-                                .first
+                                .find_by(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
     user = users(:moderator)
 
     sign_in user
