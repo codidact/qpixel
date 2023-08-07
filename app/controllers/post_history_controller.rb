@@ -156,7 +156,7 @@ class PostHistoryController < ApplicationController
   # @param edit_event [PostHistory, Nil]
   def revert_history_items(history, edit_event)
     determine_edit_events_to_undo(history.post, history)
-      .update_all(reverted_with_id: edit_event, edited_at: DateTime.now)
+      .update_all(reverted_with_id: edit_event, updated_at: DateTime.now)
   end
 
   # Determines the edit events to undo to revert to the given history item.
