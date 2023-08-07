@@ -34,12 +34,12 @@ class PostHistoryControllerTest < ActionController::TestCase
   # Rollbacks
   # -----------------------------------------------------------------------------------------------
 
-  test 'user without edit permissions cannot rollback post edit' do
+  test 'user without edit permissions cannot undo post edit' do
     event = post_histories(:q1_edit)
     sign_in users(:standard_user2)
 
     assert_no_difference 'PostHistory.count' do
-      post :rollback, params: { post_id: event.post_id, id: event.id }
+      post :undo, params: { post_id: event.post_id, id: event.id }
       assert_not_nil flash[:danger]
     end
 
@@ -47,7 +47,7 @@ class PostHistoryControllerTest < ActionController::TestCase
     assert_not_equal event.before_state, assigns(:post).body_markdown
   end
 
-  test 'privileged user can rollback post edit' do
+  test 'privileged user can undo post edit' do
     event = post_histories(:q1_edit)
     user = users(:editor)
 
@@ -55,7 +55,7 @@ class PostHistoryControllerTest < ActionController::TestCase
 
     # Rollback and check success, a new history event should be created
     assert_difference 'PostHistory.count' do
-      post :rollback, params: { post_id: event.post_id, id: event.id }
+      post :undo, params: { post_id: event.post_id, id: event.id }
       assert_not_nil flash[:success]
     end
 
