@@ -61,6 +61,16 @@
 
 <hr/>
 
+<% if @any_hidden %>
+  <div class="notice is-warning is-filled">
+    <p><i class="fas fa-exclamation-triangle"></i> <strong>Redacted changes</strong></p>
+    <p>
+      You are rolling back changes to a point in history before a redaction was made.<br>
+      Please carefully review the changes to see that you do not add back any information which should remain redacted.
+    </p>
+  </div>
+<% end %>
+
 <div>
   <p>
     You will be changing the post as follows:

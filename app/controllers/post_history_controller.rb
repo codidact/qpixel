@@ -83,9 +83,9 @@ class PostHistoryController < ApplicationController
     @full_history = @post.post_histories
                          .includes(:post_history_type, :user, post_history_tags: [:tag])
                          .order(created_at: :desc, id: :desc)
-    # We use map id here over .ids to reuse the cached database result from this method getting called earlier
-    # (in determine_changes_to_restore)
-    @undo_history_ids = determine_edit_events_to_undo(@post, @history).map(&:id)
+    events_to_undo = determine_edit_events_to_undo(@post, @history)
+    @any_hidden = events_to_undo.any?(&:hidden)
+    @undo_history_ids = events_to_undo.ids
 
     render layout: 'without_sidebar'
   end
