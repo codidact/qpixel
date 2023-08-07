@@ -13,7 +13,7 @@ module PostHistoryHelper
   # @return [String, Nil] whether the given user is allowed to roll back to the given history item
   def disallow_roll_back_to_history(history, user)
     case history.post_history_type.name
-    when 'post_edited'
+    when 'post_edited', 'initial_revision', 'imported_from_external_source'
       disallow_edit(history.post, user)
     else
       'Unsupported history type'
