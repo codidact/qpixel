@@ -1,0 +1,14 @@
+module UsersHelper
+  def avatar_url: (User? user, ?Integer size) -> untyped
+  def stack_oauth_url: -> String
+  def can_change_category: (User user, Category target) -> bool
+  def preference_choice: (Hash[String, untyped] pref_config) -> Array[[String, untyped]]
+  def default_filter: (Integer user_id, Integer category_id) -> Filter?
+  def set_filter_default: (Integer user_id, Integer filter_id, Integer category_id, bool keep) -> void
+  def user_preference: (String name, ?community: bool) -> untyped
+  def deleted_user?: (User? user) -> bool
+  def rtl_safe_username: (User user) -> String
+  def user_link: (User user, ?Hash[untyped, untyped]? url_opts, **untyped) -> ActiveSupport::SafeBuffer
+  def sso_sign_in_enabled?: -> bool
+  def devise_sign_in_enabled?: -> bool
+end

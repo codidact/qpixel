@@ -1,0 +1,110 @@
+class Tag < ::ApplicationRecord
+  class HABTM_Posts < ::ActiveRecord::Base
+    extend _ActiveRecord_Relation_ClassMethods[Tag::HABTM_Posts, ActiveRecord_Relation, top]
+
+    module GeneratedAttributeMethods
+      def tag_id: () -> Integer?
+
+      def tag_id=: (Integer?) -> Integer?
+
+      def tag_id?: () -> bool
+
+      def tag_id_changed?: () -> bool
+
+      def tag_id_change: () -> [ Integer?, Integer? ]
+
+      def tag_id_will_change!: () -> void
+
+      def tag_id_was: () -> Integer?
+
+      def tag_id_previously_changed?: () -> bool
+
+      def tag_id_previous_change: () -> Array[Integer?]?
+
+      def tag_id_previously_was: () -> Integer?
+
+      def tag_id_before_last_save: () -> Integer?
+
+      def tag_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def tag_id_in_database: () -> Integer?
+
+      def saved_change_to_tag_id: () -> Array[Integer?]?
+
+      def saved_change_to_tag_id?: () -> bool
+
+      def will_save_change_to_tag_id?: () -> bool
+
+      def restore_tag_id!: () -> void
+
+      def clear_tag_id_change: () -> void
+
+      def post_id: () -> Integer?
+
+      def post_id=: (Integer?) -> Integer?
+
+      def post_id?: () -> bool
+
+      def post_id_changed?: () -> bool
+
+      def post_id_change: () -> [ Integer?, Integer? ]
+
+      def post_id_will_change!: () -> void
+
+      def post_id_was: () -> Integer?
+
+      def post_id_previously_changed?: () -> bool
+
+      def post_id_previous_change: () -> Array[Integer?]?
+
+      def post_id_previously_was: () -> Integer?
+
+      def post_id_before_last_save: () -> Integer?
+
+      def post_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def post_id_in_database: () -> Integer?
+
+      def saved_change_to_post_id: () -> Array[Integer?]?
+
+      def saved_change_to_post_id?: () -> bool
+
+      def will_save_change_to_post_id?: () -> bool
+
+      def restore_post_id!: () -> void
+
+      def clear_post_id_change: () -> void
+    end
+    include GeneratedAttributeMethods
+
+    def left_side: () -> Tag?
+    def left_side=: (Tag?) -> Tag?
+    def reload_left_side: () -> Tag?
+    def build_left_side: (untyped) -> Tag
+    def create_left_side: (untyped) -> Tag
+    def create_left_side!: (untyped) -> Tag
+    def post: () -> Post?
+    def post=: (Post?) -> Post?
+    def reload_post: () -> Post?
+    def build_post: (untyped) -> Post
+    def create_post: (untyped) -> Post
+    def create_post!: (untyped) -> Post
+    module GeneratedAssociationMethods
+    end
+    include GeneratedAssociationMethods
+
+    module GeneratedRelationMethods
+    end
+
+    class ActiveRecord_Relation < ::ActiveRecord::Relation
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[Tag::HABTM_Posts, top]
+      include Enumerable[Tag::HABTM_Posts]
+    end
+
+    class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[Tag::HABTM_Posts, top]
+    end
+  end
+end

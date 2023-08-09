@@ -1,0 +1,3 @@
+class Article < Post
+  def self.post_type_id: () -> Integer
+end

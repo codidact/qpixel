@@ -1,0 +1,4 @@
+module UploadsHelper
+  def upload_remote_url: (ActiveStorage::Blob blob) -> String
+  def valid_image?: (untyped io) -> bool
+end

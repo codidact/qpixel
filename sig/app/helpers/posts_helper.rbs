@@ -1,0 +1,14 @@
+module PostsHelper
+  def post_markdown: ((String | Symbol) scope, (String | Symbol) field_name) -> String
+  def cancel_redirect_path: (Post post) -> String
+  def min_body_length: (Category? category) -> Integer
+  def max_body_length: (Category? _category) -> Integer
+  def min_title_length: (Category? category) -> Integer
+  def max_title_length: (Category? _category) -> Integer
+  def scrubber: -> PostScrubber
+
+  class PostScrubber
+    def initialize: -> void
+    def skip_node?: (untyped node) -> bool
+  end
+end

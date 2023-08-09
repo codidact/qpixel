@@ -1,0 +1,2 @@
+module ModWarningHelper
+end

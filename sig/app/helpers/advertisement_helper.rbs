@@ -1,0 +1,9 @@
+module AdvertisementHelper
+  RTL_BLOCK_START: Integer
+  RTL_BLOCK_END: Integer
+
+  def do_rtl_witchcraft: (String str) -> String
+  def rtl?: (String? char) -> bool
+  def wrap_text: (String text, Integer width, Integer font_size) -> String
+  def community_icon: (String icon_path) -> untyped
+end

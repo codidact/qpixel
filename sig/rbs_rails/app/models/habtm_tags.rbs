@@ -1,0 +1,110 @@
+class SuggestedEdit < ::ApplicationRecord
+  class HABTM_Tags < ::ActiveRecord::Base
+    extend _ActiveRecord_Relation_ClassMethods[SuggestedEdit::HABTM_Tags, ActiveRecord_Relation, top]
+
+    module GeneratedAttributeMethods
+      def suggested_edit_id: () -> Integer
+
+      def suggested_edit_id=: (Integer) -> Integer
+
+      def suggested_edit_id?: () -> bool
+
+      def suggested_edit_id_changed?: () -> bool
+
+      def suggested_edit_id_change: () -> [ Integer?, Integer? ]
+
+      def suggested_edit_id_will_change!: () -> void
+
+      def suggested_edit_id_was: () -> Integer?
+
+      def suggested_edit_id_previously_changed?: () -> bool
+
+      def suggested_edit_id_previous_change: () -> Array[Integer?]?
+
+      def suggested_edit_id_previously_was: () -> Integer?
+
+      def suggested_edit_id_before_last_save: () -> Integer?
+
+      def suggested_edit_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def suggested_edit_id_in_database: () -> Integer?
+
+      def saved_change_to_suggested_edit_id: () -> Array[Integer?]?
+
+      def saved_change_to_suggested_edit_id?: () -> bool
+
+      def will_save_change_to_suggested_edit_id?: () -> bool
+
+      def restore_suggested_edit_id!: () -> void
+
+      def clear_suggested_edit_id_change: () -> void
+
+      def tag_id: () -> Integer
+
+      def tag_id=: (Integer) -> Integer
+
+      def tag_id?: () -> bool
+
+      def tag_id_changed?: () -> bool
+
+      def tag_id_change: () -> [ Integer?, Integer? ]
+
+      def tag_id_will_change!: () -> void
+
+      def tag_id_was: () -> Integer?
+
+      def tag_id_previously_changed?: () -> bool
+
+      def tag_id_previous_change: () -> Array[Integer?]?
+
+      def tag_id_previously_was: () -> Integer?
+
+      def tag_id_before_last_save: () -> Integer?
+
+      def tag_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def tag_id_in_database: () -> Integer?
+
+      def saved_change_to_tag_id: () -> Array[Integer?]?
+
+      def saved_change_to_tag_id?: () -> bool
+
+      def will_save_change_to_tag_id?: () -> bool
+
+      def restore_tag_id!: () -> void
+
+      def clear_tag_id_change: () -> void
+    end
+    include GeneratedAttributeMethods
+
+    def left_side: () -> SuggestedEdit?
+    def left_side=: (SuggestedEdit?) -> SuggestedEdit?
+    def reload_left_side: () -> SuggestedEdit?
+    def build_left_side: (untyped) -> SuggestedEdit
+    def create_left_side: (untyped) -> SuggestedEdit
+    def create_left_side!: (untyped) -> SuggestedEdit
+    def tag: () -> Tag?
+    def tag=: (Tag?) -> Tag?
+    def reload_tag: () -> Tag?
+    def build_tag: (untyped) -> Tag
+    def create_tag: (untyped) -> Tag
+    def create_tag!: (untyped) -> Tag
+    module GeneratedAssociationMethods
+    end
+    include GeneratedAssociationMethods
+
+    module GeneratedRelationMethods
+    end
+
+    class ActiveRecord_Relation < ::ActiveRecord::Relation
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[SuggestedEdit::HABTM_Tags, top]
+      include Enumerable[SuggestedEdit::HABTM_Tags]
+    end
+
+    class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[SuggestedEdit::HABTM_Tags, top]
+    end
+  end
+end

@@ -1,0 +1,3 @@
+module QuestionsHelper
+  def my_vote: (Post question) -> Vote?
+end

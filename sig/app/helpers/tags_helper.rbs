@@ -1,0 +1,4 @@
+module TagsHelper
+  def category_sort_tags: (Enumerable[Tag] tags, Enumerable[Integer] required_ids, Enumerable[Integer] topic_ids, Enumerable[Integer] moderator_ids) -> Array[Tag]
+  def tag_classes: (Tag tag, Category? category) -> String
+end

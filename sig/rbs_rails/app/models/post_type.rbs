@@ -1,0 +1,654 @@
+class PostType < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[PostType, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def name: () -> String?
+
+    def name=: (String?) -> String?
+
+    def name?: () -> bool
+
+    def name_changed?: () -> bool
+
+    def name_change: () -> [ String?, String? ]
+
+    def name_will_change!: () -> void
+
+    def name_was: () -> String?
+
+    def name_previously_changed?: () -> bool
+
+    def name_previous_change: () -> Array[String?]?
+
+    def name_previously_was: () -> String?
+
+    def name_before_last_save: () -> String?
+
+    def name_change_to_be_saved: () -> Array[String?]?
+
+    def name_in_database: () -> String?
+
+    def saved_change_to_name: () -> Array[String?]?
+
+    def saved_change_to_name?: () -> bool
+
+    def will_save_change_to_name?: () -> bool
+
+    def restore_name!: () -> void
+
+    def clear_name_change: () -> void
+
+    def description: () -> String?
+
+    def description=: (String?) -> String?
+
+    def description?: () -> bool
+
+    def description_changed?: () -> bool
+
+    def description_change: () -> [ String?, String? ]
+
+    def description_will_change!: () -> void
+
+    def description_was: () -> String?
+
+    def description_previously_changed?: () -> bool
+
+    def description_previous_change: () -> Array[String?]?
+
+    def description_previously_was: () -> String?
+
+    def description_before_last_save: () -> String?
+
+    def description_change_to_be_saved: () -> Array[String?]?
+
+    def description_in_database: () -> String?
+
+    def saved_change_to_description: () -> Array[String?]?
+
+    def saved_change_to_description?: () -> bool
+
+    def will_save_change_to_description?: () -> bool
+
+    def restore_description!: () -> void
+
+    def clear_description_change: () -> void
+
+    def has_answers: () -> bool
+
+    def has_answers=: (bool) -> bool
+
+    def has_answers?: () -> bool
+
+    def has_answers_changed?: () -> bool
+
+    def has_answers_change: () -> [ bool?, bool? ]
+
+    def has_answers_will_change!: () -> void
+
+    def has_answers_was: () -> bool?
+
+    def has_answers_previously_changed?: () -> bool
+
+    def has_answers_previous_change: () -> Array[bool?]?
+
+    def has_answers_previously_was: () -> bool?
+
+    def has_answers_before_last_save: () -> bool?
+
+    def has_answers_change_to_be_saved: () -> Array[bool?]?
+
+    def has_answers_in_database: () -> bool?
+
+    def saved_change_to_has_answers: () -> Array[bool?]?
+
+    def saved_change_to_has_answers?: () -> bool
+
+    def will_save_change_to_has_answers?: () -> bool
+
+    def restore_has_answers!: () -> void
+
+    def clear_has_answers_change: () -> void
+
+    def has_votes: () -> bool
+
+    def has_votes=: (bool) -> bool
+
+    def has_votes?: () -> bool
+
+    def has_votes_changed?: () -> bool
+
+    def has_votes_change: () -> [ bool?, bool? ]
+
+    def has_votes_will_change!: () -> void
+
+    def has_votes_was: () -> bool?
+
+    def has_votes_previously_changed?: () -> bool
+
+    def has_votes_previous_change: () -> Array[bool?]?
+
+    def has_votes_previously_was: () -> bool?
+
+    def has_votes_before_last_save: () -> bool?
+
+    def has_votes_change_to_be_saved: () -> Array[bool?]?
+
+    def has_votes_in_database: () -> bool?
+
+    def saved_change_to_has_votes: () -> Array[bool?]?
+
+    def saved_change_to_has_votes?: () -> bool
+
+    def will_save_change_to_has_votes?: () -> bool
+
+    def restore_has_votes!: () -> void
+
+    def clear_has_votes_change: () -> void
+
+    def has_tags: () -> bool
+
+    def has_tags=: (bool) -> bool
+
+    def has_tags?: () -> bool
+
+    def has_tags_changed?: () -> bool
+
+    def has_tags_change: () -> [ bool?, bool? ]
+
+    def has_tags_will_change!: () -> void
+
+    def has_tags_was: () -> bool?
+
+    def has_tags_previously_changed?: () -> bool
+
+    def has_tags_previous_change: () -> Array[bool?]?
+
+    def has_tags_previously_was: () -> bool?
+
+    def has_tags_before_last_save: () -> bool?
+
+    def has_tags_change_to_be_saved: () -> Array[bool?]?
+
+    def has_tags_in_database: () -> bool?
+
+    def saved_change_to_has_tags: () -> Array[bool?]?
+
+    def saved_change_to_has_tags?: () -> bool
+
+    def will_save_change_to_has_tags?: () -> bool
+
+    def restore_has_tags!: () -> void
+
+    def clear_has_tags_change: () -> void
+
+    def has_parent: () -> bool
+
+    def has_parent=: (bool) -> bool
+
+    def has_parent?: () -> bool
+
+    def has_parent_changed?: () -> bool
+
+    def has_parent_change: () -> [ bool?, bool? ]
+
+    def has_parent_will_change!: () -> void
+
+    def has_parent_was: () -> bool?
+
+    def has_parent_previously_changed?: () -> bool
+
+    def has_parent_previous_change: () -> Array[bool?]?
+
+    def has_parent_previously_was: () -> bool?
+
+    def has_parent_before_last_save: () -> bool?
+
+    def has_parent_change_to_be_saved: () -> Array[bool?]?
+
+    def has_parent_in_database: () -> bool?
+
+    def saved_change_to_has_parent: () -> Array[bool?]?
+
+    def saved_change_to_has_parent?: () -> bool
+
+    def will_save_change_to_has_parent?: () -> bool
+
+    def restore_has_parent!: () -> void
+
+    def clear_has_parent_change: () -> void
+
+    def has_category: () -> bool
+
+    def has_category=: (bool) -> bool
+
+    def has_category?: () -> bool
+
+    def has_category_changed?: () -> bool
+
+    def has_category_change: () -> [ bool?, bool? ]
+
+    def has_category_will_change!: () -> void
+
+    def has_category_was: () -> bool?
+
+    def has_category_previously_changed?: () -> bool
+
+    def has_category_previous_change: () -> Array[bool?]?
+
+    def has_category_previously_was: () -> bool?
+
+    def has_category_before_last_save: () -> bool?
+
+    def has_category_change_to_be_saved: () -> Array[bool?]?
+
+    def has_category_in_database: () -> bool?
+
+    def saved_change_to_has_category: () -> Array[bool?]?
+
+    def saved_change_to_has_category?: () -> bool
+
+    def will_save_change_to_has_category?: () -> bool
+
+    def restore_has_category!: () -> void
+
+    def clear_has_category_change: () -> void
+
+    def has_license: () -> bool
+
+    def has_license=: (bool) -> bool
+
+    def has_license?: () -> bool
+
+    def has_license_changed?: () -> bool
+
+    def has_license_change: () -> [ bool?, bool? ]
+
+    def has_license_will_change!: () -> void
+
+    def has_license_was: () -> bool?
+
+    def has_license_previously_changed?: () -> bool
+
+    def has_license_previous_change: () -> Array[bool?]?
+
+    def has_license_previously_was: () -> bool?
+
+    def has_license_before_last_save: () -> bool?
+
+    def has_license_change_to_be_saved: () -> Array[bool?]?
+
+    def has_license_in_database: () -> bool?
+
+    def saved_change_to_has_license: () -> Array[bool?]?
+
+    def saved_change_to_has_license?: () -> bool
+
+    def will_save_change_to_has_license?: () -> bool
+
+    def restore_has_license!: () -> void
+
+    def clear_has_license_change: () -> void
+
+    def is_public_editable: () -> bool
+
+    def is_public_editable=: (bool) -> bool
+
+    def is_public_editable?: () -> bool
+
+    def is_public_editable_changed?: () -> bool
+
+    def is_public_editable_change: () -> [ bool?, bool? ]
+
+    def is_public_editable_will_change!: () -> void
+
+    def is_public_editable_was: () -> bool?
+
+    def is_public_editable_previously_changed?: () -> bool
+
+    def is_public_editable_previous_change: () -> Array[bool?]?
+
+    def is_public_editable_previously_was: () -> bool?
+
+    def is_public_editable_before_last_save: () -> bool?
+
+    def is_public_editable_change_to_be_saved: () -> Array[bool?]?
+
+    def is_public_editable_in_database: () -> bool?
+
+    def saved_change_to_is_public_editable: () -> Array[bool?]?
+
+    def saved_change_to_is_public_editable?: () -> bool
+
+    def will_save_change_to_is_public_editable?: () -> bool
+
+    def restore_is_public_editable!: () -> void
+
+    def clear_is_public_editable_change: () -> void
+
+    def is_closeable: () -> bool
+
+    def is_closeable=: (bool) -> bool
+
+    def is_closeable?: () -> bool
+
+    def is_closeable_changed?: () -> bool
+
+    def is_closeable_change: () -> [ bool?, bool? ]
+
+    def is_closeable_will_change!: () -> void
+
+    def is_closeable_was: () -> bool?
+
+    def is_closeable_previously_changed?: () -> bool
+
+    def is_closeable_previous_change: () -> Array[bool?]?
+
+    def is_closeable_previously_was: () -> bool?
+
+    def is_closeable_before_last_save: () -> bool?
+
+    def is_closeable_change_to_be_saved: () -> Array[bool?]?
+
+    def is_closeable_in_database: () -> bool?
+
+    def saved_change_to_is_closeable: () -> Array[bool?]?
+
+    def saved_change_to_is_closeable?: () -> bool
+
+    def will_save_change_to_is_closeable?: () -> bool
+
+    def restore_is_closeable!: () -> void
+
+    def clear_is_closeable_change: () -> void
+
+    def is_top_level: () -> bool
+
+    def is_top_level=: (bool) -> bool
+
+    def is_top_level?: () -> bool
+
+    def is_top_level_changed?: () -> bool
+
+    def is_top_level_change: () -> [ bool?, bool? ]
+
+    def is_top_level_will_change!: () -> void
+
+    def is_top_level_was: () -> bool?
+
+    def is_top_level_previously_changed?: () -> bool
+
+    def is_top_level_previous_change: () -> Array[bool?]?
+
+    def is_top_level_previously_was: () -> bool?
+
+    def is_top_level_before_last_save: () -> bool?
+
+    def is_top_level_change_to_be_saved: () -> Array[bool?]?
+
+    def is_top_level_in_database: () -> bool?
+
+    def saved_change_to_is_top_level: () -> Array[bool?]?
+
+    def saved_change_to_is_top_level?: () -> bool
+
+    def will_save_change_to_is_top_level?: () -> bool
+
+    def restore_is_top_level!: () -> void
+
+    def clear_is_top_level_change: () -> void
+
+    def is_freely_editable: () -> bool
+
+    def is_freely_editable=: (bool) -> bool
+
+    def is_freely_editable?: () -> bool
+
+    def is_freely_editable_changed?: () -> bool
+
+    def is_freely_editable_change: () -> [ bool?, bool? ]
+
+    def is_freely_editable_will_change!: () -> void
+
+    def is_freely_editable_was: () -> bool?
+
+    def is_freely_editable_previously_changed?: () -> bool
+
+    def is_freely_editable_previous_change: () -> Array[bool?]?
+
+    def is_freely_editable_previously_was: () -> bool?
+
+    def is_freely_editable_before_last_save: () -> bool?
+
+    def is_freely_editable_change_to_be_saved: () -> Array[bool?]?
+
+    def is_freely_editable_in_database: () -> bool?
+
+    def saved_change_to_is_freely_editable: () -> Array[bool?]?
+
+    def saved_change_to_is_freely_editable?: () -> bool
+
+    def will_save_change_to_is_freely_editable?: () -> bool
+
+    def restore_is_freely_editable!: () -> void
+
+    def clear_is_freely_editable_change: () -> void
+
+    def icon_name: () -> String?
+
+    def icon_name=: (String?) -> String?
+
+    def icon_name?: () -> bool
+
+    def icon_name_changed?: () -> bool
+
+    def icon_name_change: () -> [ String?, String? ]
+
+    def icon_name_will_change!: () -> void
+
+    def icon_name_was: () -> String?
+
+    def icon_name_previously_changed?: () -> bool
+
+    def icon_name_previous_change: () -> Array[String?]?
+
+    def icon_name_previously_was: () -> String?
+
+    def icon_name_before_last_save: () -> String?
+
+    def icon_name_change_to_be_saved: () -> Array[String?]?
+
+    def icon_name_in_database: () -> String?
+
+    def saved_change_to_icon_name: () -> Array[String?]?
+
+    def saved_change_to_icon_name?: () -> bool
+
+    def will_save_change_to_icon_name?: () -> bool
+
+    def restore_icon_name!: () -> void
+
+    def clear_icon_name_change: () -> void
+
+    def answer_type_id: () -> Integer?
+
+    def answer_type_id=: (Integer?) -> Integer?
+
+    def answer_type_id?: () -> bool
+
+    def answer_type_id_changed?: () -> bool
+
+    def answer_type_id_change: () -> [ Integer?, Integer? ]
+
+    def answer_type_id_will_change!: () -> void
+
+    def answer_type_id_was: () -> Integer?
+
+    def answer_type_id_previously_changed?: () -> bool
+
+    def answer_type_id_previous_change: () -> Array[Integer?]?
+
+    def answer_type_id_previously_was: () -> Integer?
+
+    def answer_type_id_before_last_save: () -> Integer?
+
+    def answer_type_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def answer_type_id_in_database: () -> Integer?
+
+    def saved_change_to_answer_type_id: () -> Array[Integer?]?
+
+    def saved_change_to_answer_type_id?: () -> bool
+
+    def will_save_change_to_answer_type_id?: () -> bool
+
+    def restore_answer_type_id!: () -> void
+
+    def clear_answer_type_id_change: () -> void
+
+    def has_reactions: () -> bool?
+
+    def has_reactions=: (bool?) -> bool?
+
+    def has_reactions?: () -> bool
+
+    def has_reactions_changed?: () -> bool
+
+    def has_reactions_change: () -> [ bool?, bool? ]
+
+    def has_reactions_will_change!: () -> void
+
+    def has_reactions_was: () -> bool?
+
+    def has_reactions_previously_changed?: () -> bool
+
+    def has_reactions_previous_change: () -> Array[bool?]?
+
+    def has_reactions_previously_was: () -> bool?
+
+    def has_reactions_before_last_save: () -> bool?
+
+    def has_reactions_change_to_be_saved: () -> Array[bool?]?
+
+    def has_reactions_in_database: () -> bool?
+
+    def saved_change_to_has_reactions: () -> Array[bool?]?
+
+    def saved_change_to_has_reactions?: () -> bool
+
+    def will_save_change_to_has_reactions?: () -> bool
+
+    def restore_has_reactions!: () -> void
+
+    def clear_has_reactions_change: () -> void
+
+    def has_only_specific_reactions: () -> bool?
+
+    def has_only_specific_reactions=: (bool?) -> bool?
+
+    def has_only_specific_reactions?: () -> bool
+
+    def has_only_specific_reactions_changed?: () -> bool
+
+    def has_only_specific_reactions_change: () -> [ bool?, bool? ]
+
+    def has_only_specific_reactions_will_change!: () -> void
+
+    def has_only_specific_reactions_was: () -> bool?
+
+    def has_only_specific_reactions_previously_changed?: () -> bool
+
+    def has_only_specific_reactions_previous_change: () -> Array[bool?]?
+
+    def has_only_specific_reactions_previously_was: () -> bool?
+
+    def has_only_specific_reactions_before_last_save: () -> bool?
+
+    def has_only_specific_reactions_change_to_be_saved: () -> Array[bool?]?
+
+    def has_only_specific_reactions_in_database: () -> bool?
+
+    def saved_change_to_has_only_specific_reactions: () -> Array[bool?]?
+
+    def saved_change_to_has_only_specific_reactions?: () -> bool
+
+    def will_save_change_to_has_only_specific_reactions?: () -> bool
+
+    def restore_has_only_specific_reactions!: () -> void
+
+    def clear_has_only_specific_reactions_change: () -> void
+  end
+  include GeneratedAttributeMethods
+  def posts: () -> Post::ActiveRecord_Associations_CollectionProxy
+  def posts=: (Post::ActiveRecord_Associations_CollectionProxy | Array[Post]) -> (Post::ActiveRecord_Associations_CollectionProxy | Array[Post])
+  def post_ids: () -> Array[Integer]
+  def post_ids=: (Array[Integer]) -> Array[Integer]
+  def category_post_types: () -> CategoryPostType::ActiveRecord_Associations_CollectionProxy
+  def category_post_types=: (CategoryPostType::ActiveRecord_Associations_CollectionProxy | Array[CategoryPostType]) -> (CategoryPostType::ActiveRecord_Associations_CollectionProxy | Array[CategoryPostType])
+  def category_post_type_ids: () -> Array[Integer]
+  def category_post_type_ids=: (Array[Integer]) -> Array[Integer]
+  def categories: () -> Category::ActiveRecord_Associations_CollectionProxy
+  def categories=: (Category::ActiveRecord_Associations_CollectionProxy | Array[Category]) -> (Category::ActiveRecord_Associations_CollectionProxy | Array[Category])
+  def category_ids: () -> Array[Integer]
+  def category_ids=: (Array[Integer]) -> Array[Integer]
+
+  def answer_type: () -> PostType?
+  def answer_type=: (PostType?) -> PostType?
+  def reload_answer_type: () -> PostType?
+  def build_answer_type: (untyped) -> PostType
+  def create_answer_type: (untyped) -> PostType
+  def create_answer_type!: (untyped) -> PostType
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[PostType, Integer]
+    include Enumerable[PostType]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[PostType, Integer]
+  end
+end

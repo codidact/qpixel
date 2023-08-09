@@ -1,0 +1,138 @@
+class SsoProfile < ::ApplicationRecord
+  extend _ActiveRecord_Relation_ClassMethods[SsoProfile, ActiveRecord_Relation, Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> Integer
+
+    def id=: (Integer) -> Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ Integer?, Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> Array[Integer?]?
+
+    def id_previously_was: () -> Integer?
+
+    def id_before_last_save: () -> Integer?
+
+    def id_change_to_be_saved: () -> Array[Integer?]?
+
+    def id_in_database: () -> Integer?
+
+    def saved_change_to_id: () -> Array[Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def saml_identifier: () -> String
+
+    def saml_identifier=: (String) -> String
+
+    def saml_identifier?: () -> bool
+
+    def saml_identifier_changed?: () -> bool
+
+    def saml_identifier_change: () -> [ String?, String? ]
+
+    def saml_identifier_will_change!: () -> void
+
+    def saml_identifier_was: () -> String?
+
+    def saml_identifier_previously_changed?: () -> bool
+
+    def saml_identifier_previous_change: () -> Array[String?]?
+
+    def saml_identifier_previously_was: () -> String?
+
+    def saml_identifier_before_last_save: () -> String?
+
+    def saml_identifier_change_to_be_saved: () -> Array[String?]?
+
+    def saml_identifier_in_database: () -> String?
+
+    def saved_change_to_saml_identifier: () -> Array[String?]?
+
+    def saved_change_to_saml_identifier?: () -> bool
+
+    def will_save_change_to_saml_identifier?: () -> bool
+
+    def restore_saml_identifier!: () -> void
+
+    def clear_saml_identifier_change: () -> void
+
+    def user_id: () -> Integer
+
+    def user_id=: (Integer) -> Integer
+
+    def user_id?: () -> bool
+
+    def user_id_changed?: () -> bool
+
+    def user_id_change: () -> [ Integer?, Integer? ]
+
+    def user_id_will_change!: () -> void
+
+    def user_id_was: () -> Integer?
+
+    def user_id_previously_changed?: () -> bool
+
+    def user_id_previous_change: () -> Array[Integer?]?
+
+    def user_id_previously_was: () -> Integer?
+
+    def user_id_before_last_save: () -> Integer?
+
+    def user_id_change_to_be_saved: () -> Array[Integer?]?
+
+    def user_id_in_database: () -> Integer?
+
+    def saved_change_to_user_id: () -> Array[Integer?]?
+
+    def saved_change_to_user_id?: () -> bool
+
+    def will_save_change_to_user_id?: () -> bool
+
+    def restore_user_id!: () -> void
+
+    def clear_user_id_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def user: () -> User
+  def user=: (User?) -> User?
+  def reload_user: () -> User?
+  def build_user: (untyped) -> User
+  def create_user: (untyped) -> User
+  def create_user!: (untyped) -> User
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[SsoProfile, Integer]
+    include Enumerable[SsoProfile]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include GeneratedRelationMethods
+    include _ActiveRecord_Relation[SsoProfile, Integer]
+  end
+end

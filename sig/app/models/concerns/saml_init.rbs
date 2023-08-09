@@ -1,0 +1,27 @@
+module SamlInit
+  extend ActiveSupport::Concern
+
+  def sso_profile: -> SsoProfile?
+  def sso_profile=: (SsoProfile?) -> SsoProfile?
+  def build_sso_profile: (untyped) -> SsoProfile
+  def create_sso_profile: (untyped) -> SsoProfile
+  def create_sso_profile!: (untyped) -> SsoProfile
+  def reload_sso_profile: () -> SsoProfile?
+
+  def saml_identifier: () -> String?
+  def saml_identifier=: (String? saml_identifier) -> void
+
+  def saml_init_identifier: () -> String?
+  def saml_init_identifier=: (String? saml_identifier) -> void
+
+  def saml_init_email: () -> String?
+  def saml_init_email=: (String? email) -> void
+
+  def saml_init_email_and_identifier: () -> String?
+  def saml_init_email_and_identifier=: (String? email) -> String?
+
+  def saml_init_username_no_update: () -> String?
+  def saml_init_username_no_update=: (String? username) -> String?
+
+  def prepare_from_saml: () -> void
+end

@@ -17,9 +17,4 @@ module TagsHelper
     moderator = moderator_ids&.include?(tag.id) ? 'is-red is-outlined' : ''
     "badge is-tag #{required} #{topic} #{moderator}"
   end
-
-  def post_ids_for_tags(tag_ids)
-    sql = "SELECT post_id FROM posts_tags WHERE tag_id IN #{ApplicationRecord.sanitize_sql_in(tag_ids)}"
-    ActiveRecord::Base.connection.execute(sql).to_a.flatten
-  end
 end

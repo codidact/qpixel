@@ -1,0 +1,13 @@
+module UserMerge
+  extend ActiveSupport::Concern
+
+  def merge_into: (User target_user, User attribute_to) -> void
+
+  private
+
+  def copy_abilities: (User _target_user, Hash[Integer, { source: Integer, target: Integer }] cu_ids) -> void
+  def update_thread_references: (User target_user) -> void
+  def update_post_action_references: (User target_user) -> void
+  def copy_votes: (User target_user) -> void
+  def copy_warnings: (User _target_user, Hash[Integer, { source: Integer, target: Integer }] cu_ids) -> void
+end

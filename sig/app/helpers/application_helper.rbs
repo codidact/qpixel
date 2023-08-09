@@ -1,0 +1,28 @@
+module ApplicationHelper
+  @current_user: User?
+
+  def moderator?: -> bool
+  def admin?: -> bool
+  def check_your_post_privilege: (Post post, String privilege) -> bool?
+  def check_your_privilege: (String privilege) -> bool?
+  def query_url: (?String? base_url, **untyped) -> String
+  def license_link: -> ActiveSupport::SafeBuffer
+  def active_search?: (String? param) -> bool
+  def stat_panel: (String heading, Integer value, ?caption: String?) -> ActiveSupport::SafeBuffer
+  def short_number_to_human: (*Integer args, **untyped) -> String?
+  def render_markdown: (String markdown) -> String
+  def strip_markdown: (String markdown) -> String
+  def top_level_post_types: -> Array[Integer]
+  def second_level_post_types: -> Array[Integer]
+  def generic_share_link: (Post post) -> String
+  def generic_edit_link: (Post post) -> String
+  def generic_show_link: (Post post) -> String
+  def split_words_max_length: (String text, Integer max_length) -> Array[String]
+  def deleted_item?: ((Post | Comment) item) -> bool?
+  def i18ns: ((String | Symbol) key, **untyped) -> String
+  def promoted_posts: -> Hash[Integer, DateTime]
+  def read_only?: -> bool
+  def current_user: -> User?
+  def user_signed_in?: -> bool
+  def direct_request?: -> bool?
+end

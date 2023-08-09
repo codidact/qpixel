@@ -1,0 +1,4 @@
+module MarkdownToolsHelper
+  def md_button: (?String? name, ?action: String?, ?label: String?, **untyped) -> ActiveSupport::SafeBuffer
+  def md_list_item: (?String? name, ?action: String?, ?label: String?, **untyped) -> ActiveSupport::SafeBuffer
+end

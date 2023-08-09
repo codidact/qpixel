@@ -1,0 +1,11 @@
+module CommentsHelper
+  def comment_link: (Comment comment) -> String
+  def render_pings: (Comment comment, ?pingable: Array[Integer]?) -> ActiveSupport::SafeBuffer
+  def render_comment_helpers: (String comment_text, ?User? user) -> String
+  def get_pingable: (CommentThread thread) -> Array[Integer]
+end
+
+class CommentScrubber
+  def initialize: -> void
+  def skip_node?: (untyped node) -> bool
+end

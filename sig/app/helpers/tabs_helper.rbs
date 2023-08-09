@@ -1,0 +1,6 @@
+module TabsHelper
+  @building_tabs: Array[ActiveSupport::SafeBuffer]
+
+  def tabs: -> ActiveSupport::SafeBuffer
+  def tab: (String text, String link_url, **untyped) -> Array[ActiveSupport::SafeBuffer]
+end

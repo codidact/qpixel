@@ -1,0 +1,20 @@
+class ApplicationRecord < ActiveRecord::Base
+  def self.fuzzy_search: (String term, **untyped cols) -> instance
+  def self.match_search: (String term, **untyped cols) -> instance
+
+  def self.sanitize_name: (untyped name) -> String
+
+  def match_search: (String term, **untyped cols) -> instance
+  def attributes_print: (?join: String) -> String
+
+  def self.sanitize_for_search: (String term, **untyped cols) -> String
+  def self.sanitize_sql_in: (untyped? ary) -> ("(NULL)" | String)
+
+  def self.with_lax_group_rules: () { () -> void } -> void
+
+  def self.useful_err_msg: () -> Array[String]
+end
+
+module UserSortable
+  def user_sort: ({ term: String, default: (Symbol | String) } term_opts, **untyped field_mappings) -> _ActiveRecord_Relation[instance, Integer]
+end

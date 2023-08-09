@@ -1,0 +1,10 @@
+module MaybeCommunityRelated
+  extend ActiveSupport::Concern
+
+  def community: -> Community?
+  def community=: (Community?) -> Community?
+  def reload_community: () -> Community?
+  def build_community: (untyped) -> Community
+  def create_community: (untyped) -> Community
+  def create_community!: (untyped) -> Community
+end

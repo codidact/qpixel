@@ -1,0 +1,8 @@
+class Ability < ApplicationRecord
+  include CommunityRelated
+
+  def manual?: () -> bool
+  def self.on_user: (User user) -> _ActiveRecord_Relation[Ability, Integer]
+  def self.trust_levels: () -> Hash[Integer, String]
+  def self.[]: (String key) -> Ability?
+end

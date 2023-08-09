@@ -1,0 +1,3 @@
+module SeedsHelper
+  def update_from_seeds: (Symbol `type`, Symbol unique_key, Symbol value_attribute) -> void
+end

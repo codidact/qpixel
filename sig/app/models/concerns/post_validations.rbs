@@ -1,0 +1,12 @@
+module PostValidations
+  extend ActiveSupport::Concern
+
+  def maximum_tags: () -> void
+  def maximum_tag_length: () -> void
+  def no_spaces_in_tags: () -> void
+  def stripped_minimum_body: () -> void
+  def stripped_minimum_title: () -> void
+  def maximum_title_length: () -> void
+  def tags_in_tag_set: () -> void
+  def required_tags?: () -> void
+end

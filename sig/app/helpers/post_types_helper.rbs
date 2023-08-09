@@ -1,0 +1,5 @@
+module PostTypesHelper
+  def post_type_badge: (PostType `type`) -> ActiveSupport::SafeBuffer
+  def post_type_criteria: -> Array[Symbol]
+  def post_type_ids: (**untyped) -> Array[Integer]
+end

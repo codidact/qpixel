@@ -1,0 +1,3 @@
+class AbilityQueue < ApplicationRecord
+  def self.add: (User user, Comment comment) -> AbilityQueue?
+end

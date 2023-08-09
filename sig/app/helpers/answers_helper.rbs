@@ -1,0 +1,3 @@
+module AnswersHelper
+  def my_vote: (Post answer) -> Vote?
+end

@@ -1,0 +1,437 @@
+module MicroAuth
+  class Token < ::ApplicationRecord
+    extend _ActiveRecord_Relation_ClassMethods[MicroAuth::Token, ActiveRecord_Relation, Integer]
+
+    module GeneratedAttributeMethods
+      def id: () -> Integer
+
+      def id=: (Integer) -> Integer
+
+      def id?: () -> bool
+
+      def id_changed?: () -> bool
+
+      def id_change: () -> [ Integer?, Integer? ]
+
+      def id_will_change!: () -> void
+
+      def id_was: () -> Integer?
+
+      def id_previously_changed?: () -> bool
+
+      def id_previous_change: () -> Array[Integer?]?
+
+      def id_previously_was: () -> Integer?
+
+      def id_before_last_save: () -> Integer?
+
+      def id_change_to_be_saved: () -> Array[Integer?]?
+
+      def id_in_database: () -> Integer?
+
+      def saved_change_to_id: () -> Array[Integer?]?
+
+      def saved_change_to_id?: () -> bool
+
+      def will_save_change_to_id?: () -> bool
+
+      def restore_id!: () -> void
+
+      def clear_id_change: () -> void
+
+      def app_id: () -> Integer?
+
+      def app_id=: (Integer?) -> Integer?
+
+      def app_id?: () -> bool
+
+      def app_id_changed?: () -> bool
+
+      def app_id_change: () -> [ Integer?, Integer? ]
+
+      def app_id_will_change!: () -> void
+
+      def app_id_was: () -> Integer?
+
+      def app_id_previously_changed?: () -> bool
+
+      def app_id_previous_change: () -> Array[Integer?]?
+
+      def app_id_previously_was: () -> Integer?
+
+      def app_id_before_last_save: () -> Integer?
+
+      def app_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def app_id_in_database: () -> Integer?
+
+      def saved_change_to_app_id: () -> Array[Integer?]?
+
+      def saved_change_to_app_id?: () -> bool
+
+      def will_save_change_to_app_id?: () -> bool
+
+      def restore_app_id!: () -> void
+
+      def clear_app_id_change: () -> void
+
+      def user_id: () -> Integer?
+
+      def user_id=: (Integer?) -> Integer?
+
+      def user_id?: () -> bool
+
+      def user_id_changed?: () -> bool
+
+      def user_id_change: () -> [ Integer?, Integer? ]
+
+      def user_id_will_change!: () -> void
+
+      def user_id_was: () -> Integer?
+
+      def user_id_previously_changed?: () -> bool
+
+      def user_id_previous_change: () -> Array[Integer?]?
+
+      def user_id_previously_was: () -> Integer?
+
+      def user_id_before_last_save: () -> Integer?
+
+      def user_id_change_to_be_saved: () -> Array[Integer?]?
+
+      def user_id_in_database: () -> Integer?
+
+      def saved_change_to_user_id: () -> Array[Integer?]?
+
+      def saved_change_to_user_id?: () -> bool
+
+      def will_save_change_to_user_id?: () -> bool
+
+      def restore_user_id!: () -> void
+
+      def clear_user_id_change: () -> void
+
+      def token: () -> String?
+
+      def token=: (String?) -> String?
+
+      def token?: () -> bool
+
+      def token_changed?: () -> bool
+
+      def token_change: () -> [ String?, String? ]
+
+      def token_will_change!: () -> void
+
+      def token_was: () -> String?
+
+      def token_previously_changed?: () -> bool
+
+      def token_previous_change: () -> Array[String?]?
+
+      def token_previously_was: () -> String?
+
+      def token_before_last_save: () -> String?
+
+      def token_change_to_be_saved: () -> Array[String?]?
+
+      def token_in_database: () -> String?
+
+      def saved_change_to_token: () -> Array[String?]?
+
+      def saved_change_to_token?: () -> bool
+
+      def will_save_change_to_token?: () -> bool
+
+      def restore_token!: () -> void
+
+      def clear_token_change: () -> void
+
+      def expires_at: () -> ActiveSupport::TimeWithZone?
+
+      def expires_at=: (ActiveSupport::TimeWithZone?) -> ActiveSupport::TimeWithZone?
+
+      def expires_at?: () -> bool
+
+      def expires_at_changed?: () -> bool
+
+      def expires_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+      def expires_at_will_change!: () -> void
+
+      def expires_at_was: () -> ActiveSupport::TimeWithZone?
+
+      def expires_at_previously_changed?: () -> bool
+
+      def expires_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def expires_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+      def expires_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+      def expires_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def expires_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+      def saved_change_to_expires_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def saved_change_to_expires_at?: () -> bool
+
+      def will_save_change_to_expires_at?: () -> bool
+
+      def restore_expires_at!: () -> void
+
+      def clear_expires_at_change: () -> void
+
+      def scope: () -> String?
+
+      def scope=: (String?) -> String?
+
+      def scope?: () -> bool
+
+      def scope_changed?: () -> bool
+
+      def scope_change: () -> [ String?, String? ]
+
+      def scope_will_change!: () -> void
+
+      def scope_was: () -> String?
+
+      def scope_previously_changed?: () -> bool
+
+      def scope_previous_change: () -> Array[String?]?
+
+      def scope_previously_was: () -> String?
+
+      def scope_before_last_save: () -> String?
+
+      def scope_change_to_be_saved: () -> Array[String?]?
+
+      def scope_in_database: () -> String?
+
+      def saved_change_to_scope: () -> Array[String?]?
+
+      def saved_change_to_scope?: () -> bool
+
+      def will_save_change_to_scope?: () -> bool
+
+      def restore_scope!: () -> void
+
+      def clear_scope_change: () -> void
+
+      def code: () -> String?
+
+      def code=: (String?) -> String?
+
+      def code?: () -> bool
+
+      def code_changed?: () -> bool
+
+      def code_change: () -> [ String?, String? ]
+
+      def code_will_change!: () -> void
+
+      def code_was: () -> String?
+
+      def code_previously_changed?: () -> bool
+
+      def code_previous_change: () -> Array[String?]?
+
+      def code_previously_was: () -> String?
+
+      def code_before_last_save: () -> String?
+
+      def code_change_to_be_saved: () -> Array[String?]?
+
+      def code_in_database: () -> String?
+
+      def saved_change_to_code: () -> Array[String?]?
+
+      def saved_change_to_code?: () -> bool
+
+      def will_save_change_to_code?: () -> bool
+
+      def restore_code!: () -> void
+
+      def clear_code_change: () -> void
+
+      def code_expires_at: () -> ActiveSupport::TimeWithZone?
+
+      def code_expires_at=: (ActiveSupport::TimeWithZone?) -> ActiveSupport::TimeWithZone?
+
+      def code_expires_at?: () -> bool
+
+      def code_expires_at_changed?: () -> bool
+
+      def code_expires_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+      def code_expires_at_will_change!: () -> void
+
+      def code_expires_at_was: () -> ActiveSupport::TimeWithZone?
+
+      def code_expires_at_previously_changed?: () -> bool
+
+      def code_expires_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def code_expires_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+      def code_expires_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+      def code_expires_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def code_expires_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+      def saved_change_to_code_expires_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def saved_change_to_code_expires_at?: () -> bool
+
+      def will_save_change_to_code_expires_at?: () -> bool
+
+      def restore_code_expires_at!: () -> void
+
+      def clear_code_expires_at_change: () -> void
+
+      def redirect_uri: () -> String?
+
+      def redirect_uri=: (String?) -> String?
+
+      def redirect_uri?: () -> bool
+
+      def redirect_uri_changed?: () -> bool
+
+      def redirect_uri_change: () -> [ String?, String? ]
+
+      def redirect_uri_will_change!: () -> void
+
+      def redirect_uri_was: () -> String?
+
+      def redirect_uri_previously_changed?: () -> bool
+
+      def redirect_uri_previous_change: () -> Array[String?]?
+
+      def redirect_uri_previously_was: () -> String?
+
+      def redirect_uri_before_last_save: () -> String?
+
+      def redirect_uri_change_to_be_saved: () -> Array[String?]?
+
+      def redirect_uri_in_database: () -> String?
+
+      def saved_change_to_redirect_uri: () -> Array[String?]?
+
+      def saved_change_to_redirect_uri?: () -> bool
+
+      def will_save_change_to_redirect_uri?: () -> bool
+
+      def restore_redirect_uri!: () -> void
+
+      def clear_redirect_uri_change: () -> void
+
+      def created_at: () -> ActiveSupport::TimeWithZone
+
+      def created_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+      def created_at?: () -> bool
+
+      def created_at_changed?: () -> bool
+
+      def created_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+      def created_at_will_change!: () -> void
+
+      def created_at_was: () -> ActiveSupport::TimeWithZone?
+
+      def created_at_previously_changed?: () -> bool
+
+      def created_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def created_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+      def created_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+      def created_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def created_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+      def saved_change_to_created_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def saved_change_to_created_at?: () -> bool
+
+      def will_save_change_to_created_at?: () -> bool
+
+      def restore_created_at!: () -> void
+
+      def clear_created_at_change: () -> void
+
+      def updated_at: () -> ActiveSupport::TimeWithZone
+
+      def updated_at=: (ActiveSupport::TimeWithZone) -> ActiveSupport::TimeWithZone
+
+      def updated_at?: () -> bool
+
+      def updated_at_changed?: () -> bool
+
+      def updated_at_change: () -> [ ActiveSupport::TimeWithZone?, ActiveSupport::TimeWithZone? ]
+
+      def updated_at_will_change!: () -> void
+
+      def updated_at_was: () -> ActiveSupport::TimeWithZone?
+
+      def updated_at_previously_changed?: () -> bool
+
+      def updated_at_previous_change: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def updated_at_previously_was: () -> ActiveSupport::TimeWithZone?
+
+      def updated_at_before_last_save: () -> ActiveSupport::TimeWithZone?
+
+      def updated_at_change_to_be_saved: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def updated_at_in_database: () -> ActiveSupport::TimeWithZone?
+
+      def saved_change_to_updated_at: () -> Array[ActiveSupport::TimeWithZone?]?
+
+      def saved_change_to_updated_at?: () -> bool
+
+      def will_save_change_to_updated_at?: () -> bool
+
+      def restore_updated_at!: () -> void
+
+      def clear_updated_at_change: () -> void
+    end
+    include GeneratedAttributeMethods
+
+    def app: () -> MicroAuth::App
+    def app=: (MicroAuth::App?) -> MicroAuth::App?
+    def reload_app: () -> MicroAuth::App?
+    def build_app: (untyped) -> MicroAuth::App
+    def create_app: (untyped) -> MicroAuth::App
+    def create_app!: (untyped) -> MicroAuth::App
+    def user: () -> User
+    def user=: (User?) -> User?
+    def reload_user: () -> User?
+    def build_user: (untyped) -> User
+    def create_user: (untyped) -> User
+    def create_user!: (untyped) -> User
+    module GeneratedAssociationMethods
+    end
+    include GeneratedAssociationMethods
+
+    def self.active: () -> ActiveRecord_Relation
+
+    module GeneratedRelationMethods
+      def active: () -> ActiveRecord_Relation
+    end
+
+    class ActiveRecord_Relation < ::ActiveRecord::Relation
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[MicroAuth::Token, Integer]
+      include Enumerable[MicroAuth::Token]
+    end
+
+    class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+      include GeneratedRelationMethods
+      include _ActiveRecord_Relation[MicroAuth::Token, Integer]
+    end
+  end
+end
