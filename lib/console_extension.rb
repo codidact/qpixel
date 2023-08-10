@@ -55,7 +55,9 @@ module ConsoleExtension
   end
 end
 
-# Create module that can be included as  in the .irbrc
+# Create module that can be included in the .irbrc:
+#
+#   Qpixel.irb! if defined?(Qpixel)
 module Qpixel
   def self.irb!
     IRB::Irb.class_eval do
