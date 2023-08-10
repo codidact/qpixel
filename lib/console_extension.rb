@@ -51,7 +51,7 @@ module ConsoleExtension
     end
     puts ''
   rescue
-    puts "\e[31m(!)Unable to load communities. Is your database configuration correct?\e[0m"
+    puts "\e[31m(!) Unable to load communities. Is your database configuration correct?\e[0m"
   end
 end
 
@@ -67,6 +67,8 @@ module Qpixel
           "\e[32mdev\e[0m"
         when 'production'
           "\e[31mprod\e[0m"
+        when 'test'
+          "\e[32mtest\e[0m"
         when 'staging'
           "\e[32mstag\e[0m"
         else
