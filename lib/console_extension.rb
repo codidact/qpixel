@@ -54,3 +54,49 @@ module ConsoleExtension
     puts "\e[31m(!)Unable to load communities. Is your database configuration correct?\e[0m"
   end
 end
+
+# Create module that can be included as  in the .irbrc
+module Qpixel
+  def self.irb!
+    IRB::Irb.class_eval do
+      private
+
+      def self.rails_environment
+        case Rails.env
+        when 'development'
+          "\e[32mdev\e[0m"
+        when 'production'
+          "\e[31mprod\e[0m"
+        when 'staging'
+          "\e[32mstag\e[0m"
+        else
+          "\e[31m#{Rails.env}\e[0m"
+        end
+      end
+
+      def self.qpixel_prompt
+        c = RequestContext.community
+        "[#{rails_environment}] [\e[34m#{c&.name || '-'} @ #{c&.host || '-'}\e[0m]"
+      end
+    end
+
+    IRB::Irb.class_eval do
+      # Define an alternative string dup method which will redetermine the prompt part if community changes
+      qpixel_block = proc do |s|
+        def s.dup
+          IRB::Irb.qpixel_prompt + self
+        end
+      end
+
+      IRB.conf[:PROMPT][:QPIXEL] = {
+        PROMPT_I: ':%03n> '.tap(&qpixel_block),
+        PROMPT_N: ':%03n> '.tap(&qpixel_block),
+        PROMPT_S: ':%03n%l '.tap(&qpixel_block),
+        PROMPT_C: ':%03n* '.tap(&qpixel_block),
+        RETURN: IRB.conf[:PROMPT][:DEFAULT][:RETURN]
+      }
+
+      IRB.conf[:PROMPT_MODE] = :QPIXEL
+    end
+  end
+end
