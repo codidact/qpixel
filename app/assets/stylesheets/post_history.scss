@@ -10,9 +10,24 @@
 
   & > summary {
     border-bottom: 0;
-    display: unset;
     font-weight: unset;
     color: unset;
+
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: $screen-lg) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    & > div {
+      margin: 0.2em 0;
+
+      @media screen and (min-width: $screen-lg) {
+        margin: 0;
+      }
+    }
   }
 
   &:last-of-type {

@@ -5,28 +5,70 @@
 </div>
 
 <% @history.each.with_index do |event, index| %>
-  <details class="history-event" id="<%= @history.size - index %>">
+  <% revision = @history.size - index %>
+  <details class="history-event" id="<%= revision %>">
     <summary>
-      <strong>#<%= @history.size - index %>: <%= event.post_history_type.name.humanize %></strong>
-      <span class="has-color-tertiary-600 history-meta">
-        <span>
-          by
-          <% if deleted_user? event.user %>
-            (deleted user)
+      <div>
+        <strong>
+          <% if event.reverted? %>
+            <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
           <% else %>
-            <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
-            <%= user_link event.user %>
+            #<%= revision %>: <%= event.post_history_type.name.humanize %>
           <% end %>
-          &middot;
-          <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
-        </span>
+        </strong>
+        <span class="has-color-tertiary-600 history-meta">
+          <span>
+            by
+            <% if deleted_user? event.user %>
+              (deleted user)
+            <% else %>
+              <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+              <%= user_link event.user %>
+            <% end %>
+            &middot;
+            <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+          </span>
         <% if event.comment.present? %>
-          <br/><em><%= event.comment %></em>
+          <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
         <% end %>
-      </span>
-      <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
-        <span class="js-text">copy link</span>
-      <% end %>
+        </span>
+      </div>
+
+      <div>
+        <% if event.can_undo? && allow_undo_history?(event, current_user) %>
+          <% if event.post_history_type.history_hiding_related? %>
+            <% name = event.post_history_type.name == 'history_hidden' ? 'reveal history' : 're-hide history' %>
+            <%= link_to name.titlecase, undo_post_history_url(@post, event),
+                        'aria-label': "#{name.titlecase} at ##{revision}",
+                        data: {
+                          confirm: "Are you sure you want to #{name} at ##{revision}?"
+                        },
+                        method: :post
+            %>
+            &mdash;
+          <% else %>
+            <%= link_to 'Undo', undo_post_history_url(@post, event),
+                        'aria-label': "Undo history item ##{revision} #{event.post_history_type.name.humanize}",
+                        data: {
+                          confirm: "Are you sure you want to undo change ##{revision}: #{event.post_history_type.name.humanize}?"
+                        },
+                        method: :post
+            %>
+            &mdash;
+          <% end %>
+        <% end %>
+
+        <% if index != 0 && event.post_history_type.can_be_rolled_back_to? && allow_roll_back_to_history?(event, current_user) %>
+          <%= link_to 'Roll back to this Version', rollback_overview_post_history_path(@post, event),
+                      'aria-label': "Roll back to version ##{revision} #{event.post_history_type.name.humanize}"
+          %>
+          &mdash;
+        <% end %>
+
+        <%= link_to post_history_url(@post, anchor: revision), class: 'js-permalink' do %>
+          <span class="js-text">Copy Link</span>
+        <% end %>
+      </div>
     </summary>
     <% if event.allowed_to_see_details?(current_user) %>
       <% if event.hidden? %>

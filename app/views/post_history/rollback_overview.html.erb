@@ -1,0 +1,116 @@
+<h1>Rolling back post to previous state</h1>
+
+<div class="item-list">
+  <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
+</div>
+
+<% revertion_revision = nil %>
+<% @full_history.each.with_index do |event, index| %>
+  <% revision = @full_history.size - index %>
+  <% revertion_revision = revision if event == @history %>
+  <% rolling_back = @undo_history_ids.include?(event.id) %>
+  <details class="history-event" id="<%= revision %>">
+    <summary>
+      <div>
+        <strong>
+          <% if rolling_back %>
+            <del>#<%= revision %>: <%= event.post_history_type.name.humanize %></del>
+          <% elsif event.id == @history.id %>
+            <ins>#<%= revision %>: <%= event.post_history_type.name.humanize %></ins>
+          <% else %>
+            #<%= revision %>: <%= event.post_history_type.name.humanize %>
+          <% end %>
+        </strong>
+        <span class="has-color-tertiary-600 history-meta">
+          <span>
+            by
+            <% if deleted_user? event.user %>
+              (deleted user)
+            <% else %>
+              <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
+              <%= user_link event.user %>
+            <% end %>
+            &middot;
+            <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
+          </span>
+          <% if event.comment.present? %>
+            <br/><em><%= sanitize(render_markdown(event.comment), scrubber: PostHistoryScrubber.new) %></em>
+          <% end %>
+        </span>
+      </div>
+    </summary>
+    <% if event.allowed_to_see_details?(current_user) %>
+      <% if (event.before_title.present? || event.after_title.present?) && event.before_title != event.after_title %>
+        <%= render 'diff', before: event.before_title, after: event.after_title, post: @post %>
+      <% end %>
+      <% if (event.before_state.present? || event.after_state.present?) && event.before_state != event.after_state %>
+        <%= render 'diff', before: event.before_state, after: event.after_state, post: @post %>
+      <% end %>
+      <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
+        <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
+      <% end %>
+    <% elsif [event.before_title, event.after_title,
+              event.before_state, event.after_state,
+              event.before_tags, event.after_tags].any?(&:present?) %>
+      <p>
+        <em>The detailed changes of this event are hidden because of a redaction.</em>
+      </p>
+    <% end %>
+  </details>
+<% end %>
+
+<hr/>
+
+<% if @any_hidden %>
+  <div class="notice is-warning is-filled">
+    <p><i class="fas fa-exclamation-triangle"></i> <strong>Redacted changes</strong></p>
+    <p>
+      You are rolling back changes to a point in history before a redaction was made.<br>
+      Please carefully review the changes to see that you do not add back any information which should remain redacted.
+    </p>
+    <p>
+      You may also want to look at the detailed changes of the individual events above to see which ones are
+      redactions.
+    </p>
+  </div>
+<% end %>
+
+<div>
+  <p>
+    You will be changing the post as follows:
+  </p>
+
+  <% if @changes.include?(:title) %>
+    <%= render 'diff', before: @post.title, after: @changes[:title], post: @post %>
+  <% end %>
+  <% if @changes.include?(:body) %>
+    <%= render 'diff', before: @post.body_markdown, after: @changes[:body], post: @post %>
+  <% end %>
+  <% if @changes.include?(:tags) %>
+    <%= render 'diff', before: @post.tags, after: @changes[:tags], post: @post %>
+  <% end %>
+</div>
+
+<%= form_for @history, url: rollback_to_post_history_path(@post, @history), method: :post,
+             html: { class: 'has-margin-top-4' } do |f| %>
+  <div class="form-group">
+    <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
+    <%= text_field_tag :pre_comment,
+                       "Rolling back to ##{revertion_revision} - #{@history.post_history_type.name.humanize}:",
+                       class: 'form-element', disabled: true %>
+    <%= text_field_tag :edit_comment, nil, class: 'form-element', required: true %>
+  </div>
+
+  <% if @any_hidden %>
+    <div class="form-group">
+      <%= check_box_tag :confirm, true, false, class: 'form-checkbox-element', required: true %>
+      <%= label_tag :confirm, 'I have carefully reviewed history and confirm I want to rollback post content to a point in time which was hidden.' %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit 'Confirm Rollback', class: 'button is-filled' %>
+    <%= link_to t('g.cancel').titlecase, post_history_path(@post),
+                class: 'button is-muted is-outlined is-danger js-cancel-edit' %>
+  </div>
+<% end %>
