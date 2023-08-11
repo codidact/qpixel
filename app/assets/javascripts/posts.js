@@ -149,6 +149,27 @@ $(() => {
           ALLOWED_TAGS,
           ALLOWED_ATTR
         });
+
+        const removedElements = [...new Set(DOMPurify.removed
+          .filter(entry => entry.element && !(entry.element instanceof HTMLBodyElement))
+          .map(entry => entry.element.localName))];
+
+        const removedAttributes = [...new Set(DOMPurify.removed
+          .filter(entry => entry.attribute)
+          .map(entry => [
+            entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
+            entry.from.localName
+          ]))]
+
+        $tgt.parents('form')
+          .find('.rejected-elements')
+          .toggleClass('hide', removedElements.length === 0)
+          .find('ul')
+          .empty()
+          .append(
+            removedElements.map(name => $(`<li><code>&lt;${name}&gt;</code></li>`)),
+            removedAttributes.map(([attr, elName]) => $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`)));
+
         $tgt.parents('.form-group').siblings('.post-preview').html(html);
         $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
       }, 0);
