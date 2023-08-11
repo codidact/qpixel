@@ -111,3 +111,13 @@ deleted_profile:
   sign_in_count: 1337
   username: deleted_profile
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+enabled_2fa:
+  email: 2fa@qpixel-test.net
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: enabled_2fa
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+  enabled_2fa: true
+  two_factor_token: WT65ANYXBB2SBR7III7IVWNJDS4PQF2T
+  backup_2fa_code: M8lENyehyCvo9F9MbyTl1aOL

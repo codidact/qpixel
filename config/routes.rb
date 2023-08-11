@@ -173,6 +173,7 @@ Rails.application.routes.draw do
     post 'disable/link-email',             to: 'two_factor#send_disable_email', as: :two_factor_send_disable_email
     get  'disable/link/:token',            to: 'two_factor#disable_link', as: :two_factor_disable_link
     post 'disable/link',                   to: 'two_factor#confirm_disable_link', as: :two_factor_confirm_disable_link
+    post 'backup',                         to: 'two_factor#show_backup_code', as: :two_factor_backup_code
   end
 
   scope  'users' do
