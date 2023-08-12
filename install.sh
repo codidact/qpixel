@@ -574,7 +574,7 @@ check_install_gem_mysql()
   fi
 
   # Determine the version(s) of mysql2 that are acceptable and install them (this is a best effort).
-  mysql_version=$(cat Gemfile | grep mysql2)
+  mysql_version=$(grep mysql2 < Gemfile)
   regex=", '([~><=\ 0-9\.]+)'"
   if [[ $mysql_version =~ $regex ]]; then
     mysql_version="${BASH_REMATCH[1]}"
