@@ -120,6 +120,15 @@ check_nodejs()
   fi
 }
 
+# Secures a MySQL installation by having the user set a password and go through the security setup.
+secure_mysql()
+{
+  temp_passwd="$(sudo grep 'temporary password' /var/log/mysqld.log)"
+  log "🔶 Packages: Your mysql root password is $temp_passwd"
+
+  # TODO
+}
+
 # Detects the package manager(s) present on the system and asks the user to install dependencies
 # with all of them.
 # In case of rejection for all, we fail.
@@ -220,7 +229,8 @@ install_packages_apt()
     log "✅ Packages: installed nodejs"
   fi
 
-  log "To run QPixel, you need a database, either MySQL or MariaDB. It is also possible to run these in Docker or another server if you wish (but you will have to set that up yourself)."
+  log "To run QPixel, you need a database, either MySQL or MariaDB."
+  log "You can install either locally (with this install script), run in docker or use a database on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL?"; then
     _header "INSTALLING MYSQL-SERVER USING APT-GET"
     if ! _run 'sudo apt-get install mysql-server'; then
@@ -228,6 +238,7 @@ install_packages_apt()
     fi
     _footer
     log "✅ Packages: installed mysql"
+    secure_mysql
   elif ask "Do you want to install MariaDB?"; then
     _header "INSTALLING MARIADB-SERVER USING APT-GET"
     if ! _run 'sudo apt-get install mariadb-server'; then
@@ -269,7 +280,7 @@ install_packages_pacman()
 
   # MySQL / MariaDB
   log "To run QPixel, you need a database, either MySQL or MariaDB."
-  log "You can install either locally (with this install script), run either in docker or use either on another server (you will have to do that yourself)."
+  log "You can install either locally (with this install script), run in docker or use a database on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL?"; then
     _header "INSTALLING MYSQL USING PACMAN"
     if ! _run 'sudo pacman -S mysql'; then
@@ -382,6 +393,7 @@ install_packages_homebrew()
     fi
     _footer
     log "✅ Packages: installed mysql"
+    secure_mysql
   elif ask "Do you want to install MariaDB locally?"; then
     _header "INSTALLING MARIADB USING HOMEBREW"
     if ! _run 'brew install mariadb'; then
