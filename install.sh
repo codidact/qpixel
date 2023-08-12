@@ -94,7 +94,6 @@ check_nodejs()
 {
   if builtin command -v node > /dev/null; then
     log "✅ NodeJS: found $(node --version)"
-    return 1
   else
     log "❌ NodeJS: not found"
     return 1
