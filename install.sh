@@ -321,14 +321,20 @@ install_packages_pacman()
 
 install_packages_dnf()
 {
-  # TODO: Untested
+  # Update database
+  _header "UPDATING PACKAGE DATABASE USING DNF"
+  if ! _run 'sudo dnf update'; then
+    fail "❌ Unable to update package database using pacman!"
+  fi
+  _footer
+
   # Base packages
   _header "INSTALLING BASE PACKAGES USING DNF"
-  if ! _run 'sudo dnf group install "C Development Tools and Libraries"'; then
+  if ! _run 'sudo dnf group install "C Development Tools and Libraries" -y'; then
     fail "❌ Unable to install group C Development Tools and Libraries. Please refer to the error above."
   fi
   log "$ sudo dnf install ruby-devel zlib-devel"
-  if ! _run 'sudo dnf install ruby-devel zlib-devel'; then
+  if ! _run 'sudo dnf install ruby-devel zlib-devel -y'; then
     fail "❌ Unable to install ruby-devel and zlib-devel. Please refer to the error above."
   fi
   _footer
@@ -336,14 +342,33 @@ install_packages_dnf()
 
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
     _header "INSTALLING NODEJS USING DNF"
-    if ! _run 'sudo dnf install nodejs'; then
+    if ! _run 'sudo dnf install nodejs -y'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
     _footer
     log "✅ Packages: installed nodejs"
   fi
 
-  # TODO Finish
+  log "To run QPixel, you need a database, either MySQL or MariaDB."
+  log "You can install either locally (with this install script), run in docker or use a database on another server (you will have to do that yourself)."
+  if ask "Do you want to install MySQL?"; then
+    _header "INSTALLING MYSQL USING DNF"
+    if ! _run 'sudo dnf install community-mysql-server community-mysql-libs -y' && ! _run 'sudo dnf install mysql-server mysql-libs -y'; then
+      fail "❌ Unable to install mysql. Please refer to the error above."
+    fi
+    _footer
+    log "✅ Packages: installed mysql"
+    secure_mysql
+  elif ask "Do you want to install MariaDB?"; then
+    _header "INSTALLING MARIADB-SERVER USING DNF"
+    if ! _run 'sudo dnf install mariadb-server mariadb-connector-c-devel -y'; then
+      fail "❌ Unable to install mariadb. Please refer to the error above."
+    fi
+    _footer
+    log "✅ Packages: installed mariadb"
+  else
+    log "🔶 Packages: skipped installing database software"
+  fi
 }
 
 install_packages_homebrew()
