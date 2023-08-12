@@ -105,7 +105,7 @@ check_nodejs()
 # In case of rejection for all, we fail.
 install_packages()
 {
-  if ! ask "   Packages: Do you want to install required system packages?"; then
+  if ! ask "Do you want to install required system packages?"; then
     log "🔶 Packages: Skipping installation of system packages."
     return 0
   fi
@@ -224,14 +224,14 @@ install_packages_pacman()
 {
   # Update database
   _header "UPDATING PACKAGE DATABASE USING PACMAN"
-  if ! sudo pacman -Syyu; then
+  if ! _run 'sudo pacman -Syyu'; then
     fail "❌ Unable to update package database using pacman!"
   fi
   _footer
 
   # Base packages
   _header "INSTALLING BASE PACKAGES USING PACMAN"
-  if ! sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl; then
+  if ! _run 'sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl'; then
     fail "❌ Unable to install base packages. Please refer to the error above."
   fi
   _footer
@@ -240,7 +240,7 @@ install_packages_pacman()
   # NodeJS
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
     _header "INSTALLING NODEJS USING PACMAN"
-    if ! sudo pacman -S nodejs; then
+    if ! _run 'sudo pacman -S nodejs'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
     _footer
@@ -252,14 +252,14 @@ install_packages_pacman()
   log "You can install either locally (with this install script), run either in docker or use either on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL?"; then
     _header "INSTALLING MYSQL USING PACMAN"
-    if ! sudo pacman -S mysql; then
+    if ! _run 'sudo pacman -S mysql'; then
       fail "❌ Unable to install mysql. Please refer to the error above."
     fi
     _footer
     log "✅ Packages: installed mysql"
   elif ask "Do you want to install MariaDB?"; then
     _header "INSTALLING MARIADB USING PACMAN"
-    if ! sudo pacman -S mariadb; then
+    if ! _run 'sudo pacman -S mariadb'; then
       fail "❌ Unable to install mariadb. Please refer to the error above."
     fi
     _footer
@@ -273,14 +273,14 @@ install_packages_pacman()
 
   if ask "Install mariadb-libs?"; then
     _header "INSTALLING MARIADB-LIBS USING PACMAN"
-    if ! sudo pacman -S mariadb-libs; then
+    if ! _run 'sudo pacman -S mariadb-libs'; then
       fail "❌ Unable to install mariadb-libs. This error may be due to a conflict with MySQL. If you have MySQL installed, you may not need to install this package. In that case, rerun this install script but skip installing packages."
     fi
     _footer
     log "✅ Packages: installed mariadb-libs"
   elif ask "Install libmysqlclient?"; then
     _header "INSTALLING LIBMYSQLCLIENT USING PACMAN"
-    if ! sudo pacman -S libmysqlclient; then
+    if ! _run 'sudo pacman -S libmysqlclient'; then
       fail "❌ Unable to install libmysqlclient. This error may be due to a conflict with MariaDB. If you have MariaDB installed, you may not need to install this package. In that case, rerun this install script but skip installing packages."
     fi
     _footer
@@ -298,7 +298,7 @@ install_packages_dnf()
   fi
   log "$ sudo dnf install ruby-devel zlib-devel"
   if ! _run 'sudo dnf install ruby-devel zlib-devel'; then
-    fail "❌ Unable to install C Development Tools and Libraries. Please refer to the error above."
+    fail "❌ Unable to install ruby-devel and zlib-devel. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -597,7 +597,7 @@ bundle_install()
     fail "❌ Failed to install dependencies using bundler. Please refer to the error above."
   fi
   _footer
-  log "✅ Ruby gems - other: installed"
+  log "✅ Ruby gems: installed all dependencies"
 }
 
 check_mysql()
