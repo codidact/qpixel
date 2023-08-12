@@ -708,7 +708,10 @@ set_up_db()
 # -------------------------------------------------------------------------------------------------
 # Actual commands
 
+check_production
+
 install_packages
+
 # Check ruby if previous check reports failure (installed using this command)
 while ! check_install_ruby; do
   log "🔶 Ruby: Checking again"
