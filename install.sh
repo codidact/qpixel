@@ -177,103 +177,73 @@ install_packages()
 
 install_packages_apt()
 {
-  log ""
-  log " --- UPDATING PACKAGE DATABASE USING APT-GET ---"
-  log ""
-  if ! sudo apt-get update; then
+  _header "UPDATING PACKAGE DATABASE USING APT-GET"
+  if ! _run 'sudo apt-get update'; then
     fail "❌ Unable to update package database using apt-get!"
   fi
-  log ""
-  log " -------------------------------------------------"
-  log ""
+  _footer
 
   # Base packages
-  log ""
-  log " --- INSTALLING BASE PACKAGES USING APT-GET ---"
-  log ""
-  if ! sudo apt-get install gcc make pkg-config autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev libmysqlclient-dev; then
+  _header "INSTALLING BASE PACKAGES USING APT-GET"
+  if ! _run 'sudo apt-get install gcc make pkg-config autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev libmysqlclient-dev'; then
     fail "❌ Unable to install base packages. Please refer to the error above."
   fi
-  log ""
-  log " ----------------------------------------------"
-  log ""
+  _footer
   log "✅ Packages: installed base packages"
 
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
-    log ""
-    log " --- INSTALLING NODEJS USING APT-GET ---"
-    log ""
-    if ! sudo apt-get install nodejs; then
+    _header "INSTALLING NODEJS USING APT-GET"
+    if ! _run 'sudo apt-get install nodejs'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed nodejs"
   fi
 
   log "To run QPixel, you need a database, either MySQL or MariaDB. It is also possible to run these in Docker or another server if you wish (but you will have to set that up yourself)."
   if ask "Do you want to install MySQL?"; then
-    log ""
-    log " --- INSTALLING MYSQL-SERVER USING APT-GET ---"
-    log ""
-    if ! sudo apt-get install mysql-server; then
+    _header "INSTALLING MYSQL-SERVER USING APT-GET"
+    if ! _run 'sudo apt-get install mysql-server'; then
       fail "❌ Unable to install mysql. Please refer to the error above."
     fi
-    log ""
-    log " --------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mysql"
   elif ask "Do you want to install MariaDB?"; then
-    log ""
-    log " --- INSTALLING MARIADB-SERVER USING APT-GET ---"
-    log ""
-    if ! sudo apt-get install mariadb-server; then
+    _header "INSTALLING MARIADB-SERVER USING APT-GET"
+    if ! _run 'sudo apt-get install mariadb-server'; then
       fail "❌ Unable to install mariadb. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mariadb"
+  else
+    log "🔶 Packages: skipped installing database software"
   fi
 }
 
 install_packages_pacman()
 {
   # Update database
-  log ""
-  log " --- UPDATING PACKAGE DATABASE USING PACMAN ---"
-  log ""
+  _header "UPDATING PACKAGE DATABASE USING PACMAN"
   if ! sudo pacman -Syyu; then
     fail "❌ Unable to update package database using pacman!"
   fi
-  log ""
-  log " -------------------------------------------------"
-  log ""
+  _footer
 
   # Base packages
-  log ""
-  log " --- INSTALLING BASE PACKAGES USING PACMAN ---"
-  log ""
+  _header "INSTALLING BASE PACKAGES USING PACMAN"
   if ! sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl; then
     fail "❌ Unable to install base packages. Please refer to the error above."
   fi
-  log ""
-  log " ---------------------------------------------"
-  log ""
+  _footer
   log "✅ Packages: installed base packages"
 
   # NodeJS
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
-    log ""
-    log " --- INSTALLING NODEJS USING PACMAN ---"
-    log ""
+    _header "INSTALLING NODEJS USING PACMAN"
     if ! sudo pacman -S nodejs; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
-    log ""
-    log " --------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed nodejs"
   fi
 
@@ -281,26 +251,18 @@ install_packages_pacman()
   log "To run QPixel, you need a database, either MySQL or MariaDB."
   log "You can install either locally (with this install script), run either in docker or use either on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL?"; then
-    log ""
-    log " --- INSTALLING MYSQL USING PACMAN ---"
-    log ""
+    _header "INSTALLING MYSQL USING PACMAN"
     if ! sudo pacman -S mysql; then
       fail "❌ Unable to install mysql. Please refer to the error above."
     fi
-    log ""
-    log " --------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mysql"
   elif ask "Do you want to install MariaDB?"; then
-    log ""
-    log " --- INSTALLING MARIADB USING PACMAN ---"
-    log ""
+    _header "INSTALLING MARIADB USING PACMAN"
     if ! sudo pacman -S mariadb; then
       fail "❌ Unable to install mariadb. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mariadb"
   fi
 
@@ -310,26 +272,18 @@ install_packages_pacman()
   log "These are present in mariadb-libs and in libmysqlclient"
 
   if ask "Install mariadb-libs?"; then
-    log ""
-    log " --- INSTALLING MARIADB-LIBS USING PACMAN ---"
-    log ""
+    _header "INSTALLING MARIADB-LIBS USING PACMAN"
     if ! sudo pacman -S mariadb-libs; then
       fail "❌ Unable to install mariadb-libs. This error may be due to a conflict with MySQL. If you have MySQL installed, you may not need to install this package. In that case, rerun this install script but skip installing packages."
     fi
-    log ""
-    log " --------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mariadb-libs"
   elif ask "Install libmysqlclient?"; then
-    log ""
-    log " --- INSTALLING LIBMYSQLCLIENT USING PACMAN ---"
-    log ""
+    _header "INSTALLING LIBMYSQLCLIENT USING PACMAN"
     if ! sudo pacman -S libmysqlclient; then
       fail "❌ Unable to install libmysqlclient. This error may be due to a conflict with MariaDB. If you have MariaDB installed, you may not need to install this package. In that case, rerun this install script but skip installing packages."
     fi
-    log ""
-    log " --------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed libmysqlclient"
   fi
 }
@@ -338,32 +292,23 @@ install_packages_dnf()
 {
   # TODO: Untested
   # Base packages
-  log ""
-  log " --- INSTALLING BASE PACKAGES USING DNF ---"
-  log ""
-  log "$ sudo dnf group install \"C Development Tools and Libraries\""
-  if ! sudo dnf group install "C Development Tools and Libraries"; then
+  _header "INSTALLING BASE PACKAGES USING DNF"
+  if ! _run 'sudo dnf group install "C Development Tools and Libraries"'; then
     fail "❌ Unable to install group C Development Tools and Libraries. Please refer to the error above."
   fi
   log "$ sudo dnf install ruby-devel zlib-devel"
-  if ! sudo dnf install ruby-devel zlib-devel; then
+  if ! _run 'sudo dnf install ruby-devel zlib-devel'; then
     fail "❌ Unable to install C Development Tools and Libraries. Please refer to the error above."
   fi
-  log ""
-  log " ----------------------------------------------"
-  log ""
+  _footer
   log "✅ Packages: installed base packages"
 
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
-    log ""
-    log " --- INSTALLING NODEJS USING DNF ---"
-    log ""
-    if ! sudo dnf install nodejs; then
+    _header "INSTALLING NODEJS USING DNF"
+    if ! _run 'sudo dnf install nodejs'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed nodejs"
   fi
 
@@ -378,17 +323,13 @@ install_packages_homebrew()
       if ! xcode-select -p > /dev/null; then
         log "Detected Mac OS. On Mac, QPixel needs the XCode Command Line Tools."
         if ask "Do you want to install XCode Command Line Tools?"; then
-          log ""
-          log " --- INSTALLING XCODE CLI TOOLS ---"
-          log ""
+          _header "INSTALLING XCODE CLI TOOLS"
           log "Please confirm the installation using the GUI prompt."
           log ""
-          if ! xcode-select --install; then
+          if ! _run 'xcode-select --install'; then
             fail "❌ xcode-select --install failed"
           fi
-          log ""
-          log " ----------------------------------"
-          log ""
+          _footer
         fi
       fi
       ;;
@@ -396,53 +337,37 @@ install_packages_homebrew()
   esac
 
   # Base packages
-  log ""
-  log " --- INSTALLING PACKAGES USING HOMEBREW ---"
-  log ""
-  if ! brew install bison openssl mysql-client; then
+  _header "INSTALLING PACKAGES USING HOMEBREW"
+  if ! _run 'brew install bison openssl mysql-client'; then
     fail_with_code 30 "❌ Error while installing packages with brew. Please refer to the error above."
   fi
-  log ""
-  log " ------------------------------------------"
-  log ""
+  _footer
   log "✅ Packages: installed base packages"
 
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
-    log ""
-    log " --- INSTALLING NODEJS USING HOMEBREW ---"
-    log ""
-    if ! brew install node; then
+    _header "INSTALLING NODEJS USING HOMEBREW"
+    if ! _run 'brew install node'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
-    log ""
-    log " ----------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed nodejs"
   fi
 
   log "To run QPixel, you need a database, either MySQL or MariaDB."
   log "You can install either locally (with this install script), run either in docker or use either on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL locally?"; then
-    log ""
-    log " --- INSTALLING MYSQL USING HOMEBREW ---"
-    log ""
-    if ! brew install mysql; then
+    _header "INSTALLING MYSQL USING HOMEBREW"
+    if ! _run 'brew install mysql'; then
       fail "❌ Unable to install mysql. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mysql"
   elif ask "Do you want to install MariaDB locally?"; then
-    log ""
-    log " --- INSTALLING MARIADB USING HOMEBREW ---"
-    log ""
-    if ! brew install mariadb; then
+    _header "INSTALLING MARIADB USING HOMEBREW"
+    if ! _run 'brew install mariadb'; then
       fail "❌ Unable to install mariadb. Please refer to the error above."
     fi
-    log ""
-    log " ---------------------------------------"
-    log ""
+    _footer
     log "✅ Packages: installed mariadb"
   fi
 }
@@ -472,11 +397,9 @@ install_rbenv()
     fail_with_code 10 "❌ Not installing rbenv. Please install ruby 3.x"
   fi
 
-  log ""
-  log " --- INSTALLING RBENV ---"
-  log ""
+  _header "INSTALLING RBENV"
 
-  if ! \curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash; then
+  if ! _run '\curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash'; then
     fail_with_code 11 "❌ Something went wrong with the installation. Please refer to output above."
   fi
 
@@ -511,21 +434,17 @@ You can also consider removing rbenv. This install script can re-install it for 
     fail_with_code 10 "❌ Not installing ruby using rbenv. Please install ruby 3.x"
   fi
 
-  log ""
-  log " --- INSTALLING RUBY $latest_3 USING RBENV ---"
-  log ""
+  _header "INSTALLING RUBY $latest_3 USING RBENV"
 
-  if ! rbenv install "$latest_3"; then
+  if ! _run "rbenv install \"$latest_3\""; then
     fail_with_code 13 "Something went wrong with the installation. Please refer to the rbenv output above."
   fi
 
-  log ""
-  log " -----------------------------------------"
-  log ""
+  _footer
 
   log "✅ Ruby - rbenv: installed ruby $latest_3"
 
-  if rbenv local "$latest_3"; then
+  if _run "rbenv local \"$latest_3\""; then
     log "✅ Ruby - rbenv: set ruby $latest_3 as default for QPixel"
     log "🔶 Ruby - rbenv: use \`rbenv global $latest_3\` to set your global ruby version."
   else
@@ -542,24 +461,20 @@ install_ruby_with_rvm()
     fail_with_code 10 "❌ Not installing ruby using RVM. Please install ruby 3.x"
   fi
 
-  log ""
-  log " --- INSTALLING RUBY USING RVM ---"
-  log ""
+  _header "INSTALLING RUBY USING RVM"
 
-  if ! rvm install ruby --latest; then
+  if ! _run 'rvm install ruby --latest'; then
     fail_with_code 15 "Something went wrong with the installation. Please refer to the rvm output above."
   fi
 
-  log ""
-  log " ----------------------------------"
-  log ""
+  _footer
   log "✅ Ruby - rvm: installed ruby"
 
-  if rvm --default use ruby --latest; then
+  if _run 'rvm --default use ruby --latest'; then
     log "✅ Ruby - rvm: set installed ruby as default for QPixel"
   else
-    log "❌ Ruby - rbenv: unable to set ruby $latest_3 as default for QPixel"
-    fail_with_code 16 "Use \`rbenv local $latest_3\` or \`rbenv global $latest_3\` to set your current ruby version."
+    log "❌ Ruby - rvm: unable to set installed ruby as default for QPixel"
+    fail_with_code 16 "Use \`rvm use ruby --latest\` or \`rvm --default use ruby --latest\` to set your current ruby version."
   fi
 
   return 0
@@ -623,7 +538,7 @@ check_install_gem_bundler()
   fi
 
   log "❌ Ruby gems - bundler: not found, installing..."
-  if ! gem install bundler; then
+  if ! _run 'gem install bundler'; then
     fail "❌ Unable to install bundler (ruby package manager). Please refer to the error above."
   fi
   # TODO
@@ -644,9 +559,14 @@ check_install_gem_mysql()
 
   # Check homebrew, as it needs a different mysql configuration
   if builtin command -v brew > /dev/null && brew info openssl 1> /dev/null 2> /dev/null; then
-    log "   Ruby gems - MySQL2: detected homebrew, configuring bundler for mysql2 installation..."
+    log "   Ruby gems - mysql2: detected homebrew, configuring bundler for mysql2 installation..."
 
-    if ! bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"; then
+    local _openssl_dir
+    if ! _openssl_dir="$(_run brew --prefix openssl)"; then
+      fail "❌ Unable to determine homebrew openssl install location. Please refer to the error above."
+    fi
+
+    if ! _run "bundle config --global build.mysql2 --with-opt-dir=\"$_openssl_dir\""; then
       fail "❌ Error while configuring bundler. Please refer to the error above."
     fi
 
@@ -662,29 +582,21 @@ check_install_gem_mysql()
     fail "❌ Unable to find version of MySQL2 required by the application. Please report this issue on https://github.com/codidact/qpixel"
   fi
 
-  log ""
-  log " --- INSTALLING GEM MYSQL2 $mysql_version ---"
-  log ""
-  if ! gem install mysql2 -v "$mysql_version"; then
+  _header "INSTALLING GEM MYSQL2 $mysql_version"
+  if ! _run "gem install mysql2 -v \"$mysql_version\""; then
     fail "❌ Failed to install MySQL2 gem. Please refer to the error above. If you skipped installing system packages, you may need to install libmysqlclient-dev, mysql-devel or a similar package."
   fi
-  log ""
-  log " --------------------------------------"
-  log ""
+  _footer
   log "✅ Ruby gems - mysql2: installed"
 }
 
 bundle_install()
 {
-  log ""
-  log " --- INSTALLING RUBY DEPENDENCIES USING BUNDLER ---"
-  log ""
-  if ! bundle install; then
+  _header "INSTALLING RUBY DEPENDENCIES USING BUNDLER"
+  if ! _run 'bundle install'; then
     fail "❌ Failed to install dependencies using bundler. Please refer to the error above."
   fi
-  log ""
-  log " --------------------------------------"
-  log ""
+  _footer
   log "✅ Ruby gems - other: installed"
 }
 
