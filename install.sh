@@ -86,6 +86,26 @@ function parse_yaml {
 }
 
 # -------------------------------------------------------------------------------------------------
+# General
+
+# Asks whether this setup is for production
+check_production()
+{
+  if ask "Are you setting up QPixel for development?"; then
+    production=0
+    development=1
+  else
+    production=1
+    development=0
+  fi
+}
+
+# Convenience getters which turn the production / development variables into return values.
+# Note that return values (0 = good, 1 = bad) are inverted from boolean values (0 = false, 1 = true)
+is_prod() { return $((1 - production)); }
+is_dev() { return $((1 - development)); }
+
+# -------------------------------------------------------------------------------------------------
 # System packages
 
 # Checks whether nodejs is present and reports that to the user.
