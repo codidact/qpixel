@@ -32,6 +32,39 @@ ask()
   done
 }
 
+# runs the command, outputting it to the console and
+_run()
+{
+  cmd="$*"
+  log "$ $cmd"
+  $cmd
+}
+
+# Print nicely formatted header to a section
+# "Leaks" the $_header_text variable for use in the footer.
+# @param 1 - The text to display in the header
+# @param 2 - The character to use (default -)
+_header()
+{
+  _header_text="$1"
+  _header_char="${2:--}"
+  log ""
+  log " $_header_char$_header_char$_header_char $_header_text $_header_char$_header_char$_header_char"
+  log ""
+}
+
+# Print nicely formatted footer to a section
+# Uses the leaked $_header_text variable to determine length.
+_footer()
+{
+  local sequence
+  # shellcheck disable=SC2183
+  sequence="$(printf '%*s' "$((${#_header_text} + 8))" | tr ' ' "$_header_char")"
+  log ""
+  log " $sequence"
+  log ""
+}
+
 # Parses a YAML file using awk and sed
 # Copied from StackOverflow: https://stackoverflow.com/a/21189044/14170691
 function parse_yaml {
