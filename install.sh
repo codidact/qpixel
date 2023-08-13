@@ -32,12 +32,14 @@ ask()
   done
 }
 
-# runs the command, outputting it to the console and
+# runs the command, outputting it to stdout and returning its result
+# @param * - The full command to run
+# @return the result of running the given command
 _run()
 {
   cmd="$*"
-  log "$ $cmd"
-  $cmd
+  log "$ $*"
+  eval "$cmd"
 }
 
 # Print nicely formatted header to a section
