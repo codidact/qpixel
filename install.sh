@@ -637,7 +637,7 @@ extract_gem_version()
 {
   local regex
   regex="    $1 \(([0-9\.]+)\)"
-  version="$(grep \"$1\" < Gemfile.lock)"
+  version="$(grep "$1" < Gemfile.lock)"
   if [[ $version =~ $regex ]]; then
     version="${BASH_REMATCH[1]}"
   else
