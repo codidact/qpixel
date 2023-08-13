@@ -659,8 +659,8 @@ install_gem()
     fail "❌ Unable to find version of $name required by the application. Please report this issue on https://github.com/codidact/qpixel"
   fi
 
-  _header "INSTALLING GEM ${name^^} $version"
-  if ! _run "gem install $name -v \"$version\""; then
+  _header "INSTALLING GEM $(echo "$name" | tr '[:lower:]' '[:upper:]') $version"
+  if ! _run "gem install $name -v $version"; then
     fail "❌ Failed to install $name gem. Please refer to the error above. $2"
   fi
   _footer
