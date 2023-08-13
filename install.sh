@@ -683,6 +683,7 @@ check_install_gem_bundler()
   log "✅ Ruby gems - bundler: installed"
 }
 
+# We specifically install rmagick as it requires the correct library to be installed.
 check_install_gem_rmagick()
 {
   if check_gem 'rmagick'; then
@@ -693,6 +694,8 @@ check_install_gem_rmagick()
   install_gem 'rmagick' "If you skipped installing system packages, you may need to install libmagicwand-dev, imagemagick or a similar package."
 }
 
+# We specifically install mysql as it requires the correct libraries to be installed.
+# Additionally, it needs a special path on Mac OS with homebrew.
 check_install_gem_mysql()
 {
   if check_gem 'mysql2'; then
