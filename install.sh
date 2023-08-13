@@ -209,6 +209,9 @@ install_packages_apt()
   if ! _run 'sudo apt-get -y install libvips'; then
     fail "❌ Unable to install libvips. Please refer to the error above."
   fi
+  if ! _run 'sudo apt-get -y install libmagickwand-dev'; then
+    fail "❌ Unable to install libmagickwand-dev (imagemagick). Please refer to the error above."
+  fi
   _footer
   log "✅ Packages: installed base packages"
 
@@ -259,6 +262,9 @@ install_packages_pacman()
   fi
   if ! _run 'sudo pacman -S libvips'; then
     fail "❌ Unable to install libvips. Please refer to the error above."
+  fi
+  if ! _run 'sudo pacman -S imagemagick'; then
+    fail "❌ Unable to install imagemagick. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -333,8 +339,12 @@ install_packages_dnf()
   if ! _run 'sudo dnf install ruby-devel zlib-devel -y'; then
     fail "❌ Unable to install ruby-devel and zlib-devel. Please refer to the error above."
   fi
+  # Order swapped here as vips is more tricky than imagemagick-libs.
+  if ! _run 'sudo dnf install imagemagick-libs -y'; then
+    fail "❌ Unable to install imagemagick-libs. Please refer to the error above."
+  fi
   if ! _run 'sudo dnf install vips -y'; then
-    fail "❌ Unable to install vips. Please refer to the error above. Note that on CentOS, vips is not in the repositories and may need to be built from source."
+    fail "❌ Unable to install vips. Please refer to the error above.\nNote that on CentOS, vips is not in the default repositories, but can be compiled from source or installed from other repositories (like Remi)."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -398,6 +408,9 @@ install_packages_homebrew()
   fi
   if ! _run 'brew install vips'; then
     fail "❌ Error while installing vips with brew. Please refer to the error above."
+  fi
+  if ! _run 'brew install imagemagick'; then
+    fail "❌ Error while installing imagemagick with brew. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
