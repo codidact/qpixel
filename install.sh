@@ -42,8 +42,15 @@ _run()
   eval "$cmd"
 }
 
-# Print nicely formatted header to a section
-# "Leaks" the $_header_text variable for use in the footer.
+# Print nicely formatted header to a section as follows:
+#
+# --- INPUT TEXT ---
+#
+# ...
+#
+# ------------------
+#
+# "Leaks" the $_header_text and $_header_char variables for use in the footer.
 # @param 1 - The text to display in the header
 # @param 2 - The character to use (default -)
 _header()
@@ -51,7 +58,7 @@ _header()
   _header_text="$1"
   _header_char="${2:--}"
   log ""
-  log " $_header_char$_header_char$_header_char $_header_text $_header_char$_header_char$_header_char"
+  log "$_header_char$_header_char$_header_char $_header_text $_header_char$_header_char$_header_char"
   log ""
 }
 
@@ -63,7 +70,30 @@ _footer()
   # shellcheck disable=SC2183
   sequence="$(printf '%*s' "$((${#_header_text} + 8))" | tr ' ' "$_header_char")"
   log ""
-  log " $sequence"
+  log "$sequence"
+  log ""
+}
+
+
+# Print nicely formatted header to a section as follows:
+#
+# ===============================================================================
+# INPUT TEXT
+# ===============================================================================
+#
+# @param 1 - The text to display in the header
+# @param 2 - The character to use (default =)
+_header2()
+{
+  local _header_text _header_char sequence
+  _header_text="$1"
+  _header_char="${2:-=}"
+  # shellcheck disable=SC2183
+  sequence="$(printf '%*s' "80" | tr ' ' "$_header_char")"
+  log ""
+  log "$sequence"
+  log "$_header_text"
+  log "$sequence"
   log ""
 }
 
@@ -908,9 +938,11 @@ set_up_tag_sets()
 "cat.update!(tag_set: TagSet.find_by(name: 'Main')) unless cat&.tag_set_id; "\
 "}"
 
+  _header 'SETTING UP CATEGORY TAG SETS'
   if ! _run "bundle exec rails r \"$rails_code\""; then
     fail "❌ Unable to set tag sets for communities. Please refer to the error above."
   fi
+  _footer
   log "✅ Setup - database: ensured base categories have tag sets"
 }
 
@@ -942,28 +974,32 @@ set_up_admin_user()
 
 check_production
 
+_header2 'PACKAGES' '='
 install_packages
+check_nodejs
 
 # Check ruby if previous check reports failure (installed using this command)
+_header2 'RUBY'
 while ! check_install_ruby; do
   log "🔶 Ruby: Checking again"
 done
 
-# Check nodejs
-check_nodejs
-
 # Ruby gems
+_header2 'RUBY DEPENDENCIES'
 check_install_gem_bundler
 check_install_gem_rmagick
 check_install_gem_mysql
 bundle_install
 
+_header2 'DATABASE SETTINGS'
 # TODO Settings of DB/Redis
 # TODO Start DB/Redis services
 #check_mysql
 #check_redis
 
+_header2 'QPIXEL SETUP'
 setup_ruby_initialize
 set_up_communities
-set_up_tag_sets
 set_up_seeds
+set_up_tag_sets
+
