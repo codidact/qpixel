@@ -280,18 +280,21 @@ install_packages_apt()
   fi
 }
 
+# Install packages using pacman (default on Arch linux)
+# Since we are dealing with an arch user here, we will not pass a "auto-confirm" flag to the installation.
+# The user gets the chance to accept or reject the installation.
 install_packages_pacman()
 {
   # Update database
   _header "UPDATING PACKAGE DATABASE USING PACMAN"
-  if ! _run 'sudo pacman -Syyu'; then
+  if ! _run 'sudo pacman -Syy'; then
     fail "❌ Unable to update package database using pacman!"
   fi
   _footer
 
   # Base packages
   _header "INSTALLING BASE PACKAGES USING PACMAN"
-  if ! _run 'sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl'; then
+  if ! _run 'sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl libyaml'; then
     fail "❌ Unable to install base packages. Please refer to the error above."
   fi
   if ! _run 'sudo pacman -S libvips'; then
@@ -306,7 +309,7 @@ install_packages_pacman()
   # NodeJS
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
     _header "INSTALLING NODEJS USING PACMAN"
-    if ! _run 'sudo pacman -S nodejs'; then
+    if ! _run 'sudo pacman -S nodejs npm'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
     _footer
@@ -323,6 +326,7 @@ install_packages_pacman()
     fi
     _footer
     log "✅ Packages: installed mysql"
+    secure_mysql
   elif ask "Do you want to install MariaDB?"; then
     _header "INSTALLING MARIADB USING PACMAN"
     if ! _run 'sudo pacman -S mariadb'; then
@@ -517,17 +521,14 @@ install_rbenv()
   log "✅ Ruby - rbenv: installed rbenv"
 
   log ""
-  log "🔶 To finish the setup of rbenv, run the following command and follow its instructions:"
-  log ""
-  log "  rbenv init"
-  log ""
+  log "🔶 To finish the setup of rbenv, run the init command as suggested above (rbenv init) and follow its instructions."
   log "After doing so, please close your terminal and open a new one, then rerun this install command."
   exit 0
 }
 
 install_ruby_with_rbenv()
 {
-  if ! latest_3=$(rbenv install -l | grep "^3\.\d\d*\.\d\d*$" | tail -n1); then
+  if ! latest_3=$(rbenv install -l | grep '^3\.[0-9][0-9]*\.[0-9][0-9]*$' | tail -n1); then
     fail_with_code 12 "
 It looks like your rbenv does not have the install option or does not know about any ruby 3 versions.
 
