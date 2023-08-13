@@ -13,7 +13,7 @@ class Post < ApplicationRecord
   belongs_to :license, optional: true
   belongs_to :close_reason, optional: true
   belongs_to :duplicate_post, class_name: 'Question', optional: true
-  belongs_to :template_post_type, class_name: 'PostType'
+  belongs_to :template_post_type, class_name: 'PostType', optional: true
   has_and_belongs_to_many :tags, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :comments, dependent: :destroy
