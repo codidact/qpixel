@@ -783,6 +783,153 @@ set_up_db()
 
   log "✅ Setup - Database: set correct collations"
 }
+
+# -------------------------------------------------------------------------------------------------
+# In-rails setup
+
+setup_ruby_initialize()
+{
+  if bundle exec rails db:version 1> /dev/null 2> /dev/null; then
+    log "✅ Setup: database found"
+  else
+    if ! _run "bundle exec rails db:create"; then
+      warn "Unable to create database, it may already be created. Continuing.."
+    fi
+  fi
+
+  # Check if we can query communities. If that fails, we will get an error and we will load the schema
+  if bundle exec rails r "Community.any?" 1> /dev/null 2> /dev/null; then
+    log "✅ Setup: schema already loaded"
+  else
+    if ask "Do you want to wipe the database and load the initial database schema?" && \
+       ask "🔶 WARNING: If your QPixel database already contains data, this will wipe it. Are you sure?"; then
+      _header 'LOADING SCHEMA'
+      if ! _run "bundle exec rails db:schema:load"; then
+        fail "❌ Unable to create DB schema. Please check whether you set the correct database credentials in config/database.yml"
+      fi
+      _footer
+      log "✅ Setup: schema loaded"
+    fi
+  fi
+
+  # TODO check whether schema exists?
+  _header 'CREATING TAG PATH VIEW'
+  if ! _run "bundle exec rails r db/scripts/create_tags_path_view.rb"; then
+    fail "❌ Unable to create database view for tag paths."
+  fi
+  _footer
+  log "✅ Setup: tag path view created"
+
+  # Run database migrations
+  _header 'RUNNING DATABASE MIGRATIONS'
+  if ! _run "bundle exec rails db:migrate"; then
+    fail "❌ Unable to run database migrations."
+  fi
+  _footer
+  log "✅ Setup: ran database migrations"
+}
+
+create_community()
+{
+  local name domain
+  while true; do
+    read -p "Please enter the fully qualified domain for which you want to create a community, without http(s) and without slashes (e.g. meta.codidact.com)" -r domain
+    read -p "Please enter the (user-facing) name for this community: " -r name
+    ask "You want to create '$name' @ '$domain'?" || continue
+    if bundle exec rails r "Community.create!(name: '$name', host: '$domain'); Rails.cache.clear"  2>&1 | head -n 2; then
+      log "✅ Setup - communities: created community '$name' @ '$domain'"
+      return 0
+    else
+      warn "❌ Failed to create community '$name' @ '$domain'. Please refer to the error above"
+      return 1
+    fi
+  done
+}
+
+set_up_communities()
+{
+  if is_dev; then
+    # Check whether dev community already exists
+    if ! bundle exec rails r "exit(1) unless Community.where(host: 'localhost:3000').any?" 2> /dev/null; then
+      log "✅ Setup - communities: found development community @ 'localhost:3000'"
+    else
+      log "   Setup: creating default community for development..."
+      if ! _run "bundle exec rails r \"Community.create(name: 'Dev Community', host: 'localhost:3000'); Rails.cache.clear\""; then
+        fail "❌ Unable to create development community. Please refer to the error above"
+      fi
+      log "✅ Setup - communities: created development community @ 'localhost:3000"
+    fi
+  else
+    log "QPixel is designed for a multi-community setup."
+    log "This means that a single instance of the software can host multiple, separate communities across different domains."
+    log "Accounts are the same for all communities of an instance, and users can see an overview of the communities being hosted on the instance."
+    log "The content, reputation and user privileges are completely separate per community."
+    log ""
+    log "The domain which you access in your browser is used to determine which community to serve, so it needs to be configured correctly in the application."
+
+    local domain name
+    if bundle exec rails r "exit(1) unless Community.any?" 2> /dev/null; then
+      log "🔶 Setup - communities: detected existing communities:"
+      bundle exec rails r "Community.all.each { |c| puts \"'#{c.name}' @ '#{c.host}'\" }" 2> /dev/null
+    else
+      log "🔶 Setup - communities: no communities detected - setting up first community..."
+      if ! create_community; then
+        fail "❌ Failed to create community"
+      fi
+    fi
+
+    while ask "Do you want to set up another community?"; do
+      create_community
+    done
+
+    log "🔶 Setup - communities: if you ever want to create additional communities, you can run this script again."
+  fi
+}
+
+# Ensures that all communities have correct tag sets
+set_up_tag_sets()
+{
+  # This code needs to have no indentation to work correctly
+  local rails_code
+  # shellcheck disable=SC2140
+  rails_code=""\
+"Community.all.each { |c| "\
+"RequestContext.community = c; "\
+"cat=Category.find_by(name: 'Meta'); "\
+"cat.update!(tag_set: TagSet.find_by(name: 'Meta')) unless cat&.tag_set_id; "\
+"cat=Category.find_by(name: 'Q&A'); "\
+"cat.update!(tag_set: TagSet.find_by(name: 'Main')) unless cat&.tag_set_id; "\
+"}"
+
+  if ! _run "bundle exec rails r \"$rails_code\""; then
+    fail "❌ Unable to set tag sets for communities. Please refer to the error above."
+  fi
+  log "✅ Setup - database: ensured base categories have tag sets"
+}
+
+set_up_seeds()
+{
+  # TODO: Ask user to seed to prevent recreation of Q&A category? (Or perhaps that is a bug that needs fixing?)
+  _header "SEEDING DATABASE"
+  if ! bundle exec rails r "exit(1) unless Post.unscoped.where(post_type: PostType.where(name: ['HelpDoc', 'PolicyDoc'])).any?"; then
+    # No help posts detected, seed those too
+    if ! _run "UPDATE_POSTS=true bundle exec rails db:seed"; then
+      fail "❌ Failed to seed database (with initial posts). Please refer to the error above."
+    fi
+  elif ! _run "bundle exec rails db:seed"; then
+    fail "❌ Failed to seed database. Please refer to the error above."
+  fi
+  _footer
+  log "✅ Setup - database: seeded database"
+}
+
+set_up_admin_user()
+{
+  if ! _run "bundle exec rails r \"User.last.update(confirmed_at: DateTime.now, is_global_admin: true)\""; then
+    fail "❌ Unable to create default user"
+  fi
+}
+
 # -------------------------------------------------------------------------------------------------
 # Actual commands
 
@@ -804,5 +951,12 @@ check_install_gem_rmagick
 check_install_gem_mysql
 bundle_install
 
+# TODO Settings of DB/Redis
+# TODO Start DB/Redis services
 #check_mysql
 #check_redis
+
+setup_ruby_initialize
+set_up_communities
+set_up_tag_sets
+set_up_seeds
