@@ -830,7 +830,7 @@ setup_ruby_initialize()
   fi
 
   # Check if we can query communities. If that fails, we will get an error and we will load the schema
-  if bundle exec rails r "Community.any?" 1> /dev/null 2> /dev/null; then
+  if bundle exec rails r "Community.any? || Vote.any?" 1> /dev/null 2> /dev/null; then
     log "✅ Setup: schema already loaded"
   else
     if ask "Do you want to wipe the database and load the initial database schema?" && \
@@ -851,7 +851,7 @@ setup_ruby_initialize()
   else
     _header 'CREATING TAG_PATHS VIEW'
     if ! _run "bundle exec rails r db/scripts/create_tags_path_view.rb"; then
-      fail "❌ Unable to create database view for tag paths."
+      fail "❌ Unable to create database view for tag paths. Please refer to the error above."
     fi
     _footer
     log "✅ Setup: tag_paths view created"
@@ -860,7 +860,7 @@ setup_ruby_initialize()
   # Run database migrations
   _header 'RUNNING DATABASE MIGRATIONS'
   if ! _run "bundle exec rails db:migrate"; then
-    fail "❌ Unable to run database migrations."
+    fail "❌ Unable to run database migrations. Please refer to the error above."
   fi
   _footer
   log "✅ Setup: ran database migrations"
@@ -870,14 +870,14 @@ create_community()
 {
   local name domain
   while true; do
-    read -p "Please enter the fully qualified domain for which you want to create a community, without http(s) and without slashes (e.g. meta.codidact.com)" -r domain
-    read -p "Please enter the (user-facing) name for this community: " -r name
+    read -p "Please enter the fully qualified domain for which you want to create a community, without http(s) and without slashes (e.g. meta.codidact.com): " -r domain
+    read -p "Please enter the (user-facing) name for this community (do not use quotes in the name): " -r name
     ask "You want to create '$name' @ '$domain'?" || continue
-    if bundle exec rails r "Community.create!(name: '$name', host: '$domain'); Rails.cache.clear"  2>&1 | head -n 2; then
+    if bundle exec rails r "Community.create!(name: '$name', host: '$domain'); Rails.cache.clear" 2>&1 | head -n 2; then
       log "✅ Setup - communities: created community '$name' @ '$domain'"
       return 0
     else
-      warn "❌ Failed to create community '$name' @ '$domain'. Please refer to the error above"
+      warn "❌ Failed to create community '$name' @ '$domain'. Please refer to the error above."
       return 1
     fi
   done
@@ -897,7 +897,8 @@ set_up_communities()
       log "✅ Setup - communities: created development community @ 'localhost:3000"
     fi
   else
-    log "QPixel is designed for a multi-community setup."
+    log ""
+    log "NOTE: QPixel is designed for a multi-community setup."
     log "This means that a single instance of the software can host multiple, separate communities across different domains."
     log "Accounts are the same for all communities of an instance, and users can see an overview of the communities being hosted on the instance."
     log "The content, reputation and user privileges are completely separate per community."
