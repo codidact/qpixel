@@ -918,7 +918,7 @@ set_up_seeds()
 {
   # TODO: Ask user to seed to prevent recreation of Q&A category? (Or perhaps that is a bug that needs fixing?)
   _header "SEEDING DATABASE"
-  if ! bundle exec rails r "exit(1) unless Post.unscoped.where(post_type: PostType.where(name: ['HelpDoc', 'PolicyDoc'])).any?"; then
+  if ! bundle exec rails r "exit(1) unless Post.unscoped.where(post_type: PostType.where(name: ['HelpDoc', 'PolicyDoc'])).any?" 2> /dev/null; then
     # No help posts detected, seed those too
     if ! _run "UPDATE_POSTS=true bundle exec rails db:seed"; then
       fail "❌ Failed to seed database (with initial posts). Please refer to the error above."
