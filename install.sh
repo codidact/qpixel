@@ -214,15 +214,18 @@ install_packages_apt()
 
   # Base packages
   _header "INSTALLING BASE PACKAGES USING APT-GET"
-  if ! _run 'sudo apt-get install gcc make pkg-config autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev libmysqlclient-dev'; then
+  if ! _run 'sudo apt-get -y install gcc make pkg-config autoconf bison build-essential libssl-dev libyaml-dev libreadline-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev libmysqlclient-dev'; then
     fail "❌ Unable to install base packages. Please refer to the error above."
+  fi
+  if ! _run 'sudo apt-get -y install libvips'; then
+    fail "❌ Unable to install libvips. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
 
   if ! check_nodejs && ask "Do you want to install nodejs?"; then
     _header "INSTALLING NODEJS USING APT-GET"
-    if ! _run 'sudo apt-get install nodejs'; then
+    if ! _run 'sudo apt-get -y install nodejs'; then
       fail "❌ Unable to install nodejs. Please refer to the error above."
     fi
     _footer
@@ -233,7 +236,7 @@ install_packages_apt()
   log "You can install either locally (with this install script), run in docker or use a database on another server (you will have to do that yourself)."
   if ask "Do you want to install MySQL?"; then
     _header "INSTALLING MYSQL-SERVER USING APT-GET"
-    if ! _run 'sudo apt-get install mysql-server'; then
+    if ! _run 'sudo apt-get -y install mysql-server'; then
       fail "❌ Unable to install mysql. Please refer to the error above."
     fi
     _footer
@@ -241,7 +244,7 @@ install_packages_apt()
     secure_mysql
   elif ask "Do you want to install MariaDB?"; then
     _header "INSTALLING MARIADB-SERVER USING APT-GET"
-    if ! _run 'sudo apt-get install mariadb-server'; then
+    if ! _run 'sudo apt-get -y install mariadb-server'; then
       fail "❌ Unable to install mariadb. Please refer to the error above."
     fi
     _footer
@@ -264,6 +267,9 @@ install_packages_pacman()
   _header "INSTALLING BASE PACKAGES USING PACMAN"
   if ! _run 'sudo pacman -S gcc make autoconf bison base-devel unixodbc openssl'; then
     fail "❌ Unable to install base packages. Please refer to the error above."
+  fi
+  if ! _run 'sudo pacman -S libvips'; then
+    fail "❌ Unable to install libvips. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -295,6 +301,8 @@ install_packages_pacman()
     fi
     _footer
     log "✅ Packages: installed mariadb"
+  else
+    log "🔶 Packages: skipped installing database software"
   fi
 
   # MySQL-client-headers Arch users should know what they are doing
@@ -333,9 +341,11 @@ install_packages_dnf()
   if ! _run 'sudo dnf group install "C Development Tools and Libraries" -y'; then
     fail "❌ Unable to install group C Development Tools and Libraries. Please refer to the error above."
   fi
-  log "$ sudo dnf install ruby-devel zlib-devel"
   if ! _run 'sudo dnf install ruby-devel zlib-devel -y'; then
     fail "❌ Unable to install ruby-devel and zlib-devel. Please refer to the error above."
+  fi
+  if ! _run 'sudo dnf install vips -y'; then
+    fail "❌ Unable to install vips. Please refer to the error above. Note that on CentOS, vips is not in the repositories and may need to be built from source."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -395,7 +405,10 @@ install_packages_homebrew()
   # Base packages
   _header "INSTALLING PACKAGES USING HOMEBREW"
   if ! _run 'brew install bison openssl mysql-client'; then
-    fail_with_code 30 "❌ Error while installing packages with brew. Please refer to the error above."
+    fail "❌ Error while installing packages with brew. Please refer to the error above."
+  fi
+  if ! _run 'brew install vips'; then
+    fail "❌ Error while installing vips with brew. Please refer to the error above."
   fi
   _footer
   log "✅ Packages: installed base packages"
@@ -426,6 +439,8 @@ install_packages_homebrew()
     fi
     _footer
     log "✅ Packages: installed mariadb"
+  else
+    log "🔶 Packages: skipped installing database software"
   fi
 }
 
