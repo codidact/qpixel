@@ -606,6 +606,67 @@ check_install_ruby()
 # -------------------------------------------------------------------------------------------------
 # Bundler and gems
 
+# Checks whether a gem with the given name is installed from the bundle.
+# @param 1 - name of the gem
+# @return 0 if installed, 1 otherwise
+# @fail - If the Gemfile.lock cannot be found
+check_gem()
+{
+  local name
+  name="$1"
+
+  # Check Gemfile.lock existence (failsafe)
+  if [[ ! -f "Gemfile.lock" ]]; then
+    fail "❌ Unable to find Gemfile.lock! Please ensure you cd to the directory of the project and run this script as ./install.sh"
+  fi
+
+  # Check whether bundler reports the gem as installed
+  if bundle info "$name" 1> /dev/null 2> /dev/null; then
+    return 0
+  fi
+
+  return 1
+}
+
+# Extracts the version string for the given gem from the Gemfile.
+# The version is made available in the $version variable
+#
+# @param 1 - The name of the gem
+# @return 0 if successful, the $version variable will contain the version. 1 otherwise.
+extract_gem_version()
+{
+  local regex
+  regex="    $1 \(([0-9\.]+)\)"
+  version="$(grep \"$1\" < Gemfile.lock)"
+  if [[ $version =~ $regex ]]; then
+    version="${BASH_REMATCH[1]}"
+  else
+    return 1
+  fi
+}
+
+# Attempts to install a gem with the given name
+# @param 1 - The name of the gem to install
+# @param 2 - Extra information to report to the user in case of gem install failure
+# @fail - If gem version cannot be found or the installation fails.
+install_gem()
+{
+  local name
+  name="$1"
+
+  # Determine the version(s) of gem from the lockfile
+  if ! extract_gem_version "$name"; then
+    fail "❌ Unable to find version of $name required by the application. Please report this issue on https://github.com/codidact/qpixel"
+  fi
+
+  _header "INSTALLING GEM ${name^^} $version"
+  if ! _run "gem install $name -v \"$version\""; then
+    fail "❌ Failed to install $name gem. Please refer to the error above. $2"
+  fi
+  _footer
+  log "✅ Ruby gems - $name: installed"
+}
+
 check_install_gem_bundler()
 {
   if gem info -i bundler > /dev/null; then
@@ -614,21 +675,27 @@ check_install_gem_bundler()
   fi
 
   log "❌ Ruby gems - bundler: not found, installing..."
+  _header 'INSTALLING BUNDLER'
   if ! _run 'gem install bundler'; then
     fail "❌ Unable to install bundler (ruby package manager). Please refer to the error above."
   fi
-  # TODO
+  _footer
+  log "✅ Ruby gems - bundler: installed"
+}
+
+check_install_gem_rmagick()
+{
+  if check_gem 'rmagick'; then
+    log "✅ Ruby gems - rmagick: found compatible version"
+    return 0
+  fi
+
+  install_gem 'rmagick' "If you skipped installing system packages, you may need to install libmagicwand-dev, imagemagick or a similar package."
 }
 
 check_install_gem_mysql()
 {
-  # Check Gemfile
-  if [[ ! -f "Gemfile" ]]; then
-    fail "❌ Unable to find Gemfile! Please ensure you cd to the directory of the project and run this script as ./install.sh"
-  fi
-
-  # Check whether bundler reports the gem as installed
-  if bundle info mysql2 1> /dev/null 2> /dev/null; then
+  if check_gem 'mysql2'; then
     log "✅ Ruby gems - mysql2: found compatible version"
     return 0
   fi
@@ -649,21 +716,7 @@ check_install_gem_mysql()
     log "✅ Ruby gems - mysql2: configured bundler for mysql2 installation through homebrew"
   fi
 
-  # Determine the version(s) of mysql2 that are acceptable and install them (this is a best effort).
-  mysql_version=$(grep mysql2 < Gemfile)
-  regex=", '([~><=\ 0-9\.]+)'"
-  if [[ $mysql_version =~ $regex ]]; then
-    mysql_version="${BASH_REMATCH[1]}"
-  else
-    fail "❌ Unable to find version of MySQL2 required by the application. Please report this issue on https://github.com/codidact/qpixel"
-  fi
-
-  _header "INSTALLING GEM MYSQL2 $mysql_version"
-  if ! _run "gem install mysql2 -v \"$mysql_version\""; then
-    fail "❌ Failed to install MySQL2 gem. Please refer to the error above. If you skipped installing system packages, you may need to install libmysqlclient-dev, mysql-devel or a similar package."
-  fi
-  _footer
-  log "✅ Ruby gems - mysql2: installed"
+  install_gem 'mysql2' "If you skipped installing system packages, you may need to install libmysqlclient-dev, mysql-devel or a similar package."
 }
 
 bundle_install()
@@ -675,6 +728,9 @@ bundle_install()
   _footer
   log "✅ Ruby gems: installed all dependencies"
 }
+
+# -------------------------------------------------------------------------------------------------
+# Setup
 
 check_mysql()
 {
@@ -741,6 +797,7 @@ check_nodejs
 
 # Ruby gems
 check_install_gem_bundler
+check_install_gem_rmagick
 check_install_gem_mysql
 bundle_install
 
