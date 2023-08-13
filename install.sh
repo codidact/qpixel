@@ -857,12 +857,12 @@ set_up_communities()
 {
   if is_dev; then
     # Check whether dev community already exists
-    if ! bundle exec rails r "exit(1) unless Community.where(host: 'localhost:3000').any?" 2> /dev/null; then
+    if bundle exec rails r "exit(1) unless Community.where(host: 'localhost:3000').any?" 2> /dev/null; then
       log "✅ Setup - communities: found development community @ 'localhost:3000'"
     else
       log "   Setup: creating default community for development..."
-      if ! _run "bundle exec rails r \"Community.create(name: 'Dev Community', host: 'localhost:3000'); Rails.cache.clear\""; then
-        fail "❌ Unable to create development community. Please refer to the error above"
+      if ! _run "bundle exec rails r \"Community.create!(name: 'Dev Community', host: 'localhost:3000'); Rails.cache.clear\""; then
+        fail "❌ Unable to create development community. Please refer to the error above."
       fi
       log "✅ Setup - communities: created development community @ 'localhost:3000"
     fi
