@@ -814,13 +814,18 @@ setup_ruby_initialize()
     fi
   fi
 
-  # TODO check whether schema exists?
-  _header 'CREATING TAG PATH VIEW'
-  if ! _run "bundle exec rails r db/scripts/create_tags_path_view.rb"; then
-    fail "❌ Unable to create database view for tag paths."
+  # Tag paths view
+  # MySQL throws an error if we run this again, so we instead check with rails whether there exists a view with its name.
+  if bundle exec rails r "exit(1) unless ActiveRecord::Base.connection.execute('SHOW FULL TABLES WHERE TABLE_TYPE LIKE \"%VIEW%\";')&.map(&:first)&.include?('tags_paths')" 1> /dev/null 2> /dev/null; then
+    log "✅ Setup: tag paths view already present"
+  else
+    _header 'CREATING TAG_PATHS VIEW'
+    if ! _run "bundle exec rails r db/scripts/create_tags_path_view.rb"; then
+      fail "❌ Unable to create database view for tag paths."
+    fi
+    _footer
+    log "✅ Setup: tag_paths view created"
   fi
-  _footer
-  log "✅ Setup: tag path view created"
 
   # Run database migrations
   _header 'RUNNING DATABASE MIGRATIONS'
