@@ -705,7 +705,7 @@ check_install_gem_mysql()
     log "   Ruby gems - mysql2: detected homebrew, configuring bundler for mysql2 installation..."
 
     local _openssl_dir
-    if ! _openssl_dir="$(_run brew --prefix openssl)"; then
+    if ! _openssl_dir="$(brew --prefix openssl)"; then
       fail "❌ Unable to determine homebrew openssl install location. Please refer to the error above."
     fi
 
