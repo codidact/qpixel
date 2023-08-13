@@ -160,7 +160,7 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
+    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a, template_post_type: @post.template_post_type }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
@@ -183,7 +183,9 @@ class PostsController < ApplicationController
           PostHistory.post_edited(post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
                                   before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
+                                  before_tags: before[:tags], after_tags: @post.tags,
+                                  before_template_post_type: before[:template_post_type],
+                                  after_template_post_type: @post.template_post_type)
         end
         flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
@@ -194,7 +196,9 @@ class PostsController < ApplicationController
           PostHistory.post_edited(@post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
                                   before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
+                                  before_tags: before[:tags], after_tags: @post.tags,
+                                  before_template_post_type: before[:template_post_type],
+                                  after_template_post_type: @post.template_post_type)
           Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
           do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)

@@ -37,5 +37,10 @@
     <% if (event.before_tags.present? || event.after_tags.present?) && event.before_tags != event.after_tags %>
       <%= render 'diff', before: event.before_tags, after: event.after_tags, post: @post %>
     <% end %>
+    <% if (event.before_template_post_type.present? || event.after_template_post_type.present?) &&
+           event.before_template_post_type != event.after_template_post_type %>
+      <h3><%= t('posts.template_post_type_label') %></h3>
+      <%= render 'diff', before: event.before_template_post_type.name, after: event.after_template_post_type.name, post: @post %>
+    <% end %>
   </details>
 <% end %>

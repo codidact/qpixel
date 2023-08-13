@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_01_014134) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_13_161623) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -388,6 +388,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_014134) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
+    t.bigint "before_template_post_type_id"
+    t.bigint "after_template_post_type_id"
+    t.index ["after_template_post_type_id"], name: "index_post_histories_on_after_template_post_type_id"
+    t.index ["before_template_post_type_id"], name: "index_post_histories_on_before_template_post_type_id"
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
@@ -794,6 +798,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_01_014134) do
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"
   add_foreign_key "post_histories", "communities"
+  add_foreign_key "post_histories", "post_types", column: "after_template_post_type_id"
+  add_foreign_key "post_histories", "post_types", column: "before_template_post_type_id"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"
   add_foreign_key "post_types", "post_types", column: "answer_type_id"

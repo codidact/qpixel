@@ -173,7 +173,8 @@
   <% if post_type.id == PostTemplate.post_type_id %>
     <div class="form-group">
       <%= f.label :template_post_type_id, t('posts.template_post_type_label'), class: "form-element" %>
-      <%= f.select :template_post_type_id, options_for_select(PostType.all.map { |pt| [pt.name.underscore.humanize, pt.id] }), {}, { class: "form-element" } %>
+      <%= f.select :template_post_type_id, options_for_select(PostType.all.map { |pt| [pt.name.underscore.humanize, pt.id] },
+                                                              selected: post.template_post_type_id), {}, { class: "form-element" } %>
     </div>
   <% end %>
 
