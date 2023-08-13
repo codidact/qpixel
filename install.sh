@@ -173,17 +173,6 @@ install_packages()
       log "Not installing with dnf"
     fi
   fi
-  
-  if builtin command -v yum > /dev/null; then
-    log "Detected yum (fedora-based)"
-    if ask "Do you want to install required packages with dnf?"; then
-      install_packages_yum
-      return $?
-    else
-      any_matched=0
-      log "Not installing with yum"
-    fi
-  fi
 
   # Homebrew is intentionally placed at the bottom, as it is possible to use homebrew on linux
   # In that case, the user may prefer using their system package manager.
