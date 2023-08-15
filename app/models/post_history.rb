@@ -1,7 +1,7 @@
 class PostHistory < ApplicationRecord
   include PostRelated
-  belongs_to :before_template_post_type, class_name: 'PostType'
-  belongs_to :after_template_post_type, class_name: 'PostType'
+  belongs_to :before_template_post_type, class_name: 'PostType', optional: true
+  belongs_to :after_template_post_type, class_name: 'PostType', optional: true
   belongs_to :post_history_type
   belongs_to :user
   has_many :post_history_tags
@@ -41,7 +41,7 @@ class PostHistory < ApplicationRecord
     params = { post_history_type: history_type, user: user, post: object, community_id: object.community_id }
     { before: :before_state, after: :after_state, comment: :comment, before_title: :before_title,
       after_title: :after_title, hidden: :hidden, before_template_post_type: :before_template_post_type,
-      after_template_post_type: :after_template_post_type, }.each do |arg, attr|
+      after_template_post_type: :after_template_post_type }.each do |arg, attr|
       next if values[arg].nil?
 
       params = params.merge(attr => values[arg])
