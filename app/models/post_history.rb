@@ -28,7 +28,7 @@ class PostHistory < ApplicationRecord
 
     object, user = args
     fields = [:before, :after, :comment, :before_title, :after_title, :before_tags, :after_tags, :hidden,
-      :before_template_post_type, :after_template_post_type]
+              :before_template_post_type, :after_template_post_type]
     values = fields.to_h { |f| [f, nil] }.merge(opts)
 
     history_type_name = name.to_s

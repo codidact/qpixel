@@ -3,4 +3,3 @@ class PostTemplate < Post
     PostType.mapping['PostTemplate']
   end
 end
-  

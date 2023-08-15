@@ -160,7 +160,8 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a, template_post_type: @post.template_post_type }
+    before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a,
+template_post_type: @post.template_post_type }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
