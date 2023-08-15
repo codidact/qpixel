@@ -326,7 +326,6 @@ install_packages_pacman()
     fi
     _footer
     log "✅ Packages: installed mysql"
-    secure_mysql
   elif ask "Do you want to install MariaDB?"; then
     _header "INSTALLING MARIADB USING PACMAN"
     if ! _run 'sudo pacman -S mariadb'; then
@@ -799,22 +798,66 @@ check_redis()
 
 set_up_db()
 {
-  log "   Setup - Database: QPixel supports MySQL and MariaDB."
-  log "   Setup - Database: However, if you use MariaDB, we need to update some of the collations used."
+  log "   Setup - database: QPixel supports MySQL and MariaDB."
+  log "   Setup - database: However, if you use MariaDB, we need to update some of the collations used."
 
   if ask "Are you using MariaDB/will you use MariaDB for QPixel?"; then
-    log "   Setup - Database: Setting collations to be compatible with MariaDB"
+    log "   Setup - database: Setting collations to be compatible with MariaDB"
     if ! sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' "db/schema.rb"; then
       fail "❌ Unable to update collations."
     fi
   else
-    log "   Setup - Database: Setting collations to be compatible with MySQL"
+    log "   Setup - database: Setting collations to be compatible with MySQL"
     if ! sed -i 's/utf8mb4_unicode_ci/utf8mb4_0900_ai_ci/g' "db/schema.rb"; then
       fail "❌ Unable to update collations."
     fi
   fi
 
-  log "✅ Setup - Database: set correct collations"
+  log "✅ Setup - database: set correct collations"
+
+  if ask "Do you want to create a database user?"; then
+    local _username _password _database
+    read -p "Please enter the base name to use for the database (DB NAME) [qpixel]: " -r _database
+    read -p "Please enter a name for the database user to create (USER NAME) [qpixel]: " -r _username
+    read -sp "Please enter a password for the database user to create (don't use quotes) (USER PASS): " -r _password
+
+    sudo mysql -u root -e "CREATE USER $_username@localhost IDENTIFIED BY '$_password'"
+    sudo mysql -u root -e "GRANT ALL ON ${_database}.* TO $_username@localhost"
+
+    if is_dev; then
+      sudo mysql -u root -e "GRANT ALL ON ${_database}_dev.* TO $_username@localhost"
+      sudo mysql -u root -e "GRANT ALL ON ${_database}_test.* TO $_username@localhost"
+    fi
+
+    # TODO Write to database yml file
+    log "TODO: Actually write database settings to file"
+  fi
+
+}
+
+set_up_storage()
+{
+  if [[ ! -f config/storage.yml ]]; then
+    cp config/storage.sample.yml config/storage.yml
+    log "✅ Setup - storage: set up default storage profile"
+
+    if is_prod; then
+      log '🔶 Setup - storage: Files are saved by default to ./storage in the project root.'\
+'You may want to change this for your production setup to go to a bulk drive, or to external storage like S3. You can change this in config/storage.yml'
+      read -p "Press any key to continue." -r -n1 _nothing
+    fi
+  else
+    log "✅ Setup - storage: configuration already present"
+  fi
+}
+
+set_up_irb()
+{
+  # TODO Log output?
+  if [[ ! -f .irbrc ]]; then
+    _run 'cp .sample.irbrc .irbrc > /dev/null'
+    log "✅ Setup - console: added rails console enhancements"
+  fi
 }
 
 # -------------------------------------------------------------------------------------------------
@@ -993,13 +1036,16 @@ check_install_gem_rmagick
 check_install_gem_mysql
 bundle_install
 
-_header2 'DATABASE SETTINGS'
+_header2 'QPIXEL SETTINGS'
 # TODO Settings of DB/Redis
 # TODO Start DB/Redis services
 #check_mysql
 #check_redis
+set_up_storage
+set_up_db
+set_up_irb
 
-_header2 'QPIXEL SETUP'
+_header2 'QPIXEL INITIALIZATION'
 setup_ruby_initialize
 set_up_communities
 set_up_seeds
