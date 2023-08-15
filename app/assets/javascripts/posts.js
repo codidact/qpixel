@@ -153,7 +153,6 @@ $(() => {
         const converter = window.converter;
         const unsafe_html = converter.render(text);
         const html = DOMPurify.sanitize(unsafe_html, {
-          USE_PROFILES: { html: true },
           ALLOWED_TAGS,
           ALLOWED_ATTR
         });

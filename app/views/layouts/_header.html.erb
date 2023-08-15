@@ -58,9 +58,6 @@
           <% end %>
           <i class='fas fa-fw fa-inbox' title='Notifications'></i>
         </a>
-        <%= link_to qr_login_code_path, class: 'header--item' do %>
-          <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
-        <% end %>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
           <img alt="user avatar" src="<%= avatar_url(current_user, 40) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>

@@ -46,6 +46,10 @@ en:
       Requires at least one of
     edit_comment_label: >
       Edit Comment
+    redact_label: >
+      Redact
+    redact_explanation: >
+      Redact original content by hiding the previous versions from history?
     licence_label: >
       License
     template_post_type_label: >
