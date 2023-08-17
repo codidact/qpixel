@@ -335,25 +335,29 @@ class ApplicationController < ActionController::Base
   # - assets
   # - /help, /policy, /help/* and /policy/*
   def enforce_signed_in
-    if SiteSetting['RestrictedAccess'] &&
-       !user_signed_in? &&
-       !Rails.env.test? &&
-       !request.fullpath.start_with?('/4') &&
-       request.fullpath != '/500' &&
-       !request.fullpath.end_with?('.css') &&
-       !request.fullpath.end_with?('.js') &&
-       !request.fullpath.start_with?('/assets/') &&
-       (
-         controller_name != 'posts' ||
-           (!request.fullpath.start_with?('/help') && !request.fullpath.start_with?('/policy'))
-       )
+    # If not restricted, the user is signed in or the environment is test, allow all content.
+    return true if !SiteSetting['RestrictedAccess'] || user_signed_in? || Rails.env.test?
 
-      store_location_for(:user, request.fullpath) if storable_location?
+    # Allow error pages and assets
+    path = request.fullpath
+    return true if path.start_with?('/4') || path == '/500' ||
+                   path.start_with?('/assets/') ||
+                   path.end_with?('.css') || path.end_with?('.js')
 
-      render 'errors/restricted_content', layout: 'without_sidebar', status: :forbidden
-      return false
-    end
-    true
+    # Make available to controller that wer are currently restricted
+    @restricted = true
+
+    # Allow /help (help center), /help/* and /policy/* depending on settings
+    help = SiteSetting['RestrictedAccessHelpPagesPublic']
+    policy = SiteSetting['RestrictedAccessPolicyPagesPublic']
+    return true if (help && path.start_with?('/help/')) ||
+                   (policy && path.start_with?('/policy/')) ||
+                   (path == '/help' && (help || policy))
+
+    store_location_for(:user, request.fullpath) if storable_location?
+
+    render 'errors/restricted_content', layout: 'without_sidebar', status: :forbidden
+    false
   end
 
   # Redirect user to original page they tried to visit after signing in.
