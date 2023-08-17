@@ -1014,6 +1014,15 @@ set_up_admin_user()
   fi
 }
 
+set_up_whenever()
+{
+  if _run "bundle exec whenever --update-crontab"; then
+    log "✅ Setup - crontab: updated scheduled tasks"
+  else
+    warn "❌ Unable to schedule tasks with crontab"
+  fi
+}
+
 # -------------------------------------------------------------------------------------------------
 # Actual commands
 
@@ -1051,3 +1060,6 @@ set_up_communities
 set_up_seeds
 set_up_tag_sets
 
+set_up_whenever
+
+}
