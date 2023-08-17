@@ -8,10 +8,10 @@ class ActiveStorage::BaseController < ActionController::Base
   protected
 
   def enforce_signed_in
-    if SiteSetting['RestrictedAccess'] && !user_signed_in? && !Rails.env.test?
-      redirect_to '/', status: :forbidden
-      return false
-    end
-    true
+    # If not restricted, the user is signed in or the environment is test, allow all content.
+    return true if !SiteSetting['RestrictedAccess'] || user_signed_in? || Rails.env.test?
+
+    redirect_to '/', status: :forbidden
+    false
   end
 end
