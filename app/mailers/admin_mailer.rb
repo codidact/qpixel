@@ -8,7 +8,10 @@ class AdminMailer < ApplicationMailer
             "INNER JOIN community_users cu ON cu.user_id = u.id WHERE s.type = 'moderators' AND " \
             '(u.is_global_admin = 1 OR u.is_global_moderator = 1 OR cu.is_admin = 1 OR cu.is_moderator = 1)'
     emails = ActiveRecord::Base.connection.execute(query).to_a.flatten
-    mail subject: "Codidact Moderators: #{@subject}", to: 'moderators-noreply@codidact.org', bcc: emails
+    from = "#{SiteSetting['ModeratorDistributionListSenderName']} " \
+           "<#{SiteSetting['ModeratorDistributionListSenderEmail']}>"
+    to = SiteSetting['ModeratorDistributionListReceiverEmail']
+    mail subject: "Codidact Moderators: #{@subject}", to: to, from: from, bcc: emails
   end
 
   def to_all_users

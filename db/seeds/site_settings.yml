@@ -194,7 +194,30 @@
   value_type: string
   category: EmailSubscriptions
   description: >
-    The address to send subscription emails from. Make sure your server is allowed to send email from this address, or it will land in spam.
+    The address to send subscription emails from.
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: ModeratorDistributionListSenderName
+  value: Codidact Admins
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of the moderator distribution list.
+
+- name: ModeratorDistributionListSenderEmail
+  value: moderators-noreply@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The address to send moderator distribution list emails from.
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: ModeratorDistributionListReceiverEmail
+  value: moderators-noreply@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The (fake) address to send moderator distribution list emails to.
 
 - name: LotteryAgeDeprecationSpeed
   value: 0.002
