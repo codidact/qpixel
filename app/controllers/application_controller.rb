@@ -360,11 +360,6 @@ class ApplicationController < ActionController::Base
     false
   end
 
-  # Redirect user to original page they tried to visit after signing in.
-  def after_sign_in_path_for(resource)
-    stored_location_for(resource) || root_path
-  end
-
   def block_write_request(**add)
     respond_to do |format|
       format.html do
