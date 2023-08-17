@@ -178,21 +178,21 @@
 - name: InterestingSubscriptionScoreThreshold
   value: 1
   value_type: integer
-  category: EmailSubscriptions
+  category: Email
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
 
 - name: SubscriptionSenderName
   value: Codidact Subscriptions
   value_type: string
-  category: EmailSubscriptions
+  category: Email
   description: >
-    The name of the sender of subscriptions. Email clients show this as whom the email was from.
+    The name of the sender of subscription emails.
 
 - name: SubscriptionSenderEmail
   value: subscriptions@codidact.com
   value_type: string
-  category: EmailSubscriptions
+  category: Email
   description: >
     The address to send subscription emails from.
     Make sure your server is allowed to send email from this address, or your mails will not be received.
