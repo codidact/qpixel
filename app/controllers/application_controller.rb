@@ -344,8 +344,8 @@ class ApplicationController < ActionController::Base
                    path.start_with?('/assets/') ||
                    path.end_with?('.css') || path.end_with?('.js')
 
-    # Make available to controller that wer are currently restricted
-    @restricted = true
+    # Make available to controller that the we should not leak posts in the sidebar
+    @prevent_sidebar = true
 
     # Allow /help (help center), /help/* and /policy/* depending on settings
     help = SiteSetting['RestrictedAccessHelpPagesPublic']

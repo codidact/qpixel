@@ -405,8 +405,8 @@ class PostsController < ApplicationController
       not_found
     end
 
-    # If we are a restricted community, make sure we don't leak featured posts in the sidebar
-    render layout: 'without_sidebar' if @restricted
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def upload
@@ -430,8 +430,8 @@ class PostsController < ApplicationController
                  .group_by(&:post_type_id)
                  .transform_values { |posts| posts.group_by { |p| p.help_category.presence } }
 
-    # If we are a restricted community, make sure we don't leak featured posts in the sidebar
-    render layout: 'without_sidebar' if @restricted
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def change_category
