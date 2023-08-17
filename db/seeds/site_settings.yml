@@ -182,6 +182,20 @@
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
 
+- name: SubscriptionSenderName
+  value: Codidact Subscriptions
+  value_type: string
+  category: EmailSubscriptions
+  description: >
+    The name of the sender of subscriptions. Email clients show this as whom the email was from.
+
+- name: SubscriptionSenderEmail
+  value: subscriptions@codidact.com
+  value_type: string
+  category: EmailSubscriptions
+  description: >
+    The address to send subscription emails from. Make sure your server is allowed to send email from this address, or it will land in spam.
+
 - name: LotteryAgeDeprecationSpeed
   value: 0.002
   value_type: float
