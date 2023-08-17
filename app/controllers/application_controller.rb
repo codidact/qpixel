@@ -11,6 +11,11 @@ class ApplicationController < ActionController::Base
   before_action :check_if_warning_or_suspension_pending
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
+
+  # Before checking 2fa enforcing or access, store the location that the user is trying to access.
+  # In case re-authentication is necessary / the user signs in, we can direct back to this location directly.
+  before_action :store_user_location!, if: :storable_location?
+
   before_action :enforce_2fa
   before_action :block_write_request, if: :read_only_mode?
 
@@ -418,5 +423,28 @@ class ApplicationController < ActionController::Base
         end
       end
     end
+  end
+
+  # Checks if the requested location should be stored.
+  #
+  # Its important that the location is NOT stored if:
+  # - The request method is not GET (non idempotent)
+  # - The request is handled by a Devise controller such as Devise::SessionsController as that could cause an
+  #    infinite redirect loop.
+  # - The request is an Ajax request as this can lead to very unexpected behaviour.
+  # - The request is to a location we dont want to store, such as:
+  #   - Anything trying to fetch for the current user (filters, preferences, etc) as it is not the actual page
+  #   - The mobile login, as it would redirect to the code url after the sign in
+  #   - Uploaded files, as these appear in posts and are not the main route we would want to store
+  def storable_location?
+    request.get? && is_navigational_format? && !devise_controller? && !request.xhr? &&
+      !request.path.start_with?('/users/me') &&
+      !request.path.start_with?('/users/mobile-login') &&
+      !request.path.start_with?('/uploads/')
+  end
+
+  # Stores the location in the system for the current session, such that after login we send them back to the same page.
+  def store_user_location!
+    store_location_for(:user, request.fullpath)
   end
 end

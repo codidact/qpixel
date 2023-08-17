@@ -33,7 +33,7 @@ class ReactionsController < ApplicationController
 
     reaction = Reaction.new(user: current_user, post: @post, reaction_type: reaction_type, comment: comment)
 
-    begin 
+    begin
       ActiveRecord::Base.transaction do
         thread&.save!
         comment&.save!
@@ -42,9 +42,10 @@ class ReactionsController < ApplicationController
 
       render json: { status: 'success' }
     rescue
-      render json: { status: 'failed', message: "Could not create comment thread: #{(thread&.errors&.full_messages \
-                                                        + comment&.errors&.full_messages \
-                                                        + reaction.errors.full_messages).join(', ')}" }
+      render json: { status: 'failed',
+                     message: "Could not create comment thread: #{(thread&.errors&.full_messages.to_a \
+                                                        + comment&.errors&.full_messages.to_a \
+                                                        + reaction&.errors&.full_messages.to_a).join(', ')}" }
     end
   end
 

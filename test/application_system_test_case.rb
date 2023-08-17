@@ -17,7 +17,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: DRIVER, screen_size: [1920, 1080]
 
   setup do
-    Community.first.update(host: root_url.gsub(/https?:\/\//, '').gsub(/\//, ''))
+    Community.first.update(host: root_url.gsub(/https?:\/\//, '').gsub('/', ''))
   end
 
   # Logs in as the specified user
@@ -37,8 +37,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def log_out
     within :css, '.header' do
       find(:css, 'i.far.fa-caret-square-down').find(:xpath, '..').click
-      click_on 'Sign Out'
     end
+
+    find_link('Sign Out').click
   end
 
   # Pretends the user has clicked the confirmation link in the email they received.
@@ -59,6 +60,44 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       user_or_fixture
     else
       users(user_or_fixture)
+    end
+  end
+
+  # In the post form, this method will select the given tag.
+  #
+  # @param tag_name [String] the name of the tag
+  # @param create_new [Boolean] whether creating a new tag is allowed (default false)
+  def post_form_select_tag(tag_name, create_new = false)
+    # First enter the tag name into the select2 search field for the tag
+    within find_field('Tags (at least one):').find(:xpath, '..') do
+      find('.select2-search__field').fill_in(with: tag_name)
+    end
+
+    # Get the first item listed that is not the "Searching..." item
+    first_option = find('#select2-post_tags_cache-results li:first-child') { |el| el.text != 'Searching…' }
+
+    if first_option.first('span').text == tag_name
+      # If the text matches the tag name, first check whether we are creating a new tag.
+      # If so, confirm that we are allowed to. If all is good, actually click on the item.
+      if create_new || !first_option.text.include?('Create new tag')
+        first_option.click
+      else
+        raise "Expected to find tag with the name #{tag_name}, " \
+              'but could not select it from options without creating a new tag.'
+      end
+    elsif create_new
+      # The first item returned is not the tag we were looking for (another tag partial match + not existing)
+      # If we are allowed to create a tag, select the last option from the list, which is always the tag creation.
+      last_option = find('#select2-post_tags_cache-results li:last-child')
+      if last_option.first('span').text == tag_name
+        last_option.click
+      else
+        raise "Tried to select tag #{tag_name} for creation, but it does not seem to be a presented option."
+      end
+    else
+      # The first item returned is not the tag we were looking for, and we are not allowed to create a tag.
+      raise "Expected to find tag with the name #{tag_name}, " \
+            'but could not select it from options without creating a new tag.'
     end
   end
 end
