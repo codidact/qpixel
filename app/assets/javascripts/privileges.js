@@ -27,7 +27,10 @@ $(() => {
     const $input = $td.find('.js-privilege-edit');
     const name = $input.data('name');
     const type = $input.data('type');
-    const value = parseFloat($input.val() || '') || null;
+
+    const rawValue = parseFloat($input.val() || '')
+
+    const value = rawValue || rawValue === 0 ? rawValue : null;
 
     const resp = await fetch(`/admin/privileges/${name}`, {
       method: 'POST',
