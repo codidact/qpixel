@@ -133,7 +133,7 @@ class TagsController < ApplicationController
     posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
                 'WHERE posts_tags.tag_id = ?'
-    exec([posts_sql, "\n- #{@subordinate.name}", "\n- #{@primary.name}", @subordinate.id])
+    exec([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id])
 
     # Break hierarchies
     tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
@@ -167,7 +167,7 @@ class TagsController < ApplicationController
     caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                  'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
                  'WHERE posts_tags.tag_id = ?'
-    exec([caches_sql, "\n- #{@tag.name}", '', @tag.id])
+    exec([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
 
     # Delete all references to the tag
     tables.each do |tbl|
