@@ -55,3 +55,7 @@ dump.rdb
 
 # Ignore rbenv local file
 .ruby-version
+
+# Ignore IRB files
+.irbrc
+.irb_history
