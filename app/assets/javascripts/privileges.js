@@ -28,6 +28,7 @@ $(() => {
     const name = $input.data('name');
     const type = $input.data('type');
 
+    // incorrect input values will cause rawValue to be NaN
     const rawValue = parseFloat($input.val() || '')
 
     const value = Number.isNaN(rawValue) ? null : rawValue;
