@@ -30,7 +30,7 @@ $(() => {
 
     const rawValue = parseFloat($input.val() || '')
 
-    const value = rawValue || rawValue === 0 ? rawValue : null;
+    const value = Number.isNaN(rawValue) ? null : rawValue;
 
     const resp = await fetch(`/admin/privileges/${name}`, {
       method: 'POST',
