@@ -6,13 +6,6 @@ const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 
   'start', 'dir'];
 
 $(() => {
-  $('.js-template').on('click', async ev => {
-    const $postField = $('.js-post-field');
-    $tgt = $(ev.target);
-    const content = $(`#template-md-${$tgt.attr('data-template-id')}`).val();
-    $postField.val(content);
-  });
-
   const $uploadForm = $('.js-upload-form');
 
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);

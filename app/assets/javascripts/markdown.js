@@ -15,6 +15,14 @@ $(() => {
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   };
 
+
+  $('.js-template').on('click', async ev => {
+    const $postField = $('.js-post-field');
+    $tgt = $(ev.target);
+    const content = $(`#template-md-${$tgt.attr('data-template-id')}`).val();
+    replaceSelection($postField, content);
+  });
+
   $(document).on('click', '.js-markdown-tool', ev => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
