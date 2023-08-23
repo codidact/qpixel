@@ -4,57 +4,66 @@ $(() => {
     el.removeClass(icons.join(' ')).addClass(icon);
   };
 
-  $(document).on('keyup change paste', '[data-character-count]', ev => {
+  const setCounterState = (el, state) => {
+    if(state == 'info') {
+      el.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
+    } else if(state === 'warning') {
+      el.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
+    } else if(state === 'error') {
+      el.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
+    } else {
+      el.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
+    }
+  }
+
+  const setInputState = (el, state) => {
+    el.toggleClass('failed-validation', state);
+  };
+
+  const setSubmitButtonState = (el, state) => {
+    if (el) {
+      el.attr('disabled', state).toggleClass('is-muted', state);
+    }
+  };
+
+  $(document).on('keyup change paste', '[data-character-count]', (ev) => {
     const $tgt = $(ev.target);
     const $counter = $($tgt.attr('data-character-count'));
     const $button = $counter.parents('form').find('input[type="submit"]');
     const $count = $counter.find('.js-character-count__count');
     const $icon = $counter.find('.js-character-count__icon');
 
-    const displayAt = parseFloat($counter.attr('data-display-at'));
+    const count = $tgt.val().length;
     const max = parseInt($counter.attr('data-max'), 10);
     const min = parseInt($counter.attr('data-min'), 10);
-    const count = $tgt.val().length;
-    const text = `${count} / ${max}`;
+    const threshold = parseFloat($counter.attr('data-threshold'));
 
-    if (displayAt) {
-      if (count >= displayAt * max) {
-        $counter.removeClass('hide');
-      }
-      else {
-        $counter.addClass('hide');
-      }
+    const gtnMax = count > max;
+    const ltnMin = count < min;
+    const gteThreshold = count >= threshold * max;
+
+    const text = `${count} / ${ltnMin ? min : max}`;
+    
+    if(!ltnMin && !gtnMax && !gteThreshold) {
+      $counter.addClass('hide');
+    } else {
+      $counter.removeClass('hide');
     }
 
-    if (count > max) {
-      $counter.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
+    if(gtnMax || ltnMin) {
+      setCounterState($counter, 'error');
       setIcon($icon, 'fa-times');
-      if ($button) {
-        $button.attr('disabled', true).addClass('is-muted');
-      }
-    }
-    else if (count > 0.75 * max) {
-      $counter.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
+      setSubmitButtonState($button, true);
+      setInputState($tgt, true);
+    } else if (gteThreshold) {
+      setCounterState($counter, 'warning');
       setIcon($icon, 'fa-exclamation-circle');
-      if ($button) {
-        $button.attr('disabled', false).removeClass('is-muted');
-      }
-    }
-    else if (min && count < min) {
-      $counter.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
-      setIcon($icon, 'fa-ellipsis-h');
-      if ($button) {
-        $button.attr('disabled', true).addClass('is-muted');
-      }
-      $tgt.addClass('failed-validation');
-    }
-    else {
-      $counter.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
+      setSubmitButtonState($button, false);
+    } else {
+      setCounterState($counter);
       setIcon($icon, 'fa-check');
-      if ($button) {
-        $button.attr('disabled', false).removeClass('is-muted');
-      }
-      $tgt.removeClass('failed-validation');
+      setSubmitButtonState($button, false);
+      setInputState($tgt, false);
     }
 
     $count.text(text);
