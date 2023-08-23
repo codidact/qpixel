@@ -17,7 +17,7 @@
   threshold ||= defined?(threshold) && !threshold.nil? ? threshold.to_f : 0.75
 %>
 
-<span class="has-float-right has-font-size-caption js-character-count-<%= type %> <%= cur.between?(min, max) ? 'hide' : '' %>"
+<span class="has-float-right has-font-size-caption js-character-count-<%= type %>"
   data-max="<%= max %>"
   data-min="<%= min %>"
   data-threshold="<%= threshold %>">
