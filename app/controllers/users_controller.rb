@@ -342,14 +342,25 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def validate_profile_website(profile_params)
+    uri = profile_params[:website]
+
+    if URI.parse(uri).instance_of?(URI::Generic)
+      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
+      # parsed correctly in the view later on.
+      profile_params[:website] = "https://#{uri}"
+    end
+  rescue URI::InvalidURIError
+    profile_params.delete(:website)
+    flash[:danger] = 'Invalid profile website link.'
+  end
+
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
     profile_params[:twitter] = profile_params[:twitter].delete('@')
 
-    if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{profile_params[:website]}"
+    if profile_params[:website].present?
+      validate_profile_website(profile_params)
     end
 
     @user = current_user
