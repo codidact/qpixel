@@ -129,11 +129,18 @@ class TagsController < ApplicationController
     AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user,
                              comment: "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
 
-    # Take the tag off posts
+    # Replace subordinate with primary, except when a post already has primary (to avoid giving them a duplicate tag)
     posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                'WHERE posts_tags.tag_id = ?'
-    exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id])
+                'WHERE posts_tags.tag_id = ? ' \
+                'AND post_tags.post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id = ?)'
+    exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id, @primary.id])
+
+    # Remove the subordinate tag from posts that still have it (the ones that were excluded from our previous query)
+    posts2_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                 'WHERE posts_tags.tag_id = ?'
+    exec_sql([posts2_sql, "\n- #{@subordinate.name}\n", "\n", @subordinate.id])
 
     # Break hierarchies
     tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
