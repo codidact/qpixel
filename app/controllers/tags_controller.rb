@@ -133,21 +133,21 @@ class TagsController < ApplicationController
     posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
                 'WHERE posts_tags.tag_id = ?'
-    exec([posts_sql, "\n- #{@subordinate.name}", "\n- #{@primary.name}", @subordinate.id])
+    exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id])
 
     # Break hierarchies
     tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
-    exec([tags_sql, @subordinate.id])
+    exec_sql([tags_sql, @subordinate.id])
 
     # Remove references to the tag
     sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
-    exec([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
+    exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
 
     # Nuke it from orbit
     @subordinate.destroy
@@ -167,12 +167,12 @@ class TagsController < ApplicationController
     caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                  'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
                  'WHERE posts_tags.tag_id = ?'
-    exec([caches_sql, "\n- #{@tag.name}", '', @tag.id])
+    exec_sql([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
 
     # Delete all references to the tag
     tables.each do |tbl|
       sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
-      exec([sql, @tag.id])
+      exec_sql([sql, @tag.id])
     end
 
     # Nuke it
@@ -199,7 +199,7 @@ class TagsController < ApplicationController
                                 tag_synonyms_attributes: [:id, :name, :_destroy])
   end
 
-  def exec(sql_array)
+  def exec_sql(sql_array)
     ApplicationRecord.connection.execute(ActiveRecord::Base.sanitize_sql_array(sql_array))
   end
 end
