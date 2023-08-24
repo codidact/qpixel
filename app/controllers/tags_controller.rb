@@ -134,7 +134,7 @@ class TagsController < ApplicationController
       posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
                   'WHERE posts_tags.tag_id = ? ' \
-                  'AND post_tags.post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id = ?)'
+                  'AND posts_tags.post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id = ?)'
       exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id, @primary.id])
 
       # Remove the subordinate tag from posts that still have it (the ones that were excluded from our previous query)
