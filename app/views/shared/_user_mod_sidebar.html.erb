@@ -65,10 +65,10 @@
                     <i class="fas fa-user-times fa-fw"></i>
                     Clear User Profile
                 <% end %>
-                <%= link_to mod_delete_or_destroy_path(user),
-                            class: "menu--item #{current_page?(mod_delete_or_destroy_path(user)) ? 'is-active' : ''}" do %>
+                <%= link_to mod_delete_path(user),
+                            class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : ''}" do %>
                     <i class="fas fa-trash fa-fw"></i>
-                    Delete or Destroy Account
+                    Delete Account
                 <% end %>
 
                 <% if current_user.is_global_moderator || current_user.is_global_admin %>

@@ -6,7 +6,7 @@
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
   <div class="grid--cell is-9">
-    <h1>Delete or Destroy Account</h1>
+    <h1>Delete Account</h1>
 
     <p>Some users are just blatant spammers or trolls and some users are just unwilling to follow site rules, even after repeated warnings and suspensions. As a moderator, you may delete the user account in these cases.</p>
 
@@ -15,13 +15,6 @@
     </div>
 
     <div class="widget">
-        <div class="widget--body">
-            <h4>Destroy Acccount</h4>
-            <p>Destroy Accounts of blatant spammers and trolls.</p>
-
-            <%= link_to 'Destroy Account', destroy_user_path(@user.id), remote: true,
-                        method: :delete, class: 'js-destroy-user button is-danger is-filled' %>
-        </div>
         <div class="widget--body">
             <h4>Delete Community Profile</h4>
             <p>Delete the community profile of users who are unwilling to follow the rules of this site, even after repeated warnings and suspensions. Choose this option if a user has requested deletion of their profile on one site, once you have confirmed their identity and request.</p>

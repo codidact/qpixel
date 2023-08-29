@@ -94,7 +94,6 @@ Rails.application.routes.draw do
     get    'flags',                        to: 'flags#queue', as: :flag_queue
     get    'flags/handled',                to: 'flags#handled', as: :handled_flags
     get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
-    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
     get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
     post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
     post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
@@ -214,7 +213,7 @@ Rails.application.routes.draw do
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
     get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
     post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
-    get    '/:id/mod/delete-or-destroy', to: 'users#mod_delete', as: :mod_delete_or_destroy
+    get    '/:id/mod/delete', to: 'users#mod_delete', as: :mod_delete
     get    '/:id/mod/hungry-codidactyl', to: 'users#mod_destroy', as: :mod_hungry_codidactyl
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
     get    '/:id/mod/escalate',         to: 'users#mod_escalation', as: :user_escalation
