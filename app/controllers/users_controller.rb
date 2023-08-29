@@ -94,7 +94,9 @@ class UsersController < ApplicationController
 
   def filters
     respond_to do |format|
-      format.html
+      format.html do
+        authenticate_user!
+      end
       format.json do
         render json: filters_json
       end
