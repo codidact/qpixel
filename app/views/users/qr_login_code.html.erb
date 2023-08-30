@@ -4,8 +4,20 @@
   follow the URL to log in there.
 </p>
 
-<div class="has-text-align-center">
-  <svg height="<%= @qr_code.qrcode.module_count * 4 %>" width="<%= @qr_code.qrcode.module_count * 4 %>">
-    <%= raw(@qr_code.as_svg(standalone: false, module_size: 4)) %>
-  </svg>
+<div class="notice is-warning">
+  <p><i class="fas fa-exclamation-triangle"></i> <strong>Caution</strong></p>
+  <p>
+    The QR code below, when scanned, provides immediate access to your <%= t 'platform.network_name' %> account,
+    without asking for your password again. This makes it easier to sign in on your phone, but make sure nobody's
+    looking over your shoulder! Take extra care in public places.
+  </p>
 </div>
+
+<details>
+  <summary>Show QR code</summary>
+  <div class="has-text-align-center">
+    <svg height="<%= @qr_code.qrcode.module_count * 4 %>" width="<%= @qr_code.qrcode.module_count * 4 %>">
+      <%= raw(@qr_code.as_svg(standalone: false, module_size: 4)) %>
+    </svg>
+  </div>
+</details>

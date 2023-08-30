@@ -1,4 +1,6 @@
 class SubscriptionMailer < ApplicationMailer
+  helper UsersHelper
+
   def subscription
     @subscription = params[:subscription]
     @questions = @subscription.questions&.includes(:user) || []

@@ -1,6 +1,6 @@
 standard_user:
   email: standard@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: standard_user
   is_global_admin: false
@@ -9,7 +9,7 @@ standard_user:
 
 closer:
   email: closer@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: closer
   website: https://example.com/closer
@@ -22,7 +22,7 @@ closer:
 
 editor:
   email: editor@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: editor
   is_global_admin: false
@@ -33,7 +33,7 @@ editor:
 
 deleter:
   email: delete@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: deleter
   is_global_admin: false
@@ -42,7 +42,7 @@ deleter:
 
 moderator:
   email: moderator@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: moderator
   is_global_admin: false
@@ -51,7 +51,7 @@ moderator:
 
 admin:
   email: admin@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: admin
   is_global_admin: false
@@ -60,7 +60,7 @@ admin:
 
 global_moderator:
   email: global-moderator@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: global-moderator
   is_global_admin: false
@@ -69,7 +69,7 @@ global_moderator:
 
 global_admin:
   email: global-admin@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: global-admin
   is_global_admin: true
@@ -78,7 +78,7 @@ global_admin:
 
 no_community_user:
   email: no_community_user@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: no_community_user
   is_global_admin: false
@@ -88,7 +88,7 @@ no_community_user:
 system:
   id: -99
   email: system@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: system
   is_global_admin: true
@@ -97,7 +97,7 @@ system:
 
 deleted_account:
   email: deleted@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: deleted_account
   confirmed_at: 2020-01-01T00:00:00.000000Z
@@ -107,7 +107,17 @@ deleted_account:
 
 deleted_profile:
   email: deleted_profile@qpixel-test.net
-  encrypted_password: abcdefghijklmnopqrstuvwxyz
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
   sign_in_count: 1337
   username: deleted_profile
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+enabled_2fa:
+  email: 2fa@qpixel-test.net
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: enabled_2fa
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+  enabled_2fa: true
+  two_factor_token: WT65ANYXBB2SBR7III7IVWNJDS4PQF2T
+  backup_2fa_code: M8lENyehyCvo9F9MbyTl1aOL

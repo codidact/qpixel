@@ -11,42 +11,42 @@
 <% end %>
 
 <% post_count = @posts.count %>
-<div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
-  <div>
-    <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %> &middot;
+<div class="has-color-tertiary-500 category-meta">
+  <span>
+    <span title="<%= post_count %> posts">
+      <%= short_number_to_human post_count, precision: 1, significant: false %>
+      <%= 'post'.pluralize(post_count) %> &nbsp;
+    </span>
 
     <% if current_user&.is_admin %>
-      <%= link_to 'Edit Category', edit_category_path(@category) %>
-      &middot;
+    <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
     <% end %>
 
     <%= link_to 'Subscribe',
-                new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
-                class: 'button is-outlined' %>
-  </div>
-
+	new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
+	class: 'button is-outlined',
+	title: 'Get email notifications for new top-level posts' %>
+  </span>
+      
   <div class="button-list is-gutterless has-margin-2">
-    <%= link_to 'Activity', query_url(sort: 'activity'),
+    <%= link_to 'Activity', request.params.merge(sort: 'activity'),
                 class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
                     params[:sort] == 'activity' ? 'is-active' : ''}",
                 title: 'most recent changes: new posts, edits, close/open, delete/undelete' %>
-    <%= link_to 'Age', query_url(sort: 'age'),
+    <%= link_to 'Age', request.params.merge(sort: 'age'),
                 class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
                 title: 'newest posts (ignores other activity)' %>
-    <%= link_to 'Score', query_url(sort: 'score'),
+    <%= link_to 'Score', request.params.merge(sort: 'score'),
                 class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}",
                 title: 'highest score first (not the same as net votes)' %>
     <% if SiteSetting['AllowContentTransfer'] %>
-      <%= link_to 'Native', query_url(sort: 'native'),
+      <%= link_to 'Native', request.params.merge(sort: 'native'),
                   class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}",
                   title: 'exclude imported posts' %>
     <% end %>
-    <% if @category.name == 'Q&A' %>
-      <%= link_to 'Random', query_url(sort: 'lottery'),
-                  class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
-                  title: 'random set of questions, usually older ones' %>
-    <% end %>
+    <%= link_to 'Random', request.params.merge(sort: 'lottery'),
+        class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
+        title: 'random set of questions, usually older ones' %>
   </div>
 </div>
 

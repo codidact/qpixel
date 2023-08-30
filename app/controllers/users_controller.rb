@@ -94,7 +94,9 @@ class UsersController < ApplicationController
 
   def filters
     respond_to do |format|
-      format.html
+      format.html do
+        authenticate_user!
+      end
       format.json do
         render json: filters_json
       end
@@ -196,7 +198,8 @@ class UsersController < ApplicationController
     @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                       posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).count
+    @edits = PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
+                                                                post_history_types: { name: 'post_edited' }).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -208,13 +211,14 @@ class UsersController < ApplicationController
                                                                     posts: { deleted: false })
             when 'edits'
               SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
+                                                                 post_history_types: { name: 'post_edited' })
             else
               Post.undeleted.where(user: @user) + \
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                     posts: { deleted: false }) + \
               SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
     @items = items.sort_by(&:created_at).reverse
@@ -340,14 +344,25 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def validate_profile_website(profile_params)
+    uri = profile_params[:website]
+
+    if URI.parse(uri).instance_of?(URI::Generic)
+      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
+      # parsed correctly in the view later on.
+      profile_params[:website] = "https://#{uri}"
+    end
+  rescue URI::InvalidURIError
+    profile_params.delete(:website)
+    flash[:danger] = 'Invalid profile website link.'
+  end
+
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
     profile_params[:twitter] = profile_params[:twitter].delete('@')
 
-    if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{profile_params[:website]}"
+    if profile_params[:website].present?
+      validate_profile_website(profile_params)
     end
 
     @user = current_user
@@ -518,7 +533,7 @@ class UsersController < ApplicationController
       sign_in user
       remember_me user
       AuditLog.user_history(event_type: 'mobile_login', related: user)
-      redirect_to root_path
+      redirect_to after_sign_in_path_for(user)
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'

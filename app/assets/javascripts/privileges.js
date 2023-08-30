@@ -27,7 +27,11 @@ $(() => {
     const $input = $td.find('.js-privilege-edit');
     const name = $input.data('name');
     const type = $input.data('type');
-    const value = parseFloat($input.val() || '') || null;
+
+    // incorrect input values will cause rawValue to be NaN
+    const rawValue = parseFloat($input.val())
+
+    const value = Number.isNaN(rawValue) ? null : rawValue;
 
     const resp = await fetch(`/admin/privileges/${name}`, {
       method: 'POST',

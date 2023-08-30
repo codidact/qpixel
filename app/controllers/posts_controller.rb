@@ -191,10 +191,19 @@ class PostsController < ApplicationController
         if @post.update(edit_post_params.merge(body: body_rendered,
                                                last_edited_at: DateTime.now, last_edited_by: current_user,
                                                last_activity: DateTime.now, last_activity_by: current_user))
+
           PostHistory.post_edited(@post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
                                   before_title: before[:title], after_title: @post.title,
                                   before_tags: before[:tags], after_tags: @post.tags)
+
+          if params[:redact]
+            # Hide all previous history
+            PostHistory.where(post: @post).update_all(hidden: true)
+            PostHistory.history_hidden(@post, current_user, after: @post.body_markdown,
+                                       after_title: @post.title, after_tags: @post.tags,
+                                       comment: 'Detailed history before this event is hidden because of a redaction.')
+          end
           Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
           do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
@@ -232,7 +241,7 @@ class PostsController < ApplicationController
           do_draft_delete(URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
-          @post.errors = edit.errors
+          @post.errors.copy!(edit.errors)
           render :edit, status: :bad_request
         end
       end
@@ -395,6 +404,9 @@ class PostsController < ApplicationController
     if @post&.help_category == '$Moderator' && !current_user&.is_moderator
       not_found
     end
+
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def upload
@@ -417,6 +429,9 @@ class PostsController < ApplicationController
                  .order(:help_ordering, :title)
                  .group_by(&:post_type_id)
                  .transform_values { |posts| posts.group_by { |p| p.help_category.presence } }
+
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def change_category

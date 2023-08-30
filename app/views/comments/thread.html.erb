@@ -24,9 +24,9 @@
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
-<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
+<div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
      data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
-     data-comments="<%= @comment_thread.reply_count %>">
+     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
   <div class="widget--header">
     <% if params[:inline] == 'true' %>
       <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
@@ -47,13 +47,13 @@
           <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
             data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time."
             role="button" aria-label="Unfollow this thread">
-            <i class="fa fa-minus fa-fw"></i>unfollow
+            <i class="fas fa-fw fa-bell-slash"></i> unfollow
           </a>
         <% else %>
           <a href="#" class="widget--header-link js--restrict-thread" data-action="follow"
             data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response."
             role="button" aria-label="Follow this thread">
-            <i class="fa fa-plus fa-fw"></i>follow
+            <i class="fas fa-fw fa-bell"></i> follow
           </a>
         <% end %>
       <% end %>

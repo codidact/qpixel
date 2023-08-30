@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_27_035349) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -388,6 +388,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_035349) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
+    t.boolean "hidden", default: false, null: false
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
@@ -716,6 +717,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_035349) do
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
+    t.string "backup_2fa_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
