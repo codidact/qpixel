@@ -8,7 +8,7 @@ module PostValidations
     validate :maximum_tag_length, if: -> { post_type.has_tags }
     validate :no_spaces_in_tags, if: -> { post_type.has_tags }
     validate :stripped_minimum_body, if: -> { !body_markdown.nil? }
-    validate :stripped_minimum_title, if: -> { !title.nil? }
+    validate :stripped_minimum_title, if: -> { !title.nil? && !['HelpDoc', 'PolicyDoc'].include?(post_type.name) }
     validate :maximum_title_length, if: -> { !title.nil? }
     validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
   end
