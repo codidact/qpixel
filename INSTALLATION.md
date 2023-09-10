@@ -130,6 +130,10 @@ Set up the database:
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
 
+We also recommend you load the QPixel console extensions for easier development:
+
+    cp .sample.irbrc .irbrc
+
 You'll need to create a Community record and purge the Rails cache before you can seed the database.
 In a Rails console (`rails c`), run:
 
@@ -138,7 +142,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can call `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
+After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0

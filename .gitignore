@@ -52,3 +52,7 @@ qpixel-import.tar.gz
 *.swp
 
 dump.rdb
+
+# Ignore IRB files
+.irbrc
+.irb_history
