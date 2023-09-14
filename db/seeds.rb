@@ -42,7 +42,10 @@ sorted.each do |f, type|
         Community.all.each do |c|
           RequestContext.community = c
           post = Post.find_by doc_slug: seed['doc_slug']
-          if post.present? && PostHistory.where(post: post).count <= 1
+          if post.present? && PostHistory.where(post: post)
+                                         .where.not(post_history_type:
+                                                      PostHistoryType.find_by(name: 'initial_revision'))
+                                         .count.zero?
             # post exists, still original version: update post
             post.update(seed.merge('community_id' => c.id))
             updated += 1
