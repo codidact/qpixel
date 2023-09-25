@@ -44,12 +44,6 @@ $(() => {
 
     const text = `${count} / ${ltnMin ? min : max}`;
     
-    if(!ltnMin && !gtnMax && !gteThreshold) {
-      $counter.addClass('hide');
-    } else {
-      $counter.removeClass('hide');
-    }
-
     if(gtnMax || ltnMin) {
       setCounterState($counter, 'error');
       setIcon($icon, 'fa-times');
