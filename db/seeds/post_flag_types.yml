@@ -16,7 +16,7 @@
   description: >
     This question is off-topic or cannot be reasonably answered in its current form and needs revision by its author.
   confidential: false
-  active: true
+  active: false
   post_type_id: <%= Question.post_type_id %>
 
 - name: is a duplicate

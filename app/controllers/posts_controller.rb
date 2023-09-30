@@ -409,6 +409,9 @@ template_post_type: @post.template_post_type }
     if @post&.help_category == '$Moderator' && !current_user&.is_moderator
       not_found
     end
+
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def upload
@@ -431,6 +434,9 @@ template_post_type: @post.template_post_type }
                  .order(:help_ordering, :title)
                  .group_by(&:post_type_id)
                  .transform_values { |posts| posts.group_by { |p| p.help_category.presence } }
+
+    # Make sure we don't leak featured posts in the sidebar
+    render layout: 'without_sidebar' if @prevent_sidebar
   end
 
   def change_category
