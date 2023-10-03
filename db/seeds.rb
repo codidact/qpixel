@@ -26,6 +26,7 @@ sorted.each do |f, type|
     processed = ERB.new(File.read(f)).result(binding)
     data = YAML.load(processed)
     created = 0
+    errored = 0
     skipped = 0
     updated = 0
     data.each do |seed|
@@ -39,6 +40,9 @@ sorted.each do |f, type|
         puts "Running full Posts update..."
 
         seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
+
+        system_usr = User.find(-1)
+
         Community.all.each do |c|
           RequestContext.community = c
           post = Post.find_by doc_slug: seed['doc_slug']
@@ -46,13 +50,33 @@ sorted.each do |f, type|
                                          .where.not(post_history_type:
                                                       PostHistoryType.find_by(name: 'initial_revision'))
                                          .count.zero?
+
             # post exists, still original version: update post
             post.update(seed.merge('community_id' => c.id))
+
+            no_initial = PostHistory.where(post: post)
+                       .where(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
+                       .count.zero?
+
+            if no_initial
+              puts "[#{c.name}:#{seed['doc_slug']}] missing initial revision, creating..."
+              PostHistory.initial_revision(post, system_usr)
+            end
+
             updated += 1
           elsif post.nil?
             # post doesn't exist: create post
-            Post.create seed.merge('community_id' => c.id)
-            created += 1
+            status = Post.create seed.merge('community_id' => c.id, 'user' => system_usr)
+
+            if status.errors.size
+              status.errors.full_messages.each do |msg|
+                puts "[#{c.name}:#{seed['doc_slug']}] invalid: #{msg}"
+              end
+
+              errored += 1
+            else
+              created += 1
+            end
           else
             # post exists, versions diverged: skip
             skipped += 1
@@ -92,7 +116,7 @@ sorted.each do |f, type|
       end
     end
     unless Rails.env.test?
-      puts "#{type}: Created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
+      puts "#{type}: Errored #{errored}, Created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
     end
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."
