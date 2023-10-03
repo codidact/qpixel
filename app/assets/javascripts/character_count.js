@@ -20,13 +20,13 @@ $(() => {
    * @param {CounterState} state 
    */
   const setCounterState = (el, state) => {
-    if(state === 'info') {
+    if (state === 'info') {
       el.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
     }
-    else if(state === 'warning') {
+    else if (state === 'warning') {
       el.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
     }
-    else if(state === 'error') {
+    else if (state === 'error') {
       el.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
     }
     else {
@@ -70,7 +70,7 @@ $(() => {
 
     const text = `${count} / ${ltnMin ? min : max}`;
     
-    if(gtnMax || ltnMin) {
+    if (gtnMax || ltnMin) {
       setCounterState($counter, 'error');
       setCounterIcon($icon, 'fa-times');
       setSubmitButtonDisabledState($button, 'disabled');
