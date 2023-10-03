@@ -4,14 +4,21 @@ $(() => {
     el.removeClass(icons.join(' ')).addClass(icon);
   };
 
+  /**
+   * Sets the counter's state
+   * @param {'info'|'warning'|'error'|'default'} state 
+   */
   const setCounterState = (el, state) => {
-    if(state == 'info') {
+    if(state === 'info') {
       el.removeClass('has-color-yellow-700 has-color-red-500').addClass('has-color-primary');
-    } else if(state === 'warning') {
+    }
+    else if(state === 'warning') {
       el.removeClass('has-color-red-500 has-color-primary').addClass('has-color-yellow-700');
-    } else if(state === 'error') {
+    }
+    else if(state === 'error') {
       el.removeClass('has-color-yellow-700 has-color-primary').addClass('has-color-red-500');
-    } else {
+    }
+    else {
       el.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
     }
   }
@@ -21,7 +28,7 @@ $(() => {
    * @param {'valid'|'invalid'} state the state to set
    */
   const setInputValidationState = (el, state) => {
-    const isInvalid = state === 'invalid'
+    const isInvalid = state === 'invalid';
     el.toggleClass('failed-validation', isInvalid);
   };
 
@@ -62,7 +69,7 @@ $(() => {
       setIcon($icon, 'fa-exclamation-circle');
       setSubmitButtonDisabledState($button, 'enabled');
     } else {
-      setCounterState($counter);
+      setCounterState($counter, 'default');
       setIcon($icon, 'fa-check');
       setSubmitButtonDisabledState($button, 'enabled');
       setInputValidationState($tgt, 'valid');
