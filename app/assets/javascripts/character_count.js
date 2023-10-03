@@ -1,5 +1,9 @@
 $(() => {
-  const setIcon = (el, icon) => {
+  /**
+   * Sets the icon to show before the counter, if any
+   * @param {'fa-times'|'fa-exclamation-circle'|'fa-check'} icon name of the icon to show
+   */
+  const setCounterIcon = (el, icon) => {
     const icons = ['fa-ellipsis-h', 'fa-check', 'fa-exclamation-circle', 'fa-times'];
     el.removeClass(icons.join(' ')).addClass(icon);
   };
@@ -61,16 +65,16 @@ $(() => {
     
     if(gtnMax || ltnMin) {
       setCounterState($counter, 'error');
-      setIcon($icon, 'fa-times');
+      setCounterIcon($icon, 'fa-times');
       setSubmitButtonDisabledState($button, 'disabled');
       setInputValidationState($tgt, 'invalid');
     } else if (gteThreshold) {
       setCounterState($counter, 'warning');
-      setIcon($icon, 'fa-exclamation-circle');
+      setCounterIcon($icon, 'fa-exclamation-circle');
       setSubmitButtonDisabledState($button, 'enabled');
     } else {
       setCounterState($counter, 'default');
-      setIcon($icon, 'fa-check');
+      setCounterIcon($icon, 'fa-check');
       setSubmitButtonDisabledState($button, 'enabled');
       setInputValidationState($tgt, 'valid');
     }
