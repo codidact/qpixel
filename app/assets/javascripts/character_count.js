@@ -1,7 +1,14 @@
 $(() => {
   /**
+   * @typedef {'fa-ellipsis-h'|'fa-times'|'fa-exclamation-circle'|'fa-check'} CounterIcon
+   * @typedef {'info'|'warning'|'error'|'default'} CounterState
+   * @typedef {'valid'|'invalid'} InputValidationState
+   * @typedef {'disabled'|'enabled'} SubmitButtonDisabledState
+   */
+
+  /**
    * Sets the icon to show before the counter, if any
-   * @param {'fa-times'|'fa-exclamation-circle'|'fa-check'} icon name of the icon to show
+   * @param {CounterIcon} icon name of the icon to show
    */
   const setCounterIcon = (el, icon) => {
     const icons = ['fa-ellipsis-h', 'fa-check', 'fa-exclamation-circle', 'fa-times'];
@@ -10,7 +17,7 @@ $(() => {
 
   /**
    * Sets the counter's state
-   * @param {'info'|'warning'|'error'|'default'} state 
+   * @param {CounterState} state 
    */
   const setCounterState = (el, state) => {
     if(state === 'info') {
@@ -29,7 +36,7 @@ $(() => {
 
   /**
    * Sets the input's validation state
-   * @param {'valid'|'invalid'} state the state to set
+   * @param {InputValidationState} state the state to set
    */
   const setInputValidationState = (el, state) => {
     const isInvalid = state === 'invalid';
@@ -38,7 +45,7 @@ $(() => {
 
   /**
    * Sets the submit button's disabled state
-   * @param {'disabled'|'enabled'} state the state to set
+   * @param {SubmitButtonDisabledState} state the state to set
    */
   const setSubmitButtonDisabledState = (el, state) => {
     const isDisabled = state === 'disabled';
