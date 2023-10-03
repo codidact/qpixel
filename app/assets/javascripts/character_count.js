@@ -16,8 +16,13 @@ $(() => {
     }
   }
 
-  const setInputState = (el, state) => {
-    el.toggleClass('failed-validation', state);
+  /**
+   * Sets the input's validation state
+   * @param {'valid'|'invalid'} state the state to set
+   */
+  const setInputValidationState = (el, state) => {
+    const isInvalid = state === 'invalid'
+    el.toggleClass('failed-validation', isInvalid);
   };
 
   /**
@@ -51,7 +56,7 @@ $(() => {
       setCounterState($counter, 'error');
       setIcon($icon, 'fa-times');
       setSubmitButtonDisabledState($button, 'disabled');
-      setInputState($tgt, true);
+      setInputValidationState($tgt, 'invalid');
     } else if (gteThreshold) {
       setCounterState($counter, 'warning');
       setIcon($icon, 'fa-exclamation-circle');
@@ -60,7 +65,7 @@ $(() => {
       setCounterState($counter);
       setIcon($icon, 'fa-check');
       setSubmitButtonDisabledState($button, 'enabled');
-      setInputState($tgt, false);
+      setInputValidationState($tgt, 'valid');
     }
 
     $count.text(text);
