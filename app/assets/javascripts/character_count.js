@@ -17,7 +17,7 @@ $(() => {
 
   /**
    * Sets the counter's state
-   * @param {CounterState} state 
+   * @param {CounterState} state the state to set
    */
   const setCounterState = (el, state) => {
     if (state === 'info') {
@@ -32,7 +32,7 @@ $(() => {
     else {
       el.removeClass('has-color-red-500 has-color-yellow-700 has-color-primary');
     }
-  }
+  };
 
   /**
    * Sets the input's validation state
