@@ -20,10 +20,13 @@ $(() => {
     el.toggleClass('failed-validation', state);
   };
 
-  const setSubmitButtonState = (el, state) => {
-    if (el) {
-      el.attr('disabled', state).toggleClass('is-muted', state);
-    }
+  /**
+   * Sets the submit button's disabled state
+   * @param {'disabled'|'enabled'} state the state to set
+   */
+  const setSubmitButtonDisabledState = (el, state) => {
+    const isDisabled = state === 'disabled';
+    el.attr('disabled', isDisabled).toggleClass('is-muted', isDisabled);
   };
 
   $(document).on('keyup change paste', '[data-character-count]', (ev) => {
@@ -47,16 +50,16 @@ $(() => {
     if(gtnMax || ltnMin) {
       setCounterState($counter, 'error');
       setIcon($icon, 'fa-times');
-      setSubmitButtonState($button, true);
+      setSubmitButtonDisabledState($button, 'disabled');
       setInputState($tgt, true);
     } else if (gteThreshold) {
       setCounterState($counter, 'warning');
       setIcon($icon, 'fa-exclamation-circle');
-      setSubmitButtonState($button, false);
+      setSubmitButtonDisabledState($button, 'enabled');
     } else {
       setCounterState($counter);
       setIcon($icon, 'fa-check');
-      setSubmitButtonState($button, false);
+      setSubmitButtonDisabledState($button, 'enabled');
       setInputState($tgt, false);
     }
 
