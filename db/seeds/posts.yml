@@ -7,27 +7,35 @@
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
+  title: Privacy Policy
+  body_markdown: $FILE posts/privacy-policy.html
+  body: $FILE posts/privacy-policy.html
+  doc_slug: privacy-policy
+  help_category: Legal
+  community_id: ~
+
+- post_type_id: <%= PolicyDoc.post_type_id %>
   title: Code of Conduct
   body_markdown: $FILE posts/coc.html
   body: $FILE posts/coc.html
   doc_slug: code-of-conduct
-  help_category: About Codidact
+  help_category: About the Network
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Codidact FAQ
+  title: Network FAQ
   body_markdown: $FILE posts/global_faq.html
   body: $FILE posts/global_faq.html
-  doc_slug: codidact-faq
-  help_category: About Codidact
+  doc_slug: network-faq
+  help_category: About the Network
   community_id: ~
 
 - post_type_id: <%= PolicyDoc.post_type_id %>
-  title: Guidelines for promotional content in posts on Codidact sites
+  title: Guidelines for promotional content in posts
   body_markdown: $FILE posts/spam.html
   body: $FILE posts/spam.html
   doc_slug: spam
-  help_category: About Codidact
+  help_category: About the Network
   community_id: ~
 
 - post_type_id: <%= HelpDoc.post_type_id %>
@@ -45,17 +53,17 @@
   help_category: Site Information
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Advanced formatting help
-  body_markdown: $FILE posts/advanced-formatting.html
-  body: $FILE posts/advanced-formatting.html
-  doc_slug: advanced-formatting
-  help_category: Site Information
-
-- post_type_id: <%= HelpDoc.post_type_id %>
   title: So you're a moderator now
   body_markdown: $FILE posts/moderator.html
   body: $FILE posts/moderator.html
   doc_slug: moderator
+  help_category: $Moderator
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Guidance on warnings and suspensions
+  body_markdown: $FILE posts/warnings.html
+  body: $FILE posts/warnings.html
+  doc_slug: warnings
   help_category: $Moderator
 
 - post_type_id: <%= HelpDoc.post_type_id %>
@@ -80,14 +88,21 @@
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Guidelines for referencing and quoting on Codidact sites
+  title: Guidelines for referencing and quoting
   body_markdown: $FILE posts/referencing.html
   body: $FILE posts/referencing.html
   doc_slug: referencing
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
-  title: Codidact search options
+  title: Guidance on available licenses
+  body_markdown: $FILE posts/licenses.html
+  body: $FILE posts/licenses.html
+  doc_slug: licenses
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Search options
   body_markdown: $FILE posts/search.html
   body: $FILE posts/search.html
   doc_slug: search
@@ -98,4 +113,39 @@
   body_markdown: $FILE posts/scoring.html
   body: $FILE posts/scoring.html
   doc_slug: scoring
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: About category access and write permissions
+  body_markdown: $FILE posts/category-permissions.html
+  body: $FILE posts/category-permissions.html
+  doc_slug: category-permissions
+  help_category: $Moderator
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: User Abilities
+  body_markdown: $FILE posts/abilities.html
+  body: $FILE posts/abilities.html
+  doc_slug: abilities
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Voting
+  body_markdown: $FILE posts/voting.html
+  body: $FILE posts/voting.html
+  doc_slug: voting
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Why are posts deleted?
+  body_markdown: $FILE posts/deleted.html
+  body: $FILE posts/deleted.html
+  doc_slug: deleted
+  help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Advanced formatting help
+  body_markdown: $FILE posts/advanced-formatting.html
+  body: $FILE posts/advanced-formatting.html
+  doc_slug: advanced-formatting
   help_category: Site Information
