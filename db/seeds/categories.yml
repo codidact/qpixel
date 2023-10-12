@@ -27,7 +27,7 @@
   license_id: <%= License.unscoped.first.id %>
 
 - name: Templates
-  sequence: null
+  sequence: -1
   short_wiki: Templates
   # Default to moderators-only
   min_trust_level: 4
