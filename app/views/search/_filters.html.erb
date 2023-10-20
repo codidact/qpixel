@@ -25,10 +25,10 @@
   <% if user_signed_in? && defined? @category %>
     <%= label_tag :save_as_default, 'Is default for this category?' %>
     <%= check_box_tag :save_as_default, @category.id, false, { class: 'filter-is-default form-checkbox-element' } %>
-    <% end %>
+  <% end %>
   <div class="form-group-horizontal">
     <div class="form-group">
-      <%= label_tag :min_score, 'Min Score (8-1)', class: "form-element" %>
+      <%= label_tag :min_score, 'Min Score (0-1)', class: "form-element" %>
       <%= number_field_tag :min_score, @active_filter[:min_score],
           min: 0, max: 1, step: 0.01, class: 'form-element form--filter',
           data: { name: 'min_score' } %>
