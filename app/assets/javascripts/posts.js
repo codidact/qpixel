@@ -163,7 +163,7 @@ $(() => {
 
         $tgt.parents('form')
           .find('.rejected-elements')
-          .toggleClass('hide', removedElements.length === 0)
+          .toggleClass('hide', removedElements.length === 0 && removedAttributes.length === 0)
           .find('ul')
           .empty()
           .append(
