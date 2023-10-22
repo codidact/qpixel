@@ -1,12 +1,13 @@
 <%#
   Adds a copy link button and drop panel.
   Variables:
-    id  : id of the entity to link to
-    md  : Markdown-formatted link to copy
-    raw : raw URL of the link to copy
+    classes : a CSS string representing class names for the trigger button
+    id    : id of the entity to link to
+    md    : Markdown-formatted link to copy
+    raw   : raw URL of the link to copy
 %>
 
-<button class="tools--item" 
+<button class="<%= classes %>" 
         data-drop="#permalink-<%= id %>" 
         data-drop-force-dir="down" 
         data-drop-self-class-toggle="is-active" 

@@ -208,7 +208,7 @@
 
         <div class="post--actions">
           <div class="tools">
-            <%= render 'shared/copy_link', id: post.id, md: generic_share_link_md(post), raw: generic_share_link(post) %>
+            <%= render "shared/copy_link", classes: "tools--item", id: post.id, md: generic_share_link_md(post), raw: generic_share_link(post) %>
             <%= link_to post_history_path(post), class: 'tools--item', 'aria-label': 'View history of this post' do %>
               <i class="fa fa-history"></i>
               History
