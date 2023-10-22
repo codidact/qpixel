@@ -1,0 +1,49 @@
+<%#
+  Adds a copy link button and drop panel.
+  Variables:
+    id  : id of the entity to link to
+    md  : Markdown-formatted link to copy
+    raw : raw URL of the link to copy
+%>
+
+<button class="tools--item" 
+        data-drop="#permalink-<%= id %>" 
+        data-drop-force-dir="down" 
+        data-drop-self-class-toggle="is-active" 
+        type="button"
+        >
+  <i class="fa fa-link"></i>
+  <span class="js-text">Copy Link</span>
+</button>
+<div id="permalink-<%= id %>" class="droppanel has-padding-top-0 has-padding-right-1">
+  <label for="permalink-<%= id %>-raw" class="form-element">Raw</label>
+  <div class="flex-row-always">
+    <input class="form-element" 
+           id="permalink-<%= id %>-raw" 
+           value="<%= raw %>"
+           >
+    <button class="button is-icon-only-button js-permalink-copy" 
+            data-post-id="<%= id %>" 
+            data-link-type="raw" 
+            title="Copy raw URL" 
+            type="button"
+            >
+      <i class="fa fa-copy"></i>
+    </button>
+  </div>
+  <label for="permalink-<%= id %>-raw" class="form-element">Markdown</label>
+  <div class="flex-row-always">
+    <input class="form-element" 
+           id="permalink-<%= id %>-md" 
+           value="<%= md %>"
+           >
+    <button class="button is-icon-only-button js-permalink-copy" 
+            data-post-id="<%= id %>" 
+            data-link-type="md" 
+            title="Copy Markdown Link" 
+            type="button"
+            >
+      <i class="fa fa-copy"></i>
+    </button>
+  </div>
+</div>
