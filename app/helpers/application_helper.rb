@@ -100,7 +100,8 @@ module ApplicationHelper
   end
 
   def post_history_share_link_md(post, history, index)
-    "[#{post.title}](#{post_history_share_link(post, history, index)})"
+    rev_num = history.size - index
+    "[Revision #{rev_num} — #{post.title}](#{post_history_share_link(post, history, index)})"
   end
 
   def generic_edit_link(post)
