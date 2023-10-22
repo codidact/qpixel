@@ -260,19 +260,6 @@ $(() => {
     </div>`);
   });
 
-  $('.js-permalink > .js-text').text('Copy Link');
-  $('.js-permalink').on('click', ev => {
-    ev.preventDefault();
-
-    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
-    const link = $tgt.attr('href');
-    navigator.clipboard.writeText(link);
-    $tgt.find('.js-text').text('Copied!');
-    setTimeout(() => {
-      $tgt.find('.js-text').text('Copy Link');
-    }, 1000);
-  });
-
   const setCopyButtonState = ($button, state) => {
     const isSuccess = state === "success";
     const buttonClass = isSuccess ? "is-green" : "is-danger";
