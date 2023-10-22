@@ -7,15 +7,21 @@
     raw   : raw URL of the link to copy
 %>
 
-<button class="<%= classes %>" 
-        data-drop="#permalink-<%= id %>" 
-        data-drop-force-dir="down" 
-        data-drop-self-class-toggle="is-active" 
-        type="button"
-        >
+<%
+  # Defaults
+  classes = defined?(classes) ? classes : nil
+%>
+
+<%= tag.button class: classes,
+               data: { 
+                       drop: "#permalink-#{id}", 
+                       drop_force_dir: "down", 
+                       drop_self_class_toggle: "is-active" 
+                     },
+               type: "button" do %>
   <i class="fa fa-link"></i>
   <span class="js-text">Copy Link</span>
-</button>
+<% end %>
 <div id="permalink-<%= id %>" class="droppanel has-padding-top-0 has-padding-right-1">
   <label for="permalink-<%= id %>-raw" class="form-element">Raw</label>
   <div class="flex-row-always">
