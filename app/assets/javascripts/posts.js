@@ -6,6 +6,19 @@ const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 
   'start', 'dir'];
 
 $(() => {
+  DOMPurify.addHook("uponSanitizeAttribute", (node, event) => {
+    const rowspan = node.getAttribute("rowspan");
+    const colspan = node.getAttribute("colspan");
+
+    if (rowspan && Number.isNaN(+rowspan)) {
+      event.keepAttr = false;
+    }
+
+    if (colspan && Number.isNaN(+colspan)) {
+      event.keepAttr = false;
+    }
+  });
+
   const $uploadForm = $('.js-upload-form');
 
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
