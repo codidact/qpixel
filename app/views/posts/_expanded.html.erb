@@ -208,10 +208,47 @@
 
         <div class="post--actions">
           <div class="tools">
-            <%= link_to generic_share_link(post), class: 'tools--item js-permalink', role: 'button' do %>
+            <button class="tools--item" 
+                    data-drop="#permalink-<%= post.id %>" 
+                    data-drop-force-dir="down" 
+                    data-drop-self-class-toggle="is-active" 
+                    type="button"
+                    >
               <i class="fa fa-link"></i>
-              <span class="js-text">Permalink</span>
-            <% end %>
+              <span class="js-text">Copy Link</span>
+            </button>
+            <div id="permalink-<%= post.id %>" class="droppanel has-padding-top-0 has-padding-right-1">
+              <label for="permalink-<%= post.id %>-raw" class="form-element">Raw</label>
+              <div class="flex-row-always">
+                <input class="form-element" 
+                       id="permalink-<%= post.id %>-raw" 
+                       value="<%= generic_share_link(post) %>"
+                       >
+                <button class="button is-icon-only-button js-permalink-copy" 
+                        data-post-id="<%= post.id %>" 
+                        data-link-type="raw" 
+                        title="Copy raw URL" 
+                        type="button"
+                        >
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+              <label for="permalink-<%= post.id %>-raw" class="form-element">Markdown</label>
+              <div class="flex-row-always">
+                <input class="form-element" 
+                       id="permalink-<%= post.id %>-md" 
+                       value="<%= generic_share_link_md(post) %>"
+                       >
+                <button class="button is-icon-only-button js-permalink-copy" 
+                        data-post-id="<%= post.id %>" 
+                        data-link-type="md" 
+                        title="Copy Markdown Link" 
+                        type="button"
+                        >
+                  <i class="fa fa-copy"></i>
+                </button>
+              </div>
+            </div>
             <%= link_to post_history_path(post), class: 'tools--item', 'aria-label': 'View history of this post' do %>
               <i class="fa fa-history"></i>
               History
