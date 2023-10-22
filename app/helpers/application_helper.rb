@@ -91,6 +91,10 @@ module ApplicationHelper
     end
   end
 
+  def generic_share_link_md(post)
+    "[#{post.title}](#{generic_share_link(post)})"
+  end
+
   def generic_edit_link(post)
     edit_post_url(post)
   end
