@@ -18,7 +18,7 @@
       <% title = post.title +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
-      <span class="post--title-text"><%= title %></span>
+      <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post_type) %>
       <% end %>
