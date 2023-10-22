@@ -9,18 +9,25 @@
 
 <%
   # Defaults
-  classes = defined?(classes) ? classes : nil
+  classes = defined?(classes) ? classes : []
 %>
 
-<%= tag.button class: classes,
+<noscript>
+<%= link_to raw, class: classes, role: "button" do %>
+  <i class="fa fa-link"></i>
+  <span>Copy Link</span>
+<% end %>
+</noscript>
+<%= tag.button class: classes + ["js-permalink-trigger"],
                data: { 
                        drop: "#permalink-#{id}", 
                        drop_force_dir: "down", 
                        drop_self_class_toggle: "is-active" 
                      },
+               hidden: true,
                type: "button" do %>
   <i class="fa fa-link"></i>
-  <span class="js-text">Copy Link</span>
+  <span>Copy Link</span>
 <% end %>
 <div id="permalink-<%= id %>" class="droppanel has-padding-top-0 has-padding-right-1">
   <label for="permalink-<%= id %>-raw" class="form-element">Raw</label>

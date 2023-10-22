@@ -278,7 +278,9 @@ $(() => {
     }, 1e3);
   };
 
-  $('.js-permalink-copy').on('click', async (ev) => {
+  $(".js-permalink-trigger").removeAttr("hidden");
+
+  $(".js-permalink-copy").on("click", async (ev) => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
