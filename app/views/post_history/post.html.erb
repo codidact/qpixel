@@ -25,6 +25,7 @@
         <% end %>
       </span>
       <%= render 'shared/copy_link', classes: ["button", "is-small", "is-muted", "is-outlined"],
+                                     desc: "Copy a permanent link to revision #{@history.size - index}",
                                      id: "#{@post.id}-#{@history.size - index}", 
                                      md: post_history_share_link_md(@post, @history, index), 
                                      raw: post_history_share_link(@post, @history, index) 

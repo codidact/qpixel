@@ -2,6 +2,7 @@
   Adds a copy link button and drop panel.
   Variables:
     classes : a CSS string representing class names for the trigger button
+    desc  : short description of what clicking on the button does
     id    : id of the entity to link to
     md    : Markdown-formatted link to copy
     raw   : raw URL of the link to copy
@@ -13,12 +14,13 @@
 %>
 
 <noscript>
-<%= link_to raw, class: classes, role: "button" do %>
+<%= link_to raw, 'aria-label': desc, class: classes, role: "button" do %>
   <i class="fa fa-link"></i>
   <span>Copy Link</span>
 <% end %>
 </noscript>
-<%= tag.button class: classes + ["js-permalink-trigger"],
+<%= tag.button 'aria-label': desc,
+               class: classes + ["js-permalink-trigger"],
                data: { 
                        drop: "#permalink-#{id}", 
                        drop_force_dir: "down", 
