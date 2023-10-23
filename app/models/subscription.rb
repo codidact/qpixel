@@ -11,15 +11,15 @@ class Subscription < ApplicationRecord
   validate :qualifier_presence
 
   def summary
-    if !name.empty?
+    unless name.empty?
       return name
     end
 
-    res = Subscription.connection.select_all(Arel.sql(
-      "SELECT id, ROW_NUMBER() OVER() AS rn FROM subscriptions WHERE type = '#{type}' ORDER BY created_at ASC"
-    )).find{ |e| e["id"] == id }
+    res = Subscription.connection.select_all(
+      Arel.sql("SELECT id, ROW_NUMBER() OVER() AS rn FROM subscriptions WHERE type = '#{type}' ORDER BY created_at ASC")
+    ).find { |e| e['id'] == id }
 
-    return "#{type.capitalize} subscription#{res.nil? ? "" : " #{res["rn"]}"}"
+    "#{type.capitalize} subscription#{res.nil? ? '' : " #{res['rn']}"}"
   end
 
   def questions
