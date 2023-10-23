@@ -48,8 +48,7 @@ class VotesController < ApplicationController
               vote_id: vote.id,
               upvotes: post.upvote_count,
               downvotes: post.downvote_count,
-              score: post.score
-            }
+              score: post.score }
 
     render json: state
   end
@@ -70,8 +69,7 @@ class VotesController < ApplicationController
       render json: { status: 'OK',
                      upvotes: post.upvote_count,
                      downvotes: post.downvote_count,
-                     score: post.score
-                   }
+                     score: post.score }
     else
       render json: { status: 'failed', message: vote.errors.full_messages.join('. ') }, status: :forbidden
     end
