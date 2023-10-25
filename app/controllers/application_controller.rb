@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
+  before_action :enforce_signed_in, unless: :devise_controller?
   before_action :check_if_warning_or_suspension_pending
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
@@ -325,6 +326,39 @@ class ApplicationController < ActionController::Base
         redirect_to(redirect_path)
       end
     end
+  end
+
+  # Ensure that the user is signed in before showing any content. If the user is not signed in, display the main page.
+  #
+  # Exceptions:
+  # - 4** and 500 error pages
+  # - stylesheets and javascript
+  # - assets
+  # - /help, /policy, /help/* and /policy/*
+  def enforce_signed_in
+    # If not restricted, the user is signed in or the environment is test, allow all content.
+    return true if !SiteSetting['RestrictedAccess'] || user_signed_in? || Rails.env.test?
+
+    # Allow error pages and assets
+    path = request.fullpath
+    return true if path.start_with?('/4') || path == '/500' ||
+                   path.start_with?('/assets/') ||
+                   path.end_with?('.css') || path.end_with?('.js')
+
+    # Make available to controller that the we should not leak posts in the sidebar
+    @prevent_sidebar = true
+
+    # Allow /help (help center), /help/* and /policy/* depending on settings
+    help = SiteSetting['RestrictedAccessHelpPagesPublic']
+    policy = SiteSetting['RestrictedAccessPolicyPagesPublic']
+    return true if (help && path.start_with?('/help/')) ||
+                   (policy && path.start_with?('/policy/')) ||
+                   (path == '/help' && (help || policy))
+
+    store_location_for(:user, request.fullpath) if storable_location?
+
+    render 'errors/restricted_content', layout: 'without_sidebar', status: :forbidden
+    false
   end
 
   def block_write_request(**add)
