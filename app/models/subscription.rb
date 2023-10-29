@@ -11,7 +11,7 @@ class Subscription < ApplicationRecord
   validate :qualifier_presence
 
   def summary
-    unless name.empty?
+    unless name.blank?
       return name
     end
 
