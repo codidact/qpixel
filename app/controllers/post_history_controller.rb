@@ -14,7 +14,7 @@ class PostHistoryController < ApplicationController
 
     @count = base_query.count
 
-    @page = params[:page].nil? ? 1 : params[:page]
+    @page = params[:page].nil? ? 1 : params[:page].to_i
 
     render layout: 'without_sidebar'
   end
