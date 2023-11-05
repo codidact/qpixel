@@ -111,7 +111,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
     t.boolean "use_for_advertisement", default: true
     t.integer "min_title_length", default: 15, null: false
     t.integer "min_body_length", default: 30, null: false
+    t.bigint "default_filter_id"
     t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
@@ -425,8 +427,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.boolean "has_reactions"
     t.bigint "answer_type_id"
+    t.boolean "has_reactions"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -756,8 +758,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_warnings_on_author_id"
-    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.index ["author_id"], name: "index_mod_messages_on_author_id"
+    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
   end
 
   add_foreign_key "abilities", "communities"
@@ -765,6 +767,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "categories", "filters", column: "default_filter_id"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
   add_foreign_key "category_filter_defaults", "categories"
