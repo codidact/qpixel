@@ -41,7 +41,7 @@ class VotesController < ApplicationController
 
     AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
 
-    post = Post.find(params[:post_id])
+    post.reload
 
     modified = !destroyed.empty?
     state = { status: (modified ? 'modified' : 'OK'),
