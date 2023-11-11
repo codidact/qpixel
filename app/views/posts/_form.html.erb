@@ -57,6 +57,14 @@
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
              min_length: min_body_length(category), max_length: max_body_length(category), post_type: post_type %>
 
+  <div class="rejected-elements notice is-warning hide">
+    <h3>Unsupported HTML detected</h3>
+    <p>The following HTML tags and attributes are unsupported and will be removed from the final post:</p>
+    <ul>
+    </ul>
+    <p>For a list of allowed HTML, see <a href="/help/advanced-formatting">this help article</a>.
+    If you meant to display the tags as code in the post, please enclose them in a code block.</p>
+  </div>
   <div class="post-preview"></div>
 
   <% unless post_type.has_parent? %>
