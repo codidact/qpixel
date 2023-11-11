@@ -8,7 +8,7 @@ module PostValidations
     validate :maximum_tag_length, if: -> { post_type.has_tags }
     validate :no_spaces_in_tags, if: -> { post_type.has_tags }
     validate :stripped_minimum_body, if: -> { !body_markdown.nil? }
-    validate :stripped_minimum_title, if: -> { !title.nil? && !['HelpDoc', 'PolicyDoc'].include?(post_type.name) }
+    validate :stripped_minimum_title, if: -> { !title.nil? }
     validate :maximum_title_length, if: -> { !title.nil? }
     validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
   end
@@ -46,7 +46,14 @@ module PostValidations
   end
 
   def stripped_minimum_title
-    min_title = category.nil? ? 15 : category.min_title_length
+    min_title = if ['HelpDoc', 'PolicyDoc'].include?(post_type.name)
+                  1
+                elsif category.nil?
+                  15
+                else
+                  category.min_title_length
+                end
+
     if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < min_title
       errors.add(:title, "must be more than #{min_title} non-whitespace characters long")
     end
