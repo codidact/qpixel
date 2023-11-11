@@ -63,7 +63,7 @@ class VotesController < ApplicationController
     end
 
     if vote.destroy
-      post = Post.find(post.id)
+      post.reload
 
       AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
       render json: { status: 'OK',
