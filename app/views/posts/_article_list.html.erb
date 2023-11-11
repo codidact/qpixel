@@ -3,7 +3,7 @@
 <% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
 <% @last_activity = !!defined?(last_activity) ? last_activity : true %>
 <div class="item-list--item <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
-  <div class="item-list--number-value">
+  <div class="item-list--number-value" title="Score: <%= post.score %>">
     <div class="meter is-question-score">
       <div class="meter--bar is-<%= (post.score * 100).to_i %>%"><%= (post.score * 100).to_i %>%</div>
     </div>
