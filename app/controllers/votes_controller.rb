@@ -42,8 +42,11 @@ class VotesController < ApplicationController
     AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
 
     modified = !destroyed.empty?
-    state = { status: (modified ? 'modified' : 'OK'), vote_id: vote.id, upvotes: post.upvote_count,
-              downvotes: post.downvote_count }
+    state = { status: (modified ? 'modified' : 'OK'),
+              vote_id: vote.id,
+              upvotes: post.upvote_count,
+              downvotes: post.downvote_count,
+              score: post.score }
 
     render json: state
   end
@@ -59,7 +62,10 @@ class VotesController < ApplicationController
 
     if vote.destroy
       AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
-      render json: { status: 'OK', upvotes: post.upvote_count, downvotes: post.downvote_count }
+      render json: { status: 'OK',
+                     upvotes: post.upvote_count,
+                     downvotes: post.downvote_count,
+                     score: post.score }
     else
       render json: { status: 'failed', message: vote.errors.full_messages.join('. ') }, status: :forbidden
     end

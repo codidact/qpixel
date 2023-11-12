@@ -39,7 +39,7 @@
     <% if post_type.has_votes || (user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any?) %>
       <div>
         <% if post_type.has_votes %>
-          <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
+          <div class="post--votes has-text-align-center" title="Score: <%= post.score %>">
             <% existing_vote = my_vote(post) %>
             <% unless post.locked? %>
               <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
