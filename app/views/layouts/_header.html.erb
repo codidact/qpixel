@@ -22,10 +22,12 @@
     </div>
     <nav class="header--menu">
       <% unless @community.is_fake %>
-        <%= link_to users_path, class: 'header--item' do %>
+        <%= link_to users_path, class: 'header--item', title: 'Open users list' do %>
           <i class="fas fa-fw fa-users"></i> Users
         <% end %>
-        <%= link_to search_path, class: 'header--item', data: { 'header-slide' => '#search-slide' } do %>
+        <%= link_to search_path, class: 'header--item', 
+                                 data: { 'header-slide' => '#search-slide' },
+                                 title: 'Show search' do %>
           <i class="fas fa-fw fa-search"></i> Search
         <% end %>
       <% end %>
@@ -33,7 +35,9 @@
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
           <% if current_user.is_moderator %>
-            <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'header--item' do %>
+            <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, 
+                class: 'header--item',
+                title: 'Open moderator dashboard' do %>
               <i class="fas fa-fw fa-wrench"></i> Mod
               <% if @open_flags > 0 %>
                 <span class="header--alert"><%= @open_flags %></span>
@@ -43,30 +47,38 @@
         <% end %>
       <% end %>
       <% unless @community.is_fake %>
-        <%= link_to help_center_path, class: 'header--item' do %>
+        <%= link_to help_center_path, class: 'header--item', title: 'Open Help Center' do %>
           <i class="fas fa-fw fa-question-circle"></i> Help
         <% end %>
-        <%= link_to dashboard_path, class: 'header--item' do %>
-          <i class="fas fa-fw fa-th" title='Dashboard'></i>
+        <%= link_to dashboard_path, class: 'header--item', title: 'Open dashboard' do %>
+          <i class="fas fa-fw fa-th"></i>
         <% end %>
       <% end %>
       <% if user_signed_in? %>
-        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" data-header-slide="#js-inbox">
+        <a href="#" class="header--item inbox-toggle is-visible-on-mobile" 
+                    data-header-slide="#js-inbox"
+                    title='Open notifications'
+                    >
           <% unread = current_user.unread_count %>
           <% if unread > 0 %>
             <span class="header--alert inbox-count"><%= unread %></span>
           <% end %>
-          <i class='fas fa-fw fa-inbox' title='Notifications'></i>
+          <i class='fas fa-fw fa-inbox'></i>
         </a>
-        <%= link_to qr_login_code_path, class: 'header--item' do %>
-          <i class="fas fa-fw fa-mobile-alt" aria-label="Mobile Sign In" title="Mobile Sign In"></i>
-        <% end %>
-        <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile' do %>
+        <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile',
+                                             title: 'Manage profile' do %>
           <img alt="user avatar" src="<%= avatar_url(current_user, 40) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
-      <a href="#" class="header--item is-visible-on-mobile" aria-label="Show Communities" data-header-slide="#communities-slide"><i class="far fa-fw fa-caret-square-down"></i></a>
+      <a href="#" 
+         class="header--item is-visible-on-mobile" 
+         aria-label="Show Communities" 
+         data-header-slide="#communities-slide"
+         title="Show Communities"
+         >
+          <i class="far fa-fw fa-caret-square-down"></i>
+      </a>
       <% unless user_signed_in? %>
         <div class="header--item">
           <% if devise_sign_in_enabled? %>
@@ -94,9 +106,9 @@
 <div class="header-slide" id="communities-slide">
   <% if user_signed_in? %>
     <% if devise_sign_in_enabled? %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
     <% else %>
-      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right' %>
+      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
     <% end %>
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>
@@ -148,9 +160,9 @@
     </div>
   </div>
 
-  <%= form_tag search_path, method: :get do %>
+  <%= form_tag search_path, method: :get, role: 'search' do %>
     <div class="grid is-nowrap">
-        <%= text_field_tag :search, params[:search], class: 'form-element' %>
+        <%= search_field_tag :search, params[:search], class: 'form-element' %>
         <div class="h-m-1">
           <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
             <i class="fa fa-search"></i>
@@ -193,9 +205,9 @@
         <% end %>
       <% end %>
       <% if devise_sign_in_enabled? %>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item' %>
+        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
       <% else %>
-        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item' %>
+        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
       <% end %>
     <% else %>
       <% if sso_sign_in_enabled? %>
@@ -248,7 +260,7 @@
           <%= link_to suggested_edits_queue_path(current_cat),
                       class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
             Edits
-            <% if pending_suggestions? %>
+            <% if pending_suggestions?  && check_your_privilege('edit_posts') %>
               <span class="badge is-status" title="Suggested edits pending"></span>
             <% end %>
           <% end %>

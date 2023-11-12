@@ -1,0 +1,28 @@
+<%= form_tag search_path, method: :get, role: 'search' do %>
+  <div class="form-group-horizontal">
+    <div class="form-group">
+      <%= label_tag :search, 'Search term', class: "form-element" %>
+      <%= search_field_tag :search, params[:search], class: 'form-element' %>
+    </div>
+    <div class="actions has-padding-bottom-1">
+      <%= submit_tag 'Search', class: 'button is-medium is-outlined', name: nil %>
+    </div>
+  </div>
+
+  <div class="widget is-teal">
+    <div class="widget--header">
+      Advanced Search Options
+    </div>
+    <div class="widget--body">
+      <%= raw(sanitize(render_markdown(SiteSetting['JITAdvancedSearchHelp']), scrubber: scrubber)) %>
+      <p>Further help with searching is available <%= link_to 'in the help center', help_path('search') %>.</p>
+      <p>Quick hints: <code>tag:tagname</code>, <code>user:xxx</code>, <code>"exact phrase"</code>, <code>post_type:xxx</code>, <code>created:&lt;N{d,w,mo,y}</code>, <code>score:&gt;=0.5</code></p>
+    </div>
+  </div>
+
+  <details>
+    <summary>Filters</summary>
+    <%= render 'filters' %>
+  </details>
+
+<% end %>

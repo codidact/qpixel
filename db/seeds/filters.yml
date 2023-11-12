@@ -1,0 +1,14 @@
+- name: None
+  user_id: -1
+
+- name: Positive
+  user_id: -1
+  min_score: 0.5
+  max_score: 1
+  status: 'open'
+
+- name: Unanswered
+  user_id: -1
+  min_answers: 0
+  max_answers: 0
+  status: 'open'

@@ -557,3 +557,36 @@
   category: Integrations
   description: >
     Load Stripe JS API on all pages instead of just donation pages. May improve security and fraud detection.
+
+- name: RestrictedAccess
+  value: false
+  value_type: boolean
+  category: SiteDetails
+  description: >
+    Whether the content of this community should be visible only to users who are signed in.
+
+- name: RestrictedAccessFrontPageText
+  value: >
+    <h1>Welcome to our community!</h1>
+    <p>Please sign in to continue</p>
+  value_type: text
+  category: SiteDetails
+  description: >
+    This setting only has an effect when RestrictedAccess is enabled.
+    This is the text that will be displayed on the front page for users who are not signed in. Markdown allowed.
+
+- name: RestrictedAccessHelpPagesPublic
+  value: true
+  value_type: boolean
+  category: SiteDetails
+  description: >
+    This setting only has an effect when RestrictedAccess is enabled.
+    Whether the help pages are publicly accessible.
+
+- name: RestrictedAccessPolicyPagesPublic
+  value: true
+  value_type: boolean
+  category: SiteDetails
+  description: >
+    This setting only has an effect when RestrictedAccess is enabled.
+    Whether the policy pages are publicly accessible (Terms of Service, Privacy Policy, etc.).

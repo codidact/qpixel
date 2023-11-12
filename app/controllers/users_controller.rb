@@ -65,6 +65,99 @@ class UsersController < ApplicationController
     end
   end
 
+  # Helper method to convert it to the form expected by the client
+  def filter_json(filter)
+    {
+      min_score: filter.min_score,
+      max_score: filter.max_score,
+      min_answers: filter.min_answers,
+      max_answers: filter.max_answers,
+      include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
+      exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
+      status: filter.status,
+      system: filter.user_id == -1
+    }
+  end
+
+  def filters_json
+    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
+      User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
+    end
+
+    if user_signed_in?
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
+                  .merge(system_filters)
+    else
+      system_filters
+    end
+  end
+
+  def filters
+    respond_to do |format|
+      format.html do
+        authenticate_user!
+      end
+      format.json do
+        render json: filters_json
+      end
+    end
+  end
+
+  def set_filter
+    if user_signed_in? && params[:name]
+      filter = Filter.find_or_create_by(user: current_user, name: params[:name])
+
+      filter.update(filter_params)
+
+      unless params[:category].nil? || params[:is_default].nil?
+        helpers.set_filter_default(current_user.id, filter.id, params[:category].to_i, params[:is_default])
+      end
+
+      render json: { status: 'success', success: true, filters: filters_json },
+             status: 200
+    else
+      render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+             status: 400
+    end
+  end
+
+  def delete_filter
+    unless params[:name]
+      return render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
+                    status: 400
+    end
+
+    as_user = current_user
+
+    if params[:system] == true
+      if current_user&.is_global_admin
+        as_user = User.find(-1)
+      else
+        return render json: { status: 'failed', success: false, errors: ['You do not have permission to delete'] },
+                      status: 400
+      end
+    end
+
+    filter = Filter.find_by(user: as_user, name: params[:name])
+    if filter.destroy
+      render json: { status: 'success', success: true, filters: filters_json }
+    else
+      render json: { status: 'failed', success: false, errors: ['Failed to delete'] },
+             status: 400
+    end
+  end
+
+  def default_filter
+    if user_signed_in? && params[:category]
+      default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
+      render json: { status: 'success', success: true, name: default_filter&.name },
+             status: 200
+    else
+      render json: { status: 'failed', success: false },
+             status: 400
+    end
+  end
+
   def set_preference
     if !params[:name].nil? && !params[:value].nil?
       global_key = "prefs.#{current_user.id}"
@@ -105,7 +198,8 @@ class UsersController < ApplicationController
     @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                       posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).count
+    @edits = PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
+                                                                post_history_types: { name: 'post_edited' }).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -117,13 +211,14 @@ class UsersController < ApplicationController
                                                                     posts: { deleted: false })
             when 'edits'
               SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
+                                                                 post_history_types: { name: 'post_edited' })
             else
               Post.undeleted.where(user: @user) + \
               Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
                                                                     posts: { deleted: false }) + \
               SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false })
+              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
     @items = items.sort_by(&:created_at).reverse
@@ -249,14 +344,25 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def validate_profile_website(profile_params)
+    uri = profile_params[:website]
+
+    if URI.parse(uri).instance_of?(URI::Generic)
+      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
+      # parsed correctly in the view later on.
+      profile_params[:website] = "https://#{uri}"
+    end
+  rescue URI::InvalidURIError
+    profile_params.delete(:website)
+    flash[:danger] = 'Invalid profile website link.'
+  end
+
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
     profile_params[:twitter] = profile_params[:twitter].delete('@')
 
-    if profile_params[:website].present? && URI.parse(profile_params[:website]).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{profile_params[:website]}"
+    if profile_params[:website].present?
+      validate_profile_website(profile_params)
     end
 
     @user = current_user
@@ -427,7 +533,7 @@ class UsersController < ApplicationController
       sign_in user
       remember_me user
       AuditLog.user_history(event_type: 'mobile_login', related: user)
-      redirect_to root_path
+      redirect_to after_sign_in_path_for(user)
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
@@ -511,6 +617,11 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def filter_params
+    params.permit(:min_score, :max_score, :min_answers, :max_answers, :status, :include_tags, :exclude_tags,
+                  include_tags: [], exclude_tags: [])
+  end
 
   def set_user
     @user = user_scope.find_by(id: params[:id])

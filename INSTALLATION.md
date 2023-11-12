@@ -52,10 +52,14 @@ If you already have Node.JS installed, you can skip this step. If not,
 [download and install it](https://nodejs.org/en/download/) or for example
 `sudo apt install nodejs`.
 
+On Mac with homebrew, `brew install node` .
+
 ### Install Redis
 
 If you haven't already got it, [download and install Redis](https://redis.io/download)
 or for example `sudo apt install redis-server`.
+
+For mac with homebrew, `brew install redis` .
 
 ### Install Imagemagick
 
@@ -67,6 +71,8 @@ also install the `libmagickwand-dev` package.
 
 `sudo apt install libmagick++-dev` should also work.
 
+For Mac with homebrew, `brew install imagemagick` .
+
 ### Install Libvips
 
 If you haven't already installed Libvips, you'll need to [install it for
@@ -74,6 +80,8 @@ your system](https://www.libvips.org/).
 
 To install libvips from APT on a Debian-based system, use
 `sudo apt install libvips`
+
+For Mac with homebrew, `brew install vips` .
 
 ## Install QPixel
 
@@ -106,12 +114,14 @@ Copy `config/database.sample.yml` to `config/database.yml` and fill in the corre
 username, and password for your environment. If you've followed these instructions (i.e. you
 have installed MySQL locally), the correct host is `localhost` or `127.0.0.1`.
 
-You'll also need to fill in details for the Redis connection. If you've followed these instructions,
+You will need to set the Redis connection details there too. If you've followed these instructions,
 the sample file should already contain the correct values for you, but if you've customised your
 setup you'll need to correct them.
 
 If you are using MariaDB instead of MySQL, you will need to replace all occurrences of
 `utf8mb4_0900_ai_ci` with `utf8mb4_unicode_ci` in `db/schema.rb`.
+
+You'll also need to copy the Active Storage configuration from `config/storage.sample.yml` to `config/storage.yml`.
 
 Set up the database:
 
@@ -119,6 +129,10 @@ Set up the database:
     rails db:schema:load
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
+
+We also recommend you load the QPixel console extensions for easier development:
+
+    cp .sample.irbrc .irbrc
 
 You'll need to create a Community record and purge the Rails cache before you can seed the database.
 In a Rails console (`rails c`), run:
@@ -128,7 +142,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can call `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
+After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0

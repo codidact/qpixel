@@ -25,6 +25,8 @@ class User < ApplicationRecord
   has_many :comments, dependent: :nullify
   has_many :comment_threads_deleted, class_name: 'CommentThread', foreign_key: :deleted_by_id, dependent: :nullify
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
+  has_many :category_filter_defaults, dependent: :destroy
+  has_many :filters, dependent: :destroy
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -235,11 +237,17 @@ class User < ApplicationRecord
     global_key = "prefs.#{id}"
     community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
     {
-      global: AppConfig.preferences.reject { |_, v| v['community'] }.transform_values { |v| v['default'] }
+      global: AppConfig.preferences.select { |_, v| v['global'] }.transform_values { |v| v['default'] }
                        .merge(RequestContext.redis.hgetall(global_key)),
       community: AppConfig.preferences.select { |_, v| v['community'] }.transform_values { |v| v['default'] }
                           .merge(RequestContext.redis.hgetall(community_key))
     }
+  end
+
+  def category_preference(category_id)
+    category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
+    AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
+             .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!

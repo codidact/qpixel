@@ -15,9 +15,11 @@
 <% end %>
 
 <div class="button-list is-gutterless has-margin-bottom-4">
-  <%= link_to 'Reputation', query_url(sort: 'reputation'),
-      class: "button is-muted is-outlined #{params[:sort] == 'reputation' || (params[:sort].nil? && params[:search].nil?) ? 'is-active' : ''}" %>
-  <%= link_to 'Age', query_url(sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}" %>
+  <%= link_to 'Reputation', request.params.merge(sort: 'reputation'),
+      class: "button is-muted is-outlined #{params[:sort] == 'reputation' || (params[:sort].nil? && params[:search].nil?) ? 'is-active' : ''}",
+      role: 'button', 'aria-label': 'Sort by reputation' %>
+  <%= link_to 'Age', request.params.merge(sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
+              role: 'button', 'aria-label': 'Sort by age' %>
 </div>
 
 <div class="user-list">

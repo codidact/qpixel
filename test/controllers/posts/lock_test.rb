@@ -79,4 +79,15 @@ class PostsControllerTest < ActionController::TestCase
     end
     assert_equal 'success', JSON.parse(response.body)['status']
   end
+
+  test 'Locks on posts expire' do
+    sign_in users(:moderator)
+    post :lock, params: { id: posts(:question_one).id, length: 1, format: :json }
+    assert_response 200
+
+    # Change the locked_until to have already passed
+    assigns(:post).update(locked_until: 1.second.ago)
+
+    assert_not assigns(:post).locked?
+  end
 end

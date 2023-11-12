@@ -37,7 +37,8 @@
     <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user %>
+  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
+             min_length: 0 %>
 
   <div class="post-preview"></div>
 
@@ -56,7 +57,7 @@
 
     <div class="grid--cell is-4 is-12-sm form-group">
       <%= f.label :discord, class: 'form-element' %>
-      <span class="form-caption">Your Discord user tag, in the format <code>username#1234</code>.</span>
+      <span class="form-caption">Your Discord user tag, <code>username</code> or <code>username#1234</code>.</span>
       <%= f.text_field :discord, class: 'form-element', autocomplete: 'off', placeholder: 'username#1234' %>
     </div>
   </div>
@@ -72,7 +73,7 @@
       you'll be able to request that any content you created on Stack Exchange that has been copied across here is
       transferred to you.
     </p>
-    <%= link_to stack_oauth_url, class: 'button is-outlined' do %>
+    <%= link_to stack_oauth_url, class: 'button is-outlined', 'aria-label': 'Authenticate Stack Exchange account' do %>
       <i class="fab fa-stack-exchange"></i> Authenticate
     <% end %>
   </div>

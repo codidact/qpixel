@@ -1,4 +1,14 @@
 <%= form_for @category, url: submit_path, method: :post do |f| %>
+  <% if @category.errors.any? %>
+    <div class="notice is-danger">
+      <ul>
+        <% @category.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <details open>
     <summary>
       Basic Information
@@ -50,6 +60,18 @@
       <span class="form-caption">Which tag set may posts in this category draw from?</span>
       <%= f.select :tag_set_id, options_for_select(TagSet.all.map { |ts|  [ts.name, ts.id] }, selected: @category.tag_set_id),
                    { include_blank: true }, class: 'form-element js-category-tag-set-select' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :min_title_length, 'Minimum title length', class: 'form-element' %>
+      <span class="form-caption">Titles of posts in this category must be at least this many characters long.</span>
+      <%= f.number_field :min_title_length, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :min_body_length, 'Minimum body length', class: 'form-element' %>
+      <span class="form-caption">Posts in this category must be at least this many characters long.</span>
+      <%= f.number_field :min_body_length, class: 'form-element' %>
     </div>
   </details>
 
@@ -122,6 +144,13 @@
       appear later.
     </span>
       <%= f.number_field :sequence, class: 'form-element' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :default_filter_id, class: 'form-element' %>
+      <span class="form-caption">The default filter for this category, used for anonymous users.</span>
+      <% system_filters = User.find(-1).filters.to_h { |filter| [filter.name, filter.id] } %>
+      <%= f.select :default_filter_id, options_for_select(system_filters, selected: @category.default_filter_id), { include_blank: "No default" } %>
     </div>
   </details>
 

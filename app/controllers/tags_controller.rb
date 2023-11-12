@@ -13,10 +13,10 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.paginate(page: params[:page], per_page: 50)
+            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
-        render json: @tags
+        render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
       end
     end
   end
@@ -49,8 +49,9 @@ class TagsController < ApplicationController
               else
                 @tag.all_children + [@tag.id]
               end
-    post_ids = helpers.post_ids_for_tags(tag_ids)
-    @posts = Post.where(id: post_ids).undeleted.where(post_type_id: @category.display_post_types)
+    displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
+    @posts = Post.joins(:tags).where(tags: { id: tag_ids })
+                 .undeleted.where(post_type_id: displayed_post_types)
                  .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                  .order(sort_param)
     respond_to do |format|
@@ -61,6 +62,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.tag_synonyms.build
   end
 
   def create
@@ -76,6 +78,7 @@ class TagsController < ApplicationController
 
   def edit
     check_your_privilege('edit_tags', nil, true)
+    @tag.tag_synonyms.build
   end
 
   def update
@@ -123,57 +126,68 @@ class TagsController < ApplicationController
 
     @subordinate = Tag.find params[:merge_with_id]
 
-    AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user,
-                             comment: "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
+    Post.transaction do
+      AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user, comment:
+        "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
 
-    # Take the tag off posts
-    posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
-                'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                'WHERE posts_tags.tag_id = ?'
-    exec([posts_sql, "\n- #{@subordinate.name}", "\n- #{@primary.name}", @subordinate.id])
+      # Replace subordinate with primary, except when a post already has primary (to avoid giving them a duplicate tag)
+      posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                  'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                  'WHERE posts_tags.tag_id = ? ' \
+                  'AND posts_tags.post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id = ?)'
+      exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id, @primary.id])
 
-    # Break hierarchies
-    tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
-    exec([tags_sql, @subordinate.id])
+      # Remove the subordinate tag from posts that still have it (the ones that were excluded from our previous query)
+      posts2_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                   'WHERE posts_tags.tag_id = ?'
+      exec_sql([posts2_sql, "\n- #{@subordinate.name}\n", "\n", @subordinate.id])
 
-    # Remove references to the tag
-    sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
-    exec([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
+      # Break hierarchies
+      tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
+      exec_sql([tags_sql, @subordinate.id])
 
-    # Nuke it from orbit
-    @subordinate.destroy
+      # Remove references to the tag
+      sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
+      exec_sql([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
+
+      # Nuke it from orbit
+      @subordinate.destroy
+    end
 
     flash[:success] = "Merged #{@subordinate.name} into #{@primary.name}."
     redirect_to tag_path(id: @category.id, tag_id: @primary.id)
   end
 
   def nuke
-    AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
-                         comment: "#{@tag.name} (#{@tag.id})"
+    Post.transaction do
+      AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
+                           comment: "#{@tag.name} (#{@tag.id})"
 
-    tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
-              'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
+      tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
+                'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
 
-    # Remove tag from caches
-    caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
-                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                 'WHERE posts_tags.tag_id = ?'
-    exec([caches_sql, "\n- #{@tag.name}", '', @tag.id])
+      # Remove tag from caches
+      caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                   'WHERE posts_tags.tag_id = ?'
+      exec_sql([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
 
-    # Delete all references to the tag
-    tables.each do |tbl|
-      sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
-      exec([sql, @tag.id])
+      # Delete all references to the tag
+      tables.each do |tbl|
+        sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
+        exec_sql([sql, @tag.id])
+      end
+
+      # Nuke it
+      @tag.destroy
     end
-
-    # Nuke it
-    @tag.destroy
 
     flash[:success] = "Deleted #{@tag.name}"
     redirect_to category_tags_path(@category)
@@ -192,10 +206,11 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name,
+                                tag_synonyms_attributes: [:id, :name, :_destroy])
   end
 
-  def exec(sql_array)
+  def exec_sql(sql_array)
     ApplicationRecord.connection.execute(ActiveRecord::Base.sanitize_sql_array(sql_array))
   end
 end

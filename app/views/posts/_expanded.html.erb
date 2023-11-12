@@ -36,33 +36,35 @@
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
-    <% if post_type.has_votes %>
+    <% if post_type.has_votes || (user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any?) %>
       <div>
-        <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
-          <% existing_vote = my_vote(post) %>
-          <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
-                    data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
-                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                  <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-                </svg>
-            </button>
-          <% end %>
-          <div class="score has-font-size-subheading js-upvote-count">
-            +<%= post.upvote_count %>
+        <% if post_type.has_votes %>
+          <div class="post--votes has-text-align-center" title="Score: <%= post.score %>">
+            <% existing_vote = my_vote(post) %>
+            <% unless post.locked? %>
+              <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
+                      data-vote-type="1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Upvote">
+                  <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                    <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+                  </svg>
+              </button>
+            <% end %>
+            <div class="score has-font-size-subheading js-upvote-count">
+              +<%= post.upvote_count %>
+            </div>
+            <div class="score has-font-size-subheading js-downvote-count">
+              &minus;<%= post.downvote_count %>
+            </div>
+            <% unless post.locked? %>
+              <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
+                      data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
+                  <svg width="2em" height="1.33em" viewbox="0 0 100 50">
+                    <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+                  </svg>
+              </button>
+            <% end %>
           </div>
-          <div class="score has-font-size-subheading js-downvote-count">
-            &minus;<%= post.downvote_count %>
-          </div>
-          <% unless post.locked? %>
-            <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == -1) ? 'is-active' : '' %>"
-                    data-vote-type="-1" data-vote-id="<%= existing_vote&.id %>" id="post-<%= post.id %>-up" aria-label="Downvote">
-                <svg width="2em" height="1.33em" viewbox="0 0 100 50">
-                  <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-                </svg>
-            </button>
-          <% end %>
-        </div>
+        <% end %>
         <% if user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any? %>
           <div class="post--react has-text-align-center">
             <% unless post.locked? %>
@@ -123,7 +125,7 @@
             </p>
           <% end %>
 
-          <p>Users with the Curate privilege may vote to undelete this post if it has been deleted incorrectly.</p>
+          <p>Users with the Curate privilege may vote to restore this post if it has been deleted incorrectly.</p>
         </div>
       <% end %>
 
@@ -139,11 +141,17 @@
       <% if post_type.is_public_editable && post.pending_suggested_edit? %>
         <% if check_your_post_privilege(post, 'edit_posts') %>
           <div class="notice h-p-2">
-            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i> There is a <strong>pending suggested edit</strong> on this post. <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small">Review changes</a></p>
+            <p class="h-m-0">
+              <i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i>
+              There is a <strong>pending suggested edit</strong> on this post.
+              <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>" class="button is-outlined is-muted is-small" role="button" aria-label="Review changes of suggested edit">Review changes</a></p>
           </div>
         <% elsif post.pending_suggested_edit.user.id == current_user&.id %>
           <div class="notice h-p-2">
-            <p class="h-m-0"><i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i> Your suggested edit on this post is <strong><%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
+            <p class="h-m-0">
+              <i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i>
+              Your suggested edit on this post is <strong>
+              <%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
           </div>
         <% end %>
       <% end %>
@@ -200,11 +208,11 @@
 
         <div class="post--actions">
           <div class="tools">
-            <%= link_to generic_share_link(post), class: 'tools--item js-permalink' do %>
+            <%= link_to generic_share_link(post), class: 'tools--item js-permalink', role: 'button' do %>
               <i class="fa fa-link"></i>
               <span class="js-text">Permalink</span>
             <% end %>
-            <%= link_to post_history_path(post), class: 'tools--item' do %>
+            <%= link_to post_history_path(post), class: 'tools--item', 'aria-label': 'View history of this post' do %>
               <i class="fa fa-history"></i>
               History
             <% end %>
@@ -216,7 +224,7 @@
                     Review suggested edit
                   <% end %>
                 <% else %>
-                  <%= link_to edit_post_path(post), class: 'tools--item' do %>
+                  <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Edit this post' do %>
                     <i class="fa fa-pencil-alt"></i>
                     Edit
                   <% end %>
@@ -225,7 +233,7 @@
                 <% if post.pending_suggested_edit? %>
                   <span class="tools--item">suggested edit pending...</span>
                 <% else %>
-                  <%= link_to edit_post_path(post), class: 'tools--item' do %>
+                  <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Suggest edit to this post' do %>
                     <i class="fa fa-pencil-alt"></i>
                     Suggest edit
                   <% end %>
@@ -233,7 +241,7 @@
               <% end %>
             <% end %>
             <% if user_signed_in? %>
-              <a href="#" class="flag-dialog-link tools--item">
+              <a href="#" class="flag-dialog-link tools--item" role="button" aria-label="Flag this post">
                 <i class="fa fa-flag"></i>
                 Flag
               </a>
@@ -241,12 +249,12 @@
             <% unless post.locked? || !post_type.is_closeable %>
               <% if check_your_privilege('flag_close') || (post.user_id === current_user&.id)%>
                 <% if !post.closed %>
-                  <a href="#" class="close-dialog-link tools--item">
+                  <a href="#" class="close-dialog-link tools--item" role="button" aria-label="Close this post">
                     <i class="fa fa-lock"></i>
                     Close
                   </a>
                 <% elsif post.closed %>
-                  <%= link_to reopen_post_path(post), method: :post, class: 'reopen-question tools--item' do %>
+                  <%= link_to reopen_post_path(post), method: :post, class: 'reopen-question tools--item', role: 'button', 'aria-label': 'Reopen this post' do %>
                     <i class="fa fa-unlock"></i>
                     Reopen
                   <% end %>
@@ -257,13 +265,15 @@
               <% unless post.locked? %>
                 <% if !post.deleted %>
                   <%= link_to delete_post_path(post), method: :post,
-                              data: { confirm: 'Are you sure you want to delete this post?' }, class: "tools--item is-danger" do %>
+                              data: { confirm: 'Are you sure you want to delete this post?' }, class: "tools--item is-danger",
+                              role: 'button', 'aria-label': 'Delete this post' do %>
                     <i class="fa fa-trash"></i>
                     Delete
                   <% end %>
                 <% else %>
                   <%= link_to restore_post_path(post), method: :post,
-                              data: { confirm: 'Restore this post, making it visible to regular users?' }, class: "tools--item is-danger is-filled" do %>
+                              data: { confirm: 'Restore this post, making it visible to regular users?' }, class: "tools--item is-danger is-filled",
+                              role: 'button', 'aria-label': 'Restore this post' do %>
                     <i class="fa fa-undo"></i>
                     Restore
                   <% end %>
@@ -271,7 +281,7 @@
               <% end %>
             <% end %>
             <% if check_your_privilege('flag_curate') %>
-              <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>" class="tools--item">
+              <a href="javascript:void(0);" data-modal="#mod-tools-<%= post.id %>" class="tools--item" role="button" aria-label="Open Moderator Tools">
                 <i class="fa fa-wrench"></i>
                 Tools
               </a>
@@ -288,7 +298,7 @@
                                    end %>
 
               <% if flags_count > 0 %>
-                <a href="#" class="show-all-flags-dialog-link tools--item">
+                <a href="#" class="show-all-flags-dialog-link tools--item" role="button">
                   <i class="fa fa-exclamation-triangle"></i>
                   Show <%= pluralize(flags_count - own_flags_count, 'flag') %>
                 </a>
@@ -301,7 +311,7 @@
           <div class="widget">
             <div class="widget--header">Why does this post require moderator attention?</div>
             <% unless post.locked? %>
-              <% PostFlagType.where(post_type_id: post.post_type.id).or(PostFlagType.where(post_type_id: nil)).each do |reason| %>
+	    <% PostFlagType.where(post_type_id: [post.post_type.id, nil]).where(active: 1).each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
@@ -452,30 +462,36 @@
           <% public_count = comment_threads.count %>
           <% available_count = current_user&.has_post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>
+          <div class="post--comments-header">
           <h4 class="has-margin-0">
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <% if user_signed_in? %>
-            <p class="has-font-size-caption">
-              <% if CommentThread.post_followed?(post, current_user) %>
-                <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
-                            title: 'Don\'t follow new comment threads on this post' do %>
-                  <i class="fas fa-fw fa-minus"></i> unfollow new
-                <% end %>
-              <% else %>
-                <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
-                            title: 'Follow all new comment threads on this post' do %>
-                  <i class="fas fa-fw fa-plus"></i> follow new
-                <% end %>
+            <% if CommentThread.post_followed?(post, current_user) %>
+              <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                          class: "button is-muted is-outlined is-small",
+                          title: 'Don\'t follow new comment threads on this post',
+                          role: 'button',
+                          'aria-label': 'Unfollow new comment threads on this post' do %>
+                  <i class="fas fa-fw fa-bell-slash"></i> Unfollow new
               <% end %>
-            </p>
+            <% else %>
+              <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                          class: "button is-muted is-outlined is-small",
+                          title: 'Follow all new comment threads on this post',
+                          role: 'button',
+                          'aria-label': 'Follow all new comment threads on this post' do %>
+                <i class="fas fa-fw fa-bell"></i> Follow new
+              <% end %>
+            <% end %>
           <% end %>
-          <div class="post--comments-container">
+          </div>
+          <div class="post--comments-container" role="list">
             <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>
-              <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>">
+              <a href="#" class="js-more-comments button is-muted is-small" data-post-id="<%= post.id %>" role="button" aria-label="Show more comment threads">
                 Show more
               </a>
             <% end %>
@@ -492,8 +508,10 @@
                 <% elsif post.comments_disabled %>
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
-                <a class="button is-muted is-small js-new-thread-link" data-post="<%= post.id %>">Start new comment thread</a>
               <% end %>
+                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
+                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
+                </a>
                 <%= render 'comments/new_thread_modal', post: post %>
             <% end %>
           </div>

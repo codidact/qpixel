@@ -21,9 +21,9 @@
 <% if current_user.enabled_2fa %>
   <p>
     <% if current_user.two_factor_method == 'app' %>
-      <%= link_to 'Turn off', two_factor_disable_code_path, class: 'button is-outlined' %>
+      <%= link_to 'Turn off', two_factor_disable_code_path, class: 'button is-outlined', 'aria-label': 'Turn off 2FA using an app' %>
     <% elsif current_user.two_factor_method == 'email' %>
-      <%= link_to 'Turn off', two_factor_send_disable_email_path, method: :post, class: 'button is-outlined' %>
+      <%= link_to 'Turn off', two_factor_send_disable_email_path, method: :post, class: 'button is-outlined', 'aria-label': 'Turn off 2FA using email' %>
     <% end %>
   </p>
 <% else %>
@@ -41,8 +41,23 @@
                          { class: 'form-element' } %>
         </div>
 
-        <%= submit_tag 'Enable', class: 'button is-filled' %>
+        <%= submit_tag 'Enable', class: 'button is-filled', 'aria-label': 'Enable 2FA' %>
       <% end %>
     <% end %>
   </div>
+<% end %>
+
+<% if current_user.enabled_2fa && current_user.two_factor_method == 'app' %>
+  <h3>Recovery</h3>
+  <p>
+    Your <strong>backup code</strong> for two-factor authentication can be found below. You should save this somewhere
+    safe &mdash; if you lose access to your authenticator app, you can sign in using this code to get back into your
+    account and reconfigure 2FA.
+  </p>
+
+  <%= form_tag two_factor_backup_code_path, class: 'js-backup-code-form' do %>
+    <%= label_tag :code, 'Enter a 2FA code to access your backup code', class: 'form-element' %>
+    <%= text_field_tag :code, nil, class: 'form-element' %>
+    <%= submit_tag 'Show backup code', class: 'button is-filled' %>
+  <% end %>
 <% end %>

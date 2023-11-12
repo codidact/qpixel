@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -109,7 +109,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.integer "sequence"
     t.boolean "use_for_hot_posts", default: true
     t.boolean "use_for_advertisement", default: true
+    t.integer "min_title_length", default: 15, null: false
+    t.integer "min_body_length", default: 30, null: false
+    t.bigint "default_filter_id"
     t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
@@ -136,6 +140,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
   create_table "categories_topic_tags", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "category_id"
     t.bigint "tag_id"
+  end
+
+  create_table "category_filter_defaults", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "filter_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id"], name: "index_category_filter_defaults_on_category_id"
+    t.index ["filter_id"], name: "index_category_filter_defaults_on_filter_id"
+    t.index ["user_id"], name: "index_category_filter_defaults_on_user_id"
   end
 
   create_table "close_reasons", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -232,6 +245,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.string "user_agent"
     t.index ["community_id"], name: "index_error_logs_on_community_id"
     t.index ["user_id"], name: "index_error_logs_on_user_id"
+  end
+
+  create_table "filters", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.float "min_score"
+    t.float "max_score"
+    t.integer "min_answers"
+    t.integer "max_answers"
+    t.string "status"
+    t.string "include_tags"
+    t.string "exclude_tags"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_filters_on_user_id"
   end
 
   create_table "flags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -360,6 +388,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
+    t.boolean "hidden", default: false, null: false
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
@@ -398,8 +427,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.boolean "has_reactions"
     t.bigint "answer_type_id"
+    t.boolean "has_reactions"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -600,6 +629,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.index ["community_id"], name: "index_tag_sets_on_community_id"
   end
 
+  create_table "tag_synonyms", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "tag_id"
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_tag_synonyms_on_tag_id"
+  end
+
   create_table "tags", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -680,6 +717,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
+    t.string "backup_2fa_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -720,8 +758,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_warnings_on_author_id"
-    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.index ["author_id"], name: "index_mod_messages_on_author_id"
+    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
   end
 
   add_foreign_key "abilities", "communities"
@@ -729,8 +767,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "categories", "filters", column: "default_filter_id"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
+  add_foreign_key "category_filter_defaults", "categories"
+  add_foreign_key "category_filter_defaults", "filters"
+  add_foreign_key "category_filter_defaults", "users"
   add_foreign_key "comment_threads", "users", column: "archived_by_id"
   add_foreign_key "comment_threads", "users", column: "deleted_by_id"
   add_foreign_key "comment_threads", "users", column: "locked_by_id"
@@ -741,6 +783,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
   add_foreign_key "community_users", "users", column: "deleted_by_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
+  add_foreign_key "filters", "users"
   add_foreign_key "flags", "communities"
   add_foreign_key "flags", "users", column: "escalated_by_id"
   add_foreign_key "micro_auth_apps", "users"
@@ -768,6 +811,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_13_183826) do
   add_foreign_key "suggested_edits", "posts"
   add_foreign_key "suggested_edits", "users"
   add_foreign_key "suggested_edits", "users", column: "decided_by_id"
+  add_foreign_key "tag_synonyms", "tags"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "thread_followers", "posts"

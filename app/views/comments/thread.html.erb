@@ -24,9 +24,9 @@
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
-<div class="widget <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
+<div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
      data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
-     data-comments="<%= @comment_thread.reply_count %>">
+     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
   <div class="widget--header">
     <% if params[:inline] == 'true' %>
       <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
@@ -37,18 +37,23 @@
       </a>
     <% else %>
       <% if current_user&.privilege? 'flag_curate' %>
-        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fa fa-cog fa-fw"></i>tools</a>
+        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"
+          role="button" aria-label="Show more thread tools">
+          <i class="fa fa-cog fa-fw"></i>tools
+        </a>
       <% end %>
       <% unless current_user.nil? %>
         <% if @comment_thread.followed_by? current_user %>
           <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
-            data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time.">
-            <i class="fa fa-minus fa-fw"></i>unfollow
+            data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time."
+            role="button" aria-label="Unfollow this thread">
+            <i class="fas fa-fw fa-bell-slash"></i> unfollow
           </a>
         <% else %>
           <a href="#" class="widget--header-link js--restrict-thread" data-action="follow"
-            data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response.">
-            <i class="fa fa-plus fa-fw"></i>follow
+            data-thread="<%= @comment_thread.id %>" title="Follow this thread to be notified of every response."
+            role="button" aria-label="Follow this thread">
+            <i class="fas fa-fw fa-bell"></i> follow
           </a>
         <% end %>
       <% end %>
@@ -71,26 +76,28 @@
       <% count <= 5 %>
     <% end %>
   <% end %>
-  <% comments.each do |comment| %>
-    <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
-      <% skipped_deleted += 1%>
-      <% next %>
-    <% elsif skipped_deleted > 0 %>
-      <div class="widget--body">
+  <div role="list">
+    <% comments.each do |comment| %>
+      <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
+        <% skipped_deleted += 1%>
+        <% next %>
+      <% elsif skipped_deleted > 0 %>
+        <div class="widget--body" role="listitem">
+          <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
+        </div>
+        <% skipped_deleted = 0 %>
+      <% end %>
+      <div class="widget--body" role="listitem">
+        <%= render 'comments/comment', comment: comment, pingable: pingable %>
+      </div>
+    <% end %>
+    <% if skipped_deleted > 0 %>
+      <div class="widget--body" role="listitem">
         <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
       </div>
       <% skipped_deleted = 0 %>
     <% end %>
-    <div class="widget--body">
-      <%= render 'comments/comment', comment: comment, pingable: pingable %>
-    </div>
-  <% end %>
-  <% if skipped_deleted > 0 %>
-    <div class="widget--body">
-      <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
-    </div>
-    <% skipped_deleted = 0 %>
-  <% end %>
+  </div>
   <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
@@ -149,36 +156,50 @@
     <div class="droppanel--header">thread options</div>
     <div class="droppanel--menu">
       <% if current_user.is_moderator || !@comment_thread.read_only? %>
-        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-pen fa-fw"></i> rename</a>
+        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" role="button" aria-label="Rename thread">
+          <i class="fas fa-pen fa-fw"></i> rename
+        </a>
       <% end %>
 
       <% unless @comment_thread.archived || @comment_thread.deleted %>
         <% if @comment_thread.locked? %>
-          <a href="#" class="js--unrestrict-thread" data-action="lock" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> unlock</a>
+          <a href="#" class="js--unrestrict-thread" data-action="lock" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Unlock thread">
+            <i class="fas fa-lock fa-fw"></i> unlock
+          </a>
         <% else %>
-          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>" data-drop=".js--tools-thread-<%= @comment_thread.id %>"><i class="fas fa-lock fa-fw"></i> lock</a>
+          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>" role="button" aria-label="Lock thread">
+            <i class="fas fa-lock fa-fw"></i> lock
+          </a>
         <% end %>
       <% end %>
       
       <% unless @comment_thread.locked? || @comment_thread.deleted %>
         <% if @comment_thread.archived %>
-          <a href="#" class="js--unrestrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> restore</a>
+          <a href="#" class="js--unrestrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Restore thread">
+            <i class="fas fa-archive fa-fw"></i> restore
+          </a>
         <% else %>
-          <a href="#" class="js--restrict-thread" data-action="archive" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-archive fa-fw"></i> archive</a>
+          <a href="#" class="js--restrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Archive thread">
+            <i class="fas fa-archive fa-fw"></i> archive
+          </a>
         <% end %>
       <% end %>
 
       <% unless @comment_thread.locked? || @comment_thread.archived %>
         <% if @comment_thread.deleted %>
-          <a href="#" class="js--unrestrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> undelete</a>
+          <a href="#" class="js--unrestrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Undelete thread">
+            <i class="fas fa-trash fa-fw"></i> undelete
+          </a>
         <% else %>
-          <a href="#" class="js--restrict-thread" data-action="delete" data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"><i class="fas fa-trash fa-fw"></i> delete</a>
+          <a href="#" class="js--restrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Delete thread">
+            <i class="fas fa-trash fa-fw"></i> delete
+          </a>
         <% end %>
       <% end %>
 
       <% if current_user&.is_moderator || current_user&.is_admin %>
-        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>"
-           data-drop=".js--tools-thread-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>">
+        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"
+           role="button" aria-label="Show thread followers">
           <i class="fas fa-users"></i> followers
         </a>
       <% end %>

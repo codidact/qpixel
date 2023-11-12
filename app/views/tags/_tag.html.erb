@@ -8,6 +8,13 @@
   <% end %>
   <%= link_to tag.name, tag_path(id: category.id, tag_id: tag.id), class: classes, 'data-ckb-item-link' => '' %>
   <span class="has-color-tertiary-900">&times;&nbsp;<%= tag.post_count %></span>
+  <% if tag.tag_synonyms.present? %>
+    <p>
+    <% tag.tag_synonyms.each do |synonym| %>
+      <span class="badge is-tag is-small is-teal"><%= synonym.name %></span>
+    <% end %>
+    </p>
+  <% end %>
   <% if tag.excerpt.present? %>
     <p class="has-font-size-caption has-color-tertiary-900">
       <% splat = split_words_max_length(tag.excerpt, 120) %>

@@ -6,6 +6,19 @@ const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 
   'start', 'dir'];
 
 $(() => {
+  DOMPurify.addHook("uponSanitizeAttribute", (node, event) => {
+    const rowspan = node.getAttribute("rowspan");
+    const colspan = node.getAttribute("colspan");
+
+    if (rowspan && Number.isNaN(+rowspan)) {
+      event.keepAttr = false;
+    }
+
+    if (colspan && Number.isNaN(+colspan)) {
+      event.keepAttr = false;
+    }
+  });
+
   const $uploadForm = $('.js-upload-form');
 
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
@@ -63,7 +76,7 @@ $(() => {
 
     const $postField = $('.js-post-field');
     const postText = $postField.val();
-    $postField.val(postText.replace(placeholder, `![Image alt text](${data.link})`));
+    $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
   });
 
@@ -146,10 +159,30 @@ $(() => {
         const converter = window.converter;
         const unsafe_html = converter.render(text);
         const html = DOMPurify.sanitize(unsafe_html, {
-          USE_PROFILES: { html: true },
           ALLOWED_TAGS,
           ALLOWED_ATTR
         });
+
+        const removedElements = [...new Set(DOMPurify.removed
+          .filter(entry => entry.element && !(entry.element instanceof HTMLBodyElement))
+          .map(entry => entry.element.localName))];
+
+        const removedAttributes = [...new Set(DOMPurify.removed
+          .filter(entry => entry.attribute)
+          .map(entry => [
+            entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
+            entry.from.localName
+          ]))]
+
+        $tgt.parents('form')
+          .find('.rejected-elements')
+          .toggleClass('hide', removedElements.length === 0 && removedAttributes.length === 0)
+          .find('ul')
+          .empty()
+          .append(
+            removedElements.map(name => $(`<li><code>&lt;${name}&gt;</code></li>`)),
+            removedAttributes.map(([attr, elName]) => $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`)));
+
         $tgt.parents('.form-group').siblings('.post-preview').html(html);
         $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
       }, 0);

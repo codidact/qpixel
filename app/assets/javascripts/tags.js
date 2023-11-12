@@ -14,7 +14,8 @@ $(() => {
   };
 
   const template = (tag) => {
-    const tagSpan = `<span>${tag.text}</span>`;
+    const tagSynonyms = !!tag.synonyms ? ` <i>(${tag.synonyms})</i>` : '';
+    const tagSpan = `<span>${tag.text}${tagSynonyms}</span>`;
     let desc = !!tag.desc ? splitWordsMaxLength(tag.desc, 120) : '';
     const descSpan = !!tag.desc ?
       `<br/><span class="has-color-tertiary-900 has-font-size-caption">${desc[0]}${desc.length > 1 ? '...' : ''}</span>` :
@@ -61,6 +62,7 @@ $(() => {
             results: data.map(t => ({
               id: useIds ? t.id : t.name,
               text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
+              synonyms: processSynonyms($this, t.tag_synonyms),
               desc: t.excerpt
             }))
           };
@@ -70,6 +72,53 @@ $(() => {
       allowClear: true
     });
   });
+
+  function processSynonyms($search, synonyms) {
+    if (!synonyms) return synonyms;
+
+    let displayedSynonyms;
+    if (synonyms.length > 3) {
+      const searchValue = $search.data('select2').selection.$search.val().toLowerCase();
+      displayedSynonyms = synonyms.filter(ts => ts.name.includes(searchValue)).slice(0, 3);
+    } else {
+      displayedSynonyms = synonyms;
+    }
+    let synonymsString = displayedSynonyms.map((ts) => `${ts.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;')}`).join(', ');
+    if (synonyms.length > displayedSynonyms.length) {
+      synonymsString += `, ${synonyms.length - displayedSynonyms.length} more synonyms`;
+    }
+    return synonymsString;
+  }
+
+  $('#add-tag-synonym').on('click', ev => {
+    const $wrapper = $('#tag-synonyms-wrapper');
+    const lastId = $wrapper.children('.tag-synonym').last().attr('data-id');
+    const newId = parseInt(lastId, 10) + 1;
+
+    //Duplicate the first element at the end of the wrapper
+    const newField = $wrapper.find('.tag-synonym[data-id="0"]')[0]
+                             .outerHTML
+                             .replace(/data-id="0"/g, 'data-id="' + newId + '"')
+                             .replace(/(?<connector>attributes(\]\[)|(_))0/g, '$<connector>' + newId)
+    $wrapper.append(newField);
+
+    //Alter the newly added tag synonym
+    const $newTagSynonym = $wrapper.children().last();
+    $newTagSynonym.find('.tag-synonym-name').removeAttr('value').removeAttr('readonly').removeAttr('disabled');
+    $newTagSynonym.find('.destroy-tag-synonym').attr('value', 'false');
+    $newTagSynonym.show();
+
+    //Add handler for removing an element
+    $newTagSynonym.find(`.remove-tag-synonym`).click(removeTagSynonym);
+  });
+
+  $('.remove-tag-synonym').click(removeTagSynonym);
+
+  function removeTagSynonym() {
+    const synonym = $(this).closest('.tag-synonym');
+    synonym.find('.destroy-tag-synonym').attr('value', 'true');
+    synonym.hide();
+  }
 
   $('.js-add-required-tag').on('click', ev => {
     const $tgt = $(ev.target);

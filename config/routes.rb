@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   devise_scope :user do
     get  'users/2fa/login',                to: 'users/sessions#verify_2fa', as: :login_verify_2fa
     post 'users/2fa/login',                to: 'users/sessions#verify_code', as: :login_verify_code
+    get  'users/saml/sign_in_request_from_other/:id', to: 'users/saml_sessions#sign_in_request_from_other', as: :sign_in_request_from_other
+    get  'users/saml/sign_in_return_from_base',       to: 'users/saml_sessions#sign_in_return_from_base', as: :sign_in_return_from_base
+    get  'users/saml/after_sign_in_check',            to: 'users/saml_sessions#after_sign_in_check', as: :after_sign_in_check
   end
 
   root                                     to: 'categories#homepage'
@@ -155,8 +158,8 @@ Rails.application.routes.draw do
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
-  get    'policy/:slug',                   to: 'posts#document', as: :policy
-  get    'help/:slug',                     to: 'posts#document', as: :help
+  get    'policy/:slug',                   to: 'posts#document', as: :policy, constraints: { slug: /.*/ }
+  get    'help/:slug',                     to: 'posts#document', as: :help, constraints: { slug: /.*/ }
 
   get    'tags',                           to: 'tags#index', as: :tags
 
@@ -170,6 +173,7 @@ Rails.application.routes.draw do
     post 'disable/link-email',             to: 'two_factor#send_disable_email', as: :two_factor_send_disable_email
     get  'disable/link/:token',            to: 'two_factor#disable_link', as: :two_factor_disable_link
     post 'disable/link',                   to: 'two_factor#confirm_disable_link', as: :two_factor_confirm_disable_link
+    post 'backup',                         to: 'two_factor#show_backup_code', as: :two_factor_backup_code
   end
 
   scope  'users' do
@@ -181,6 +185,10 @@ Rails.application.routes.draw do
     get    '/me',                       to: 'users#me', as: :users_me
     get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
     post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
+    get    '/me/filters',               to: 'users#filters', as: :user_filters
+    get    '/me/filters/default/',      to: 'users#default_filter', as: :default_filter
+    post   '/me/filters',               to: 'users#set_filter', as: :set_user_filter
+    delete '/me/filters',               to: 'users#delete_filter', as: :delete_user_filter
     get    '/me/notifications',         to: 'notifications#index', as: :notifications
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
@@ -250,6 +258,7 @@ Rails.application.routes.draw do
     root                                   to: 'categories#index', as: :categories
     get    'new',                          to: 'categories#new', as: :new_category
     post   'new',                          to: 'categories#create', as: :create_category
+    post   ':id/filters/default',          to: 'categories#default_filter', as: :set_default_filter
     get    ':id',                          to: 'categories#show', as: :category
     get    ':id/edit',                     to: 'categories#edit', as: :edit_category
     post   ':id/edit',                     to: 'categories#update', as: :update_category
@@ -352,4 +361,8 @@ Rails.application.routes.draw do
   scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
+
+  # Communities can have custom js or css defined (placed in public/assets/community).
+  # If these are not defined for a community, respond with 204 (ok but empty)
+  get '/assets/community/*path', to: ->(env) { [204, {}, ['']] }
 end
