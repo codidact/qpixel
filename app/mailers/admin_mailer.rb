@@ -1,5 +1,8 @@
 class AdminMailer < ApplicationMailer
-  default from: 'Codidact Admins <moderators-noreply@codidact.com>'
+  default from: lambda {
+                  "#{SiteSetting['ModeratorDistributionListSenderName']} " \
+                    "<#{SiteSetting['ModeratorDistributionListSenderEmail']}>"
+                }
 
   def to_moderators
     @subject = params[:subject]
@@ -10,7 +13,7 @@ class AdminMailer < ApplicationMailer
     emails = ActiveRecord::Base.connection.execute(query).to_a.flatten
     from = "#{SiteSetting['ModeratorDistributionListSenderName']} " \
            "<#{SiteSetting['ModeratorDistributionListSenderEmail']}>"
-    to = SiteSetting['ModeratorDistributionListReceiverEmail']
+    to = SiteSetting['ModeratorDistributionListSenderEmail']
     mail subject: "Codidact Moderators: #{@subject}", to: to, from: from, bcc: emails
   end
 
@@ -18,7 +21,9 @@ class AdminMailer < ApplicationMailer
     @subject = params[:subject]
     @body_markdown = params[:body_markdown]
     @users = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
-    mail subject: @subject, to: 'allusers-noreply@codidact.org', from: 'Codidact Team <allusers-noreply@codidact.org>',
-         reply_to: 'info@codidact.org', bcc: @users
+    to = SiteSetting['AllUsersSenderEmail']
+    from = "#{SiteSetting['AllUsersSenderName']} <#{SiteSetting['AllUsersSenderEmail']}>"
+    reply_to = SiteSetting['AllUsersReplyToEmail']
+    mail subject: @subject, to: to, from: from, reply_to: reply_to, bcc: @users
   end
 end

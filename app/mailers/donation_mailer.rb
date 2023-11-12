@@ -5,7 +5,7 @@ class DonationMailer < ApplicationMailer
     @email = params[:email]
     @name = params[:name]
     from = "#{SiteSetting['DonationSenderName']} <#{SiteSetting['DonationSenderEmail']}>"
-    reply_to = "#{SiteSetting['SupportReceiverName']} <#{SiteSetting['SupportReceiverEmail']}>"
+    reply_to = "#{SiteSetting['DonationSupportReceiverName']} <#{SiteSetting['DonationSupportReceiverEmail']}>"
     mail from: from, reply_to: reply_to, to: @email, subject: 'Thanks for your donation!'
   end
 
@@ -16,7 +16,7 @@ class DonationMailer < ApplicationMailer
     @name = params[:name]
     @intent = params[:intent]
     from = "#{SiteSetting['DonationSenderName']} <#{SiteSetting['DonationSenderEmail']}>"
-    reply_to = "#{SiteSetting['SupportReceiverName']} <#{SiteSetting['SupportReceiverEmail']}>"
+    reply_to = "#{SiteSetting['DonationSupportReceiverName']} <#{SiteSetting['DonationSupportReceiverEmail']}>"
     mail from: from, reply_to: reply_to, to: @email, subject: 'Your donation is unfinished - was everything okay?'
   end
 end
