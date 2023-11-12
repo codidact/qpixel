@@ -219,6 +219,48 @@
   description: >
     The (fake) address to send moderator distribution list emails to.
 
+- name: NoReplySenderName
+  value: Codidact
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of no-reply emails.
+
+- name: NoReplySenderEmail
+  value: noreply@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The (fake) address to send no-reply emails from (e.g. 2FA, flag notifications, account emails, etc.)
+
+- name: SupportReceiverName
+  value: Codidact Support
+  value_type: string
+  category: Email
+  description: >
+    The name of the support email address.
+
+- name: SupportReceiverEmail
+  value: support@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The (real) address to receive support emails on. Used for users who want to reply to donation emails.
+
+- name: DonationSenderName
+  value: Codidact Donations
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of donation related emails.
+
+- name: DonationSenderEmail
+  value: donations-support@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The (fake) address to send donation related emails from.
+
 - name: LotteryAgeDeprecationSpeed
   value: 0.002
   value_type: float
