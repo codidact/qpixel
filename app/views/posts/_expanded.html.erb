@@ -39,7 +39,7 @@
     <% if post_type.has_votes || (user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any?) %>
       <div>
         <% if post_type.has_votes %>
-          <div class="post--votes has-text-align-center" title="Score : <%= post.score %>">
+          <div class="post--votes has-text-align-center" title="Score: <%= post.score %>">
             <% existing_vote = my_vote(post) %>
             <% unless post.locked? %>
               <button class="vote-button button is-icon-only-button <%= (existing_vote&.vote_type == 1) ? 'is-active' : '' %>"
@@ -462,13 +462,11 @@
           <% public_count = comment_threads.count %>
           <% available_count = current_user&.has_post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>
+          <div class="post--comments-header">
           <h4 class="has-margin-0">
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <% if user_signed_in? %>
-            <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
-              <i class="fas fa-fw fa-plus"></i> Start new comment thread
-            </a>
             <% if CommentThread.post_followed?(post, current_user) %>
               <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
                           class: "button is-muted is-outlined is-small",
@@ -487,6 +485,7 @@
               <% end %>
             <% end %>
           <% end %>
+          </div>
           <div class="post--comments-container" role="list">
             <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
           </div>
@@ -510,6 +509,9 @@
                   <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
                 <% end %>
               <% end %>
+                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
+                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
+                </a>
                 <%= render 'comments/new_thread_modal', post: post %>
             <% end %>
           </div>
