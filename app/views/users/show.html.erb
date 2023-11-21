@@ -85,6 +85,9 @@
       <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
       <% else %>
+        <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+          See all &raquo;
+        <% end %>
         <div class="item-list user-profile-post-list">
           <% @posts.each do |a| %>
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
