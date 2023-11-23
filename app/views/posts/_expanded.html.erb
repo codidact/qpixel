@@ -232,6 +232,11 @@
               <% elsif !current_user.nil? %>
                 <% if post.pending_suggested_edit? %>
                   <span class="tools--item">suggested edit pending...</span>
+		<% elsif post_type.is_freely_editable %>
+                  <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Edit this post' do %>
+                    <i class="fa fa-pencil-alt"></i>
+                    Edit
+		  <% end %>
                 <% else %>
                   <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Suggest edit to this post' do %>
                     <i class="fa fa-pencil-alt"></i>
