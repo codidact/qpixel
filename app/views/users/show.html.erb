@@ -81,8 +81,8 @@
         <% end %>
       </div>
 
-      <div class="user-profile-heading">
-        <h2 class="has-margin-0">Posts</h2>
+      <div class="user-profile-heading-container">
+        <h2 class="user-profile-heading">Posts</h2>
         <% if @posts.size > 0 %>
           <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
             See all &raquo;
@@ -91,7 +91,7 @@
       </div>
       <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
-	<% else %>
+      <% else %>
         <div class="item-list user-profile-post-list">
           <% @posts.each do |a| %>
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
