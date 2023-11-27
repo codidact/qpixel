@@ -54,7 +54,7 @@ $(() => {
       const filters = await QPixel.filters();
 
       function template(option) {
-        if (option.id == '') { return 'None'; }
+        if (option.id == '') { return 'Default'; }
 
         const filter = filters[option.id];
         const name = `<span>${option.text}</span>`;

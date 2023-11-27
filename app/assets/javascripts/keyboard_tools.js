@@ -77,8 +77,27 @@ $(() => {
       }
     });
 
+    /**
+     * Checks common modifier states on a given keyboard event
+     * @param {KeyboardEvent} e
+     * @returns {boolean}
+     */
+    const getModifierState = (e) => {
+      return !!e.altKey || !!e.ctrlKey || !!e.metaKey || !!e.shiftKey;
+    };
+
+    /**
+     * Handles the "home" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function homeMenu(e) {
-      if (e.key === "?") {
+      const isHelp = e.key === "?";
+
+      if (!isHelp && getModifierState(e)) {
+        return;
+      }
+
+      if (isHelp) {
         _CodidactKeyboard.dialog(
           'Codidact Keyboard Shortcuts\n' +
           '===========================\n' +
@@ -156,7 +175,15 @@ $(() => {
       }
     }
 
+    /**
+     * Handles "goto" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function gotoMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       if (e.key === 'm') {
         window.location.href = '/';
       } else if (e.key === 'u') {
@@ -208,7 +235,15 @@ $(() => {
       }
     }
 
+    /**
+     * Handles the "goto/category" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function categoryMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       const number = parseInt(e.key);
       if (!isNaN(number)) {
         const data = _CodidactKeyboard.categories();
@@ -219,7 +254,15 @@ $(() => {
       }
     }
 
+    /**
+     * Handles the "goto/category-tags" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function categoryTagsMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       const number = parseInt(e.key);
       if (!isNaN(number)) {
         const data = Object.entries(_CodidactKeyboard.categories());
@@ -229,7 +272,15 @@ $(() => {
       }
     }
 
+    /**
+     * Handles the "goto/category-edits" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function categorySuggestedEditsMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       const number = parseInt(e.key);
       if (!isNaN(number)) {
         const data = Object.entries(_CodidactKeyboard.categories());
@@ -239,7 +290,15 @@ $(() => {
       }
     }
 
+    /**
+     * Handles the "tools" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function toolsMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       if (e.key === 'e') {
         window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-pencil-alt').parent().attr("href");
       } else if (e.key === 'h') {
@@ -276,7 +335,15 @@ $(() => {
 
     }
 
+    /**
+     * Handles the "tools/vote" keyboard state
+     * @param {KeyboardEvent} e
+     */
     function voteMenu(e) {
+      if (getModifierState(e)) {
+        return;
+      }
+
       if (e.key === 'u') {
         const cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="1"]');
         cl.click();
