@@ -229,5 +229,5 @@ class TagsController < ApplicationController
       return false
     end
     true
-  end    
+  end
 end
