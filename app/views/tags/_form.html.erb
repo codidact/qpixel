@@ -62,9 +62,8 @@
       Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
       the tag page.
     </span>
-    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3 %>
-    <span class="has-float-right has-font-size-caption js-character-count"
-          data-target=".js-tag-excerpt" data-max="600">0 / 600</span>
+    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3, data: { character_count: '.js-character-count-tag-excerpt' } %>
+    <%= render 'shared/char_count', type: 'tag-excerpt', cur: @tag.excerpt&.length, min: 0, max: 600 %>
   </div>
 
   <%= render 'shared/body_field', f: f, field_name: :wiki_markdown, field_label: 'Wiki', post: @tag do %>
