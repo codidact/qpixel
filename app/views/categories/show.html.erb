@@ -21,10 +21,12 @@
     <%= link_to category_feed_path(@category, format: 'rss') do %>
     <i class="fas fa-rss"></i> RSS
     <% end %>
-    
-    <% if current_user&.is_admin %>
-    <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
-    <% end %>
+
+    <span class="has-margin-4">
+      <% if current_user&.is_admin %>
+      <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
+      <% end %>
+    </span>
 
   </span>
 
