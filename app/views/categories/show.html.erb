@@ -18,16 +18,16 @@
       <%= 'post'.pluralize(post_count) %> &nbsp;
     </span>
 
+    <%= link_to category_feed_path(@category, format: 'rss') do %>
+    <i class="fas fa-rss"></i> RSS
+    <% end %>
+    
     <% if current_user&.is_admin %>
     <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
     <% end %>
 
-    <%= link_to 'Subscribe',
-	new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
-	class: 'button is-outlined',
-	title: 'Get email notifications for new top-level posts' %>
   </span>
-      
+
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Activity', request.params.merge(sort: 'activity'),
                 class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
