@@ -34,7 +34,8 @@
   <div class="form-group has-padding-2">
     <%= f.label :username, class: "form-element" %>
     <div class="form-caption">What other people call you.</div>
-    <%= f.text_field :username, class: 'form-element', autocomplete: 'off' %>
+    <%= f.text_field :username, class: 'form-element', autocomplete: 'off', data: { character_count: '.js-character-count-user-name' } %>
+    <%= render 'shared/char_count', type: 'user-name', cur: current_user.username&.length, min: 3, max: 50 %>
   </div>
 
   <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
