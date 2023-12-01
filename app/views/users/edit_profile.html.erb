@@ -38,7 +38,7 @@
   </div>
 
   <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
-             min_length: 0 %>
+            cur_length: current_user.profile_markdown&.length, min_length: 0 %>
 
   <div class="post-preview"></div>
 

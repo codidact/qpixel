@@ -3,12 +3,14 @@
   post body.
 
   Variables:
+    cur_length    : [Integer, Nil] optional, current character length (default 0)
     min_length    : [Integer, Nil] optional, the minimum allowed length (default 30)
     max_length    : [Integer, Nil] optional, the maximum allowed length (default 30_000)
 %>
 
 <%
   # Defaults
+  cur_length = (defined?(cur_length) ? cur_length : nil) || 0
   min_length = (defined?(min_length) ? min_length : nil) || 30
   max_length = (defined?(max_length) ? max_length : nil) || 30_000
 %>
@@ -16,5 +18,5 @@
 <div class="form-caption widget--footer js-post-field-footer">
   We <a href="/help/formatting">support Markdown</a> for posts:
   <strong>**bold**</strong>, <em>*italics*</em>, <code>`code`</code>, two newlines for paragraphs
-  <%= render 'shared/char_count', type: 'post-body', min: min_length, max: max_length %>
+  <%= render 'shared/char_count', type: 'post-body', cur: cur_length, min: min_length, max: max_length %>
 </div>

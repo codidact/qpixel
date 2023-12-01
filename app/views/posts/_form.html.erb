@@ -55,7 +55,7 @@
   <% end %>
 
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
-             min_length: min_body_length(category), max_length: max_body_length(category) %>
+            cur_length: post.body_markdown&.length, min_length: min_body_length(category), max_length: max_body_length(category) %>
 
   <div class="rejected-elements notice is-warning hide">
     <h3>Unsupported HTML detected</h3>
