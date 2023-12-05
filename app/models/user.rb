@@ -271,7 +271,7 @@ class User < ApplicationRecord
   end
 
   def has_active_flags?(post)
-    post.flags.where(user: self, status: nil).size != 0
+    !post.flags.where(user: self, status: nil).empty?
   end
 
   def active_flags(post)

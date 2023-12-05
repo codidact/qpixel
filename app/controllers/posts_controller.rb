@@ -144,18 +144,18 @@ class PostsController < ApplicationController
       return not_found
     end
 
-    #@post = @post.includes(:flags, flags: :post_flag_type)
+    # @post = @post.includes(:flags, flags: :post_flag_type)
     @children = if current_user&.privilege?('flag_curate')
                   Post.where(parent_id: @post.id)
                 else
                   Post.where(parent_id: @post.id).undeleted
                       .or(Post.where(parent_id: @post.id, user_id: current_user&.id).where.not(user_id: nil))
                 end.includes(:votes, :user, :comments, :license, :post_type, :flags, flags: :post_flag_type)
-                   .order(Post.arel_table[:id].not_eq(params[:answer]))
-                   .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
-                              score: Arel.sql('deleted ASC, score DESC, RAND()'), active: :last_activity,
-                              age: :created_at)
-                   .paginate(page: params[:page], per_page: 20)
+                .order(Post.arel_table[:id].not_eq(params[:answer]))
+                .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
+                           score: Arel.sql('deleted ASC, score DESC, RAND()'), active: :last_activity,
+                           age: :created_at)
+                .paginate(page: params[:page], per_page: 20)
   end
 
   def edit; end
