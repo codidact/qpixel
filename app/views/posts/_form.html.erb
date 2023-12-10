@@ -71,11 +71,10 @@
     <div class="form-group">
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
+      <div class="clearfix">
+        <%= render 'shared/char_count', type: 'post-title', cur: post.body_markdown&.length, max: max_title_length(category), min: min_title_length(category) %>
+      </div>
     </div>
-    <div>
-      <%= render 'shared/char_count', type: 'post-title', cur: post.body_markdown&.length, max: max_title_length(category), min: min_title_length(category) %>
-    </div>
-
   <% end %>
 
   <% if post_type.has_tags? && category.present? %>
