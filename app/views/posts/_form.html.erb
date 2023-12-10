@@ -178,21 +178,7 @@
 
   <% if edit_comment %>
     <hr/>
-    <div class="form-group">
-      <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
-      <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
-    </div>
-    <div class="form-group">
-      <div class="checkbox-setting">
-        <div class="checkbox-setting--desc">
-          <%= label_tag :redact, t('posts.redact_label'), class: 'form-element' %>
-          <span class="form-caption"><%= t('posts.redact_explanation') %></span>
-        </div>
-        <div class="checkbox-setting--value">
-          <%= check_box_tag :redact, true, false, class: 'form-checkbox-element' %>
-        </div>
-      </div>
-    </div>
+    <%= render 'edit_comment', max_length: max_edit_comment_length %>
   <% end %>
 
   <div class="actions">
