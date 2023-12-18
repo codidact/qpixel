@@ -216,7 +216,8 @@ class TagsController < ApplicationController
   end
 
   def verify_tag_editor
-    unless user_signed_in? && (current_user.privilege?(:edit_tags) || current_user.is_moderator || current_user.is_admin)
+    unless user_signed_in? &&
+           (current_user.privilege?(:edit_tags) || current_user.is_moderator || current_user.is_admin)
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found

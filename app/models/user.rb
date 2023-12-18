@@ -269,5 +269,13 @@ class User < ApplicationRecord
   def preference(name, community: false)
     preferences[community ? :community : :global][name]
   end
+
+  def has_active_flags?(post)
+    !post.flags.where(user: self, status: nil).empty?
+  end
+
+  def active_flags(post)
+    post.flags.where(user: self, status: nil)
+  end
   # rubocop:enable Naming/PredicateName
 end
