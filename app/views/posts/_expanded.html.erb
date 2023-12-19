@@ -315,8 +315,25 @@
         <div class="post--action-dialog js-flag-box">
           <div class="widget">
             <div class="widget--header">Why does this post require moderator attention?</div>
+            <% if current_user&.has_active_flags?(post) %>
+              <div class="widget--body">
+                <div class="notice is-warning">
+                  You already have active flags on this post:
+                  <ul>
+                    <% current_user.active_flags(post).each do |flag| %>
+                      <li>
+                        <strong><%= flag.post_flag_type&.name || 'other' %></strong>
+                        <% unless flag.reason.nil? %>
+                          <span class="has-color-tertiary-600"><%= flag.reason %></span>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            <% end %>
             <% unless post.locked? %>
-	    <% PostFlagType.where(post_type_id: [post.post_type.id, nil]).where(active: 1).each do |reason| %>
+	            <% PostFlagType.where(post_type_id: [post.post_type.id, nil]).where(active: 1).each do |reason| %>
                 <div class="widget--body">
                   <div class="grid">
                     <div class="grid--cell">
@@ -345,22 +362,22 @@
                 </div>
               <% end %>
             <% end %>
-              <div class="widget--body">
-                <div class="grid">
-                  <div class="grid--cell">
-                    <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>"
-                           data-requires-details="true" />
-                  </div>
-                  <div class="grid--cell is-flexible">
-                    <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
-                      other reason
-                      <span class="form-caption">
-                        Please elaborate in the details field below.
-                      </span>
-                    </label>
-                  </div>
+            <div class="widget--body">
+              <div class="grid">
+                <div class="grid--cell">
+                  <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>"
+                         data-requires-details="true" />
+                </div>
+                <div class="grid--cell is-flexible">
+                  <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
+                    other reason
+                    <span class="form-caption">
+                      Please elaborate in the details field below.
+                    </span>
+                  </label>
                 </div>
               </div>
+            </div>
             <div class="widget--body">
               <label class="form-element" for="flag-post-<%= post.id %>">
                 Details?
