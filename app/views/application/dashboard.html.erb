@@ -27,16 +27,16 @@
               <% if user_signed_in? && cat.new_posts_for?(current_user) %>
                 <span class="badge is-status" title="unread activity in category"></span>
               <% end %>
-            <% end %>
+	      <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
+	      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+	      <% if sug_edits != 0 %>
+	      &nbsp;&nbsp;(<%= sug_edits %> pending edits)
+	      <% end %>
+	      <% end %>
+
+	    <% end %>
           </div>
         <% end %>
-
-	<% if current_user&.has_ability_on(c.id, 'edit_posts') %>
-        <div class="widget--body h-fw-bold h-bg-tertiary-050">
-	  <% suggested_edits = SuggestedEdit.unscoped.where(community: c, active: true).count %>
-	  Pending edits: <%= suggested_edits %>
-	</div>
-	<% end %>
 
 	<% if current_user&.is_global_moderator || current_user&.is_global_admin %>
           <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
