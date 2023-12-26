@@ -28,12 +28,12 @@
                 <span class="badge is-status" title="unread activity in category"></span>
               <% end %>
 	      <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
-	      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
-	      <% if sug_edits != 0 %>
-	      &nbsp;&nbsp;(<%= sug_edits %> pending edits)
+	        <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+		<% if sug_edits != 0 %>
+		  &nbsp;&nbsp;(<a href="<%= suggested_edits_queue_path(cat) %>">
+		  <%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %></a>)
+		<% end %>
 	      <% end %>
-	      <% end %>
-
 	    <% end %>
           </div>
         <% end %>
