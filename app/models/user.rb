@@ -133,7 +133,7 @@ class User < ApplicationRecord
       return false
     end
 
-    cu = community_users.find { |cu| cu.community_id == community_id && cu.id == id }
+    cu = community_users.find { |cuf| cuf.community_id == community_id && cuf.id == id }
 
     if cu.nil?
       return false
