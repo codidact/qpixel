@@ -19,6 +19,8 @@
             <% end %>
           </div>
         </div>
+
+
         <% categories.each do |cat| %>
           <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
           <div class="widget--body">
@@ -27,18 +29,19 @@
               <% if user_signed_in? && cat.new_posts_for?(current_user) %>
                 <span class="badge is-status" title="unread activity in category"></span>
               <% end %>
-	      <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
-	        <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
-		<% if sug_edits != 0 %>
-		  &nbsp;
-		  <a href="<%= suggested_edits_queue_path(cat) %>">
-		  (<%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %>)</a>
-		<% end %>
-	      <% end %>
-	    <% end %>
+            <% end %>
+
+            <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
+              <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+              <% if sug_edits > 0 %>
+                <%= link_to suggested_edits_queue_path(cat), class: 'widget--body-extra' do %>
+                (<%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %>)
+                <% end %>
+              <% end %>
+            <% end %>
+
           </div>
         <% end %>
-
 	<% if current_user&.is_global_moderator || current_user&.is_global_admin %>
           <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
           <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
