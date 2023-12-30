@@ -55,7 +55,7 @@
   <% end %>
 
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
-             min_length: min_body_length(category), max_length: max_body_length(category), post_type: post_type %>
+            cur_length: post.body_markdown&.length, min_length: min_body_length(category), max_length: max_body_length(category), post_type: post_type %>
 
   <div class="rejected-elements notice is-warning hide">
     <h3>Unsupported HTML detected</h3>
@@ -73,14 +73,9 @@
       <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
     </div>
     <div>
-      <span class="has-float-right has-font-size-caption js-character-count-post-title hide"
-            data-min="<%= min_title_length(category) %>"
-            data-max="<%= max_title_length(category) %>"
-            data-display-at="0.75">
-        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / <%= max_title_length(category) %></span>
-      </span>
+      <%= render 'shared/char_count', type: 'post-title', cur: post.body_markdown&.length, max: max_title_length(category), min: min_title_length(category) %>
     </div>
+
   <% end %>
 
   <% if post_type.has_tags? && category.present? %>

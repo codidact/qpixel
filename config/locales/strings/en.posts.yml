@@ -49,7 +49,7 @@ en:
     redact_label: >
       Redact
     redact_explanation: >
-      Redact original content by hiding the previous versions from history?
+      Redact original content by hiding the previous versions from history? Use only for private information such as passwords or personally identifiable information.
     licence_label: >
       License
     template_post_type_label: >

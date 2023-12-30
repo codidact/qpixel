@@ -20,11 +20,7 @@
       <div class="form-caption">Start the thread with a comment.</div>
       <%= text_area_tag :body, '', class: 'form-element js-comment-field', required: true,
                         data: { post: post.id, thread: '-1', character_count: ".js-character-count-#{post.id}" } %>
-      <span class="has-float-right has-font-size-caption js-character-count-<%= post.id %>"
-            data-max="1000" data-min="15">
-        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / 1000</span>
-      </span>
+      <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
 
       <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
       <span class="form-caption">
@@ -32,12 +28,7 @@
         be shown.
       </span>
       <%= text_field_tag :title, '', class: 'form-element', data: { character_count: ".js-character-count-thread-title" } %>
-
-      <span class="has-float-right has-font-size-caption js-character-count-thread-title hide"
-            data-max="255" data-min="0" data-display-at="0.75">
-        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / 255</span>
-      </span>
+      <%= render 'shared/char_count', type: 'thread-title' %>
 
       <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
     <% end %>
