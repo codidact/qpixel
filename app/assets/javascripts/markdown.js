@@ -21,6 +21,8 @@ $(() => {
     $tgt = $(ev.target);
     const content = $(`#template-md-${$tgt.attr('data-template-id')}`).val();
     replaceSelection($postField, content);
+    $postField.trigger('markdown');
+    $tgt.parents('.modal,.droppanel').removeClass('is-active');
   });
 
   $(document).on('click', '.js-markdown-tool', ev => {
