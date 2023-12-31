@@ -124,7 +124,7 @@ class User < ApplicationRecord
 
   def has_ability_on(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
-    if is_moderator
+    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
       true
     elsif cu.nil?
       false
