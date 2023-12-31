@@ -20,7 +20,6 @@
           </div>
         </div>
 
-
         <% categories.each do |cat| %>
           <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
           <div class="widget--body">
@@ -32,7 +31,7 @@
             <% end %>
 
             <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
-              <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+              <% sug_edits = SuggestedEdit.unscoped.where(post: Post.undeleted.where(category: cat), active: true).count %>
               <% if sug_edits > 0 %>
                 <%= link_to suggested_edits_queue_path(cat), class: 'widget--body-extra' do %>
                 (<%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %>)
