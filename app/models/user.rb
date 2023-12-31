@@ -122,6 +122,16 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
+  def has_ability_on(community_id, ability_internal_id)
+    cu = community_users.joins(:community).where(communities: { id: community_id }).first
+    if is_admin || is_global_moderator || cu.is_moderator
+      true
+    else
+      UserAbility.joins(:ability).where(community_user_id: cu.id, is_suspended: false,
+                                        ability: { internal_id: ability_internal_id }).exists?
+    end
+  end
+
   def rtl_safe_username
     "#{username}\u202D"
   end
