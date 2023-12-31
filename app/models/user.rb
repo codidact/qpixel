@@ -1,4 +1,3 @@
-# coding: utf-8
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
@@ -125,14 +124,14 @@ class User < ApplicationRecord
 
   def has_ability_on(community_id, ability_internal_id)
     cu = community_users.joins(:community).where(communities: { id: community_id }).first
-    if is_admin || is_global_moderator || cu.is_moderator 
+    if is_admin || is_global_moderator || cu.is_moderator
       true
     else
-      UserAbility.joins(:ability).where(community_user_id: cu.id, is_suspended: false, ability: { internal_id: ability_internal_id }).exists?
+      UserAbility.joins(:ability).where(community_user_id: cu.id, is_suspended: false,
+                                        ability: { internal_id: ability_internal_id }).exists?
     end
   end
 
-  
   def rtl_safe_username
     "#{username}\u202D"
   end
