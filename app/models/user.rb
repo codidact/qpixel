@@ -123,12 +123,14 @@ class User < ApplicationRecord
   end
 
   def has_ability_on(community_id, ability_internal_id)
-    cu = community_users.joins(:community).where(communities: { id: community_id }).first
-    if is_admin || is_global_moderator || cu.is_moderator
+    cu = community_users.where(community_id: community_id).first
+    if is_moderator
       true
     else
-      UserAbility.joins(:ability).where(community_user_id: cu.id, is_suspended: false,
-                                        ability: { internal_id: ability_internal_id }).exists?
+      Ability.unscoped do
+        UserAbility.joins(:ability).where(community_user_id: cu.id, is_suspended: false,
+                                          ability: { internal_id: ability_internal_id }).exists?
+      end
     end
   end
 

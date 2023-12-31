@@ -32,17 +32,16 @@
             <% end %>
 
             <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
-              <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+              <% sug_edits = @edits[cat.id] || 0 %>
               <% if sug_edits > 0 %>
                 <%= link_to suggested_edits_queue_path(cat), class: 'widget--body-extra' do %>
                 (<%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %>)
                 <% end %>
               <% end %>
             <% end %>
-
           </div>
         <% end %>
-	<% if current_user&.is_global_moderator || current_user&.is_global_admin %>
+	      <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
           <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
           <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
           <div class="widget--body h-fw-bold h-bg-tertiary-050">
