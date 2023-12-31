@@ -127,6 +127,8 @@ class User < ApplicationRecord
     cu = community_users.where(community_id: community_id).first
     if is_moderator
       true
+    elsif cu.nil?
+      false
     else
       Ability.unscoped do
         UserAbility.joins(:ability).where(community_user_id: cu&.id, is_suspended: false,
