@@ -41,7 +41,7 @@
             <% end %>
           </div>
         <% end %>
-	      <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
+        <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
           <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
           <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
           <div class="widget--body h-fw-bold h-bg-tertiary-050">
