@@ -72,7 +72,10 @@
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
       <div class="clearfix">
-        <%= render 'shared/char_count', type: 'post-title', cur: post.title&.length, max: max_title_length(category), min: min_title_length(category) %>
+        <%= render 'shared/char_count', type: 'post-title', 
+                                        cur: post.title&.length, 
+                                        max: max_title_length(category), 
+                                        min: min_title_length(category, post_type) %>
       </div>
     </div>
   <% end %>
