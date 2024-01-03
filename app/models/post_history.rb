@@ -1,5 +1,7 @@
 class PostHistory < ApplicationRecord
   include PostRelated
+  include PostHistoryValidations
+
   belongs_to :post_history_type
   belongs_to :user
   has_many :post_history_tags
@@ -64,7 +66,10 @@ class PostHistory < ApplicationRecord
       end
     end.values.compact.flatten
 
-    history.post_history_tags = PostHistoryTag.create(post_history_tags)
+    # do not create post history tags if post history validations failed
+    unless history.errors.any?
+      history.post_history_tags = PostHistoryTag.create(post_history_tags)
+    end
 
     history
   end
