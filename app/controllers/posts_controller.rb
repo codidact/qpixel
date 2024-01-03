@@ -244,8 +244,6 @@ class PostsController < ApplicationController
             Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
             do_draft_delete(URI(request.referer || '').path)
             redirect_to post_path(@post)
-          else
-            render :edit, status: :bad_request
           end
 
           next
