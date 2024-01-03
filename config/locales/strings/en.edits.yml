@@ -1,5 +1,5 @@
 en:
-  post_histories:
+  edits:
     # validation error messages
     max_edit_comment_length: >
       Edit comment can't be more than :length characters long.

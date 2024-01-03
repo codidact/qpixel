@@ -1,6 +1,6 @@
 class PostHistory < ApplicationRecord
   include PostRelated
-  include PostHistoryValidations
+  include EditsValidations
 
   belongs_to :post_history_type
   belongs_to :user
