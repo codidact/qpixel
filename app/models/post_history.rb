@@ -19,6 +19,17 @@ class PostHistory < ApplicationRecord
     !hidden || user&.is_admin || user_id == user&.id || post.user_id == user&.id
   end
 
+  # Hides all previous history
+  # @param post [Post]
+  # @param user [User]
+  def self.redact(post, user)
+    where(post: post).update_all(hidden: true)
+    history_hidden(post, user, after: post.body_markdown,
+                                    after_title: post.title,
+                                    after_tags: post.tags,
+                                    comment: 'Detailed history before this event is hidden because of a redaction.')
+  end
+
   def self.method_missing(name, *args, **opts)
     unless args.length >= 2
       raise NoMethodError
