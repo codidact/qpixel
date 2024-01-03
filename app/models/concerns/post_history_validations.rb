@@ -7,6 +7,10 @@ module PostHistoryValidations
   end
 
   def max_edit_comment_length
+    if comment.nil?
+      return
+    end
+
     max_edit_comment_length = SiteSetting['MaxEditCommentLength']
     max_length = [(max_edit_comment_length || 255), 255].min
     if comment.length > max_length
