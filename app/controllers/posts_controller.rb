@@ -168,6 +168,16 @@ class PostsController < ApplicationController
                                        last_activity_by: user))
   end
 
+  def do_update_network(posts, user, edit_post_params, body_rendered)
+    update_params = edit_post_params.to_h.merge(body: body_rendered,
+                                                last_edited_at: DateTime.now,
+                                                last_edited_by_id: user.id,
+                                                last_activity: DateTime.now,
+                                                last_activity_by_id: user.id)
+
+    posts.update_all(**update_params.symbolize_keys)
+  end
+
   # Checks if a given user can push a given post type to network
   # @param user [User] user attempting to push to network
   # @param post_type [PostType] type of the post to be pushed
@@ -199,11 +209,11 @@ class PostsController < ApplicationController
     if can_update(@post, current_user, @post_type)
       if can_push_to_network(current_user, @post_type) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
-                                    doc_slug: @post.doc_slug, body: @post.body)
-        update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
-                                                    last_edited_by_id: current_user.id, last_activity: DateTime.now,
-                                                    last_activity_by_id: current_user.id)
-        posts.update_all(**update_params.symbolize_keys)
+                                    doc_slug: @post.doc_slug,
+                                    body: @post.body)
+
+        do_update_network(posts, current_user, edit_post_params, body_rendered)
+
         posts.each do |post|
           PostHistory.post_edited(post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
