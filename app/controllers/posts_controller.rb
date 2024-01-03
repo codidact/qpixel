@@ -177,11 +177,11 @@ class PostsController < ApplicationController
   end
 
   # Checks if a given user can directly update a given post
+  # @param post [Post] updated post (owners can unilaterally update)
   # @param user [User] user attempting to update the post
   # @param post_type [PostType] type of the post (some are freely editable)
-  # @param post [Post] updated post (owners can unilaterally update)
   # @return [Boolean]
-  def can_update(user, post_type, post)
+  def can_update(post, user, post_type)
     user.privilege?('edit_posts') || user.is_moderator || user == post.user || \
       (post_type.is_freely_editable && user.privilege?('unrestricted'))
   end
@@ -196,7 +196,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if can_update(current_user, @post_type, @post)
+    if can_update(@post, current_user, @post_type)
       if can_push_to_network(current_user, @post_type) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                     doc_slug: @post.doc_slug, body: @post.body)
