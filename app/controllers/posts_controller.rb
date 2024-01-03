@@ -212,16 +212,18 @@ class PostsController < ApplicationController
                                     doc_slug: @post.doc_slug,
                                     body: @post.body)
 
-        do_update_network(posts, current_user, edit_post_params, body_rendered)
+        update_status = do_update_network(posts, current_user, edit_post_params, body_rendered)
 
-        posts.each do |post|
-          PostHistory.post_edited(post, current_user, before: before[:body],
-                                  after: @post.body_markdown, comment: params[:edit_comment],
-                                  before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
+        if update_status
+          posts.each do |post|
+            PostHistory.post_edited(post, current_user, before: before[:body],
+                                    after: @post.body_markdown, comment: params[:edit_comment],
+                                    before_title: before[:title], after_title: @post.title,
+                                    before_tags: before[:tags], after_tags: @post.tags)
+          end
+          flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
+          redirect_to help_path(slug: @post.doc_slug)
         end
-        flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
-        redirect_to help_path(slug: @post.doc_slug)
       else
         # post update & post history creation must be atomic to prevent sync issues on error
         @post.transaction do
@@ -250,7 +252,7 @@ class PostsController < ApplicationController
         end
       end
 
-      # this is only reached if we rollback the transaction
+      # this is only reached if we rollback the transaction or fail validations
       if @post.errors.any?
         render :edit, status: :bad_request
       end
