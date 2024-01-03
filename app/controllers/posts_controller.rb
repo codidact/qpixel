@@ -175,6 +175,15 @@ class PostsController < ApplicationController
     post_type.system? && (user.is_global_moderator || user.is_global_admin)
   end
 
+  # @param user [User]
+  # @param post_type [PostType]
+  # @param post [Post]
+  # @return [Boolean]
+  def can_update(user, post_type, post)
+    user.privilege?('edit_posts') || user.is_moderator || user == post.user || \
+      (post_type.is_freely_editable && user.privilege?('unrestricted'))
+  end
+
   def update
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
@@ -185,8 +194,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
-       (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
+    if can_update(current_user, @post_type, @post)
       if can_push_to_network(current_user, @post_type) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                     doc_slug: @post.doc_slug, body: @post.body)
