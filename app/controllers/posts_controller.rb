@@ -197,8 +197,9 @@ class PostsController < ApplicationController
         flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
       else
-        if do_update(@post, current_user, edit_post_params, body_rendered)
+        update_status = do_update(@post, current_user, edit_post_params, body_rendered)
 
+        if update_status
           PostHistory.post_edited(@post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
                                   before_title: before[:title], after_title: @post.title,
