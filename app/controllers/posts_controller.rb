@@ -168,6 +168,7 @@ class PostsController < ApplicationController
                                        last_activity_by: user))
   end
 
+  # @return [Integer] number of updated posts
   def do_update_network(posts, user, edit_post_params, body_rendered)
     update_params = edit_post_params.to_h.merge(body: body_rendered,
                                                 last_edited_at: DateTime.now,
@@ -208,21 +209,32 @@ class PostsController < ApplicationController
 
     if can_update(@post, current_user, @post_type)
       if can_push_to_network(current_user, @post_type) && params[:network_push] == 'true'
-        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
-                                    doc_slug: @post.doc_slug,
-                                    body: @post.body)
+        # post network push & post histories creation must be atomic to prevent sync issues on error
+        @post.transaction do
+          posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                      doc_slug: @post.doc_slug,
+                                      body: @post.body)
 
-        update_status = do_update_network(posts, current_user, edit_post_params, body_rendered)
+          num_updated = do_update_network(posts, current_user, edit_post_params, body_rendered)
 
-        if update_status
-          posts.each do |post|
-            PostHistory.post_edited(post, current_user, before: before[:body],
-                                    after: @post.body_markdown, comment: params[:edit_comment],
-                                    before_title: before[:title], after_title: @post.title,
-                                    before_tags: before[:tags], after_tags: @post.tags)
+          if num_updated == posts.to_a.size
+            posts.each do |post|
+              history_entry = PostHistory.post_edited(post, current_user, before: before[:body],
+                                      after: @post.body_markdown, comment: params[:edit_comment],
+                                      before_title: before[:title], after_title: @post.title,
+                                      before_tags: before[:tags], after_tags: @post.tags)
+
+              if history_entry&.errors&.any?
+                @post.errors.merge!(history_entry.errors)
+                raise ActiveRecord::Rollback
+              end
+            end
+
+            flash[:success] = "#{helpers.pluralize(num_updated, 'post')} updated."
+            redirect_to help_path(slug: @post.doc_slug)
           end
-          flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
-          redirect_to help_path(slug: @post.doc_slug)
+
+          next
         end
       else
         # post update & post history creation must be atomic to prevent sync issues on error
