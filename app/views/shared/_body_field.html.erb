@@ -10,6 +10,7 @@
 
 <%
   # Defaults
+  cur_length = defined?(cur_length) ? cur_length : nil
   min_length = defined?(min_length) ? min_length : nil
   max_length = defined?(max_length) ? max_length : nil
 %>
@@ -38,7 +39,7 @@
     <%= render 'shared/markdown_tools' %>
     <%= f.text_area field_name, **({ class: classes, rows: 15, placeholder: 'Start typing your post...' }).merge(value), 
                                 data: { character_count: ".js-character-count-post-body" } %>
-    <%= render 'posts/mdhint', min_length: min_length, max_length: max_length %>
+    <%= render 'posts/mdhint', cur_length: cur_length, min_length: min_length, max_length: max_length %>
   </div>
   <%= hidden_field_tag "__html", nil, class: 'js-post-html' %>
 </div>

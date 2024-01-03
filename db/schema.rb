@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -111,7 +111,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
     t.boolean "use_for_advertisement", default: true
     t.integer "min_title_length", default: 15, null: false
     t.integer "min_body_length", default: 30, null: false
+    t.bigint "default_filter_id"
     t.index ["community_id"], name: "index_categories_on_community_id"
+    t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
@@ -765,6 +767,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_191600) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "communities"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "categories", "filters", column: "default_filter_id"
   add_foreign_key "categories", "licenses"
   add_foreign_key "categories", "tag_sets"
   add_foreign_key "category_filter_defaults", "categories"

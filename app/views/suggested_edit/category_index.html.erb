@@ -10,8 +10,8 @@
 
 <% if params[:show_decided] != '1' && !current_user&.privilege?('edit_posts') %>
   <div class="notice is-info has-color-teal-800">
-    <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits because you haven't
-    yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
+    <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits (except on your own posts) 
+    because you haven't yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
   </div>
 <% end %>
 

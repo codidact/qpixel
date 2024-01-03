@@ -178,9 +178,121 @@
 - name: InterestingSubscriptionScoreThreshold
   value: 1
   value_type: integer
-  category: EmailSubscriptions
+  category: Email
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
+
+- name: SubscriptionSenderName
+  value: Codidact Subscriptions
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of subscription emails.
+
+- name: SubscriptionSenderEmail
+  value: subscriptions@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The address to send subscription emails from (can be a fake address).
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: ModeratorDistributionListSenderName
+  value: Codidact Admins
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of the moderator distribution list.
+
+- name: ModeratorDistributionListSenderEmail
+  value: moderators-noreply@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The address to send moderator distribution list emails from (can be a fake address).
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: NoReplySenderName
+  value: Codidact
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of no-reply emails.
+
+- name: NoReplySenderEmail
+  value: noreply@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The address to send no-reply emails from (can be a fake address).
+    Example uses of this address are 2FA emails, flag notifications, account emails, and more.
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: DonationSupportReceiverName
+  value: Codidact Support
+  value_type: string
+  category: Email
+  description: >
+    The name of the donation support email address.
+
+- name: DonationSupportReceiverEmail
+  value: support@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The (real) address to receive donation support emails on. Used for users who want to reply to donation emails.
+
+- name: DonationSenderName
+  value: Codidact Donations
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of donation related emails.
+
+- name: DonationSenderEmail
+  value: donations-support@codidact.com
+  value_type: string
+  category: Email
+  description: >
+    The address to send donation related emails from (can be a fake address).
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: SupportReceiverName
+  value: Codidact Support
+  value_type: string
+  category: Email
+  description: >
+    The name of the donation support email address.
+
+- name: SupportReceiverEmail
+  value: info@codidact.org
+  value_type: string
+  category: Email
+  description: >
+    The (real) address to receive support emails on.
+
+- name: AllUsersSenderName
+  value: Codidact Team
+  value_type: string
+  category: Email
+  description: >
+    The name of the sender of emails sent to all users of the network via the admin tools.
+
+- name: AllUsersSenderEmail
+  value: allusers-noreply@codidact.org
+  value_type: string
+  category: Email
+  description: >
+    The address to use as sender for emails sent to all users of the network via the admin tools (can be a fake address).
+    Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: AllUsersReplyToEmail
+  value: info@codidact.org
+  value_type: string
+  category: Email
+  description: >
+    The (real) address to use as reply-to for emails sent to all users of the network via the admin tools.
+
 
 - name: LotteryAgeDeprecationSpeed
   value: 0.002

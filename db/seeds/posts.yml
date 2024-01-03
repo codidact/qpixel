@@ -142,3 +142,10 @@
   body: $FILE posts/deleted.html
   doc_slug: deleted
   help_category: Site Information
+
+- post_type_id: <%= HelpDoc.post_type_id %>
+  title: Advanced formatting help
+  body_markdown: $FILE posts/advanced-formatting.html
+  body: $FILE posts/advanced-formatting.html
+  doc_slug: advanced-formatting
+  help_category: Site Information

@@ -19,17 +19,18 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
+    stripped = term.strip
     # Query to search on tags, the name is used for sorting.
-    q1 = where('tags.name LIKE ?', "%#{sanitize_sql_like(term)}%")
-         .or(where('tags.excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
+    q1 = where('tags.name LIKE ?', "%#{sanitize_sql_like(stripped)}%")
+         .or(where('tags.excerpt LIKE ?', "%#{sanitize_sql_like(stripped)}%"))
          .select(Arel.sql('name AS sortname, tags.*'))
 
     # Query to search on synonyms, the synonym name is used for sorting.
     # The order clause here actually applies to the union of q1 and q2 (so not just q2).
     q2 = joins(:tag_synonyms)
-         .where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%")
+         .where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(stripped)}%")
          .select(Arel.sql('tag_synonyms.name AS sortname, tags.*'))
-         .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(term)}%"])))
+         .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(stripped)}%"])))
 
     # Select from the union of the above queries, select only the tag columns such that we can distinct them
     from(Arel.sql("(#{q1.to_sql} UNION #{q2.to_sql}) tags"))
