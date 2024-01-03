@@ -26,7 +26,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name)
+    if @post_type.system?
       check_permissions
       # return # uncomment if you add more code after this
     end
@@ -73,7 +73,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && !check_permissions
+    if @post_type.system? && !check_permissions
       return
     end
 
@@ -172,7 +172,7 @@ class PostsController < ApplicationController
 
     if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
        (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
-      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
+      if @post_type.system? && (current_user.is_global_moderator || \
          current_user.is_global_admin) && params[:network_push] == 'true'
         posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
                                     doc_slug: @post.doc_slug, body: @post.body)
