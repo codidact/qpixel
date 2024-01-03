@@ -211,23 +211,38 @@ class PostsController < ApplicationController
         flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
       else
-        update_status = do_update(@post, current_user, edit_post_params, body_rendered)
+        # post update & post history creation must be atomic to prevent sync issues on error
+        @post.transaction do
+          update_status = do_update(@post, current_user, edit_post_params, body_rendered)
 
-        if update_status
-          PostHistory.post_edited(@post, current_user, before: before[:body],
-                                  after: @post.body_markdown, comment: params[:edit_comment],
-                                  before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
+          if update_status
+            history_entry = PostHistory.post_edited(@post, current_user, before: before[:body],
+                                    after: @post.body_markdown, comment: params[:edit_comment],
+                                    before_title: before[:title], after_title: @post.title,
+                                    before_tags: before[:tags], after_tags: @post.tags)
 
-          if params[:redact]
-            PostHistory.redact(@post, current_user)
+            if history_entry&.errors&.any?
+              @post.errors.merge!(history_entry.errors)
+              raise ActiveRecord::Rollback
+            end
+
+            if params[:redact]
+              PostHistory.redact(@post, current_user)
+            end
+            Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
+            do_draft_delete(URI(request.referer || '').path)
+            redirect_to post_path(@post)
+          else
+            render :edit, status: :bad_request
           end
-          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-          do_draft_delete(URI(request.referer || '').path)
-          redirect_to post_path(@post)
-        else
-          render :edit, status: :bad_request
+
+          next
         end
+      end
+
+      # this is only reached if we rollback the transaction
+      if @post.errors.any?
+        render :edit, status: :bad_request
       end
     else
       new_user = !current_user.privilege?('unrestricted')
