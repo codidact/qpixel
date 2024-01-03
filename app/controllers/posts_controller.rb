@@ -160,6 +160,14 @@ class PostsController < ApplicationController
 
   def edit; end
 
+  def do_update(post, user, edit_post_params, body_rendered)
+    post.update(edit_post_params.merge(body: body_rendered,
+                                       last_edited_at: DateTime.now,
+                                       last_edited_by: user,
+                                       last_activity: DateTime.now,
+                                       last_activity_by: user))
+  end
+
   def update
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
@@ -189,9 +197,7 @@ class PostsController < ApplicationController
         flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
         redirect_to help_path(slug: @post.doc_slug)
       else
-        if @post.update(edit_post_params.merge(body: body_rendered,
-                                               last_edited_at: DateTime.now, last_edited_by: current_user,
-                                               last_activity: DateTime.now, last_activity_by: current_user))
+        if do_update(@post, current_user, edit_post_params, body_rendered)
 
           PostHistory.post_edited(@post, current_user, before: before[:body],
                                   after: @post.body_markdown, comment: params[:edit_comment],
