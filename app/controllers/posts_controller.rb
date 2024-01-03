@@ -168,16 +168,18 @@ class PostsController < ApplicationController
                                        last_activity_by: user))
   end
 
-  # @param user [User]
-  # @param post_type [PostType]
+  # Checks if a given user can push a given post type to network
+  # @param user [User] user attempting to push to network
+  # @param post_type [PostType] type of the post to be pushed
   # @return [Boolean]
   def can_push_to_network(user, post_type)
     post_type.system? && (user.is_global_moderator || user.is_global_admin)
   end
 
-  # @param user [User]
-  # @param post_type [PostType]
-  # @param post [Post]
+  # Checks if a given user can directly update a given post
+  # @param user [User] user attempting to update the post
+  # @param post_type [PostType] type of the post (some are freely editable)
+  # @param post [Post] updated post (owners can unilaterally update)
   # @return [Boolean]
   def can_update(user, post_type, post)
     user.privilege?('edit_posts') || user.is_moderator || user == post.user || \
