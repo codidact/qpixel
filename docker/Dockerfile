@@ -1,4 +1,4 @@
-FROM ruby:2.7.6
+FROM ruby:3.0.0
 
 # docker build -f docker/Dockerfile -t qpixel_uwsgi .
 
@@ -34,7 +34,7 @@ ENV PATH=$NODEJS_HOME:$PATH
 # Add core code to container
 WORKDIR /code
 COPY . /code
-RUN gem install bundler && \
+RUN gem install bundler -v 2.4.22 && \
     bundle install
 
 EXPOSE 80 443 3000

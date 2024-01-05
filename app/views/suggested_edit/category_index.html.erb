@@ -1,5 +1,8 @@
 <h1>Suggested Edits</h1>
-<p class="is-lead">This is a list of suggested edits on posts in this category.</p>
+<p class="is-lead">Suggested edits for review.</p>
+
+<% categories = Category.unscoped.where(community: @community).order(sequence: :asc, id: :asc) %>
+<% current_cat = current_category %>
 
 <div class="button-list is-gutterless">
   <%= link_to 'Pending', query_url(show_decided: 0),
@@ -14,6 +17,41 @@
     because you haven't yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
   </div>
 <% end %>
+
+<% if params[:show_decided] != '1' %>
+  <h3>All categories</h3>
+  <table>
+    <tr>
+      <th>category</th>
+      <th>pending edits</th>
+    </tr>
+  <% categories.each do |cat| %>
+      <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
+      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+    <tr>
+      <td>
+      <% if cat == current_cat %>
+        <%= cat.name %>
+      <% else %>
+        <%= link_to suggested_edits_queue_url(cat) do %>
+        <%= cat.name %>
+	<% end %>
+      <% end %>
+      </td>
+      <td>
+      <% if cat == current_cat %>
+        <%= sug_edits %>
+      <% else %>
+        <%= link_to suggested_edits_queue_url(cat) do %>
+        <%= sug_edits %>
+	<% end %>
+      <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+<% end %>
+
 
 <% if @edits.any? %>
   <div class="widget">
