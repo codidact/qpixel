@@ -78,7 +78,11 @@
           Flag
         </td>
         <td>
+	  <% if i.post_type == 'Post' %>
           <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+	  <% elsif i.post_type == 'Comment' %>
+	  <%= link_to "Comment thread: " + i.post.comment_thread.title, comment_link(i.post) %>
+	  <% end %>
         </td>
         <td class="h-fs-caption">
           <%= i.reason[0..300] + ((i.reason.length > 300) ? "..." : "") %><br>
