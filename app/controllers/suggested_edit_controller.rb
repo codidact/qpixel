@@ -30,14 +30,24 @@ class SuggestedEditController < ApplicationController
       return
     end
 
+    comment = params[:comment].present? && !params[:comment].empty? ? params[:comment] : @edit.comment
+
     # The to_a / dup methods called on the tags for `opts` and `before` are necessary.
     # We need to work on a copy of them, because we update the post before the edit, which will change their values.
     # (We would otherwise be pointing to the same instance, and only see the updated version).
-    opts = { before: @post.body_markdown, after: @edit.body_markdown, comment: @edit.comment,
-             before_title: @post.title, after_title: @edit.title, before_tags: @post.tags.to_a, after_tags: @edit.tags }
+    opts = { before: @post.body_markdown,
+             after: @edit.body_markdown,
+             comment: comment,
+             before_title: @post.title,
+             after_title: @edit.title,
+             before_tags: @post.tags.to_a,
+             after_tags: @edit.tags }
 
-    before = { before_body: @post.body, before_body_markdown: @post.body_markdown,
-               before_tags_cache: @post.tags_cache.dup, before_tags: @post.tags.to_a, before_title: @post.title }
+    before = { before_body: @post.body,
+               before_body_markdown: @post.body_markdown,
+               before_tags_cache: @post.tags_cache.dup,
+               before_tags: @post.tags.to_a,
+               before_title: @post.title }
 
     @post.transaction do
       post_update_status = @post.update(applied_details)
@@ -45,6 +55,7 @@ class SuggestedEditController < ApplicationController
       if post_update_status
         edit_update_status = @edit.update(before.merge(active: false,
                                                        accepted: true,
+                                                       comment: comment,
                                                        rejected_comment: '',
                                                        decided_at: DateTime.now,
                                                        decided_by: current_user,

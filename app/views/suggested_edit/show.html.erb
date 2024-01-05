@@ -50,8 +50,7 @@
   <div class="widget--body">
     <label for="summary" class="form-element">Suggested edit summary:</label>
     <%= text_field_tag :summary, @edit.comment, class: 'form-element',
-                                                data: { character_count: ".js-character-count-#{@edit.id}" },
-                                                readonly: true %>
+                                                data: { character_count: ".js-character-count-#{@edit.id}" } %>
     <div class="clearfix">
       <%= render 'shared/char_count', type: @edit.id, cur: @edit.comment&.length, max: max_edit_comment_length %>
     </div>
