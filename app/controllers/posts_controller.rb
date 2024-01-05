@@ -160,6 +160,12 @@ class PostsController < ApplicationController
 
   def edit; end
 
+  # Attempts to update a given post
+  # @param post [Post] post the user is attempting to update
+  # @param user [User] user attempting to update the post
+  # @param edit_post_params [ActionController::Parameters] edit parameters
+  # @param body_rendered [String] new post body
+  # @return [Boolean] status of the operation
   def do_update(post, user, edit_post_params, body_rendered)
     post.update(edit_post_params.merge(body: body_rendered,
                                        last_edited_at: DateTime.now,
@@ -175,7 +181,7 @@ class PostsController < ApplicationController
   # @param user [User] user attempting to push updates to network
   # @param edit_post_params [ActionController::Parameters] edit parameters
   # @param body_rendered [String] new post body
-  # @return [Integer] number of updated posts
+  # @return [Boolean] status of the operation
   def do_update_network(post, posts, user, edit_post_params, body_rendered)
     update_status = true
 
