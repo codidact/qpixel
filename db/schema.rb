@@ -388,7 +388,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.bigint "community_id"
     t.string "before_title"
     t.string "after_title"
+    t.bigint "before_template_post_type_id"
+    t.bigint "after_template_post_type_id"
     t.boolean "hidden", default: false, null: false
+    t.index ["after_template_post_type_id"], name: "index_post_histories_on_after_template_post_type_id"
+    t.index ["before_template_post_type_id"], name: "index_post_histories_on_before_template_post_type_id"
     t.index ["community_id"], name: "index_post_histories_on_community_id"
     t.index ["post_history_type_id"], name: "index_post_histories_on_post_history_type_id"
     t.index ["post_id"], name: "index_post_histories_on_post_type_and_post_id"
@@ -474,6 +478,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.bigint "locked_by_id"
     t.datetime "locked_at", precision: nil
     t.datetime "locked_until", precision: nil
+    t.bigint "template_post_type_id"
     t.index ["att_source"], name: "index_posts_on_att_source"
     t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -491,6 +496,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.index ["post_type_id"], name: "index_posts_on_post_type_id"
     t.index ["score"], name: "index_posts_on_score"
     t.index ["tags_cache"], name: "index_posts_on_tags_cache"
+    t.index ["template_post_type_id"], name: "index_posts_on_template_post_type_id"
     t.index ["upvote_count"], name: "index_posts_on_upvote_count"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
@@ -794,12 +800,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
   add_foreign_key "pinned_links", "communities"
   add_foreign_key "pinned_links", "posts"
   add_foreign_key "post_histories", "communities"
+  add_foreign_key "post_histories", "post_types", column: "after_template_post_type_id"
+  add_foreign_key "post_histories", "post_types", column: "before_template_post_type_id"
   add_foreign_key "post_history_tags", "post_histories"
   add_foreign_key "post_history_tags", "tags"
   add_foreign_key "post_types", "post_types", column: "answer_type_id"
   add_foreign_key "posts", "close_reasons"
   add_foreign_key "posts", "communities"
   add_foreign_key "posts", "licenses"
+  add_foreign_key "posts", "post_types", column: "template_post_type_id"
   add_foreign_key "posts", "posts", column: "duplicate_post_id"
   add_foreign_key "posts", "users", column: "locked_by_id"
   add_foreign_key "privileges", "communities"

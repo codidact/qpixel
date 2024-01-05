@@ -64,5 +64,10 @@
         <em>The detailed changes of this event are hidden because of a redaction.</em>
       </p>
     <% end %>
+    <% if (event.before_template_post_type.present? || event.after_template_post_type.present?) &&
+           event.before_template_post_type != event.after_template_post_type %>
+      <h3><%= t('posts.template_post_type_label') %></h3>
+      <%= render 'diff', before: event.before_template_post_type.name, after: event.after_template_post_type.name, post: @post %>
+    <% end %>
   </details>
 <% end %>

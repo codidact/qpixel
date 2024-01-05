@@ -19,6 +19,10 @@ class PostType < ApplicationRecord
     end
   end
 
+  def templates
+    Post.undeleted.where(post_type_id: PostTemplate.post_type_id).where(template_post_type: self).to_a
+  end
+
   def self.mapping
     Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
       PostType.all.to_h { |pt| [pt.name, pt.id] }

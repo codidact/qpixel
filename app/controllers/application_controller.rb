@@ -292,7 +292,7 @@ class ApplicationController < ActionController::Base
 
   def pull_categories
     @header_categories = Rails.cache.fetch('header_categories') do
-      Category.all.order(sequence: :asc, id: :asc)
+      Category.where.not(sequence: -1).order(sequence: :asc, id: :asc)
     end
   end
 
