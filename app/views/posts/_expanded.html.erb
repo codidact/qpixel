@@ -18,7 +18,7 @@
       <% title = post.title +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
-      <span class="post--title-text"><%= title %></span>
+      <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>
       <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
         <%= post_type_badge(post_type) %>
       <% end %>
@@ -208,10 +208,11 @@
 
         <div class="post--actions">
           <div class="tools">
-            <%= link_to generic_share_link(post), class: 'tools--item js-permalink', role: 'button' do %>
-              <i class="fa fa-link"></i>
-              <span class="js-text">Permalink</span>
-            <% end %>
+            <%= render "shared/copy_link", classes: ["tools--item"],
+                                           desc: "Copy a permanent link to this post",
+                                           id: post.id, 
+                                           md: generic_share_link_md(post), 
+                                           raw: generic_share_link(post) %>
             <%= link_to post_history_path(post), class: 'tools--item', 'aria-label': 'View history of this post' do %>
               <i class="fa fa-history"></i>
               History

@@ -1,4 +1,4 @@
-<% content_for :title, @post.title.truncate(50) %>
+<% content_for :title, @post.title.truncate(max_title_length(@post.category)) %>
 <% content_for :description do %>
   <% Rails.cache.fetch "posts/#{@post.id}/description" do %>
     <%= @post.body_plain[0..74].strip %>...

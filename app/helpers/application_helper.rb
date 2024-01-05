@@ -91,6 +91,19 @@ module ApplicationHelper
     end
   end
 
+  def generic_share_link_md(post)
+    "[#{post.title}](#{generic_share_link(post)})"
+  end
+
+  def post_history_share_link(post, history, index)
+    post_history_url(post, anchor: history.size - index)
+  end
+
+  def post_history_share_link_md(post, history, index)
+    rev_num = history.size - index
+    "[Revision #{rev_num} — #{post.title}](#{post_history_share_link(post, history, index)})"
+  end
+
   def generic_edit_link(post)
     edit_post_url(post)
   end
