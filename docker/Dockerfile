@@ -1,4 +1,4 @@
-FROM ruby:2.7.6
+FROM ruby:3.0.0
 
 # docker build -f docker/Dockerfile -t qpixel_uwsgi .
 
