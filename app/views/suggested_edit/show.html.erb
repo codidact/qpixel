@@ -52,7 +52,9 @@
     <%= text_field_tag :summary, @edit.comment, class: 'form-element',
                                                 data: { character_count: ".js-character-count-#{@edit.id}" },
                                                 readonly: true %>
-    <%= render 'shared/char_count', type: @edit.id, cur: @edit.comment&.length, max: max_edit_comment_length %>
+    <div class="clearfix">
+      <%= render 'shared/char_count', type: @edit.id, cur: @edit.comment&.length, max: max_edit_comment_length %>
+    </div>
   </div>
   <div class="widget--body">
     <div class="diff">
