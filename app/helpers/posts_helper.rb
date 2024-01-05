@@ -27,11 +27,11 @@ module PostsHelper
     30_000
   end
 
-  # @param category [Category, Nil]
-  # @param post_type [PostType]
+  # @param category [Category, Nil] post category, if any
+  # @param post_type [PostType] type of the post (system limits are relaxed)
   # @return [Integer] the minimum length for post titles
   def min_title_length(category, post_type)
-    if ['HelpDoc', 'PolicyDoc'].include?(post_type.name)
+    if post_type.system?
       1
     else
       category&.min_title_length || 15
