@@ -72,6 +72,13 @@ class User < ApplicationRecord
     end
   end
 
+  # Checks if the user can push a given post type to network
+  # @param post_type [PostType] type of the post to be pushed
+  # @return [Boolean]
+  def can_push_to_network(post_type)
+    post_type.system? && (is_global_moderator || is_global_admin)
+  end
+
   def metric(key)
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key

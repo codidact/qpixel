@@ -203,14 +203,6 @@ class PostsController < ApplicationController
     update_status
   end
 
-  # Checks if a given user can push a given post type to network
-  # @param user [User] user attempting to push to network
-  # @param post_type [PostType] type of the post to be pushed
-  # @return [Boolean]
-  def can_push_to_network(user, post_type)
-    post_type.system? && (user.is_global_moderator || user.is_global_admin)
-  end
-
   # Checks if a given user can directly update a given post
   # @param post [Post] updated post (owners can unilaterally update)
   # @param user [User] user attempting to update the post
@@ -232,7 +224,7 @@ class PostsController < ApplicationController
     end
 
     if can_update(@post, current_user, @post_type)
-      if can_push_to_network(current_user, @post_type) && params[:network_push] == 'true'
+      if current_user.can_push_to_network(@post_type) && params[:network_push] == 'true'
         # post network push & post histories creation must be atomic to prevent sync issues on error
         @post.transaction do
           posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
