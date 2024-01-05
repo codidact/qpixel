@@ -23,7 +23,7 @@
   </div>
 <% end %>
 
-<div class="widget">
+<form class="widget">
   <div class="widget--body h-bg-tertiary-050">
     <div class="h-f-r">
       <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">Return to post</a>
@@ -80,16 +80,16 @@
   </div>
   <% if @edit.active? && may_decide %>
     <div class="widget--footer">
-      <button class="button is-filled is-medium" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
+      <button class="button is-filled is-medium js-suggested-edit-approve" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
       <button class="button is-filled is-medium js-suggested-edit-reject">Reject (with optional reason)</button>
 
       <div class="widget js-suggested-edit-reject-dialog is-hidden">
         <div class="widget--header">Rejecting this suggested edit</div>
         <div class="widget--body">
           <input class="js-rejection-reason form-element" placeholder="Why are you rejecting this edit?">
-          <button class="button is-outlined is-medium " data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
+          <button class="button is-outlined is-medium" data-suggested-edit-reject="<%= @edit.id %>">Reject</button>
         </div>
       </div>
     </div>
   <% end %>
-</div>
+</form>
