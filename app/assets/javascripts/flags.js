@@ -30,7 +30,7 @@ $(() => {
 
     if (requiresDetails && data['reason'].length < 1) {
       QPixel.createNotification('danger',
-                                'Details are required for this flag type - please enter at least a few characters.');
+                                'Details are required for this flag type - please enter a message.');
       return;
     }
 
