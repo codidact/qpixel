@@ -39,15 +39,36 @@ class SuggestedEditController < ApplicationController
     before = { before_body: @post.body, before_body_markdown: @post.body_markdown,
                before_tags_cache: @post.tags_cache.dup, before_tags: @post.tags.to_a, before_title: @post.title }
 
-    if @post.update(applied_details)
-      @edit.update(before.merge(active: false, accepted: true, rejected_comment: '', decided_at: DateTime.now,
-                                decided_by: current_user, updated_at: DateTime.now))
-      PostHistory.post_edited(@post, @edit.user, **opts)
-      flash[:success] = 'Edit approved successfully.'
-      AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
-      render json: { status: 'success', redirect_url: post_path(@post) }
-    else
+    @post.transaction do
+      post_update_status = @post.update(applied_details)
+
+      if post_update_status
+        edit_update_status = @edit.update(before.merge(active: false,
+                                                       accepted: true,
+                                                       rejected_comment: '',
+                                                       decided_at: DateTime.now,
+                                                       decided_by: current_user,
+                                                       updated_at: DateTime.now))
+
+        if @edit.errors.any?
+          @post.errors.merge!(@edit.errors)
+          raise ActiveRecord::Rollback
+        end
+
+        if edit_update_status
+          PostHistory.post_edited(@post, @edit.user, **opts)
+          AbilityQueue.add(@edit.user, "Suggested Edit Approved ##{@edit.id}")
+        end
+      end
+
+      next
+    end
+
+    if @post.errors.any?
       render json: { status: 'error', message: @post.errors.full_messages.join(', ') }, status: :bad_request
+    else
+      flash[:success] = 'Edit approved successfully.'
+      render json: { status: 'success', redirect_url: post_path(@post) }
     end
   end
 
