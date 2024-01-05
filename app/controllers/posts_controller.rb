@@ -203,16 +203,6 @@ class PostsController < ApplicationController
     update_status
   end
 
-  # Checks if a given user can directly update a given post
-  # @param post [Post] updated post (owners can unilaterally update)
-  # @param user [User] user attempting to update the post
-  # @param post_type [PostType] type of the post (some are freely editable)
-  # @return [Boolean]
-  def can_update(post, user, post_type)
-    user.privilege?('edit_posts') || user.is_moderator || user == post.user || \
-      (post_type.is_freely_editable && user.privilege?('unrestricted'))
-  end
-
   def update
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
     body_rendered = helpers.post_markdown(:post, :body_markdown)
@@ -223,7 +213,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if can_update(@post, current_user, @post_type)
+    if current_user.can_update(@post, @post_type)
       if current_user.can_push_to_network(@post_type) && params[:network_push] == 'true'
         # post network push & post histories creation must be atomic to prevent sync issues on error
         @post.transaction do

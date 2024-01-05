@@ -79,6 +79,15 @@ class User < ApplicationRecord
     post_type.system? && (is_global_moderator || is_global_admin)
   end
 
+  # Checks if the user can directly update a given post
+  # @param post [Post] updated post (owners can unilaterally update)
+  # @param post_type [PostType] type of the post (some are freely editable)
+  # @return [Boolean]
+  def can_update(post, post_type)
+    privilege?('edit_posts') || is_moderator || self == post.user || \
+      (post_type.is_freely_editable && privilege?('unrestricted'))
+  end
+
   def metric(key)
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
