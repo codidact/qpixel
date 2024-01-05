@@ -168,15 +168,33 @@ class PostsController < ApplicationController
                                        last_activity_by: user))
   end
 
+  # Attempts to update a given post network-wide. The update is manual to avoid
+  # skipping validations and fail early if at least one validation fails.
+  # @param post [Post] post from which the network push is initiated
+  # @param posts [ActiveRecord::Result] network posts to be updated
+  # @param user [User] user attempting to push updates to network
+  # @param edit_post_params [ActionController::Parameters] edit parameters
+  # @param body_rendered [String] new post body
   # @return [Integer] number of updated posts
-  def do_update_network(posts, user, edit_post_params, body_rendered)
-    update_params = edit_post_params.to_h.merge(body: body_rendered,
-                                                last_edited_at: DateTime.now,
-                                                last_edited_by_id: user.id,
-                                                last_activity: DateTime.now,
-                                                last_activity_by_id: user.id)
+  def do_update_network(post, posts, user, edit_post_params, body_rendered)
+    update_status = true
 
-    posts.update_all(**update_params.symbolize_keys)
+    posts.each do |network_post|
+      network_post.update(edit_post_params.merge(body: body_rendered,
+                                                 last_edited_at: DateTime.now,
+                                                 last_edited_by_id: user.id,
+                                                 last_activity: DateTime.now,
+                                                 last_activity_by_id: user.id))
+
+      if network_post.errors.any?
+        post.errors.merge!(network_post.errors)
+        update_status = false
+      end
+
+      next if update_status == true
+    end
+
+    update_status
   end
 
   # Checks if a given user can push a given post type to network
@@ -215,9 +233,9 @@ class PostsController < ApplicationController
                                       doc_slug: @post.doc_slug,
                                       body: @post.body)
 
-          num_updated = do_update_network(posts, current_user, edit_post_params, body_rendered)
+          update_status = do_update_network(@post, posts, current_user, edit_post_params, body_rendered)
 
-          if num_updated == posts.to_a.size
+          if update_status
             posts.each do |post|
               history_entry = PostHistory.post_edited(post, current_user, before: before[:body],
                                       after: @post.body_markdown, comment: params[:edit_comment],
@@ -230,7 +248,7 @@ class PostsController < ApplicationController
               end
             end
 
-            flash[:success] = "#{helpers.pluralize(num_updated, 'post')} updated."
+            flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
             redirect_to help_path(slug: @post.doc_slug)
           end
 
