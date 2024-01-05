@@ -163,10 +163,10 @@ class PostsController < ApplicationController
   # Attempts to update a given post
   # @param post [Post] post the user is attempting to update
   # @param user [User] user attempting to update the post
-  # @param edit_post_params [ActionController::Parameters] edit parameters
   # @param body_rendered [String] new post body
+  # @param edit_post_params [ActionController::Parameters] edit parameters
   # @return [Boolean] status of the operation
-  def do_update(post, user, edit_post_params, body_rendered)
+  def do_update(post, user, body_rendered, **edit_post_params)
     post.update(edit_post_params.merge(body: body_rendered,
                                        last_edited_at: DateTime.now,
                                        last_edited_by: user,
@@ -179,10 +179,10 @@ class PostsController < ApplicationController
   # @param post [Post] post from which the network push is initiated
   # @param posts [ActiveRecord::Result] network posts to be updated
   # @param user [User] user attempting to push updates to network
-  # @param edit_post_params [ActionController::Parameters] edit parameters
   # @param body_rendered [String] new post body
+  # @param edit_post_params [ActionController::Parameters] edit parameters
   # @return [Boolean] status of the operation
-  def do_update_network(post, posts, user, edit_post_params, body_rendered)
+  def do_update_network(post, posts, user, body_rendered, **edit_post_params)
     update_status = true
 
     posts.each do |network_post|
@@ -239,7 +239,7 @@ class PostsController < ApplicationController
                                       doc_slug: @post.doc_slug,
                                       body: @post.body)
 
-          update_status = do_update_network(@post, posts, current_user, edit_post_params, body_rendered)
+          update_status = do_update_network(@post, posts, current_user, body_rendered, **edit_post_params)
 
           if update_status
             posts.each do |post|
@@ -263,7 +263,7 @@ class PostsController < ApplicationController
       else
         # post update & post history creation must be atomic to prevent sync issues on error
         @post.transaction do
-          update_status = do_update(@post, current_user, edit_post_params, body_rendered)
+          update_status = do_update(@post, current_user, body_rendered, **edit_post_params)
 
           if update_status
             history_entry = PostHistory.post_edited(@post, current_user, before: before[:body],
