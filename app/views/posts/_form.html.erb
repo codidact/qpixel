@@ -71,11 +71,13 @@
     <div class="form-group">
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
+      <div class="clearfix">
+        <%= render 'shared/char_count', type: 'post-title', 
+                                        cur: post.title&.length, 
+                                        max: max_title_length(category), 
+                                        min: min_title_length(category, post_type) %>
+      </div>
     </div>
-    <div>
-      <%= render 'shared/char_count', type: 'post-title', cur: post.body_markdown&.length, max: max_title_length(category), min: min_title_length(category) %>
-    </div>
-
   <% end %>
 
   <% if post_type.has_tags? && category.present? %>
@@ -178,21 +180,7 @@
 
   <% if edit_comment %>
     <hr/>
-    <div class="form-group">
-      <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
-      <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
-    </div>
-    <div class="form-group">
-      <div class="checkbox-setting">
-        <div class="checkbox-setting--desc">
-          <%= label_tag :redact, t('posts.redact_label'), class: 'form-element' %>
-          <span class="form-caption"><%= t('posts.redact_explanation') %></span>
-        </div>
-        <div class="checkbox-setting--value">
-          <%= check_box_tag :redact, true, false, class: 'form-checkbox-element' %>
-        </div>
-      </div>
-    </div>
+    <%= render 'edit_comment', max_length: max_edit_comment_length %>
   <% end %>
 
   <div class="actions">

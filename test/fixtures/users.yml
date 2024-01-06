@@ -1,3 +1,12 @@
+basic_user:
+  email: basic@qpixel-test.net
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 42
+  username: basic_user
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 standard_user:
   email: standard@qpixel-test.net
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'

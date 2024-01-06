@@ -19,6 +19,11 @@ class PostType < ApplicationRecord
     end
   end
 
+  # @return [Boolean] whether the post type is a system type
+  def system?
+    ['HelpDoc', 'PolicyDoc'].include?(name)
+  end
+
   def self.mapping
     Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
       PostType.all.to_h { |pt| [pt.name, pt.id] }

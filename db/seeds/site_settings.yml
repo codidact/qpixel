@@ -150,14 +150,21 @@
   description: >
     The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
     may introduce validation issues with content imported from SE.
-    
+
 - name: MaxTitleLength
   value: 150
   value_type: integer
   category: SiteDetails
   description: >
     The maximum characters a post title may contain. Default is 150 for compatibility with Stack Exchange; going lower
-    may introduce validation issues with content imported from SE.    
+    may introduce validation issues with content imported from SE.
+
+- name: MaxEditCommentLength
+  value: 255
+  value_type: integer
+  category: SiteDetails
+  description: >
+    The maximum number of characters an edit comment may contain. Defaults to 255.
 
 - name: MaxUploadSize
   value: 2MB
