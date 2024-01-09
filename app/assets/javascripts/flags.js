@@ -28,9 +28,9 @@ $(() => {
       'reason': $(`#flag-post-${postId}`).val()
     };
 
-    if (requiresDetails && data['reason'].length < 15) {
+    if (requiresDetails && data['reason'].length < 1) {
       QPixel.createNotification('danger',
-                                'Details are required for this flag type - please enter at least 15 characters.');
+                                'Details are required for this flag type - please enter a message.');
       return;
     }
 

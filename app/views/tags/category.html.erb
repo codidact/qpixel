@@ -2,8 +2,8 @@
 
 <h1>Tags used in <%= @category.name %></h1>
 
-<% if current_user&.is_moderator %>
-  <%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined', 'aria-label': 'Create new tag' %>
+<% if current_user&.is_moderator || check_your_privilege('edit_tags') %>
+<%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined', 'aria-label': 'Create new tag' %>
 <% end %>
 
 <%= form_tag category_tags_path(@category), method: :get, class: 'form-inline' do %>

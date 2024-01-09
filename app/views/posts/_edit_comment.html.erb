@@ -1,0 +1,36 @@
+<%#
+  Edit comment reusable partial.
+  Variables:
+    cur_length    : [Integer, Nil] optional, current character length (default 0)
+    min_length    : [Integer, Nil] optional, the minimum allowed length (default 0)
+    max_length    : [Integer, Nil] optional, the maximum allowed length (default 255)
+%>
+
+<%
+  # Defaults
+  cur_length = (defined?(cur_length) ? cur_length : nil) || 0
+  min_length = (defined?(min_length) ? min_length : nil) || 0
+  max_length = (defined?(max_length) ? max_length : nil) || 255
+%>
+
+<div class="form-group">
+  <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
+  <%= text_field_tag :edit_comment, 
+                     nil, 
+                     class: 'form-element', 
+                     data: { character_count: ".js-character-count-edit-comment" } %>
+  <div class="clearfix">
+    <%= render 'shared/char_count', type: 'edit-comment', cur: cur_length, min: min_length, max: max_length %>
+  </div>
+</div>
+<div class="form-group">
+  <div class="checkbox-setting">
+    <div class="checkbox-setting--desc">
+      <%= label_tag :redact, t('posts.redact_label'), class: 'form-element' %>
+      <span class="form-caption"><%= t('posts.redact_explanation') %></span>
+    </div>
+    <div class="checkbox-setting--value">
+      <%= check_box_tag :redact, true, false, class: 'form-checkbox-element' %>
+    </div>
+  </div>
+</div>

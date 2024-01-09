@@ -18,16 +18,18 @@
       <%= 'post'.pluralize(post_count) %> &nbsp;
     </span>
 
-    <% if current_user&.is_admin %>
-    <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
+    <%= link_to category_feed_path(@category, format: 'rss') do %>
+    <i class="fas fa-rss"></i> RSS
     <% end %>
 
-    <%= link_to 'Subscribe',
-	new_subscription_path(type: 'category', qualifier: @category.id, return_to: request.path),
-	class: 'button is-outlined',
-	title: 'Get email notifications for new top-level posts' %>
+    <span class="has-margin-4">
+      <% if current_user&.is_admin %>
+      <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
+      <% end %>
+    </span>
+
   </span>
-      
+
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Activity', request.params.merge(sort: 'activity'),
                 class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
@@ -51,7 +53,7 @@
 </div>
 
 <details>
-  <summary>Filters (<%= @filtered ? @active_filter[:name] || 'Custom' : 'None' %>)</summary>
+  <summary>Filters (<%= @filtered ? @active_filter[:name].empty? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
   <% if @active_filter[:default] == :user %>
     <div class="notice is-info">
       You are currently filtering by <strong><%= @active_filter[:name] %></strong> because it is set as your default for this category
