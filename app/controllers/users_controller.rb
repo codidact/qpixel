@@ -88,7 +88,7 @@ class UsersController < ApplicationController
   end
 
   def filters_json
-    system_filters = Rails.cache.fetch 'system_filters' do
+    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
       User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
 
@@ -229,7 +229,7 @@ class UsersController < ApplicationController
               PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
-    @items = items.sort_by(&:created_at).reverse
+    @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
     render layout: 'without_sidebar'
   end
 
@@ -322,7 +322,7 @@ class UsersController < ApplicationController
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
                   SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
-              end).sort_by(&:created_at).reverse
+              end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
     render layout: 'without_sidebar'
   end

@@ -50,17 +50,35 @@
   overflow: auto;
 }
 
-.user-profile-heading {
-  padding: 0.5em;
+.user-profile-heading-container {
+  align-items: center;
   border-bottom: 1px solid #ddd;
-  margin-bottom: 0;
-}
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5em;
 
+  & > .user-profile-heading {
+    flex-grow: 1;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0.5em;
+
+    &:not(:last-child) {
+      padding-right: 0;
+    }
+  }
+
+  & > .button:last-child {
+    margin-right: 0;
+  }
+}
 .user-profile--image {
   text-align: center;
 
   img {
     width: 100%;
+    object-fit: contain;
   }
 }
 

@@ -29,6 +29,7 @@ coverage/
 coverage/*
 
 .idea
+.vscode
 
 test/reports
 

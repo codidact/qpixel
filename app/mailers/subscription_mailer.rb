@@ -11,6 +11,8 @@ class SubscriptionMailer < ApplicationMailer
       return
     end
 
+    # Load request community to ensure we can access the settings/posts of the correct community
+    RequestContext.community = @subscription.community
     site_name = @subscription.community.name
     subject = if @subscription.name.present?
                 "Latest questions from your '#{@subscription.name}' subscription on #{site_name}"
@@ -19,6 +21,7 @@ class SubscriptionMailer < ApplicationMailer
               end
 
     @subscription.update(last_sent_at: DateTime.now)
-    mail from: 'Codidact Subscriptions <subscriptions@codidact.com>', to: @subscription.user.email, subject: subject
+    from = "#{SiteSetting['SubscriptionSenderName']} <#{SiteSetting['SubscriptionSenderEmail']}>"
+    mail from: from, to: @subscription.user.email, subject: subject
   end
 end

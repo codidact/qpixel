@@ -32,6 +32,11 @@
     <%= md_button action: 'code', label: 'Monospace font', class: 'is-icon-only' do %>
       <i class="fas fa-fw fa-code"></i>
     <% end %>
+    <% if SiteSetting['MathJaxEnabled'] %>
+      <%= md_button action: 'mathjax', label: 'MathJax', class: 'is-icon-only' do %>
+        $
+      <% end %>
+    <% end %>
   </div>
 
   <div class="button-list is-gutterless">

@@ -2,7 +2,8 @@ class TagsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
   before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
-  before_action :verify_moderator, only: [:new, :create, :rename, :merge, :select_merge]
+  before_action :verify_tag_editor, only: [:new, :create]
+  before_action :verify_moderator, only: [:rename, :merge, :select_merge]
   before_action :verify_admin, only: [:nuke, :nuke_warning]
 
   def index
@@ -36,7 +37,7 @@ class TagsController < ApplicationController
     @count = @tags.count
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
     @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
-                 .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
+                 .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
   end
 
@@ -50,7 +51,7 @@ class TagsController < ApplicationController
                 @tag.all_children + [@tag.id]
               end
     displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
-    @posts = Post.joins(:tags).where(tags: { id: tag_ids })
+    @posts = Post.joins(:tags).where(id: PostsTag.select(:post_id).distinct.where(tag_id: tag_ids))
                  .undeleted.where(post_type_id: displayed_post_types)
                  .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                  .order(sort_param)
@@ -212,5 +213,23 @@ class TagsController < ApplicationController
 
   def exec_sql(sql_array)
     ApplicationRecord.connection.execute(ActiveRecord::Base.sanitize_sql_array(sql_array))
+  end
+
+  def verify_tag_editor
+    unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
+      current_user.is_moderator ||
+      current_user.is_admin)
+      respond_to do |format|
+        format.html do
+          render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        end
+        format.json do
+          render json: { status: 'failed', success: false, errors: ['not_found'] }, status: :not_found
+        end
+      end
+
+      return false
+    end
+    true
   end
 end

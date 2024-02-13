@@ -2,22 +2,29 @@ $(() => {
   $(document).on('click', '.vote-button', async evt => {
     const $tgt = $(evt.target).is('button') ? $(evt.target) : $(evt.target).parents('button');
     const $post = $tgt.parents('.post');
-    const $up = $post.find('.post--votes').find('.js-upvote-count');
-    const $down = $post.find('.post--votes').find('.js-downvote-count');
+
+    const $container = $post.find(".post--votes");
+
+    const $up = $container.find('.js-upvote-count');
+    const $down = $container.find('.js-downvote-count');
     const voteType = $tgt.data('vote-type');
     const voted = $tgt.hasClass('is-active');
 
     if (voted) {
       const voteId = $tgt.attr('data-vote-id');
+
       const resp = await fetch(`/votes/${voteId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: { 'X-CSRF-Token': QPixel.csrfToken() }
       });
+
       const data = await resp.json();
+
       if (data.status === 'OK') {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
+        $container.attr("title", `Score: ${data.score}`);
         $tgt.removeClass('is-active')
             .removeAttr('data-vote-id');
       }
@@ -34,10 +41,13 @@ $(() => {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
         body: JSON.stringify({post_id: $post.data('post-id'), vote_type: voteType})
       });
+
       const data = await resp.json();
+
       if (data.status === 'modified' || data.status === 'OK') {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
+        $container.attr("title", `Score: ${data.score}`);
         $tgt.addClass('is-active')
             .attr('data-vote-id', data.vote_id);
 
