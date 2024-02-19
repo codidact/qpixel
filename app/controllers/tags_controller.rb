@@ -37,7 +37,7 @@ class TagsController < ApplicationController
     @count = @tags.count
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
     @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
-                 .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
+                 .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
   end
 
