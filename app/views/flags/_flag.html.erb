@@ -30,6 +30,9 @@
         <strong>Escalation reason</strong>: <%= flag.escalation_comment %> &mdash;
         <%= user_link flag.escalated_by %> <%= flag.escalated_at.iso8601 %>
       </p>
+      <p>
+	<strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this flag. Do not share sensitive, mod-only information.
+      </p>
     </div>
   <% end %>
   <% if controls %>
