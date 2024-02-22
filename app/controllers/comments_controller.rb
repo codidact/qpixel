@@ -41,12 +41,9 @@ class CommentsController < ApplicationController
 
     if success
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
-      unless @comment.post.user == current_user
-        @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
-      end
 
       ThreadFollower.where(post: @post).each do |tf|
-        unless tf.user == current_user || tf.user == @comment.post.user
+        unless tf.user == current_user
           tf.user.create_notification(notification, helpers.comment_link(@comment))
         end
         ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
@@ -237,8 +234,7 @@ class CommentsController < ApplicationController
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
     when 'follow'
-      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf&.destroy
+      ThreadFollower.where(comment_thread: @comment_thread, user: current_user).destroy_all
     else
       return not_found
     end
