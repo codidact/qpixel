@@ -21,7 +21,7 @@
   <div class="widget--body">
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
-      <%= user_link flag.user %>
+      <%= user_link flag.user %> at <%= flag.created_at.iso8601 %>
     </p>
   </div>
   <% if escalation %>
