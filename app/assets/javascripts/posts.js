@@ -93,6 +93,13 @@ $(() => {
     tags: true
   });
 
+  /**
+   * Attempts to save a draft with a given body
+   * @param {string} postText draft text
+   * @param {JQuery<Element>} $field body input element
+   * @param {boolean} [manual] whether manual draft saving is enabled
+   * @returns {Promise<void>}
+   */
   const saveDraft = async (postText, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
     if (autosavePref !== 'on' && !manual) {
@@ -111,10 +118,15 @@ $(() => {
         path: location.pathname
       })
     });
+
     if (resp.status === 200) {
-      const $el = $(`<span>&middot; <span class="has-color-green-600">draft saved</span></span>`);
-      $field.parents('.widget').find('.js-post-field-footer').append($el);
-      $el.fadeOut(1500, function () { $(this).remove() });
+      const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+
+      $statusEl.removeClass('transparent');
+
+      setTimeout(() => {
+        $statusEl.addClass('transparent');
+      }, 1500);
     }
   };
 
