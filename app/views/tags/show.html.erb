@@ -94,9 +94,15 @@
   <div>
     <%= short_number_to_human post_count, precision: 1, significant: false %>
     <%= 'post'.pluralize(post_count) %>
-    <%= link_to 'Subscribe',
-                new_subscription_path(type: 'tag', qualifier: @tag.name, return_to: request.path),
-                class: 'button is-outlined', 'aria-label': "Subscribe to tag #{@tag.name}" %>
+
+    <% if user_signed_in? && current_user&.subscriptions.where(type: 'tag', qualifier: @tag.name).exists? %>
+      <%= link_to 'Subscribed', subscriptions_path(current_user),
+          class: 'button is-outlined', 'aria-label': "Subscribed to tag #{@tag.name}" %>
+    <% else %>
+      <%= link_to 'Subscribe',
+          new_subscription_path(type: 'tag', qualifier: @tag.name, return_to: request.path),
+          class: 'button is-outlined', 'aria-label': "Subscribe to tag #{@tag.name}" %>
+     <% end %>
   </div>
 
   <div class="button-list is-gutterless has-margin-2">
