@@ -25,7 +25,7 @@
   <div class="widget--body">
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
-      <%= user_link flag.user %>
+      <%= user_link flag.user %> at <%= flag.created_at.iso8601 %>
     </p>
   </div>
   <% if escalation %>
@@ -33,6 +33,9 @@
       <p>
         <strong>Escalation reason</strong>: <%= flag.escalation_comment %> &mdash;
         <%= user_link flag.escalated_by %> <%= flag.escalated_at.iso8601 %>
+      </p>
+      <p>
+	<strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this flag. Do not share sensitive, mod-only information.
       </p>
     </div>
   <% end %>
