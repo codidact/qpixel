@@ -31,7 +31,7 @@
 
 <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
      data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
-     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
+     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post&.id %>">
   <div class="widget--header">
     <% if params[:inline] == 'true' %>
       <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
