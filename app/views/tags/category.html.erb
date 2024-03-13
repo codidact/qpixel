@@ -2,6 +2,12 @@
 
 <h1>Tags used in <%= @category.name %></h1>
 
+<% if @tags == nil %>
+<p>This category is missing its tag set. Set this in the Category settings (admin).</p>
+<% end %>
+
+<% unless @tags == nil %>
+
 <% if current_user&.is_moderator || check_your_privilege('edit_tags') %>
 <%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined', 'aria-label': 'Create new tag' %>
 <% end %>
@@ -37,7 +43,7 @@
 
 <%= render 'list' %>
 
-<% if @tags.size == 0 %>
+<% if @tags&.size == 0 %>
   <% if params[:q].present? %>
     <p class="has-color-tertiary"><em>No results for <strong><%= params[:q] %></strong></em></p>
   <% else %>
@@ -46,3 +52,6 @@
 <% end %>
 
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
+
+<% end %> <!-- unless @tags == nil -->
+
