@@ -175,6 +175,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
+    t.boolean "is_private", default: false
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -427,8 +428,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.boolean "is_top_level", default: false, null: false
     t.boolean "is_freely_editable", default: false, null: false
     t.string "icon_name"
-    t.boolean "has_reactions"
     t.bigint "answer_type_id"
+    t.boolean "has_reactions"
     t.boolean "has_only_specific_reactions"
     t.index ["answer_type_id"], name: "index_post_types_on_answer_type_id"
     t.index ["name"], name: "index_post_types_on_name"
@@ -717,6 +718,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
+    t.boolean "is_globally_suspended", default: false
+    t.datetime "global_suspension_end", precision: nil
     t.string "backup_2fa_code"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
@@ -758,8 +761,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
-    t.index ["author_id"], name: "index_warnings_on_author_id"
-    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.boolean "is_global", default: false
+    t.bigint "user_id"
+    t.index ["author_id"], name: "index_mod_messages_on_author_id"
+    t.index ["community_user_id"], name: "index_mod_messages_on_community_user_id"
+    t.index ["user_id"], name: "index_warnings_on_user_id"
   end
 
   add_foreign_key "abilities", "communities"

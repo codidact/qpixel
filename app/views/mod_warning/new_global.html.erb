@@ -1,0 +1,42 @@
+<% content_for :head do %>
+  <%= render 'posts/markdown_script' %>
+<% end %>
+
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'users/tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>Network-wide Suspension Tool</h1>
+
+    <div class="notice is-danger">
+        <p>As a global moderator, you may suspend users network-wide. Using this tool <strong>applies a suspension on all community profiles</strong> of this user.</p>
+        <p>Only use this tool if no other mean of communication or correction (including warnings and per-community suspensions) have been effective or if such a network-wide suspension is immediately necessary to prevent grave harm that would occur otherwise. <strong>Prior consultation with your fellow community team is strongly recommended.</strong></p>
+    </div>
+
+    <%= form_for @warning, url: create_global_warning_path(@user.id), method: :post do |f| %>
+    
+    <h2>Message</h2>
+
+    <p>This suspension message will be shown to the user when they try accessing any page.</p>
+    <p>Moderators of all communities might see this message in the warnings and suspensions list of their community, so be careful which information you share here.</p>
+    <div class="h-p-2">
+        <%= render 'shared/body_field', f: f, field_name: :body, field_label: 'Message' %>
+        <div class="post-preview"></div>
+    </div>
+
+    <h2>Suspension Details</h2>
+    <div class="h-p-2">
+        <%= f.label :suspension_duration, 'Duration', class: 'form-element' %>
+        <div class="form-caption">Enter the number of days. At least 1, at most 7300 (20 years).</div>
+        <%= f.number_field :suspension_duration, in: 1..7300, class: 'form-element' %>
+    </div>
+    
+    <%= f.submit 'Suspend user globally', class: 'button is-danger is-filled' %>
+    <% end %>
+
+  </div>
+</div>

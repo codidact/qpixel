@@ -31,6 +31,8 @@ Rails.application.routes.draw do
     post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
 
     delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+    get    'users/suspend/:user_id',       to: 'mod_warning#new_global', as: :new_global_warning
+    post   'users/suspend/:user_id',       to: 'mod_warning#create_global', as: :create_global_warning
 
     get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
     get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege
@@ -92,7 +94,6 @@ Rails.application.routes.draw do
     get    'flags',                        to: 'flags#queue', as: :flag_queue
     get    'flags/handled',                to: 'flags#handled', as: :handled_flags
     get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
-    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
     get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
     post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
     post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
@@ -200,6 +201,8 @@ Rails.application.routes.draw do
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
+    get    '/:id/mod/profile-reset',    to: 'users#mod_reset_profile', as: :mod_reset_profile
+    post   '/:id/mod/profile-reset',    to: 'users#mod_clear_profile', as: :mod_clear_profile
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
@@ -208,8 +211,15 @@ Rails.application.routes.draw do
     get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
     post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+    get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
     post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+    get    '/:id/mod/delete', to: 'users#mod_delete', as: :mod_delete
+    get    '/:id/mod/hungry-codidactyl', to: 'users#mod_destroy', as: :mod_hungry_codidactyl
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+    get    '/:id/mod/escalate',         to: 'users#mod_escalation', as: :user_escalation
+    post   '/:id/mod/escalate',         to: 'users#mod_escalate', as: :user_escalate
+    get    '/:id/mod/contact',          to: 'users#mod_contact', as: :mod_contact
+    post   '/:id/mod/contact',          to: 'users#mod_message', as: :mod_message
   end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications

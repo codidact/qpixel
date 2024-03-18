@@ -299,7 +299,8 @@ class ApplicationController < ActionController::Base
   def check_if_warning_or_suspension_pending
     return if current_user.nil?
 
-    warning = ModWarning.where(community_user: current_user.community_user, active: true).any?
+    warning = ModWarning.where(community_user: current_user.community_user, active: true)
+                        .or(ModWarning.where(user: current_user, is_global: true, active: true)).any?
     return unless warning
 
     # Ignore devise and warning routes

@@ -1,0 +1,23 @@
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'tabs', user: @user %>
+
+<div class="grid">
+    <%= render 'shared/user_mod_sidebar', user: @user %>
+
+    <div class="grid--cell is-9">
+        <h1>Clear User Profile</h1>
+        <p>As a moderator you may clear user profiles which are in violation of the rules of this site.</p>
+        <p>This will clear the following fields:</p>
+        <ul>
+            <li>user name</li>
+            <li>bio</li>
+            <li>website</li>
+            <li>twitter</li>
+            <li>discord</li>
+        </ul>
+        <p>The user will receive a notification about this action.</p>
+        <%= link_to 'Clear Profile', mod_clear_profile_path(@user.id),
+                    method: :post, class: 'button is-danger is-outlined' %>
+    </div>
+</div>
