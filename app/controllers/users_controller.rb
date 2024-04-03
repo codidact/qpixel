@@ -27,7 +27,7 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
-    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
+    @posts = if current_user&.privilege?('flag_curate')
                @user.posts
              else
                @user.posts.undeleted
