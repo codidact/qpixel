@@ -41,6 +41,7 @@ gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
 gem 'aws-sdk-s3', '~> 1.61', require: false
+gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduler.
