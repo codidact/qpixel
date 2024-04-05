@@ -2,6 +2,8 @@
 
 <h1>Tags used in <%= @category.name %></h1>
 
+<% ApplicationRecord.with_lax_group_rules do %>
+
 <% if @tags == nil %>
 <p>This category is missing its tag set. Set this in the Category settings (admin).</p>
 <% end %>
@@ -53,5 +55,7 @@
 
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
 
-<% end %> <!-- unless @tags == nil -->
+<% end %> <%# unless @tags == nil %>
+
+<% end %> <%# ApplicationRecord.with_lax_group_rules %>
 
