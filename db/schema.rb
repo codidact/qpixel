@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2024_04_05_113618) do
-  create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
     t.text "description"
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_05_113618) do
     t.index ["community_id"], name: "index_abilities_on_community_id"
   end
 
-  create_table "ability_queues", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "ability_queues", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.text "comment"
     t.boolean "completed"
@@ -370,7 +370,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_05_113618) do
     t.index ["post_id"], name: "index_pinned_links_on_post_id"
   end
 
-  create_table "post_flag_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "post_flag_types", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
     t.text "description"
@@ -671,7 +671,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_05_113618) do
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
-  create_table "user_abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "user_abilities", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "community_user_id"
     t.bigint "ability_id"
     t.boolean "is_suspended", default: false

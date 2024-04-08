@@ -1,4 +1,4 @@
-FROM ruby:3.0.0
+FROM ruby:3.1.0
 
 # docker build -f docker/Dockerfile -t qpixel_uwsgi .
 
@@ -8,7 +8,7 @@ RUN apt-get update && \
     apt-get install -y make && \
     apt-get install -y \
         default-libmysqlclient-dev \
-        autoconf \ 
+        autoconf \
         bison \
         build-essential \
         libssl-dev \
@@ -33,10 +33,11 @@ ENV PATH=$NODEJS_HOME:$PATH
 
 # Add core code to container
 WORKDIR /code
-COPY . /code
+COPY Gemfile Gemfile.lock /code/
 RUN gem install bundler -v 2.4.22 && \
     bundle install
 
+COPY . /code
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
 CMD ["/code/docker/entrypoint.sh"]
