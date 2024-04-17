@@ -174,7 +174,7 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = if current_user&.privilege?('flag_curate')
+    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
                Post.all
              else
                Post.undeleted
