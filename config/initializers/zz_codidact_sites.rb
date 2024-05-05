@@ -1,7 +1,7 @@
 Rails.cache.persistent 'codidact_sites', clear: true do
   # Do not show codidact_sites for development (allows offline dev)
   # Do not spam codidact.com while running the tests.
-  if Rails.env.development? || Rails.env.test?
+  if Rails.env.development? || Rails.env.test? || ENV.fetch("COMMUNITY_OTHERS_SHOW", "true") == "false"
     []
   else
     response = Net::HTTP.get_response(URI('https://codidact.com/communities.json'))
