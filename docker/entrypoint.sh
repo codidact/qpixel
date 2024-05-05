@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -f "/code/tmp/db-created" ]; then
+if [ ! -f "/tmp/db-created" ]; then
     echo "Creating database"
     rails db:create
     rails db:schema:load
@@ -11,7 +11,7 @@ if [ ! -f "/code/tmp/db-created" ]; then
     rails r docker/create_admin_and_community.rb
     echo "Seeding database"
     UPDATE_POSTS=true rails db:seed
-    touch /code/tmp/db-created
+    touch /tmp/db-created
 fi
 
 # If this isn't done again, there is a 500 error on the first page about posts
