@@ -25,9 +25,11 @@ WORKDIR /code
 COPY Gemfile Gemfile.lock /code/
 RUN gem install bundler -v 2.4.22 && \
     bundle install
-RUN bundle exec rails assets:precompile
 
 COPY . /code
+RUN bundle exec rails assets:precompile && \
+    chmod -R 0777 /code
+
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
 CMD ["/code/docker/entrypoint.sh"]
