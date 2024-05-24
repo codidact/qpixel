@@ -34,7 +34,7 @@ class TagsController < ApplicationController
             else
               @tag_set&.tags&.order(Arel.sql('COUNT(posts.id) DESC'))
             end
-    @count = @tags&.count || 0
+    @count = @tags&.size || 0
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
     if @count.positive?
       @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
