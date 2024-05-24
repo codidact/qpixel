@@ -348,6 +348,10 @@ Rails.application.routes.draw do
     end
   end
 
+  scope 'emails' do
+    post   'log', to: 'email_logs#log', as: :create_email_log
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
