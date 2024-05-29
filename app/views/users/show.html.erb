@@ -137,6 +137,14 @@
         <td><%= @user.metric 'E' %></td>
       </tr>
     </table>
+    
+    <% if current_user&.id == @user.id || current_user&.is_moderator %>
+    <table class="table is-full-width">
+      <tr>
+	<td>User since <%= @user.created_at %></td>
+      </tr>
+    </table>
+    <% end %>
 
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>
