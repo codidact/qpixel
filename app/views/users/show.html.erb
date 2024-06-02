@@ -85,7 +85,7 @@
         <h2 class="user-profile-heading">Posts</h2>
         <% if @posts.size > 0 %>
           <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
-            See all &raquo;
+            See all <%= @posts.count %> &raquo;
           <% end %>
         <% end %>
       </div>
@@ -98,7 +98,7 @@
           <% end %>
         </div>
         <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
-          See all &raquo;
+          See all <%= @posts.count %> &raquo;
         <% end %>
       <% end %>
     </div>
