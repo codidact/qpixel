@@ -174,7 +174,7 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = if current_user&.privilege?('flag_curate')
+    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
                Post.all
              else
                Post.undeleted
@@ -579,7 +579,7 @@ class UsersController < ApplicationController
   def avatar
     respond_to do |format|
       format.png do
-        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
+        size = params[:size]&.to_i&.positive? ? [params[:size]&.to_i, 256].min : 64
         send_data helpers.user_auto_avatar(size, user: @user).to_blob, type: 'image/png', disposition: 'inline'
       end
     end

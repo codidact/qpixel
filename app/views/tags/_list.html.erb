@@ -4,7 +4,7 @@
   <% topic_ids = @category&.topic_tag_ids %>
 
   <% ApplicationRecord.with_lax_group_rules do %>
-    <% @tags.each do |tag| %>
+    <% @tags&.each do |tag| %>
       <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
       <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
       <% moderator = moderator_ids&.include?(tag.id) ? 'is-red is-outlined' : '' %>
