@@ -2,7 +2,7 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban]
+                                             :setup_save, :failban]
   before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
 
   def index; end
@@ -143,7 +143,7 @@ class AdminController < ApplicationController
     render
   end
 
-  def hellban
+  def failban
     @user = User.find params[:id]
     @user.block("user manually blocked by admin ##{current_user.id}")
     flash[:success] = t 'admin.user_fed_stat'

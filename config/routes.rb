@@ -212,7 +212,7 @@ Rails.application.routes.draw do
     post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
     get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
-    post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+    post   '/:id/failban',              to: 'admin#failban', as: :failban_user
     get    '/:id/mod/delete',           to: 'users#mod_delete', as: :mod_delete
     get    '/:id/mod/delete-network-account', to: 'users#mod_delete_network_account', as: :mod_delete_network_account
     get    '/:id/mod/failban',          to: 'users#mod_failban', as: :mod_failban

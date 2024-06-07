@@ -18,7 +18,7 @@
             <h4>Feed to STAT</h4>
             <p>Blatant spammers and trolls may be fed into STAT ("Stop The Awful Troll") which causes the system to <a href="/418">fail-ban</a> them and limits the amount of damage they might possibly do. Only use for accounts where you are sure that they are never going to constructively use this site.</p>
 
-            <%= link_to 'Feed to STAT (180 days)', hellban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
+            <%= link_to 'Feed to STAT (180 days)', failban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
         </div>
         <% end %>
     </div>
