@@ -15,12 +15,12 @@ class UsersController < ApplicationController
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete, :mod_reset_profile,
                                           :mod_clear_profile]
-  before_action :verify_global_moderator, only: [:mod_destroy]
+  before_action :verify_global_moderator, only: [:mod_failban, :mod_delete_network_account]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
                                   :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :network, :avatar, :mod_delete, :mod_destroy, :mod_reset_profile,
-                                  :mod_clear_profile]
+                                  :mod_clear_profile, :mod_failban, :mod_delete_network_account]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -349,7 +349,11 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def mod_destroy
+  def mod_delete_network_account
+    render layout: 'without_sidebar'
+  end
+
+  def mod_failban
     render layout: 'without_sidebar'
   end
 

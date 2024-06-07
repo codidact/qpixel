@@ -6,22 +6,13 @@
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
   <div class="grid--cell is-9">
-    <h1>Network-wide Account Deletion</h1>
-
-    <p>Some users are just blatant spammers or trolls and some users are just unwilling to follow site rules, even after repeated warnings and suspensions. As a global moderator, you may delete the user account network-wide in these cases.</p>
+    <h1>Fail-ban</h1>
 
     <div class="notice is-danger">
         <p><strong>Take care!</strong> These actions may not be reversible and you will not be asked to confirm after initiating an action.</p>
     </div>
 
     <div class="widget">
-        <div class="widget--body">
-            <h4>Delete User Network-wide</h4>
-            <p>Delete the account network-wide for users who are unwilling to follow the rules of this network, even after repeated warnings and suspensions. Choose this option if a user has requested deletion of their profile on all sites, once you have confirmed their identity and request.</p>
-
-            <%= link_to 'Delete user network-wide', soft_delete_user_path(@user.id, type: 'user'), remote: true,
-                    method: :delete, class: 'js-soft-delete button is-danger is-filled' %>
-        </div>
         <% if current_user.is_global_admin %>
         <div class="widget--body">
             <h4>Feed to STAT</h4>
