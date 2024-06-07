@@ -83,10 +83,15 @@
                     <i class="fas fa-user-slash fa-fw"></i>
                     Network-wide Suspension
                 <% end %>
-                <%= link_to mod_hungry_codidactyl_path(user),
-                            class: "menu--item #{current_page?(mod_hungry_codidactyl_path(user)) ? 'is-active' : ''}" do %>
+                <%= link_to mod_delete_network_account_path(user),
+                            class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : ''}" do %>
                     <i class="fas fa-skull fa-fw"></i>
                     Delete Network Account
+                <% end %>
+                <%= link_to mod_failban_path(user),
+                            class: "menu--item #{current_page?(mod_failban_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-eye-slash fa-fw"></i>
+                    Fail-ban
                 <% end %>
                 <% end %>
                 <% if current_user.developer %>

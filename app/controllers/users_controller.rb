@@ -12,11 +12,11 @@ class UsersController < ApplicationController
                                           :mod_privilege_action, :mod_delete, :mod_reset_profile,
                                           :mod_clear_profile, :mod_escalation, :mod_escalate,
                                           :mod_contact, :mod_message]
-  before_action :verify_global_moderator, only: [:mod_destroy, :global_log]
+  before_action :verify_global_moderator, only: [:mod_failban, :global_log, :mod_delete_network_account]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
                                   :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar, :mod_delete, :mod_destroy,
+                                  :vote_summary, :avatar, :mod_delete, :mod_failban, :mod_delete_network_account,
                                   :mod_reset_profile, :mod_clear_profile, :mod_escalation,
                                   :mod_escalate, :mod_contact, :mod_message, :global_log]
   before_action :check_deleted, only: [:show, :posts, :activity]
@@ -403,7 +403,11 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def mod_destroy
+  def mod_delete_network_account
+    render layout: 'without_sidebar'
+  end
+
+  def mod_failban
     render layout: 'without_sidebar'
   end
 

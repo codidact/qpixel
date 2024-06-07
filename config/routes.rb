@@ -213,8 +213,9 @@ Rails.application.routes.draw do
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
     get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
     post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
-    get    '/:id/mod/delete', to: 'users#mod_delete', as: :mod_delete
-    get    '/:id/mod/hungry-codidactyl', to: 'users#mod_destroy', as: :mod_hungry_codidactyl
+    get    '/:id/mod/delete',           to: 'users#mod_delete', as: :mod_delete
+    get    '/:id/mod/delete-network-account', to: 'users#mod_delete_network_account', as: :mod_delete_network_account
+    get    '/:id/mod/failban',          to: 'users#mod_failban', as: :mod_failban
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
     get    '/:id/mod/escalate',         to: 'users#mod_escalation', as: :user_escalation
     post   '/:id/mod/escalate',         to: 'users#mod_escalate', as: :user_escalate
