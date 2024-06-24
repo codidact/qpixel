@@ -78,11 +78,15 @@
                         Comment
                     </td>
                     <td>
-                        <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                        <% if i.post.nil? %>
+                            <%= link_to 'Private', comment_link(i), 'aria-label': 'Location of comment in private thread' %>
+                        <% else %>
+                            <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
+                        <% end %>
                     </td>
                     <td class="h-fs-caption">
                         <%= i.content[0..300] + ((i.content.length > 300) ? "..." : "") %><br>
-                        <%= link_to '(more)', generic_share_link(i.post) + "#comment-" + i.id.to_s %>
+                        <%= link_to '(more)', comment_link(i), 'aria-label': 'More information about comment' %>
                     </td>
                     <td>&mdash;</td>
                 <% elsif i.class == PostHistory %>
