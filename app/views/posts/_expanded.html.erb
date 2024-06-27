@@ -371,9 +371,9 @@
                 </div>
                 <div class="grid--cell is-flexible">
                   <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
-                    other reason
+                    moderator attention <br/>
                     <span class="form-caption">
-                      Please elaborate in the details field below.
+                      Please elaborate in the details field below. This flag will be seen only by moderators and administrators, not curators.
                     </span>
                   </label>
                 </div>
@@ -388,7 +388,7 @@
             </div>
             <div class="widget--footer">
               <button class="flag-link button is-filled is-muted" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">
-                Flag for moderator attention
+                Flag for attention
               </button>
             </div>
           </div>
