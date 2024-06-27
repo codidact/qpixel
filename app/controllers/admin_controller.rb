@@ -152,6 +152,7 @@ class AdminController < ApplicationController
 
   def impersonate
     @user = User.find params[:id]
+    render layout: 'without_sidebar'
   end
 
   def change_users
