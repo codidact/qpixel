@@ -21,6 +21,12 @@
                 <div class="widget--body">
                     <%= raw(sanitize(render_markdown(m.comments.first.content), scrubber: scrubber)) %>
                 </div>
+                <div class="widget--footer">
+                    <p class="h-m-0">
+                        Showing 1 of <%= pluralize(m.reply_count, 'comment') %>.
+                        <%= link_to 'See the whole thread', comment_thread_path(m) %>.
+                    </p>
+                </div>
             <% elsif e[:type] == :warning %>
                 <% w = e[:value] %>
                 <div class="widget--header is-complex h-bg-tertiary-050">
