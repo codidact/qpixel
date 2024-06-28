@@ -27,6 +27,16 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
+    # allposts definition copied from posts() method. posts is limited to 15.
+    @allposts = if current_user&.privilege?('flag_curate') || @user == current_user
+               Post.all
+             else
+               Post.undeleted
+             end.where(user: @user).list_includes.joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+             .user_sort({ term: params[:sort], default: :score },
+                        age: :created_at, score: :score)
+             .paginate(page: params[:page], per_page: 25)
     @posts = if current_user&.privilege?('flag_curate')
                @user.posts
              else
