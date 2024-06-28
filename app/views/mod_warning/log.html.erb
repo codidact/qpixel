@@ -8,6 +8,10 @@
   <div class="grid--cell is-9">
     <h1>Previously Sent Messages and Warnings</h1>
 
+    <% if @entries.size == 0 %>
+        <p class="has-color-tertiary"><em>No messages or warnings found for this user.</em></p>
+    <% end %>
+
     <% @entries.each do |e| %>
         <div class="widget">
             <% if e[:type] == :message %>
