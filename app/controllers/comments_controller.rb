@@ -1,6 +1,5 @@
 # Provides mainly web actions for using and making comments.
 
-# rubocop:disable Metrics/ClassLength
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
@@ -371,4 +370,3 @@ class CommentsController < ApplicationController
     end
   end
 end
-# rubocop:enable Metrics/ClassLength
