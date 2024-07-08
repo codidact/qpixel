@@ -81,7 +81,7 @@ class User < ApplicationRecord
 
     false
   end
-  
+
   # Checks if the user can push a given post type to network
   # @param post_type [PostType] type of the post to be pushed
   # @return [Boolean]
