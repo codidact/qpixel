@@ -315,7 +315,7 @@
 
         <div class="post--action-dialog js-flag-box">
           <div class="widget">
-            <div class="widget--header">Why does this post require moderator attention?</div>
+            <div class="widget--header">Why does this post require attention from curators or moderators?</div>
             <% if current_user&.has_active_flags?(post) %>
               <div class="widget--body">
                 <div class="notice is-warning">
@@ -366,14 +366,30 @@
             <div class="widget--body">
               <div class="grid">
                 <div class="grid--cell">
+                  <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-curator_<%= post.id  %>"
+                         data-requires-details="true" />
+                </div>
+                <div class="grid--cell is-flexible">
+                  <label class="form-element has-margin-0" for="flag-reason-curator_<%= post.id  %>">
+                    change post status <br/>
+                    <span class="form-caption">
+		      This post should be reopened/closed, locked/unlocked, or deleted/undeleted. Please elaborate in the details field below.
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="widget--body">
+              <div class="grid">
+                <div class="grid--cell">
                   <input class="form-radio-element" type="radio" name="flag-reason" value="-1" id="flag-reason-other_<%= post.id  %>"
                          data-requires-details="true" />
                 </div>
                 <div class="grid--cell is-flexible">
                   <label class="form-element has-margin-0" for="flag-reason-other_<%= post.id  %>">
-                    other reason
+                    moderator attention <br/>
                     <span class="form-caption">
-                      Please elaborate in the details field below.
+                      Please elaborate in the details field below. This flag will be seen only by moderators and administrators, not curators.
                     </span>
                   </label>
                 </div>
@@ -388,7 +404,7 @@
             </div>
             <div class="widget--footer">
               <button class="flag-link button is-filled is-muted" data-post-type="<%= is_question ? 'Question' : 'Answer' %>" data-post-id="<%= post.id %>">
-                Flag for moderator attention
+                Flag for attention
               </button>
             </div>
           </div>
