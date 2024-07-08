@@ -35,7 +35,7 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Allow ngrok connections to dev server
-  config.hosts << /[a-z0-9-.]+\.ngrok-free\.app/
+  config.hosts << /[a-z0-9\-.]+\.ngrok-free\.app/
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
