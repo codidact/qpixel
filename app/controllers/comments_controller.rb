@@ -365,7 +365,7 @@ class CommentsController < ApplicationController
   end
 
   def check_if_not_mod_and_thread_is_private
-    if !current_user.is_moderator
+    unless current_user.is_moderator
       check_if_thread_is_private
     end
   end
