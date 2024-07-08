@@ -27,13 +27,20 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
-    @posts = if current_user&.privilege?('flag_curate')
-               @user.posts
-             else
-               @user.posts.undeleted
-             end.list_includes.joins(:category)
-             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-             .order(score: :desc).first(15)
+
+    all_posts = if current_user&.privilege?('flag_curate') || @user == current_user
+                  @user.posts
+                else
+                  @user.posts.undeleted
+                end
+                .list_includes
+                .joins(:category)
+                .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                .user_sort({ term: params[:sort], default: :score },
+                           age: :created_at, score: :score)
+
+    @posts = all_posts.first(15)
+    @total_post_count = all_posts.count
     render layout: 'without_sidebar'
   end
 
