@@ -23,5 +23,6 @@ class SubscriptionMailer < ApplicationMailer
     @subscription.update(last_sent_at: DateTime.now)
     from = "#{SiteSetting['SubscriptionSenderName']} <#{SiteSetting['SubscriptionSenderEmail']}>"
     mail from: from, to: @subscription.user.email, subject: subject
+    Rails.logger.info "Sent subscription mail (sub ID ##{@subscription.id}, to: #{@subscription.user.email}, name: '#{@subscription.name}'"
   end
 end
