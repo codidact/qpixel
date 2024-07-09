@@ -11,10 +11,14 @@ class EmailLogsController < ApplicationController
       body = request.body.read
       if verifier.authentic? body
         aws_data = JSON.parse body
-        message_data = JSON.parse aws_data['Message']
-        log_type = message_data['notificationType']
-        destination = message_data['mail']['destination'].join(', ')
-        EmailLog.create(log_type: log_type, destination: destination, data: aws_data['Message'])
+        if message_type == 'SubscriptionConfirmation'
+          EmailLog.create(log_type: 'SubscriptionConfirmation', data: aws_data)
+        else
+          message_data = JSON.parse aws_data['Message']
+          log_type = message_data['notificationType']
+          destination = message_data['mail']['destination'].join(', ')
+          EmailLog.create(log_type: log_type, destination: destination, data: aws_data['Message'])
+        end
         render plain: 'OK'
       else
         render plain: "You're not AWS. Go away.", status: 401
