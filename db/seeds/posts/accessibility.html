@@ -1,0 +1,255 @@
+<p>This short guide goes over several aspects of accessibility to keep in mind when writing or editing posts on the Codidact network. There are many different disabilities out there, and these tips cover accessibility for many of them, such as people using screen readers, keyboard users, colorblind users, and people with cognitive disabilities.</p>
+<hr>
+<h2>Table of Contents</h2>
+<ul>
+<li>
+<a href="#Formatting">Formatting</a>
+<ul>
+<li>
+<a href="#Headings">Headings</a>
+<ul>
+<li><a href="#Headings-Examples">Examples</a></li>
+</ul>
+</li>
+<li><a href="#Emphasis">Emphasized text</a></li>
+<li><a href="#Code">Code markup</a></li>
+<li><a href="#Text-size">Text size</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+</li>
+<li>
+<a href="#Images">Images</a>
+<ul>
+<li><a href="#Alt-text">Alternative (alt) text</a></li>
+<li><a href="#Decorative-images">Decorative images</a></li>
+<li>
+<a href="#Local-images">Stable resource (local images)</a>
+<ul>
+<li><a href="#Images-examples">Examples</a></li>
+</ul>
+</li>
+<li><a href="#Color">Color</a></li>
+<li><a href="#Contrast">Contrast</a></li>
+<li><a href="#Animations">Animations</a></li>
+<li>
+<a href="#Text-images">Images of text</a>
+<ul>
+<li><a href="#Quotes">Quoting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#Links">Links</a>
+<ul>
+<li><a href="#Link-text">Link text</a></li>
+<li><a href="#Web-Archive">Stable resource (Web Archive)</a></li>
+</ul>
+</li>
+<li>
+<a href="#Understandable">Making your posts understandable</a>
+<ul>
+<li><a href="#Vocabulary">Vocabulary</a></li>
+<li><a href="#Jargon">Define acronyms and specialized terms</a></li>
+<li><a href="#Paragraphs">Paragraph and sentence breaks</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Formatting">Formatting</h2>
+<h3 id="Headings">Headings</h3>
+<p>Headings are used to separate sections of information. Each heading should give you a decent indication of what you can expect in that section. (As an example, the heading "headings" before this section is a good hint that this section is about headings.)</p>
+<ul>
+<li>
+<p>Follow an intuitive header order.</p>
+<p>Don't jump from an <code>&lt;h2&gt;</code> to an <code>&lt;h5&gt;</code>; follow a consistent, intuitive order for headings, where top-level sections have a higher-level header and sub-sections have a lower-level header. You shouldn't skip levels of headings (for instance, moving from an <code>&lt;h2&gt;</code> to an <code>&lt;h4&gt;</code> without an <code>&lt;h3&gt;</code> in between)<br>
+However, when you are ending a sub-section and moving back to a higher-level section, you can move from a low-level header (such as <code>&lt;h4&gt;</code>) back up to a higher-level header (such as <code>&lt;h2&gt;</code>) without including a mid-level header.</p>
+</li>
+<li>
+<p>There should generally only be one top-level header (which can be formatted using <code>&lt;h1&gt;</code> or <code>#</code>) per-page.</p>
+<p>Posts on the Codidact network have a top-level heading as the question or article title.<br>
+Whether or not using another top-level header is appropriate depends on the type of post you're writing, as well as on how the question and answers are structured. Posts covering a large number of topics or that are split up into multiple, entirely distinct sections sometimes might need to include more than one top-level heading, but consider carefully if it's actually necessary.</p>
+</li>
+<li>
+<p>Only use headings for actual headings, and don't use headings for non-header content.</p>
+<p>If something acts as a heading, it should be properly marked up as a heading, using either the appropriate Markdown or HTML tags. The opposite holds true as well; if something is not acting as a heading, it should not be formatted as a heading. If you want to emphasize something, don't use headings to do that.</p>
+</li>
+</ul>
+<p>Screen readers and similar can jump from heading to heading (including describing what level of heading), so keep that in mind when choosing headings for your posts.</p>
+<hr>
+<h4 id="Headings-Examples">Examples</h4>
+<p>A good heading order follows the logical layout of the page, without skipping over levels, consistently uses the same level headings for sections at the same level, and only uses headings for actual heading content.</p>
+<pre>// Example of a good heading order
+&lt;h1&gt;Question title (automatically provided)&lt;h1&gt;
+&lt;h2&gt;Answer section 1&lt;/h2&gt;
+&lt;h3&gt;Answer sub-section 1a&lt;/h3&gt;
+&lt;h3&gt;Answer sub-section 1b&lt;/h3&gt;
+&lt;h2&gt;Answer section 2&lt;/h2&gt;
+&lt;h3&gt;Answer sub-section 2a&lt;/h3&gt;
+&lt;h3&gt;Answer sub-section 2b&lt;/h3&gt;
+&lt;h4&gt;Answer sub-sub-section 2b.1&lt;/h4&gt;
+&lt;h4&gt;Answer sub-sub-section 2b.2&lt;/h4&gt;
+&lt;h2&gt;Answer section 3&lt;/h2&gt;
+</pre>
+<p>The heading order above shows an answer that doesn't use a top-level heading (<code>&lt;h1&gt;</code>), since there's already one on the page - the question title. It uses <code>&lt;h2&gt;</code> to differentiate its high-level sections. It then uses <code>&lt;h3&gt;</code> for the sub-sections, and when it's necessary to have a sub-sub-section, it uses <code>&lt;h4&gt;</code>.</p>
+<p>A bad heading order would skip levels, use headings for non-heading content, or unnecessarily over-use top-level headings.</p>
+<pre>// Example of a bad heading order
+&lt;h1&gt;Question title (automatically provided)&lt;/h1&gt;
+&lt;h1&gt;Answer summary (actual content)&lt;/h1&gt;
+&lt;h3&gt;Answer section 1&lt;/h3&gt;
+&lt;h5&gt;Answer sub-section 1a&lt;/h5&gt;
+&lt;h4&gt;Answer sub-section 1b&lt;/h4&gt;
+&lt;h2&gt;Answer section 2&lt;/h2&gt;
+&lt;h4&gt;Notes&lt;/h4&gt;
+&lt;h1&gt;Thank you for reading!&lt;/h1&gt;
+</pre>
+<p>This bad example uses <code>&lt;h1&gt;</code> twice in the answer, despite there already being a top-level heading as the question title. It uses an <code>&lt;h1&gt;</code> heading for the answer summary, using a heading for non-heading content. It then uses wildly inconsistent heading levels for its different sections and sub-sections, and skips levels of headings (such as moving directly from <code>&lt;h3&gt;</code> to <code>&lt;h5&gt;</code>).</p>
+<hr>
+<h3 id="Emphasis">Emphasized text</h3>
+<p>Emphasized text, such as bold or italics, is good for calling attention to key words or sentences. However, if it's overused, it ends up defeating its own purpose and making a post more difficult to read instead of clearer.</p>
+<ul>
+<li>
+<p>Bold text should be used sparingly.</p>
+<p>Only use it to highlight words or sentences that actually need special attention called to them.</p>
+</li>
+<li>
+<p>Italics should only be used when it is appropriate to use italics.</p>
+<p>Italics are used for emphasizing stress on a certain word, italicizing the names of works, indicating words in foreign languages, and other standard uses of italics. Don't over-use italics on text that doesn't need to be italicized; remember that italics can make it harder to read the text for certain people, including some people with dyslexia.</p>
+</li>
+<li>
+<p>Avoid bolding or italicizing entire paragraphs.</p>
+</li>
+</ul>
+<h3 id="Code">Code markup</h3>
+<ul>
+<li>
+<p>Code markup should be used for code, including variable names and other code elements that may be found in non-code lines.</p>
+<p>This allows for code highlighting to work, and makes it clear when a code element is being referred to.</p>
+</li>
+<li>
+<p>Code markup should not be used for any non-code elements.</p>
+<p>This includes using it for emphasis, for tables, or other non-code usage. Instead, use the <a href="https://meta.codidact.com/help/formatting">dedicated formatting</a> for those elements. Misusing code markup can cause issues for assistive technology such as screen readers.</p>
+</li>
+</ul>
+<h3 id="Text-size">Text size</h3>
+<ul>
+<li>
+<p>Don't stack subscripts or superscripts to make your text tiny.</p>
+<p>Using superscript or subscript once is enough, and only use it when necessary. Screen readers may not differentiate between sub- or superscript and regular text, so keep that in mind.</p>
+</li>
+</ul>
+<p>Codidact has integrated footnotes available, so you should avoid using sub- and superscript for footnotes; use the dedicated Markdown instead.</p>
+<h3 id="Tables">Tables</h3>
+<ul>
+<li>
+<p>If possible, avoid putting ambiguous data into tables - i.e., having data that you can't tell which column of the table it would be associated with without checking, such as having two columns containing plain numbers.</p>
+</li>
+<li>
+<p>Avoid blank header rows in tables, and don't use table formatting for data that doesn't actually belong in a table.</p>
+</li>
+</ul>
+<h2 id="Images">Images</h2>
+<h3 id="Alt-text">Alternative (alt) text</h3>
+<ul>
+<li>
+<p>Whenever you include an image in a post, you should include alternative text (commonly called "alt text") that serves the same purpose as the image.</p>
+<p>This replaces the default text of "Image_alt_text". This is used by screen readers, search engines, and when images can't be displayed (such as images being blocked in certain countries or by school/business networks).</p>
+</li>
+<li>
+<p>The alt text should be short, succinct, and serve the exact same purpose as the image - it shouldn't contain more or less information than the image itself.</p>
+</li>
+</ul>
+<p>As a general way of making sure your alt text is appropriate, consider if the information present in the post would change at all if the image was replaced entirely with the alt text. If the information would stay the same, you're good to go.</p>
+<h3 id="Decorative-images">Decorative images</h3>
+<ul>
+<li>A decorative image, which serves no purpose other than visual, should have its alt text be entirely blank.</li>
+</ul>
+<p>Note that this is <em>blank</em>, not <em>missing</em>. From a coding perspective, this means setting its <code>alt</code> attribute to <code>=""</code>, not leaving out the <code>alt</code> attribute.</p>
+<p>In general, you should avoid including images that don't serve any specific purpose or that are just decorative in your post.<br>
+If you find yourself including a decorative image, make sure that it's not formatted as a link, leaving only the embedded image, and to set the alt text to be blank.</p>
+<h3 id="Local-images">Stable resource (local images)</h3>
+<p>In order to avoid the possibility of dead images, and ensure that that post remains stable for as long as possible, you should avoid using an external image hosting service. Instead, use the built-in image uploader for the Codidact Network. This means that the image is stored on our own servers instead of depending on someone else.</p>
+<hr>
+<h4 id="Images-examples">Examples</h4>
+<p>Let's take the following snippet of a post for our example:</p>
+<blockquote>
+<p>When you go to edit a post, you now have the option to check the "redact" button:</p>
+<p><img alt="Checkbox to select &quot;redact&quot;: Redact original content by hiding the previous versions from history?" src="https://meta.codidact.com/uploads/qwvy25mvolpdjabhknuujzjncbpm"><br>
+<sub>(Source: "<a href="https://meta.codidact.com/posts/289192/289193#answer-289193">What should I do when I come across PII in a post?</a>" by Mithical on Codidact Meta, licensed under CC BY-SA-NC 4.0)</sub></p>
+</blockquote>
+<p>In this example, the image is being used to illustrate the new button and what it does. That information needs to be presented in the alt text as well, which the current alt text does:</p>
+  <pre>![Checkbox to select "redact": Redact original content by hiding the previous versions from history?](https://meta.codidact.com/uploads/qwvy25mvolpdjabhknuujzjncbpm)
+</pre>
+<p>This is short and to the point. It tells anybody who can't see the image what information is shown with the checkbox, which is why the screenshot was included.</p>
+<p>A bad example would be leaving out the alt text, having overly long alt text, or relying on an external image hosting service:</p>
+  <pre>![](https://i.imgur.com/XtjJxjF.jpg) 
+
+![A screenshot of two different sections that you see when editing a post. One says "Edit Comment" with a blank text box, where you can input an edit comment that will show up in the revision history for that post. The other says "Redact", and it has text with an unchecked checkbox. It has the text "Redact original content by hiding the previous revisions from history?" Below those are two buttons. One is blue and says "Save Post in Q&amp;A". The other is gray and says "Cancel".](https://meta.codidact.com/uploads/qwvy25mvolpdjabhknuujzjncbpm)
+</pre>
+<p>In the first bad example, there is both no alt text and it relies on an external image service. There is no information presented to anyone who can't see the image, and there's the risk that the image will go dead even for people who can see it.<br>
+In the second bad example, the alt text is too long. It has information that's not present in the image itself, such as information about the edit comment appearing in the revision history, and describes information that's not relevant to the purpose of the screenshot - which is simply to show what you're presented with when you go to redact a post.</p>
+<hr>
+<h3 id="Color">Don't rely solely on color</h3>
+<p>When your image uses colors to indicate a difference between things - such as on a chart or graph - you should also use a different method of differentiating, such as an icon or different shape. Also avoid using colors that are known to be a problem for colorblind users (such as red/green).</p>
+<h3 id="Contrast">Contrast</h3>
+<p>Avoid colors that are too close to each other, especially for text on a background color. As a simple way of testing, take a glance at the image in sunlight - can you still make it out?</p>
+<h3 id="Animations">Animations</h3>
+<p>We don't currently support any way to disable or pause animations in posts, so avoid using animations where possible. In particular, make sure to avoid flashing content (especially anything flashing more than three times a second - don't do that!). Flashing content can cause seizures, and looping animations can be distracting for everyone, but especially for people with some cognitive disabilities.</p>
+<h3 id="Text-images">Images of text</h3>
+<ul>
+<li>
+<p>Avoid images of text.</p>
+<p>Images of text can't have the text selected, be read by screen readers, indexed by search engines, have the text adjust in a responsive design, or have the font changed. This includes images of code; instead, put the actual code in your post and format it using the dedicated code formatting Markdown.</p>
+</li>
+</ul>
+<h4 id="Quotes">Quoting</h4>
+<ul>
+<li>
+<p>If you are quoting from somewhere, don't provide an image of the text; use text, formatted as a blockquote (which can be done by putting a <code>&gt;</code> at the beginning of a paragraph), and cite your source.</p>
+<p>This applies to both online and offline resources, such as Wikipedia or a physical book.</p>
+</li>
+<li>
+<p>Do not use code formatting for quotes.</p>
+</li>
+</ul>
+<h2 id="Links">Links</h2>
+<h3 id="Link-text">Link text</h3>
+<ul>
+<li>
+<p>Avoid link text such as "Here" or "Read more".</p>
+<p>The link should explain its purpose through the text itself. Remember that screen readers and similar tools can jump to specific links, but if they're named something like "this", navigating to the correct link is much harder.<br>
+Don't go too far in the other direction, though; there's no need to make an entire sentence a link as long as the link text is descriptive and distinct.</p>
+</li>
+<li>
+<p>In general, link text should be unique - don't use the same link text twice in one post if those links go to different places.</p>
+</li>
+</ul>
+<h3 id="Web-Archive">Stable resource (Web Archive)</h3>
+<p>While not required by any standard that I'm aware of, I'd encourage you to take steps to make sure that any resource you link to remains stable by archiving it in the Web Archive when you link to it. (This is similar to what Wikipedia does; sources used in articles are almost always archived so that a backup exists.)</p>
+<h2 id="Understandable">Making your posts understandable</h2>
+<h3 id="Vocabulary">Vocabulary</h3>
+<ul>
+<li>
+<p>In general, try to keep your vocabulary simple.</p>
+<p>This doesn't mean avoiding all technical terms, or not using the correct terms for things, but don't use jargon or fancy words when it's not necessary. This makes it easier for people who don't speak English as their first language, or people with cognitive disabilities, to understand your post.</p>
+</li>
+</ul>
+<p>This should not come at the expense of precision or accuracy, though; keep your audience in mind. If you are writing for a highly specialized or technical audience, you shouldn't necessary shy away from using the relevant terminology; but if you're writing for everyone, using relatively simple terms is often a good idea.</p>
+<h3 id="Jargon">Define acronyms and specialized terms</h3>
+<ul>
+<li>
+<p>The first time you use an acronym, you should fully spell out what you're referring to.</p>
+<p>A common example found on Codidact (CD) is just that - the acronym CD. However, that acronym can also refer to the terminal command <code>cd</code>, or the physical medium of Compact Discs, as well as other meanings. Once you've defined what CD stands for in your specific post, you can continue to use the acronym.</p>
+</li>
+</ul>
+<p>This applies to specialized terms, jargon, and words in other languages as well. The first time you use a specialized term, define what it means or translate it.</p>
+<h3 id="Paragraphs">Paragraph and sentence breaks</h3>
+<ul>
+<li>
+<p>Avoid walls of text.</p>
+<p>Make sure to break up your posts into sections, paragraphs, and sentences. When something runs on for too long, or is too dense, it can be very hard for people to get through, especially people who don't speak the language well or people with certain cognitive disabilities.</p>
+</li>
+</ul>
+<hr>
+<p>And those are the top tips for making your post accessible! Remember that accessibility is an ongoing process, so don't feel too bad if not all of your posts meet these guidelines. They can always be edited later, and the important thing is to keep accessibility in mind as you go forwards writing and editing posts.</p>
+
