@@ -67,9 +67,10 @@ class UsersController < ApplicationController
         @community_prefs = prefs[:community]
       end
       format.json do
-        render json: current_user.preferences
+        render json: current_user.preferences 
       end
     end
+    render layout: 'without_sidebar'
   end
 
   # Helper method to convert it to the form expected by the client
@@ -108,6 +109,7 @@ class UsersController < ApplicationController
         render json: filters_json
       end
     end
+    render layout: 'without_sidebar'
   end
 
   def set_filter
@@ -581,6 +583,7 @@ class UsersController < ApplicationController
                    end \
                    .paginate(page: params[:page], per_page: 15)
     @votes
+    render layout: 'without_sidebar'
   end
 
   def avatar
