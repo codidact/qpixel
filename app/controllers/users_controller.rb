@@ -65,12 +65,12 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
       end
     end
-    render layout: 'without_sidebar'
   end
 
   # Helper method to convert it to the form expected by the client
@@ -104,12 +104,12 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html do
         authenticate_user!
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
       end
     end
-    render layout: 'without_sidebar'
   end
 
   def set_filter
