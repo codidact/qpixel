@@ -582,8 +582,8 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
-    @votes
     render layout: 'without_sidebar'
+    @votes
   end
 
   def avatar
