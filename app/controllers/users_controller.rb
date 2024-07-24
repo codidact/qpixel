@@ -65,7 +65,6 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
-        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -104,7 +103,6 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html do
         authenticate_user!
-        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
@@ -582,7 +580,6 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
-    render layout: 'without_sidebar'
     @votes
   end
 
