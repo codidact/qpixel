@@ -4,6 +4,8 @@ const ALLOWED_TAGS = ['a', 'p', 'span', 'b', 'i', 'em', 'strong', 'hr', 'h1', 'h
   'summary', 'ins', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 's'];
 const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 'alt', 'rowspan', 'colspan', 'lang',
   'start', 'dir'];
+// this is a list of constructors to ignore even if they are removed by sanitizer (mostly comments & body)
+const IGNORE_UNSUPPORTED = [Comment, HTMLBodyElement];
 
 $(() => {
   DOMPurify.addHook("uponSanitizeAttribute", (node, event) => {
@@ -176,7 +178,7 @@ $(() => {
         });
 
         const removedElements = [...new Set(DOMPurify.removed
-          .filter(entry => entry.element && !(entry.element instanceof HTMLBodyElement))
+          .filter(entry => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
           .map(entry => entry.element.localName))];
 
         const removedAttributes = [...new Set(DOMPurify.removed
