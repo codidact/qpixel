@@ -3,14 +3,14 @@
 <h1>Your Subscriptions</h1>
 <p>These are all the email subscriptions you're currently signed up for. You can turn them off or remove them entirely from here.</p>
 
-<% @subscriptions.group_by(&:type).flat_map { 
-  |type, subs| subs.each_with_index.map { 
-    |sub, index| [
+<% @subscriptions.group_by(&:type).flat_map do |type, subs|
+  subs.each_with_index.map do |sub, index|
+    [
       sub.created_at, 
       [sub.name.present? ? sub.name : "#{type.capitalize} subscription #{index + 1}",sub]
     ] 
-  } 
-}.sort_by { |a| a }.map { |_, v| v }.each do |name, sub| %>
+  end
+end.sort_by { |a| a }.map { |_, v| v }.each do |name, sub| %>
   <details data-sub-id="<%= sub %>">
     <summary><%= name %></summary>
     <p>Subscription to <%= phrase_for sub.type, sub.qualifier %>, emailed every <%= 
