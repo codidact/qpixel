@@ -22,6 +22,11 @@
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
       <%= user_link flag.user %> at <%= flag.created_at.iso8601 %>
+      <% if flag.post_type == 'Post' && flag.post.updated_at > flag.created_at %>
+      <%= link_to post_history_path(flag.post) do %>
+	(post modified after flag)
+      <% end %>
+      <% end %>
     </p>
   </div>
   <% if escalation %>
