@@ -1,6 +1,7 @@
 class SuggestedEdit < ApplicationRecord
   include PostRelated
   include PostValidations
+  include EditsValidations
 
   belongs_to :user
 

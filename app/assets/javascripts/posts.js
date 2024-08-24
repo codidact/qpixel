@@ -4,6 +4,8 @@ const ALLOWED_TAGS = ['a', 'p', 'span', 'b', 'i', 'em', 'strong', 'hr', 'h1', 'h
   'summary', 'ins', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 's'];
 const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 'alt', 'rowspan', 'colspan', 'lang',
   'start', 'dir'];
+// this is a list of constructors to ignore even if they are removed by sanitizer (mostly comments & body)
+const IGNORE_UNSUPPORTED = [Comment, HTMLBodyElement];
 
 $(() => {
   DOMPurify.addHook("uponSanitizeAttribute", (node, event) => {
@@ -93,6 +95,13 @@ $(() => {
     tags: true
   });
 
+  /**
+   * Attempts to save a draft with a given body
+   * @param {string} postText draft text
+   * @param {JQuery<Element>} $field body input element
+   * @param {boolean} [manual] whether manual draft saving is enabled
+   * @returns {Promise<void>}
+   */
   const saveDraft = async (postText, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
     if (autosavePref !== 'on' && !manual) {
@@ -111,10 +120,15 @@ $(() => {
         path: location.pathname
       })
     });
+
     if (resp.status === 200) {
-      const $el = $(`<span>&middot; <span class="has-color-green-600">draft saved</span></span>`);
-      $field.parents('.widget').find('.js-post-field-footer').append($el);
-      $el.fadeOut(1500, function () { $(this).remove() });
+      const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+
+      $statusEl.removeClass('transparent');
+
+      setTimeout(() => {
+        $statusEl.addClass('transparent');
+      }, 1500);
     }
   };
 
@@ -164,7 +178,7 @@ $(() => {
         });
 
         const removedElements = [...new Set(DOMPurify.removed
-          .filter(entry => entry.element && !(entry.element instanceof HTMLBodyElement))
+          .filter(entry => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
           .map(entry => entry.element.localName))];
 
         const removedAttributes = [...new Set(DOMPurify.removed
@@ -294,17 +308,57 @@ $(() => {
     </div>`);
   });
 
-  $('.js-permalink > .js-text').text('Copy Link');
-  $('.js-permalink').on('click', ev => {
+  const setCopyButtonState = ($button, state) => {
+    const isSuccess = state === "success";
+    const buttonClass = isSuccess ? "is-green" : "is-danger";
+    const iconClass = isSuccess ? "fa-check" : "fa-times";
+
+    const $icon = $button.find(".fa");
+
+    $icon.removeClass("fa-copy");
+    $icon.addClass(iconClass);
+    $button.addClass(buttonClass);
+
+    setTimeout(() => {
+      $icon.removeClass(iconClass);
+      $button.removeClass(buttonClass);
+      $icon.addClass("fa-copy");
+    }, 1e3);
+  };
+
+  $(".js-permalink-trigger").removeAttr("hidden");
+
+  $(".js-permalink-copy").on("click", async (ev) => {
     ev.preventDefault();
 
-    const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
-    const link = $tgt.attr('href');
-    navigator.clipboard.writeText(link);
-    $tgt.find('.js-text').text('Copied!');
-    setTimeout(() => {
-      $tgt.find('.js-text').text('Copy Link');
-    }, 1000);
+    const $tgt = $(ev.target);
+
+    const $button = $tgt.hasClass("js-permalink-copy")
+      ? $tgt
+      : $tgt.parents(".js-permalink-copy");
+
+    const postId = $button.data("post-id");
+    const linkType = $button.data("link-type");
+
+    if (!postId || !linkType) {
+      return;
+    }
+
+    const $input = $(`#permalink-${postId}-${linkType}`);
+
+    const url = $input.val();
+
+    if (!url) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyButtonState($button, "success");
+    }
+    catch (_e) {
+      setCopyButtonState($button, "error");
+    }
   });
 
   $('.js-nominate-promotion').on('click', async ev => {

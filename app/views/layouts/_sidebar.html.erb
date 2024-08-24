@@ -92,10 +92,10 @@
       <div class="widget has-margin-4">
         <div class="widget--header">
           <%= link_to 'edit', subscriptions_path, class: 'widget--header-link' %>
-          Subscribe to Questions
+          Subscribe by Email
         </div>
         <div class="widget--body">
-          <p>You can subscribe to
+          <p>You can subscribe by email to
             <%= link_to 'all new questions', new_subscription_path(type: 'all', return_to: request.path) %>
             (from all categories) or to
             <%= link_to 'interesting questions', new_subscription_path(type: 'interesting', return_to: request.path) %>.</p>

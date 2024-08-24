@@ -1,0 +1,6 @@
+en:
+  edits:
+    # validation error messages
+    max_edit_comment_length:
+      one: Edit comment can't be more than 1 character long.
+      other: Edit comment can't be more than :length characters long.

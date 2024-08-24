@@ -26,7 +26,11 @@
       London, UK<br/>
       WC2H 9JQ
     </p>
-    <p><a href="mailto:info@codidact.org">info@codidact.org</a></p>
+    <p>
+      <a href="mailto:<%= SiteSetting['SupportReceiverEmail'] || 'info@codidact.org' %>">
+        <%= SiteSetting['SupportReceiverEmail'] || 'info@codidact.org' %>
+      </a>
+    </p>
   </div>
 </div>
 </body>

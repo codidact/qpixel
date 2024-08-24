@@ -81,7 +81,14 @@
         <% end %>
       </div>
 
-      <h2 class="user-profile-heading">Posts</h2>
+      <div class="user-profile-heading-container">
+        <h2 class="user-profile-heading">Posts</h2>
+        <% if @posts.size > 0 %>
+          <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+            See all <%= @total_post_count %> &raquo;
+          <% end %>
+        <% end %>
+      </div>
       <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
       <% else %>
@@ -91,7 +98,7 @@
           <% end %>
         </div>
         <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
-          See all &raquo;
+          See all <%= @total_post_count %> &raquo;
         <% end %>
       <% end %>
     </div>
@@ -140,6 +147,14 @@
         <td><%= @user.metric 'E' %></td>
       </tr>
     </table>
+    
+    <% if current_user&.id == @user.id || current_user&.is_moderator %>
+    <table class="table is-full-width">
+      <tr>
+	<td>User since <%= @user.created_at %></td>
+      </tr>
+    </table>
+    <% end %>
 
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>

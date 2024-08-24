@@ -9,3 +9,7 @@ end
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end
+
+every 1.day, at: '02:10' do
+  runner 'scripts/prune_email_logs.rb'
+end

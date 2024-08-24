@@ -41,6 +41,7 @@ gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
 gem 'aws-sdk-s3', '~> 1.61', require: false
+gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduler.
@@ -70,7 +71,7 @@ gem 'net-smtp', '~> 0.3'
 gem 'ruby-progressbar', '~> 1.11'
 
 # Image generation
-gem 'rmagick', '~> 5.0'
+gem 'rmagick', '~> 5.3'
 
 # Payments. Kinda important, y'know.
 gem 'stripe', '~> 5.55'

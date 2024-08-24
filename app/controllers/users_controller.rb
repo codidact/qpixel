@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso]
+                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -27,13 +27,20 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
-    @posts = if current_user&.privilege?('flag_curate')
-               @user.posts
-             else
-               @user.posts.undeleted
-             end.list_includes.joins(:category)
-             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-             .order(score: :desc).first(15)
+
+    all_posts = if current_user&.privilege?('flag_curate') || @user == current_user
+                  @user.posts
+                else
+                  @user.posts.undeleted
+                end
+                .list_includes
+                .joins(:category)
+                .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                .user_sort({ term: params[:sort], default: :score },
+                           age: :created_at, score: :score)
+
+    @posts = all_posts.first(15)
+    @total_post_count = all_posts.count
     render layout: 'without_sidebar'
   end
 
@@ -58,6 +65,7 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -80,7 +88,7 @@ class UsersController < ApplicationController
   end
 
   def filters_json
-    system_filters = Rails.cache.fetch 'system_filters' do
+    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
       User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
 
@@ -95,7 +103,7 @@ class UsersController < ApplicationController
   def filters
     respond_to do |format|
       format.html do
-        authenticate_user!
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
@@ -174,7 +182,7 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = if current_user&.privilege?('flag_curate')
+    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
                Post.all
              else
                Post.undeleted
@@ -221,7 +229,7 @@ class UsersController < ApplicationController
               PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
-    @items = items.sort_by(&:created_at).reverse
+    @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
     render layout: 'without_sidebar'
   end
 
@@ -264,7 +272,7 @@ class UsersController < ApplicationController
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
                   SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
-              end).sort_by(&:created_at).reverse
+              end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
     render layout: 'without_sidebar'
   end
@@ -573,13 +581,14 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
+    render layout: 'without_sidebar'
     @votes
   end
 
   def avatar
     respond_to do |format|
       format.png do
-        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
+        size = params[:size]&.to_i&.positive? ? [params[:size]&.to_i, 256].min : 64
         send_data helpers.user_auto_avatar(size, user: @user).to_blob, type: 'image/png', disposition: 'inline'
       end
     end

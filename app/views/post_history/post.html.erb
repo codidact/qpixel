@@ -24,9 +24,12 @@
           <br/><em><%= event.comment %></em>
         <% end %>
       </span>
-      <%= link_to post_history_url(@post, anchor: @history.size - index), class: 'js-permalink' do %>
-        <span class="js-text">copy link</span>
-      <% end %>
+      <%= render 'shared/copy_link', classes: ["button", "is-small", "is-muted", "is-outlined"],
+                                     desc: "Copy a permanent link to revision #{@history.size - index}",
+                                     id: "#{@post.id}-#{@history.size - index}", 
+                                     md: post_history_share_link_md(@post, @history, index), 
+                                     raw: post_history_share_link(@post, @history, index) 
+                                     %>
     </summary>
     <% if event.allowed_to_see_details?(current_user) %>
       <% if event.hidden? %>

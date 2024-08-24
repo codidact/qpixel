@@ -41,7 +41,7 @@ module SearchHelper
 
   def active_filter
     {
-      default: false,
+      default: nil,
       name: params[:predefined_filter],
       min_score: params[:min_score],
       max_score: params[:max_score],

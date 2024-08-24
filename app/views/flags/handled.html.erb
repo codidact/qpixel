@@ -14,3 +14,5 @@
 <% @flags.each do |flag| %>
   <%= render 'handled', flag: flag %>
 <% end %>
+
+<%= will_paginate @flags, renderer: BootstrapPagination::Rails %>

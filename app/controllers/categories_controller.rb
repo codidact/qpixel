@@ -143,7 +143,8 @@ class CategoriesController < ApplicationController
     params.require(:category).permit(:name, :short_wiki, :tag_set_id, :is_homepage, :min_trust_level, :button_text,
                                      :color_code, :min_view_trust_level, :license_id, :sequence,
                                      :asking_guidance_override, :answering_guidance_override,
-                                     :use_for_hot_posts, :use_for_advertisement, :min_title_length, :min_body_length,
+                                     :use_for_hot_posts, :use_for_advertisement,
+                                     :min_title_length, :min_body_length, :default_filter_id,
                                      display_post_types: [], post_type_ids: [], required_tag_ids: [],
                                      topic_tag_ids: [], moderator_tag_ids: [])
   end
@@ -165,13 +166,22 @@ class CategoriesController < ApplicationController
     filter_qualifiers = helpers.params_to_qualifiers
     @active_filter = helpers.active_filter
 
-    if filter_qualifiers.blank? && user_signed_in?
-      default_filter_id = helpers.default_filter(current_user.id, @category.id)
-      default_filter = Filter.find_by(id: default_filter_id)
+    if filter_qualifiers.blank? && @active_filter[:name].blank?
+      if user_signed_in?
+        default_filter_id = helpers.default_filter(current_user.id, @category.id)
+        default_filter = Filter.find_by(id: default_filter_id)
+        default = :user if default_filter.present?
+      end
+
+      if default_filter.nil?
+        default_filter = @category.default_filter
+        default = :category if default_filter.present?
+      end
+
       unless default_filter.nil?
         filter_qualifiers = helpers.filter_to_qualifiers default_filter
         @active_filter = {
-          default: true,
+          default: default,
           name: default_filter.name,
           min_score: default_filter.min_score,
           max_score: default_filter.max_score,

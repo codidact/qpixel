@@ -26,7 +26,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name)
+    if @post_type.system?
       check_permissions
       # return # uncomment if you add more code after this
     end
@@ -73,7 +73,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && !check_permissions
+    if @post_type.system? && !check_permissions
       return
     end
 
@@ -144,12 +144,13 @@ class PostsController < ApplicationController
       return not_found
     end
 
+    # @post = @post.includes(:flags, flags: :post_flag_type)
     @children = if current_user&.privilege?('flag_curate')
                   Post.where(parent_id: @post.id)
                 else
                   Post.where(parent_id: @post.id).undeleted
                       .or(Post.where(parent_id: @post.id, user_id: current_user&.id).where.not(user_id: nil))
-                end.includes(:votes, :user, :comments, :license, :post_type)
+                end.includes(:votes, :user, :comments, :license, :post_type, :flags, flags: :post_flag_type)
                 .order(Post.arel_table[:id].not_eq(params[:answer]))
                 .user_sort({ term: params[:sort], default: Arel.sql('deleted ASC, score DESC, RAND()') },
                            score: Arel.sql('deleted ASC, score DESC, RAND()'), active: :last_activity,
@@ -158,6 +159,49 @@ class PostsController < ApplicationController
   end
 
   def edit; end
+
+  # Attempts to update a given post
+  # @param post [Post] post the user is attempting to update
+  # @param user [User] user attempting to update the post
+  # @param body_rendered [String] new post body
+  # @param edit_post_params [ActionController::Parameters] edit parameters
+  # @return [Boolean] status of the operation
+  def do_update(post, user, body_rendered, **edit_post_params)
+    post.update(edit_post_params.merge(body: body_rendered,
+                                       last_edited_at: DateTime.now,
+                                       last_edited_by: user,
+                                       last_activity: DateTime.now,
+                                       last_activity_by: user))
+  end
+
+  # Attempts to update a given post network-wide. The update is manual to avoid
+  # skipping validations and fail early if at least one validation fails.
+  # @param post [Post] post from which the network push is initiated
+  # @param posts [ActiveRecord::Result] network posts to be updated
+  # @param user [User] user attempting to push updates to network
+  # @param body_rendered [String] new post body
+  # @param edit_post_params [ActionController::Parameters] edit parameters
+  # @return [Boolean] status of the operation
+  def do_update_network(post, posts, user, body_rendered, **edit_post_params)
+    update_status = true
+
+    posts.each do |network_post|
+      network_post.update(edit_post_params.merge(body: body_rendered,
+                                                 last_edited_at: DateTime.now,
+                                                 last_edited_by_id: user.id,
+                                                 last_activity: DateTime.now,
+                                                 last_activity_by_id: user.id))
+
+      if network_post.errors.any?
+        post.errors.merge!(network_post.errors)
+        update_status = false
+      end
+
+      next if update_status == true
+    end
+
+    update_status
+  end
 
   def update
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
@@ -169,47 +213,66 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.privilege?('edit_posts') || current_user.is_moderator || current_user == @post.user || \
-       (@post_type.is_freely_editable && current_user.privilege?('unrestricted'))
-      if ['HelpDoc', 'PolicyDoc'].include?(@post_type.name) && (current_user.is_global_moderator || \
-         current_user.is_global_admin) && params[:network_push] == 'true'
-        posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
-                                    doc_slug: @post.doc_slug, body: @post.body)
-        update_params = edit_post_params.to_h.merge(body: body_rendered, last_edited_at: DateTime.now,
-                                                    last_edited_by_id: current_user.id, last_activity: DateTime.now,
-                                                    last_activity_by_id: current_user.id)
-        posts.update_all(**update_params.symbolize_keys)
-        posts.each do |post|
-          PostHistory.post_edited(post, current_user, before: before[:body],
-                                  after: @post.body_markdown, comment: params[:edit_comment],
-                                  before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
-        end
-        flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
-        redirect_to help_path(slug: @post.doc_slug)
-      else
-        if @post.update(edit_post_params.merge(body: body_rendered,
-                                               last_edited_at: DateTime.now, last_edited_by: current_user,
-                                               last_activity: DateTime.now, last_activity_by: current_user))
+    if current_user.can_update(@post, @post_type)
+      if current_user.can_push_to_network(@post_type) && params[:network_push] == 'true'
+        # post network push & post histories creation must be atomic to prevent sync issues on error
+        @post.transaction do
+          posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
+                                      doc_slug: @post.doc_slug,
+                                      body: @post.body)
 
-          PostHistory.post_edited(@post, current_user, before: before[:body],
-                                  after: @post.body_markdown, comment: params[:edit_comment],
-                                  before_title: before[:title], after_title: @post.title,
-                                  before_tags: before[:tags], after_tags: @post.tags)
+          update_status = do_update_network(@post, posts, current_user, body_rendered, **edit_post_params)
 
-          if params[:redact]
-            # Hide all previous history
-            PostHistory.where(post: @post).update_all(hidden: true)
-            PostHistory.history_hidden(@post, current_user, after: @post.body_markdown,
-                                       after_title: @post.title, after_tags: @post.tags,
-                                       comment: 'Detailed history before this event is hidden because of a redaction.')
+          if update_status
+            posts.each do |post|
+              history_entry = PostHistory.post_edited(post, current_user, before: before[:body],
+                                      after: @post.body_markdown, comment: params[:edit_comment],
+                                      before_title: before[:title], after_title: @post.title,
+                                      before_tags: before[:tags], after_tags: @post.tags)
+
+              if history_entry&.errors&.any?
+                @post.errors.merge!(history_entry.errors)
+                raise ActiveRecord::Rollback
+              end
+            end
+
+            flash[:success] = "#{helpers.pluralize(posts.to_a.size, 'post')} updated."
+            redirect_to help_path(slug: @post.doc_slug)
           end
-          Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-          do_draft_delete(URI(request.referer || '').path)
-          redirect_to post_path(@post)
-        else
-          render :edit, status: :bad_request
+
+          next
         end
+      else
+        # post update & post history creation must be atomic to prevent sync issues on error
+        @post.transaction do
+          update_status = do_update(@post, current_user, body_rendered, **edit_post_params)
+
+          if update_status
+            history_entry = PostHistory.post_edited(@post, current_user, before: before[:body],
+                                    after: @post.body_markdown, comment: params[:edit_comment],
+                                    before_title: before[:title], after_title: @post.title,
+                                    before_tags: before[:tags], after_tags: @post.tags)
+
+            if history_entry&.errors&.any?
+              @post.errors.merge!(history_entry.errors)
+              raise ActiveRecord::Rollback
+            end
+
+            if params[:redact]
+              PostHistory.redact(@post, current_user)
+            end
+            Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
+            do_draft_delete(URI(request.referer || '').path)
+            redirect_to post_path(@post)
+          end
+
+          next
+        end
+      end
+
+      # this is only reached if we rollback the transaction or fail validations
+      if @post.errors.any?
+        render :edit, status: :bad_request
       end
     else
       new_user = !current_user.privilege?('unrestricted')

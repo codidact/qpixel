@@ -1,3 +1,6 @@
+- name: None
+  user_id: -1
+
 - name: Positive
   user_id: -1
   min_score: 0.5

@@ -28,6 +28,15 @@
                 <span class="badge is-status" title="unread activity in category"></span>
               <% end %>
             <% end %>
+
+            <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
+              <% sug_edits = @edits[cat.id] || 0 %>
+              <% if sug_edits > 0 %>
+                <%= link_to suggested_edits_queue_url(cat, host: c.host), class: 'widget--body-extra' do %>
+                (<%= sug_edits %> pending <%= "edit".pluralize(sug_edits) %>)
+                <% end %>
+              <% end %>
+            <% end %>
           </div>
         <% end %>
         <% if current_user&.is_global_moderator || current_user&.is_global_admin %>

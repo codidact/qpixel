@@ -164,6 +164,11 @@ class Post < ApplicationRecord
     sql = 'UPDATE posts SET score = (upvote_count + ?) / (upvote_count + downvote_count + (2 * ?)) WHERE id = ?'
     sanitized = ActiveRecord::Base.sanitize_sql_array([sql, variable, variable, id])
     ActiveRecord::Base.connection.execute sanitized
+
+    # ensures the updated score is immediately available
+    self.score = (upvote_count + variable).to_f / (upvote_count + downvote_count + (2 * variable))
+    # prevents AR from accidentally saving the dirty state
+    clear_attribute_changes([:score])
   end
 
   # This method will update the locked status of this post if locked_until is in the past.
