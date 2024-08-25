@@ -260,12 +260,10 @@ class Post < ApplicationRecord
     sc = saved_changes
     if sc.include?('deleted') && sc['deleted'][0] != sc['deleted'][1] && created_at >= 60.days.ago
       deleted = !!saved_changes['deleted']&.last
-      if user
-        if deleted
-          user.update(reputation: user.reputation - Vote.total_rep_change(votes))
-        else
-          user.update(reputation: user.reputation + Vote.total_rep_change(votes))
-        end
+      if deleted
+        user&.update(reputation: (user&.reputation || 1) - Vote.total_rep_change(votes))
+      else
+        user&.update(reputation: (user&.reputation || 1) + Vote.total_rep_change(votes))
       end
     end
   end
