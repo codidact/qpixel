@@ -206,7 +206,7 @@ $(() => {
       }
 
       featureTimeout = setTimeout(() => {
-        if (window['MathJax']) {
+        if (window['MathJax'] && typeof MathJax.typeset === 'function') {
           MathJax.typeset();
         }
         if (window['hljs']) {
