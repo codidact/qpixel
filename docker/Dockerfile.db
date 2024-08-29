@@ -1,4 +1,4 @@
-FROM mysql
+FROM mysql:8.4.2
 
 # docker build -t qpixel_db -f docker/Dockerfile.db .
 

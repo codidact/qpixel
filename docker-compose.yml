@@ -8,7 +8,7 @@ services:
       - ./docker/mysql:/var/lib/mysql
     env_file:
       - ${ENV_FILE_LOCATION}
-    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
+    command: mysqld --mysql-native-password=on --skip-mysqlx
     cap_add:
       - SYS_NICE
     healthcheck:

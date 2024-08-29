@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso]
+                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges,
                                           :mod_privilege_action, :mod_delete, :mod_reset_profile,
@@ -110,7 +110,7 @@ class UsersController < ApplicationController
   def filters
     respond_to do |format|
       format.html do
-        authenticate_user!
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
@@ -719,6 +719,7 @@ class UsersController < ApplicationController
                    end \
                    .paginate(page: params[:page], per_page: 15)
     render layout: 'without_sidebar'
+    @votes
   end
 
   def avatar
