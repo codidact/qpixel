@@ -30,7 +30,7 @@ class CommentThread < ApplicationRecord
 
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
-      (!post || post&.can_access?(user)) && (!is_private || followed_by?(user))
+      (!post || post.can_access?(user)) && (!is_private || followed_by?(user))
   end
 
   def self.post_followed?(post, user)
