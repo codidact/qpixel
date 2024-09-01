@@ -22,19 +22,19 @@ class ModWarningController < ApplicationController
   end
 
   def log
-    @warnings = ModWarning.where(community_user: @user.community_user)
+    warnings = ModWarning.where(community_user: @user.community_user)
     if current_user.is_global_moderator || current_user.is_global_admin
-      @warnings = @warnings.or(ModWarning.where(user: @user, is_global: true))
+      warnings = warnings.or(ModWarning.where(user: @user, is_global: true))
     end
-    @warnings = @warnings.all
-    @warnings = @warnings.map { |w| { type: :warning, value: w } }
+    warnings = warnings.all
+    warnings = warnings.map { |w| { type: :warning, value: w } }
 
-    @messages = ThreadFollower.where(user: @user).select(:comment_thread_id)
-    @messages = CommentThread.where(post: nil, is_private: true, id: @messages).all
-    @messages = @messages.filter { |m| m.comments.first.user&.id != @user&.id }
-    @messages = @messages.map { |m| { type: :message, value: m } }
+    messages = ThreadFollower.where(user: @user).select(:comment_thread_id)
+    messages = CommentThread.where(post: nil, is_private: true, id: messages).all
+    messages = messages.filter { |m| m.comments.first.user&.id != @user&.id }
+    messages = messages.map { |m| { type: :message, value: m } }
 
-    @entries = @warnings + @messages
+    @entries = warnings + messages
     @entries = @entries.sort_by { |e| e[:value].created_at }.reverse
     render layout: 'without_sidebar'
   end
