@@ -29,7 +29,7 @@ class ModWarningController < ApplicationController
     @warnings = @warnings.all
     @warnings = @warnings.map { |w| { type: :warning, value: w } }
 
-    @messages = ThreadFollower.where(user: @user).all.map { |t| t.id - 1 }
+    @messages = ThreadFollower.where(user: @user).all.map { |t| t.comment_thread_id }
     @messages = CommentThread.where(post: nil, is_private: true, id: @messages).all
     @messages = @messages.filter { |m| m.comments.first.user&.id != @user&.id }
     @messages = @messages.map { |m| { type: :message, value: m } }
