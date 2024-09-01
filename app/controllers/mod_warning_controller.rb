@@ -24,7 +24,7 @@ class ModWarningController < ApplicationController
   def log
     @warnings = ModWarning.where(community_user: @user.community_user)
     if current_user.is_global_moderator || current_user.is_global_admin
-      @warnings = @warnings.or ModWarning.where(user: @user, is_global: true)
+      @warnings = @warnings.or(ModWarning.where(user: @user, is_global: true))
     end
     @warnings = @warnings.all
     @warnings = @warnings.map { |w| { type: :warning, value: w } }
