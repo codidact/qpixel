@@ -27,15 +27,15 @@ class ModWarningController < ApplicationController
       warnings = warnings.or(ModWarning.where(user: @user, is_global: true))
     end
     warnings = warnings.all
-    warnings = warnings.map { |w| { type: :warning, value: w } }
+                       .map { |w| { type: :warning, value: w } }
 
-    messages = ThreadFollower.where(user: @user).select(:comment_thread_id)
-    messages = CommentThread.where(post: nil, is_private: true, id: messages).all
-    messages = messages.filter { |m| m.comments.first.user&.id != @user&.id }
-    messages = messages.map { |m| { type: :message, value: m } }
+    user_followed_threads = ThreadFollower.where(user: @user).select(:comment_thread_id)
+    messages = CommentThread.where(post: nil, is_private: true, id: user_followed_threads)
+                            .all
+                            .filter { |m| m.comments.first.user&.id != @user&.id }
+                            .map { |m| { type: :message, value: m } }
 
-    @entries = warnings + messages
-    @entries = @entries.sort_by { |e| e[:value].created_at }.reverse
+    @entries = (warnings + messages).sort_by { |e| e[:value].created_at }.reverse
     render layout: 'without_sidebar'
   end
 
