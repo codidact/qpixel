@@ -81,7 +81,7 @@ class ModWarningController < ApplicationController
     suspension_duration = params[:mod_warning][:suspension_duration].to_i
 
     suspension_duration = 1 if suspension_duration <= 0
-    suspension_duration = 7300 if suspension_duration > 7300
+    suspension_duration = 365 if suspension_duration > 365
 
     suspension_end = DateTime.now + suspension_duration.days
 

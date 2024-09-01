@@ -31,8 +31,8 @@
     <h2>Suspension Details</h2>
     <div class="h-p-2">
         <%= f.label :suspension_duration, 'Duration', class: 'form-element' %>
-        <div class="form-caption">Enter the number of days. At least 1, at most 7300 (20 years).</div>
-        <%= f.number_field :suspension_duration, in: 1..7300, class: 'form-element' %>
+        <div class="form-caption">Enter the number of days. At least 1, at most 365.</div>
+        <%= f.number_field :suspension_duration, in: 1..365, class: 'form-element' %>
     </div>
     
     <%= f.submit 'Suspend user globally', class: 'button is-danger is-filled' %>
