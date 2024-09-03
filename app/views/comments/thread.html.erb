@@ -106,16 +106,16 @@
   <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
-        <% if @post.present? && @post.locked? && !moderator? && !admin? %>
+        <% if @post&.locked? && !moderator? && !admin? %>
           <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
-        <% elsif @post.present? && @post.deleted %>
+        <% elsif @post&.deleted %>
           <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
-        <% elsif @post.present? && @post.comments_disabled && !moderator? && !admin? %>
+        <% elsif @post&.comments_disabled && !moderator? && !admin? %>
           <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on the parent post.</p>
         <% else %>
-          <% if @post.present? && @post.locked? %>
+          <% if @post&.locked? %>
             <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
-          <% elsif @post.present? && @post.comments_disabled %>
+          <% elsif @post&.comments_disabled %>
             <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
           <% end %>
           <h4>Reply to this thread</h4>
