@@ -62,6 +62,8 @@
 <% else %>
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:creator" content="@CodidactQA" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="<%= RequestContext.community.name %> - Codidact" />
   <meta property="og:url" content="<%= request.original_url %>" />
   <meta property="og:title" content="<%= page_title %>" />
   <meta property="og:description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
