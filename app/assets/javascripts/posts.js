@@ -164,7 +164,7 @@ $(() => {
       body: bodyText,
       comment: commentText,
       license: license,
-      tags: tags ?? [],
+      tags: tags,
       title: titleText,
     };
 
