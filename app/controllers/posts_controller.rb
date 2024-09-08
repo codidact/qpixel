@@ -584,14 +584,43 @@ class PostsController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
+  # saving by-field is kept for backwards compatibility with old drafts
   def save_draft
-    key = "saved_post.#{current_user.id}.#{params[:path]}"
+    expiration_time = 86_400 * 7
+
+    base_key = "saved_post.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.set base_key, params[:body]
+    RequestContext.redis.expire base_key, expiration_time
+
     saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set key, params[:post]
     RequestContext.redis.set saved_at, DateTime.now.iso8601
-    RequestContext.redis.expire key, 86_400 * 7
-    RequestContext.redis.expire saved_at, 86_400 * 7
-    render json: { status: 'success', success: true, key: key }
+    RequestContext.redis.expire saved_at, expiration_time
+
+    if params.key?(:comment)
+      comment_key = "saved_post.#{current_user.id}.#{params[:path]}.comment"
+      RequestContext.redis.set comment_key, params[:comment]
+      RequestContext.redis.expire comment_key, expiration_time
+    end
+
+    if params.key?(:license)
+      license_key = "saved_post.#{current_user.id}.#{params[:path]}.license"
+      RequestContext.redis.set license_key, params[:license]
+      RequestContext.redis.expire license_key, expiration_time
+    end
+
+    if params.key?(:tags)
+      tags_key = "saved_post.#{current_user.id}.#{params[:path]}.tags"
+      RequestContext.redis.sadd tags_key, params[:tags]
+      RequestContext.redis.expire tags_key, expiration_time
+    end
+
+    if params.key?(:title)
+      title_key = "saved_post.#{current_user.id}.#{params[:path]}.title"
+      RequestContext.redis.set title_key, params[:title]
+      RequestContext.redis.expire title_key, expiration_time
+    end
+
+    render json: { status: 'success', success: true, key: base_key }
   end
 
   def delete_draft
@@ -658,9 +687,13 @@ class PostsController < ApplicationController
   end
 
   def do_draft_delete(path)
-    key = "saved_post.#{current_user.id}.#{path}"
+    body_key = "saved_post.#{current_user.id}.#{path}"
+    comment_key = "saved_post.#{current_user.id}.#{path}.comment"
+    license_key = "saved_post.#{current_user.id}.#{path}.license"
+    tags_key = "saved_post.#{current_user.id}.#{path}.tags"
+    title_key = "saved_post.#{current_user.id}.#{path}.title"
     saved_at = "saved_post_at.#{current_user.id}.#{path}"
-    RequestContext.redis.del key, saved_at
+    RequestContext.redis.del body_key, comment_key, license_key, tags_key, title_key, saved_at
   end
 end
 # rubocop:enable Metrics/MethodLength
