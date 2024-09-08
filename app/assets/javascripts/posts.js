@@ -344,7 +344,7 @@ $(() => {
   $('.js-draft-loaded').each((i, e) => {
     $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
-      You've edited this post before but didn't save it. We loaded your edits here for you.
+      You had edited this before but haven't saved it. We loaded the edits for you.
     </div>`);
   });
 
