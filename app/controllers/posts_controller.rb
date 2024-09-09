@@ -602,6 +602,12 @@ class PostsController < ApplicationController
       RequestContext.redis.expire comment_key, expiration_time
     end
 
+    if params.key?(:excerpt)
+      exceprt_key = "saved_post.#{current_user.id}.#{params[:path]}.excerpt"
+      RequestContext.redis.set exceprt_key, params[:excerpt]
+      RequestContext.redis.expire exceprt_key, expiration_time
+    end
+
     if params.key?(:license)
       license_key = "saved_post.#{current_user.id}.#{params[:path]}.license"
       RequestContext.redis.set license_key, params[:license]
@@ -689,11 +695,23 @@ class PostsController < ApplicationController
   def do_draft_delete(path)
     body_key = "saved_post.#{current_user.id}.#{path}"
     comment_key = "saved_post.#{current_user.id}.#{path}.comment"
+    excerpt_key = "saved_post.#{current_user.id}.#{path}.excerpt"
     license_key = "saved_post.#{current_user.id}.#{path}.license"
     tags_key = "saved_post.#{current_user.id}.#{path}.tags"
     title_key = "saved_post.#{current_user.id}.#{path}.title"
     saved_at = "saved_post_at.#{current_user.id}.#{path}"
-    RequestContext.redis.del body_key, comment_key, license_key, tags_key, title_key, saved_at
+
+    keys = [
+      body_key,
+      comment_key,
+      excerpt_key,
+      license_key,
+      tags_key,
+      title_key,
+      saved_at
+    ]
+
+    RequestContext.redis.del(*keys)
   end
 end
 # rubocop:enable Metrics/MethodLength

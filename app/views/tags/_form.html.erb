@@ -57,13 +57,31 @@
   </div>
 
   <div class="form-group">
+    <% excerpt = @tag.excerpt %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.excerpt" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      excerpt = [
+        [@tag.created_at || Date.new(2000, 1, 1), @tag.excerpt],
+        [@tag.updated_at || Date.new(2000, 1, 1), @tag.excerpt],
+        [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <%= f.label :excerpt, 'Usage guidance', class: 'form-element' %>
     <span class="form-caption">
       Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
       the tag page.
     </span>
-    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3, data: { character_count: '.js-character-count-tag-excerpt' } %>
-    <%= render 'shared/char_count', type: 'tag-excerpt', cur: @tag.excerpt&.length, min: 0, max: 600 %>
+    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt',
+                              value: excerpt,
+                              rows: 3,
+                              data: { character_count: '.js-character-count-tag-excerpt' }
+    %>
+    <%= render 'shared/char_count', type: 'tag-excerpt', cur: excerpt&.length || @tag.excerpt&.length, min: 0, max: 600 %>
   </div>
 
   <%= render 'shared/body_field', f: f, min_length: 0, max_length: 30_000, cur_length: @tag.wiki_markdown&.length, 

@@ -99,6 +99,7 @@ $(() => {
    * @typedef {{
    *  body: string
    *  comment?: string
+   *  excerpt?: string
    *  license?: string
    *  tags?: string[]
    *  title?: string
@@ -148,21 +149,24 @@ $(() => {
 
     const $bodyField = $form.find('.js-post-field');
     const $licenseField = $form.find('.js-license-select');
-    const $tagField = $form.find('.js-tag-select');
-    // TODO: switch to .js-* lookup
+    const $excerptField = $form.find('.js-tag-excerpt');
+    
+    const $tagsField = $form.find('#post_tags_cache');
     const $titleField = $form.find('#post_title');
     const $commentField = $form.find('#edit_comment');
 
     const bodyText = $bodyField.val();
     const commentText = $commentField.val();
+    const excerptText = $excerptField.val();
     const license = $licenseField.val();
-    const tags = $tagField.val();
+    const tags = $tagsField.val();
     const titleText = $titleField.val();
 
     /** @type {PostDraft} */
     const draft = {
       body: bodyText,
       comment: commentText,
+      excerpt: excerptText,
       license: license,
       tags: tags,
       title: titleText,
@@ -181,14 +185,24 @@ $(() => {
 
   const postFields = $('.post-field');
 
+  const draftFieldsSelectors = [
+    '.js-post-field',
+    '.js-license-select',
+    '.js-tag-excerpt',
+    '#edit_comment',
+    '#post_tags_cache',
+    '#post_title',
+    '#tag_parent_id',
+  ];
+
   // TODO: consider merging with post fields
-  $('.js-post-field, .js-license-select, .js-tag-select, #edit_comment, #post_title').on('keyup change', (ev) => {
-      clearTimeout(draftTimeout);
-      draftTimeout = setTimeout(() => {
-        const { draft, field } = parseDraft(ev.target);
-        saveDraft(draft, field);
-      }, 3000);
-    });
+  $(draftFieldsSelectors.join(', ')).on('keyup change', (ev) => {
+    clearTimeout(draftTimeout);
+    draftTimeout = setTimeout(() => {
+      const { draft, field } = parseDraft(ev.target);
+      saveDraft(draft, field);
+    }, 3000);
+  });
 
   postFields.on('paste', async (evt) => {
     if (evt.originalEvent.clipboardData.files.length > 0) {
