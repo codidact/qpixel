@@ -2,22 +2,20 @@
   <div class="footer--container container">
     <div class="grid">
       <div class="grid--cell is-6 is-12-md is-12-sm">
-        <h3>The Codidact Project</h3>
-        <ul>
+	<h3>This Network</h3>
+	<ul>
+          <li><%= link_to 'All communities', '/dashboard' %></li>
           <li><%= link_to 'Terms of Service', '/policy/tos' %></li>
           <li><%= link_to 'Privacy Policy', '/policy/privacy-policy' %></li>
           <li><%= link_to 'Code of Conduct', '/policy/code-of-conduct' %></li>
-          <li><%= link_to 'About us', 'https://codidact.org/' %></li>
-          <li><%= link_to 'Contact us', 'https://codidact.com/contact' %></li>
-          <li><%= link_to 'Other communities', 'https://codidact.com/' %></li>
-        </ul>
+	</ul>
       </div>
       <div class="grid--cell is-6 is-12-md is-12-sm">
-        <h3>Other Codidact Communities</h3>
+	<h3>The Codidact Project</h3>
         <ul>
-          <% Rails.cache.persistent('codidact_sites').each do |site| %>
-            <li><%= link_to site['name'], site['canonical_url'] %></li>
-          <% end %>
+          <li><%= link_to 'About us', 'https://codidact.org/' %></li>
+          <li><%= link_to 'Contact us', 'https://codidact.com/contact' %></li>
+          <li><%= link_to 'GitHub', 'https://github.com/codidact' %></li>
         </ul>
       </div>
     </div>
