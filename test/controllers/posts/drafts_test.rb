@@ -11,6 +11,7 @@ class PostsControllerTest < ActionController::TestCase
       excerpt: 'test_excerpt',
       license: '4',
       path: 'test_path',
+      tag_name: 'test_tag_name',
       tags: ['tag1', 'tag2'],
       title: 'test_title'
     }
@@ -25,6 +26,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'test_body', RequestContext.redis.get(base_key)
     assert_equal 'test_comment', RequestContext.redis.get("#{base_key}.comment")
     assert_equal 'test_excerpt', RequestContext.redis.get("#{base_key}.excerpt")
+    assert_equal 'test_tag_name', RequestContext.redis.get("#{base_key}.tag_name")
     assert_equal '4', RequestContext.redis.get("#{base_key}.license")
     assert_empty ['tag1', 'tag2'].difference(RequestContext.redis.smembers("#{base_key}.tags"))
     assert_equal 'test_title', RequestContext.redis.get("#{base_key}.title")

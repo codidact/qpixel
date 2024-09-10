@@ -614,6 +614,12 @@ class PostsController < ApplicationController
       RequestContext.redis.expire license_key, expiration_time
     end
 
+    if params.key?(:tag_name)
+      tag_name_key = "saved_post.#{current_user.id}.#{params[:path]}.tag_name"
+      RequestContext.redis.set tag_name_key, params[:tag_name]
+      RequestContext.redis.expire tag_name_key, expiration_time
+    end
+
     if params.key?(:tags)
       tags_key = "saved_post.#{current_user.id}.#{params[:path]}.tags"
       RequestContext.redis.sadd tags_key, params[:tags]
@@ -698,6 +704,7 @@ class PostsController < ApplicationController
     excerpt_key = "saved_post.#{current_user.id}.#{path}.excerpt"
     license_key = "saved_post.#{current_user.id}.#{path}.license"
     tags_key = "saved_post.#{current_user.id}.#{path}.tags"
+    tag_name_key = "saved_post.#{current_user.id}.#{path}.tag_name"
     title_key = "saved_post.#{current_user.id}.#{path}.title"
     saved_at = "saved_post_at.#{current_user.id}.#{path}"
 
@@ -707,6 +714,7 @@ class PostsController < ApplicationController
       excerpt_key,
       license_key,
       tags_key,
+      tag_name_key,
       title_key,
       saved_at
     ]

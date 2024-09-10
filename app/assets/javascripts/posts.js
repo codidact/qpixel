@@ -101,6 +101,7 @@ $(() => {
    *  comment?: string
    *  excerpt?: string
    *  license?: string
+   *  tag_name?: string
    *  tags?: string[]
    *  title?: string
    * }} PostDraft
@@ -154,6 +155,7 @@ $(() => {
     const $tagsField = $form.find('#post_tags_cache');
     const $titleField = $form.find('#post_title');
     const $commentField = $form.find('#edit_comment');
+    const $tagNameField = $form.find('#tag_name');
 
     const bodyText = $bodyField.val();
     const commentText = $commentField.val();
@@ -161,6 +163,7 @@ $(() => {
     const license = $licenseField.val();
     const tags = $tagsField.val();
     const titleText = $titleField.val();
+    const tagName = $tagNameField.val();
 
     /** @type {PostDraft} */
     const draft = {
@@ -169,6 +172,7 @@ $(() => {
       excerpt: excerptText,
       license: license,
       tags: tags,
+      tag_name: tagName,
       title: titleText,
     };
 
@@ -193,6 +197,7 @@ $(() => {
     '#post_tags_cache',
     '#post_title',
     '#tag_parent_id',
+    '#tag_name',
   ];
 
   // TODO: consider merging with post fields

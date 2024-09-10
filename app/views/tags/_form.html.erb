@@ -14,12 +14,26 @@
 
 <%= form_for @tag, url: submit_path do |f| %>
   <% if submit_path == create_tag_path %>
+    <% tag_name = @tag.name %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.tag_name" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      tag_name = [
+        [@tag.created_at || Date.new(2000, 1, 1), @tag.name],
+        [@tag.updated_at || Date.new(2000, 1, 1), @tag.name],
+        [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <div class="form-group">
       <%= f.label :name, 'Name', class: 'form-element' %>
       <span class="form-caption">
         Name of the tag
       </span>
-      <%= f.text_field :name, class: 'form-element' %>
+      <%= f.text_field :name, value: tag_name, class: 'form-element' %>
     </div>
   <% end %>
 
