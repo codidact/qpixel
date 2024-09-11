@@ -281,8 +281,8 @@ Devise.setup do |config|
   # Set the default user key. The user will be looked up by this key. Make
   # sure that the Authentication Response includes the attribute.
   #
-  # In the attribute map we register this as init_saml_identifier (the method to call), so this is also how we have to refer to it here.
-  config.saml_default_user_key = :'init_saml_identifier'
+  # In the attribute map we register this as saml_init_identifier (the method to call), so this is also how we have to refer to it here.
+  config.saml_default_user_key = :'saml_init_identifier'
 
   # Load by sso_profile instead of by email address.
   config.saml_resource_locator = Proc.new do |model, saml_response, auth_value|
