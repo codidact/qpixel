@@ -1,6 +1,8 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   protected
 
+  layout 'without_sidebar', only: :edit
+
   before_action :check_sso, only: :update
 
   def after_update_path_for(resource)

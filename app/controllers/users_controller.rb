@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso]
+                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -65,6 +65,7 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -102,7 +103,7 @@ class UsersController < ApplicationController
   def filters
     respond_to do |format|
       format.html do
-        authenticate_user!
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
@@ -580,6 +581,7 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
+    render layout: 'without_sidebar'
     @votes
   end
 
