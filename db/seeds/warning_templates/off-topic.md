@@ -4,7 +4,7 @@ You can find out about what's on-topic and what's off-topic on $SiteName in the 
 
 This is just a gentle reminder that we expect posts on this site to stay focused on the topic on-hand.
 We have a [Network of communities](/dashboard) that you are free to use; you may find one of our other communities more suitable to some of your posts.
-If you would like to explore creating a site for a subject not currently covered, see [the Proposals process on codidact.con](https://proposals.codidact.com/help/proposals).
+If you would like to explore creating a site for a subject not currently covered, see [the Proposals process on codidact.com](https://proposals.codidact.com/help/proposals).
 
 Additionally, we have a $ChatLink available for more free-form discussion.
 
