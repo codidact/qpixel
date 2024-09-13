@@ -28,6 +28,10 @@ class CommentThread < ApplicationRecord
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  def second_follower()
+    ThreadFollower.where(comment_thread: self).second
+  end
+
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
       (!post || post.can_access?(user)) &&
