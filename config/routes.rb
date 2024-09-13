@@ -202,6 +202,7 @@ Rails.application.routes.draw do
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/network',               to: 'users#network', as: :network
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
     post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
     post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role

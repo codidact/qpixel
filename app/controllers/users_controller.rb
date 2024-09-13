@@ -201,6 +201,12 @@ class UsersController < ApplicationController
     end
   end
 
+  def network
+    @communities = Community.all
+    render layout: 'without_sidebar'
+  end
+  
+
   def activity
     @posts = Post.undeleted.where(user: @user).count
     @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
