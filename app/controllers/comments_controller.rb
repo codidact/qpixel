@@ -94,12 +94,13 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        next if @post.nil?
-
-        title = @post.parent.nil? ? @post.title : @post.parent.title
-        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{title}'",
-                                          helpers.comment_link(@comment))
+        if @post.nil?
+          wording = "There are new comments in a private thread '#{@comment_thread.title}'"
+        else
+          post_title = @post.parent.nil? ? @post.title : @post.parent.title
+          wording = "There are new comments in a followed thread '#{@comment_thread.title}' on the post '#{post_title}'"
+        end
+        follower.user.create_notification(wording, helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
