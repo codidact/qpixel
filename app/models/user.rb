@@ -1,3 +1,4 @@
+# coding: utf-8
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
@@ -141,26 +142,22 @@ class User < ApplicationRecord
   # Used by network profile: does this user have a profile on that other comm?
   def has_profile_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    !cu&.user_id.nil?
+    !cu&.user_id.nil? || false
   end
 
   def reputation_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    cu&.reputation
+    cu&.reputation || 1
   end
 
   def post_count_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    cu&.post_count
+    cu&.post_count || 0
   end
 
   def is_moderator_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    if cu&.is_moderator || cu&.privilege?('mod')
-      true
-    else
-      false
-    end
+    cu&.is_moderator || cu&.privilege?('mod')
   end
 
   def has_ability_on(community_id, ability_internal_id)
