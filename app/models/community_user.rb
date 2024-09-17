@@ -28,7 +28,7 @@ class CommunityUser < ApplicationRecord
   def post_count
     Post.unscoped.where(community_id: community_id).where(user: user).undeleted.count
   end
-  
+
   # Calculation functions for privilege scores
   # These are quite expensive, so we'll cache them for a while
   def post_score

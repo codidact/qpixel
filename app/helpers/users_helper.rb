@@ -62,7 +62,7 @@ module UsersHelper
   def user_link(user, url_opts = nil, **link_opts)
     url_opts ||= {}
     anchortext = link_opts[:anchortext]
-    if anchortext != nil
+    if !anchortext.nil?
       link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
     elsif deleted_user?(user)
       link_to 'deleted user', '#', { dir: 'ltr' }.merge(link_opts).except(:anchortext)
