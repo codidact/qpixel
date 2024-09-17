@@ -24,8 +24,8 @@
     <%= link_to notifications_path, class: "tabs--item #{current_page?(notifications_path) ? 'is-active' : ''}" do %>
       Notifications
     <% end %>
-    <%= link_to network_path, class: "tabs--item #{current_page?(network_path) ? 'is-active' : ''}" do %>
-      All Communities
-    <% end %>
+  <% end %>
+  <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
+  All Communities
   <% end %>
 </div>

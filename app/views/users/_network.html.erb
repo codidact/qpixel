@@ -1,15 +1,24 @@
+<p>User: <%= @user %></p>
+<p>User link: <%= user_link @user %></p>
+
 <table class="table is-with-hover is-full-width">
   <tr>
+    <th>User (temporary)</th>
     <th>Community</th>
     <th>Posts</th>
     <th>Reputation</th>
   </tr>
 
   <% @communities.each do |c| %>
-  <tr>
-
-  </tr>
-
+    <% if @user.has_profile_on(c) %>
+    <tr>
+      <td><%= user_link @user, { host: c.host } %>
+      <td><%= c.name %></td>
+      <td><%= @user.posts.count %></td>
+      <td><%= @user.reputation %> </td>
+    </tr>
+    <% end %>
   <% end %>
+  
 
 </table>
