@@ -141,11 +141,7 @@ class User < ApplicationRecord
   # Used by network profile: does this user have a profile on that other comm?
   def has_profile_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    if cu&.user_id.nil?
-      false
-    else
-      true
-    end
+    !cu&.user_id.nil?
   end
 
   def reputation_on(community_id)
