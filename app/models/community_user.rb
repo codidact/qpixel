@@ -4,7 +4,9 @@ class CommunityUser < ApplicationRecord
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
+  has_many :posts, through: :user
   belongs_to :deleted_by, required: false, class_name: 'User'
+  counter_culture :posts, column_name: proc { |model| model.deleted? ? nil : "post_count" }
 
   validates :user_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
@@ -25,9 +27,9 @@ class CommunityUser < ApplicationRecord
   end
 
   # All undeleted posts on this community by this user.
-  def post_count
-    Post.unscoped.where(community_id: community_id).where(user: user).undeleted.count
-  end
+#  def post_count
+#    Post.unscoped.where(community_id: community_id).where(user: user).undeleted.count
+#  end
 
   # Calculation functions for privilege scores
   # These are quite expensive, so we'll cache them for a while
