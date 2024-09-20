@@ -18,13 +18,11 @@
       <%= 'post'.pluralize(post_count) %> &nbsp;
     </span>
 
-    <%= link_to category_feed_path(@category, format: 'rss') do %>
-    <i class="fas fa-rss"></i> RSS
-    <% end %>
+    <%= render 'shared/rss_link', url: category_feed_path(@category, format: 'rss') %>
 
     <span class="has-margin-4">
       <% if current_user&.is_admin %>
-      <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
+        <%= link_to 'Edit Category', edit_category_path(@category) %> &nbsp;
       <% end %>
     </span>
 
@@ -83,7 +81,5 @@
 </div>
 
 <div class="has-padding-top-4">
-  <%= link_to category_feed_path(@category, format: 'rss') do %>
-    <i class="fas fa-rss"></i> Category RSS feed
-  <% end %>
+  <%= render 'shared/rss_link', url: category_feed_path(@category, format: 'rss'), text: 'Category RSS feed' %>
 </div>
