@@ -2,26 +2,21 @@
   <div class="footer--container container">
     <div class="grid">
       <div class="grid--cell is-6 is-12-md is-12-sm">
-	<h3>This Network</h3>
 	<ul>
-          <li><%= link_to 'All communities', '/dashboard' %></li>
-          <li><%= link_to 'Terms of Service', '/policy/tos' %></li>
-          <li><%= link_to 'Privacy Policy', '/policy/privacy-policy' %></li>
-          <li><%= link_to 'Code of Conduct', '/policy/code-of-conduct' %></li>
+          <li><%= link_to 'Our Communities', '/dashboard' %></li>
+          <li><%= link_to 'About Us', '/policy/network-faq' %></li>
 	</ul>
       </div>
       <div class="grid--cell is-6 is-12-md is-12-sm">
-	<h3>The Codidact Project</h3>
         <ul>
-          <li><%= link_to 'About us', 'https://codidact.org/' %></li>
-          <li><%= link_to 'Contact us', 'https://codidact.com/contact' %></li>
-          <li><%= link_to 'GitHub', 'https://github.com/codidact' %></li>
+          <li><%= link_to 'Terms of Service', '/policy/tos' %></li>
+          <li><%= link_to 'Privacy Policy', '/policy/privacy-policy' %></li>
+          <li><%= link_to 'Code of Conduct', '/policy/code-of-conduct' %></li>
         </ul>
       </div>
     </div>
     <% commit = Rails.cache.persistent('current_commit') %>
-    <p>
-      Version <%= link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" %> (<%= commit[1] %>)
+    <p>Powered by <%= link_to 'Codidact', 'https://codidact.org/' %>. Version <%= link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" %> (<%= commit[1] %>)
     </p>
   </div>
 </footer>
