@@ -11,7 +11,7 @@ class UsersController < ApplicationController
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar]
+                                  :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -199,6 +199,11 @@ class UsersController < ApplicationController
         render json: @posts
       end
     end
+  end
+
+  def network
+    @communities = Community.all
+    render layout: 'without_sidebar'
   end
 
   def activity
