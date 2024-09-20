@@ -699,25 +699,11 @@ class PostsController < ApplicationController
   end
 
   def do_draft_delete(path)
-    body_key = "saved_post.#{current_user.id}.#{path}"
-    comment_key = "saved_post.#{current_user.id}.#{path}.comment"
-    excerpt_key = "saved_post.#{current_user.id}.#{path}.excerpt"
-    license_key = "saved_post.#{current_user.id}.#{path}.license"
-    tags_key = "saved_post.#{current_user.id}.#{path}.tags"
-    tag_name_key = "saved_post.#{current_user.id}.#{path}.tag_name"
-    title_key = "saved_post.#{current_user.id}.#{path}.title"
-    saved_at = "saved_post_at.#{current_user.id}.#{path}"
-
-    keys = [
-      body_key,
-      comment_key,
-      excerpt_key,
-      license_key,
-      tags_key,
-      tag_name_key,
-      title_key,
-      saved_at
-    ]
+    keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
+      pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
+      base = "#{pfx}.#{current_user.id}.#{path}"
+      [:body, :saved_at].include?(key) ? base : "#{base}.#{key}"
+    end
 
     RequestContext.redis.del(*keys)
   end
