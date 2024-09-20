@@ -589,48 +589,24 @@ class PostsController < ApplicationController
     expiration_time = 86_400 * 7
 
     base_key = "saved_post.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set base_key, params[:body]
-    RequestContext.redis.expire base_key, expiration_time
 
-    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set saved_at, DateTime.now.iso8601
-    RequestContext.redis.expire saved_at, expiration_time
+    [:body, :comment, :excerpt, :license, :tag_name, :tags, :title].each do |key|
+      next unless params.key?(key)
 
-    if params.key?(:comment)
-      comment_key = "saved_post.#{current_user.id}.#{params[:path]}.comment"
-      RequestContext.redis.set comment_key, params[:comment]
-      RequestContext.redis.expire comment_key, expiration_time
+      key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
+
+      if key == :tags
+        RequestContext.redis.sadd(key_name, params[key])
+      else
+        RequestContext.redis.set(key_name, params[key])
+      end
+
+      RequestContext.redis.expire(key_name, expiration_time)
     end
 
-    if params.key?(:excerpt)
-      exceprt_key = "saved_post.#{current_user.id}.#{params[:path]}.excerpt"
-      RequestContext.redis.set exceprt_key, params[:excerpt]
-      RequestContext.redis.expire exceprt_key, expiration_time
-    end
-
-    if params.key?(:license)
-      license_key = "saved_post.#{current_user.id}.#{params[:path]}.license"
-      RequestContext.redis.set license_key, params[:license]
-      RequestContext.redis.expire license_key, expiration_time
-    end
-
-    if params.key?(:tag_name)
-      tag_name_key = "saved_post.#{current_user.id}.#{params[:path]}.tag_name"
-      RequestContext.redis.set tag_name_key, params[:tag_name]
-      RequestContext.redis.expire tag_name_key, expiration_time
-    end
-
-    if params.key?(:tags)
-      tags_key = "saved_post.#{current_user.id}.#{params[:path]}.tags"
-      RequestContext.redis.sadd tags_key, params[:tags]
-      RequestContext.redis.expire tags_key, expiration_time
-    end
-
-    if params.key?(:title)
-      title_key = "saved_post.#{current_user.id}.#{params[:path]}.title"
-      RequestContext.redis.set title_key, params[:title]
-      RequestContext.redis.expire title_key, expiration_time
-    end
+    saved_at_key = "saved_post_at.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.set(saved_at_key, DateTime.now.iso8601)
+    RequestContext.redis.expire(saved_at_key, expiration_time)
 
     render json: { status: 'success', success: true, key: base_key }
   end
