@@ -1,0 +1,20 @@
+<%# 
+   'Adds an RSS link.
+    Variables:
+      url     : [String] URL to the feed
+      text    : [String, Nil] text to visibly show
+      tooltip : [String, Nil] text to show in the tooltip
+   '
+ %>
+
+<%
+  # Defaults
+  text = defined?(text) ? text : 'RSS'
+  tooltip = defined?(tooltip) ? tooltip : 'RSS Feed'
+%>
+
+<span title="<%= tooltip %>">
+  <%= link_to url, class: 'has-display-inline-block' do %>
+    <i class="fas fa-rss"></i> RSS
+  <% end %>
+</span>
