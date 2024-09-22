@@ -2,10 +2,10 @@
   <div class="footer--container container">
     <div class="grid">
       <div class="grid--cell is-6 is-12-md is-12-sm">
-	<ul>
+        <ul>
           <li><%= link_to 'Our Communities', '/dashboard' %></li>
           <li><%= link_to 'About Us', '/policy/network-faq' %></li>
-	</ul>
+        </ul>
       </div>
       <div class="grid--cell is-6 is-12-md is-12-sm">
         <ul>
@@ -16,7 +16,9 @@
       </div>
     </div>
     <% commit = Rails.cache.persistent('current_commit') %>
-    <p>Powered by <%= link_to 'Codidact', 'https://codidact.org/' %>. Version <%= link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" %> (<%= commit[1] %>)
+    <p>Powered by <%= link_to 'Codidact', 'https://codidact.org/' %>. Version <%= 
+      link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" 
+    %> (<%= DateTime.iso8601(commit[1]).to_time.utc.strftime('%F %TZ') %>)
     </p>
   </div>
 </footer>
