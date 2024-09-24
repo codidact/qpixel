@@ -1,6 +1,7 @@
 <%= content_for :title, 'Dashboard' %>
 
 <h1>Dashboard</h1>
+<p>All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of each page.</p>
 <div class="grid community-list">
   <% @communities.each do |c| %>
     <% categories = Category.unscoped.where(community: c).order(sequence: :asc, id: :asc) %>

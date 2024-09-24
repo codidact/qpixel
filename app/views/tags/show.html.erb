@@ -32,7 +32,7 @@
 
 <p class="has-color-tertiary-900 has-font-weight-normal has-margin-0 has-font-family-brand">
   <% if @tag.parent_id.present? %>
-      Subtag of <%= link_to @tag.parent.name, tag_path(id: @category.id, tag_id: @tag.parent_id),
+    Subtag of <%= link_to @tag.parent.name, tag_path(id: @category.id, tag_id: @tag.parent_id),
                             class: tag_classes(@tag.parent, @category) %>
   <% end %>
   <% child_count = @tag.children.count %>
@@ -62,12 +62,12 @@
   <div class="widget--body">
     <% if @tag.wiki.present? %>
       <% if @tag.wiki.length < 600 %>
-      <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
-      <% else %>
-      <details>
-        <summary>Tag Wiki</summary>
         <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
-      </details>
+      <% else %>
+        <details>
+          <summary>Tag Wiki</summary>
+          <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+        </details>
       <% end %>
     <% end %>
     <% unless @tag.wiki.present? %>
@@ -91,18 +91,24 @@
 
 <% post_count = @posts.count %>
 <div class="has-color-tertiary-500 category-meta" title="<%= post_count %>">
-  <div>
-    <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %>
-
+  <div class="category-meta--start">
+    <span title="<%= post_count %> posts with this tag">
+      <%= short_number_to_human post_count, precision: 1, significant: false %>
+      <%= 'post'.pluralize(post_count) %>
+    </span>
+    <%= render 'shared/rss_link', url: tag_path(id: @category.id, tag_id: @tag.id, format: 'rss'), tooltip: 'RSS feed for this tag' %>
     <% if user_signed_in? && current_user&.subscriptions.where(type: 'tag', qualifier: @tag.name).exists? %>
-      <%= link_to 'Subscribed', subscriptions_path(current_user),
+      <span class="has-margin-4" title="Subscribed: manage email subscriptions">
+        <%= link_to 'Subscribed', subscriptions_path(current_user),
           class: 'button is-outlined', 'aria-label': "Subscribed to tag #{@tag.name}" %>
+      </span>
     <% else %>
-      <%= link_to 'Subscribe',
+      <span title="Create email subscription">
+        <%= link_to 'Subscribe',
           new_subscription_path(type: 'tag', qualifier: @tag.name, return_to: request.path),
           class: 'button is-outlined', 'aria-label': "Subscribe to tag #{@tag.name}" %>
-     <% end %>
+      </span>
+    <% end %>
   </div>
 
   <div class="button-list is-gutterless has-margin-2">
@@ -126,7 +132,5 @@
 </div>
 
 <div class="has-padding-top-4">
-  <%= link_to tag_path(id: @category.id, tag_id: @tag.id, format: 'rss') do %>
-    <i class="fas fa-rss"></i> Tag RSS feed
-  <% end %>
+  <%= render 'shared/rss_link', url: tag_path(id: @category.id, tag_id: @tag.id, format: 'rss'), text: 'Tag RSS feed' %>
 </div>
