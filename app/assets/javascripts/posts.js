@@ -27,7 +27,7 @@ $(() => {
 
   const placeholder = "![Uploading, please wait...]()";
 
-  $uploadForm.find('input[type="file"]').on('change', async evt => {
+  $uploadForm.find('input[type="file"]').on('change', async (evt) => {
     const $postField = $('.js-post-field');
     const postText = $postField.val();
     const cursorPos = $postField[0].selectionStart;
@@ -39,7 +39,7 @@ $(() => {
     $form.submit();
   });
 
-  $uploadForm.on('submit', async evt => {
+  $uploadForm.on('submit', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
@@ -96,13 +96,23 @@ $(() => {
   });
 
   /**
-   * Attempts to save a draft with a given body
-   * @param {string} postText draft text
+   * @typedef {{
+   *  body: string
+   *  comment?: string
+   *  excerpt?: string
+   *  license?: string
+   *  tag_name?: string
+   *  tags?: string[]
+   *  title?: string
+   * }} PostDraft
+   * 
+   * Attempts to save a post draft
+   * @param {PostDraft} draft post draft
    * @param {JQuery<Element>} $field body input element
    * @param {boolean} [manual] whether manual draft saving is enabled
    * @returns {Promise<void>}
    */
-  const saveDraft = async (postText, $field, manual = false) => {
+  const saveDraft = async (draft, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
     if (autosavePref !== 'on' && !manual) {
       return;
@@ -115,10 +125,7 @@ $(() => {
         'X-CSRF-Token': QPixel.csrfToken(),
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        post: postText,
-        path: location.pathname
-      })
+      body: JSON.stringify({ ...draft, path: location.pathname })
     });
 
     if (resp.status === 200) {
@@ -132,11 +139,49 @@ $(() => {
     }
   };
 
-  $('.js-save-draft').on('click', async ev => {
-    const $tgt = $(ev.target);
-    const $field = $tgt.parents('.widget').find('.js-post-field');
-    const postText = $field.val();
-    await saveDraft(postText, $field, true);
+  /**
+   * Extracts draft info from a given target
+   * @param {EventTarget} target post input field or "save draft" button
+   * @returns {{ draft: PostDraft, field: any }}
+   */
+  const parseDraft = (target) => {
+    const $tgt = $(target);
+    const $form = $tgt.parents('form');
+
+    const $bodyField = $form.find('.js-post-field');
+    const $licenseField = $form.find('.js-license-select');
+    const $excerptField = $form.find('.js-tag-excerpt');
+    
+    const $tagsField = $form.find('#post_tags_cache');
+    const $titleField = $form.find('#post_title');
+    const $commentField = $form.find('#edit_comment');
+    const $tagNameField = $form.find('#tag_name');
+
+    const bodyText = $bodyField.val();
+    const commentText = $commentField.val();
+    const excerptText = $excerptField.val();
+    const license = $licenseField.val();
+    const tags = $tagsField.val();
+    const titleText = $titleField.val();
+    const tagName = $tagNameField.val();
+
+    /** @type {PostDraft} */
+    const draft = {
+      body: bodyText,
+      comment: commentText,
+      excerpt: excerptText,
+      license: license,
+      tags: tags,
+      tag_name: tagName,
+      title: titleText,
+    };
+
+    return { draft, field: $bodyField };
+  };
+
+  $('.js-save-draft').on('click', async (ev) => {
+    const { draft, field } = parseDraft(ev.target);
+    await saveDraft(draft, field, true);
   });
 
   let featureTimeout = null;
@@ -144,7 +189,27 @@ $(() => {
 
   const postFields = $('.post-field');
 
-  postFields.on('paste', async evt => {
+  const draftFieldsSelectors = [
+    '.js-post-field',
+    '.js-license-select',
+    '.js-tag-excerpt',
+    '#edit_comment',
+    '#post_tags_cache',
+    '#post_title',
+    '#tag_parent_id',
+    '#tag_name',
+  ];
+
+  // TODO: consider merging with post fields
+  $(draftFieldsSelectors.join(', ')).on('keyup change', (ev) => {
+    clearTimeout(draftTimeout);
+    draftTimeout = setTimeout(() => {
+      const { draft, field } = parseDraft(ev.target);
+      saveDraft(draft, field);
+    }, 3000);
+  });
+
+  postFields.on('paste', async (evt) => {
     if (evt.originalEvent.clipboardData.files.length > 0) {
       const $fileInput = $uploadForm.find('input[type="file"]');
       $fileInput[0].files = evt.originalEvent.clipboardData.files;
@@ -214,15 +279,9 @@ $(() => {
         }
       }, 1000);
     };
-  })()).on('keyup', ev => {
-    clearTimeout(draftTimeout);
-    const text = $(ev.target).val();
-    draftTimeout = setTimeout(() => {
-      saveDraft(text, $(ev.target));
-    }, 3000);
-  }).trigger('markdown');
+  })()).trigger('markdown');
 
-  postFields.parents('form').on('submit', async ev => {
+  postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
     const field = $tgt.find('.post-field');
 
@@ -304,7 +363,7 @@ $(() => {
   $('.js-draft-loaded').each((i, e) => {
     $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
-      You've edited this post before but didn't save it. We loaded your edits here for you.
+      You had edited this before but haven't saved it. We loaded the edits for you.
     </div>`);
   });
 
@@ -361,7 +420,7 @@ $(() => {
     }
   });
 
-  $('.js-nominate-promotion').on('click', async ev => {
+  $('.js-nominate-promotion').on('click', async (ev) => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
@@ -383,7 +442,7 @@ $(() => {
     $('.js-mod-tools').removeClass('is-active');
   });
 
-  $('.js-cancel-edit').on('click', async ev => {
+  $('.js-cancel-edit').on('click', async (ev) => {
     ev.preventDefault();
 
     let $btn = $(ev.target);
