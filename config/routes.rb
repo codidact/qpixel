@@ -194,6 +194,7 @@ Rails.application.routes.draw do
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
     get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
+    get    '/me/network',               to: 'users#my_network', as: :my_network
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
@@ -205,6 +206,7 @@ Rails.application.routes.draw do
     post   '/:id/mod/profile-reset',    to: 'users#mod_clear_profile', as: :mod_clear_profile
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/network',              to: 'users#network', as: :network
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
     post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
     post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role

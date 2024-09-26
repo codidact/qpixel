@@ -148,6 +148,27 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
+  # Used by network profile: does this user have a profile on that other comm?
+  def has_profile_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    !cu&.user_id.nil? || false
+  end
+
+  def reputation_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.reputation || 1
+  end
+
+  def post_count_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.post_count || 0
+  end
+
+  def is_moderator_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.is_moderator || cu&.privilege?('mod')
+  end
+
   def has_ability_on(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
     if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')

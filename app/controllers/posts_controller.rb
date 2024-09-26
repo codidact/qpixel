@@ -584,14 +584,31 @@ class PostsController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
+  # saving by-field is kept for backwards compatibility with old drafts
   def save_draft
-    key = "saved_post.#{current_user.id}.#{params[:path]}"
-    saved_at = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set key, params[:post]
-    RequestContext.redis.set saved_at, DateTime.now.iso8601
-    RequestContext.redis.expire key, 86_400 * 7
-    RequestContext.redis.expire saved_at, 86_400 * 7
-    render json: { status: 'success', success: true, key: key }
+    expiration_time = 86_400 * 7
+
+    base_key = "saved_post.#{current_user.id}.#{params[:path]}"
+
+    [:body, :comment, :excerpt, :license, :tag_name, :tags, :title].each do |key|
+      next unless params.key?(key)
+
+      key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
+
+      if key == :tags
+        RequestContext.redis.sadd(key_name, params[key])
+      else
+        RequestContext.redis.set(key_name, params[key])
+      end
+
+      RequestContext.redis.expire(key_name, expiration_time)
+    end
+
+    saved_at_key = "saved_post_at.#{current_user.id}.#{params[:path]}"
+    RequestContext.redis.set(saved_at_key, DateTime.now.iso8601)
+    RequestContext.redis.expire(saved_at_key, expiration_time)
+
+    render json: { status: 'success', success: true, key: base_key }
   end
 
   def delete_draft
@@ -658,9 +675,13 @@ class PostsController < ApplicationController
   end
 
   def do_draft_delete(path)
-    key = "saved_post.#{current_user.id}.#{path}"
-    saved_at = "saved_post_at.#{current_user.id}.#{path}"
-    RequestContext.redis.del key, saved_at
+    keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
+      pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
+      base = "#{pfx}.#{current_user.id}.#{path}"
+      [:body, :saved_at].include?(key) ? base : "#{base}.#{key}"
+    end
+
+    RequestContext.redis.del(*keys)
   end
 end
 # rubocop:enable Metrics/MethodLength

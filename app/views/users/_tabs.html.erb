@@ -25,6 +25,9 @@
       Notifications
     <% end %>
   <% end %>
+  <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
+  All Communities
+  <% end %>
   <div class="tabs--push"></div>
   <% if current_user&.is_moderator %>
     <%= link_to mod_user_path(user), class: "tabs--item #{(

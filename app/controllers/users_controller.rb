@@ -13,12 +13,11 @@ class UsersController < ApplicationController
                                           :mod_clear_profile, :mod_escalation, :mod_escalate,
                                           :mod_contact, :mod_message]
   before_action :verify_global_moderator, only: [:mod_failban, :global_log, :mod_delete_network_account]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle,
-                                  :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar, :mod_delete, :mod_failban, :mod_delete_network_account,
-                                  :mod_reset_profile, :mod_clear_profile, :mod_escalation,
-                                  :mod_escalate, :mod_contact, :mod_message, :global_log]
+  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :destroy, :full_log, :global_log, :mod,
+                                  :mod_clear_profile, :mod_contact, :mod_delete, :mod_delete_network_account,
+                                  :mod_escalate, :mod_escalation, :mod_failban, :mod_message, :mod_privilege_action,
+                                  :mod_privileges, :mod_reset_profile, :network, :posts, :role_toggle, :show,
+                                  :soft_delete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -206,6 +205,11 @@ class UsersController < ApplicationController
         render json: @posts
       end
     end
+  end
+
+  def network
+    @communities = Community.all
+    render layout: 'without_sidebar'
   end
 
   def activity
