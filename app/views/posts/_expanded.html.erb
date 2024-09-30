@@ -85,6 +85,15 @@
       <%= render('reactions/list', post: post) if post.reactions %>
 
       <% if post_type.is_closeable && post.closed %>
+        <% if current_user == post.user %>
+          <div class="notice is-info has-margin-2">
+            <p>
+              <i class="fas fa-info-circle"></i>
+              <%= t 'posts.post_closed_guidance' %>
+            </p>
+          </div>
+        <% end %>
+
         <div class="notice has-margin-2">
           <p class="has-font-weight-normal">
             <strong>Closed</strong>
