@@ -268,7 +268,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason)
+  def block(reason, length: 180.days)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -276,10 +276,10 @@ class User < ApplicationRecord
       user_ip << current_sign_in_ip
     end
 
-    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+    BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
                        automatic: true, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
-      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
+      BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
                          automatic: true, reason: "#{reason}: #" + id.to_s)
     end
   end
@@ -328,5 +328,16 @@ class User < ApplicationRecord
   def active_flags(post)
     post.flags.where(user: self, status: nil)
   end
+
+  def do_soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
+                      username: "user#{id}", email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+    skip_reconfirmation!
+    save
+  end
+
   # rubocop:enable Naming/PredicateName
 end
