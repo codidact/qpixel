@@ -15,6 +15,7 @@ class CleanUpSpammyUsersJob < ApplicationJob
       end
       if all_posts_spam
         spammer.block('automatic block from spam cleanup job', length: 2.years)
+        spammer.do_soft_delete(User.find(-1))
       end
     end
   end
