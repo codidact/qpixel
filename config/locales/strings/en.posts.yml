@@ -25,6 +25,8 @@ en:
       Can't delete a deleted post.
     cant_delete_responded: >
       This post cannot be deleted because it has responses.
+    cant_delete_community: >
+      This post cannot be deleted because it is owned by the community (freely editable).
     cant_restore_post: >
       Can't restore this post right now. Try again later.
     cant_restore_undeleted: >
