@@ -331,10 +331,10 @@ class User < ApplicationRecord
 
   def do_soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
-                             comment: self.attributes_print(join: "\n"))
+                             comment: attributes_print(join: "\n"))
     assign_attributes(deleted: true, deleted_by_id: current_user.id, deleted_at: DateTime.now,
-                            username: "user#{self.id}", email: "#{self.id}@deleted.localhost",
-                            password: SecureRandom.hex(32))
+                      username: "user#{id}", email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
     skip_reconfirmation!
     save
   end
