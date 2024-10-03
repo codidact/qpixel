@@ -474,13 +474,7 @@ class UsersController < ApplicationController
         return
       end
 
-      AuditLog.moderator_audit(event_type: 'user_delete', related: @user, user: current_user,
-                               comment: @user.attributes_print(join: "\n"))
-      @user.assign_attributes(deleted: true, deleted_by_id: current_user.id, deleted_at: DateTime.now,
-                              username: "user#{@user.id}", email: "#{@user.id}@deleted.localhost",
-                              password: SecureRandom.hex(32))
-      @user.skip_reconfirmation!
-      @user.save
+      @user.do_soft_delete(current_user)
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
