@@ -4,7 +4,13 @@ Rails.cache.persistent 'codidact_sites', clear: true do
   if Rails.env.development? || Rails.env.test?
     []
   else
-    response = Net::HTTP.get_response(URI('https://codidact.com/communities.json'))
+    uri = URI('https://codidact.com/communities.json')
+    req = Net::HTTP::Get.new(uri)
+    req['Authorization'] = "Bearer #{Rails.application.credentials.cf_bot_key}"
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(req)
+    end
+
     if response.code == '200'
       JSON.parse(response.body)
     else
