@@ -8,8 +8,8 @@ Rails.cache.persistent 'codidact_sites', clear: true do
     if response.code == '200'
       JSON.parse(response.body)
     else
-      Rails.logger.fatal "Couldn't fetch Codidact sites: response code #{response.code}"
-      exit 255
+      Rails.logger.error "Couldn't fetch Codidact sites: response code #{response.code}"
+      []
     end
   end
 end
