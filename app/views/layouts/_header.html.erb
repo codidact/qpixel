@@ -2,6 +2,20 @@
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
+<script>
+  $(document).ready(function () {
+      $('a[data-header-slide="#search-slide"]').on('click', focusSearch);
+  });
+
+  var search = false;
+  function focusSearch() {
+      search = !search;
+      if (search) {
+          $('#search').focus();
+      }
+  }
+</script>
+
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
   <div class="container header--container">
     <div class="header--brand">
