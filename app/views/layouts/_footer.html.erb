@@ -15,10 +15,10 @@
         </ul>
       </div>
     </div>
-    <% commit = Rails.cache.persistent('current_commit') %>
+    <% sha, date = current_commit %>
     <p>Powered by <%= link_to 'Codidact', 'https://codidact.org/' %>. Version <%= 
-      link_to commit[0][0..7], "https://github.com/codidact/qpixel/commit/#{commit[0]}" 
-    %> (<%= DateTime.iso8601(commit[1]).to_time.utc.strftime('%F %TZ') %>)
+      link_to sha[0..7], "https://github.com/codidact/qpixel/commit/#{sha}" 
+    %> (<%= date.to_time.utc.strftime('%F %TZ') %>)
     </p>
   </div>
 </footer>

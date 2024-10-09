@@ -190,4 +190,17 @@ module ApplicationHelper
       false
     end
   end
+
+  def current_commit
+    commit_info = Rails.cache.persistent('current_commit')
+    shasum, timestamp = commit_info
+
+    begin
+      date = DateTime.iso8601(timestamp)
+    rescue
+      date = DateTime.parse(timestamp)
+    end
+
+    [shasum, date]
+  end
 end
