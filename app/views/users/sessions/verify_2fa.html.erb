@@ -1,9 +1,13 @@
 <h1>Two-factor authentication</h1>
 
 <script>
-  window.onload = function() {
-      document.getElementById("code").focus();
-  };
+  addEventListener('load', () => {
+      const codeElem = document.getElementById("code");
+
+      if (codeElem) {
+	  codeElem.focus();
+      }
+  });
 </script>
 
 <p>
