@@ -3,17 +3,19 @@
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
 <script>
-  $(document).ready(function () {
-      $('a[data-header-slide="#search-slide"]').on('click', focusSearch);
-  });
+const toggleSearchFocus = () => {
+  const $input = $('#search');
 
-  var search = false;
-  function focusSearch() {
-      search = !search;
-      if (search) {
-          $('#search').focus();
-      }
+  if ($input.is(':focus')) {
+    $input.blur();
+  } else {
+    $input.focus();
   }
+};
+
+$(() => {
+  $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
+});
 </script>
 
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
