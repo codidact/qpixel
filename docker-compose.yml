@@ -1,5 +1,6 @@
 services:
   db:
+    restart: on-failure:3
     build:
       context: "."
       dockerfile: docker/Dockerfile.db
@@ -19,7 +20,7 @@ services:
 
 
   uwsgi:
-    restart: always
+    restart: on-failure:3
     build:
       context: "."
       dockerfile: docker/Dockerfile
@@ -46,7 +47,7 @@ services:
       - db
 
   redis:
-    restart: always
+    restart: on-failure:3
     image: redis:latest
     healthcheck:
       test: ["CMD", "redis-cli","ping"]
