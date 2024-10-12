@@ -41,5 +41,18 @@ QPixel.DOM = {
     document.querySelectorAll(selector).forEach(el => {
       el.addEventListener(event, callback);
     });
+  },
+
+  /**
+   * Smoothly fade an element out of view, then remove it.
+   * @param {Node|HTMLElement} element The element to fade out.
+   * @param {number} duration A duration for the effect in milliseconds.
+   */
+  fadeOut: (element, duration) => {
+    element.style.transition = `${duration}ms`;
+    element.style.opacity = '0';
+    setTimeout(() => {
+      element.remove();
+    }, duration);
   }
 };
