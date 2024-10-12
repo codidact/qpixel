@@ -16,6 +16,6 @@ fi
 rails db:seed
 
 # we don't start the server immediately in dev mode
-if [[ -z "$1" ]]; then
+if [[ "$1" != 'dev' ]]; then
     rails server -b 0.0.0.0
 fi
