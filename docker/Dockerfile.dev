@@ -36,6 +36,8 @@ RUN gem install bundler -v 2.4.22 && \
     bundle install
 
 EXPOSE 80 443 3000
-ENTRYPOINT ["/bin/bash"]
-CMD ["/code/docker/entrypoint.sh"]
 
+RUN /code/docker/entrypoint.sh dev
+
+# ensures continued running of the container
+CMD sleep 7d
