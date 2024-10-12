@@ -70,8 +70,7 @@ Creating qpixel_db_1    ... done
 Creating qpixel_uwsgi_1 ... done
 ```
 
-The uwsgi container has a sleep command for 15 seconds to give the database a chance to start,
-so don't expect to see output right away. After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
+After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
 
 ```
 qpixel_uwsgi_1  | => Booting Puma
