@@ -67,6 +67,18 @@ Then start your containers:
 docker compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
 ```
 
+After the containers have started, connect to the uwsgi container (if you are using Docker Desktop, you can connect directly from the application):
+
+```bash
+docker exec -it qpixel-uwsgi-1 bash
+```
+
+And run the following command to start Rails (starting the server is intentionally disabled to allow for live debugging):
+
+```bash
+rails server -b 0.0.0.0
+```
+
 After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
 
 ```
