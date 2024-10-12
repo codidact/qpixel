@@ -15,5 +15,7 @@ fi
 # If this isn't done again, there is a 500 error on the first page about posts
 rails db:seed
 
-# defaults to port 3000
-rails server -b 0.0.0.0
+# we don't start the server immediately in dev mode
+if [[ -z "$1" ]]; then
+    rails server -b 0.0.0.0
+fi
