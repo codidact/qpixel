@@ -32,7 +32,14 @@ chmod +x docker/local-setup.sh
 docker/local-setup.sh
 ```
 
-Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
+Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. 
+Editing the `./docker/env` file will change environment variables only in the running container.
+
+### Custom build config
+
+Our Docker setup supports custom build configurations for the uwsgi contianer via the `CLIENT_DOKERFILE` environment variable (see [compose-env](/docker/compose-env)). The default is `docker/Dockerfile`, which points to a preconfigured [production-like setup](/docker/Dockerfile). For developers who need more control over their setup, we also provide a [configuration](/docker/Dockerfile.dev) that is tailored for local development.
+
+To use a custom build config, change the `CLIENT_DOCKERFILE` variable in the .env file that is automatically created by [local-setup.sh](/docker/local-setup.sh) in the project root.
 
 ## 2. Database File
 Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/env) file. The `config/database.yml` should already be gitignored.
@@ -64,19 +71,7 @@ NOTE: If you get an error like "Cannot connect to the Docker daemon at ...", you
 Then start your containers:
 
 ```bash
-docker compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
-```
-
-After the containers have started, connect to the uwsgi container (if you are using Docker Desktop, you can connect directly from the application):
-
-```bash
-docker exec -it qpixel-uwsgi-1 bash
-```
-
-And run the following command to start Rails (starting the server is intentionally disabled to allow for live debugging):
-
-```bash
-rails server -b 0.0.0.0
+docker compose up # append -d (--detach) if you want, although it can be useful to see output in the terminal
 ```
 
 After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
@@ -101,6 +96,22 @@ and see the interface.
 ![img/interface.png](../img/interface.png)
 
 You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or longer, otherwise the user won't be created.
+
+### Custom build configs
+
+If you are using a custom build config that doesn't automatically start Rails or our [config for local development](/docker/Dockerfile.dev), you will also have to manually start the server.
+
+After the containers have started, connect to the uwsgi container (if you are using Docker Desktop, you can connect directly from the application):
+
+```bash
+docker exec -it qpixel-uwsgi-1 bash
+```
+
+And run the following command to start Rails (starting the server is intentionally disabled to allow for live debugging):
+
+```bash
+rails server -b 0.0.0.0
+```
 
 ## 5. Login
 
