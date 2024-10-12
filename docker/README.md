@@ -61,13 +61,10 @@ NOTE: If you get an error like "Cannot connect to the Docker daemon at ...", you
 
 ## 4. Start Containers
 
-Then start your containers! 
+Then start your containers:
 
 ```bash
 docker compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
-Creating qpixel_redis_1 ... done
-Creating qpixel_db_1    ... done
-Creating qpixel_uwsgi_1 ... done
 ```
 
 After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
