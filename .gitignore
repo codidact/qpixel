@@ -52,6 +52,9 @@ qpixel-import.tar.gz
 # Ignore Vim stuff.
 *.swp
 
+# Ignore emacs stuff.
+*~
+
 dump.rdb
 
 # Ignore rbenv local file
