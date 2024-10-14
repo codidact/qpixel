@@ -2,6 +2,7 @@
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
+<!--
 <script>
 const toggleSearchFocus = () => {
   const $input = $('#search');
@@ -18,6 +19,7 @@ $(() => {
   $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
 });
 </script>
+-->
 
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
   <div class="container header--container">
@@ -177,15 +179,15 @@ $(() => {
     </div>
   </div>
 
-  <%= form_tag search_path, method: :get, role: 'search' do %>
-    <div class="grid is-nowrap">
-        <%= search_field_tag :search, params[:search], class: 'form-element' %>
+  <%= form_tag search_path, method: :dialog, role: 'search' do %>
+    <dialog class="grid is-nowrap">
+        <%= search_field_tag :search, params[:search], class: 'form-element', autofocus:'true' %>
         <div class="h-m-1">
           <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
             <i class="fa fa-search"></i>
           <% end %>
         </div>
-    </div>
+    </dialog>
   <% end %>
   <div class="has-padding-top-2 has-padding-right-1 has-float-right">
     <a href="<%= help_path('search') %>">Search help</a>
