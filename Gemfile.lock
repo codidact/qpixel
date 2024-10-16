@@ -202,7 +202,7 @@ GEM
     minitest-ci (3.4.0)
       minitest (>= 5.0.6)
     mysql2 (0.5.4)
-    net-imap (0.4.14)
+    net-imap (0.4.17)
       date
       net-protocol
     net-pop (0.1.2)
