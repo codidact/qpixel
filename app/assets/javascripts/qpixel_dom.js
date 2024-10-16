@@ -54,5 +54,19 @@ QPixel.DOM = {
     setTimeout(() => {
       element.remove();
     }, duration);
+  },
+
+  /**
+   * Helper to set the visibility of an element or list of elements. Uses display: none so should work with screen
+   * readers.
+   * @param {HTMLElement|HTMLElement[]|Node|Node[]|NodeList} elements An element or list/array of elements to set
+   *  visibility for.
+   * @param {boolean} visible Whether or not the elements should be visible.
+   */
+  setVisible: (elements, visible) => {
+    if (!elements['forEach']) {
+      elements = [elements];
+    }
+    elements.forEach(el => el.style.display = visible ? '' : 'none');
   }
 };
