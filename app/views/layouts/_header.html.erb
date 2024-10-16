@@ -2,6 +2,23 @@
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
+<script>
+const toggleSearchFocus = () => {
+  const $input = $('#search');
+
+  if ($input.is(':focus')) {
+    $input.blur();
+  }
+  else {
+      $input.focus();
+  }
+};
+
+$(() => {
+  $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
+});
+</script>
+
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
   <div class="container header--container">
     <div class="header--brand">
