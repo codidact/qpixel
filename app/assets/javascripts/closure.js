@@ -4,11 +4,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const self = ev.target;
     const activeRadio = self.closest('.js-close-box').querySelector("input[type='radio'][name='close-reason']:checked");
+
+    if (!activeRadio) {
+      QPixel.createNotification('danger', 'You must select a close reason.');
+      return;
+    }
+
     const otherPostInput = activeRadio.closest('.widget--body').querySelector('.js-close-other-post');
-    const otherPostRequired = !!activeRadio.dataset.rop;
+    const otherPostRequired = activeRadio.dataset.rop === 'true';
     const data = {
-      'reason_id': activeRadio.value,
-      'other_post': otherPostInput.value
+      'reason_id': parseInt(activeRadio.value, 10),
+      'other_post': otherPostInput?.value
       // option will be silently discarded if no input element
     };
 
@@ -16,11 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       data['other_post'] = data['other_post'].replace(/.*\/([0-9]+)$/, "$1");
     }
 
-    if (!activeRadio.value) {
-      QPixel.createNotification('danger', 'You must select a close reason.');
-      return;
-    }
-    if (!otherPostInput.value && otherPostRequired) {
+    if (!otherPostInput?.value && otherPostRequired) {
       QPixel.createNotification('danger', 'You must enter an ID or URL to another post.');
       return;
     }
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       body: JSON.stringify(data),
       credentials: 'include',
       headers: {
+        'Content-Type': 'application/json',
         'X-CSRF-Token': QPixel.csrfToken()
       }
     });

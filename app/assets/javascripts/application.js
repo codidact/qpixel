@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   if (document.cookie.indexOf('dismiss_fvn') === -1) {
-    document.querySelector('#fvn-dismiss').addEventListener('click', _ev => {
+    QPixel.DOM.addSelectorListener('click', '#fvn-dismiss', _ev => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
     });
   }
