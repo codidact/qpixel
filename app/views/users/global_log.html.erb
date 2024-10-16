@@ -1,4 +1,4 @@
-<% content_for :title, "Full Activity Log: #{rtl_safe_username(@user)}" %>
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
 <%= render 'tabs', user: @user %>
 
@@ -6,41 +6,41 @@
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
   <div class="grid--cell is-9">
-    <h1>Full activity log</h1>
+    <h1>Global activity log</h1>
 
-    <p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to it.</p>
+    <p class="is-lead">This is a filterable log for all activity by the user <strong>network-wide</strong>. You can consult it for moderation decisions. Do not share this information to people, who do not have access to it, <strong>which generally includes community moderators</strong>, unless relevant to a site they are a mod on</p>
 
     <% if params[:filter] == 'interesting' %>
         <p>You are looking at <em>negative</em> interactions the user had with this site. These are not necessarily bad, just actions at which you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
     <% end %>
 
     <div class="button-list is-gutterless h-m-v-4">
-        <a class="button is-muted is-outlined" href="?" role="button">
+        <a class="button is-muted is-outlined" href="?">
             Show all events
         </a>
         <% if @interesting > 0 %>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'interesting' ? 'is-active' : '' %>" href="?filter=interesting" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'interesting' ? 'is-active' : '' %>" href="?filter=interesting">
             Negative
             <span class="badge is-status"><%= @interesting %></span>
         </a>
         <% end %>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts">
             Posts
             <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span><% end %>
         </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments">
             Comments
             <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span><% end %>
         </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags">
             Flags
             <% if @flags > 0 %><span class="badge is-status"><%= @flags %></span><% end %>
         </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits">
             Edits
             <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span><% end %>
         </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings" role="button">
+        <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings">
             Warnings
             <% if @mod_warnings_received > 0 %><span class="badge is-status"><%= @mod_warnings_received %></span><% end %>
         </a>
@@ -49,6 +49,7 @@
     <table class="table is-with-hover is-full-width">
         <tr>
             <th>Type</th>
+            <th>Community</th>
             <th>On...</th>
             <th>Excerpt</th>
             <th>Status</th>
@@ -62,6 +63,7 @@
                             <%= (i.question? ? "Question" : (i.article? ? "Article" : "Answer")) %>
                         </span>
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>&mdash;</td>
                     <td class="h-fs-caption">
                         <% if !i.answer? %>
@@ -77,6 +79,7 @@
                     <td>
                         Comment
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <% if i.post.nil? %>
                             <%= link_to 'Private', comment_link(i), 'aria-label': 'Location of comment in private thread' %>
@@ -93,6 +96,7 @@
                     <td>
                         Edit
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                     </td>
@@ -108,6 +112,7 @@
                     <td>
                         Suggested Edit
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
                     </td>
@@ -121,6 +126,11 @@
                     <td>
                         <span class="h-fw-bold h-c-red-700">Warning</span>
                     </td>
+                    <% if i.community_user.present? %>
+                        <td><%= link_to i.community_user.community.name, "//#{i.community_user.community.host}" %></td>
+                    <% else %>
+                        <td>Global</td>
+                    <% end %>
                     <td>&mdash;</td>
                     <td class="h-fs-caption">
                         <%= i.body[0..300] + ((i.body.length > 300) ? "..." : "") %>
@@ -130,6 +140,7 @@
                     <td>
                         Flag
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>
                         <% if i.post_type == 'Post' %>
                             <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
@@ -149,6 +160,7 @@
                     <td>
                         <span class="badge is-tag is-muted">Unknown</span>
                     </td>
+                    <td><%= link_to i.community.name, "//#{i.community.host}" %></td>
                     <td>&mdash;</td>
                     <td><%= i.class %></td>
                     <td>&mdash;</td>
