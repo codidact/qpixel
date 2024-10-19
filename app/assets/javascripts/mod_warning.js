@@ -1,6 +1,6 @@
-$(function () {
-    $(".js--warning-template-selection").on("input", (e) => {
-        const $this = $(e.target);
-        $(".js--warning-template-target textarea").val(atob($this.val()));
-    });
-})
+document.addEventListener('DOMContentLoaded', () => {
+  QPixel.DOM.addSelectorListener('input', '.js--warning-template-selection', ev => {
+    const tgt = ev.target;
+    document.querySelector('.js--warning-template-target textarea').value = atob(tgt.value);
+  });
+});
