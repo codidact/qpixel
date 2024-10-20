@@ -203,9 +203,13 @@ class Post < ApplicationRecord
   # Updates the tags association from the tags_cache.
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag = Tag.find_or_create_by name: tag_name, tag_set: category.tag_set
+      tag, name = Tag.find_or_create_synonymized name: tag_name, tag_set: category.tag_set
       unless tags.include? tag
         tags << tag
+      end
+      unless tags_cache.include? name
+        tags_cache.delete tag_name
+        tags_cache << name
       end
     end
     tags.each do |tag|

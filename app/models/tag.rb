@@ -38,6 +38,17 @@ class Tag < ApplicationRecord
       .distinct
   end
 
+  def self.find_or_create_synonymized(name:, tag_set:)
+    existing = Tag.find_by(name: name, tag_set: tag_set)
+    if !existing.nil?
+      [existing, name]
+    else
+      synonyms = TagSynonym.joins(:tag).where(name: name, tags: { tag_set: tag_set })
+      synonymized_name = synonyms.exists? ? synonyms.first.tag.name : name
+      [Tag.find_or_create_by(name: synonymized_name, tag_set: tag_set), synonymized_name]
+    end
+  end
+
   def all_children
     query = File.read(Rails.root.join('db/scripts/tag_children.sql'))
     query = query.gsub('$ParentId', id.to_s)
