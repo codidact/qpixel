@@ -671,4 +671,4 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_20_193053) do
     t.index ["post_id"], name: "index_thread_followers_on_post_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
-
+end
