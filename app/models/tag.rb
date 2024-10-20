@@ -40,12 +40,12 @@ class Tag < ApplicationRecord
 
   def self.find_or_create_synonymized(name:, tag_set:)
     existing = Tag.find_by(name: name, tag_set: tag_set)
-    if !existing.nil?
-      [existing, name]
-    else
+    if existing.nil?
       synonyms = TagSynonym.joins(:tag).where(name: name, tags: { tag_set: tag_set })
       synonymized_name = synonyms.exists? ? synonyms.first.tag.name : name
       [Tag.find_or_create_by(name: synonymized_name, tag_set: tag_set), synonymized_name]
+    else
+      [existing, name]
     end
   end
 
