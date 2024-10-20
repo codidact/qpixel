@@ -18,6 +18,12 @@ RUN apt-get update && \
     libgdbm-dev && \
     apt-get install -y default-mysql-server
 
+# Install dependencies specific to amd64
+RUN dpkg --add-architecture amd64
+RUN apt update
+RUN apt-get install libc6:amd64
+RUN apt-get install g++-multilib
+
 # Install nodejs and imagemagick
 WORKDIR /opt
 RUN wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.xz && \
