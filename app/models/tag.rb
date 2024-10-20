@@ -38,6 +38,36 @@ class Tag < ApplicationRecord
       .distinct
   end
 
+  ##
+  # Find or create a tag within a given tag set, considering synonyms. If a synonym is given as +name+ then the primary
+  # tag for it is returned instead.
+  # @param name [String] A tag name to find or create.
+  # @param tag_set [TagSet] The tag set within which to search for or create the tag.
+  # @return [Array(Tag, String)] The found or created tag, and the final name used. If a synonymized name was given as
+  #   +name+ then this will be the primary tag name.
+  #
+  # @example +name+ does not yet exist: a new Tag is created
+  #   Tag.find_or_create_synonymized name: 'new-tag', tag_set: ...
+  #   # => [Tag, 'new-tag']
+  #
+  # @example +name+ already exists: the existing Tag is returned
+  #   Tag.find_or_create_synonymized name: 'existing-tag', tag_set: ...
+  #   # => [Tag, 'existing-tag']
+  #
+  # @example +name+ is a synonym of 'other-tag': the Tag for 'other-tag' is returned
+  #   Tag.find_or_create_synonymized name: 'synonym', tag_set: ...
+  #   # => [Tag, 'other-tag']
+  def self.find_or_create_synonymized(name:, tag_set:)
+    existing = Tag.find_by(name: name, tag_set: tag_set)
+    if existing.nil?
+      synonyms = TagSynonym.joins(:tag).where(name: name, tags: { tag_set: tag_set })
+      synonymized_name = synonyms.exists? ? synonyms.first.tag.name : name
+      [Tag.find_or_create_by(name: synonymized_name, tag_set: tag_set), synonymized_name]
+    else
+      [existing, name]
+    end
+  end
+
   def all_children
     query = File.read(Rails.root.join('db/scripts/tag_children.sql'))
     query = query.gsub('$ParentId', id.to_s)
