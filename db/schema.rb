@@ -671,4 +671,164 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_20_193053) do
     t.index ["post_id"], name: "index_thread_followers_on_post_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
+
+  create_table "user_abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.bigint "ability_id"
+    t.boolean "is_suspended", default: false
+    t.datetime "suspension_end", precision: nil
+    t.text "suspension_message"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["ability_id"], name: "index_user_abilities_on_ability_id"
+    t.index ["community_user_id"], name: "index_user_abilities_on_community_user_id"
+  end
+
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "email"
+    t.string "encrypted_password"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.boolean "is_global_moderator"
+    t.boolean "is_global_admin"
+    t.string "username"
+    t.text "profile"
+    t.text "website"
+    t.string "twitter"
+    t.text "profile_markdown"
+    t.integer "se_acct_id"
+    t.boolean "transferred_content", default: false
+    t.string "login_token"
+    t.datetime "login_token_expires_at", precision: nil
+    t.string "two_factor_token"
+    t.boolean "enabled_2fa", default: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
+    t.string "unconfirmed_email"
+    t.string "two_factor_method"
+    t.boolean "staff", default: false, null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at", precision: nil
+    t.integer "trust_level"
+    t.boolean "developer"
+    t.string "cid"
+    t.string "discord"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "deleted_by_id"
+    t.string "backup_2fa_code"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username"
+  end
+
+  create_table "votes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "vote_type"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.integer "user_id"
+    t.integer "post_id"
+    t.integer "recv_user_id"
+    t.bigint "community_id", null: false
+    t.index ["community_id"], name: "index_votes_on_community_id"
+    t.index ["post_id"], name: "index_votes_on_post_type_and_post_id"
+    t.index ["user_id"], name: "index_votes_on_user_id"
+  end
+
+  create_table "warning_templates", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_id"
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["community_id"], name: "index_warning_templates_on_community_id"
+  end
+
+  create_table "warnings", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "community_user_id"
+    t.text "body"
+    t.boolean "is_suspension"
+    t.datetime "suspension_end", precision: nil
+    t.boolean "active"
+    t.bigint "author_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.boolean "read", default: false
+    t.index ["author_id"], name: "index_warnings_on_author_id"
+    t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+  end
+
+  add_foreign_key "abilities", "communities"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "audit_logs", "communities"
+  add_foreign_key "audit_logs", "users"
+  add_foreign_key "categories", "filters", column: "default_filter_id"
+  add_foreign_key "categories", "licenses"
+  add_foreign_key "categories", "tag_sets"
+  add_foreign_key "category_filter_defaults", "categories"
+  add_foreign_key "category_filter_defaults", "filters"
+  add_foreign_key "category_filter_defaults", "users"
+  add_foreign_key "comment_threads", "users", column: "archived_by_id"
+  add_foreign_key "comment_threads", "users", column: "deleted_by_id"
+  add_foreign_key "comment_threads", "users", column: "locked_by_id"
+  add_foreign_key "comments", "comments", column: "references_comment_id"
+  add_foreign_key "comments", "communities"
+  add_foreign_key "community_users", "communities"
+  add_foreign_key "community_users", "users"
+  add_foreign_key "community_users", "users", column: "deleted_by_id"
+  add_foreign_key "error_logs", "communities"
+  add_foreign_key "error_logs", "users"
+  add_foreign_key "filters", "users"
+  add_foreign_key "flags", "communities"
+  add_foreign_key "flags", "users", column: "escalated_by_id"
+  add_foreign_key "micro_auth_apps", "users"
+  add_foreign_key "micro_auth_apps", "users", column: "deactivated_by_id"
+  add_foreign_key "micro_auth_tokens", "micro_auth_apps", column: "app_id"
+  add_foreign_key "micro_auth_tokens", "users"
+  add_foreign_key "notifications", "communities"
+  add_foreign_key "pinned_links", "communities"
+  add_foreign_key "pinned_links", "posts"
+  add_foreign_key "post_histories", "communities"
+  add_foreign_key "post_history_tags", "post_histories"
+  add_foreign_key "post_history_tags", "tags"
+  add_foreign_key "post_types", "post_types", column: "answer_type_id"
+  add_foreign_key "posts", "close_reasons"
+  add_foreign_key "posts", "communities"
+  add_foreign_key "posts", "licenses"
+  add_foreign_key "posts", "posts", column: "duplicate_post_id"
+  add_foreign_key "posts", "users", column: "locked_by_id"
+  add_foreign_key "privileges", "communities"
+  add_foreign_key "site_settings", "communities"
+  add_foreign_key "sso_profiles", "users"
+  add_foreign_key "subscriptions", "communities"
+  add_foreign_key "subscriptions", "users"
+  add_foreign_key "suggested_edits", "communities"
+  add_foreign_key "suggested_edits", "posts"
+  add_foreign_key "suggested_edits", "users"
+  add_foreign_key "suggested_edits", "users", column: "decided_by_id"
+  add_foreign_key "tag_synonyms", "tags"
+  add_foreign_key "tags", "communities"
+  add_foreign_key "tags", "tags", column: "parent_id"
+  add_foreign_key "thread_followers", "posts"
+  add_foreign_key "user_abilities", "abilities"
+  add_foreign_key "user_abilities", "community_users"
+  add_foreign_key "users", "users", column: "deleted_by_id"
+  add_foreign_key "votes", "communities"
+  add_foreign_key "warning_templates", "communities"
+  add_foreign_key "warnings", "community_users"
+  add_foreign_key "warnings", "users", column: "author_id"
 end
