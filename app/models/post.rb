@@ -200,16 +200,20 @@ class Post < ApplicationRecord
 
   private
 
-  # Updates the tags association from the tags_cache.
+  ##
+  # Before-validation callback. Update the tags association from the tags_cache.
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag, name = Tag.find_or_create_synonymized name: tag_name, tag_set: category.tag_set
+      tag, name_used = Tag.find_or_create_synonymized name: tag_name, tag_set: category.tag_set
       unless tags.include? tag
         tags << tag
       end
-      unless tags_cache.include? name
+
+      # If the tags_cache doesn't include name_used then tag_name was a synonym - remove the synonym from tags_cache
+      # and add the primary for it instead.
+      unless tags_cache.include? name_used
         tags_cache.delete tag_name
-        tags_cache << name
+        tags_cache << name_used
       end
     end
     tags.each do |tag|
@@ -219,10 +223,12 @@ class Post < ApplicationRecord
     end
   end
 
+  ##
+  # Helper method for #check_attribution_notice validator. Produces a text-only attribution notice either based on
+  # values given or the current state of the post for use in post histories.
   # @param source [String, Nil] where the post originally came from
   # @param name [String, Nil] the name of the license
   # @param url [String, Nil] the url of the license
-  #
   # @return [String] an attribution notice corresponding to this post
   def attribution_text(source = nil, name = nil, url = nil)
     "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\n" \
