@@ -25,6 +25,7 @@ class Post < ApplicationRecord
   has_many :reactions
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
+  counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
 
   serialize :tags_cache, Array
 
