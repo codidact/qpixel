@@ -17,6 +17,10 @@
     </div>
   <% elsif flag.post_type == 'Comment' %>
     <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
+  <% elsif flag.post_type == 'User' %>
+    <div class="widget--body">
+      <%= render 'users/common_card', user: flag.post, ckb: false, external_url: true %>
+    </div>
   <% end %>
   <div class="widget--body">
     <p>

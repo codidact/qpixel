@@ -5,28 +5,33 @@
 
 <% pingable = get_pingable(@comment_thread) %>
 
-<h1>Comments on
-  <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
-</h1>
+<% if @post.present? %>
+  <h1>Comments on
+    <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
+  </h1>
 
-<% if @post.parent.present? %>
+  <% if @post.parent.present? %>
+    <details>
+      <summary>Parent</summary>
+      <%= render 'posts/expanded', post: @post.parent %>
+    </details>
+  <% end %>
+
   <details>
-    <summary>Parent</summary>
-    <%= render 'posts/expanded', post: @post.parent %>
+    <summary>Post</summary>
+    <%= render 'posts/expanded', post: @post %>
   </details>
-<% end %>
 
-<details>
-  <summary>Post</summary>
-  <%= render 'posts/expanded', post: @post %>
-</details>
+<% else %>
+  <h1><i class="fa fa-envelope"></i> Private Notification for user <%= user_link @comment_thread.second_follower.user %></h1>
+<% end %>
 
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
 
 <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
      data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
-     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
+     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post&.id %>">
   <div class="widget--header">
     <% if params[:inline] == 'true' %>
       <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
@@ -42,7 +47,7 @@
           <i class="fa fa-cog fa-fw"></i>tools
         </a>
       <% end %>
-      <% unless current_user.nil? %>
+      <% unless current_user.nil? || @comment_thread.is_private %>
         <% if @comment_thread.followed_by? current_user %>
           <a href="#" class="widget--header-link js--unrestrict-thread" data-action="follow"
             data-thread="<%= @comment_thread.id %>" title="You are following this thread and will be notified of every response. You can unfollow at any time."
@@ -101,27 +106,27 @@
   <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
-        <% if @post.locked? && !moderator? && !admin? %>
+        <% if @post&.locked? && !moderator? && !admin? %>
           <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
-        <% elsif @post.deleted %>
+        <% elsif @post&.deleted %>
           <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
-        <% elsif @post.comments_disabled && !moderator? && !admin? %>
+        <% elsif @post&.comments_disabled && !moderator? && !admin? %>
           <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on the parent post.</p>
         <% else %>
-          <% if @post.locked? %>
+          <% if @post&.locked? %>
             <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
-          <% elsif @post.comments_disabled %>
+          <% elsif @post&.comments_disabled %>
             <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
           <% end %>
           <h4>Reply to this thread</h4>
           <%= form_tag create_comment_path(@comment_thread.id) do %>
-            <%= hidden_field_tag :post_id, @post.id %>
+            <%= hidden_field_tag :post_id, @post&.id %>
             
             <%= label_tag :content, 'Your message', class: 'form-element' %>
             <%= text_area_tag :content, '', class: 'form-element js-comment-field',
-                              data: { thread: @comment_thread.id, post: @comment_thread.post_id,
-                                      character_count: ".js-character-count-#{@post.id}" } %>
-            <%= render 'shared/char_count', type: @post.id, min: 15, max: 1000 %>
+                              data: { thread: @comment_thread.id, post: @post&.id,
+                                      character_count: ".js-character-count-#{@post&.id}" } %>
+            <%= render 'shared/char_count', type: @post&.id, min: 15, max: 1000 %>
 
             <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
           <% end %>
