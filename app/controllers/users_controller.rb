@@ -632,7 +632,12 @@ class UsersController < ApplicationController
   end
 
   def set_user
-    @user = user_scope.find_by(id: params[:id])
+    user_id = if params[:id] == 'me' && user_signed_in?
+                current_user.id
+              else
+                params[:id]
+              end
+    @user = user_scope.find_by(id: user_id)
     not_found if @user.nil?
   end
 
