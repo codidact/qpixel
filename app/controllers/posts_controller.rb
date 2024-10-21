@@ -100,6 +100,7 @@ class PostsController < ApplicationController
 
     if @post.save
       @post.update(last_activity: @post.created_at, last_activity_by: current_user)
+      ThreadFollower.create user: @post.user, post: @post
       if @post_type.has_parent?
         unless @post.user_id == @post.parent.user_id
           @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
