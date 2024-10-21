@@ -67,3 +67,7 @@
   <meta property="og:description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
   <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
+
+<% if @post %>
+  <%= render 'posts/schema', post: @post %>
+<% end %>
