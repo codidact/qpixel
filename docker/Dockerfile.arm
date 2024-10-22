@@ -21,8 +21,7 @@ RUN apt-get update && \
 # Install dependencies specific to amd64
 RUN dpkg --add-architecture amd64
 RUN apt update
-RUN apt-get install -y libc6:amd64
-RUN apt-get install -y g++-multilib
+RUN apt-get install -y libc6:amd64 g++-multilib liblzma-dev patch
 
 # Install nodejs and imagemagick
 WORKDIR /opt
@@ -39,10 +38,8 @@ ENV PATH=$NODEJS_HOME:$PATH
 WORKDIR /code
 COPY . /code
 
-# see: https://nokogiri.org/tutorials/installing_nokogiri.html#how-can-i-avoid-using-a-precompiled-native-gem
-RUN bundle config set force_ruby_platform true
-
 RUN gem install bundler -v 2.4.22 && \
+    gem install nokogiri --platform=ruby && \
     bundle install
 
 EXPOSE 80 443 3000
