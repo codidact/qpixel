@@ -21,6 +21,10 @@ RUN apt-get update && \
     patch && \
     apt-get install -y default-mysql-server
 
+RUN dpkg --add-architecture amd64
+RUN apt update
+RUN apt install libc6:amd64
+
 # Install nodejs and imagemagick
 WORKDIR /opt
 RUN wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.xz && \
