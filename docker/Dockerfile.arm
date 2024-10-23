@@ -46,9 +46,13 @@ ENV PATH=$NODEJS_HOME:$PATH
 WORKDIR /code
 COPY . /code
 
-RUN gem install bundler -v 2.4.22 && \
-    gem install nokogiri --platform=ruby -- --use-system-libraries && \
-    bundle install
+RUN gem install bundler -v 2.4.22
+
+RUN gem install nokogiri --platform=ruby -- --use-system-libraries 2> /dev/null
+
+RUN cat /usr/local/bundle/extensions/aarch64-linux/3.0.0/nokogiri-1.16.7/mkmf.log
+
+RUN bundle install
 
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
