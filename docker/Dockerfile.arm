@@ -23,7 +23,7 @@ RUN apt-get update && \
 
 RUN dpkg --add-architecture amd64
 RUN apt update
-RUN apt install libc6:amd64
+RUN apt install -y libc6:amd64
 
 # Install nodejs and imagemagick
 WORKDIR /opt
