@@ -41,10 +41,8 @@ WORKDIR /code
 COPY . /code
 
 RUN gem install bundler -v 2.4.22
-
-RUN gem install nokogiri --platform=ruby
-
 RUN bundle install
+RUN gem install nokogiri --platform=ruby
 
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
