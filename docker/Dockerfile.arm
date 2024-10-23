@@ -26,7 +26,10 @@ RUN apt-get install -y \
     gcc:amd64 \
     g++:amd64 \
     gcc-multilib:amd64 \
-    g++-multilib:amd64
+    g++-multilib:amd64 \
+    pkg-config \
+    libxml2-dev \
+    libxslt-dev
 
 # Install nodejs and imagemagick
 WORKDIR /opt
