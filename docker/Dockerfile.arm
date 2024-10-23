@@ -9,27 +9,17 @@ RUN apt-get update && \
     autoconf \ 
     bison \
     build-essential \
+    ruby-dev \
     libssl-dev \
     libyaml-dev \
     libreadline-dev \
     zlib1g-dev \
+    liblzma-dev \
     libncurses5-dev \
     libffi-dev \
     libgdbm-dev && \
+    patch && \
     apt-get install -y default-mysql-server
-
-# Install dependencies specific to amd64
-RUN dpkg --add-architecture amd64
-RUN apt update
-RUN apt-get install -y libc6:amd64 
-RUN apt-get install -y \
-    gcc:amd64 \
-    g++:amd64 \
-    gcc-multilib:amd64 \
-    g++-multilib:amd64 \
-    pkg-config \
-    libxml2-dev \
-    libxslt-dev
 
 # Install nodejs and imagemagick
 WORKDIR /opt
@@ -48,9 +38,7 @@ COPY . /code
 
 RUN gem install bundler -v 2.4.22
 
-RUN gem install nokogiri --platform=ruby -- --use-system-libraries 2> /dev/null || true
-
-RUN cat /usr/local/bundle/extensions/aarch64-linux/3.0.0/nokogiri-1.16.7/mkmf.log
+RUN gem install nokogiri --platform=ruby
 
 RUN bundle install
 
