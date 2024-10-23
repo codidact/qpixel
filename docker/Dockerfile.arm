@@ -1,4 +1,4 @@
-FROM ruby:3.0.0
+FROM --platform=linux/arm64/v8 ruby:3.0.0
 
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 RUN apt-get update && \
@@ -9,14 +9,21 @@ RUN apt-get update && \
     autoconf \ 
     bison \
     build-essential \
+    ruby-dev \
     libssl-dev \
     libyaml-dev \
     libreadline-dev \
     zlib1g-dev \
+    liblzma-dev \
     libncurses5-dev \
     libffi-dev \
     libgdbm-dev && \
+    patch && \
     apt-get install -y default-mysql-server
+
+RUN dpkg --add-architecture amd64
+RUN apt update
+RUN apt install -y libc6:amd64
 
 # Install nodejs and imagemagick
 WORKDIR /opt
@@ -32,8 +39,10 @@ ENV PATH=$NODEJS_HOME:$PATH
 # Add core code to container
 WORKDIR /code
 COPY . /code
-RUN gem install bundler -v 2.4.22 && \
-    bundle install
+
+RUN gem install bundler -v 2.4.22
+RUN bundle install
+RUN gem install nokogiri --platform=ruby
 
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
