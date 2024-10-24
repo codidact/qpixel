@@ -1,4 +1,9 @@
+# Helpers related to comments.
 module CommentsHelper
+  ##
+  # Get a link to the specified comment, accounting for deleted comments.
+  # @param comment [Comment]
+  # @return [String]
   def comment_link(comment)
     if comment.deleted
       comment_thread_url(comment.comment_thread_id, show_deleted_comments: 1, anchor: "comment-#{comment.id}",
@@ -8,6 +13,12 @@ module CommentsHelper
     end
   end
 
+  ##
+  # Process a comment and convert ping-strings (i.e. @#1234) into links.
+  # @param comment [String] The text of the comment to process.
+  # @param pingable [Array<Integer>, nil] A list of user IDs that should be pingable in this comment. Any user IDs not
+  #   present in the list will be displayed as 'unpingable'.
+  # @return [ActiveSupport::SafeBuffer]
   def render_pings(comment, pingable: nil)
     comment.gsub(/@#\d+/) do |id|
       u = User.where(id: id[2..-1].to_i).first
@@ -22,6 +33,11 @@ module CommentsHelper
     end.html_safe
   end
 
+  ##
+  # Process comment text and convert helper links (like [help] and [flags]) into real links.
+  # @param comment_text [String] The text of the comment to process.
+  # @param user [User] Specify a user whose pages to link to from user-related helpers.
+  # @return [String]
   def render_comment_helpers(comment_text, user = current_user)
     comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_url}\">\\1</a>")
 
@@ -53,6 +69,11 @@ module CommentsHelper
     comment_text
   end
 
+  ##
+  # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
+  # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
+  # @param thread [CommentThread]
+  # @return [Array<Integer>]
   def get_pingable(thread)
     post = thread.post
 
@@ -61,7 +82,6 @@ module CommentsHelper
     # last 500 history event users +
     # last 500 comment authors +
     # all thread followers
-
     query = <<~END_SQL
       SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
       UNION DISTINCT
@@ -78,6 +98,7 @@ module CommentsHelper
   end
 end
 
+# HTML sanitizer for use with comments.
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super
