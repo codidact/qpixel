@@ -201,6 +201,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def my_network
+    redirect_to network_path(current_user)
+  end
+
   def network
     @communities = Community.all
     render layout: 'without_sidebar'
