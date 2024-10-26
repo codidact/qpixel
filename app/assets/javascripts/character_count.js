@@ -89,7 +89,7 @@ $(() => {
     $count.text(text);
   });
 
-  $(document).on('ajax:success', 'form', ev => {
+  $(document).on('ajax:success', 'form', (ev) => {
     const $tgt = $(ev.target);
     $tgt.find('[data-character-count]').val('').trigger('change');
   });

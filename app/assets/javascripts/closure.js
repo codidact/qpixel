@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  QPixel.DOM.addSelectorListener('click', '.js-close-question', async ev => {
+  QPixel.DOM.addSelectorListener('click', '.js-close-question', async (ev) => {
     ev.preventDefault();
 
     const self = ev.target;

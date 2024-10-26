@@ -1,5 +1,5 @@
 $(() => {
-  $('.js-user-pref').on('change', async ev => {
+  $('.js-user-pref').on('change', async (ev) => {
     const $tgt = $(ev.target);
     let value;
     if ($tgt.attr('type') === 'checkbox') {

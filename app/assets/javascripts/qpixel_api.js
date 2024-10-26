@@ -155,13 +155,13 @@ window.QPixel = {
    * all custom checks.
    */
   validatePost: function (postText) {
-    const results = validators.map(x => x(postText));
-    const valid = results.every(x => x[0]);
+    const results = validators.map((x) => x(postText));
+    const valid = results.every((x) => x[0]);
     if (valid) {
       return [true, null];
     }
     else {
-      return [false, results.map(x => x[1]).flat()];
+      return [false, results.map((x) => x[1]).flat()];
     }
   },
 
@@ -359,7 +359,7 @@ window.QPixel = {
   },
 
   setFilterAsDefault: async (categoryId, name) => {
-    const resp = await fetch(`/categories/${categoryId}/filters/default`, {
+    await fetch(`/categories/${categoryId}/filters/default`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -461,7 +461,7 @@ window.QPixel = {
    * Set local variable _preferences and localStorage to new preferences data
    * @param data an object, containing the new preferences data
    */
-  _updatePreferencesLocally: data => {
+  _updatePreferencesLocally: (data) => {
     QPixel._preferences = data;
     const key = QPixel._preferencesLocalStorageKey();
     localStorage[key] = JSON.stringify(QPixel._preferences);

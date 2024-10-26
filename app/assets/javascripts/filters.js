@@ -33,7 +33,7 @@ $(() => {
       // Not a new filter
       $deleteButton.prop('disabled', filter.system);
 
-      const hasChanges = [...$formFilters].some(el => {
+      const hasChanges = [...$formFilters].some((el) => {
         const filterValue = filter[el.dataset.name];
         let elValue = $(el).val();
         if (filterValue?.constructor == Array) {
@@ -75,7 +75,7 @@ $(() => {
 
         templateResult: template,
         templateSelection: template
-      }).on('select2:select', async evt => {
+      }).on('select2:select', async (evt) => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
 
@@ -134,7 +134,7 @@ $(() => {
       computeEnables();
     }
 
-    $deleteButton?.on('click', async evt => {
+    $deleteButton?.on('click', async (_evt) => {
       if (confirm(`Are you sure you want to delete ${$select.val()}?`)) {
         await QPixel.deleteFilter($select.val());
         // Reinitialize to get new options

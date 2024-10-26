@@ -18,8 +18,8 @@ QPixel.DOM = {
    */
   addDelegatedListener: (event, selector, callback) => {
     if (!QPixel.DOM._eventListeners[event]) {
-      const listener = ev => {
-        QPixel.DOM._delegatedListeners.filter(x => x.event === event).forEach(listener => {
+      const listener = (ev) => {
+        QPixel.DOM._delegatedListeners.filter((x) => x.event === event).forEach((listener) => {
           if (ev.target.matches(listener.selector)) {
             listener.callback(ev);
           }
@@ -38,7 +38,7 @@ QPixel.DOM = {
    * @param {eventCallback} callback A callback function to pass to the event listener.
    */
   addSelectorListener: (event, selector, callback) => {
-    document.querySelectorAll(selector).forEach(el => {
+    document.querySelectorAll(selector).forEach((el) => {
       el.addEventListener(event, callback);
     });
   },
@@ -67,6 +67,6 @@ QPixel.DOM = {
     if (!elements['forEach']) {
       elements = [elements];
     }
-    elements.forEach(el => el.style.display = visible ? '' : 'none');
+    elements.forEach((el) => el.style.display = visible ? '' : 'none');
   }
 };

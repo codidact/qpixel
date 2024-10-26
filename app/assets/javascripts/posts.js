@@ -219,7 +219,7 @@ $(() => {
 
   postFields.on('focus keyup paste change markdown', (() => {
     let previous = null;
-    return evt => {
+    return (evt) => {
       const $tgt = $(evt.target);
       const text = $(evt.target).val();
       // Don't bother re-rendering if nothing's changed
@@ -243,12 +243,12 @@ $(() => {
         });
 
         const removedElements = [...new Set(DOMPurify.removed
-          .filter(entry => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
-          .map(entry => entry.element.localName))];
+          .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
+          .map((entry) => entry.element.localName))];
 
         const removedAttributes = [...new Set(DOMPurify.removed
-          .filter(entry => entry.attribute)
-          .map(entry => [
+          .filter((entry) => entry.attribute)
+          .map((entry) => [
             entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
             entry.from.localName
           ]))]
@@ -259,7 +259,7 @@ $(() => {
           .find('ul')
           .empty()
           .append(
-            removedElements.map(name => $(`<li><code>&lt;${name}&gt;</code></li>`)),
+            removedElements.map((name) => $(`<li><code>&lt;${name}&gt;</code></li>`)),
             removedAttributes.map(([attr, elName]) => $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`)));
 
         $tgt.parents('.form-group').siblings('.post-preview').html(html);
@@ -326,13 +326,13 @@ $(() => {
         $tgt.submit();
       }
       else {
-        const warnings = validated[1].filter(x => x['type'] === 'warning');
-        const errors = validated[1].filter(x => x['type'] === 'error');
+        const warnings = validated[1].filter((x) => x['type'] === 'warning');
+        const errors = validated[1].filter((x) => x['type'] === 'error');
 
         if (warnings.length > 0) {
           const $warningBox = $(`<div class="notice is-warning"></div>`);
           const $warningList = $(`<ul></ul>`);
-          warnings.forEach(w => {
+          warnings.forEach((w) => {
             $warningList.append(`<li>${w['message']}</li>`);
           });
           $warningBox.append($warningList);
@@ -342,7 +342,7 @@ $(() => {
         if (errors.length > 0) {
           const $errorBox = $(`<div class="notice is-danger"></div>`);
           const $errorList = $(`<ul></ul>`);
-          errors.forEach(e => {
+          errors.forEach((e) => {
             $errorList.append(`<li>${e['message']}</li>`);
           });
           $errorBox.append($errorList);
@@ -360,7 +360,7 @@ $(() => {
     }
   });
 
-  $('.js-draft-loaded').each((i, e) => {
+  $('.js-draft-loaded').each((_i, e) => {
     $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You had edited this before but haven't saved it. We loaded the edits for you.

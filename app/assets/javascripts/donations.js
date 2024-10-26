@@ -13,27 +13,27 @@ $(() => {
     }, 100);
   };
 
-  $('.js-dc-currency').on('change', ev => {
+  $('.js-dc-currency').on('change', (ev) => {
     const symbols = {
       'GBP': '£',
       'USD': '$',
       'EUR': '€'
     };
     const selected = $(ev.target).val();
-    $('.js-dc-suggestion').each((idx, el) => {
+    $('.js-dc-suggestion').each((_i, el) => {
       const $el = $(el);
       $el.text(`${symbols[selected]}${$el.attr('data-amount')}`);
     });
   });
 
-  $('.js-dc-suggestion').on('click', ev => {
+  $('.js-dc-suggestion').on('click', (ev) => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const amount = $tgt.attr('data-amount');
     $('.js-dc-amount').val(amount);
   });
 
-  $('.js-dc-amount').on('change', ev => {
+  $('.js-dc-amount').on('change', (ev) => {
     const $tgt = $(ev.target);
     const amount = parseFloat($tgt.val() || '') || 1;
     const currency = $('.js-dc-currency').val();
@@ -44,7 +44,7 @@ $(() => {
     $tgt.val(formatter.format(amount).replaceAll(',', '').substr(1));
   });
 
-  $('.js-dc-amt-form').on('submit', ev => {
+  $('.js-dc-amt-form').on('submit', (ev) => {
     const $tgt = $(ev.target);
     if ($tgt.attr('data-validated') === 'true') {
       return;
@@ -96,7 +96,7 @@ $(() => {
       }
     });
 
-    $('#stripe-df').on('submit', ev => {
+    $('#stripe-df').on('submit', (ev) => {
       if ($(ev.target).attr('data-completed') === 'true') {
         return;
       }

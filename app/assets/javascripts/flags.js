@@ -1,5 +1,5 @@
 $(() => {
-  $(document).on('click', '.flag-link', ev => {
+  $(document).on('click', '.flag-link', (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
     const isCommentFlag = self.hasClass('js-comment-flag');
@@ -58,7 +58,7 @@ $(() => {
         $(`#flag-comment-${postId}`).removeClass('is-active');
 
       })
-      .fail((jqXHR, textStatus, errorThrown) => {
+      .fail((jqXHR, _textStatus, _errorThrown) => {
         let message = jqXHR.status;
         try {
           message = JSON.parse(jqXHR.responseText)['message'];
@@ -71,7 +71,7 @@ $(() => {
       });
   });
 
-  $('.js-start-escalate').on('click', ev => {
+  $('.js-start-escalate').on('click', (ev) => {
     const $modal = $('.js-escalation-modal');
     const $tgt = $(ev.target);
     const flagId = $tgt.data('flag');

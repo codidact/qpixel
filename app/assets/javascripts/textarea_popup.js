@@ -7,7 +7,7 @@ QPixel.Popup = class Popup {
    * Remove all currently open popups.
    */
   static destroyAll () {
-    Object.values(QPixel._popups).forEach(popup => {
+    Object.values(QPixel._popups).forEach((popup) => {
       popup.destroy();
     });
   }
@@ -61,9 +61,9 @@ QPixel.Popup = class Popup {
     this._clickHandler = this.getClickHandler();
     this._keyHandler = this.getKeyHandler();
 
-    this.items.forEach(el => {
+    this.items.forEach((el) => {
       this.$popup.append(el);
-      $(el).on('click', ev => {
+      $(el).on('click', (ev) => {
         ev.stopPropagation();
         return !!this.callback ? this.callback(ev, this) : null;
       });
@@ -89,9 +89,9 @@ QPixel.Popup = class Popup {
    */
   updateItems (items) {
     this.$popup.empty();
-    items.forEach(el => {
+    items.forEach((el) => {
       this.$popup.append(el);
-      $(el).on('click', ev => {
+      $(el).on('click', (ev) => {
         ev.stopPropagation();
         return !!this.callback ? this.callback(ev, this) : null;
       });
@@ -122,7 +122,7 @@ QPixel.Popup = class Popup {
 
   getActiveIdx () {
     const items = this.$popup.find('.item').toArray();
-    const matching = items.filter(x => $(x).hasClass('active'));
+    const matching = items.filter((x) => $(x).hasClass('active'));
     return matching.length > 0 ? items.indexOf(matching[0]) : null;
   }
 
@@ -156,9 +156,9 @@ QPixel.Popup = class Popup {
 
   /**
    * Internal. Handle a keypress anywhere on the body element.
-   * @param ev the keydown Event
+   * @param _ev the keydown Event (unused)
    */
-  getKeyHandler (ev) {
+  getKeyHandler (_ev) {
     const self = this;
     return function (ev) {
       switch (ev.keyCode) {
