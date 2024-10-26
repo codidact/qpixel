@@ -28,7 +28,7 @@ class CommentThread < ApplicationRecord
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
-  def second_follower()
+  def second_follower
     ThreadFollower.where(comment_thread: self).second
   end
 
