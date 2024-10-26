@@ -80,7 +80,10 @@ Rails.application.configure do
   config.i18n.raise_on_missing_translations = true
 
   config.action_mailer.delivery_method = :letter_opener_web
-  config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
+
+  config.action_mailer.default_url_options = { 
+    host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
+  }
 
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true
