@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": false,
+    "module": "none",
+    "noEmit": true,
+    "target": "ES2018"
+  },
+  "include": ["./app/assets/javascripts"],
+  "exclude": [
+    "config",
+    "db",
+    "docker",
+    "images",
+    "img",
+    "lib",
+    "log",
+    "public",
+    "scripts",
+    "static",
+    "test",
+    "tmp",
+    "vendor"
+  ]
+}
