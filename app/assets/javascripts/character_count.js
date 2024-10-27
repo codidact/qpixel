@@ -8,6 +8,7 @@ $(() => {
 
   /**
    * Sets the icon to show before the counter, if any
+   * @param {JQuery} el
    * @param {CounterIcon} icon name of the icon to show
    */
   const setCounterIcon = (el, icon) => {
@@ -36,6 +37,7 @@ $(() => {
 
   /**
    * Sets the input's validation state
+   * @param {JQuery} el
    * @param {InputValidationState} state the state to set
    */
   const setInputValidationState = (el, state) => {
@@ -45,6 +47,7 @@ $(() => {
 
   /**
    * Sets the submit button's disabled state
+   * @param {JQuery} el
    * @param {SubmitButtonDisabledState} state the state to set
    */
   const setSubmitButtonDisabledState = (el, state) => {

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   QPixel.DOM.addSelectorListener('click', '.js-close-question', async (ev) => {
     ev.preventDefault();
 
-    const self = ev.target;
+    const self = /** @type {HTMLElement} */(ev.target);
     const activeRadio = self.closest('.js-close-box').querySelector("input[type='radio'][name='close-reason']:checked");
 
     if (!activeRadio) {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         location.reload();
       }
       else {
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${response.message}`);
+        QPixel.createNotification('danger', `<strong>Failed:</strong> ${res.message}`);
       }
     }
     else {

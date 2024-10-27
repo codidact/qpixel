@@ -1,3 +1,6 @@
+/**
+ * @type {PostValidator[]}
+ */
 const validators = [];
 
 /** Counts notifications popped up at any time. */
@@ -79,7 +82,7 @@ window.QPixel = {
         'max-width': '800px',
         'cursor': 'pointer'
       })
-      .on('click', function (ev) {
+      .on('click', function (_ev) {
         $(this).fadeOut(200, function () {
           $(this).remove();
           popped_modals_ct = popped_modals_ct > 0 ? (popped_modals_ct - 1) : 0;
@@ -92,7 +95,7 @@ window.QPixel = {
   /**
    * Get the absolute offset of an element.
    * @param el the element for which to find the offset.
-   * @returns {{top: integer, left: integer, bottom: integer, right: integer}}
+   * @returns {{top: number, left: number, bottom: number, right: number}}
    */
   offset: function (el) {
     const topLeft = $(el).offset();
@@ -171,9 +174,14 @@ window.QPixel = {
    * @param text the text with which to replace the selection
    */
   replaceSelection: ($field, text) => {
-    const prev = $field.val();
+    const prev = $field.val()?.toString();
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   },
+
+  /**
+   * @type {Filter[]|null}
+   */
+  _filters: null,
 
   /**
    * Used to prevent launching multiple requests to /users/me
@@ -236,7 +244,7 @@ window.QPixel = {
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * localStorage, or Redis via AJAX.
-   * @returns {Promise<Object>} a JSON object containing user preferences
+   * @returns {Promise<UserPreferences>} a JSON object containing user preferences
    */
   _getPreferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
@@ -262,7 +270,7 @@ window.QPixel = {
    * Get a single user preference by name.
    * @param name the name of the requested preference
    * @param community is the requested preference community-local (true), or network-wide (false)?
-   * @returns {Promise<*>} the value of the requested preference
+   * @returns {Promise<string>} the value of the requested preference
    */
   preference: async (name, community = false) => {
     const user = await QPixel.user();

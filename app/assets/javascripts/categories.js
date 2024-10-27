@@ -1,7 +1,7 @@
 $(() => {
   $('.js-category-tag-set-select').on('change', (ev) => {
     const $tgt = $(ev.target);
-    const tagSetId = $tgt.val();
+    const tagSetId = $tgt.val()?.toString();
     const formGroups = $('.js-category-tags-group');
     if (tagSetId) {
       formGroups.each((_i, el) => {
@@ -66,9 +66,9 @@ $(() => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
     const categoryId = $tgt.attr('data-category');
-    const postTypeId = parseInt($widget.find('.js-cpt-post-type').val(), 10) || null;
-    const upvoteRep = parseInt($widget.find('.js-cpt-upvote-rep').val(), 10) || 0;
-    const downvoteRep = parseInt($widget.find('.js-cpt-downvote-rep').val(), 10) || 0;
+    const postTypeId = parseInt($widget.find('.js-cpt-post-type').val()?.toString(), 10) || null;
+    const upvoteRep = parseInt($widget.find('.js-cpt-upvote-rep').val()?.toString(), 10) || 0;
+    const downvoteRep = parseInt($widget.find('.js-cpt-downvote-rep').val()?.toString(), 10) || 0;
 
     const resp = await fetch(`/categories/${categoryId}/edit/post-types`, {
       method: 'POST',

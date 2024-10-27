@@ -5,14 +5,14 @@ $(() => {
     const $formFilters = $form.find('.form--filter');
     const $saveButton = $form.find('.filter-save');
     const $isDefaultCheckbox = $form.find('.filter-is-default');
-    const categoryId = $isDefaultCheckbox.val();
+    const categoryId = $isDefaultCheckbox.val()?.toString();
     let defaultFilter = await QPixel.defaultFilter(categoryId);
     const $deleteButton = $form.find('.filter-delete');
 
     // Enables/Disables Save & Delete buttons programatically
     async function computeEnables() {
       const filters = await QPixel.filters();
-      const filterName = $select.val();
+      const filterName = $select.val()?.toString();
 
       // Nothing set
       if (!filterName) {
@@ -112,13 +112,13 @@ $(() => {
     async function saveFilter() {
       if (!$form[0].reportValidity()) { return; }
 
-      const filter = {};
+      const filter = /** @type {Filter} */({});
 
       for (const el of $formFilters) {
         filter[el.dataset.name] = $(el).val();
       }
 
-      await QPixel.setFilter($select.val(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
+      await QPixel.setFilter($select.val()?.toString(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
       defaultFilter = await QPixel.defaultFilter(categoryId);
 
       // Reinitialize to get new options
@@ -136,7 +136,7 @@ $(() => {
 
     $deleteButton?.on('click', async (_evt) => {
       if (confirm(`Are you sure you want to delete ${$select.val()}?`)) {
-        await QPixel.deleteFilter($select.val());
+        await QPixel.deleteFilter($select.val()?.toString());
         // Reinitialize to get new options
         await initializeSelect();
         clear();

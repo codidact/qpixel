@@ -35,8 +35,8 @@ $(() => {
 
   $('.js-dc-amount').on('change', (ev) => {
     const $tgt = $(ev.target);
-    const amount = parseFloat($tgt.val() || '') || 1;
-    const currency = $('.js-dc-currency').val();
+    const amount = parseFloat($tgt.val()?.toString() || '') || 1;
+    const currency = $('.js-dc-currency').val()?.toString();
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency
@@ -51,7 +51,7 @@ $(() => {
     }
 
     const amountInput = $tgt.find('input[name="amount"]');
-    const amount = amountInput.val();
+    const amount = amountInput.val()?.toString();
 
     if (amount === '') {
       failValidation(amountInput, 'Please enter an amount');

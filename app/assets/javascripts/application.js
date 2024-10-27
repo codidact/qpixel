@@ -18,25 +18,28 @@
 document.addEventListener('DOMContentLoaded', async () => {
   QPixel.DOM.addSelectorListener('click', 'a.flag-dialog-link', (ev) => {
     ev.preventDefault();
-    const flagDialog = ev.target.closest('.post--body').querySelector('.js-flag-box');
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const flagDialog = tgt.closest('.post--body').querySelector('.js-flag-box');
     flagDialog.classList.toggle('is-active');
   });
 
   QPixel.DOM.addSelectorListener('click', '.close-dialog-link', (ev) => {
     ev.preventDefault();
-    const dialog = ev.target.closest('.post--body').querySelector('.js-close-box');
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const dialog = tgt.closest('.post--body').querySelector('.js-close-box');
     dialog.classList.toggle('is-active');
   });
 
   QPixel.DOM.addSelectorListener('click', '.show-all-flags-dialog-link', (ev) => {
     ev.preventDefault();
-    const dialog = ev.target.closest('.post--body').querySelector('.js-flags');
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const dialog = tgt.closest('.post--body').querySelector('.js-flags');
     dialog.classList.toggle('is-active');
   });
 
   QPixel.DOM.addSelectorListener('click', '.flag-resolve', async (ev) => {
     ev.preventDefault();
-    const tgt = ev.target;
+    const tgt = /** @type {HTMLElement} */(ev.target);
     const id = tgt.dataset.flagId;
     const data = {
       result: tgt.dataset.result,
@@ -52,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (req.status === 200) {
       const res = await req.json();
       if (res.status === 'success') {
-        const flagContainer = tgt.parentNode.parentNode.parentNode;
+        const flagContainer = /** @type {HTMLElement} */(tgt.parentNode.parentNode.parentNode);
         QPixel.DOM.fadeOut(flagContainer, 200);
       }
       else {

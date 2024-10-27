@@ -13,7 +13,7 @@ $(() => {
     await QPixel.setPreference(prefName, value, community);
   });
 
-  $('.item-list--item').find('.badge.is-tag').each(async (i, e) => {
+  $('.item-list--item').find('.badge.is-tag').each(async (_i, e) => {
     const prefValue = await QPixel.preference('favorite_tags', true);
     if (!prefValue) {
       return;
