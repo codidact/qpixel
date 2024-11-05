@@ -4,7 +4,7 @@ These instructions are for setting up a development instance of QPixel. QPixel i
 built with Ruby on Rails.
 
 In that guide it is assumed that you already have a Unix environment available
-with Ruby  and Bundler installed. WSL works as well. Windows (core) has not been tested.
+with Ruby and Bundler installed. WSL works as well. Windows (core) has not been tested.
 
 For an installation with **Docker** see the README.md in the [docker](docker) folder
 for further instructions.
@@ -45,6 +45,29 @@ bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
 
 QPixel is tested with Ruby 3 (and works with Ruby 2.7 as of December 2022).
 
+## Environment
+
+The following lists environment variables provided for QPixel customization
+(this section is best-effort, please check for `ENV['<variable name>']`) in source code for the full list of available variables (for Docker-specific variables, see [Docker README](/docker/README.md)):
+
+| Name                              | Value                                                  | Required? | Default                    | Description                                                                                                    |
+| --------------------------------- | ------------------------------------------------------ | --------- | -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `BACKTRACE`                       | `<1>`                                                  | no        | -                          | Enables backtrace for libraries (see [backtrace_silencers.rb](/config/initializers/backtrace_silencers.rb))    |
+| `BUNDLE_GEMFILE`                  |                                                        | no        |                            |                                                                                                                |
+| `CONFIRMABLE_ALLOWED_ACCESS_DAYS` | `<number>`                                             | no        | `0`                        | Sets for how long (in days) an unconfirmed account can access the instance                                     |
+| `DRIVER`                          | `<headless_chrome\|chrome\|headless_firefox\|firefox>` | no        | `headless_firefox`         | Sets browser to use when running system tests                                                                  |
+| `MAILER_PROTOCOL`                 | `http\|https`                                          | no        | `https`                    | Sets default URL protocol to use with mailes (f.e., confirmation emails)                                       |
+| `PIDFILE`                         | `<string>`                                             | no        | `tmp/pids/server.pid`      | Sets pidfile (a file where the id of a process is written to) for Puma                                         |
+| `PORT`                            | `<number>`                                             | no        | `3000`                     | Sets the port on which the server will listen for incoming requests                                            |
+| `RAILS_ENV`                       | `<development\|production\|test>`                      | no        | `development`              | Sets the environment to use (see [config/environments](/config/environments/))                                 |
+| `RAILS_MAX_THREADS`               | `<number>`                                             | no        | `5`                        | Sets the maximum number of threads from the internal thread pool to use for requests                           |
+| `RAILS_MIN_THREADS`               | `<number>`                                             | no        | `5`                        | Sets the minimum number of threads from the internal pool to use for requests                                  |
+| `RAILS_SERVE_STATIC_FILES`        | `<boolean>`                                            | no        | -                          |                                                                                                                |
+| `REDIS_URL`                       | `<string>`                                             | no        | `redis://localhost:6379/1` |                                                                                                                |
+| `SECRET_KEY_BASE`                 | `<string>`                                             | yes       | -                          | Sets the secret key for signed cookie verification (can be generated with `rake secret`, used in `production`) |
+| `SEEDS`                           | `<seeds source name>`                                  | no        | -                          | Runs only a specified set of seeds from [db/seeds](/db/seeds/)                                                 |
+| `UPDATE_POSTS`                    | `<boolean>`                                            | no        | -                          | If set to `true`, updates seeded posts when running post seeds                                                 |
+| `WEB_CONCURRENCY`                 | `<number>`                                             | no        | `2`                        |                                                                                                                |
 
 ### Install JS runtime
 
@@ -142,7 +165,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
+After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates. (If you are preparing a production deployment, you might choose to edit some of the help seeds first. See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -182,8 +205,8 @@ Go to `http://localhost:3000/categories/`
 
 ![img/categories.png](img/categories.png)
 
- Click "edit" for each category and scroll down to see the "Tag Set" field. This
- will be empty on first setup.
+Click "edit" for each category and scroll down to see the "Tag Set" field. This
+will be empty on first setup.
 
 ![img/tagset.png](img/tagset.png)
 
@@ -208,20 +231,18 @@ And then click to "Save Post in Q&A"
 
 ## Optional: Help Topics
 
-If you are running a development server, you might not care a lot about what's in the help.  If you are planning to deploy a server for actual use, however, note that the seeds have some placeholder text you'll want to edit.  We have provided starting points (to be edited) for the following topics:
+If you are running a development server, you might not care a lot about what's in the help. If you are planning to deploy a server for actual use, however, note that the seeds have some placeholder text you'll want to edit. We have provided starting points (to be edited) for the following topics:
 
-- Terms of service (TOS)  
-- Code of conduct (COC)  
-- Privacy policy  
-- Spam policy  
+- Terms of service (TOS)
+- Code of conduct (COC)
+- Privacy policy
+- Spam policy
 - Global (network) FAQ
 
-The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like.  We recommend reviewing all of the content in these topics.  There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
+The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like. We recommend reviewing all of the content in these topics. There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
 
 If you edit the seed files, use the following command to add them to your database:
 
 `UPDATE_POSTS=true rails db:seed`
 
-You can also edit the topics in the UI.  As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities.  Administrators can update help topics in this way at any time.
-
-
+You can also edit the topics in the UI. As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities. Administrators can update help topics in this way at any time.
