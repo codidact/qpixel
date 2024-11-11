@@ -165,7 +165,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates. (If you are preparing a production deployment, you might choose to edit some of the help seeds first. See "Help Topics" at the end of this guide.)
+After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates. (If you are preparing a production deployment, you might choose to edit some of the help seeds first. The "policy" topics are not included in the initial seed. See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -176,6 +176,9 @@ Now comes the big moment: You can start the QPixel server for the first time. Ru
     rails s
 
 Open a web browser and visit your server, which should be running under [http://localhost:3000](http://localhost:3000).
+
+![img/qpixel-dev.png](img/qpixel-dev.png)
+
 
 ### Create administrator account
 
@@ -198,36 +201,32 @@ While being logged into your administrator account, go to [http://localhost:3000
 Review the settings (if you want; you can change them later) and click "Save and continue" to complete
 setting up the dev server.
 
-### Configure Categories
-
-Before you try to create a post we need to configure categories!
-Go to `http://localhost:3000/categories/`
-
-![img/categories.png](img/categories.png)
-
-Click "edit" for each category and scroll down to see the "Tag Set" field. This
-will be empty on first setup.
-
-![img/tagset.png](img/tagset.png)
-
-You will need to select a tag set for each category! For example, the Meta category can be
-associated with the "Meta" tag set, and the Q&A category can be associated with "Main"
-
-![img/tagset-selected.png](img/tagset-selected.png)
-
-Make sure to click save for each one.<br>
-<em>Note:</em> You may need to run `rails db:seed` again.
-
 ## Create a Post
 
-You should then be able to create a post! There are character requirements for the
-body and title, and you are required at least one tag.
+You can now create your first post. There are character requirements for the
+body and title, and you are required to add at least one tag.
 
 ![img/create-post.png](img/create-post.png)
 
-And then click to "Save Post in Q&A"
+When you've met the length requirements and added a tag, the "Save Post in Q&A" button is enabled and you can click it.
 
 ![img/post.png](img/post.png)
+
+
+## Optional: Required Tags
+
+The special Meta tags (discussion, bug, support, feature-request) are not seeded. (We do not assume that all deployments want to manage user feedback the same way.) You can create tags directly on the Meta Tags page:
+
+![img/meta-tags.png](img/meta-tags.png)
+
+Next, edit the Meta category settings:
+
+![img/edit-category.png](img/edit-category.png)
+
+Add the tags to the "Required tags" section:
+
+![img/required-tags.png](img/required-tags.png)
+
 
 ## Optional: Help Topics
 
