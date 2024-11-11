@@ -203,7 +203,7 @@ setting up the dev server.
 
 ## Create a Post
 
-You can now reate your first post. There are character requirements for the
+You can now create your first post. There are character requirements for the
 body and title, and you are required to add at least one tag.
 
 ![img/create-post.png](img/create-post.png)
