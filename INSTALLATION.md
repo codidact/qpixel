@@ -179,6 +179,7 @@ Open a web browser and visit your server, which should be running under [http://
 
 ![img/qpixel-dev.png](img/qpixel-dev.png)
 
+
 ### Create administrator account
 
 You can create the first user account in the application through the "Sign up" route.
@@ -202,12 +203,12 @@ setting up the dev server.
 
 ## Create a Post
 
-You should then be able to create a post! There are character requirements for the
-body and title, and you are required at least one tag.
+You can now reate your first post. There are character requirements for the
+body and title, and you are required to add at least one tag.
 
 ![img/create-post.png](img/create-post.png)
 
-And then click to "Save Post in Q&A"
+When you've met the length requirements and added a tag, the "Save Post in Q&A" button is enabled and you can click it.
 
 ![img/post.png](img/post.png)
 
