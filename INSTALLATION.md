@@ -212,11 +212,15 @@ And then click to "Save Post in Q&A"
 
 ## Optional: Required Tags
 
-The special Meta tags (discussion, bug, support, feature-request) are not seeded. (We do not assume that all deployments want to manage user feedback the same way.) You can create tags directly on the Meta Tags page and then add them in category settings:
+The special Meta tags (discussion, bug, support, feature-request) are not seeded. (We do not assume that all deployments want to manage user feedback the same way.) You can create tags directly on the Meta Tags page:
 
 ![img/meta-tags.png](img/meta-tags.png)
 
+Next, edit the Meta category settings:
+
 ![img/edit-category.png](img/edit-category.png)
+
+Add the tags to the "Required tags" section:
 
 ![img/required-tags.png](img/required-tags.png)
 
