@@ -177,6 +177,8 @@ Now comes the big moment: You can start the QPixel server for the first time. Ru
 
 Open a web browser and visit your server, which should be running under [http://localhost:3000](http://localhost:3000).
 
+![img/qpixel-dev.png](img/qpixel-dev.png)
+
 ### Create administrator account
 
 You can create the first user account in the application through the "Sign up" route.
