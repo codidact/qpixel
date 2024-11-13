@@ -8,6 +8,7 @@ RUN apt-get update && \
     autoconf \ 
     bison \
     build-essential \
+    libc6 \
     libffi-dev \
     libgdbm-dev \
     libncurses5-dev \
