@@ -1,29 +1,23 @@
-FROM --platform=linux/arm64/v8 ruby:3.0.0
+FROM ruby:3.0.0
 
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 RUN apt-get update && \
-    apt-get install -y gcc && \
-    apt-get install -y make && \
-    apt-get install -y \
+    apt-get install -y gcc \
+    make \
     default-libmysqlclient-dev \
     autoconf \ 
     bison \
     build-essential \
-    ruby-dev \
-    libssl-dev \
-    libyaml-dev \
-    libreadline-dev \
-    zlib1g-dev \
-    liblzma-dev \
-    libncurses5-dev \
     libffi-dev \
-    libgdbm-dev && \
-    patch && \
-    apt-get install -y default-mysql-server
-
-RUN dpkg --add-architecture amd64
-RUN apt update
-RUN apt install -y libc6:amd64
+    libgdbm-dev \
+    libncurses5-dev \
+    libreadline-dev \
+    libssl-dev \
+    libxml2-dev \ 
+    libxslt-dev \
+    libyaml-dev \
+    zlib1g-dev \
+    default-mysql-server
 
 # Install nodejs and imagemagick
 WORKDIR /opt
@@ -41,8 +35,11 @@ WORKDIR /code
 COPY . /code
 
 RUN gem install bundler -v 2.4.22
+
+# otherwise, Nokogiri fails on M1+ Mac host builds
+RUN bundle config build.nokogiri --use-system-libraries
+
 RUN bundle install
-RUN gem install nokogiri --platform=ruby
 
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
