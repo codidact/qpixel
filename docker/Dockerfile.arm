@@ -1,23 +1,10 @@
-FROM ruby:3.0.0
+FROM ruby:3.0.6-bullseye
 
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 RUN apt-get update && \
-    apt-get install -y gcc \
-    make \
-    default-libmysqlclient-dev \
-    autoconf \ 
-    bison \
+    apt-get install -y bison \
     build-essential \
-    libc6 \
-    libffi-dev \
-    libgdbm-dev \
-    libncurses5-dev \
-    libreadline-dev \
-    libssl-dev \
-    libxml2-dev \ 
     libxslt-dev \
-    libyaml-dev \
-    zlib1g-dev \
     default-mysql-server
 
 # Install nodejs and imagemagick
@@ -35,11 +22,7 @@ ENV PATH=$NODEJS_HOME:$PATH
 WORKDIR /code
 COPY . /code
 
-RUN gem install bundler -v 2.4.22
-
-# otherwise, Nokogiri fails on M1+ Mac host builds
-RUN bundle config build.nokogiri --use-system-libraries
-
+RUN gem install bundler:2.4.13
 RUN bundle install
 
 EXPOSE 80 443 3000

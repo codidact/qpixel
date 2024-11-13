@@ -1,22 +1,11 @@
-FROM ruby:3.0.0
+FROM ruby:3.0.6-bullseye
 
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 RUN apt-get update && \
-    apt-get install -y gcc && \
-    apt-get install -y make && \
-    apt-get install -y \
-    default-libmysqlclient-dev \
-    autoconf \ 
-    bison \
+    apt-get install -y bison \
     build-essential \
-    libssl-dev \
-    libyaml-dev \
-    libreadline-dev \
-    zlib1g-dev \
-    libncurses5-dev \
-    libffi-dev \
-    libgdbm-dev && \
-    apt-get install -y default-mysql-server
+    libxslt-dev \
+    default-mysql-server
 
 # Install nodejs and imagemagick
 WORKDIR /opt
@@ -32,8 +21,9 @@ ENV PATH=$NODEJS_HOME:$PATH
 # Add core code to container
 WORKDIR /code
 COPY . /code
-RUN gem install bundler -v 2.4.22 && \
-    bundle install
+
+RUN gem install bundler:2.4.13
+RUN bundle install
 
 EXPOSE 80 443 3000
 ENTRYPOINT ["/bin/bash"]
