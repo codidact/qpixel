@@ -1,4 +1,4 @@
-FROM ruby:3.0.6-bullseye
+FROM ruby:3.1.2-bullseye
 
 ENV RUBYOPT="-KU -E utf-8:utf-8"
 RUN apt-get update && \
