@@ -10,10 +10,7 @@ RUN apt-get update && \
 # Install nodejs and imagemagick
 WORKDIR /opt
 RUN wget https://nodejs.org/dist/v12.18.3/node-v12.18.3-linux-x64.tar.xz && \
-    tar xf node-v12.18.3-linux-x64.tar.xz && \
-    wget https://imagemagick.org/archive/binaries/magick && \
-    chmod +x magick && \
-    mv magick /usr/local/bin/magick
+    tar xf node-v12.18.3-linux-x64.tar.xz
 
 ENV NODEJS_HOME=/opt/node-v12.18.3-linux-x64/bin
 ENV PATH=$NODEJS_HOME:$PATH
