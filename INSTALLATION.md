@@ -13,6 +13,8 @@ If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 [rbenv](https://github.com/rbenv/rbenv#installation) to install it before following
 these instructions.
 
+QPixel is tested with Ruby 3 (and works with Ruby 2.7 as of December 2022).
+
 ## Prerequisites
 
 For Debian-Based Linux:
@@ -43,7 +45,6 @@ brew install mysql bison openssl mysql-client
 bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
 ```
 
-QPixel is tested with Ruby 3 (and works with Ruby 2.7 as of December 2022).
 
 ## Environment
 
@@ -120,7 +121,7 @@ After downloading QPixel, you need to install all the dependencies. For that, yo
 If Ruby complains, that the Bundler hasn't been installed yet, use `gem install bundler` and
 then re-run the above command.
 
-### Setting up the Database
+### Set up the Database
 
 If you weren't asked to set the root MySQL user password during `mysql-server` installation,
 the installation is likely to be using Unix authentication instead. You'll need to sign into
@@ -211,6 +212,11 @@ body and title, and you are required to add at least one tag.
 When you've met the length requirements and added a tag, the "Save Post in Q&A" button is enabled and you can click it.
 
 ![img/post.png](img/post.png)
+
+
+## Optional: Single Sign On
+
+You can [set up SAML Single Sign On](https://github.com/codidact/qpixel/wiki/Setting-up-SAML-Single-Sign-On).
 
 
 ## Optional: Required Tags
