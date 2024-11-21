@@ -1,3 +1,5 @@
+<%= render 'tabs', user: @user %>
+
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
 <% if moderator? && deleted_user?(@user) %>
@@ -17,8 +19,6 @@
     The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
   </div>
 <% end %>
-
-<%= render 'tabs', user: @user %>
 
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
