@@ -216,7 +216,7 @@ When you've met the length requirements and added a tag, the "Save Post in Q&A" 
 
 ## Optional: Single Sign On
 
-You can [set up SAML Single Sign On](https://github.com/codidact/qpixel/wiki/Setting-up-SAML-Single-Sign-On).
+Please see our wiki for [detailed instructions](https://github.com/codidact/qpixel/wiki/Setting-up-SAML-Single-Sign-On) on setting up SAML Single Sign-On.
 
 
 ## Optional: Required Tags
