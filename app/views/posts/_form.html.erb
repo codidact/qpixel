@@ -129,7 +129,7 @@
       <%= f.select :tags_cache, options_for_select(
                                   (tags || post.tags_cache).map { |t| [t, t] },
                                   selected: tags || post.tags_cache),
-                   { include_blank: true },
+                   {},
                    multiple: true,
                    class: "form-element js-tag-select",
                    data: { tag_set: category.tag_set_id } %>
