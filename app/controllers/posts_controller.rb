@@ -602,7 +602,9 @@ class PostsController < ApplicationController
       key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
 
       if key == :tags
-        RequestContext.redis.sadd(key_name, params[key])
+        if params[key].present?
+          RequestContext.redis.sadd(key_name, params[key])
+        end
       else
         RequestContext.redis.set(key_name, params[key])
       end
