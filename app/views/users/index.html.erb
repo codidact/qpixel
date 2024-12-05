@@ -22,10 +22,14 @@
               role: 'button', 'aria-label': 'Sort by age' %>
 </div>
 
-<div class="user-list">
-  <% @users.each do |user| %>
-    <%= render 'user', user: user %>
-  <% end %>
-</div>
+<% if @users.count == 0 %>
+  <p>No users found.</p>
+<% else %>
+  <div class="user-list">
+    <% @users.each do |user| %>
+      <%= render 'user', user: user %>
+    <% end %>
+  </div>
+<% end %>
 
 <%= will_paginate @users, renderer: BootstrapPagination::Rails %>
