@@ -23,7 +23,7 @@
 </div>
 
 <% if @users.count == 0 %>
-  <p>No users found.</p>
+  <p><%= I18n.t('search.no_users') %>
 <% else %>
   <div class="user-list">
     <% @users.each do |user| %>
