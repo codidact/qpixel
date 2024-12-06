@@ -23,7 +23,7 @@
 </div>
 
 <% if @users.count == 0 %>
-  <p><%= I18n.t('search.no_users') %>
+  <p><%= I18n.t('search.no_users') %></p>
 <% else %>
   <div class="user-list">
     <% @users.each do |user| %>
