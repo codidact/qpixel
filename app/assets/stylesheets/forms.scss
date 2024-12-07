@@ -17,14 +17,6 @@ select.form-element {
 
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
-
-    & > :first-child {
-      margin: 0 0.5em 0 0 !important;
-    }
-
-    & > :last-child {
-      margin: 0 0 0 0.5em !important;
-    }
   }
 
   & > .form-group {
