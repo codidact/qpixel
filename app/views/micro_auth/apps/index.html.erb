@@ -29,7 +29,9 @@
       <%= text_field_tag :search, params[:search], class: 'form-element' %>
     </div>
     <div class="actions has-padding-bottom-1">
-      <%= submit_tag 'Search', class: 'button' %>
+     <%= button_tag type: :submit, class: 'button is-medium is-filled is-outlined', name: nil do %>
+        <i class="fa fa-search"></i>
+      <% end %>
     </div>
   </div>
 <% end %>
