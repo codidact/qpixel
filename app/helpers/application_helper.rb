@@ -202,5 +202,7 @@ module ApplicationHelper
     end
 
     [shasum, date]
+  rescue
+    [nil, nil]
   end
 end
