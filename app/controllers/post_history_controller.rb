@@ -10,7 +10,12 @@ class PostHistoryController < ApplicationController
                           .includes(:post_history_type, :user, post_history_tags: [:tag])
                           .order(created_at: :desc, id: :desc)
                           .paginate(per_page: 20, page: params[:page])
-    render layout: 'without_sidebar'
+
+    if @post&.help_category.nil?
+      render layout: 'without_sidebar'
+    else
+      render 'post_history/post', layout: 'without_sidebar', locals: { show_content: false }
+    end
   end
 
   def slug_post
