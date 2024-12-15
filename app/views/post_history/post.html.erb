@@ -1,8 +1,12 @@
+<% @show_content = !!defined?(show_content) ? show_content : true %>
+
 <h1>Post History</h1>
 
+<% if @show_content %>
 <div class="item-list">
   <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
 </div>
+<% end %>
 
 <% @history.each.with_index do |event, index| %>
   <details class="history-event" id="<%= @history.size - index %>">
