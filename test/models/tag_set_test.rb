@@ -1,7 +1,9 @@
 require 'test_helper'
 
 class TagSetTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  include CommunityRelatedHelper
+
+  test 'is community related' do
+    assert_community_related(TagSet)
+  end
 end
