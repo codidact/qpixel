@@ -63,6 +63,23 @@ class Post < ApplicationRecord
     match_search term, posts: :body_markdown
   end
 
+  def self.by_slug(slug, user)
+    post = Post.unscoped.where(
+      doc_slug: slug,
+      community_id: [RequestContext.community_id, nil]
+    ).first
+
+    if post&.help_category == '$Disabled'
+      return nil
+    end
+
+    if post&.help_category == '$Moderator' && !user&.is_moderator
+      return nil
+    end
+
+    post
+  end
+
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
   # override them later with more efficient methods.
   ['Question', 'Answer', 'PolicyDoc', 'HelpDoc', 'Article'].each do |pt|
