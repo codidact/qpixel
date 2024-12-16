@@ -574,12 +574,13 @@ class UsersController < ApplicationController
   end
 
   def vote_summary
-    @votes = Vote.where(recv_user: @user) \
-                 .includes(:post).group(:date_of, :post_id, :vote_type)
+    @votes = Vote.where(recv_user: @user)
+                 .joins(:post)
+                 .group(:date_of, :post_id, :vote_type)
 
-    @votes = @votes.select(:post_id, :vote_type) \
-                   .select('count(*) as vote_count') \
-                   .select('date(created_at) as date_of')
+    @votes = @votes.select(:post_id, :vote_type)
+                   .select('count(*) as vote_count')
+                   .select('date(votes.created_at) as date_of')
 
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
                    .group_by(&:date_of).map do |k, vl|
