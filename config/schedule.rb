@@ -18,6 +18,10 @@ every 1.day, at: '02:20' do
   runner 'scripts/cleanup_drafts.rb'
 end
 
+every 1.day, ay: '02.25' do
+  runner 'scripts/cleanup_votes.rb'
+end
+
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end
