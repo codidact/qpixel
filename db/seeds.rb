@@ -51,6 +51,19 @@ def expand_ids(type, seeds)
   end
 end
 
+def create_objects(type, seed)
+  seeds = expand_communities(type, seed)
+  seeds = expand_ids(type, seeds)
+
+  # Actually create the objects and count successes
+  objs = type.create seeds
+
+  skipped = objs.select { |o| o.errors.any? }.size
+  created = objs.select { |o| !o.errors.any? }.size
+
+  [created, skipped]
+end
+
 sorted.each do |f, type|
   begin
     processed = ERB.new(File.read(f)).result(binding)
@@ -113,13 +126,9 @@ sorted.each do |f, type|
           end
         end
       else
-        seeds = expand_communities(type, seed)
-        seeds = expand_ids(type, seeds)
-
-        # Actually create the objects and count successes
-        objs = type.create seeds
-        skipped += objs.select { |o| o.errors.any? }.size
-        created += objs.select { |o| !o.errors.any? }.size
+        new_created, new_skipped = create_objects(type, seed)
+        created += new_created
+        skipped += new_skipped
       end
     end
     unless Rails.env.test?
