@@ -47,7 +47,7 @@ class Vote < ApplicationRecord
   end
 
   def check_valid
-    throw :abort unless valid?
+    throw :abort unless valid? || post.blank?
   end
 
   def add_counter
