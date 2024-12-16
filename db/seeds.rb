@@ -31,6 +31,26 @@ def expand_communities(type, seed)
   end
 end
 
+def expand_ids(type, seeds)
+  # Transform all _id relations into the actual rails objects to pass validations
+  seeds.map do |seed|
+    columns = type.column_names.select { |name| name.match(/^.*_id$/) }
+    new_seed = seed.deep_symbolize_keys
+    columns.each do |column|
+      begin
+        column_type_name = column.chomp('_id')
+        column_type = column_type_name.classify.constantize
+        new_seed = new_seed.except(column.to_sym)
+                           .merge(column_type_name.to_sym => column_type.unscoped.find(seed[column.to_sym]))
+      rescue StandardError
+        # Either the type does not exist or the value specified as the id is not valid, ignore.
+        next
+      end
+    end
+    new_seed
+  end
+end
+
 sorted.each do |f, type|
   begin
     processed = ERB.new(File.read(f)).result(binding)
@@ -94,24 +114,7 @@ sorted.each do |f, type|
         end
       else
         seeds = expand_communities(type, seed)
-
-        # Transform all _id relations into the actual rails objects to pass validations
-        seeds = seeds.map do |seed|
-          columns = type.column_names.select { |name| name.match(/^.*_id$/) }
-          new_seed = seed.deep_symbolize_keys
-          columns.each do |column|
-            begin
-              column_type_name = column.chomp('_id')
-              column_type = column_type_name.classify.constantize
-              new_seed = new_seed.except(column.to_sym)
-                                 .merge(column_type_name.to_sym => column_type.unscoped.find(seed[column.to_sym]))
-            rescue StandardError
-              # Either the type does not exist or the value specified as the id is not valid, ignore.
-              next
-            end
-          end
-          new_seed
-        end
+        seeds = expand_ids(type, seeds)
 
         # Actually create the objects and count successes
         objs = type.create seeds
