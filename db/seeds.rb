@@ -21,6 +21,16 @@ sorted = files.zip(types).to_h.sort do |a, b|
   (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
 end.to_h
 
+def expand_communities(type, seed)
+  if type.column_names.include?('community_id') && !seed.include?('community_id')
+    # if model includes a community_id, create the seed for every community
+    Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
+  else
+    # otherwise, no need to worry, just create it
+    [seed]
+  end
+end
+
 sorted.each do |f, type|
   begin
     processed = ERB.new(File.read(f)).result(binding)
@@ -83,13 +93,7 @@ sorted.each do |f, type|
           end
         end
       else
-        seeds = if type.column_names.include?('community_id') && !seed.include?('community_id')
-                 # if model includes a community_id, create the seed for every community
-                 Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
-               else
-                 # otherwise, no need to worry, just create it
-                 [seed]
-                end
+        seeds = expand_communities(type, seed)
 
         # Transform all _id relations into the actual rails objects to pass validations
         seeds = seeds.map do |seed|
@@ -116,7 +120,7 @@ sorted.each do |f, type|
       end
     end
     unless Rails.env.test?
-      puts "#{type}: Errored #{errored}, Created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
+      puts "#{type}: errored #{errored}, created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
     end
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."
