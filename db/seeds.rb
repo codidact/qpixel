@@ -16,7 +16,7 @@ types = files.map do |f|
 end
 
 # Prioritize the following models (in this order) such that models depending on them get created after
-priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, CommunityUser, Filter]
+priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, Ability, CommunityUser, Filter]
 sorted = files.zip(types).to_h.sort do |a, b|
   (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
 end.to_h
@@ -62,6 +62,27 @@ def create_objects(type, seed)
   created = objs.select { |o| !o.errors.any? }.size
 
   [created, skipped]
+end
+
+def ensure_system_user_abilities
+  system_users = CommunityUser.unscoped.where(user_id: -1)
+
+  system_users.each do |su|
+    abilities = Ability.unscoped
+      .where(internal_id: ['everyone', 'mod', 'unrestricted'])
+      .where(community_id: su.community_id)
+
+    user_abilities = UserAbility.unscoped.where(community_user_id: su.id)
+
+    abilities.each do |ab|
+      unless user_abilities.any? { |ua| ua.ability_id == ab.id }
+        UserAbility.create community_user_id: su.id, ability: ab
+      end
+    rescue => e
+      puts "#{type}: failed to add \"#{ab.name}\" to system user \"#{su.id}\" on \"#{su.community.name}\""
+      puts e
+    end
+  end
 end
 
 sorted.each do |f, type|
@@ -129,6 +150,10 @@ sorted.each do |f, type|
         new_created, new_skipped = create_objects(type, seed)
         created += new_created
         skipped += new_skipped
+
+        if type == CommunityUser
+          ensure_system_user_abilities
+        end
       end
     end
     unless Rails.env.test?
