@@ -1,6 +1,6 @@
-version: "3.9"
 services:
   db:
+    restart: on-failure:3
     build:
       context: "."
       dockerfile: docker/Dockerfile.db
@@ -20,10 +20,10 @@ services:
 
 
   uwsgi:
-    restart: always
+    restart: on-failure:3
     build:
       context: "."
-      dockerfile: docker/Dockerfile
+      dockerfile: ${CLIENT_DOCKERFILE}
     depends_on:
       db:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
       - db
 
   redis:
-    restart: always
+    restart: on-failure:3
     image: redis:latest
     healthcheck:
       test: ["CMD", "redis-cli","ping"]

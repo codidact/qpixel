@@ -68,6 +68,7 @@ $(() => {
           };
         },
       },
+      placeholder: '',
       templateResult: template,
       allowClear: true
     });
