@@ -47,7 +47,9 @@
       <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
       <% if effective_profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-      <% else %>
+	<% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+	  <%= sanitize(effective_profile, attributes: %w()) %>
+	<% else %>
         <%= effective_profile %>
       <% end %>
       </div>
