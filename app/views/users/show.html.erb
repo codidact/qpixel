@@ -26,10 +26,13 @@
       <div class="profile-text">
       <p>
         <% if @user.website.present? %>
+  	  <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
           <span class="h-m-r-4">
-            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
-                                                    'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
+            <i class="fas fa-link"></i>
+	    <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
+                'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
           </span>
+          <% end %>
         <% end %>
         <% if @user.twitter.present? %>
           <span class="h-m-r-4">
@@ -47,7 +50,9 @@
       <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
       <% if effective_profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-      <% else %>
+	<% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+	  <%= sanitize(effective_profile, attributes: %w()) %>
+	<% else %>
         <%= effective_profile %>
       <% end %>
       </div>
@@ -161,14 +166,16 @@
 
       <div class="widget">
         <% @abilities.each do |a| %>
+	<% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
               <%= a.name %>
             </a>
           </div>
+        <% end %> 
         <% end %>
-        <div class="widget--footer">
+       <div class="widget--footer">
           <% if current_user&.id == @user.id %>
            <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
              Abilities &raquo;
