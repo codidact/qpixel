@@ -161,12 +161,14 @@
 
       <div class="widget">
         <% @abilities.each do |a| %>
+	<% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
               <%= a.name %>
             </a>
           </div>
+        <% end %>
         <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
