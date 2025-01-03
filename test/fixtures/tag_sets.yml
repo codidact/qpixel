@@ -5,3 +5,7 @@ main:
 meta:
   name: Meta
   community: sample
+
+empty:
+  name: 'Empty'
+  community: sample
