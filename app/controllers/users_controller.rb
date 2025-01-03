@@ -575,7 +575,7 @@ class UsersController < ApplicationController
 
   def vote_summary
     @votes = Vote.where(recv_user: @user)
-                 .joins(:post)
+                 .includes(:post)
                  .group(:date_of, :post_id, :vote_type)
 
     @votes = @votes.select(:post_id, :vote_type)
