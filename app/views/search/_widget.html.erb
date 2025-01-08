@@ -9,6 +9,14 @@
     </div>
   </div>
 
+  <% if @signed_out_me %>
+  <div class="widget is-red">
+    <div class="widget--body">
+      <p>Search results for <code>user:me</code> can only be displayed when signed in. Please sign in and try again.</p>
+    </div>
+  </div>
+  <% end %>
+
   <div class="widget is-teal">
     <div class="widget--header">
       Advanced Search Options
