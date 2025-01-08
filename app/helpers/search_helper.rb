@@ -132,7 +132,7 @@ module SearchHelper
       when 'user'
         operator, val = if value.match?(valid_value[:numeric])
                           numeric_value_sql value
-                        elsif value == 'me'
+                        elsif value == 'me' && current_user
                           ['=', current_user.id]
                         else
                           next
