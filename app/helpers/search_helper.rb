@@ -138,12 +138,12 @@ module SearchHelper
         operator, val = if value.match?(valid_value[:numeric])
                           numeric_value_sql value
                         elsif value == 'me'
-                          ['=', current_user&.id]
+                          ['=', current_user&.id&.to_i]
                         else
                           next
                         end
 
-        { param: :user, operator: operator.presence || '=', user_id: val.to_i }
+        { param: :user, operator: operator.presence || '=', user_id: val }
       when 'upvotes'
         next unless value.match?(valid_value[:numeric])
 
