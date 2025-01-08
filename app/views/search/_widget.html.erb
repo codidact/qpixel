@@ -12,7 +12,10 @@
   <% if @signed_out_me %>
   <div class="widget is-red">
     <div class="widget--body">
-      <p>Search results for <code>user:me</code> can only be displayed when signed in. Please sign in and try again.</p>
+      <p>
+        Search results for <code>user:me</code> can only be displayed when signed in. 
+        Please <%= sign_in_link 'sign in' %> and try again.
+      </p>
     </div>
   </div>
   <% end %>
