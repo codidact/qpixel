@@ -1,8 +1,11 @@
 module SearchHelper
-  def search_posts
-    # Check permissions
-    posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
+  def check_posts_permissions
+    (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
             .qa_only.list_includes
+  end
+
+  def search_posts
+    posts = check_posts_permissions
 
     qualifiers = params_to_qualifiers
     search_string = params[:search]
