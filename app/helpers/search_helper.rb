@@ -27,6 +27,8 @@ module SearchHelper
       posts.user_sort({ term: params[:sort], default: :score },
                       score: :score, age: :created_at)
     end
+
+    [posts, qualifiers]
   end
 
   # Convert a Filter record into a form parseable by the search function
