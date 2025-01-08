@@ -1,20 +1,21 @@
 # Docker Installation
 
-A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
+A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker Compose. If you want to use a custom one, simply override the `COMPOSE_FILE` predefined environment variable in the `.env` file in project root ([local-setup.sh](./local-setup.sh) script creates one automatically from [compose-env](./compose-env). By default, `COMPOSE_FILE` is set to [docker-compose.yml](../docker-compose.yml)).
 
-To use docker compose, you need to install the docker-compose-plugin. You can check whether it is already installed by running the following command.
+To use Docker Compose, you need to install the docker-compose-plugin. 
+You can check if it's already installed via the following command:
 
 ```bash
 sudo docker compose version
 ```
 
-If your version is 2.x or higher, then you are good. Otherwise, you should install the docker compose plugin. For a system like debian or ubuntu, you can use the following command.
+If the version is 2.x or higher, you are all set. If not, you should install the plugin. On a Debian-based Linux distro, you can run the following:
 
 ```bash
 sudo apt-get install docker-compose-plugin
 ```
 
-For Mac OS, you can install docker desktop by downloading it from the docker website. After starting the application, the docker compose command becomes available in your terminal.
+For Mac OS, you can install Docker Desktop by downloading it from the Docker website. After starting the application, the docker compose command becomes available in your terminal.
 
 Depending on your setup, you may need to prefix every docker command with sudo.
 
@@ -71,7 +72,7 @@ NOTE: If you get an error like "Cannot connect to the Docker daemon at ...", you
 Then start your containers:
 
 ```bash
-docker compose up # append -d (--detach) if you want, although it can be useful to see output in the terminal
+docker compose up # append -d (--detach) if you don't want to see output in the terminal
 ```
 
 After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
