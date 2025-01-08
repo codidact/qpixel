@@ -1,7 +1,7 @@
 module SearchHelper
   def check_posts_permissions
     (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
-            .qa_only.list_includes
+      .qa_only.list_includes
   end
 
   def search_posts
