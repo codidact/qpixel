@@ -1,20 +1,21 @@
 # Docker Installation
 
-A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker compose, if you choose.
+A [docker-compose.yml](../docker-compose.yml) file is provided for deployment with Docker Compose. If you want to use a custom one, simply override the `COMPOSE_FILE` predefined environment variable in the `.env` file in project root ([local-setup.sh](./local-setup.sh) script creates one automatically from [compose-env](./compose-env). By default, `COMPOSE_FILE` is set to [docker-compose.yml](../docker-compose.yml)).
 
-To use docker compose, you need to install the docker-compose-plugin. You can check whether it is already installed by running the following command.
+To use Docker Compose, you need to install the docker-compose-plugin. 
+You can check if it's already installed via the following command:
 
 ```bash
 sudo docker compose version
 ```
 
-If your version is 2.x or higher, then you are good. Otherwise, you should install the docker compose plugin. For a system like debian or ubuntu, you can use the following command.
+If the version is 2.x or higher, you are all set. If not, you should install the plugin. On a Debian-based Linux distro, you can run the following:
 
 ```bash
 sudo apt-get install docker-compose-plugin
 ```
 
-For Mac OS, you can install docker desktop by downloading it from the docker website. After starting the application, the docker compose command becomes available in your terminal.
+For Mac OS, you can install Docker Desktop by downloading it from the Docker website. After starting the application, the docker compose command becomes available in your terminal.
 
 Depending on your setup, you may need to prefix every docker command with sudo.
 
@@ -32,7 +33,14 @@ chmod +x docker/local-setup.sh
 docker/local-setup.sh
 ```
 
-Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. Editing the `./docker/env` file will change environment variables only in the running container.
+Editing the `./.env` file will modify the corresponding variables used in the docker-compose.yml file but **NOT** the environment variables in the container. 
+Editing the `./docker/env` file will change environment variables only in the running container.
+
+### Custom build config
+
+Our Docker setup supports custom build configurations for the uwsgi contianer via the `CLIENT_DOCKERFILE` environment variable (see [compose-env](/docker/compose-env)). The default is `docker/Dockerfile`, which points to a preconfigured [production-like setup](/docker/Dockerfile). For developers who need more control over their setup, we also provide a [configuration](/docker/Dockerfile.dev) that is tailored for local development.
+
+To use a custom build config, change the `CLIENT_DOCKERFILE` variable in the .env file that is automatically created by [local-setup.sh](/docker/local-setup.sh) in the project root.
 
 ## 2. Database File
 Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/env) file. The `config/database.yml` should already be gitignored.
@@ -61,17 +69,13 @@ NOTE: If you get an error like "Cannot connect to the Docker daemon at ...", you
 
 ## 4. Start Containers
 
-Then start your containers! 
+Then start your containers:
 
 ```bash
-docker compose up # append -d if you want to detach the processes, although it can be useful to see output into the terminal
-Creating qpixel_redis_1 ... done
-Creating qpixel_db_1    ... done
-Creating qpixel_uwsgi_1 ... done
+docker compose up # append -d (--detach) if you don't want to see output in the terminal
 ```
 
-The uwsgi container has a sleep command for 15 seconds to give the database a chance to start,
-so don't expect to see output right away. After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
+After about 20 seconds, check to make sure the server is running (and verify port 3000, note that you can change this mapping in the `.env` file)
 
 ```
 qpixel_uwsgi_1  | => Booting Puma
@@ -93,6 +97,22 @@ and see the interface.
 ![img/interface.png](../img/interface.png)
 
 You can then click "Sign in" to login with what you defined for `$COMMUNITY_ADMIN_EMAIL` and `$COMMUNITY_ADMIN_PASSWORD`. Importantly, your password must be 6 characters or longer, otherwise the user won't be created.
+
+### Custom build configs
+
+If you are using a custom build config that doesn't automatically start Rails or our [config for local development](/docker/Dockerfile.dev), you will also have to manually start the server.
+
+After the containers have started, connect to the uwsgi container (if you are using Docker Desktop, you can connect directly from the application):
+
+```bash
+docker exec -it qpixel-uwsgi-1 bash
+```
+
+And run the following command to start Rails (starting the server is intentionally disabled to allow for live debugging):
+
+```bash
+rails server -b 0.0.0.0
+```
 
 ## 5. Login
 

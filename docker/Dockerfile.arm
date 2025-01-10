@@ -44,7 +44,7 @@ RUN useradd --uid 1000 \
             --create-home node
 
 # setup Node.js environment
-ENV NODEJS_HOME=/opt/node-v12.18.3-linux-x64/bin
+ENV NODEJS_HOME=/usr/local/bin/node
 ENV PATH=$NODEJS_HOME:$PATH
 
 WORKDIR /code

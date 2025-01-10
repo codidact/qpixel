@@ -206,7 +206,7 @@ $(() => {
     draftTimeout = setTimeout(() => {
       const { draft, field } = parseDraft(ev.target);
       saveDraft(draft, field);
-    }, 3000);
+    }, 1000);
   });
 
   postFields.on('paste', async (evt) => {

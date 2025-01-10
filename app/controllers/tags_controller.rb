@@ -27,20 +27,27 @@ class TagsController < ApplicationController
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
-              @tag_set.tags_with_paths.order(:path)
+              @tag_set.with_paths(params[:no_excerpt])
             elsif params[:no_excerpt].present?
-              @tag_set.tags.where(excerpt: '').or(@tag_set.tags.where(excerpt: nil))
-                      .order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set.tags.where(excerpt: ['', nil])
             else
-              @tag_set&.tags&.order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set&.tags
             end
-    @count = @tags&.size || 0
+
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
-    if @count.positive?
-      @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
-                   .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
-                   .paginate(per_page: 96, page: params[:page])
-    end
+
+    @tags = @tags&.left_joins(:posts)
+                 &.group(Arel.sql("#{table}.id"))
+                 &.select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
+                 &.paginate(per_page: 96, page: params[:page])
+
+    @tags = if params[:hierarchical].present?
+              @tags&.order(:path)
+            else
+              @tags&.order(Arel.sql('COUNT(posts.id) DESC'))
+            end
+
+    @count = @tags&.length || 0
   end
 
   def show

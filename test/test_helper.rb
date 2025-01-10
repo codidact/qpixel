@@ -25,6 +25,7 @@ class ActiveSupport::TestCase
   def load_fixtures(config)
     # Loading a fixture deletes all data in the same tables, so it has to happen before we load our normal seeds.
     fixture_data = super(config)
+    load_tags_paths
     load_seeds
 
     # We do need to return the same thing as the original method to not break fixtures
@@ -40,6 +41,10 @@ class ActiveSupport::TestCase
   def load_seeds
     set_request_context
     Rails.application.load_seed
+  end
+
+  def load_tags_paths
+    ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
   end
 
   def clear_cache

@@ -10,6 +10,7 @@ support:
 
 bug:
   name: bug
+  excerpt: use for bug reports
   community: sample
   tag_set: main
 

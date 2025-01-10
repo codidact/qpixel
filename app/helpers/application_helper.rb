@@ -34,6 +34,10 @@ module ApplicationHelper
     uri.to_s
   end
 
+  def sign_in_link(title)
+    link_to title, new_user_session_url
+  end
+
   def license_link
     link_to SiteSetting['ContentLicenseName'], SiteSetting['ContentLicenseLink']
   end
@@ -202,5 +206,7 @@ module ApplicationHelper
     end
 
     [shasum, date]
+  rescue
+    [nil, nil]
   end
 end

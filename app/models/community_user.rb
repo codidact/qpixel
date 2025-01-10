@@ -14,6 +14,10 @@ class CommunityUser < ApplicationRecord
 
   after_create :prevent_ulysses_case
 
+  def system?
+    user_id == -1
+  end
+
   def suspended?
     return true if is_suspended && !suspension_end.past?
 

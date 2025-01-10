@@ -166,7 +166,8 @@ class User < ApplicationRecord
 
   def is_moderator_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    cu&.is_moderator || cu&.privilege?('mod')
+    # is_moderator is a DB check, not a call to is_moderator()
+    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
   end
 
   def has_ability_on(community_id, ability_internal_id)

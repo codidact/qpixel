@@ -44,12 +44,17 @@ RUN useradd --uid 1000 \
             --create-home node
 
 # setup Node.js environment
-ENV NODEJS_HOME=/opt/node-v12.18.3-linux-x64/bin
+ENV NODEJS_HOME=/usr/local/bin/node
 ENV PATH=$NODEJS_HOME:$PATH
 
 WORKDIR /code
 
 EXPOSE 80 443 3000
-ENTRYPOINT ["/bin/bash"]
-CMD ["/code/docker/entrypoint.sh"]
 
+RUN ls -1 /
+RUN [ ! -f "/db-created" ] && echo 1 || echo 2
+
+RUN /code/docker/entrypoint.sh dev
+
+# ensures continued running of the container
+CMD sleep 7d

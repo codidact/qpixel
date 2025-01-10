@@ -1,41 +1,43 @@
+<%= render 'tabs', user: @user %>
+
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
 <% if moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
-<%= render 'tabs', user: @user %>
+<h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
+
+<% if @user.globally_suspended? %>
+  <div class="notice is-danger h-m-b-4">
+    <p>This user has been <strong>temporarily suspended network-wide</strong>.
+    The suspension ends <span title="<%= @user.global_suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.global_suspension_end) %></span>.</p>
+  </div>
+<% elsif @user.community_user.suspended? %>
+  <div class="notice is-danger h-m-b-4">
+    <% if @user.community_user.suspension_public_comment.nil? %>
+      <p>This user has been <strong>temporarily suspended</strong>.
+    <% else %>
+      <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
+    <% end %>
+
+    The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
+  </div>
+<% end %>
 
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-6 h-p-l-2 h-p-t-0">
-
-      <h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
-
-      <% if @user.globally_suspended? %>
-        <div class="notice is-danger h-m-b-4">
-          <p>This user has been <strong>temporarily suspended network-wide</strong>.
-          The suspension ends <span title="<%= @user.global_suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.global_suspension_end) %></span>.</p>
-        </div>
-      <% elsif @user.community_user.suspended? %>
-        <div class="notice is-danger h-m-b-4">
-        <% if @user.community_user.suspension_public_comment.nil? %>
-          <p>This user has been <strong>temporarily suspended</strong>.
-        <% else %>
-          <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
-        <% end %>
-
-          The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
-        </div>
-      <% end %>
-
       <div class="profile-text">
       <p>
         <% if @user.website.present? %>
+  	  <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
           <span class="h-m-r-4">
-            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
-                                                    'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
+            <i class="fas fa-link"></i>
+	    <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
+                'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
           </span>
+          <% end %>
         <% end %>
         <% if @user.twitter.present? %>
           <span class="h-m-r-4">
@@ -53,7 +55,9 @@
       <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
       <% if effective_profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-      <% else %>
+	<% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+	  <%= sanitize(effective_profile, attributes: %w()) %>
+	<% else %>
         <%= effective_profile %>
       <% end %>
       </div>
@@ -151,12 +155,14 @@
 
       <div class="widget">
         <% @abilities.each do |a| %>
+	<% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
               <%= a.name %>
             </a>
           </div>
+        <% end %>
         <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
