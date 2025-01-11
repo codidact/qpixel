@@ -35,8 +35,8 @@ module Users::AvatarHelper
       let.font = './app/assets/imgfonts/Roboto.ttf'
       let.pointsize = size * 0.75
       let.gravity = CenterGravity
-      let.annotate ava, size, size * 1.16, 0, 0, letter.upcase do
-        self.fill = text_color
+      let.annotate ava, size, size * 1.16, 0, 0, letter.upcase do |s|
+        s.fill = text_color
       end
 
       ava.format = 'PNG'

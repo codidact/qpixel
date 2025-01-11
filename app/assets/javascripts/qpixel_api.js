@@ -3,6 +3,30 @@ const validators = [];
 /** Counts notifications popped up at any time. */
 let popped_modals_ct = 0;
 
+/**
+ * @typedef {{
+ *  min_score: number | null,
+ *  max_score: number | null,
+ *  min_answers: number | null,
+ *  max_answers: number | null,
+ *  include_tags: [string, number][],
+ *  exclude_tags: [string, number][],
+ *  status: 'any' | 'closed' | 'open',
+ *  system: boolean,
+ * }} Filter
+ *
+ * @typedef {{
+ *  id: number,
+ *  username: string,
+ *  is_moderator: boolean,
+ *  is_admin: boolean,
+ *  is_global_moderator: boolean,
+ *  is_global_admin: boolean,
+ *  trust_level: number,
+ *  se_acct_id: string | null,
+ * }} User
+ */
+
 window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
@@ -20,7 +44,7 @@ window.QPixel = {
    * @param type the type to apply to the popup - warning, danger, etc.
    * @param message the message to show
    */
-  createNotification: function(type, message) {
+  createNotification: function (type, message) {
     // Some messages include a date stamp, `append_date` governs that.
     let append_date = false;
     let message_with_date = message;
@@ -42,26 +66,26 @@ window.QPixel = {
     }
     const span = '<span aria-hidden="true">&times;</span>';
     const button = ('<button type="button" class="button is-close-button" data-dismiss="alert" aria-label="Close">' +
-        span + '</button>');
-    $("<div></div>")
-    .addClass("notice has-shadow-3 is-" + type)
-    .html(button + '<p>' + message_with_date + '</p>')
-    .css({
-      'position': 'fixed',
-      'top': '50px',
-      'left': '50%',
-      'transform': 'translateX(-50%)',
-      'width': '100%',
-      'max-width': '800px',
-      'cursor': 'pointer'
-    })
-    .on('click', function(ev) {
-      $(this).fadeOut(200, function() {
-        $(this).remove();
-        popped_modals_ct = popped_modals_ct > 0 ? (popped_modals_ct - 1) : 0;
-      });
-    })
-    .appendTo(document.body);
+      span + '</button>');
+    $('<div></div>')
+      .addClass('notice has-shadow-3 is-' + type)
+      .html(button + '<p>' + message_with_date + '</p>')
+      .css({
+        'position': 'fixed',
+        'top': '50px',
+        'left': '50%',
+        'transform': 'translateX(-50%)',
+        'width': '100%',
+        'max-width': '800px',
+        'cursor': 'pointer'
+      })
+      .on('click', function (ev) {
+        $(this).fadeOut(200, function () {
+          $(this).remove();
+          popped_modals_ct = popped_modals_ct > 0 ? (popped_modals_ct - 1) : 0;
+        });
+      })
+      .appendTo(document.body);
     popped_modals_ct += 1;
   },
 
@@ -70,7 +94,7 @@ window.QPixel = {
    * @param el the element for which to find the offset.
    * @returns {{top: integer, left: integer, bottom: integer, right: integer}}
    */
-  offset: function(el) {
+  offset: function (el) {
     const topLeft = $(el).offset();
     return {
       top: topLeft.top,
@@ -151,23 +175,59 @@ window.QPixel = {
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   },
 
+  /**
+   * Used to prevent launching multiple requests to /users/me
+   * @type {Promise<Response>|null}
+   */
+  _pendingUserResponse: null,
+
+  /**
+   * @type {User|null}
+   */
   _user: null,
 
   /**
-   * Get the user object for the current user.
-   * @returns {Promise<Object>} a JSON object containing user details
+   * FIFO-style fetch wrapper for /users/me requests
+   * @returns {Promise<Response>}
    */
-  user: async () => {
-    if (QPixel._user != null || document.body.dataset.userId === 'none') {
-      return QPixel._user;
+  _fetchUser () {
+    if (QPixel._pendingUserResponse) {
+      return QPixel._pendingUserResponse;
     }
-    const resp = await fetch('/users/me', {
+
+    const myselfPromise = fetch('/users/me', {
       credentials: 'include',
       headers: {
         'Accept': 'application/json'
       }
     });
-    QPixel._user = await resp.json();
+
+    QPixel._pendingUserResponse = myselfPromise;
+
+    return myselfPromise;
+  },
+
+  /**
+   * Get the user object for the current user.
+   * @returns {Promise<User>} a JSON object containing user details
+   */
+  user: async () => {
+    if (QPixel._user != null || document.body.dataset.userId === 'none') {
+      return QPixel._user;
+    }
+
+    try {
+      const resp = await QPixel._fetchUser();
+
+      if (!resp.bodyUsed) {
+        QPixel._user = await resp.json();
+      }
+    }
+    finally {
+      // ensures pending user is cleared regardless of network errors
+      QPixel._pendingUserResponse = null;
+    }
+
     return QPixel._user;
   },
 
@@ -186,8 +246,8 @@ window.QPixel = {
     // Early return the preferences from localStorage unless null or undefined
     const key = QPixel._preferencesLocalStorageKey();
     const localStoragePreferences = (key in localStorage)
-                                    ? JSON.parse(localStorage[key])
-                                    : null;
+      ? JSON.parse(localStorage[key])
+      : null;
     if (localStoragePreferences != null) {
       QPixel._preferences = localStoragePreferences;
       return QPixel._preferences;
@@ -205,15 +265,17 @@ window.QPixel = {
    * @returns {Promise<*>} the value of the requested preference
    */
   preference: async (name, community = false) => {
-    // Do not attempt to access preference if user is not signed in
-    if (document.body.dataset.userId === 'none') {
+    const user = await QPixel.user();
+
+    if (!user) {
       return null;
     }
+
     let prefs = await QPixel._getPreferences();
     let value = community ? prefs.community[name] : prefs.global[name];
 
     // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
-    if (typeof(value) !== 'undefined') {
+    if (typeof (value) !== 'undefined') {
       return value;
     }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
@@ -240,7 +302,7 @@ window.QPixel = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ name, value, community })
+      body: JSON.stringify({name, value, community})
     });
     const data = await resp.json();
     if (data.status !== 'success') {
@@ -249,6 +311,107 @@ window.QPixel = {
     }
     else {
       QPixel._updatePreferencesLocally(data.preferences);
+    }
+  },
+
+  /**
+   * @returns {Promise<Record<string, Filter>>}
+   */
+  filters: async () => {
+    if (this._filters == null) {
+      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
+      // loaded them for yet. Load via AJAX.
+      const resp = await fetch('/users/me/filters', {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await resp.json();
+      localStorage['qpixel.user_filters'] = JSON.stringify(data);
+      this._filters = data;
+    }
+
+    return this._filters;
+  },
+
+  /**
+   * Fetches default user filter for a given category
+   * @param categoryId id of the category to fetch
+   * @returns {Promise<string>}
+   */
+  defaultFilter: async (categoryId) => {
+    const user = await QPixel.user();
+
+    if (!user) {
+      return '';
+    }
+
+    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    const data = await resp.json();
+    return data.name;
+  },
+
+  setFilterAsDefault: async (categoryId, name) => {
+    const resp = await fetch(`/categories/${categoryId}/filters/default`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name})
+    });
+  },
+
+  setFilter: async (name, filter, category, isDefault) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.assign(filter, {name, category, is_default: isDefault}))
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter persist failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+    }
+  },
+
+  deleteFilter: async (name, system = false) => {
+    const resp = await fetch('/users/me/filters', {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name, system})
+    });
+    const data = await resp.json();
+    if (data.status !== 'success') {
+      console.error(`Filter deletion failed (${name})`);
+      console.error(resp);
+    }
+    else {
+      this._filters = data.filters;
+      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
     }
   },
 
@@ -274,7 +437,7 @@ window.QPixel = {
     // This prevents multiple calls from triggering multiple redundant '_fetchPreferences' calls
     QPixel._cachedFetchPreferences = async () => {
       await cachedPromise;
-    }
+    };
     // Remember to await the promise so the very first call does not return before '_fetchPreferences' returns
     await cachedPromise;
   },

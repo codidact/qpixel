@@ -3,7 +3,7 @@ class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
                                              :setup_save, :hellban]
-  before_action :verify_developer, only: [:change_users, :impersonate]
+  before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
 
   def index; end
 
@@ -47,6 +47,18 @@ class AdminController < ApplicationController
       AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
     end
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
+                         comment: "Subject: #{params[:subject]}")
+    flash[:success] = t 'admin.email_being_sent'
+    redirect_to admin_path
+  end
+
+  def all_email; end
+
+  def send_all_email
+    Thread.new do
+      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_all_users.deliver_now
+    end
+    AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
     flash[:success] = t 'admin.email_being_sent'
     redirect_to admin_path

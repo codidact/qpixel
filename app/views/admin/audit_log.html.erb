@@ -4,15 +4,15 @@
   <h3><%= pluralize(@logs.count, t('g.log')) %></h3>
   <div class="button-list is-gutterless">
     <% classes = 'button is-outlined is-muted' %>
-    <%= link_to t('g.age'), query_url(sort: 'age'),
+    <%= link_to t('g.age'), request.params.merge(sort: 'age'),
                 class: "#{classes} #{params[:sort] == 'age' || params[:sort].nil? ? 'is-active' : ''}" %>
-    <%= link_to t('g.type'), query_url(sort: 'type'),
+    <%= link_to t('g.type'), request.params.merge(sort: 'type'),
                 class: "#{classes} #{params[:sort] == 'type' ? 'is-active' : ''}" %>
-    <%= link_to t('g.event'), query_url(sort: 'event'),
+    <%= link_to t('g.event'), request.params.merge(sort: 'event'),
                 class: "#{classes} #{params[:sort] == 'event' ? 'is-active' : ''}" %>
-    <%= link_to t('g.related'), query_url(sort: 'related'),
+    <%= link_to t('g.related'), request.params.merge(sort: 'related'),
                 class: "#{classes} #{params[:sort] == 'related' ? 'is-active' : ''}" %>
-    <%= link_to t('g.user'), query_url(sort: 'user'),
+    <%= link_to t('g.user'), request.params.merge(sort: 'user'),
                 class: "#{classes} #{params[:sort] == 'user' ? 'is-active' : ''}" %>
   </div>
 </div>

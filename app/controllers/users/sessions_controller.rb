@@ -3,37 +3,10 @@ class Users::SessionsController < Devise::SessionsController
 
   mattr_accessor :first_factor, default: [], instance_writer: false, instance_reader: false
 
-  # Any changes made here should also be made to the Users::SamlSessionsController.
+  # Any changes made here may also require changes to Users::SamlSessionsController#create.
   def create
     super do |user|
-      if user.deleted?
-        sign_out user
-        flash[:notice] = nil
-        flash[:danger] = 'Invalid Email or password.'
-        render :new
-        return
-      end
-
-      if user.community_user&.deleted?
-        sign_out user
-        flash[:notice] = nil
-        flash[:danger] = 'Your profile on this community has been deleted.'
-        render :new
-        return
-      end
-
-      if user.present? && user.sso_profile.present?
-        sign_out user
-        flash[:notice] = nil
-        flash[:danger] = 'Please sign in using the Single Sign-On service of your institution.'
-        redirect_to new_saml_user_session_path
-        return
-      end
-
-      if user.present? && user.enabled_2fa
-        handle_2fa_login(user)
-        return
-      end
+      return unless post_sign_in(user)
     end
   end
 
@@ -48,12 +21,18 @@ class Users::SessionsController < Devise::SessionsController
     end
 
     totp = ROTP::TOTP.new(target_user.two_factor_token)
-    if totp.verify(params[:code], drift_ahead: 15, drift_behind: 15)
+    if totp.verify(params[:code], drift_ahead: 15, drift_behind: 15) || params[:code] == target_user.backup_2fa_code
       if @@first_factor.include? params[:uid].to_i
+        if params[:code] == target_user.backup_2fa_code
+          target_user.update(enabled_2fa: false, two_factor_token: nil, backup_2fa_code: nil)
+          flash[:warning] = 'Two-factor authentication has been disabled for your account because you signed in with ' \
+                            'a backup code. Please re-configure two-factor authentication via your profile.'
+        end
+
         AuditLog.user_history(event_type: 'two_factor_success', related: target_user)
         @@first_factor.delete params[:uid].to_i
         flash[:info] = 'Signed in successfully.'
-        sign_in_and_redirect User.find(params[:uid])
+        sign_in_and_redirect target_user
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."
@@ -72,6 +51,50 @@ class Users::SessionsController < Devise::SessionsController
 
   private
 
+  # After a sign in, this method is called to check whether special conditions apply to the user.
+  # The user may be signed out by this method.
+  #
+  # In general, this method should have similar behavior to the Users::SamlSessionsController#post_sign_in method.
+  # If you make changes here, you may also have to update that method.
+  # @param user [User]
+  # @return [Boolean] false if the handling by the calling method should be stopped
+  def post_sign_in(user)
+    # For a deleted user (banished), tell them non-specifically that there was a mistake with their credentials.
+    if user.deleted?
+      sign_out user
+      flash[:notice] = nil
+      flash[:danger] = 'Invalid Email or password.'
+      render :new
+      return false
+    end
+
+    # If profile is deleted, the user was banished. Inform them and send them back to the sign in page.
+    if user.community_user&.deleted?
+      sign_out user
+      flash[:notice] = nil
+      flash[:danger] = 'Your profile on this community has been deleted.'
+      render :new
+      return false
+    end
+
+    # For users who are linked to an SSO Profile, disallow normal login and let them sign in through SSO instead.
+    if user.sso_profile.present?
+      sign_out user
+      flash[:notice] = nil
+      flash[:danger] = 'Please sign in using the Single Sign-On service of your institution.'
+      redirect_to new_saml_user_session_path
+      return false
+    end
+
+    # Enforce 2FA
+    if user.enabled_2fa
+      handle_2fa_login(user)
+      return false
+    end
+
+    true
+  end
+
   def handle_2fa_login(user)
     sign_out user
     case user.two_factor_method
@@ -83,7 +106,7 @@ class Users::SessionsController < Devise::SessionsController
       TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
       flash[:notice] = nil
       flash[:info] = 'Please check your email inbox for a link to sign in.'
-      redirect_to root_path
+      redirect_to after_sign_in_path_for(user)
     end
   end
 end

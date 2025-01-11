@@ -1,6 +1,6 @@
-version: "3.9"
 services:
   db:
+    restart: on-failure:3
     build:
       context: "."
       dockerfile: docker/Dockerfile.db
@@ -8,7 +8,7 @@ services:
       - ./docker/mysql:/var/lib/mysql
     env_file:
       - ${ENV_FILE_LOCATION}
-    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
+    command: mysqld --mysql-native-password=on --skip-mysqlx
     cap_add:
       - SYS_NICE
     healthcheck:
@@ -20,10 +20,10 @@ services:
 
 
   uwsgi:
-    restart: always
+    restart: on-failure:3
     build:
       context: "."
-      dockerfile: docker/Dockerfile
+      dockerfile: ${CLIENT_DOCKERFILE}
     depends_on:
       db:
         condition: service_healthy
@@ -32,6 +32,7 @@ services:
     environment:
       - COMMUNITY_NAME=${COMMUNITY_NAME}
       - RAILS_ENV=${RAILS_ENV}
+      - MAILER_PROTOCOL=${MAILER_PROTOCOL}
       - CONFIRMABLE_ALLOWED_ACCESS_DAYS=${CONFIRMABLE_ALLOWED_ACCESS_DAYS}
       - LOCAL_DEV_PORT=${LOCAL_DEV_PORT}
     env_file:
@@ -47,7 +48,7 @@ services:
       - db
 
   redis:
-    restart: always
+    restart: on-failure:3
     image: redis:latest
     healthcheck:
       test: ["CMD", "redis-cli","ping"]

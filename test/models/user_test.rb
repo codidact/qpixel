@@ -25,6 +25,39 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'example.com', users(:closer).website_domain
   end
 
+  test 'can_update should determine if the user can update a given post' do
+    basic_user = users(:basic_user)
+    post_owner = users(:standard_user)
+    category = categories(:main)
+    license = licenses(:cc_by_sa)
+    post_type = post_types(:question)
+    post = Post.create(body_markdown: 'rev 1',
+                       body: '<p>rev 1</p>',
+                       title: 'test post',
+                       tags_cache: ['test'],
+                       license: license,
+                       score: 0,
+                       user: post_owner,
+                       post_type: post_type,
+                       category: category)
+
+    assert_equal true, post_owner.can_update(post, post_type)
+    assert_equal false, basic_user.can_update(post, post_type)
+    assert_equal true, users(:moderator).can_update(post, post_type)
+    assert_equal true, users(:editor).can_update(post, post_type)
+
+    basic_user.community_user.grant_privilege('unrestricted')
+    assert_equal false, basic_user.can_update(post, post_type)
+    assert_equal true, basic_user.can_update(post, post_types(:free_edit))
+  end
+
+  test 'can_push_to_network should determine if the user can push updates to network' do
+    post_type = post_types(:help_doc)
+    assert_equal false, users(:standard_user).can_push_to_network(post_type)
+    assert_equal true, users(:global_moderator).can_push_to_network(post_type)
+    assert_equal true, users(:global_admin).can_push_to_network(post_type)
+  end
+
   test 'community_user is based on context' do
     user = users(:standard_user)
     community = Community.create(host: 'other', name: 'Other')

@@ -9,6 +9,7 @@ class Category < ApplicationRecord
   has_many :posts
   belongs_to :tag_set
   belongs_to :license
+  belongs_to :default_filter, class_name: 'Filter', optional: true
 
   serialize :display_post_types, Array
 

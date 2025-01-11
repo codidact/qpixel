@@ -9,12 +9,12 @@ gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 5.6'
-gem 'rails', '~> 7.0.0'
-gem 'rails-html-sanitizer', '~> 1.4'
+gem 'rails', '~> 7.0.8'
+gem 'rails-html-sanitizer', '~> 1.6'
 gem 'redis', '~> 4.8'
 gem 'rotp', '~> 6.2'
 gem 'sass-rails', '~> 6.0'
-gem 'sprockets', '~> 4.1'
+gem 'sprockets', '~> 4.1.0'
 gem 'sprockets-rails', '~> 3.4', require: 'sprockets/railtie'
 gem 'terser', '~> 1.1'
 gem 'tzinfo-data', '~> 1.2022.3'
@@ -41,6 +41,7 @@ gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
 gem 'aws-sdk-s3', '~> 1.61', require: false
+gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduler.
@@ -70,7 +71,7 @@ gem 'net-smtp', '~> 0.3'
 gem 'ruby-progressbar', '~> 1.11'
 
 # Image generation
-gem 'rmagick'
+gem 'rmagick', '~> 5.3'
 
 # Payments. Kinda important, y'know.
 gem 'stripe', '~> 5.55'
@@ -83,6 +84,10 @@ group :test do
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'term-ansicolor', '~> 1.7'
+
+  gem 'capybara', '~> 3.38'
+  gem 'selenium-webdriver', '~> 4.7'
+  gem 'webdrivers', '~> 5.2'
 end
 
 group :development, :test do

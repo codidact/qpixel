@@ -14,16 +14,37 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  setup :load_seeds
+  setup :set_request_context
 
   teardown :clear_cache
 
   protected
 
-  def load_seeds
+  # Overrides minitest' load_fixtures method to also load our seeds when fixtures are loaded.
+  # This means that we can leverage it's smart transaction behavior to significantly speed up our tests (by a factor of 6).
+  def load_fixtures(config)
+    # Loading a fixture deletes all data in the same tables, so it has to happen before we load our normal seeds.
+    fixture_data = super(config)
+    load_tags_paths
+    load_seeds
+
+    # We do need to return the same thing as the original method to not break fixtures
+    fixture_data
+  end
+
+  # Ensures that a community is set for all requests that will be made (on this thread)
+  def set_request_context
     comm = Community.first || Community.create(name: 'Test', host: 'test.host')
     RequestContext.community = comm
+  end
+
+  def load_seeds
+    set_request_context
     Rails.application.load_seed
+  end
+
+  def load_tags_paths
+    ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
   end
 
   def clear_cache

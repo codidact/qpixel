@@ -48,8 +48,8 @@ class ModeratorController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
-  VoteData = Struct.new(:cast, :received)
-  VoteSummary = Struct.new(:breakdown, :types, :total)
+  VoteData = Struct.new(:cast, :received, keyword_init: true)
+  VoteSummary = Struct.new(:breakdown, :types, :total, keyword_init: true)
 
   def user_vote_summary
     @user = User.find params[:id]

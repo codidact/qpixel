@@ -21,8 +21,8 @@ module Advertisements::ArticleHelper
       answer.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       answer.pointsize = 40
       answer.gravity = CenterGravity
-      answer.annotate ad, 600, 120, 0, 10, 'Check out this article' do
-        self.fill = 'white'
+      answer.annotate ad, 600, 120, 0, 10, 'Check out this article' do |s|
+        s.fill = 'white'
       end
 
       icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: article.community).typed
@@ -37,8 +37,8 @@ module Advertisements::ArticleHelper
         community_name.font = './app/assets/imgfonts/Roboto-Bold.ttf'
         community_name.pointsize = 25
         community_name.gravity = SouthWestGravity
-        community_name.annotate ad, 0, 0, 20, 20, article.community.name do
-          self.fill = '#4B68FF'
+        community_name.annotate ad, 0, 0, 20, 20, article.community.name do |s|
+          s.fill = '#4B68FF'
         end
       end
 
@@ -48,8 +48,8 @@ module Advertisements::ArticleHelper
       community_url.font = './app/assets/imgfonts/Roboto-Bold.ttf'
       community_url.pointsize = 20
       community_url.gravity = SouthEastGravity
-      community_url.annotate ad, 0, 0, 20, 20, article.community.host do
-        self.fill = '#666666'
+      community_url.annotate ad, 0, 0, 20, 20, article.community.host do |s|
+        s.fill = '#666666'
       end
 
       title = Draw.new
@@ -62,15 +62,15 @@ module Advertisements::ArticleHelper
       if article.title.length > 60
         title.pointsize = 35
         wrap_text(do_rtl_witchcraft(article.title), 500, 35).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 135 + (position * 55), line do
-            self.fill = '#333333'
+          title.annotate ad, 500, 100, 50, 135 + (position * 55), line do |s|
+            s.fill = '#333333'
           end
           position += 1
         end
       else
         wrap_text(do_rtl_witchcraft(article.title), 500, 55).split("\n").each do |line|
-          title.annotate ad, 500, 100, 50, 160 + (position * 70), line do
-            self.fill = '#333333'
+          title.annotate ad, 500, 100, 50, 160 + (position * 70), line do |s|
+            s.fill = '#333333'
           end
           position += 1
         end

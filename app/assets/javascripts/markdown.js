@@ -30,7 +30,8 @@ $(() => {
       numbered: ['\n 1. ', null],
       heading: ['\n# ', null],
       hr: ['\n\n-----\n\n', null],
-      table: ['\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n', null]
+      table: ['\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n', null],
+      mathjax: ['$', '$']
     };
 
     if (Object.keys(actions).indexOf(action) !== -1) {
@@ -117,7 +118,7 @@ $(() => {
 
   QPixel.addPrePostValidation(text => {
     // This regex catches Markdown images with no or default alt text.
-    const altRegex = /!\[(?:Image alt text)?\](?:\(.+(?!\\\))\)|\[.+(?!\\\])\])/gi;
+    const altRegex = /!\[(?:Image_alt_text)?\](?:\(.+(?!\\\))\)|\[.+(?!\\\])\])/gi;
     if (text.match(altRegex)) {
       const message = `It looks like you're posting an image with no alt text. Alt text is important for ` +
                       `accessibility. Consider adding alt text to the images in your post - ` +

@@ -1,0 +1,60 @@
+FROM ruby:3.1.2-bullseye AS ruby
+FROM node:12.18.3-slim AS node
+
+FROM ruby AS build
+
+# Set all encoding to UTF-8
+ENV RUBYOPT="-KU -E utf-8:utf-8"
+
+# Install additional dependencies not present in the base image
+RUN apt-get update && \
+    apt-get install -y bison \
+    build-essential \
+    libxslt-dev \
+    default-mysql-server
+
+# Add core code to container
+WORKDIR /code
+COPY . /code
+
+RUN gem install bundler:2.4.13
+RUN bundle install
+
+# cherry pick only what we really need to run Node.js
+COPY --from=node /usr/local/bin/node /usr/local/bin
+COPY --from=node /usr/local/bin/nodejs /usr/local/bin
+COPY --from=node /usr/local/bin/npm /usr/local/bin
+COPY --from=node /usr/local/bin/npx /usr/local/bin
+COPY --from=node /usr/local/bin/yarn /usr/local/bin
+COPY --from=node /usr/local/bin/yarnpkg /usr/local/bin
+COPY --from=node /usr/local/include/node /usr/local/include
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib
+COPY --from=node /usr/local/share/doc/node /usr/local/share/doc
+COPY --from=node /usr/local/share/man/man1/node.1 /usr/local/share/man/man1
+COPY --from=node /usr/local/share/systemtap/tapset/node.stp /usr/local/share/systemtap/tapset
+COPY --from=node /opt/yarn-v1.22.4 /opt/yarn-v1.22.4
+
+FROM build
+
+# setup a dedicated user for Node.js
+RUN groupadd --gid 1000 node 
+RUN useradd --uid 1000 \
+            --gid node \
+            --shell /bin/bash \
+            --create-home node
+
+# setup Node.js environment
+ENV NODEJS_HOME=/usr/local/bin/node
+ENV PATH=$NODEJS_HOME:$PATH
+
+WORKDIR /code
+
+EXPOSE 80 443 3000
+
+RUN ls -1 /
+RUN [ ! -f "/db-created" ] && echo 1 || echo 2
+
+RUN /code/docker/entrypoint.sh dev
+
+# ensures continued running of the container
+CMD sleep 7d

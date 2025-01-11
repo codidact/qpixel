@@ -28,9 +28,9 @@ $(() => {
       'reason': $(`#flag-post-${postId}`).val()
     };
 
-    if (requiresDetails && data['reason'].length < 15) {
+    if (requiresDetails && data['reason'].length < 1) {
       QPixel.createNotification('danger',
-                                'Details are required for this flag type - please enter at least 15 characters.');
+                                'Details are required for this flag type - please enter a message.');
       return;
     }
 
@@ -50,7 +50,7 @@ $(() => {
           const messages = {
             comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
           };
-          const defaultMessage = `<strong>Thanks!</strong> A moderator will review your flag.`;
+          const defaultMessage = `<strong>Thanks!</strong> We will review your flag.`;
           QPixel.createNotification('success', messages[responseType] || defaultMessage);
           $(`#flag-post-${postId}`).val('');
         }

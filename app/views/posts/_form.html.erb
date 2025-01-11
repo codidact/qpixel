@@ -54,21 +54,46 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post %>
+  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
+            cur_length: post.body_markdown&.length, min_length: min_body_length(category), max_length: max_body_length(category) %>
 
+  <div class="rejected-elements notice is-warning hide">
+    <h3>Unsupported HTML detected</h3>
+    <p>The following HTML tags and attributes are unsupported and will be removed from the final post:</p>
+    <ul>
+    </ul>
+    <p>For a list of allowed HTML, see <a href="/help/advanced-formatting">this help article</a>.
+    If you meant to display the tags as code in the post, please enclose them in a code block.</p>
+  </div>
   <div class="post-preview"></div>
 
   <% unless post_type.has_parent? %>
+    <% value = {} %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.title" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      value = [
+        [post.created_at || Date.new(2000, 1, 1), {}],
+        [post.updated_at || Date.new(2000, 1, 1), {}],
+        [saved_at || Date.new(2001, 1, 1), { value: RequestContext.redis.get(key) }]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <div class="form-group">
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
-      <%= f.text_field :title, class: 'form-element post_title', data: { character_count: ".js-character-count-post-title" } %>
-    </div>
-    <div>
-      <span class="has-float-right has-font-size-caption js-character-count-post-title hide"
-            data-max="255" data-min="15" data-display-at="0.75">
-        <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">0 / 255</span>
-      </span>
+      <%= f.text_field :title,
+                        **({ class: 'form-element post_title' }).merge(value),
+                        data: { character_count: ".js-character-count-post-title" }
+      %>
+      <div class="clearfix">
+        <%= render 'shared/char_count', type: 'post-title',
+                                        cur: value[:value]&.length || post.title&.length,
+                                        max: max_title_length(category),
+                                        min: min_title_length(category, post_type) %>
+      </div>
     </div>
   <% end %>
 
@@ -87,8 +112,26 @@
           <% end %>
         </span>
       <% end %>
-      <%= f.select :tags_cache, options_for_select(post.tags_cache.map { |t| [t, t] }, selected: post.tags_cache),
-                   { include_blank: true }, multiple: true, class: "form-element js-tag-select",
+      <% tags = post.tags_cache %>
+      <% key = "saved_post.#{current_user&.id}.#{request.path}.tags" %>
+      <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+      <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+      <%
+        # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+        tags = [
+          [post.created_at || Date.new(2000, 1, 1), post.tags_cache],
+          [post.updated_at || Date.new(2000, 1, 1), post.tags_cache],
+          [saved_at || Date.new(2001, 1, 1), RequestContext.redis.smembers(key)]
+        ].max_by do |x|
+          x[0]
+        end[1]
+      %>
+      <%= f.select :tags_cache, options_for_select(
+                                  (tags || post.tags_cache).map { |t| [t, t] },
+                                  selected: tags || post.tags_cache),
+                   {},
+                   multiple: true,
+                   class: "form-element js-tag-select",
                    data: { tag_set: category.tag_set_id } %>
     </div>
   <% end %>
@@ -122,9 +165,23 @@
           </a>
         <% end %>
       </span>
+      <% license = post.license_id %>
+      <% key = "saved_post.#{current_user&.id}.#{request.path}.license" %>
+      <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+      <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+      <%
+        # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+        license = [
+          [post.created_at || Date.new(2000, 1, 1), post.license_id],
+          [post.updated_at || Date.new(2000, 1, 1), post.license_id],
+          [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+        ].max_by do |x|
+          x[0]
+        end[1]
+      %>
       <%= f.select :license_id, options_for_select(License.enabled.default_order(category, user_default)
                                                           .map { |l| [l.name, l.id, { 'data-title': l.description }] },
-                                                   selected: post.license_id),
+                                                   selected: license || post.license_id),
                    { include_blank: user_default == 'No default (make me choose)' },
                    class: 'form-element js-license-select' %>
     </div>
@@ -171,11 +228,25 @@
   <% end %>
 
   <% if edit_comment %>
+    <% comment = '' %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.comment" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      comment = [
+        [post.created_at || Date.new(2000, 1, 1), ''],
+        [post.updated_at || Date.new(2000, 1, 1), ''],
+        [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <hr/>
-    <div class="form-group">
-      <%= label_tag :edit_comment, t('posts.edit_comment_label'), class: 'form-element' %>
-      <%= text_field_tag :edit_comment, nil, class: 'form-element' %>
-    </div>
+    <%= render 'edit_comment', comment: comment,
+                               cur_length: comment&.length || 0,
+                               max_length: max_edit_comment_length
+    %>
   <% end %>
 
   <div class="actions">

@@ -3,10 +3,10 @@ require 'test_helper'
 class SearchControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test 'get without a search term should result in nil' do
+  test 'get without a search term should result in all posts' do
     get :search
     assert_response 200
-    assert_nil assigns(:posts)
+    assert_not_nil assigns(:posts)
   end
 
   test 'get with a search term should have results' do

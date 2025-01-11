@@ -10,6 +10,7 @@ support:
 
 bug:
   name: bug
+  excerpt: use for bug reports
   community: sample
   tag_set: main
 
@@ -38,3 +39,8 @@ child:
   community: sample
   tag_set: main
   parent: topic
+
+base:
+  name: base
+  community: sample
+  tag_set: main

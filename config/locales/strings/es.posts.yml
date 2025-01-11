@@ -46,6 +46,10 @@ es:
       Requiere al menos un/a de
     edit_comment_label: >
       Editar comentario
+    redact_label: >
+      Redactar
+    redact_explanation: >
+      Redactar el contenido original ocultando las versiones anteriores del historial
     licence_label: >
       Licencia
     unsaved_changes_confirmation: >

@@ -77,7 +77,10 @@ $(() => {
     const $tgt = $(evt.target);
     const $comment = $tgt.parents('.comment');
     const $commentBody = $comment.find('.comment--body');
+    const $thread = $comment.parents('.thread');
     const commentId = $comment.attr('data-id');
+    const postId = $thread.attr('data-post');
+    const threadId = $thread.attr('data-thread');
     const originalComment = $commentBody.clone();
 
     const resp = await fetch(`/comments/${commentId}`, {
@@ -89,7 +92,7 @@ $(() => {
 
     const formTemplate = `<form action="/comments/${commentId}/edit" method="POST" class="comment-edit-form" data-remote="true">
       <label for="comment-content" class="form-element">Comment body:</label>
-      <textarea id="comment-content" rows="6" class="form-element is-small" data-character-count=".js-character-count-comment-body" name="comment[content]">${content}</textarea>
+      <textarea id="comment-content" rows="6" class="form-element is-small" data-thread="${threadId}" data-post="${postId}" data-character-count=".js-character-count-comment-body" name="comment[content]">${content}</textarea>
       <input type="submit" class="button is-muted is-filled" value="Update comment" />
       <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
       <span class="has-float-right has-font-size-caption js-character-count-comment-body"
@@ -100,6 +103,8 @@ $(() => {
     </form>`;
 
     $commentBody.html(formTemplate);
+
+    $commentBody.find(`#comment-content`).on('keyup', pingable_popup);
 
     $(`.js-discard-edit[data-comment-id="${commentId}"]`).click(() => {
       $commentBody.html(originalComment.html());
@@ -195,7 +200,9 @@ $(() => {
   });
 
   const pingable = {};
-  $(document).on('keyup', '.js-comment-field', async ev => {
+  $(document).on('keyup', '.js-comment-field', pingable_popup);
+
+  async function pingable_popup(ev) {
     if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
       return;
     }
@@ -242,7 +249,7 @@ $(() => {
     else {
       QPixel.Popup.destroyAll();
     }
-  });
+  }
 
   $('.js-new-thread-link').on('click', async ev => {
     ev.preventDefault();

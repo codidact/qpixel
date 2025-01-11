@@ -25,6 +25,8 @@ class User < ApplicationRecord
   has_many :comments, dependent: :nullify
   has_many :comment_threads_deleted, class_name: 'CommentThread', foreign_key: :deleted_by_id, dependent: :nullify
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
+  has_many :category_filter_defaults, dependent: :destroy
+  has_many :filters, dependent: :destroy
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -68,6 +70,22 @@ class User < ApplicationRecord
     else
       privilege?(name)
     end
+  end
+
+  # Checks if the user can push a given post type to network
+  # @param post_type [PostType] type of the post to be pushed
+  # @return [Boolean]
+  def can_push_to_network(post_type)
+    post_type.system? && (is_global_moderator || is_global_admin)
+  end
+
+  # Checks if the user can directly update a given post
+  # @param post [Post] updated post (owners can unilaterally update)
+  # @param post_type [PostType] type of the post (some are freely editable)
+  # @return [Boolean]
+  def can_update(post, post_type)
+    privilege?('edit_posts') || is_moderator || self == post.user || \
+      (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
   def metric(key)
@@ -118,6 +136,42 @@ class User < ApplicationRecord
 
   def is_admin
     is_global_admin || community_user&.is_admin || false
+  end
+
+  # Used by network profile: does this user have a profile on that other comm?
+  def has_profile_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    !cu&.user_id.nil? || false
+  end
+
+  def reputation_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.reputation || 1
+  end
+
+  def post_count_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.post_count || 0
+  end
+
+  def is_moderator_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    # is_moderator is a DB check, not a call to is_moderator()
+    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
+  end
+
+  def has_ability_on(community_id, ability_internal_id)
+    cu = community_users.where(community_id: community_id).first
+    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
+      true
+    elsif cu.nil?
+      false
+    else
+      Ability.unscoped do
+        UserAbility.joins(:ability).where(community_user_id: cu&.id, is_suspended: false,
+                                          ability: { internal_id: ability_internal_id }).exists?
+      end
+    end
   end
 
   def rtl_safe_username
@@ -215,7 +269,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason)
+  def block(reason, length: 180.days)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -223,10 +277,10 @@ class User < ApplicationRecord
       user_ip << current_sign_in_ip
     end
 
-    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+    BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
                        automatic: true, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
-      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
+      BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
                          automatic: true, reason: "#{reason}: #" + id.to_s)
     end
   end
@@ -235,11 +289,17 @@ class User < ApplicationRecord
     global_key = "prefs.#{id}"
     community_key = "prefs.#{id}.community.#{RequestContext.community_id}"
     {
-      global: AppConfig.preferences.reject { |_, v| v['community'] }.transform_values { |v| v['default'] }
+      global: AppConfig.preferences.select { |_, v| v['global'] }.transform_values { |v| v['default'] }
                        .merge(RequestContext.redis.hgetall(global_key)),
       community: AppConfig.preferences.select { |_, v| v['community'] }.transform_values { |v| v['default'] }
                           .merge(RequestContext.redis.hgetall(community_key))
     }
+  end
+
+  def category_preference(category_id)
+    category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
+    AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
+             .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!
@@ -261,5 +321,24 @@ class User < ApplicationRecord
   def preference(name, community: false)
     preferences[community ? :community : :global][name]
   end
+
+  def has_active_flags?(post)
+    !post.flags.where(user: self, status: nil).empty?
+  end
+
+  def active_flags(post)
+    post.flags.where(user: self, status: nil)
+  end
+
+  def do_soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
+                      username: "user#{id}", email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+    skip_reconfirmation!
+    save
+  end
+
   # rubocop:enable Naming/PredicateName
 end
