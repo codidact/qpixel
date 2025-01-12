@@ -5,8 +5,9 @@
 <% if moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
-
+<div class="reducegap">
 <h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
+</div>
 
 <% if @user.community_user.suspended? %>
   <div class="notice is-danger h-m-b-4">
