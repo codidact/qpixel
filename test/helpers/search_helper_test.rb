@@ -36,14 +36,14 @@ class SearchHelperTest < ActionView::TestCase
     end
   end
 
-  test 'get_accessible_posts should correctly check access' do
+  test 'accessible_posts_for should correctly check access' do
     admin_user = users(:admin)
     mod_user = users(:moderator)
     standard_user = users(:standard_user)
 
-    admin_posts = get_accessible_posts(admin_user)
-    mod_posts = get_accessible_posts(mod_user)
-    user_posts = get_accessible_posts(standard_user)
+    admin_posts = accessible_posts_for(admin_user)
+    mod_posts = accessible_posts_for(mod_user)
+    user_posts = accessible_posts_for(standard_user)
 
     can_admin_get_deleted_posts = admin_posts.any?(&:deleted)
     can_mod_get_deleted_posts = mod_posts.any?(&:deleted)
