@@ -49,8 +49,24 @@ class SearchHelperTest < ActionView::TestCase
     can_mod_get_deleted_posts = mod_posts.any?(&:deleted)
     can_user_get_deleted_posts = user_posts.any?(&:deleted)
 
-    assert_equal can_admin_get_deleted_posts, true
-    assert_equal can_mod_get_deleted_posts, true
-    assert_equal can_user_get_deleted_posts, false
+    assert can_admin_get_deleted_posts
+    assert can_mod_get_deleted_posts
+    assert_not can_user_get_deleted_posts
+  end
+
+  test 'qualifiers_to_sql should correctly narrow by :user qualifier' do
+    standard_user = users(:standard_user)
+    editor_user = users(:editor)
+
+    posts_query = accessible_posts_for(standard_user)
+
+    eq_editor = [{ param: :user, operator: '=', user_id: editor_user.id }]
+    qualified_query = qualifiers_to_sql(eq_editor, posts_query, standard_user)
+
+    is_owner_editor = qualified_query.to_a.all? { |p| p.user.id == editor_user.id }
+
+    assert_not_equal posts_query.size, qualified_query.size
+    assert_not_equal qualified_query.size, 0
+    assert is_owner_editor
   end
 end
