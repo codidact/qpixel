@@ -59,14 +59,35 @@ class SearchHelperTest < ActionView::TestCase
     editor_user = users(:editor)
 
     posts_query = accessible_posts_for(standard_user)
-
     eq_editor = [{ param: :user, operator: '=', user_id: editor_user.id }]
-    qualified_query = qualifiers_to_sql(eq_editor, posts_query, standard_user)
+    editor_query = qualifiers_to_sql(eq_editor, posts_query, standard_user)
 
-    is_owner_editor = qualified_query.to_a.all? { |p| p.user.id == editor_user.id }
+    only_editor_posts = editor_query.to_a.all? { |p| p.user.id == editor_user.id }
 
-    assert_not_equal posts_query.size, qualified_query.size
-    assert_not_equal qualified_query.size, 0
-    assert is_owner_editor
+    assert_not_equal posts_query.size, editor_query.size
+    assert_not_equal editor_query.size, 0
+    assert only_editor_posts
+  end
+
+  test 'qualifiers_to_sql should correctly narrow by :status qualifier' do
+    standard_user = users(:standard_user)
+
+    posts_query = accessible_posts_for(standard_user)
+    eq_open = [{ param: :status, value: 'open' }]
+    eq_closed = [{ param: :status, value: 'closed' }]
+
+    open_query = qualifiers_to_sql(eq_open, posts_query, standard_user)
+    closed_query = qualifiers_to_sql(eq_closed, posts_query, standard_user)
+
+    only_open_posts = open_query.to_a.none?(&:closed)
+    only_closed_posts = closed_query.to_a.all?(&:closed)
+
+    assert_not_equal posts_query.size, open_query.size
+    assert_not_equal open_query.size, 0
+    assert only_open_posts
+
+    assert_not_equal posts_query.size, closed_query.size
+    assert_not_equal closed_query.size, 0
+    assert only_closed_posts
   end
 end
