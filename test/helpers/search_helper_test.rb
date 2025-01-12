@@ -37,17 +37,17 @@ class SearchHelperTest < ActionView::TestCase
   end
 
   test 'accessible_posts_for should correctly check access' do
-    admin_user = users(:admin)
+    adm_user = users(:admin)
     mod_user = users(:moderator)
-    standard_user = users(:standard_user)
+    std_user = users(:standard_user)
 
-    admin_posts = accessible_posts_for(admin_user)
+    adm_posts = accessible_posts_for(adm_user)
     mod_posts = accessible_posts_for(mod_user)
-    user_posts = accessible_posts_for(standard_user)
+    std_posts = accessible_posts_for(std_user)
 
-    can_admin_get_deleted_posts = admin_posts.any?(&:deleted)
+    can_admin_get_deleted_posts = adm_posts.any?(&:deleted)
     can_mod_get_deleted_posts = mod_posts.any?(&:deleted)
-    can_user_get_deleted_posts = user_posts.any?(&:deleted)
+    can_user_get_deleted_posts = std_posts.any?(&:deleted)
 
     assert can_admin_get_deleted_posts
     assert can_mod_get_deleted_posts
@@ -55,29 +55,58 @@ class SearchHelperTest < ActionView::TestCase
   end
 
   test 'qualifiers_to_sql should correctly narrow by :user qualifier' do
-    standard_user = users(:standard_user)
-    editor_user = users(:editor)
+    std_user = users(:standard_user)
+    edt_user = users(:editor)
 
-    posts_query = accessible_posts_for(standard_user)
-    eq_editor = [{ param: :user, operator: '=', user_id: editor_user.id }]
-    editor_query = qualifiers_to_sql(eq_editor, posts_query, standard_user)
+    posts_query = accessible_posts_for(std_user)
+    eq_editor = [{ param: :user, operator: '=', user_id: edt_user.id }]
+    edt_query = qualifiers_to_sql(eq_editor, posts_query, std_user)
 
-    only_editor_posts = editor_query.to_a.all? { |p| p.user.id == editor_user.id }
+    only_editor_posts = edt_query.to_a.all? { |p| p.user.id == edt_user.id }
 
-    assert_not_equal posts_query.size, editor_query.size
-    assert_not_equal editor_query.size, 0
+    assert_not_equal posts_query.size, edt_query.size
+    assert_not_equal edt_query.size, 0
     assert only_editor_posts
   end
 
-  test 'qualifiers_to_sql should correctly narrow by :status qualifier' do
-    standard_user = users(:standard_user)
+  test 'qualifiers_to_sql should correctly narrow by :score qualifier' do
+    std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(standard_user)
+    posts_query = accessible_posts_for(std_user)
+    bad_post = [{ param: :score, operator: '<', value: 0.5 }]
+    good_post = [{ param: :score, operator: '>', value: 0.5 }]
+    neut_post = [{ param: :score, operator: '=', value: 0.5 }]
+
+    bad_posts_query = qualifiers_to_sql(bad_post, posts_query, std_user)
+    good_posts_query = qualifiers_to_sql(good_post, posts_query, std_user)
+    neut_posts_query = qualifiers_to_sql(neut_post, posts_query, std_user)
+
+    only_bad_posts = bad_posts_query.to_a.all? { |p| p.score < 0.5 }
+    only_good_posts = good_posts_query.to_a.all? { |p| p.score > 0.5 }
+    only_neut_posts = neut_posts_query.to_a.all? { |p| p.score.to_d == 0.5.to_d }
+
+    assert_not_equal posts_query.size, bad_posts_query.size
+    assert_not_equal bad_posts_query.size, 0
+    assert only_bad_posts
+
+    assert_not_equal posts_query.size, good_posts_query.size
+    assert_not_equal good_posts_query.size, 0
+    assert only_good_posts
+
+    assert_not_equal posts_query.size, neut_posts_query.size
+    assert_not_equal neut_posts_query.size, 0
+    assert only_neut_posts
+  end
+
+  test 'qualifiers_to_sql should correctly narrow by :status qualifier' do
+    std_user = users(:standard_user)
+
+    posts_query = accessible_posts_for(std_user)
     eq_open = [{ param: :status, value: 'open' }]
     eq_closed = [{ param: :status, value: 'closed' }]
 
-    open_query = qualifiers_to_sql(eq_open, posts_query, standard_user)
-    closed_query = qualifiers_to_sql(eq_closed, posts_query, standard_user)
+    open_query = qualifiers_to_sql(eq_open, posts_query, std_user)
+    closed_query = qualifiers_to_sql(eq_closed, posts_query, std_user)
 
     only_open_posts = open_query.to_a.none?(&:closed)
     only_closed_posts = closed_query.to_a.all?(&:closed)

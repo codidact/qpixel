@@ -306,6 +306,19 @@ deleted_answer:
   upvote_count: 0
   downvote_count: 0
 
+good_answer:
+  post_type: answer
+  body: A3GA - This is the seventh answer to question number 1 (Q1). It has a good score. Posted by standard_user.
+  body_markdown: A7 - This is the seventh answer to question number 1 (Q1). It has a good score. Posted by standard_user.
+  score: 0.6
+  parent: question_one
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 1
+  downvote_count: 0
+
 policy_doc:
   post_type: policy_doc
   body: PD - This is a policy document called "Terms of Service", or "tos" for short.
