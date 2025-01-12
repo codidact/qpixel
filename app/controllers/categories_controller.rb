@@ -194,7 +194,7 @@ class CategoriesController < ApplicationController
       end
     end
 
-    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
+    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts, current_user)
     @filtered = filter_qualifiers.any?
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end

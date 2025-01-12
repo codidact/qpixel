@@ -5,8 +5,8 @@ module SearchHelper
       .qa_only.list_includes
   end
 
-  def search_posts
-    posts = accessible_posts_for(current_user)
+  def search_posts(user)
+    posts = accessible_posts_for(user)
     qualifiers = params_to_qualifiers
     search_string = params[:search]
 
@@ -17,7 +17,7 @@ module SearchHelper
       search_string = search_data[:search]
     end
 
-    posts = qualifiers_to_sql(qualifiers, posts)
+    posts = qualifiers_to_sql(qualifiers, posts, user)
     posts = posts.paginate(page: params[:page], per_page: 25)
 
     posts = if search_string.present?
@@ -187,8 +187,8 @@ module SearchHelper
     # Consider partitioning and telling the user which filters were invalid
   end
 
-  def qualifiers_to_sql(qualifiers, query)
-    trust_level = current_user&.trust_level || 0
+  def qualifiers_to_sql(qualifiers, query, user)
+    trust_level = user&.trust_level || 0
     allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
     query = query.where(category_id: allowed_categories)
 
