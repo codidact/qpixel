@@ -59,8 +59,8 @@ class SearchHelperTest < ActionView::TestCase
     edt_user = users(:editor)
 
     posts_query = accessible_posts_for(std_user)
-    eq_editor = [{ param: :user, operator: '=', user_id: edt_user.id }]
-    edt_query = qualifiers_to_sql(eq_editor, posts_query, std_user)
+    edt_post = [{ param: :user, operator: '=', user_id: edt_user.id }]
+    edt_query = qualifiers_to_sql(edt_post, posts_query, std_user)
 
     only_editor_posts = edt_query.to_a.all? { |p| p.user.id == edt_user.id }
 
@@ -102,11 +102,11 @@ class SearchHelperTest < ActionView::TestCase
     std_user = users(:standard_user)
 
     posts_query = accessible_posts_for(std_user)
-    eq_open = [{ param: :status, value: 'open' }]
-    eq_closed = [{ param: :status, value: 'closed' }]
+    open_post = [{ param: :status, value: 'open' }]
+    closed_post = [{ param: :status, value: 'closed' }]
 
-    open_query = qualifiers_to_sql(eq_open, posts_query, std_user)
-    closed_query = qualifiers_to_sql(eq_closed, posts_query, std_user)
+    open_query = qualifiers_to_sql(open_post, posts_query, std_user)
+    closed_query = qualifiers_to_sql(closed_post, posts_query, std_user)
 
     only_open_posts = open_query.to_a.none?(&:closed)
     only_closed_posts = closed_query.to_a.all?(&:closed)
@@ -118,5 +118,27 @@ class SearchHelperTest < ActionView::TestCase
     assert_not_equal posts_query.size, closed_query.size
     assert_not_equal closed_query.size, 0
     assert only_closed_posts
+  end
+
+  test 'qualifiers_to_sql should correctly narrow by :upvotes qualifier' do
+    std_user = users(:standard_user)
+
+    posts_query = accessible_posts_for(std_user)
+    upvoted_post = [{ param: :upvotes, operator: '>', value: 0 }]
+    neutral_post = [{ param: :upvotes, operator: '=', value: 0 }]
+
+    upvoted_query = qualifiers_to_sql(upvoted_post, posts_query, std_user)
+    neutral_query = qualifiers_to_sql(neutral_post, posts_query, std_user)
+
+    only_upvoted_posts = upvoted_query.to_a.all? { |p| p[:upvote_count].positive? }
+    only_neutral_posts = neutral_query.to_a.all? { |p| p[:upvote_count].zero? }
+
+    assert_not_equal posts_query.size, upvoted_query.size
+    assert_not_equal upvoted_query.size, 0
+    assert only_upvoted_posts
+
+    assert_not_equal posts_query.size, neutral_query.size
+    assert_not_equal neutral_query.size, 0
+    assert only_neutral_posts
   end
 end
