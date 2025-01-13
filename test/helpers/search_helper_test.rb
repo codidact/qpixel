@@ -54,6 +54,32 @@ class SearchHelperTest < ActionView::TestCase
     assert_not can_user_get_deleted_posts
   end
 
+  test 'qualifiers_to_sql should correctly narrow by :category qualifier' do
+    main = categories(:main)
+    admin_only = categories(:admin_only)
+
+    std_user = users(:standard_user)
+    adm_user = users(:admin)
+
+    posts_query_std = accessible_posts_for(std_user)
+    posts_query_adm = accessible_posts_for(adm_user)
+
+    std_post = [{ param: :category, operator: '=', category_id: main.id }]
+    adm_post = [{ param: :category, operator: '=', category_id: admin_only.id }]
+
+    std_posts_query_standard = qualifiers_to_sql(std_post, posts_query_std, std_user)
+    adm_posts_query_standard = qualifiers_to_sql(adm_post, posts_query_std, std_user)
+    adm_posts_query_admin = qualifiers_to_sql(adm_post, posts_query_adm, adm_user)
+
+    assert_not_equal posts_query_std.size, std_posts_query_standard.size
+    assert_not_equal std_posts_query_standard.size, 0
+
+    assert_not_equal posts_query_adm.size, adm_posts_query_admin.size
+    assert_not_equal adm_posts_query_admin.size, 0
+
+    assert_equal adm_posts_query_standard.size, 0
+  end
+
   test 'qualifiers_to_sql should correctly narrow by :user qualifier' do
     std_user = users(:standard_user)
     edt_user = users(:editor)
