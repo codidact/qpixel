@@ -163,4 +163,21 @@ class SearchHelperTest < ActionView::TestCase
     assert_not_equal neutral_query.size, 0
     assert only_neutral_posts
   end
+
+  test 'qualifiers_to_sql should correctly narrow by :net_votes qualifier' do
+    std_user = users(:standard_user)
+
+    posts_query = accessible_posts_for(std_user)
+    divisive_post = [{ param: :net_votes, operator: '=', value: 2 }]
+
+    divisive_query = qualifiers_to_sql(divisive_post, posts_query, std_user)
+
+    only_divisive_posts = divisive_query.to_a.all? do |p|
+      (p[:upvote_count] - p[:downvote_count]) == 2
+    end
+
+    assert_not_equal posts_query.size, divisive_query.size
+    assert_not_equal divisive_query.size, 0
+    assert only_divisive_posts
+  end
 end
