@@ -1,6 +1,10 @@
 module SearchHelper
   # @param user [User] user to check
   def accessible_categories_for(user)
+    if user&.mod_or_admin?
+      return Category.all
+    end
+
     trust_level = user&.trust_level || 0
     Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
   end
