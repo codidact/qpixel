@@ -635,6 +635,14 @@
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
 
+- name: NetworkPitch
+  value: $FILE site_settings/widgets_network_pitch.html
+  value_type: text
+  community_id: ~
+  category: Widgets
+  description: >
+    Sidebar text to promote the rest of the network.
+  
 - name: SsoSignIn
   value: false
   value_type: boolean
