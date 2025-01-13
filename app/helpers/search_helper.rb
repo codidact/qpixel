@@ -7,8 +7,7 @@ module SearchHelper
 
   # @param user [User] user to check
   def accessible_posts_for(user)
-    (user&.is_moderator || user&.is_admin ? Post : Post.undeleted)
-      .qa_only.list_includes
+    (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
   end
 
   def search_posts(user)

@@ -138,6 +138,10 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
+  def mod_or_admin?
+    is_admin || is_moderator
+  end
+
   # Used by network profile: does this user have a profile on that other comm?
   def has_profile_on(community_id)
     cu = community_users.where(community_id: community_id).first
