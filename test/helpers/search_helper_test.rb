@@ -141,4 +141,26 @@ class SearchHelperTest < ActionView::TestCase
     assert_not_equal neutral_query.size, 0
     assert only_neutral_posts
   end
+
+  test 'qualifiers_to_sql should correctly narrow by :downvotes qualifier' do
+    std_user = users(:standard_user)
+
+    posts_query = accessible_posts_for(std_user)
+    downvoted_post = [{ param: :downvotes, operator: '>', value: 0 }]
+    neutral_post = [{ param: :downvotes, operator: '=', value: 0 }]
+
+    downvoted_query = qualifiers_to_sql(downvoted_post, posts_query, std_user)
+    neutral_query = qualifiers_to_sql(neutral_post, posts_query, std_user)
+
+    only_downvoted_posts = downvoted_query.to_a.all? { |p| p[:downvote_count].positive? }
+    only_neutral_posts = neutral_query.to_a.all? { |p| p[:downvote_count].zero? }
+
+    assert_not_equal posts_query.size, downvoted_query.size
+    assert_not_equal downvoted_query.size, 0
+    assert only_downvoted_posts
+
+    assert_not_equal posts_query.size, neutral_query.size
+    assert_not_equal neutral_query.size, 0
+    assert only_neutral_posts
+  end
 end
