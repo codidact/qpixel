@@ -38,7 +38,7 @@ module QPixel
 
     def fetch_multi(*keys, **opts, &block)
       include_community = opts.delete(:include_community)
-      keys = keys.map { |k| construct_ns_key(k, include_community: include_community)) }
+      keys = keys.map { |k| construct_ns_key(k, include_community: include_community) }
       @underlying.fetch_multi *keys, **opts, &block
     end
 
