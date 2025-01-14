@@ -11,14 +11,14 @@ class SiteSetting < ApplicationRecord
 
   def self.[](name)
     key = "SiteSettings/#{RequestContext.community_id}/#{name}"
-    cached = Rails.cache.fetch key do
+    cached = Rails.cache.fetch key, include_community: false do
       SiteSetting.applied_setting(name)&.typed
     end
 
     if cached.nil?
-      Rails.cache.delete key
+      Rails.cache.delete, include_community: false key
       value = SiteSetting.applied_setting(name)&.typed
-      Rails.cache.write key, value
+      Rails.cache.write key, value, include_community: false
       value
     else
       cached
@@ -26,7 +26,7 @@ class SiteSetting < ApplicationRecord
   end
 
   def self.exist?(name)
-    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}") ||
+    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}", include_community: false) ||
       SiteSetting.where(name: name).count.positive?
   end
 
@@ -45,14 +45,14 @@ class SiteSetting < ApplicationRecord
   def self.all_communities(name)
     communities = Community.all
     keys = (communities.map { |c| [c.id, "SiteSetting/#{c.id}/#{name}"] } + [[nil, "SiteSetting//#{name}"]]).to_h
-    cached = Rails.cache.read_multi(*keys.values)
+    cached = Rails.cache.read_multi(*keys.values, include_community: false)
     missing = keys.reject { |_k, v| cached.include?(v) }.map { |k, _v| k }
     settings = if missing.empty?
                  {}
                else
                  SiteSetting.where(name: name, community_id: missing).to_h { |s| [s.community_id, s] }
                end
-    Rails.cache.write_multi(missing.to_h { |cid| [keys[cid], settings[cid]&.typed] })
+    Rails.cache.write_multi(missing.to_h { |cid| [keys[cid], settings[cid]&.typed] }, include_community: false)
     communities.to_h do |c|
       [
         c.id,
