@@ -8,7 +8,8 @@ module QPixel
     # These methods need the cache key name updating before we pass it to the underlying cache.
     [:decrement, :delete, :exist?, :fetch, :increment, :read, :write, :delete_matched].each do |method|
       define_method method do |name, *args, **opts, &block|
-        @underlying.send(method, construct_ns_key(name, include_community: opts.delete(:include_community) || true),
+        include_community = opts.delete(:include_community)
+        @underlying.send(method, construct_ns_key(name, include_community: include_community),
                          *args, **opts, &block)
       end
     end
