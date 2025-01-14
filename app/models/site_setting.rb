@@ -16,7 +16,7 @@ class SiteSetting < ApplicationRecord
     end
 
     if cached.nil?
-      Rails.cache.delete, include_community: false key
+      Rails.cache.delete key, include_community: false
       value = SiteSetting.applied_setting(name)&.typed
       Rails.cache.write key, value, include_community: false
       value
