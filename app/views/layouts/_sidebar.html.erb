@@ -109,11 +109,11 @@
       <img src="/assets/codidact.png" alt="Codidact logo" class="codidact-logo" />
     </div>
     <div class="widget--body">
+      <% pitch = SiteSetting['NetworkPitch'] %>
       <% chat = SiteSetting['ChatLink'] %>
-      <p>
-        This community is part of the <a href="https://codidact.com">Codidact network</a>.
-        We have other communities too &mdash; take a look!
-      </p>
+      <% if pitch.present? %>
+        <%= raw(sanitize(render_markdown(pitch), scrubber: scrubber)) %>
+      <% end %>
       <% if chat.present? %>
         <p>
           You can also <%= link_to 'join us in chat', chat %>!
