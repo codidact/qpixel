@@ -49,7 +49,7 @@ class SiteSettingsController < ApplicationController
     @setting.update(setting_params)
     AuditLog.admin_audit(event_type: 'setting_update', related: @setting, user: current_user,
                          comment: "from <<SiteSetting #{before}>>\nto <<SiteSetting #{@setting.attributes_print}>>")
-    Rails.cache.delete "SiteSettings/#{RequestContext.community_id}/#{@setting.name}"
+    Rails.cache.delete "SiteSettings/#{RequestContext.community_id}/#{@setting.name}", include_community: false
     render json: { status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed) }
   end
 
