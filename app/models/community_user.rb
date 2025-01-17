@@ -58,12 +58,6 @@ class CommunityUser < ApplicationRecord
     end
   end
 
-  alias ability? privilege?
-  alias ability privilege
-  alias grant_ability! grant_privilege!
-  alias recalc_ability recalc_privilege
-  alias recalc_abilities recalc_privileges
-
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
     if internal_id != 'mod' && !ignore_mod && user.is_moderator
       return true # includes: privilege? 'mod'
@@ -128,6 +122,12 @@ class CommunityUser < ApplicationRecord
       recalc_privilege(ability, sandbox: sandbox)
     end
   end
+
+  alias ability? privilege?
+  alias ability privilege
+  alias grant_ability! grant_privilege!
+  alias recalc_ability recalc_privilege
+  alias recalc_abilities recalc_privileges
 
   # This check makes sure that every user gets the
   # 'everyone' permission upon creation. We do not want
