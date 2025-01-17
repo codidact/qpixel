@@ -77,11 +77,21 @@ class CommunityUser < ApplicationRecord
     UserAbility.joins(:ability).where(community_user_id: id, abilities: { internal_id: internal_id }).first
   end
 
-  def grant_privilege(internal_id)
+  ##
+  # Grant a specified ability to this CommunityUser.
+  # @param internal_id [String] The +internal_id+ of the ability to grant.
+  def grant_privilege!(internal_id)
     priv = Ability.where(internal_id: internal_id).first
     UserAbility.create community_user_id: id, ability: priv
+    user.create_notification("You've earned the #{priv.name} ability! Learn more.", ability_url(priv))
   end
 
+  ##
+  # Recalculate a specified ability for this CommunityUser. Will not revoke abilities that have already been granted.
+  # @param internal_id [String] The +internal_id+ of the ability to be recalculated.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - if sandboxed, the ability will not be granted but the
+  #   return value indicates whether it would have been.
+  # @return [Boolean] Whether or not the ability was granted.
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: false)
@@ -100,11 +110,15 @@ class CommunityUser < ApplicationRecord
     end
 
     # If not sandbox mode, create new privilege entry
-    grant_privilege(internal_id) unless sandbox
+    grant_privilege!(internal_id) unless sandbox
     recalc_trust_level unless sandbox
     true
   end
 
+  ##
+  # Recalculate a list of standard abilities for this CommunityUser.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege}.
+  # @return [Array<Boolean>]
   def recalc_privileges(sandbox: false)
     [:everyone, :unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
       recalc_privilege(ability, sandbox: sandbox)
