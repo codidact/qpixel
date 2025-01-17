@@ -81,7 +81,7 @@ class CommunityUser < ApplicationRecord
   def grant_privilege!(internal_id)
     priv = Ability.where(internal_id: internal_id).first
     UserAbility.create community_user_id: id, ability: priv
-    user.create_notification("You've earned the #{priv.name} ability! Learn more.", ability_url(priv))
+    user.create_notification("You've earned the #{priv.name} ability! Learn more.", helpers.ability_url(priv))
   end
 
   ##
