@@ -87,7 +87,7 @@ class CommunityUser < ApplicationRecord
     if notify
       community_host = priv.community.host
       user.create_notification("You've earned the #{priv.name} ability! Learn more.",
-                               url_helpers.ability_url(priv, host: community_host))
+                               url_helpers.ability_url(priv.internal_id, host: community_host))
     end
   end
 
