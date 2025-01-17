@@ -14,6 +14,8 @@ class CommunityUser < ApplicationRecord
 
   after_create :prevent_ulysses_case
 
+  delegate :url_helpers, to: 'Rails.application.routes'
+
   def system?
     user_id == -1
   end
@@ -78,10 +80,15 @@ class CommunityUser < ApplicationRecord
   ##
   # Grant a specified ability to this CommunityUser.
   # @param internal_id [String] The +internal_id+ of the ability to grant.
-  def grant_privilege!(internal_id)
+  # @param notify [Boolean] Whether to send a notification to the user.
+  def grant_privilege!(internal_id, notify: true)
     priv = Ability.where(internal_id: internal_id).first
     UserAbility.create community_user_id: id, ability: priv
-    user.create_notification("You've earned the #{priv.name} ability! Learn more.", helpers.ability_url(priv))
+    if notify
+      community_host = priv.community.host
+      user.create_notification("You've earned the #{priv.name} ability! Learn more.",
+                               url_helpers.ability_url(priv, host: community_host))
+    end
   end
 
   ##
