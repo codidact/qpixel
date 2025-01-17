@@ -58,7 +58,11 @@ class CommunityUser < ApplicationRecord
     end
   end
 
-  ## Privilege functions
+  alias ability? privilege?
+  alias ability privilege
+  alias grant_ability! grant_privilege!
+  alias recalc_ability recalc_privilege
+  alias recalc_abilities recalc_privileges
 
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
     if internal_id != 'mod' && !ignore_mod && user.is_moderator

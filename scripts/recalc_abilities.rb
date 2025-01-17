@@ -36,11 +36,11 @@ all.each do |q|
       puts "Scope: CommunityUser : #{cu.id}"
     end
 
-    cu.recalc_privileges
+    cu.recalc_abilities
 
     # Grant mod ability if mod status is given
-    if (cu.is_moderator || cu.is_admin || u.is_global_moderator || u.is_global_admin) && !cu.privilege?('mod')
-      cu.grant_privilege!('mod')
+    if (cu.is_moderator || cu.is_admin || u.is_global_moderator || u.is_global_admin) && !cu.ability?('mod')
+      cu.grant_ability!('mod')
     end
 
     resolved << q.id
