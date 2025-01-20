@@ -202,6 +202,14 @@ class Post < ApplicationRecord
     false
   end
 
+  # The test here is for flags that are pending (no status). A spam flag
+  # could be marked helpful but the post wouldn't be deleted, and
+  # we don't necessarily want the post to be treated like it's a spam risk
+  # if that happens.
+  def spam_flag_pending?
+    flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
+  end
+  
   # @param user [User, Nil]
   # @return [Boolean] whether the given user can view this post
   def can_access?(user)
