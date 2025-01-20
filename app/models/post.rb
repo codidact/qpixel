@@ -209,7 +209,7 @@ class Post < ApplicationRecord
   def spam_flag_pending?
     flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
-  
+
   # @param user [User, Nil]
   # @return [Boolean] whether the given user can view this post
   def can_access?(user)
