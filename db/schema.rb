@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_20_193053) do
+ActiveRecord::Schema[7.0].define(version: 2025_01_23_141400) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -684,6 +684,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_20_193053) do
     t.index ["community_user_id"], name: "index_user_abilities_on_community_user_id"
   end
 
+  create_table "user_websites", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "label", limit: 80
+    t.string "url"
+    t.integer "position"
+    t.bigint "user_id", null: false
+    t.index ["user_id", "url"], name: "index_user_websites_on_user_id_and_url", unique: true
+    t.index ["user_id"], name: "index_user_websites_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password"
@@ -826,6 +835,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_20_193053) do
   add_foreign_key "thread_followers", "posts"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
+  add_foreign_key "user_websites", "users"
   add_foreign_key "users", "users", column: "deleted_by_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"

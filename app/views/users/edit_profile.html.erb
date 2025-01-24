@@ -44,6 +44,18 @@
   <p>Note: Links are not shown publicly until you have earned the Participate Everywhere ability.</p>
   <div class="post-preview"></div>
 
+  <div>
+    <p>External links (your web site, blog, social media, GitHub, etc)</p>
+    <div class="grid">
+      <%= form_for current_user do |uw_form| %>
+      <%= uw_form.fields_for :user_websites do |w| %>
+        <span class="has-padding-2">Label:</span> <span class="has-padding-2"><%= w.text_field :label %></span>
+        <span class="has-padding-2">URL:</span> <span class="has-padding-2"><%= w.text_field :url %></span>
+      <% end %>
+    <% end %>    
+    </div>
+  </div>
+
   <div class="grid">
     <div class="grid--cell is-4 is-12-sm form-group">
       <%= f.label :website, class: "form-element" %>

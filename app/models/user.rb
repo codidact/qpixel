@@ -1,3 +1,4 @@
+# coding: utf-8
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
@@ -27,6 +28,8 @@ class User < ApplicationRecord
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
+  has_many :user_websites, dependent: :destroy
+  accepts_nested_attributes_for :user_websites
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -128,6 +131,10 @@ class User < ApplicationRecord
 
   def website_domain
     website.nil? ? website : URI.parse(website).hostname
+  end
+
+  def websites_for
+    user_websites.order(position)
   end
 
   def is_moderator

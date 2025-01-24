@@ -57,6 +57,20 @@
       <% end %>
       </div>
 
+      <% if @user.user_websites.size > 0 %>
+      <div>
+	<p><strong>External links</strong></p>
+	<table class="table is-with-hover">
+	  <% @user.user_websites.first(3).each do |w| %>
+	  <tr>
+	    <td><%= w.label %></td>
+	    <td><%= link_to w.url, w.url, rel: 'nofollow' %></td>
+	  </tr>
+	  <% end %>
+	</table>
+      </div>
+      <% end %>
+     
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
           <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>

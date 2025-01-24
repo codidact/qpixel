@@ -368,9 +368,20 @@ class UsersController < ApplicationController
     flash[:danger] = 'Invalid profile website link.'
   end
 
+  def ensure_protocol(uri)
+    if URI.parse(uri).instance_of?(URI::Generic)
+      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
+      # parsed correctly in the view later on.
+      return "https://#{uri}"
+    else
+      return uri
+    end
+  rescue URI::InvalidURIError
+    return null
+  end    
+
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
-    profile_params[:twitter] = profile_params[:twitter].delete('@')
+    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord)
 
     if profile_params[:website].present?
       validate_profile_website(profile_params)
