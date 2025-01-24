@@ -49,8 +49,16 @@
     <div class="grid">
       <%= form_for current_user do |uw_form| %>
       <%= uw_form.fields_for :user_websites do |w| %>
-        <span class="has-padding-2">Label:</span> <span class="has-padding-2"><%= w.text_field :label %></span>
-        <span class="has-padding-2">URL:</span> <span class="has-padding-2"><%= w.text_field :url %></span>
+      <div class="grid grid--cell is-12">
+	<div class="grid grid--cell is-4">
+	  <div class="grid--cell is-2">Label:</div>
+	  <div class="grid--cell is-10"><%= w.text_field :label, class: 'form-element' %></div>
+	</div>
+	<div class="grid grid--cell is-6">
+	  <div class="grid--cell is-2">URL:</div>
+          <div class="grid--cell is-10"><%= w.text_field :url, class: 'form-element' %></div>
+	</div>
+      </div>
       <% end %>
     <% end %>    
     </div>
