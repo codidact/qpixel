@@ -30,6 +30,13 @@ class SiteSetting < ApplicationRecord
       SiteSetting.where(name: name).count.positive?
   end
 
+  # Checks whether the setting is a global site setting
+  # @return [Boolean]
+  #
+  def global?
+    community_id.nil?
+  end
+
   def typed
     SettingConverter.new(value).send("as_#{value_type.downcase}")
   end
