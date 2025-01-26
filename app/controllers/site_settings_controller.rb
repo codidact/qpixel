@@ -6,7 +6,7 @@ class SiteSettingsController < ApplicationController
 
   # Checks if a given user has access to site settings on a given community
   # @param [User] user user to check access for
-  # @param [String] community_id id of the community to check access on
+  # @param [String, nil] community_id id of the community to check access on
   # @return [Boolean]
   def access?(user, community_id)
     community_id.present? || user.is_global_admin
@@ -46,6 +46,14 @@ class SiteSettingsController < ApplicationController
                          comment: "from <<SiteSetting #{before}>>\nto <<SiteSetting #{after.attributes_print}>>")
   end
 
+  # Deletes cache for a given site setting for a given community
+  # @param [SiteSetting] setting site setting to clear cache for
+  # @param [String, nil] community_id community id to clear cache for
+  # @return [void]
+  def clear_cache(setting, community_id)
+    Rails.cache.delete("SiteSettings/#{community_id}/#{setting.name}", include_community: false)
+  end
+
   def update
     unless access?(current_user, params[:community_id])
       not_found
@@ -72,7 +80,7 @@ class SiteSettingsController < ApplicationController
 
     audit_update(current_user, before, @setting)
 
-    Rails.cache.delete("SiteSettings/#{RequestContext.community_id}/#{@setting.name}", include_community: false)
+    clear_cache(@setting, RequestContext.community_id)
 
     render json: { status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed) }
   end
