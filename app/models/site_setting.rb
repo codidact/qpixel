@@ -32,7 +32,6 @@ class SiteSetting < ApplicationRecord
 
   # Checks whether the setting is a global site setting
   # @return [Boolean]
-  #
   def global?
     community_id.nil?
   end

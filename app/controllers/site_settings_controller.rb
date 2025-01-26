@@ -26,6 +26,18 @@ class SiteSettingsController < ApplicationController
     render json: @setting&.as_json&.merge(typed: @setting.typed)
   end
 
+  # Adds an audit log for a given site setting update event
+  # @param [User] user initiating user
+  # @param [SiteSetting] before current site setting
+  # @param [SiteSetting] after updated site setting
+  # @return [void]
+  def audit_update(user, before, after)
+    AuditLog.admin_audit(event_type: 'setting_update',
+                         related: after,
+                         user: user,
+                         comment: "from <<SiteSetting #{before}>>\nto <<SiteSetting #{after.attributes_print}>>")
+  end
+
   def update
     if params[:community_id].blank? && !current_user.is_global_admin
       not_found
@@ -45,11 +57,15 @@ class SiteSettingsController < ApplicationController
                else
                  SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
                end
+
     before = @setting.attributes_print
+
     @setting.update(setting_params)
-    AuditLog.admin_audit(event_type: 'setting_update', related: @setting, user: current_user,
-                         comment: "from <<SiteSetting #{before}>>\nto <<SiteSetting #{@setting.attributes_print}>>")
-    Rails.cache.delete "SiteSettings/#{RequestContext.community_id}/#{@setting.name}", include_community: false
+
+    audit_update(current_user, before, @setting)
+
+    Rails.cache.delete("SiteSettings/#{RequestContext.community_id}/#{@setting.name}", include_community: false)
+
     render json: { status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed) }
   end
 
