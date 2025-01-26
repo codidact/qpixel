@@ -4,6 +4,14 @@ class SiteSettingsController < ApplicationController
   before_action :verify_admin
   before_action :verify_global_admin, only: [:global]
 
+  # Checks if a given user has access to site settings on a given community
+  # @param [User] user user to check access for
+  # @param [String] community_id id of the community to check access on
+  # @return [Boolean]
+  def access?(user, community_id)
+    community_id.present? || user.is_global_admin
+  end
+
   def index
     # The weird argument to sort_by here sorts without throwing errors on nil values -
     # see https://stackoverflow.com/a/35539062/3160466. 0:1,c sorts nil last, to switch
@@ -39,7 +47,7 @@ class SiteSettingsController < ApplicationController
   end
 
   def update
-    if params[:community_id].blank? && !current_user.is_global_admin
+    unless access?(current_user, params[:community_id])
       not_found
       return
     end
