@@ -47,8 +47,7 @@
   <div>
     <p>External links (your web site, blog, social media, GitHub, etc)</p>
     <div class="grid">
-      <%= form_for current_user do |uw_form| %>
-      <%= uw_form.fields_for :user_websites do |w| %>
+      <%= f.fields_for :user_websites do |w| %>
       <div class="grid grid--cell is-12">
 	<div class="grid grid--cell is-4">
 	  <div class="grid--cell is-2">Label:</div>
@@ -60,7 +59,6 @@
 	</div>
       </div>
       <% end %>
-    <% end %>    
     </div>
   </div>
 
