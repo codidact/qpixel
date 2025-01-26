@@ -370,7 +370,7 @@ class UsersController < ApplicationController
 
   def validate_profile_websites(profile_params)
     sites = profile_params[:user_websites]
-    ws.url.all? { |u| ensure_protocol(u) }
+    ws.url.all? { |u| u = ensure_protocol(u) }
   end
 
   def ensure_protocol(uri)
@@ -382,14 +382,14 @@ class UsersController < ApplicationController
       return uri
     end
   rescue URI::InvalidURIError
-    return null
+    return nil
   end    
 
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, :user_websites)
 
     if profile_params[:user_websites].present?
-      validate_profile_websites(profile_params) || flash[:danger] = "Invalid external link"
+      profile_params[:user_websistes] = validate_profile_websites(profile_params) || flash[:danger] = "Invalid external link"
     end
     
     @user = current_user
