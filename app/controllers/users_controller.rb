@@ -371,7 +371,7 @@ class UsersController < ApplicationController
 
   def validate_profile_websites(profile_params)
     sites = profile_params[:user_websites]
-    ws.url.all? { |u| u = ensure_protocol(u) }
+    sites.all? { |u| u = ensure_protocol(u.url) }
   end
 
   def ensure_protocol(uri)
