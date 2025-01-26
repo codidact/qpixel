@@ -355,6 +355,7 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  # to be deleted (when I'm done debugging with it)
   def validate_profile_website(profile_params)
     uri = profile_params[:website]
     
