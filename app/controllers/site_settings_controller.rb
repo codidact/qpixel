@@ -91,7 +91,13 @@ class SiteSettingsController < ApplicationController
 
     audit_update(current_user, before, @setting)
 
-    clear_cache(@setting, RequestContext.community_id)
+    if @setting.global?
+      Community.all.each do |c|
+        clear_cache(@setting, c.id)
+      end
+    else
+      clear_cache(@setting, RequestContext.community_id)
+    end
 
     render json: { status: 'OK', setting: @setting&.as_json&.merge(typed: @setting.typed) }
   end
