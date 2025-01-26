@@ -2,7 +2,7 @@ class EnforceConcurrenceOfIsModeratorAndModAbility < ActiveRecord::Migration[5.2
   def up
     CommunityUser.unscoped.where(is_moderator: true).all.map do |cu|
       RequestContext.community = cu.community
-      cu.grant_privilege  'mod'
+      cu.grant_privilege! 'mod'
     end
   end
 

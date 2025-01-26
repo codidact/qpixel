@@ -9,7 +9,7 @@ User.unscoped.all.map do |u|
     cu.recalc_privileges
 
     if (cu.is_moderator || cu.is_admin || u.is_global_moderator || u.is_global_admin) && !cu.privilege?('mod')
-      cu.grant_privilege('mod')
+      cu.grant_privilege!('mod')
     end
   rescue
     puts "    !!! Error recalcing for CommunityUser.Id=#{cu.id}"
