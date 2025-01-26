@@ -369,7 +369,8 @@ class UsersController < ApplicationController
     flash[:danger] = 'Invalid profile website link.'
   end
 
-  def validate_profile_websites(profile_params)
+  # Return the user websites that pass validation (only).
+  def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites]
     # Create a hash mapping the submitted URL to the validated URL.
     # If any of the validated are `nil`, this indicates there was an error
@@ -384,6 +385,7 @@ class UsersController < ApplicationController
     websites.compact
   end
 
+  # Ensure that a "naked" URL like example.com gets a protocol.
   def ensure_protocol(uri)
     if URI.parse(uri).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
@@ -399,8 +401,9 @@ class UsersController < ApplicationController
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, :user_websites)
 
+    # Ensure that all user-supplied URLs are valid (strip ones that aren't).
     if profile_params[:user_websites].present?
-      profile_params[:user_websistes] = validate_profile_websites(profile_params)
+      profile_params[:user_websistes] = validated_profile_websites(profile_params)
     end
     
     @user = current_user
