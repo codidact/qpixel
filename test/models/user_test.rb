@@ -46,7 +46,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal true, users(:moderator).can_update(post, post_type)
     assert_equal true, users(:editor).can_update(post, post_type)
 
-    basic_user.community_user.grant_privilege('unrestricted')
+    basic_user.community_user.grant_privilege!('unrestricted')
     assert_equal false, basic_user.can_update(post, post_type)
     assert_equal true, basic_user.can_update(post, post_types(:free_edit))
   end
