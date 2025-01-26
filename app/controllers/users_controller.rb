@@ -371,7 +371,17 @@ class UsersController < ApplicationController
 
   def validate_profile_websites(profile_params)
     sites = profile_params[:user_websites]
-    sites.all? { |u| u = ensure_protocol(u.url) }
+    # Create a hash mapping the submitted URL to the validated URL.
+    # If any of the validated are `nil`, this indicates there was an error
+    # and we can use this to give feedback.
+    websites = sites.map { |u| [u, ensure_protocol(u.url)] }.to_h
+
+    # Check for `nil` values and produce an array of erroneous submitted values.
+    errors = websites.select { |k, v| v.nil? }.keys
+    flash[:danger] = "Invalid external link: #{errors.join(', ')}"
+
+    # Return just the valid websites for saving
+    websites.compact
   end
 
   def ensure_protocol(uri)
@@ -390,7 +400,7 @@ class UsersController < ApplicationController
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, :user_websites)
 
     if profile_params[:user_websites].present?
-      profile_params[:user_websistes] = validate_profile_websites(profile_params) || flash[:danger] = "Invalid external link"
+      profile_params[:user_websistes] = validate_profile_websites(profile_params)
     end
     
     @user = current_user

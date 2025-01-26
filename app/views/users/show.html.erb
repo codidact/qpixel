@@ -59,15 +59,15 @@
 
       <% if @user.user_websites.size > 0 %>
       <div>
-	<p><strong>External links</strong></p>
-	<table class="table is-with-hover">
-	  <% @user.user_websites.first(3).each do |w| %>
-	  <tr>
-	    <td><%= w.label %></td>
-	    <td><%= link_to w.url, w.url, rel: 'nofollow' %></td>
-	  </tr>
-	  <% end %>
-	</table>
+        <p><strong>External links</strong></p>
+        <table class="table is-with-hover">
+          <% @user.user_websites.each do |w| %>
+          <tr>
+            <td><%= w.label %></td>
+            <td><%= link_to w.url, w.url, rel: 'nofollow' %></td>
+          </tr>
+          <% end %>
+        </table>
       </div>
       <% end %>
      
