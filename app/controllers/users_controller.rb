@@ -358,7 +358,7 @@ class UsersController < ApplicationController
   # to be deleted (when I'm done debugging with it)
   def validate_profile_website(profile_params)
     uri = profile_params[:website]
-    
+
     if URI.parse(uri).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
       # parsed correctly in the view later on.
@@ -375,10 +375,10 @@ class UsersController < ApplicationController
     # Create a hash mapping the submitted URL to the validated URL.
     # If any of the validated are `nil`, this indicates there was an error
     # and we can use this to give feedback.
-    websites = sites.map { |u| [u, ensure_protocol(u.url)] }.to_h
+    websites = sites.to_h { |u| [u, ensure_protocol(u.url)] }
 
     # Check for `nil` values and produce an array of erroneous submitted values.
-    errors = websites.select { |k, v| v.nil? }.keys
+    errors = websites.select { |_, v| v.nil? }.keys
     flash[:danger] = "Invalid external link: #{errors.join(', ')}"
 
     # Return just the valid websites for saving
@@ -390,13 +390,13 @@ class UsersController < ApplicationController
     if URI.parse(uri).instance_of?(URI::Generic)
       # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
       # parsed correctly in the view later on.
-      return "https://#{uri}"
+      "https://#{uri}"
     else
-      return uri
+      uri
     end
   rescue URI::InvalidURIError
-    return nil
-  end    
+    nil
+  end
 
   def update_profile
     profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, :user_websites)
@@ -405,7 +405,7 @@ class UsersController < ApplicationController
     if profile_params[:user_websites].present?
       profile_params[:user_websistes] = validated_profile_websites(profile_params)
     end
-    
+
     @user = current_user
 
     if params[:user][:avatar].present?
