@@ -49,9 +49,22 @@ class SiteSettingsController < ApplicationController
   # Deletes cache for a given site setting for a given community
   # @param [SiteSetting] setting site setting to clear cache for
   # @param [String, nil] community_id community id to clear cache for
-  # @return [void]
+  # @return [Boolean]
   def clear_cache(setting, community_id)
     Rails.cache.delete("SiteSettings/#{community_id}/#{setting.name}", include_community: false)
+  end
+
+  # Actually creates a given site setting
+  # @param [SiteSetting] setting site setting to create
+  # @param [String, nil] community_id community id to create a setting for
+  # @return [SiteSetting]
+  def do_create(setting, community_id)
+    SiteSetting.create(name: setting.name,
+                       community_id: community_id,
+                       value: '',
+                       value_type: setting.value_type,
+                       category: setting.category,
+                       description: setting.description)
   end
 
   def update
@@ -64,9 +77,7 @@ class SiteSettingsController < ApplicationController
                  matches = SiteSetting.unscoped.where(community_id: RequestContext.community_id, name: params[:name])
                  if matches.count.zero?
                    global = SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
-                   SiteSetting.create(name: global.name, community_id: RequestContext.community_id, value: '',
-                                      value_type: global.value_type, category: global.category,
-                                      description: global.description)
+                   do_create(global, RequestContext.community_id)
                  else
                    matches.first
                  end
