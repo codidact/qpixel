@@ -57,11 +57,11 @@
       <% end %>
       </div>
 
-      <% if @user.user_websites.size > 0 %>
+      <% if @user.user_websites.where.not(url: [nil, ""]).size > 0 %>
       <div>
         <p><strong>External links</strong></p>
         <table class="table is-with-hover">
-          <% @user.user_websites.each do |w| %>
+          <% @user.user_websites.where.not(url: [nil, ""]).each do |w| %>
           <tr>
             <td><%= w.label %></td>
             <td><%= link_to w.url, w.url, rel: 'nofollow' %></td>
