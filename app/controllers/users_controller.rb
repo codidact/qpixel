@@ -555,7 +555,7 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege 'mod'
+        @user.community_user.grant_privilege! 'mod'
       else
         @user.community_user.privilege('mod').destroy
       end
@@ -584,7 +584,7 @@ class UsersController < ApplicationController
     case params[:do]
     when 'grant'
       if ua.nil?
-        @user.community_user.grant_privilege(ability.internal_id)
+        @user.community_user.grant_privilege!(ability.internal_id)
         AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
                              comment: ability.internal_id.to_s)
       elsif ua.is_suspended

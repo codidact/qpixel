@@ -41,7 +41,9 @@
   <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
             cur_length: current_user.profile_markdown&.length, min_length: 0 %>
 
-  <p>Note: Links are not shown publicly until you have earned the Participate Everywhere ability.</p>
+  <% unless current_user.community_user.privilege?('unrestricted') %>
+    <p>Note: Links are not shown publicly until you have earned the Participate Everywhere ability.</p>
+  <% end %>
   <div class="post-preview"></div>
 
   <div class="grid">
