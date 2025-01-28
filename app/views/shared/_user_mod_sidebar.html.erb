@@ -1,0 +1,116 @@
+<div class="grid--cell is-3">
+    <div class="widget modtools--sidebar">
+        <div class="widget--header">
+            User Moderation Tools
+        </div>
+        <div class="widget--body">
+            <div class="modtools--usercard">
+                <%= render 'users/common_card', user: user, ckb: false %>
+            </div>
+        </div>
+        <div class="widget--body">
+            <div class="menu">
+                <%= link_to mod_user_path(user),
+                            class: "menu--item #{current_page?(mod_user_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-tachometer-alt fa-fw"></i>
+                    Dashboard
+                <% end %>
+                <div class="menu--heading">Activity</div>
+                <%= link_to full_user_log_path(user),
+                            class: "menu--item #{current_page?(full_user_log_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-history fa-fw"></i>
+                    Full Activity Log
+                <% end %>
+                <%= link_to user_annotations_path(user),
+                            class: "menu--item #{current_page?(user_annotations_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-sticky-note fa-fw"></i>
+                    Annotations
+                <% end %>
+                <%= link_to mod_vote_summary_path(user),
+                            class: "menu--item #{current_page?(mod_vote_summary_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-poll fa-fw"></i>
+                    Voting Behavior
+                <% end %>
+
+                <div class="menu--heading">Privileges</div>
+                <%= link_to user_privileges_path(user),
+                            class: "menu--item #{current_page?(user_privileges_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-shield fa-fw"></i>
+                    Manage Privileges
+                <% end %>
+
+                <div class="menu--heading">Warnings and Suspensions</div>
+                <%= link_to mod_contact_path(user),
+                            class: "menu--item #{current_page?(mod_contact_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-envelope fa-fw"></i>
+                    Contact Privately
+                <% end %>
+                <%= link_to mod_warning_log_path(user),
+                            class: "menu--item #{current_page?(mod_warning_log_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-lock fa-fw"></i>
+                    List Previous
+                    <% if user.community_user.suspended? %>
+                        (includes lifting the suspension)
+                    <% end %>
+                <% end %>
+                <%= link_to new_mod_warning_path(user),
+                            class: "menu--item #{current_page?(new_mod_warning_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-exclamation-triangle fa-fw"></i>
+                    Warn or Suspend
+                <% end %>
+
+                <div class="menu--heading">Account</div>
+                <%= link_to mod_reset_profile_path(user),
+                            class: "menu--item #{current_page?(mod_reset_profile_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-times fa-fw"></i>
+                    Clear User Profile
+                <% end %>
+                <%= link_to mod_delete_path(user),
+                            class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-trash fa-fw"></i>
+                    Delete Account
+                <% end %>
+
+                <% if current_user.is_global_moderator || current_user.is_global_admin %>
+                <div class="menu--heading">Global Mod Tools</div>
+                <%= link_to global_user_log_path(user),
+                            class: "menu--item #{current_page?(global_user_log_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-heartbeat fa-fw"></i>
+                    Global Summary
+                <% end %>
+                <%= link_to new_global_warning_path(user),
+                            class: "menu--item #{current_page?(new_global_warning_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-slash fa-fw"></i>
+                    Network-wide Suspension
+                <% end %>
+                <%= link_to mod_delete_network_account_path(user),
+                            class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-skull fa-fw"></i>
+                    Delete Network Account
+                <% end %>
+                <%= link_to mod_failban_path(user),
+                            class: "menu--item #{current_page?(mod_failban_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-eye-slash fa-fw"></i>
+                    Fail-ban
+                <% end %>
+                <% end %>
+                <% if current_user.developer %>
+                <div class="menu--heading">Developer Tools</div>
+                <%= link_to start_impersonating_path(user),
+                            class: "menu--item #{current_page?(start_impersonating_path(user)) ? 'is-active' : ''}" do %>
+                    <i class="fas fa-user-secret fa-fw"></i>
+                    Impersonate
+                <% end %>
+                <% end %>
+            </div>
+        </div>
+        <div class="widget--body">
+            <p>You can always ask the Community Team for assistance:</p>
+            <%= link_to user_escalation_path(user),
+                        class: "button is-primary is-outlined #{current_page?(user_escalation_path(user)) ? 'is-active' : ''}" do %>
+                <i class="fas fa-flag fa-fw"></i>
+                Contact Community Team
+            <% end %>
+        </div>
+    </div>
+</div>

@@ -231,3 +231,19 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
     }
   }
 }
+
+
+.modtools--sidebar {
+  margin-right: 1rem;
+}
+.modtools--usercard {
+  padding: 0.5rem;
+}
+.modtools-tbl-noborder {
+  th {
+    border-bottom-width: 1px !important;
+    width: 150px;
+  }
+}
+
+.mod-warnings-clear-form { display: inline; }

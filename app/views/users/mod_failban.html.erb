@@ -1,0 +1,26 @@
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'tabs', user: @user %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9">
+    <h1>Fail-ban</h1>
+
+    <div class="notice is-danger">
+        <p><strong>Take care!</strong> These actions may not be reversible and you will not be asked to confirm after initiating an action.</p>
+    </div>
+
+    <div class="widget">
+        <% if current_user.is_global_admin %>
+        <div class="widget--body">
+            <h4>Feed to STAT</h4>
+            <p>Blatant spammers and trolls may be fed into STAT ("Stop The Awful Troll") which causes the system to <a href="/418">fail-ban</a> them and limits the amount of damage they might possibly do. Only use for accounts where you are sure that they are never going to constructively use this site.</p>
+
+            <%= link_to 'Feed to STAT (180 days)', failban_user_path(@user), method: :post, class: 'button is-danger is-filled' %>
+        </div>
+        <% end %>
+    </div>
+  </div>
+</div>

@@ -8,10 +8,16 @@ class UsersController < ApplicationController
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
                                             :disconnect_sso, :confirm_disconnect_sso, :filters]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :network, :avatar]
+                                          :annotate, :annotations, :mod_privileges,
+                                          :mod_privilege_action, :mod_delete, :mod_reset_profile,
+                                          :mod_clear_profile, :mod_escalation, :mod_escalate,
+                                          :mod_contact, :mod_message]
+  before_action :verify_global_moderator, only: [:mod_failban, :global_log, :mod_delete_network_account]
+  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :destroy, :full_log, :global_log, :mod,
+                                  :mod_clear_profile, :mod_contact, :mod_delete, :mod_delete_network_account,
+                                  :mod_escalate, :mod_escalation, :mod_failban, :mod_message, :mod_privilege_action,
+                                  :mod_privileges, :mod_reset_profile, :network, :posts, :role_toggle, :show,
+                                  :soft_delete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -242,7 +248,56 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def mod; end
+  def mod
+    render layout: 'without_sidebar'
+  end
+
+  def mod_escalation
+    @flag = Flag.new(post_flag_type: nil, reason: '', post_id: @user.id, post_type: 'User', user: current_user)
+    render layout: 'without_sidebar'
+  end
+
+  def mod_escalate
+    @flag = Flag.create(post_flag_type: nil, reason: params[:flag][:reason], post_id: @user.id,
+                        post_type: 'User', user: current_user, escalated: true,
+                        escalated_by: current_user, escalated_at: DateTime.now,
+                        escalation_comment: '(escalated via Contact Community Team Tool)')
+    FlagMailer.with(flag: @flag).flag_escalated.deliver_now
+    flash[:success] = 'Thank you for your message. We have been notified and are looking into it.'
+    redirect_to mod_user_path(@user)
+  end
+
+  def mod_contact
+    render layout: 'without_sidebar'
+  end
+
+  def mod_message
+    title = params[:title]
+    unless title.present?
+      title = 'Private Moderator Message'
+    end
+
+    body = params[:body]
+
+    @comment_thread = CommentThread.new(title: title, post: nil, is_private: true)
+    @comment = Comment.new(post: nil, content: body, user: current_user, comment_thread: @comment_thread)
+
+    success = ActiveRecord::Base.transaction do
+      @comment_thread.save!
+      @comment.save!
+      ThreadFollower.create! comment_thread: @comment_thread, user: @user
+    end
+
+    if success
+      @user.create_notification("You have received a moderator message: #{@comment_thread.title}",
+                                helpers.comment_link(@comment))
+      redirect_to comment_thread_path(@comment_thread.id)
+    else
+      flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
+                                                           + @comment.errors.full_messages).join(', ')}"
+      render :mod_contact, layout: 'without_sidebar'
+    end
+  end
 
   def full_log
     @posts = Post.where(user: @user).count
@@ -276,7 +331,8 @@ class UsersController < ApplicationController
               when 'interesting'
                 Comment.where(user: @user, deleted: true).all + Flag.where(user: @user, status: 'declined').all + \
                   SuggestedEdit.where(user: @user, active: false, accepted: false).all + \
-                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all + \
+                  ModWarning.where(community_user: @user.community_user).all
               else
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
                   SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
@@ -286,8 +342,88 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def global_log
+    @posts = Post.unscoped.where(user: @user).count
+    @comments = Comment.unscoped.where(user: @user).count
+    @flags = Flag.unscoped.where(user: @user).count
+    @suggested_edits = SuggestedEdit.unscoped.where(user: @user).count
+    @edits = PostHistory.unscoped.where(user: @user).count
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_users).count + \
+                             ModWarning.where(user: @user).count
+
+    @all_edits = @suggested_edits + @edits
+
+    @interesting_comments = Comment.unscoped.where(user: @user, deleted: true).count
+    @interesting_flags = Flag.unscoped.where(user: @user, status: 'declined').count
+    @interesting_edits = SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).count
+    @interesting_posts = Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').count
+
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+                   @interesting_edits + @interesting_posts
+
+    @items = (case params[:filter]
+              when 'posts'
+                Post.unscoped.where(user: @user).all
+              when 'comments'
+                Comment.unscoped.where(user: @user).all
+              when 'flags'
+                Flag.unscoped.where(user: @user).all
+              when 'edits'
+                SuggestedEdit.unscoped.where(user: @user).all + \
+                  PostHistory.where(user: @user).all
+              when 'warnings'
+                ModWarning.where(community_user: @user.community_users).all + \
+                  ModWarning.where(user: @user).all
+              when 'interesting'
+                Comment.unscoped.where(user: @user, deleted: true).all + \
+                  Flag.unscoped.where(user: @user, status: 'declined').all + \
+                  SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all + \
+                  Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all + \
+                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                  ModWarning.where(user: @user).all
+              else
+                Post.unscoped.where(user: @user).all + \
+                  Comment.unscoped.where(user: @user).all + \
+                  Flag.unscoped.where(user: @user).all + \
+                  SuggestedEdit.unscoped.where(user: @user).all + \
+                  PostHistory.unscoped.where(user: @user).all + \
+                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                  ModWarning.where(user: @user).all
+              end).sort_by(&:created_at).reverse
+
+    render layout: 'without_sidebar'
+  end
+
   def mod_privileges
     @abilities = Ability.all
+    render layout: 'without_sidebar'
+  end
+
+  def mod_reset_profile
+    render layout: 'without_sidebar'
+  end
+
+  def mod_clear_profile
+    before = @user.attributes_print
+    @user.update(username: "user#{@user.id}", profile: '', website: '', twitter: '',
+                 profile_markdown: '', discord: '')
+    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
+                              'notification to update your profile.', edit_user_profile_path)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>",
+                             related: @user)
+    redirect_to mod_user_path(@user)
+  end
+
+  def mod_delete
+    render layout: 'without_sidebar'
+  end
+
+  def mod_delete_network_account
+    render layout: 'without_sidebar'
+  end
+
+  def mod_failban
+    render layout: 'without_sidebar'
   end
 
   def destroy
