@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_01_23_141400) do
+ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -307,6 +307,27 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_23_141400) do
     t.text "description"
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
+  end
+
+  create_table "maintenance_tasks_runs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "task_name", null: false
+    t.datetime "started_at", precision: nil
+    t.datetime "ended_at", precision: nil
+    t.float "time_running", default: 0.0, null: false
+    t.bigint "tick_count", default: 0, null: false
+    t.bigint "tick_total"
+    t.string "job_id"
+    t.string "cursor"
+    t.string "status", default: "enqueued", null: false
+    t.string "error_class"
+    t.string "error_message"
+    t.text "backtrace"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "arguments"
+    t.integer "lock_version", default: 0, null: false
+    t.text "metadata"
+    t.index ["task_name", "status", "created_at"], name: "index_maintenance_tasks_runs", order: { created_at: :desc }
   end
 
   create_table "micro_auth_apps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount MaintenanceTasks::Engine, at: "/maintenance_tasks"
   # Add normal sign in/sign up, confirmations, registrations, unlocking and password editing routes only if no SSO or mixed sign in.
   devise_for :users, only: %i[sessions registrations confirmations unlock passwords],
              controllers: { sessions: 'users/sessions', registrations: 'users/registrations' },
