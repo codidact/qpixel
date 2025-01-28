@@ -101,4 +101,4 @@ group :development do
   gem 'web-console', '~> 4.2'
 end
 
-gem "maintenance_tasks", "~> 2.10"
+gem 'maintenance_tasks', '~> 2.10'
