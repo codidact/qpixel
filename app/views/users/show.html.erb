@@ -57,18 +57,26 @@
       <% end %>
       </div>
 
-      <% if @user.user_websites.where.not(url: [nil, ""]).size > 0 %>
+      <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+      <% if @user.valid_websites_for.size.positive? %>
       <div>
-        <p><strong>External links</strong></p>
+        <p><strong>Extra fields</strong></p>
         <table class="table is-with-hover">
-          <% @user.user_websites.where.not(url: [nil, ""]).each do |w| %>
+          <% @user.valid_websites_for.each do |w| %>
           <tr>
             <td><%= w.label %></td>
-            <td><%= link_to w.url, w.url, rel: 'nofollow' %></td>
+            <td>
+	      <% if w.url[0,4] == 'http' %>
+	        <%= link_to w.url, w.url, rel: 'nofollow' %>
+	      <% else %>
+	      <%= w.url %>
+	      <% end %>
+	    </td>
           </tr>
           <% end %>
         </table>
       </div>
+      <% end %>
       <% end %>
      
       <div class="button-list h-p-2">

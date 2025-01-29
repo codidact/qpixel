@@ -359,7 +359,10 @@ class UsersController < ApplicationController
   def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
 
-    websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }
+    websites = sites.select { |_, v| v[:url].present? &&  v[:url] != ''}
+                 .transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }    
+
+#    websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }    
 
     invalid_keys = websites.select { |_, w| w[:url].nil? }.keys
 
@@ -395,9 +398,9 @@ class UsersController < ApplicationController
                                                   user_websites_attributes: [:id, :label, :url])
 
     # Ensure that all user-supplied URLs are valid (strip ones that aren't).
-    if profile_params[:user_websites_attributes].present?
-      profile_params[:user_websites_attributes] = validated_profile_websites(profile_params)
-    end
+#    if profile_params[:user_websites_attributes].present?
+#      profile_params[:user_websites_attributes] = validated_profile_websites(profile_params)
+#    end
 
     @user = current_user
 
