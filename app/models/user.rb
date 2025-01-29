@@ -63,6 +63,12 @@ class User < ApplicationRecord
     community_user.trust_level
   end
 
+  # Checks whether this user is the same as a given user
+  # @param [User] user user to compare with
+  def same?(user)
+    id == user.id
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
