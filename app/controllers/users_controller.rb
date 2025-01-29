@@ -390,6 +390,7 @@ class UsersController < ApplicationController
                                                   :profile_markdown,
                                                   :website,
                                                   :discord,
+                                                  :twitter,
                                                   user_websites_attributes: [:id, :label, :url])
 
     # Ensure that all user-supplied URLs are valid (strip ones that aren't).
