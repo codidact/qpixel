@@ -361,11 +361,14 @@ class UsersController < ApplicationController
 
     websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }
 
-    # Check for `nil` values and produce an array of erroneous submitted values.
-    errors = websites.select { |_, w| w[:url].nil? }.keys
+    invalid_keys = websites.select { |_, w| w[:url].nil? }.keys
+
+    errors = invalid_keys.map do |key|
+      "\"#{sites[key][:url]}\""
+    end
 
     unless errors.empty?
-      flash[:danger] = "Invalid external link: #{errors.join(', ')}"
+      flash[:danger] = "Some of the external link URLs are invalid: #{errors.join(', ')}"
     end
 
     websites.reject { |_, w| w[:url].nil? }
