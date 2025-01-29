@@ -372,10 +372,11 @@ class UsersController < ApplicationController
   # Return the user websites that pass validation (only).
   def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
+
     # Create a hash mapping the submitted URL to the validated URL.
     # If any of the validated are `nil`, this indicates there was an error
     # and we can use this to give feedback.
-    websites = sites.to_h { |u| [u, ensure_protocol(u.url)] }
+    websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }
 
     # Check for `nil` values and produce an array of erroneous submitted values.
     errors = websites.select { |_, v| v.nil? }.keys
