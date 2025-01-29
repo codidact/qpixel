@@ -359,24 +359,19 @@ class UsersController < ApplicationController
   def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
 
-    # Create a hash mapping the submitted URL to the validated URL.
-    # If any of the validated are `nil`, this indicates there was an error
-    # and we can use this to give feedback.
     websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }
 
     # Check for `nil` values and produce an array of erroneous submitted values.
     errors = websites.select { |_, v| v.nil? }.keys
     flash[:danger] = "Invalid external link: #{errors.join(', ')}"
 
-    # Return just the valid websites for saving
     websites.compact
   end
 
   # Ensure that a "naked" URL like example.com gets a protocol.
   def ensure_protocol(uri)
+    # URI::Generic indicates the user didn't include a protocol
     if URI.parse(uri).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
       "https://#{uri}"
     else
       uri
