@@ -355,20 +355,6 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  # to be deleted (when I'm done debugging with it)
-  def validate_profile_website(profile_params)
-    uri = profile_params[:website]
-
-    if URI.parse(uri).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{uri}"
-    end
-  rescue URI::InvalidURIError
-    profile_params.delete(:website)
-    flash[:danger] = 'Invalid profile website link.'
-  end
-
   # Return the user websites that pass validation (only).
   def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
