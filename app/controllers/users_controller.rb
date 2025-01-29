@@ -371,7 +371,7 @@ class UsersController < ApplicationController
 
   # Return the user websites that pass validation (only).
   def validated_profile_websites(profile_params)
-    sites = profile_params[user_websites_attributes: [:id, :label, :url]]
+    sites = profile_params[:user_websites]
     # Create a hash mapping the submitted URL to the validated URL.
     # If any of the validated are `nil`, this indicates there was an error
     # and we can use this to give feedback.
@@ -399,7 +399,7 @@ class UsersController < ApplicationController
   end
 
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, user_websites_attributes: [:id, :label, :url])
+    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :discord, :user_websites, user_websites_attributes: [:id, :label, :url])
 
     # Ensure that all user-supplied URLs are valid (strip ones that aren't).
     if profile_params[user_websites: [:id, :label, :url]].present?
