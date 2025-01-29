@@ -115,8 +115,13 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should update profile text' do
     sign_in users(:standard_user)
-    patch :update_profile, params: { user: { profile_markdown: 'ABCDEF GHIJKL', website: 'https://example.com/user',
-                                             twitter: '@standard_user' } }
+    patch :update_profile, params: {
+      user: {
+        profile_markdown: 'ABCDEF GHIJKL',
+        website: 'https://example.com/user',
+        twitter: 'standard_user'
+      }
+    }
     assert_response 302
     assert_not_nil flash[:success]
     assert_not_nil assigns(:user)
