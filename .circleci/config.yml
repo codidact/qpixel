@@ -198,7 +198,7 @@ jobs:
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
-  system-test-ruby31:
+  system-test-ruby32:
     docker:
       - image: cimg/ruby:3.2-browsers
       - image: cimg/mysql:8.0
