@@ -368,7 +368,7 @@ class UsersController < ApplicationController
       flash[:danger] = "Invalid external link: #{errors.join(', ')}"
     end
 
-    websites.compact
+    websites.reject { |_, w| w[:url].nil? }
   end
 
   # Ensure that a "naked" URL like example.com gets a protocol.
