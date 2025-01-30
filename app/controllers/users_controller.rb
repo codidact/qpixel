@@ -366,18 +366,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # Ensure that a "naked" URL like example.com gets a protocol.
-  def ensure_protocol(uri)
-    # URI::Generic indicates the user didn't include a protocol
-    if URI.parse(uri).instance_of?(URI::Generic)
-      "https://#{uri}"
-    else
-      uri
-    end
-  rescue URI::InvalidURIError
-    nil
-  end
-
   def update_profile
     profile_params = params.require(:user).permit(:username,
                                                   :profile_markdown,
