@@ -1,4 +1,3 @@
-# coding: utf-8
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
@@ -144,7 +143,7 @@ class User < ApplicationRecord
   end
 
   def valid_websites_for
-    user_websites.where.not(url: [nil, ""]).order(position: :asc)
+    user_websites.where.not(url: [nil, '']).order(position: :asc)
   end
 
   def is_moderator
