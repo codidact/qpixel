@@ -50,11 +50,11 @@
     <p>Extra fields -- your web site, GitHub profile, social-media usernames, whatever you want. Only values that begin with "http" are rendered as links.</p>
     <div class="grid">
       <%= f.fields_for :user_websites do |w| %>
-      <div class="grid grid--cell is-12">
-	<div class="grid grid--cell is-3">
+      <div class="grid grid--cell is-12 is-12-sm">
+	<div class="grid grid--cell is-3 is-3-sm">
 	  <div class="grid--cell is-12"><%= w.text_field :label, class: 'form-element', autocomplete: 'off', placeholder: 'label' %></div>
 	</div>
-	<div class="grid grid--cell is-6">
+	<div class="grid grid--cell is-6 is-9-sm">
           <div class="grid--cell is-12"><%= w.text_field :url, class: 'form-element', autocomplete: 'off', placeholder: 'https://...' %></div>
 	</div>
       </div>
