@@ -358,7 +358,7 @@ class UsersController < ApplicationController
   # Return the user websites that pass validation (only).
   def validated_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
-
+    
     websites = sites.select { |_, v| v[:url].present? &&  v[:url] != ''}
                  .transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }    
 
@@ -375,6 +375,17 @@ class UsersController < ApplicationController
     end
 
     websites.reject { |_, w| w[:url].nil? }
+  end
+
+  def cleaned_profile_websites(profile_params)
+    sites = profile_params[:user_websites_attributes]
+
+    sites.transform_values do |w|
+      w.merge({
+                label: w[:label].present? ? w[:label] : nil,
+                url: w[:url].present? ? w[:url] : nil
+              })
+    end
   end
 
   # Ensure that a "naked" URL like example.com gets a protocol.
@@ -397,10 +408,9 @@ class UsersController < ApplicationController
                                                   :twitter,
                                                   user_websites_attributes: [:id, :label, :url])
 
-    # Ensure that all user-supplied URLs are valid (strip ones that aren't).
-#    if profile_params[:user_websites_attributes].present?
-#      profile_params[:user_websites_attributes] = validated_profile_websites(profile_params)
-#    end
+    if profile_params[:user_websites_attributes].present?
+      profile_params[:user_websites_attributes] = cleaned_profile_websites(profile_params)
+    end
 
     @user = current_user
 
