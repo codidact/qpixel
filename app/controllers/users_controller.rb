@@ -355,28 +355,6 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  # Return the user websites that pass validation (only).
-  def validated_profile_websites(profile_params)
-    sites = profile_params[:user_websites_attributes]
-    
-    websites = sites.select { |_, v| v[:url].present? &&  v[:url] != ''}
-                 .transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }    
-
-#    websites = sites.transform_values { |w| w.merge({ url: ensure_protocol(w[:url]) }) }    
-
-    invalid_keys = websites.select { |_, w| w[:url].nil? }.keys
-
-    errors = invalid_keys.map do |key|
-      "\"#{sites[key][:url]}\""
-    end
-
-    unless errors.empty?
-      flash[:danger] = "Some of the external link URLs are invalid: #{errors.join(', ')}"
-    end
-
-    websites.reject { |_, w| w[:url].nil? }
-  end
-
   def cleaned_profile_websites(profile_params)
     sites = profile_params[:user_websites_attributes]
 
