@@ -142,6 +142,15 @@ class User < ApplicationRecord
     user_websites.where.not(url: [nil, '']).order(position: :asc)
   end
 
+  def ensure_websites
+    pos = user_websites.size
+    while pos < UserWebsite::MaxRows
+      pos += 1
+      UserWebsite.create(user_id: id, position: pos)
+    end
+  end
+
+
   def is_moderator
     is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
   end
