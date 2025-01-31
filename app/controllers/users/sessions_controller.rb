@@ -92,9 +92,6 @@ class Users::SessionsController < Devise::SessionsController
       return false
     end
 
-    # Make sure the rows in user_websites get created
-    user.ensure_websites
-
     true
   end
 
