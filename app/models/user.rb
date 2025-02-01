@@ -65,7 +65,7 @@ class User < ApplicationRecord
 
   # Checks whether this user is the same as a given user
   # @param [User] user user to compare with
-  def same?(user)
+  def same_as?(user)
     id == user.id
   end
 
