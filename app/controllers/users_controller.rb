@@ -359,10 +359,7 @@ class UsersController < ApplicationController
     sites = profile_params[:user_websites_attributes]
 
     sites.transform_values do |w|
-      w.merge({
-                label: w[:label].present? ? w[:label] : nil,
-                url: w[:url].present? ? w[:url] : nil
-              })
+      w.merge({ label: w[:label].presence, url: w[:url].presence })
     end
   end
 
