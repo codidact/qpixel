@@ -28,33 +28,33 @@
       <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
       <% if effective_profile.blank? %>
         <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-	<% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
-	  <%= sanitize(effective_profile, attributes: %w()) %>
-	<% else %>
+      <% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+        <%= sanitize(effective_profile, attributes: %w()) %>
+      <% else %>
         <%= effective_profile %>
       <% end %>
       </div>
 
       <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
-      <% if @user.valid_websites_for.size.positive? %>
-      <div>
-        <p><strong>Extra fields</strong></p>
-        <table class="table is-with-hover">
-          <% @user.valid_websites_for.each do |w| %>
-          <tr>
-            <td><%= w.label %></td>
-            <td>
-	      <% if w.url[0,4] == 'http' %>
-	        <%= link_to w.url, w.url, rel: 'nofollow' %>
-	      <% else %>
-	      <%= w.url %>
-	      <% end %>
-	    </td>
-          </tr>
-          <% end %>
-        </table>
-      </div>
-      <% end %>
+        <% if @user.valid_websites_for.size.positive? %>
+        <div>
+          <p><strong>Extra fields</strong></p>
+          <table class="table is-with-hover">
+            <% @user.valid_websites_for.each do |w| %>
+            <tr>
+              <td><%= w.label %></td>
+              <td>
+              <% if w.url[0,4] == 'http' %>
+                <%= link_to w.url, w.url, rel: 'nofollow' %>
+              <% else %>
+              <%= w.url %>
+              <% end %>
+              </td>
+            </tr>
+            <% end %>
+          </table>
+        </div>
+        <% end %>
       <% end %>
      
       <p>
@@ -164,7 +164,7 @@
     <% if current_user&.id == @user.id || current_user&.is_moderator %>
     <table class="table is-full-width">
       <tr>
-	<td>User since <%= @user.created_at %></td>
+        <td>User since <%= @user.created_at %></td>
       </tr>
     </table>
     <% end %>
@@ -174,7 +174,7 @@
 
       <div class="widget">
         <% @abilities.each do |a| %>
-	<% if @user.privilege?(a.internal_id) %>
+        <% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
