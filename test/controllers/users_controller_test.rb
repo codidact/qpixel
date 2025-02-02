@@ -113,19 +113,28 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  test 'should update profile text and discord name' do
+  test 'should redirect & show success notice on profile update' do
     sign_in users(:standard_user)
-    patch :update_profile, params: {
-      user: {
-        profile_markdown: 'ABCDEF GHIJKL',
-        discord: 'example_user#1234'
-      }
-    }
+    patch :update_profile, params: { user: { username: 'std' } }
     assert_response 302
     assert_not_nil flash[:success]
     assert_not_nil assigns(:user)
     assert_equal users(:standard_user).id, assigns(:user).id
-    assert_not_nil assigns(:user).profile
+  end
+
+  test 'should update profile text' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+      user: { profile_markdown: 'ABCDEF GHIJKL' }
+    }
+    assert_equal assigns(:user).profile.strip, '<p>ABCDEF GHIJKL</p>'
+  end
+
+  test 'should update user discord link' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+      user: { discord: 'example_user#1234' }
+    }
     assert_equal 'example_user#1234', assigns(:user).discord
   end
 
