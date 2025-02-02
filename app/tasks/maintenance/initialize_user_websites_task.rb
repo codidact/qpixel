@@ -7,7 +7,7 @@ module Maintenance
     end
 
     def process(user)
-      unless user.user_websites.where(position: 1).size.positive?
+      unless user.user_websites.exists?(position: 1)
         if user.website.present?
           UserWebsite.create!(user_id: user.id, position: 1, label: 'website', url: user.website)
         else
@@ -15,7 +15,7 @@ module Maintenance
         end
       end
 
-      unless user.user_websites.where(position: 2).size.positive?
+      unless user.user_websites.exists?(position: 2)
         if user.twitter.present?
           UserWebsite.create!(user_id: user.id, position: 2, label: 'Twitter',
                               url: "https://twitter.com/#{user.twitter}")
@@ -25,7 +25,7 @@ module Maintenance
       end
 
       # This check *should* be superfluous, but just in case...
-      unless user.user_websites.where(position: 3).size.positive?
+      unless user.user_websites.exists?(position: 3)
         UserWebsite.create!(user_id: user.id, position: 3)
       end
     end
