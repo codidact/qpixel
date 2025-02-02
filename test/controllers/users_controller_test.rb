@@ -113,13 +113,12 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  test 'should update profile text' do
+  test 'should update profile text and discord name' do
     sign_in users(:standard_user)
     patch :update_profile, params: {
       user: {
         profile_markdown: 'ABCDEF GHIJKL',
-        website: 'https://example.com/user',
-        twitter: 'standard_user'
+        discord: 'example_user#1234'
       }
     }
     assert_response 302
@@ -127,7 +126,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
     assert_equal users(:standard_user).id, assigns(:user).id
     assert_not_nil assigns(:user).profile
-    assert_equal 'standard_user', assigns(:user).twitter
+    assert_equal 'example_user#1234', assigns(:user).discord
   end
 
   test 'should get full posts list for a user' do
