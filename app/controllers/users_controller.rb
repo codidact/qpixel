@@ -388,8 +388,14 @@ class UsersController < ApplicationController
       end
     end
 
-    profile_rendered = helpers.post_markdown(:user, :profile_markdown)
-    if @user.update(profile_params.merge(profile: profile_rendered))
+    if params[:user][:profile_markdown].present?
+      profile_rendered = helpers.post_markdown(:user, :profile_markdown)
+      profile_params = profile_params.merge(profile: profile_rendered)
+    end
+
+    status = @user.update(profile_params)
+
+    if status
       flash[:success] = 'Your profile details were updated.'
       redirect_to user_path(current_user)
     else
