@@ -130,6 +130,19 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal assigns(:user).profile.strip, '<p>ABCDEF GHIJKL</p>'
   end
 
+  test 'should update websites' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+            user: { user_websites_attributes: {
+                      '0': { label: 'web', url: 'example.com' }
+                    }
+                  }
+          }
+    assert_not_nil assigns(:user).user_websites
+    assert_equal 'web', assigns(:user).user_websites.first.label
+    assert_equal 'example.com', assigns(:user).user_websites.first.url
+  end
+  
   test 'should update user discord link' do
     sign_in users(:standard_user)
     patch :update_profile, params: {
