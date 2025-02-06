@@ -30,6 +30,10 @@ class CommunityUser < ApplicationRecord
     false
   end
 
+  def latest_warning
+    mod_warnings&.order(created_at: 'desc').first.created_at
+  end
+
   # Calculation functions for privilege scores
   # These are quite expensive, so we'll cache them for a while
   def post_score

@@ -20,6 +20,14 @@
   </div>
 <% end %>
 
+<% if moderator? && @user.community_user.mod_warnings&.size.positive? %>
+<div class="notice is-info h-m-b-4">
+  <p><%= pluralize(@user.community_user.mod_warnings.count, 'message') %> sent,
+  most recent: <%= time_ago_in_words(@user.community_user.latest_warning) %> ago
+  </p>
+</div>
+<% end %>
+
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-0 h-p-t-0">
