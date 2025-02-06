@@ -86,13 +86,13 @@
         <% end %>
       </div>
 
-<% if moderator? && @user.community_user.mod_warnings&.size.positive? %>
-<div class="notice is-info h-m-b-4">
-  <p><%= pluralize(@user.community_user.mod_warnings.count, 'message') %> sent,
-  most recent: <%= time_ago_in_words(@user.community_user.latest_warning) %> ago
-  </p>
-</div>
-<% end %>
+      <% if moderator? && @user.community_user.mod_warnings&.size.positive? %>
+      <div class="notice is-info h-m-b-4">
+	<p><%= pluralize(@user.community_user.mod_warnings.count, 'message') %> sent,
+	  most recent: <%= time_ago_in_words(@user.community_user.latest_warning) %> ago
+	</p>
+      </div>
+      <% end %>
 
       <div class="user-profile-heading-container">
         <h2 class="user-profile-heading">Posts</h2>
