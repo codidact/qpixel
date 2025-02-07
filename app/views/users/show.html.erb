@@ -72,14 +72,18 @@
           <% end %>
         <% end %>
         <% if current_user&.is_moderator %>
-          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
+          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a> 
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
             <div class="droppanel--menu">
               <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
               <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
               <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
+              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user
+		<% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em>
+		<% elsif @user.community_user.mod_warnings&.size.positive? %>
+		(latest <%= time_ago_in_words(@user.community_user.latest_warning) %> ago)
+		<% end %></a>
               <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
             </div>
             <div class="h-m-t-6">
