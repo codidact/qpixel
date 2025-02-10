@@ -131,7 +131,7 @@ GEM
     crass (1.0.6)
     css_parser (1.16.0)
       addressable
-    date (3.3.4)
+    date (3.4.1)
     devise (4.8.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -202,7 +202,7 @@ GEM
     minitest-ci (3.4.0)
       minitest (>= 5.0.6)
     mysql2 (0.5.4)
-    net-imap (0.4.17)
+    net-imap (0.4.19)
       date
       net-protocol
     net-pop (0.1.2)
@@ -354,7 +354,7 @@ GEM
     thwait (0.2.0)
       e2mmap
     tilt (2.0.11)
-    timeout (0.4.1)
+    timeout (0.4.3)
     tins (1.31.1)
       sync
     tzinfo (2.0.6)
