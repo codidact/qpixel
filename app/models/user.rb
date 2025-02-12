@@ -232,7 +232,7 @@ class User < ApplicationRecord
 
   def email_not_bad_pattern
     return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless saved_changes.include? 'email'
+    return unless changes.include? 'email'
 
     patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
     matched = patterns.select { |p| email.match? Regexp.new(p) }
