@@ -100,3 +100,5 @@ group :development do
   gem 'spring', '~> 4.0'
   gem 'web-console', '~> 4.2'
 end
+
+gem 'maintenance_tasks', '~> 2.1.1'
