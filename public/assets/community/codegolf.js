@@ -70,7 +70,7 @@
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
-      pagePromises.push(fetch(`/posts/${id}?sort=active&page=${i}`).then(response => response.text()));
+      pagePromises.push(fetch(`/posts/${id}?sort=active&page=${i}`).then((response) => response.text()));
     }
 
     const leaderboard = [];
@@ -79,7 +79,7 @@
       const text = await pagePromises[i];
       const doc = dom_parser.parseFromString(text.toString(), 'text/html');
       const [question, ...page_answers] = doc.querySelectorAll('.post');
-      const non_deleted_answers = page_answers.filter(answer => answer.querySelector('.deleted-content') === null);
+      const non_deleted_answers = page_answers.filter((answer) => answer.querySelector('.deleted-content') === null);
 
       for (const answerPost of non_deleted_answers) {
 
@@ -155,7 +155,7 @@
 
   const leaderboardsTable = embed.querySelector('#toc-rows');
   const toggle = embed.querySelector('#leaderboards-header');
-  toggle.addEventListener('click', _ => { 
+  toggle.addEventListener('click', (_) => { 
     if (leaderboardsTable.style.display === 'none') {
       refreshBoard();
       leaderboardsTable.style.display = 'block';
@@ -166,18 +166,18 @@
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
   const showPlacementsInput = embed.querySelector('#show-placement');
 
-  groupByLanguageInput.addEventListener('click', _ => {
+  groupByLanguageInput.addEventListener('click', (_) => {
     settings.groupByLanguage = groupByLanguageInput.checked;
     refreshBoard();
   });
-  showPlacementsInput.addEventListener('click', _ => {
+  showPlacementsInput.addEventListener('click', (_) => {
     settings.showPlacements = showPlacementsInput.checked;
     refreshBoard();
   });
 
   function refreshBoard() {
     // Clear table
-    leaderboardsTable.querySelectorAll('a').forEach(el => el.remove());
+    leaderboardsTable.querySelectorAll('a').forEach((el) => el.remove());
 
     if (settings.groupByLanguage) {
       renderLeaderboardsByLanguage();
@@ -231,7 +231,7 @@
 
   async function renderLeaderboardsByLanguage() {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    const languageLeaderboards = createGroups(leaderboard, entry => entry.full_language);
+    const languageLeaderboards = createGroups(leaderboard, (entry) => entry.full_language);
 
     for (const language in languageLeaderboards) {
       augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
@@ -253,9 +253,9 @@
     }
   }
 
-  window.addEventListener('DOMContentLoaded', _ => {
+  window.addEventListener('DOMContentLoaded', (_) => {
     if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      const question_tags = [...document.querySelector('.post--tags').children].map(el => el.innerText);
+      const question_tags = [...document.querySelector('.post--tags').children].map((el) => el.innerText);
       
       if (question_tags.includes('code-golf') || question_tags.includes('lowest-score')) {
         sort = (x, y) => x.score - y.score;

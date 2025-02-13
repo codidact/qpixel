@@ -1,6 +1,6 @@
 // markdown-it plugin to escape LaTeX
 
-function latexEscape(md, options) {
+function latexEscape(md, _options) {
   // Load all the rules
   for (const [rule, ruleset] of Object.entries(latexEscape.inlineDelimiters)) {
     md.inline.ruler.before('escape', rule, latexEscape.inlineRule(ruleset));
@@ -18,7 +18,7 @@ function latexEscape(md, options) {
     md.renderer.rules['math_close'] = (tokens, idx) => tokens[idx].content;
 }
 
-latexEscape.inlineRule = ruleset => (state, silent) => {
+latexEscape.inlineRule = (ruleset) => (state, silent) => {
   const start = state.pos;
 
   ruleset.match.lastIndex = start;
@@ -37,7 +37,7 @@ latexEscape.inlineRule = ruleset => (state, silent) => {
   return true;
 }
 
-latexEscape.blockRule = ruleset => (state, startLine, endLine, silent) => {
+latexEscape.blockRule = (ruleset) => (state, startLine, endLine, silent) => {
   const start = state.bMarks[startLine] + state.tShift[startLine]
 
   ruleset.match.lastIndex = start;
@@ -102,7 +102,7 @@ latexEscape.blockDelimiters = {
     // $$123$$ some text
     //
     // not math $$456$$
-    validate: match => match.indexOf('$$', 2) === match.length - 2.
+    validate: (match) => match.indexOf('$$', 2) === match.length - 2.
   },
   '\\[': {
     match: /\\\[[^]+?\\\]$/my   // \[...\]

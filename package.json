@@ -1,0 +1,13 @@
+{
+  "name": "qpixel",
+  "description": "Rails-based Q&A engine",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@types/jquery": "3.5.32",
+    "@types/select2": "4.0.63",
+    "typescript": "5.6.3"
+  }
+}

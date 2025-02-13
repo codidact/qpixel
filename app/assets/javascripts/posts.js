@@ -49,7 +49,7 @@ $(() => {
     if (files.length > 0 && files[0].size >= 2000000) {
       $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
       const postField = $('.js-post-field');
-      postField.val(postField.val().replace(placeholder, ''));
+      postField.val(postField.val()?.toString().replace(placeholder, ''));
       setTimeout(() => {
         $tgt.find('.js-max-size').removeClass('error-shake');
       }, 1000);
@@ -77,7 +77,7 @@ $(() => {
     $tgt[0].reset();
 
     const $postField = $('.js-post-field');
-    const postText = $postField.val();
+    const postText = $postField.val()?.toString();
     $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
   });
@@ -88,7 +88,7 @@ $(() => {
     const error = data['error'];
     QPixel.createNotification('danger', error);
     $tgt.parents('.modal').removeClass('is-active');
-    $postField.val($postField.val().replace(placeholder, ''));
+    $postField.val($postField.val()?.toString().replace(placeholder, ''));
   });
 
   $('.js-category-select').select2({
@@ -157,13 +157,13 @@ $(() => {
     const $commentField = $form.find('#edit_comment');
     const $tagNameField = $form.find('#tag_name');
 
-    const bodyText = $bodyField.val();
-    const commentText = $commentField.val();
-    const excerptText = $excerptField.val();
-    const license = $licenseField.val();
+    const bodyText = $bodyField.val()?.toString();
+    const commentText = $commentField.val()?.toString();
+    const excerptText = $excerptField.val()?.toString();
+    const license = $licenseField.val()?.toString();
     const tags = $tagsField.val();
-    const titleText = $titleField.val();
-    const tagName = $tagNameField.val();
+    const titleText = $titleField.val()?.toString();
+    const tagName = $tagNameField.val()?.toString();
 
     /** @type {PostDraft} */
     const draft = {
@@ -171,7 +171,7 @@ $(() => {
       comment: commentText,
       excerpt: excerptText,
       license: license,
-      tags: tags,
+      tags: Array.isArray(tags) ? tags: [],
       tag_name: tagName,
       title: titleText,
     };
@@ -219,7 +219,7 @@ $(() => {
 
   postFields.on('focus keyup paste change markdown', (() => {
     let previous = null;
-    return evt => {
+    return (evt) => {
       const $tgt = $(evt.target);
       const text = $(evt.target).val();
       // Don't bother re-rendering if nothing's changed
@@ -243,12 +243,12 @@ $(() => {
         });
 
         const removedElements = [...new Set(DOMPurify.removed
-          .filter(entry => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
-          .map(entry => entry.element.localName))];
+          .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
+          .map((entry) => entry.element.localName))];
 
         const removedAttributes = [...new Set(DOMPurify.removed
-          .filter(entry => entry.attribute)
-          .map(entry => [
+          .filter((entry) => entry.attribute)
+          .map((entry) => [
             entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
             entry.from.localName
           ]))]
@@ -259,7 +259,7 @@ $(() => {
           .find('ul')
           .empty()
           .append(
-            removedElements.map(name => $(`<li><code>&lt;${name}&gt;</code></li>`)),
+            removedElements.map((name) => $(`<li><code>&lt;${name}&gt;</code></li>`)),
             removedAttributes.map(([attr, elName]) => $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`)));
 
         $tgt.parents('.form-group').siblings('.post-preview').html(html);
@@ -319,20 +319,20 @@ $(() => {
 
     // Validation
     if (!isValidated) {
-      const text = $(field).val();
+      const text = $(field).val()?.toString();
       const validated = QPixel.validatePost(text);
       if (validated[0] === true) {
         $tgt.attr('data-validated', 'true');
         $tgt.submit();
       }
       else {
-        const warnings = validated[1].filter(x => x['type'] === 'warning');
-        const errors = validated[1].filter(x => x['type'] === 'error');
+        const warnings = validated[1].filter((x) => x['type'] === 'warning');
+        const errors = validated[1].filter((x) => x['type'] === 'error');
 
         if (warnings.length > 0) {
           const $warningBox = $(`<div class="notice is-warning"></div>`);
           const $warningList = $(`<ul></ul>`);
-          warnings.forEach(w => {
+          warnings.forEach((w) => {
             $warningList.append(`<li>${w['message']}</li>`);
           });
           $warningBox.append($warningList);
@@ -342,7 +342,7 @@ $(() => {
         if (errors.length > 0) {
           const $errorBox = $(`<div class="notice is-danger"></div>`);
           const $errorList = $(`<ul></ul>`);
-          errors.forEach(e => {
+          errors.forEach((e) => {
             $errorList.append(`<li>${e['message']}</li>`);
           });
           $errorBox.append($errorList);
@@ -360,7 +360,7 @@ $(() => {
     }
   });
 
-  $('.js-draft-loaded').each((i, e) => {
+  $('.js-draft-loaded').each((_i, e) => {
     $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You had edited this before but haven't saved it. We loaded the edits for you.
@@ -405,7 +405,7 @@ $(() => {
 
     const $input = $(`#permalink-${postId}-${linkType}`);
 
-    const url = $input.val();
+    const url = $input.val()?.toString();
 
     if (!url) {
       return;

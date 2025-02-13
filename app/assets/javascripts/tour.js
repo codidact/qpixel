@@ -45,7 +45,7 @@ $(() => {
     }
 
     $("[data-step-from][data-step-to]").click((e) => {
-        $this = $(e.target);
+        const $this = $(e.target);
         $($this.attr("data-step-from")).toggleClass("hide");
         $($this.attr("data-step-to")).toggleClass("hide");
     });

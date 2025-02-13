@@ -1,5 +1,5 @@
 $(() => {
-   $('.js-backup-code-form').on('submit', async ev => {
+   $('.js-backup-code-form').on('submit', async (ev) => {
       ev.preventDefault();
       const $tgt = $(ev.target);
       const $input = $tgt.find('input[name="code"]');
