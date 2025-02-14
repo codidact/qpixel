@@ -15,7 +15,7 @@
     <p>
       <%= link_to 'Edit', edit_license_path(license), class: 'button is-outlined' %>
       <%= link_to license.enabled? ? 'Disable' : 'Enable', toggle_license_path(license), class: 'button is-outlined',
-                  method: :post %>
+                  method: :post, role: 'button' %>
     </p>
   </div>
 </div>

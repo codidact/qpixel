@@ -1,3 +1,5 @@
+<%= render 'tabs', user: @user %>
+
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
 <% if moderator? && deleted_user?(@user) %>
@@ -18,36 +20,50 @@
   </div>
 <% end %>
 
-<%= render 'tabs', user: @user %>
-
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
-    <div class="h-p-6 h-p-t-2">
+    <div class="h-p-0 h-p-t-0">
       <div class="profile-text">
+
+      <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
+      <% if effective_profile.blank? %>
+        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
+      <% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+        <%= sanitize(effective_profile, attributes: %w()) %>
+      <% else %>
+        <%= effective_profile %>
+      <% end %>
+      </div>
+
+      <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+        <% if @user.valid_websites_for.size.positive? %>
+        <div>
+          <p><strong>Extra fields</strong></p>
+          <table class="table is-with-hover">
+            <% @user.valid_websites_for.each do |w| %>
+            <tr>
+              <td><%= w.label %></td>
+              <td>
+              <% if w.url[0,4] == 'http' %>
+                <%= link_to w.url, w.url, rel: 'nofollow' %>
+              <% else %>
+              <%= w.url %>
+              <% end %>
+              </td>
+            </tr>
+            <% end %>
+          </table>
+        </div>
+        <% end %>
+      <% end %>
+     
       <p>
-        <% if @user.website.present? %>
-          <span class="h-m-r-4">
-            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow' %>
-          </span>
-        <% end %>
-        <% if @user.twitter.present? %>
-          <span class="h-m-r-4">
-            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}" %>
-          </span>
-        <% end %>
         <% if @user.discord.present? %>
           <span class="h-m-r-4">
             <i class="fab fa-discord h-m-r-1"></i> <%= @user.discord %>
           </span>
         <% end %>
       </p>
-
-      <% if @user.profile.nil? || @user.profile.blank? %>
-        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-      <% else %>
-        <%= raw(sanitize(@user.profile, scrubber: scrubber)) %>
-      <% end %>
-      </div>
 
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
@@ -56,14 +72,18 @@
           <% end %>
         <% end %>
         <% if current_user&.is_moderator %>
-          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
+          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a> 
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
             <div class="droppanel--menu">
               <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
               <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
               <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
+              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user
+		<% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em>
+		<% elsif @user.community_user.mod_warnings&.size.positive? %>
+		(latest <%= time_ago_in_words(@user.community_user.latest_warning) %> ago)
+		<% end %></a>
               <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
             </div>
             <div class="h-m-t-6">
@@ -71,14 +91,21 @@
             </div>
           </div>
         <% end %>
-        <% if current_user&.id == @user.id %>
+        <% if current_user&.same_as?(@user) %>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
             <i class="fas fa-mobile-alt"></i> Mobile Sign In
           <% end %>
         <% end %>
       </div>
 
-      <h2 class="user-profile-heading">Posts</h2>
+      <div class="user-profile-heading-container">
+        <h2 class="user-profile-heading">Posts</h2>
+        <% if @posts.size > 0 %>
+          <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+            See all <%= @total_post_count %> &raquo;
+          <% end %>
+        <% end %>
+      </div>
       <% if @posts.size == 0 %>
         <p><span dir="ltr"><%= rtl_safe_username(@user) %></span> hasn't posted anything yet.</p>
       <% else %>
@@ -87,8 +114,8 @@
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
           <% end %>
         </div>
-        <%= link_to user_posts_path(@user), class: "button is-muted" do %>
-          See all &raquo;
+        <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+          See all <%= @total_post_count %> &raquo;
         <% end %>
       <% end %>
     </div>
@@ -137,12 +164,21 @@
         <td><%= @user.metric 'E' %></td>
       </tr>
     </table>
+    
+    <% if current_user&.id == @user.id || current_user&.is_moderator %>
+    <table class="table is-full-width">
+      <tr>
+        <td>User since <%= @user.created_at %></td>
+      </tr>
+    </table>
+    <% end %>
 
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>
 
       <div class="widget">
         <% @abilities.each do |a| %>
+        <% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
@@ -150,13 +186,14 @@
             </a>
           </div>
         <% end %>
+        <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
-           <%= link_to abilities_path, class: 'has-font-weight-bold' do %>
+           <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
              Abilities &raquo;
            <% end %>
           <% else %>
-           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold' do %>
+           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold', 'aria-label': "View abilities of #{rtl_safe_username(@user)}" do %>
              Abilities &raquo;
            <% end %>
           <% end %>
@@ -259,7 +296,8 @@
         <td colspan="2">Count</td>
         <td>
           <% if current_user&.id == @user.id || moderator? %>
-            <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted' %>
+            <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
+                        'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>
             <%= @user.flags.count %>
           <% end %>

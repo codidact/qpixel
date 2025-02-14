@@ -2,8 +2,16 @@
 
 <h1>Tags used in <%= @category.name %></h1>
 
-<% if current_user&.is_moderator %>
-  <%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined' %>
+<% ApplicationRecord.with_lax_group_rules do %>
+
+<% if @tags == nil %>
+<p>This category is missing its tag set. Set this in the Category settings (admin).</p>
+<% end %>
+
+<% unless @tags == nil %>
+
+<% if current_user&.is_moderator || check_your_privilege('edit_tags') %>
+<%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined', 'aria-label': 'Create new tag' %>
 <% end %>
 
 <%= form_tag category_tags_path(@category), method: :get, class: 'form-inline' do %>
@@ -23,15 +31,33 @@
     <h3><%= pluralize(@count, 'tag') %></h3>
     <div class="button-list is-gutterless has-margin-2">
       <%= link_to 'Usage', category_tags_path(@category),
-                  class: "button is-muted is-outlined #{request.query_parameters.size == 0 ? 'is-active' : ''}" %>
+                  class: "button is-muted is-outlined #{request.query_parameters.size == 0 ? 'is-active' : ''}",
+                  'aria-label': 'Show tag usage for this category' %>
       <%= link_to 'Hierarchy', query_url(hierarchical: '1'),
-                  class: "button is-muted is-outlined #{params[:hierarchical].present? ? 'is-active' : ''}" %>
+                  class: "button is-muted is-outlined #{params[:hierarchical].present? ? 'is-active' : ''}",
+                  'aria-label': 'Show tag hierarchies' %>
       <%= link_to 'Missing Excerpt', query_url(no_excerpt: '1'),
-                  class: "button is-muted is-outlined #{params[:no_excerpt].present? ? 'is-active' : ''}" %>
+                  class: "button is-muted is-outlined #{params[:no_excerpt].present? ? 'is-active' : ''}",
+                  'aria-label': 'Show tags without excerpts' %>
     </div>
   </div>
 <% end %>
 
 <%= render 'list' %>
 
+<% if @tags&.size == 0 %>
+  <% if params[:q].present? %>
+    <p class="has-color-tertiary"><em>No results for <strong><%= params[:q] %></strong></em></p>
+  <% else %>
+    <p class="has-color-tertiary"><em>There are no tags in <%= @category.name %></em></p>
+  <% end %>
+<% end %>
+
+<% if @tags&.size > 0 %>
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
+<% end %>
+
+<% end %> <%# unless @tags == nil %>
+
+<% end %> <%# ApplicationRecord.with_lax_group_rules %>
+

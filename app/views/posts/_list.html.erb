@@ -8,7 +8,7 @@
 
 <div class="item-list--item <%= post.deleted ? 'deleted-content' : '' %>" data-ckb-list-item data-ckb-item-type="link">
   <% if post.post_type.has_votes %>
-    <div class="item-list--number-value">
+    <div class="item-list--number-value" title="Score: <%= post.score %>">
       <div class="meter is-question-score">
         <div class="meter--bar is-<%= (post.score * 100).to_i %>%"><%= (post.score * 100).to_i %>%</div>
       </div>
@@ -28,7 +28,7 @@
     <div class="post-list--title">
       <%= link_to generic_share_link(post), 'data-ckb-item-link' => '' do %>
         <% if @show_category_tag && post.post_type.has_category %>
-          <span class="badge is-tag is-filled"><%= defined?(@category) ? @category.name : post.category.name %></span>
+          <span class="badge is-tag is-filled"><%= post.category.name %></span>
         <% end %>
         <%= post.post_type.is_top_level ? post.title : post.parent.title %>
         <%= post.post_type.is_closeable && post.closed && !post.duplicate_post  ? "[closed]" : "" %>
@@ -37,7 +37,7 @@
     </div>
     <% if (SiteSetting['PostBodyListTruncateLength'] || 0) > 0 %>
       <p class="post-list--content">
-        <%= strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200) %>
+        <%= sanitize(strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200), scrubber: scrubber) %>
       </p>
     <% end %>
     <p class="has-color-tertiary-600 has-float-right post-list--meta">

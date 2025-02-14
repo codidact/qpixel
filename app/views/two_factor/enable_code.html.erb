@@ -1,5 +1,16 @@
 <h1>Confirm your code</h1>
-<p>Last step: to confirm that you're all correctly set up, enter the code shown in your mobile authenticator below.</p>
+<p>
+  First, save your two-factor <strong>backup code</strong> somewhere safe. You can use it to log in and reset
+  two-factor authentication if you lose access to your app.
+</p>
+
+<details>
+  <summary>Show code</summary>
+  <label for="backup-code" class="form-element">2FA backup code</label>
+  <input class="form-element" type="text" readonly name="backup-code" id="backup-code" value="<%= current_user.backup_2fa_code %>" />
+</details>
+
+<p>Last step: to confirm that you're all correctly set up, enter the code shown in your authenticator app below.</p>
 
 <%= form_tag two_factor_confirm_enable_path, autocomplete: 'off' do %>
   <div class="field">

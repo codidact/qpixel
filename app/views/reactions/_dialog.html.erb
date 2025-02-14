@@ -37,6 +37,7 @@
   <% end %>
   <label for="reaction-type-comment-<%= post.id %>">Explain in comment?</label>
   <textarea class="form-element reaction-comment-field is-small"
+            placeholder="Enter comment (minimum 15 characters)"
             id="reaction-type-comment-<%= post.id %>"></textarea>
   <button type="button" class="button is-filled reaction-submit" data-post-id="<%= post.id %>">
     Add reaction

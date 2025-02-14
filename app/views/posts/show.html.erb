@@ -1,4 +1,4 @@
-<% content_for :title, @post.title.truncate(50) %>
+<% content_for :title, @post.title.truncate(max_title_length(@post.category)) %>
 <% content_for :description do %>
   <% Rails.cache.fetch "posts/#{@post.id}/description" do %>
     <%= @post.body_plain[0..74].strip %>...
@@ -23,8 +23,15 @@
   <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
 
   <div class="button-list is-gutterless has-float-right">
-    <a href="<%= query_url(sort: 'score') %>" class="button is-muted is-outlined <%= params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : '' %>">Score</a>
-    <a href="<%= query_url(sort: 'active') %>" class="button is-muted is-outlined <%= params[:sort] == 'active' ? 'is-active' : '' %>">Active</a>
+    <%= link_to 'Score', request.params.merge(sort: 'score'),
+        class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}",
+	title: 'highest score first (not the same as net votes)' %>
+    <%= link_to 'Active', request.params.merge(sort: 'active'),
+        class: "button is-muted is-outlined #{params[:sort] == 'active' ? 'is-active' : ''}",
+	title: 'most recent changes first: new answers, edits, delete/undelete' %>
+    <%= link_to 'Age', request.params.merge(sort: 'age'),
+	class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
+	title: 'newest posts first (ignores other activity)' %>
   </div>
 
   <div class="has-clear-clear"></div>

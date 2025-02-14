@@ -3,7 +3,7 @@ class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
                                              :setup_save, :hellban]
-  before_action :verify_developer, only: [:change_users, :impersonate]
+  before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
 
   def index; end
 
@@ -47,6 +47,18 @@ class AdminController < ApplicationController
       AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
     end
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
+                         comment: "Subject: #{params[:subject]}")
+    flash[:success] = t 'admin.email_being_sent'
+    redirect_to admin_path
+  end
+
+  def all_email; end
+
+  def send_all_email
+    Thread.new do
+      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_all_users.deliver_now
+    end
+    AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
     flash[:success] = t 'admin.email_being_sent'
     redirect_to admin_path
@@ -170,7 +182,12 @@ class AdminController < ApplicationController
     return not_found unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
-    if @impersonator&.valid_password? params[:password]
+    if @impersonator&.sso_profile.present?
+      session.delete :impersonator_id
+      AuditLog.admin_audit(event_type: 'impersonation_end', related: current_user, user: @impersonator)
+      sign_out @impersonator
+      redirect_to new_saml_user_session_path
+    elsif @impersonator&.valid_password? params[:password]
       session.delete :impersonator_id
       AuditLog.admin_audit(event_type: 'impersonation_end', related: current_user, user: @impersonator)
       sign_in @impersonator

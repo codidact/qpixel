@@ -23,6 +23,7 @@
   <p>This action will be logged.</p>
 </div>
 
-<%= link_to nuke_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-danger is-filled', method: :delete do %>
+<%= link_to nuke_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-danger is-filled', method: :delete,
+            role: 'button' do %>
   I understand, delete <%= @tag.name %>
 <% end %>

@@ -5,10 +5,16 @@ module QPixel
       @getters = {}
     end
 
+    def include_community(opts)
+      include = opts.delete(:include_community)
+      include.nil? ? true : include
+    end
+
     # These methods need the cache key name updating before we pass it to the underlying cache.
     [:decrement, :delete, :exist?, :fetch, :increment, :read, :write, :delete_matched].each do |method|
       define_method method do |name, *args, **opts, &block|
-        @underlying.send(method, construct_ns_key(name, include_community: opts.delete(:include_community) || true),
+        include_community = include_community(opts)
+        @underlying.send(method, construct_ns_key(name, include_community: include_community),
                          *args, **opts, &block)
       end
     end
@@ -16,7 +22,8 @@ module QPixel
     # These methods need a hash of cache keys updating before we pass it to the underlying cache.
     [:write_multi].each do |method|
       define_method method do |hash, *args, **opts, &block|
-        hash = hash.map { |k, v| [construct_ns_key(k), v] }.to_h
+        include_community = include_community(opts)
+        hash = hash.map { |k, v| [construct_ns_key(k, include_community: include_community), v] }.to_h
         @underlying.send(method, hash, *args, **opts, &block)
       end
     end
@@ -29,14 +36,16 @@ module QPixel
     end
 
     def read_multi(*keys, **opts)
-      keys = keys.map { |k| [construct_ns_key(k), k] }.to_h
-      results = @underlying.read_multi *keys.keys, **opts
+      include_community = include_community(opts)
+      keys = keys.map { |k| [construct_ns_key(k, include_community: include_community), k] }.to_h
+      results = @underlying.read_multi(*keys.keys, **opts)
       results.map { |k, v| [keys[k], v] }.to_h
     end
 
     def fetch_multi(*keys, **opts, &block)
-      keys = keys.map { |k| construct_ns_key(k) }
-      @underlying.fetch_multi *keys, **opts, &block
+      include_community = include_community(opts)
+      keys = keys.map { |k| construct_ns_key(k, include_community: include_community) }
+      @underlying.fetch_multi(*keys, **opts, &block)
     end
 
     def persistent(name, **opts, &block)

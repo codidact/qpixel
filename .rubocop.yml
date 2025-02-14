@@ -4,7 +4,7 @@ require:
   - ./lib/rubocop/path_in_helpers.rb
 
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.7
   Exclude:
     - 'config/**/*'
     - 'db/**/*'
@@ -43,13 +43,13 @@ Metrics/BlockLength:
 Metrics/BlockNesting:
   Max: 5
 Metrics/ClassLength:
-  Max: 300
+  Max: 350
 Metrics/CyclomaticComplexity:
   Max: 30
 Metrics/MethodLength:
   Max: 60
 Metrics/ModuleLength:
-  Max: 200
+  Max: 250
 Metrics/PerceivedComplexity:
   Enabled: false
 

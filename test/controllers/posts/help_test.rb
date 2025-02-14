@@ -25,20 +25,20 @@ class PostsControllerTest < ActionController::TestCase
   test 'moderator help requires authentication' do
     get :document, params: { slug: posts(:mod_help_article).doc_slug }
     assert_response 404
-    assert_not_nil assigns(:post)
+    assert_nil assigns(:post)
   end
 
   test 'regular user cannot get mod help' do
     sign_in users(:standard_user)
     get :document, params: { slug: posts(:mod_help_article).doc_slug }
     assert_response 404
-    assert_not_nil assigns(:post)
+    assert_nil assigns(:post)
   end
 
   test 'cannot get disabled help article' do
     sign_in users(:moderator)
     get :document, params: { slug: posts(:disabled_help_article).doc_slug }
     assert_response 404
-    assert_not_nil assigns(:post)
+    assert_nil assigns(:post)
   end
 end

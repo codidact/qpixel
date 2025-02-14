@@ -3,6 +3,7 @@ $(document).on('ready', function () {
     ev.preventDefault();
     const self = $(ev.target);
     const editId = self.attr('data-suggested-edit-approve');
+    const comment = $('#summary').val();
 
     const resp = await fetch(`/posts/suggested-edit/${editId}/approve`, {
       method: 'POST',
@@ -10,7 +11,8 @@ $(document).on('ready', function () {
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': QPixel.csrfToken()
-      }
+      },
+      body: JSON.stringify({ comment })
     });
     const data = await resp.json();
 

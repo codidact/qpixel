@@ -2,7 +2,8 @@ class TagsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
   before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
-  before_action :verify_moderator, only: [:new, :create, :rename, :merge, :select_merge]
+  before_action :verify_tag_editor, only: [:new, :create]
+  before_action :verify_moderator, only: [:rename, :merge, :select_merge]
   before_action :verify_admin, only: [:nuke, :nuke_warning]
 
   def index
@@ -13,10 +14,10 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.paginate(page: params[:page], per_page: 50)
+            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.json do
-        render json: @tags
+        render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
       end
     end
   end
@@ -26,18 +27,27 @@ class TagsController < ApplicationController
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
-              @tag_set.tags_with_paths.order(:path)
+              @tag_set.with_paths(params[:no_excerpt])
             elsif params[:no_excerpt].present?
-              @tag_set.tags.where(excerpt: '').or(@tag_set.tags.where(excerpt: nil))
-                      .order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set.tags.where(excerpt: ['', nil])
             else
-              @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set&.tags
             end
-    @count = @tags.count
+
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
-    @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
-                 .select(Arel.sql("#{table}.*, COUNT(posts.id) AS post_count"))
-                 .paginate(per_page: 96, page: params[:page])
+
+    @tags = @tags&.left_joins(:posts)
+                 &.group(Arel.sql("#{table}.id"))
+                 &.select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
+                 &.paginate(per_page: 96, page: params[:page])
+
+    @tags = if params[:hierarchical].present?
+              @tags&.order(:path)
+            else
+              @tags&.order(Arel.sql('COUNT(posts.id) DESC'))
+            end
+
+    @count = @tags&.length || 0
   end
 
   def show
@@ -49,8 +59,9 @@ class TagsController < ApplicationController
               else
                 @tag.all_children + [@tag.id]
               end
-    post_ids = helpers.post_ids_for_tags(tag_ids)
-    @posts = Post.where(id: post_ids).undeleted.where(post_type_id: @category.display_post_types)
+    displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
+    @posts = Post.joins(:tags).where(id: PostsTag.select(:post_id).distinct.where(tag_id: tag_ids))
+                 .undeleted.where(post_type_id: displayed_post_types)
                  .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
                  .order(sort_param)
     respond_to do |format|
@@ -61,6 +72,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.tag_synonyms.build
   end
 
   def create
@@ -76,6 +88,7 @@ class TagsController < ApplicationController
 
   def edit
     check_your_privilege('edit_tags', nil, true)
+    @tag.tag_synonyms.build
   end
 
   def update
@@ -123,57 +136,68 @@ class TagsController < ApplicationController
 
     @subordinate = Tag.find params[:merge_with_id]
 
-    AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user,
-                             comment: "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
+    Post.transaction do
+      AuditLog.moderator_audit event_type: 'tag_merge', related: @primary, user: current_user, comment:
+        "#{@subordinate.name} (#{@subordinate.id}) into #{@primary.name} (#{@primary.id})"
 
-    # Take the tag off posts
-    posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
-                'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                'WHERE posts_tags.tag_id = ?'
-    exec([posts_sql, "\n- #{@subordinate.name}", "\n- #{@primary.name}", @subordinate.id])
+      # Replace subordinate with primary, except when a post already has primary (to avoid giving them a duplicate tag)
+      posts_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                  'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                  'WHERE posts_tags.tag_id = ? ' \
+                  'AND posts_tags.post_id NOT IN (SELECT post_id FROM posts_tags WHERE tag_id = ?)'
+      exec_sql([posts_sql, "\n- #{@subordinate.name}\n", "\n- #{@primary.name}\n", @subordinate.id, @primary.id])
 
-    # Break hierarchies
-    tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
-    exec([tags_sql, @subordinate.id])
+      # Remove the subordinate tag from posts that still have it (the ones that were excluded from our previous query)
+      posts2_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                   'WHERE posts_tags.tag_id = ?'
+      exec_sql([posts2_sql, "\n- #{@subordinate.name}\n", "\n", @subordinate.id])
 
-    # Remove references to the tag
-    sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
-    exec([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
-    exec([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
+      # Break hierarchies
+      tags_sql = 'UPDATE tags SET parent_id = NULL WHERE parent_id = ?'
+      exec_sql([tags_sql, @subordinate.id])
 
-    # Nuke it from orbit
-    @subordinate.destroy
+      # Remove references to the tag
+      sql = 'UPDATE IGNORE $TABLENAME SET tag_id = ? WHERE tag_id = ?'
+      exec_sql([sql.gsub('$TABLENAME', 'posts_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_moderator_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_required_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'categories_topic_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'post_history_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_tags'), @primary.id, @subordinate.id])
+      exec_sql([sql.gsub('$TABLENAME', 'suggested_edits_before_tags'), @primary.id, @subordinate.id])
+
+      # Nuke it from orbit
+      @subordinate.destroy
+    end
 
     flash[:success] = "Merged #{@subordinate.name} into #{@primary.name}."
     redirect_to tag_path(id: @category.id, tag_id: @primary.id)
   end
 
   def nuke
-    AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
-                         comment: "#{@tag.name} (#{@tag.id})"
+    Post.transaction do
+      AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
+                           comment: "#{@tag.name} (#{@tag.id})"
 
-    tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
-              'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
+      tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
+                'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
 
-    # Remove tag from caches
-    caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
-                 'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                 'WHERE posts_tags.tag_id = ?'
-    exec([caches_sql, "\n- #{@tag.name}", '', @tag.id])
+      # Remove tag from caches
+      caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                   'WHERE posts_tags.tag_id = ?'
+      exec_sql([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
 
-    # Delete all references to the tag
-    tables.each do |tbl|
-      sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
-      exec([sql, @tag.id])
+      # Delete all references to the tag
+      tables.each do |tbl|
+        sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
+        exec_sql([sql, @tag.id])
+      end
+
+      # Nuke it
+      @tag.destroy
     end
-
-    # Nuke it
-    @tag.destroy
 
     flash[:success] = "Deleted #{@tag.name}"
     redirect_to category_tags_path(@category)
@@ -192,10 +216,29 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name)
+    params.require(:tag).permit(:excerpt, :wiki_markdown, :parent_id, :name,
+                                tag_synonyms_attributes: [:id, :name, :_destroy])
   end
 
-  def exec(sql_array)
+  def exec_sql(sql_array)
     ApplicationRecord.connection.execute(ActiveRecord::Base.sanitize_sql_array(sql_array))
+  end
+
+  def verify_tag_editor
+    unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
+      current_user.is_moderator ||
+      current_user.is_admin)
+      respond_to do |format|
+        format.html do
+          render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        end
+        format.json do
+          render json: { status: 'failed', success: false, errors: ['not_found'] }, status: :not_found
+        end
+      end
+
+      return false
+    end
+    true
   end
 end

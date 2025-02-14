@@ -17,19 +17,38 @@
 </ul>
 <p><strong>Filtering by score and age</strong></p>
 <p>It&#39;s possible to filter your search to only include results that have been posted within a certain timeframe, or match certain score requirements.</p>
+<p>You can use <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, and <code>&lt;=</code> with these options to search for ranges. By default, a value without an operator looks for an exact match. For example, <code>upvotes:4</code> searches for exactly 4; <code>upvotes:&gt;=4</code> searches for at least 4.</p>
 <ul>
     <li><p>filtering by post score</p>
-        <p>Codidact uses Wilson scoring to help in sorting posts. (To learn more about how this works, see <a href="/help/scoring">/help/scoring</a> for a detailed explanation.) Every post has a score between 0.0 and 1.0. To use this in search, you can use <code>score:0.5</code> to filter your search to only include posts with a score of at least 0.5.</p>
+        <p>Codidact uses Wilson scoring to help in sorting posts. (To learn more about how this works, see <a href="/help/scoring">/help/scoring</a> for a detailed explanation.) Every post has a score between 0.0 and 1.0. To use this in search, you can use <code>score:&gt;=0.5</code> to filter your search to only include posts with a score of at least 0.5.</p>
     </li>
     <li><p>filtering by votes</p>
-        <p>If you want to filter by the raw votes that a post has, you can use <code>votes:5</code> to find posts where the net votes (upvotes minus downvotes) of a post equals 5 or higher.</p>
+        <p>If you want to filter by the raw votes that a post has, you can use <code>votes:5</code> to find posts where the net votes (upvotes minus downvotes) of a post equals 5 or <code>votes:&gt;=5</code> for votes of 5 or more.</p>
     </li>
     <li><p>filtering by upvotes and downvotes</p>
-        <p>If you search for <code>upvotes:4</code>, Codidact will find posts that have received at least 4 upvotes, irrespective of how many downvotes the post has. Likewise, if you search for <code>downvotes:4</code>, Codidact will find posts that have received at least 4 downvotes without taking upvotes into consideration. You can also use a less than (<code>&lt;</code>) symbol to filter for posts that have received no more than a certain number of votes (for instance, <code>downvotes:&lt;4</code> will find posts that have received less than four downvotes total).</p>
+      <p>If you search for <code>upvotes:4</code>, Codidact will find posts that have received exactly 4 upvotes, irrespective of how many downvotes the post has. Likewise, if you search for <code>downvotes:4</code>, Codidact will find posts that have received exactly 4 downvotes without taking upvotes into consideration. <code>downvotes:&lt;4</code> will find posts that have received fewer than four downvotes total).</p>
+    </li>
+    <li><p>filtering by number of answers</p>
+      <p>If you want to find posts with <code>n</code> answers, use <code>answers:n</code>. This is particularly helpful to find unanswered questions: <code>answers:0</code>. <code>answers:&lt;5</code> shows posts with fewer than five answers.</p>
     </li>
     <li><p>filtering by creation date</p>
         <p>If you want to only find posts that have been written within a certain timeframe, you can use the <code>created:</code> search operator. <code>created:&lt;1w</code> will find all posts created less than a week ago, where <code>created:&gt;1w</code> will find only posts older than a week. You can use <code>m</code> for minute, <code>h</code> for hour, <code>d</code> for day, <code>w</code> for week, <code>mo</code> for month, and <code>y</code> for year. </p>
     </li>
+</ul>
+<p><strong>Filtering by tag, user, category, or post type</strong></p>
+<ul>
+  <li><p>filtering by tag</p>
+    <p>To filter for all posts with the tag <code>snake</code>, use the <code>tag:snake</code> operator. To exclude all posts with the tag <code>oil</code>, use <code>-tag:oil</code>.</p>
+  </li>
+  <li><p>filtering by user</p>
+    <p>If you want to search for posts written by a particular user you will need to know their unique user number for the community. This can be found by looking at their profile URL. You can then use <code>user:xxxx</code> where <code>xxxx</code> is the unique user number you are interested in.</p>
+  </li>
+  <li><p>filtering by category</p>
+    <p>To filter by category, you will need to know the unique numeric ID for that category. This can be found by looking at the URL shown when you click to view all posts in a particular category. Use the formatting <code>category:xxxx</code> to apply this filter.</p>
+  </li>
+  <li><p>filtering by post type</p>
+    <p>If you want to restrict your search to a particular post type, type <code>post_type:</code> into the search bar, and a dropdown menu should show the available post types to search. Note that not all communities may use all post types.</p>
+  </li>
 </ul>
 <p><strong>Advanced</strong></p>
 <ul>

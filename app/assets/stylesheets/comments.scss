@@ -65,6 +65,17 @@
   font-style: italic;
 }
 
+.post--comments-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.post--comments-container {
+  margin-bottom: 1rem;
+}
+
 .post--comments-thread.is-inline {
   padding: 0.5rem 0.25rem;
   display: flex;
@@ -139,7 +150,7 @@
 .new-thread-modal {
   box-shadow: 0 3px 5px -2px #eee;
   border: 1px solid #d0d9dd;
-  margin-top: 10px;
+  margin-top: 1rem;
   padding: 0.7em;
   display: none;
 }

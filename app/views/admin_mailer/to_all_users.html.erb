@@ -1,0 +1,2 @@
+<%= raw(sanitize(ApplicationController.helpers.render_markdown(@body_markdown),
+                 scrubber: ApplicationController.helpers.scrubber)) %>

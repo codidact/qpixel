@@ -1,0 +1,18 @@
+# Add your SAML attribute mapping here.
+#
+# Required:
+#   '<email attribute>': 'saml_init_email'
+#   '<uid attribute>': 'saml_init_identifier'
+#   '<full name attribute>': 'username' (user cannot change it) OR 'saml_init_username_no_update' (only set on first login, user can change)
+#
+# If email is the unique identifier, map the email attribute to 'saml_init_email_and_identifier' instead of the above.
+# In that case you also need to update devise.rb and set `config.saml_default_user_key = :'saml_init_email_and_identifier'`.
+#
+'uid': 'saml_init_identifier'
+'urn:mace:dir:attribute-def:uid': 'saml_init_identifier'
+'mail': 'saml_init_email'
+'urn:mace:dir:attribute-def:mail': 'saml_init_email'
+'email': 'saml_init_email'
+'urn:mace:dir:attribute-def:email': 'saml_init_email'
+'displayName': 'saml_init_username_no_update'
+'urn:mace:dir:attribute-def:displayName': 'saml_init_username_no_update'

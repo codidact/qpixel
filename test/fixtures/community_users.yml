@@ -1,3 +1,10 @@
+sample_basic_user:
+  user: basic_user
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
 sample_standard_user:
   user: standard_user
   community: sample

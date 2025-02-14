@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include PostValidations
 
   belongs_to :user, optional: true
   belongs_to :post_type
@@ -24,22 +25,20 @@ class Post < ApplicationRecord
   has_many :reactions
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
+  counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
 
   serialize :tags_cache, Array
 
-  validates :body, presence: true, length: { minimum: 30, maximum: 30_000 }
+  validates :body, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
-  validates :title, :body, :tags_cache, presence: true, if: -> { post_type.has_tags }
-  validate :tags_in_tag_set, if: -> { post_type.has_tags }
-  validate :maximum_tags, if: -> { post_type.has_tags }
-  validate :maximum_tag_length, if: -> { post_type.has_tags }
-  validate :no_spaces_in_tags, if: -> { post_type.has_tags }
-  validate :stripped_minimum, if: -> { post_type.has_tags }
-  validate :maximum_title_length, if: -> { post_type.has_tags }
+  validates :title, presence: true, if: -> { post_type.is_top_level? }
+  validates :tags_cache, presence: true, if: -> { post_type.has_tags }
+
   validate :category_allows_post_type, if: -> { category_id.present? }
   validate :license_valid, if: -> { post_type.has_license }
-  validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
-  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category }
+  validate :moderator_tags, if: -> { post_type.has_tags && post_type.has_category && tags_cache_changed? }
+
+  # Other validations (shared with suggested edits) are in concerns/PostValidations
 
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
@@ -55,11 +54,30 @@ class Post < ApplicationRecord
   after_save :modify_author_reputation
   after_save :copy_last_activity_to_parent
   after_save :break_description_cache
-  after_save :update_category_activity, if: -> { post_type.has_category }
+  after_save :update_category_activity, if: -> { post_type.has_category && !destroyed? }
   after_save :recalc_score
 
+  # @param term [String] the search term
+  # @return [ActiveRecord::Relation<Post>]
   def self.search(term)
     match_search term, posts: :body_markdown
+  end
+
+  def self.by_slug(slug, user)
+    post = Post.unscoped.where(
+      doc_slug: slug,
+      community_id: [RequestContext.community_id, nil]
+    ).first
+
+    if post&.help_category == '$Disabled'
+      return nil
+    end
+
+    if post&.help_category == '$Moderator' && !user&.is_moderator
+      return nil
+    end
+
+    post
   end
 
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
@@ -76,14 +94,18 @@ class Post < ApplicationRecord
     end
   end
 
+  # @return [TagSet]
   def tag_set
     parent.nil? ? category.tag_set : parent.category.tag_set
   end
 
+  # @return [Boolean]
   def meta?
     false
   end
 
+  # Used in the transfer of content from SE to reassign the owner of a post to the given user.
+  # @param new_user [User]
   def reassign_user(new_user)
     new_user.ensure_community_user!
 
@@ -94,10 +116,13 @@ class Post < ApplicationRecord
     update!(deleted: false, deleted_at: nil, deleted_by: nil)
   end
 
+  # Removes the attribution notice from this post
+  # @return [Boolean] whether the action was successful
   def remove_attribution_notice!
     update(att_source: nil, att_license_link: nil, att_license_name: nil)
   end
 
+  # @return [String] the type of the last activity on this post
   def last_activity_type
     case last_activity
     when closed_at
@@ -121,37 +146,51 @@ class Post < ApplicationRecord
     end
   end
 
+  # @return [String] the body with all markdown stripped
   def body_plain
     ApplicationController.helpers.strip_markdown(body_markdown)
   end
 
+  # @return [Boolean] whether this post is a question
   def question?
     post_type_id == Question.post_type_id
   end
 
+  # @return [Boolean] whether this post is an answer
   def answer?
     post_type_id == Answer.post_type_id
   end
 
+  # @return [Boolean] whether this post is an article
   def article?
     post_type_id == Article.post_type_id
   end
 
+  # @return [Boolean] whether there is a suggested edit pending for this post
   def pending_suggested_edit?
     SuggestedEdit.where(post_id: id, active: true).any?
   end
 
+  # @return [SuggestedEdit, Nil] the suggested edit pending for this post (if any)
   def pending_suggested_edit
     SuggestedEdit.where(post_id: id, active: true).last
   end
 
+  # Recalculates the score of this post based on its up and downvotes
   def recalc_score
     variable = SiteSetting['ScoringVariable'] || 2
     sql = 'UPDATE posts SET score = (upvote_count + ?) / (upvote_count + downvote_count + (2 * ?)) WHERE id = ?'
     sanitized = ActiveRecord::Base.sanitize_sql_array([sql, variable, variable, id])
     ActiveRecord::Base.connection.execute sanitized
+
+    # ensures the updated score is immediately available
+    self.score = (upvote_count + variable).to_f / (upvote_count + downvote_count + (2 * variable))
+    # prevents AR from accidentally saving the dirty state
+    clear_attribute_changes([:score])
   end
 
+  # This method will update the locked status of this post if locked_until is in the past.
+  # @return [Boolean] whether this post is locked
   def locked?
     return true if locked && locked_until.nil? # permanent lock
     return true if locked && !locked_until.past?
@@ -159,14 +198,27 @@ class Post < ApplicationRecord
     if locked
       update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
     end
+
+    false
   end
 
+  # The test here is for flags that are pending (no status). A spam flag
+  # could be marked helpful but the post wouldn't be deleted, and
+  # we don't necessarily want the post to be treated like it's a spam risk
+  # if that happens.
+  def spam_flag_pending?
+    flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
+  end
+
+  # @param user [User, Nil]
+  # @return [Boolean] whether the given user can view this post
   def can_access?(user)
     (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
         category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
+  # @return [Hash] a hash with as key the reaction type and value the amount of reactions for that type
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }
@@ -174,11 +226,20 @@ class Post < ApplicationRecord
 
   private
 
+  ##
+  # Before-validation callback. Update the tags association from the tags_cache.
   def update_tag_associations
     tags_cache.each do |tag_name|
-      tag = Tag.find_or_create_by name: tag_name, tag_set: category.tag_set
+      tag, name_used = Tag.find_or_create_synonymized name: tag_name, tag_set: category.tag_set
       unless tags.include? tag
         tags << tag
+      end
+
+      # If the tags_cache doesn't include name_used then tag_name was a synonym - remove the synonym from tags_cache
+      # and add the primary for it instead.
+      unless tags_cache.include? name_used
+        tags_cache.delete tag_name
+        tags_cache << name_used
       end
     end
     tags.each do |tag|
@@ -188,11 +249,20 @@ class Post < ApplicationRecord
     end
   end
 
+  ##
+  # Helper method for #check_attribution_notice validator. Produces a text-only attribution notice either based on
+  # values given or the current state of the post for use in post histories.
+  # @param source [String, Nil] where the post originally came from
+  # @param name [String, Nil] the name of the license
+  # @param url [String, Nil] the url of the license
+  # @return [String] an attribution notice corresponding to this post
   def attribution_text(source = nil, name = nil, url = nil)
     "Source: #{source || att_source}\nLicense name: #{name || att_license_name}\n" \
       "License URL: #{url || att_license_link}"
   end
 
+  # Intended to be called as callback after a save.
+  # If changes were made to the licensing of this post, this will insert the correct history items.
   def check_attribution_notice
     sc = saved_changes
     attributes = ['att_source', 'att_license_name', 'att_license_link']
@@ -210,6 +280,8 @@ class Post < ApplicationRecord
     end
   end
 
+  # Intended to be called as callback after a save.
+  # If the last activity of this post was changed and it has a parent, also updates the parent activity
   def copy_last_activity_to_parent
     sc = saved_changes
     if parent.present? && (sc.include?('last_activity') || sc.include?('last_activity_by_id')) \
@@ -218,22 +290,28 @@ class Post < ApplicationRecord
     end
   end
 
+  # Intended to be called as callback after a save.
+  # If this deletion status of this post was changed, then remove or re-add the reputation.
   def modify_author_reputation
     sc = saved_changes
     if sc.include?('deleted') && sc['deleted'][0] != sc['deleted'][1] && created_at >= 60.days.ago
       deleted = !!saved_changes['deleted']&.last
       if deleted
-        user.update(reputation: user.reputation - Vote.total_rep_change(votes))
+        user&.update(reputation: (user&.reputation || 1) - Vote.total_rep_change(votes))
       else
-        user.update(reputation: user.reputation + Vote.total_rep_change(votes))
+        user&.update(reputation: (user&.reputation || 1) + Vote.total_rep_change(votes))
       end
     end
   end
 
+  # Intended to be called as callback after a save.
+  # @return [PostHistory] creates an initial revision for this post
   def create_initial_revision
     PostHistory.initial_revision(self, user, after: body_markdown, after_title: title, after_tags: tags)
   end
 
+  # Intended to be used as validation.
+  # Will add an error if this post's post type is not allowed in the associated category.
   def category_allows_post_type
     return if category.nil?
 
@@ -242,6 +320,8 @@ class Post < ApplicationRecord
     end
   end
 
+  # Intended to be called as callback after a save.
+  # Deletes this posts description from the cache such that it will be regenerated next time it is needed.
   def break_description_cache
     Rails.cache.delete "posts/#{id}/description"
     if parent_id.present?
@@ -249,6 +329,8 @@ class Post < ApplicationRecord
     end
   end
 
+  # Intended to be used as a validation.
+  # Checks whether the associated license is present and enabled.
   def license_valid
     # Don't validate license on edits
     return unless id.nil?
@@ -263,63 +345,9 @@ class Post < ApplicationRecord
     end
   end
 
-  def maximum_tags
-    if tags_cache.length > 5
-      errors.add(:base, "Post can't have more than 5 tags.")
-    elsif tags_cache.empty?
-      errors.add(:base, 'Post must have at least one tag.')
-    end
-  end
-
-  def maximum_tag_length
-    tags_cache.each do |tag|
-      max_len = SiteSetting['MaxTagLength']
-      if tag.length > max_len
-        errors.add(:tags, "can't be more than #{max_len} characters long each")
-      end
-    end
-  end
-
-  def no_spaces_in_tags
-    tags_cache.each do |tag|
-      if tag.include?(' ') || tag.include?('_')
-        errors.add(:tags, 'may not include spaces or underscores - use hyphens for multiple-word tags')
-      end
-    end
-  end
-
-  def stripped_minimum
-    if (body&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 30
-      errors.add(:body, 'must be more than 30 non-whitespace characters long')
-    end
-    if (title&.gsub(/(?:^[\s\t\u2000-\u200F]+|[\s\t\u2000-\u200F]+$)/, '')&.length || 0) < 15
-      errors.add(:title, 'must be more than 15 non-whitespace characters long')
-    end
-  end
-
-  def maximum_title_length
-    max_title_len = SiteSetting['MaxTitleLength']
-    if title.length > [(max_title_len || 255), 255].min
-      errors.add(:title, "can't be more than #{max_title_len} characters")
-    end
-  end
-
-  def tags_in_tag_set
-    tag_set = category.tag_set
-    unless tags.all? { |t| t.tag_set_id == tag_set.id }
-      errors.add(:base, "Not all of this question's tags are in the correct tag set.")
-    end
-  end
-
-  def required_tags?
-    required = category&.required_tag_ids
-    return unless required.present? && !required.empty?
-
-    unless tag_ids.any? { |t| required.include? t }
-      errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
-    end
-  end
-
+  # Intended to be used as validation.
+  # Checks whether there are any moderator tags present added, and if so whether the current user is allowed to add
+  # those.
   def moderator_tags
     mod_tags = category&.moderator_tags&.map(&:name)
     return unless mod_tags.present? && !mod_tags.empty?
@@ -333,6 +361,8 @@ class Post < ApplicationRecord
     end
   end
 
+  # Intended to be used as callback after a save.
+  # Updates the category activity indicator if the last activity of this post changed.
   def update_category_activity
     if saved_changes.include? 'last_activity'
       category.update_activity(last_activity)

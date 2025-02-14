@@ -39,5 +39,10 @@ module Qpixel
       Devise::Mailer.helper :users
       Devise::Mailer.layout 'devise_mailer'
     end
+
+    console do
+      require 'console_extension'
+      include ConsoleExtension
+    end
   end
 end

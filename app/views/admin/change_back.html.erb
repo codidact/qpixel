@@ -1,14 +1,20 @@
 <h1>Stop impersonating</h1>
 <p>
-  You (<%= @impersonator.username %>) are currently impersonating <%= current_user.username %>. To stop
-  impersonating them, verify your password below
+  You (<%= @impersonator.username %>) are currently impersonating <%= current_user.username %>.
+  <% if @impersonator.sso_profile.present? %>
+    You can stop impersonating them with the button below, after which you will have to sign in again.
+  <% else %>
+    To stop impersonating them, verify your password below.
+  <% end %>
 </p>
 
 <%= form_tag stop_impersonating_path, class: 'form-horizontal' do %>
-  <div class="form-group">
-    <%= label_tag :password, 'Password', class: 'form-element' %>
-    <%= password_field_tag :password, '', class: 'form-element' %>
-  </div>
+  <% unless @impersonator.sso_profile.present? %>
+    <div class="form-group">
+      <%= label_tag :password, 'Password', class: 'form-element' %>
+      <%= password_field_tag :password, '', class: 'form-element' %>
+    </div>
+  <% end %>
 
   <div class="actions">
     <%= submit_tag 'Verify & Stop Impersonating', class: 'button is-primary is-filled' %>

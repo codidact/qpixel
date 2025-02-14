@@ -121,7 +121,7 @@ Pseudo-classes and pseudo-element selectors should appear *after* the main selec
 `@media` and other nested [*at-rules*](https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule) should be added to
 the end of the document, preceded by an extra blank line.
 
-See [*landing-page/primary.css @1ca2f671*](https://github.com/codidact/landing-page/blob/1ca2f671/dist/assets/css/primary.css)
+See [*landing-page/dist/assets/css/primary.css @1ca2f671*](https://github.com/codidact/landing-page/blob/1ca2f671/dist/assets/css/primary.css)
 for an example of all of the above.
 
 ### Spacing
@@ -130,9 +130,9 @@ for an example of all of the above.
 - Do not write more than one statement per line.
 
 ### Line breaks
-Rules should be separated by a blank line, except for the two special cases provided in item
-[**#3**](#Order-of-selectors) - namely, an extra blank line is expected between universal selectors and other
-selectors, as well as before nested _at-rules_. As such, these rule groups should be separated by *two* spaces.
+Rules should be separated by a blank line, except for the two special cases provided in
+[Order of selectors](#order-of-selectors) - namely, an extra blank line is expected between universal selectors and
+other selectors, as well as before nested _at-rules_. As such, these rule groups should be separated by *two* spaces.
 
 All properties are written on their own line and end with a semicolon. The closing bracket must appear in its own
 line.
@@ -259,7 +259,7 @@ When referencing external resources (including those local to the domain), do no
 HTTPS access to resources if possible.
 
 Prefer retrieving resources by canonical URIs when possible, i.e. those that do not redirect upon request. Check
-with a command-line tool or a service such as [apitester.com](https://apitester.com/) to be sure.
+with a command-line tool or a service such as [apitester.org](https://apitester.org/app) to be sure.
 
 ```html
 <script type="application/javascript" src="https://codidact.org/assets/product.js"></script>
@@ -379,20 +379,23 @@ When adding an ID or class to reference an element from JavaScript, prefix the v
 
 #### `<a>`
 - If using `target="_blank"` to open links in a new tab, also include `rel="noopener noreferrer"`.
-- If a JS-enabled link is necessary (it normally shouldn't - see note below), prefer `href="#"` over `href="javascript:void(0)"` (and its equivalent `href="javascript:;"`). Please do combine this with `event.preventDefault()` in order to prevent unwanted scrolling and adding of pointless entries to the user's browsing history.
+- If a JS-enabled link is necessary (it normally shouldn't be - see note below), prefer `href="#"` over
+`href="javascript:void(0)"` (and its equivalent `href="javascript:;"`). Please do combine this with
+`event.preventDefault()` in order to prevent unwanted scrolling and adding of pointless entries to the user's browsing
+history.
 
     **Note:** Since the above directive still requires JavaScript to be enabled, the RECOMMENDED first-line
     approach is to either link to an actual page/resource that performs the same expected action, or use a
     `<button>` element styled as a link instead. The JS-enabled link (`<a>`) strategy MUST be reserved for the
     rare cases, if any, where these are not possible - and ideally, they SHOULD be added ("injected") to the page
-    using JavaScript.<sup>[\[1\]](https://stackoverflow.com/a/134957/3258851) [\[2\]](https://stackoverflow.com/a/20215524/3258851)</sup>
+    using JavaScript[^1][^2]
 
 #### `<img>`
 - Use a compressed image format or small file size where possible.
 - Make use of `<picture>`/`srcset` where possible.
 - Load images asynchronously where possible.
 
-#### <h1-6>`
+#### `<h1-6>`
 - Ensure all pages have a level 1 header (`<h1>`) that is not the website name.
 - Pages MUST NOT have more than one `<h1>` element.
 - Use headings in order; style via CSS rather than using a smaller heading level.
@@ -521,7 +524,7 @@ this.dataset = (Object.keys(data).length > 0) ? data : {};
 Note the use of parentheses around the conditional expression - it makes it more obvious at first glance that this
 is a conditional statement. **This is a requirement.**
 
-For very long or deeply indented expressions that exceed the 120-char line length limit ([item 8](#8-line-length)),
+For very long or deeply indented expressions that exceed the [120-char line length limit](#line-length),
 use the following line-break and indenting style:
 
 ```js
@@ -598,3 +601,6 @@ first and then developing features, it can be helpful to create a commit where t
 channel - anything on there should be suitable for production deployment. Commits should generally not be made
 directly to master - only organization and repository administrators have the ability to, and should avoid doing
 so if at all possible.
+
+[^1]: [Which 'href' value should I use for JavaScript links, '#' or 'javascript:void(0)'?](https://stackoverflow.com/a/134957/3258851)
+[^2]: [Prevent href='#' link from changing the URL hash](https://stackoverflow.com/a/20215524/3258851)

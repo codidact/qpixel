@@ -7,9 +7,15 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
+  before_action :enforce_signed_in, unless: :devise_controller?
   before_action :check_if_warning_or_suspension_pending
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
+
+  # Before checking 2fa enforcing or access, store the location that the user is trying to access.
+  # In case re-authentication is necessary / the user signs in, we can direct back to this location directly.
+  before_action :store_user_location!, if: :storable_location?
+
   before_action :enforce_2fa
   before_action :block_write_request, if: :read_only_mode?
 
@@ -17,15 +23,19 @@ class ApplicationController < ActionController::Base
 
   def upload
     if ActiveStorage::Blob.service.class.name.end_with?('S3Service')
-      redirect_to helpers.upload_remote_url(params[:key]), status: 301
+      redirect_to helpers.upload_remote_url(params[:key]), status: 301, allow_other_host: true
     else
       blob = params[:key]
-      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key))
+      redirect_to url_for(ActiveStorage::Blob.find_by(key: blob.is_a?(String) ? blob : blob.key)),
+                  allow_other_host: true
     end
   end
 
   def dashboard
     @communities = Community.all
+    @edits = Post.unscoped do
+      SuggestedEdit.unscoped.joins(:post).where(active: true).group(Arel.sql('posts.category_id')).count
+    end
     render layout: 'without_sidebar'
   end
 
@@ -309,7 +319,8 @@ class ApplicationController < ActionController::Base
        # Enable users to log out even if 2fa is enforced
        !request.fullpath.end_with?('/users/sign_out') &&
        (current_user.is_global_admin ||
-         current_user.is_global_moderator)
+         current_user.is_global_moderator) &&
+       (current_user.sso_profile.blank? || SiteSetting['Enable2FAForSsoUsers'])
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)
         flash[:notice] = 'All global admins and global moderators must enable two-factor authentication to continue' \
@@ -317,6 +328,39 @@ class ApplicationController < ActionController::Base
         redirect_to(redirect_path)
       end
     end
+  end
+
+  # Ensure that the user is signed in before showing any content. If the user is not signed in, display the main page.
+  #
+  # Exceptions:
+  # - 4** and 500 error pages
+  # - stylesheets and javascript
+  # - assets
+  # - /help, /policy, /help/* and /policy/*
+  def enforce_signed_in
+    # If not restricted, the user is signed in or the environment is test, allow all content.
+    return true if !SiteSetting['RestrictedAccess'] || user_signed_in? || Rails.env.test?
+
+    # Allow error pages and assets
+    path = request.fullpath
+    return true if path.start_with?('/4') || path == '/500' ||
+                   path.start_with?('/assets/') ||
+                   path.end_with?('.css') || path.end_with?('.js')
+
+    # Make available to controller that the we should not leak posts in the sidebar
+    @prevent_sidebar = true
+
+    # Allow /help (help center), /help/* and /policy/* depending on settings
+    help = SiteSetting['RestrictedAccessHelpPagesPublic']
+    policy = SiteSetting['RestrictedAccessPolicyPagesPublic']
+    return true if (help && path.start_with?('/help/')) ||
+                   (policy && path.start_with?('/policy/')) ||
+                   (path == '/help' && (help || policy))
+
+    store_location_for(:user, request.fullpath) if storable_location?
+
+    render 'errors/restricted_content', layout: 'without_sidebar', status: :forbidden
+    false
   end
 
   def block_write_request(**add)
@@ -342,17 +386,52 @@ class ApplicationController < ActionController::Base
     helpers.user_signed_in?
   end
 
+  def sso_sign_in_enabled?
+    helpers.sso_sign_in_enabled?
+  end
+
+  def devise_sign_in_enabled?
+    helpers.devise_sign_in_enabled?
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          redirect_to new_user_session_path
+          if devise_sign_in_enabled?
+            redirect_to new_user_session_path
+          else
+            redirect_to new_saml_user_session_path
+          end
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
         end
       end
     end
+  end
+
+  # Checks if the requested location should be stored.
+  #
+  # Its important that the location is NOT stored if:
+  # - The request method is not GET (non idempotent)
+  # - The request is handled by a Devise controller such as Devise::SessionsController as that could cause an
+  #    infinite redirect loop.
+  # - The request is an Ajax request as this can lead to very unexpected behaviour.
+  # - The request is to a location we dont want to store, such as:
+  #   - Anything trying to fetch for the current user (filters, preferences, etc) as it is not the actual page
+  #   - The mobile login, as it would redirect to the code url after the sign in
+  #   - Uploaded files, as these appear in posts and are not the main route we would want to store
+  def storable_location?
+    request.get? && is_navigational_format? && !devise_controller? && !request.xhr? &&
+      !request.path.start_with?('/users/me') &&
+      !request.path.start_with?('/users/mobile-login') &&
+      !request.path.start_with?('/uploads/')
+  end
+
+  # Stores the location in the system for the current session, such that after login we send them back to the same page.
+  def store_user_location!
+    store_location_for(:user, request.fullpath)
   end
 end

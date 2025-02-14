@@ -1,8 +1,15 @@
 <h1>Sign in</h1>
 
+<% if sso_sign_in_enabled? %>
+  <div class="notice is-info has-margin-bottom-4">
+    <i class="fas fa-info-circle"></i> You can also sign in with your Single Sign-On provider.
+    <%= link_to "SSO Sign in", new_saml_user_session_path(resource_name), class: 'button is-primary is-filled' %>
+  </div>
+<% end %>
+
 <div class="notice is-info has-margin-bottom-4">
-  <i class="fas fa-info-circle"></i> Your sign-in information is the same on all
-  <a href="https://codidact.com/">Codidact communities</a>.
+  <p><i class="fas fa-info-circle"></i> Your sign-in information is the same on all communities on this network.</p>
+  <p>By signing in, you agree to abide by our <a href="/help/tos">Terms of Service</a>, <a href="/help/code-of-conduct">Code of Conduct</a>, <a href="/help/spam">Guidelines for promotional content</a>, and any other policies listed in the <a href="/help">Help Center</a>.</p>
 </div>
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), method: :post) do |f| %>
@@ -18,7 +25,7 @@
 
   <% if devise_mapping.rememberable? %>
     <div class="form-group">
-      <%= f.label :remember_me, class: "form-element" %>
+      <%= f.label :remember_me, 'Stay signed in on this device', class: "form-element" %>
       <%= f.check_box :remember_me, class: "form-radio-element" %>
     </div>
   <% end %>

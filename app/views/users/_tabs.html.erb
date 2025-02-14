@@ -18,5 +18,14 @@
     <%= link_to user_preferences_path, class: "tabs--item #{current_page?(user_preferences_path) ? 'is-active' : ''}" do %>
       Preferences
     <% end %>
+    <%= link_to user_filters_path, class: "tabs--item #{current_page?(user_filters_path) ? 'is-active' : ''}" do %>
+      Filters
+    <% end %>
+    <%= link_to notifications_path, class: "tabs--item #{current_page?(notifications_path) ? 'is-active' : ''}" do %>
+      Notifications
+    <% end %>
+  <% end %>
+  <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
+  All Communities
   <% end %>
 </div>

@@ -34,6 +34,10 @@ module ApplicationHelper
     uri.to_s
   end
 
+  def sign_in_link(title)
+    link_to title, new_user_session_url
+  end
+
   def license_link
     link_to SiteSetting['ContentLicenseName'], SiteSetting['ContentLicenseLink']
   end
@@ -89,6 +93,19 @@ module ApplicationHelper
     else
       post_url(post)
     end
+  end
+
+  def generic_share_link_md(post)
+    "[#{post.title}](#{generic_share_link(post)})"
+  end
+
+  def post_history_share_link(post, history, index)
+    post_history_url(post, anchor: history.size - index)
+  end
+
+  def post_history_share_link_md(post, history, index)
+    rev_num = history.size - index
+    "[Revision #{rev_num} — #{post.title}](#{post_history_share_link(post, history, index)})"
   end
 
   def generic_edit_link(post)
@@ -176,5 +193,20 @@ module ApplicationHelper
     elsif request.headers['Sec-Fetch-Mode'].present?
       false
     end
+  end
+
+  def current_commit
+    commit_info = Rails.cache.persistent('current_commit')
+    shasum, timestamp = commit_info
+
+    begin
+      date = DateTime.iso8601(timestamp)
+    rescue
+      date = DateTime.parse(timestamp)
+    end
+
+    [shasum, date]
+  rescue
+    [nil, nil]
   end
 end

@@ -2,12 +2,19 @@
 
 <h1>Vote summary for <%= user_link @user %></h1>
 
-<p class="is-lead">A daily summary of votes you have received for your posts.</p>
+<p class="is-lead">A daily summary of votes received for posts.</p>
 
-<% @votes.each do |day, vote_list| %>
+<% @votes.each do |day, vote_list, net_votes| %>
 <details class="user-vote-summary" <%= 'open' unless day < SiteSetting['VoteSummaryAutoExpandLastNrOfDays'].days.ago%>>
 <summary>
-<h2><%= day.strftime('%b %e, %Y') %></h2>
+<h2><%= day.strftime('%b %e, %Y') %>:
+<% if net_votes > 0 %>
+  <span class="has-color-green-800 has-font-weight-bold">+<%= net_votes %></span>
+<% elsif net_votes < 0 %>
+  <span class="has-color-red-800 has-font-weight-bold"><%= net_votes %></span>
+<% else %>
+  <span class="has-color-tertiary-600">0</span>
+<% end %></h2>
 </summary>
 <div class="item-list">
     <% vote_list.each do |post, vote_data| %>
@@ -33,15 +40,21 @@
         </div>
         <div class="item-list--text-value is-primary grid">
             <div class="grid grid--cell is-12">
-                <div class="grid--cell is-flexible">
-                    <%= link_to generic_share_link(post) do %>
-                        <%= post.post_type.is_top_level ? post.title : post.parent.title %>
-                    <% end %>
-                </div>
-                <div class="grid--cell">
-                    <span class="badge is-tag is-muted is-filled"><%= post.post_type.name %></span>
-                    <a href="<%= category_path(post.category) %>" class="badge is-tag is-muted"><%= post.category.name %></a>
-                </div>
+                <% if post.present? %>
+                    <div class="grid--cell is-flexible">
+                            <%= link_to generic_share_link(post) do %>
+                                <%= post.post_type.is_top_level ? post.title : post.parent.title %>
+                            <% end %>
+                    </div>
+                    <div class="grid--cell">
+                        <span class="badge is-tag is-muted is-filled"><%= post.post_type.name %></span>
+                        <a href="<%= category_path(post.category) %>" class="badge is-tag is-muted"><%= post.category.name %></a>
+                    </div>
+                <% else %>
+                    <div class="grid--cell">
+                        <%= I18n.t('votes.summary.post_missing') %>
+                    </div>
+                <% end %>
             </div>
         </div>
     </div>

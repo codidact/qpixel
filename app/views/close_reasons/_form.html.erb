@@ -42,5 +42,5 @@
   </div>
 
   <%= f.submit 'Save', class: 'button is-filled' %>
-  <%= link_to 'Cancel', close_reasons_path(global: @close_reason.community.nil? ? 1 : 0), class: 'button' %>
+  <%= link_to 'Cancel', close_reasons_path(global: @close_reason.community.nil? ? 1 : 0), class: 'button', role: 'button' %>
 <% end %>

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Give database chance to finish creation
-sleep 15
-
 # If not created yet
 if [ ! -f "/db-created" ]; then
     rails db:create
@@ -18,5 +15,7 @@ fi
 # If this isn't done again, there is a 500 error on the first page about posts
 rails db:seed
 
-# defaults to port 3000
-rails server -b 0.0.0.0
+# we don't start the server immediately in dev mode
+if [[ "$1" != 'dev' ]]; then
+    rails server -b 0.0.0.0
+fi

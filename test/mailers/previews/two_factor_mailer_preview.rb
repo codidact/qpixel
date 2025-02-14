@@ -7,4 +7,8 @@ class TwoFactorMailerPreview < ActionMailer::Preview
   def login_email_preview
     TwoFactorMailer.with(user: User.last, host: 'testhost.codidact.com').login_email
   end
+
+  def backup_code_preview
+    TwoFactorMailer.with(user: User.last, host: 'testhost.codidact.com').backup_code
+  end
 end

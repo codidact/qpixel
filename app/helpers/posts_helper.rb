@@ -15,6 +15,35 @@ module PostsHelper
     end
   end
 
+  # @param category [Category, Nil]
+  # @return [Integer] the minimum length for post bodies
+  def min_body_length(category)
+    category&.min_body_length || 30
+  end
+
+  # @param _category [Category, Nil]
+  # @return [Integer] the maximum length for post bodies
+  def max_body_length(_category)
+    30_000
+  end
+
+  # @param category [Category, Nil] post category, if any
+  # @param post_type [PostType] type of the post (system limits are relaxed)
+  # @return [Integer] the minimum length for post titles
+  def min_title_length(category, post_type)
+    if post_type.system?
+      1
+    else
+      category&.min_title_length || 15
+    end
+  end
+
+  # @param _category [Category, Nil]
+  # @return [Integer] the maximum length for post titles
+  def max_title_length(_category)
+    [SiteSetting['MaxTitleLength'] || 255, 255].min
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     def initialize
       super

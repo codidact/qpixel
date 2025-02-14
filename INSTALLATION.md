@@ -4,7 +4,7 @@ These instructions are for setting up a development instance of QPixel. QPixel i
 built with Ruby on Rails.
 
 In that guide it is assumed that you already have a Unix environment available
-with Ruby  and Bundler installed. WSL works as well. Windows (core) has not been tested.
+with Ruby and Bundler installed. WSL works as well. Windows (core) has not been tested.
 
 For an installation with **Docker** see the README.md in the [docker](docker) folder
 for further instructions.
@@ -12,6 +12,8 @@ for further instructions.
 If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 [rbenv](https://github.com/rbenv/rbenv#installation) to install it before following
 these instructions.
+
+QPixel is tested with Ruby 3 (and works with Ruby 2.7 as of December 2022).
 
 ## Prerequisites
 
@@ -43,7 +45,30 @@ brew install mysql bison openssl mysql-client
 bundle config --global build.mysql2 --with-opt-dir="$(brew --prefix openssl)"
 ```
 
-QPixel requires Ruby 2.7+.
+
+## Environment
+
+The following lists environment variables provided for QPixel customization
+(this section is best-effort, please check for `ENV['<variable name>']`) in source code for the full list of available variables (for Docker-specific variables, see [Docker README](/docker/README.md)):
+
+| Name                              | Value                                                  | Required? | Default                    | Description                                                                                                    |
+| --------------------------------- | ------------------------------------------------------ | --------- | -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `BACKTRACE`                       | `<1>`                                                  | no        | -                          | Enables backtrace for libraries (see [backtrace_silencers.rb](/config/initializers/backtrace_silencers.rb))    |
+| `BUNDLE_GEMFILE`                  |                                                        | no        |                            |                                                                                                                |
+| `CONFIRMABLE_ALLOWED_ACCESS_DAYS` | `<number>`                                             | no        | `0`                        | Sets for how long (in days) an unconfirmed account can access the instance                                     |
+| `DRIVER`                          | `<headless_chrome\|chrome\|headless_firefox\|firefox>` | no        | `headless_firefox`         | Sets browser to use when running system tests                                                                  |
+| `MAILER_PROTOCOL`                 | `http\|https`                                          | no        | `https`                    | Sets default URL protocol to use with mailes (f.e., confirmation emails)                                       |
+| `PIDFILE`                         | `<string>`                                             | no        | `tmp/pids/server.pid`      | Sets pidfile (a file where the id of a process is written to) for Puma                                         |
+| `PORT`                            | `<number>`                                             | no        | `3000`                     | Sets the port on which the server will listen for incoming requests                                            |
+| `RAILS_ENV`                       | `<development\|production\|test>`                      | no        | `development`              | Sets the environment to use (see [config/environments](/config/environments/))                                 |
+| `RAILS_MAX_THREADS`               | `<number>`                                             | no        | `5`                        | Sets the maximum number of threads from the internal thread pool to use for requests                           |
+| `RAILS_MIN_THREADS`               | `<number>`                                             | no        | `5`                        | Sets the minimum number of threads from the internal pool to use for requests                                  |
+| `RAILS_SERVE_STATIC_FILES`        | `<boolean>`                                            | no        | -                          |                                                                                                                |
+| `REDIS_URL`                       | `<string>`                                             | no        | `redis://localhost:6379/1` |                                                                                                                |
+| `SECRET_KEY_BASE`                 | `<string>`                                             | yes       | -                          | Sets the secret key for signed cookie verification (can be generated with `rake secret`, used in `production`) |
+| `SEEDS`                           | `<seeds source name>`                                  | no        | -                          | Runs only a specified set of seeds from [db/seeds](/db/seeds/)                                                 |
+| `UPDATE_POSTS`                    | `<boolean>`                                            | no        | -                          | If set to `true`, updates seeded posts when running post seeds                                                 |
+| `WEB_CONCURRENCY`                 | `<number>`                                             | no        | `2`                        |                                                                                                                |
 
 ### Install JS runtime
 
@@ -51,10 +76,26 @@ If you already have Node.JS installed, you can skip this step. If not,
 [download and install it](https://nodejs.org/en/download/) or for example
 `sudo apt install nodejs`.
 
+On Mac with homebrew, `brew install node` .
+
 ### Install Redis
 
 If you haven't already got it, [download and install Redis](https://redis.io/download)
 or for example `sudo apt install redis-server`.
+
+For mac with homebrew, `brew install redis` .
+
+### Install Imagemagick
+
+If you haven't already installed Imagemagick, you'll need to
+[install it for your system](https://imagemagick.org/script/download.php).
+
+If you install Imagemagick from APT on a Debian-based system, you may need to
+also install the `libmagickwand-dev` package.
+
+`sudo apt install libmagick++-dev` should also work.
+
+For Mac with homebrew, `brew install imagemagick` .
 
 ### Install Libvips
 
@@ -63,6 +104,8 @@ your system](https://www.libvips.org/).
 
 To install libvips from APT on a Debian-based system, use
 `sudo apt install libvips`
+
+For Mac with homebrew, `brew install vips` .
 
 ## Install QPixel
 
@@ -78,7 +121,7 @@ After downloading QPixel, you need to install all the dependencies. For that, yo
 If Ruby complains, that the Bundler hasn't been installed yet, use `gem install bundler` and
 then re-run the above command.
 
-### Setting up the Database
+### Set up the Database
 
 If you weren't asked to set the root MySQL user password during `mysql-server` installation,
 the installation is likely to be using Unix authentication instead. You'll need to sign into
@@ -95,9 +138,11 @@ Copy `config/database.sample.yml` to `config/database.yml` and fill in the corre
 username, and password for your environment. If you've followed these instructions (i.e. you
 have installed MySQL locally), the correct host is `localhost` or `127.0.0.1`.
 
-You'll also need to fill in details for the Redis connection. If you've followed these instructions,
+You will need to set the Redis connection details there too. If you've followed these instructions,
 the sample file should already contain the correct values for you, but if you've customised your
 setup you'll need to correct them.
+
+You'll also need to copy the Active Storage configuration from `config/storage.sample.yml` to `config/storage.yml`.
 
 If you are using MariaDB instead of MySQL, you will need to replace all occurrences of
 `utf8mb4_0900_ai_ci` with `utf8mb4_unicode_ci` in `db/schema.rb`.
@@ -109,6 +154,10 @@ Set up the database:
     rails r db/scripts/create_tags_path_view.rb
     rails db:migrate
 
+We also recommend you load the QPixel console extensions for easier development:
+
+    cp .sample.irbrc .irbrc
+
 You'll need to create a Community record and purge the Rails cache before you can seed the database.
 In a Rails console (`rails c`), run:
 
@@ -117,7 +166,7 @@ Community.create(name: 'Dev Community', host: 'localhost:3000')
 Rails.cache.clear
 ```
 
-After that you can call `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates.  (If you are preparing a production deployment, you might choose to edit some of the help seeds first.  See "Help Topics" at the end of this guide.)
+After that you can run `rails db:seed` to fill the database with necessary seed data, such as settings, help posts and default templates. (If you are preparing a production deployment, you might choose to edit some of the help seeds first. The "policy" topics are not included in the initial seed. See "Help Topics" at the end of this guide.)
 
     $ rails db:seed
     Category: Created 2, skipped 0
@@ -128,6 +177,9 @@ Now comes the big moment: You can start the QPixel server for the first time. Ru
     rails s
 
 Open a web browser and visit your server, which should be running under [http://localhost:3000](http://localhost:3000).
+
+![img/qpixel-dev.png](img/qpixel-dev.png)
+
 
 ### Create administrator account
 
@@ -150,53 +202,52 @@ While being logged into your administrator account, go to [http://localhost:3000
 Review the settings (if you want; you can change them later) and click "Save and continue" to complete
 setting up the dev server.
 
-### Configure Categories
-
-Before you try to create a post we need to configure categories!
-Go to `http://localhost:3000/categories/`
-
-![img/categories.png](img/categories.png)
-
- Click "edit" for each category and scroll down to see the "Tag Set" field. This
- will be empty on first setup.
-
-![img/tagset.png](img/tagset.png)
-
-You will need to select a tag set for each category! For example, the Meta category can be
-associated with the "Meta" tag set, and the Q&A category can be associated with "Main"
-
-![img/tagset-selected.png](img/tagset-selected.png)
-
-Make sure to click save for each one.<br>
-<em>Note:</em> You may need to run `rails db:seed` again.
-
 ## Create a Post
 
-You should then be able to create a post! There are character requirements for the
-body and title, and you are required at least one tag.
+You can now create your first post. There are character requirements for the
+body and title, and you are required to add at least one tag.
 
 ![img/create-post.png](img/create-post.png)
 
-And then click to "Save Post in Q&A"
+When you've met the length requirements and added a tag, the "Save Post in Q&A" button is enabled and you can click it.
 
 ![img/post.png](img/post.png)
 
+
+## Optional: Single Sign On
+
+Please see our wiki for [detailed instructions](https://github.com/codidact/qpixel/wiki/Setting-up-SAML-Single-Sign-On) on setting up SAML Single Sign-On.
+
+
+## Optional: Required Tags
+
+The special Meta tags (discussion, bug, support, feature-request) are not seeded. (We do not assume that all deployments want to manage user feedback the same way.) You can create tags directly on the Meta Tags page:
+
+![img/meta-tags.png](img/meta-tags.png)
+
+Next, edit the Meta category settings:
+
+![img/edit-category.png](img/edit-category.png)
+
+Add the tags to the "Required tags" section:
+
+![img/required-tags.png](img/required-tags.png)
+
+
 ## Optional: Help Topics
 
-If you are running a development server, you might not care a lot about what's in the help.  If you are planning to deploy a server for actual use, however, note that the seeds have some placeholder text you'll want to edit.  We have provided starting points (to be edited) for the following topics:
+If you are running a development server, you might not care a lot about what's in the help. If you are planning to deploy a server for actual use, however, note that the seeds have some placeholder text you'll want to edit. We have provided starting points (to be edited) for the following topics:
 
-- Terms of service (TOS)  
-- Code of conduct (COC)  
-- Privacy policy  
-- Spam policy  
+- Terms of service (TOS)
+- Code of conduct (COC)
+- Privacy policy
+- Spam policy
 - Global (network) FAQ
 
-The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like.  We recommend reviewing all of the content in these topics.  There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
+The corresponding posts in db/seeds/posts have some places marked with "$EDIT" where you will probably want to insert URLs, email addresses, and the like. We recommend reviewing all of the content in these topics. There are two ways to edit these topics: in the source files before adding to your database, or through the UI in your running instance.
 
 If you edit the seed files, use the following command to add them to your database:
 
 `UPDATE_POSTS=true rails db:seed`
 
-You can also edit the topics in the UI.  As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities.  Administrators can update help topics in this way at any time.
-
-
+You can also edit the topics in the UI. As an administrator, you'll see an edit button on help topics when you view them, and the editor provides an option to deploy changes across your network of communities. Administrators can update help topics in this way at any time.

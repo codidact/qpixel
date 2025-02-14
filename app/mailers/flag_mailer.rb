@@ -7,7 +7,8 @@ class FlagMailer < ApplicationMailer
                  .or(User.joins(:community_user)
                          .where(community_users: { is_admin: true, community_id: @flag.community_id }))
                  .select(:email).map(&:email)
-    mail from: 'Codidact <noreply@codidact.com>', to: 'noreply@codidact.com', bcc: emails,
-         subject: "New flag escalation on #{@flag.community.name}"
+    from = "#{SiteSetting['NoReplySenderName']} <#{SiteSetting['NoReplySenderEmail']}>"
+    to = SiteSetting['NoReplySenderEmail']
+    mail from: from, to: to, bcc: emails, subject: "New flag escalation on #{@flag.community.name}"
   end
 end

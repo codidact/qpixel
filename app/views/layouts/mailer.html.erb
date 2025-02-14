@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title><%= message.subject %></title>
-  <%= stylesheet_link_tag 'https://cdn.jsdelivr.net/npm/@codidact/co-design@0.12.5/dist/codidact.css' %>
+  <%= stylesheet_link_tag 'https://cdn.jsdelivr.net/npm/@codidact/co-design@latest/dist/codidact.css' %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
 </head>
 <body>
@@ -26,7 +26,11 @@
       London, UK<br/>
       WC2H 9JQ
     </p>
-    <p><a href="mailto:info@codidact.org">info@codidact.org</a></p>
+    <p>
+      <a href="mailto:<%= SiteSetting['SupportReceiverEmail'] || 'info@codidact.org' %>">
+        <%= SiteSetting['SupportReceiverEmail'] || 'info@codidact.org' %>
+      </a>
+    </p>
   </div>
 </div>
 </body>
