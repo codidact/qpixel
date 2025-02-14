@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class TasksControllerTest < ActionController::TestCase
-  include Devise::Test::ControllerHelpers
+class TasksIntegrationTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
 
   test 'should deny access to anonymous users' do
     get '/maintenance'
