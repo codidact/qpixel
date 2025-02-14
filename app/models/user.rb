@@ -27,6 +27,8 @@ class User < ApplicationRecord
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
+  has_many :user_websites, dependent: :destroy
+  accepts_nested_attributes_for :user_websites
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -43,7 +45,7 @@ class User < ApplicationRecord
   scope :active, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
 
-  after_create :send_welcome_tour_message
+  after_create :send_welcome_tour_message, :ensure_websites
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -59,6 +61,12 @@ class User < ApplicationRecord
 
   def trust_level
     community_user.trust_level
+  end
+
+  # Checks whether this user is the same as a given user
+  # @param [User] user user to compare with
+  def same_as?(user)
+    id == user.id
   end
 
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
@@ -128,6 +136,18 @@ class User < ApplicationRecord
 
   def website_domain
     website.nil? ? website : URI.parse(website).hostname
+  end
+
+  def valid_websites_for
+    user_websites.where.not(url: [nil, '']).order(position: :asc)
+  end
+
+  def ensure_websites
+    pos = user_websites.size
+    while pos < UserWebsite::MAX_ROWS
+      pos += 1
+      UserWebsite.create(user_id: id, position: pos)
+    end
   end
 
   def is_moderator
@@ -232,7 +252,7 @@ class User < ApplicationRecord
 
   def email_not_bad_pattern
     return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless saved_changes.include? 'email'
+    return unless changes.include? 'email'
 
     patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
     matched = patterns.select { |p| email.match? Regexp.new(p) }
