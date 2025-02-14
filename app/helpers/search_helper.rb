@@ -1,12 +1,21 @@
 module SearchHelper
-  def check_posts_permissions
-    (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
-      .qa_only.list_includes
+  # @param user [User] user to check
+  def accessible_categories_for(user)
+    if user&.mod_or_admin?
+      return Category.all
+    end
+
+    trust_level = user&.trust_level || 0
+    Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
   end
 
-  def search_posts
-    posts = check_posts_permissions
+  # @param user [User] user to check
+  def accessible_posts_for(user)
+    (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
+  end
 
+  def search_posts(user)
+    posts = accessible_posts_for(user)
     qualifiers = params_to_qualifiers
     search_string = params[:search]
 
@@ -17,7 +26,7 @@ module SearchHelper
       search_string = search_data[:search]
     end
 
-    posts = qualifiers_to_sql(qualifiers, posts)
+    posts = qualifiers_to_sql(qualifiers, posts, user)
     posts = posts.paginate(page: params[:page], per_page: 25)
 
     posts = if search_string.present?
@@ -187,10 +196,9 @@ module SearchHelper
     # Consider partitioning and telling the user which filters were invalid
   end
 
-  def qualifiers_to_sql(qualifiers, query)
-    trust_level = current_user&.trust_level || 0
-    allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
-    query = query.where(category_id: allowed_categories)
+  def qualifiers_to_sql(qualifiers, query, user)
+    categories = accessible_categories_for(user)
+    query = query.where(category_id: categories)
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
       case qualifier[:param]
