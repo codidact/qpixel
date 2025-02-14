@@ -45,8 +45,8 @@ gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduling & maintenance.
-gem 'whenever', '~> 1.0', require: false
 gem 'maintenance_tasks', '~> 2.2'
+gem 'whenever', '~> 1.0', require: false
 
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.9'
