@@ -44,7 +44,8 @@ gem 'aws-sdk-s3', '~> 1.61', require: false
 gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
-# Task scheduler.
+# Task scheduling & maintenance.
+gem 'maintenance_tasks', '~> 2.2'
 gem 'whenever', '~> 1.0', require: false
 
 # Debugging, linting, testing.
@@ -100,5 +101,3 @@ group :development do
   gem 'spring', '~> 4.0'
   gem 'web-console', '~> 4.2'
 end
-
-gem 'maintenance_tasks', '~> 2.1.1'

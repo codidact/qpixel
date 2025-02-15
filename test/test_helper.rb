@@ -83,3 +83,11 @@ class ActionController::TestCase
     request.env['HTTP_HOST'] = Community.first.host
   end
 end
+
+class ActionDispatch::IntegrationTest
+  setup :load_host
+
+  def load_host
+    integration_session.host = Community.first.host
+  end
+end
