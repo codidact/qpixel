@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  codecov: codecov/codecov@5
 jobs:
   test-ruby31:
     docker:
@@ -56,10 +58,6 @@ jobs:
           name: Current revision
           command: |
             git rev-parse $(git rev-parse --abbrev-ref HEAD)
-      - run:
-          name: Coveralls token
-          command: |
-            if [ -z "$COVERALLS_REPO_TOKEN" ]; then echo "Skipping coveralls"; else echo "repo_token: $COVERALLS_REPO_TOKEN" > .coveralls.yml; fi
       - run:
           name: Test
           command: |
@@ -189,15 +187,12 @@ jobs:
           command: |
             git rev-parse $(git rev-parse --abbrev-ref HEAD)
       - run:
-          name: Coveralls token
-          command: |
-            if [ -z "$COVERALLS_REPO_TOKEN" ]; then echo "Skipping coveralls"; else echo "repo_token: $COVERALLS_REPO_TOKEN" > .coveralls.yml; fi
-      - run:
           name: Test
           command: |
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
+      - codecov/upload
   system-test-ruby32:
     docker:
       - image: cimg/ruby:3.2-browsers
