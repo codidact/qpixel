@@ -50,7 +50,6 @@ gem 'whenever', '~> 1.0', require: false
 
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.9'
-gem 'coveralls', '~> 0.8', require: false
 gem 'rubocop', '~> 1'
 gem 'rubocop-rails', '~> 2.15'
 
