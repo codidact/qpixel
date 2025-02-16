@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  codecov: codecov/codecov@5
 jobs:
   test-ruby31:
     docker:
@@ -198,6 +200,7 @@ jobs:
             bundle exec rails test
       - store_test_results:
           path: "~/qpixel/test/reports"
+      - codecov/upload
   system-test-ruby32:
     docker:
       - image: cimg/ruby:3.2-browsers

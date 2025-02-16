@@ -83,6 +83,8 @@ group :test do
   gem 'minitest', '~> 5.16.0'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
+  gem 'simplecov', '~> 0.21'
+  gem 'simplecov_json_formatter', '~> 0.1'
   gem 'term-ansicolor', '~> 1.7'
 
   gem 'capybara', '~> 3.38'
