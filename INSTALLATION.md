@@ -13,7 +13,7 @@ If you don't already have Ruby installed, use [RVM](https://rvm.io/) or
 [rbenv](https://github.com/rbenv/rbenv#installation) to install it before following
 these instructions.
 
-QPixel is tested with Ruby 3 (and works with Ruby 2.7 as of December 2022).
+QPixel is tested with Ruby 3.1 and 3.2. Note that Ruby 3.1 reaches end of life on 2025-03-31.
 
 ## Prerequisites
 

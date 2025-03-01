@@ -19,7 +19,8 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin

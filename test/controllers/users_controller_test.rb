@@ -91,16 +91,41 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  test 'should update profile text' do
+  test 'should redirect & show success notice on profile update' do
     sign_in users(:standard_user)
-    patch :update_profile, params: { user: { profile_markdown: 'ABCDEF GHIJKL', website: 'https://example.com/user',
-                                             twitter: '@standard_user' } }
+    patch :update_profile, params: { user: { username: 'std' } }
     assert_response 302
     assert_not_nil flash[:success]
     assert_not_nil assigns(:user)
     assert_equal users(:standard_user).id, assigns(:user).id
-    assert_not_nil assigns(:user).profile
-    assert_equal 'standard_user', assigns(:user).twitter
+  end
+
+  test 'should update profile text' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+      user: { profile_markdown: 'ABCDEF GHIJKL' }
+    }
+    assert_equal assigns(:user).profile.strip, '<p>ABCDEF GHIJKL</p>'
+  end
+
+  test 'should update websites' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+      user: { user_websites_attributes: {
+        '0': { label: 'web', url: 'example.com' }
+      } }
+    }
+    assert_not_nil assigns(:user).user_websites
+    assert_equal 'web', assigns(:user).user_websites.first.label
+    assert_equal 'example.com', assigns(:user).user_websites.first.url
+  end
+
+  test 'should update user discord link' do
+    sign_in users(:standard_user)
+    patch :update_profile, params: {
+      user: { discord: 'example_user#1234' }
+    }
+    assert_equal 'example_user#1234', assigns(:user).discord
   end
 
   test 'should get full posts list for a user' do

@@ -47,7 +47,7 @@
       current_page?(mod_failban_path(user)) ||
       current_page?(start_impersonating_path(user))
     ) ? 'is-active' : ''}" do %>
-      <i class="fas fa-shield-alt"></i> Moderator Tools
+      <i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %>
     <% end %>
   <% end %>
 </div>
