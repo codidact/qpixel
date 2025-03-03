@@ -14,12 +14,26 @@
 
 <%= form_for @tag, url: submit_path do |f| %>
   <% if submit_path == create_tag_path %>
+    <% tag_name = @tag.name %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.tag_name" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      tag_name = [
+        [@tag.created_at || Date.new(2000, 1, 1), @tag.name],
+        [@tag.updated_at || Date.new(2000, 1, 1), @tag.name],
+        [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <div class="form-group">
       <%= f.label :name, 'Name', class: 'form-element' %>
       <span class="form-caption">
         Name of the tag
       </span>
-      <%= f.text_field :name, class: 'form-element' %>
+      <%= f.text_field :name, value: tag_name, class: 'form-element' %>
     </div>
   <% end %>
 
@@ -57,17 +71,35 @@
   </div>
 
   <div class="form-group">
+    <% excerpt = @tag.excerpt %>
+    <% key = "saved_post.#{current_user&.id}.#{request.path}.excerpt" %>
+    <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
+    <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
+    <%
+      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      excerpt = [
+        [@tag.created_at || Date.new(2000, 1, 1), @tag.excerpt],
+        [@tag.updated_at || Date.new(2000, 1, 1), @tag.excerpt],
+        [saved_at || Date.new(2001, 1, 1), RequestContext.redis.get(key)]
+      ].max_by do |x|
+        x[0]
+      end[1]
+    %>
     <%= f.label :excerpt, 'Usage guidance', class: 'form-element' %>
     <span class="form-caption">
       Short usage guidance for this tag. Will be cut off at 120 characters in the tags list, but displayed in full on
       the tag page.
     </span>
-    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt', rows: 3 %>
-    <span class="has-float-right has-font-size-caption js-character-count"
-          data-target=".js-tag-excerpt" data-max="600">0 / 600</span>
+    <%= f.text_area :excerpt, class: 'form-element js-tag-excerpt',
+                              value: excerpt,
+                              rows: 3,
+                              data: { character_count: '.js-character-count-tag-excerpt' }
+    %>
+    <%= render 'shared/char_count', type: 'tag-excerpt', cur: excerpt&.length || @tag.excerpt&.length, min: 0, max: 600 %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :wiki_markdown, field_label: 'Wiki', post: @tag do %>
+  <%= render 'shared/body_field', f: f, min_length: 0, max_length: 30_000, cur_length: @tag.wiki_markdown&.length, 
+                                  field_name: :wiki_markdown, field_label: 'Wiki', post: @tag do %>
     Full usage guidance and any other information you want people to know about this tag.
   <% end %>
   <div class="post-preview"></div>

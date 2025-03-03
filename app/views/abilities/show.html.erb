@@ -49,20 +49,23 @@
     <% unless @ability.manual? %>
       <% unless params[:thresholds].nil? %>
         <div class="widget--body">
-          <p>You need to reach these thresholds to earn the ability:</p>
-
+          <% if @user.id == current_user&.id %>
+            <p>You need to reach these thresholds to earn the ability:</p>
+	  <% else %>
+            <p><%= @user.username %> needs to reach these thresholds to earn the ability:</p>
+	  <% end %>
           <% unless @ability.post_score_threshold.nil? %>
             <% post_score_percent = (linearize_progress(@user.community_user.post_score) / linearize_progress(@ability.post_score_threshold) * 100).to_i %>
 
             <p><strong>Post score threshold</strong></p>
             <% if post_score_percent < 100 %>
-              <p>You need to have more well-received posts.</p>
+              <p>Need to have more well-received posts.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-<%= post_score_percent %>%"></div>
                 <div class="meter--label"><%= post_score_percent %>%</div>
               </div>
             <% else %>
-              <p>You need to have many well-received posts.</p>
+              <p>Need to have many well-received posts.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-100%"></div>
                 <div class="meter--label">100%</div>
@@ -75,13 +78,13 @@
 
             <p><strong>Edit score threshold</strong></p>
             <% if edit_score_percent < 100 %>
-              <p>You need to have more accepted suggested edits.</p>
+              <p>Need to have more accepted suggested edits.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-<%= edit_score_percent %>%"></div>
                 <div class="meter--label"><%= edit_score_percent %>%</div>
               </div>
             <% else %>
-              <p>You need to have many accepted suggested edits.</p>
+              <p>Need to have many accepted suggested edits.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-100%"></div>
                 <div class="meter--label">100%</div>
@@ -94,13 +97,13 @@
 
             <p><strong>Flag score threshold</strong></p>
             <% if flag_score_percent < 100 %>
-              <p>You need to have more helpful flags.</p>
+              <p>Need to have more helpful flags.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-<%= flag_score_percent %>%"></div>
                 <div class="meter--label"><%= flag_score_percent %>%</div>
               </div>
             <% else %>
-              <p>You need to have many helpful flags.</p>
+              <p>Need to have many helpful flags.</p>
               <div class="meter is-progress">
                 <div class="meter--bar is-100%"></div>
                 <div class="meter--label">100%</div>

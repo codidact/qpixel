@@ -89,7 +89,25 @@ h1 .badge.is-tag.is-master-tag {
   width: calc(100% + 2px);
 
   + .widget--footer {
-    margin-bottom: 0;
+    border-top: none;
+    align-items: center;
+    margin: 0;
+
+    &.mdhint {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em 0;
+      justify-content: space-between;
+
+      & > * {
+        padding: 0;
+      }
+    }
+
+    & > .draft-status {
+      text-align: center;
+      transition: opacity 0.5s ease-in-out;
+    }
   }
 }
 

@@ -16,6 +16,12 @@
     align-items: center;
     justify-content: space-between;
   }
+
+  & .category-meta--start {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
 }
 
 .category-header--nav {

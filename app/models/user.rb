@@ -27,6 +27,8 @@ class User < ApplicationRecord
   has_many :comment_threads_locked, class_name: 'CommentThread', foreign_key: :locked_by_id, dependent: :nullify
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
+  has_many :user_websites, dependent: :destroy
+  accepts_nested_attributes_for :user_websites
   belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
@@ -43,7 +45,7 @@ class User < ApplicationRecord
   scope :active, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
 
-  after_create :send_welcome_tour_message
+  after_create :send_welcome_tour_message, :ensure_websites
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -61,6 +63,12 @@ class User < ApplicationRecord
     community_user.trust_level
   end
 
+  # Checks whether this user is the same as a given user
+  # @param [User] user user to compare with
+  def same_as?(user)
+    id == user.id
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
@@ -70,6 +78,22 @@ class User < ApplicationRecord
     else
       privilege?(name)
     end
+  end
+
+  # Checks if the user can push a given post type to network
+  # @param post_type [PostType] type of the post to be pushed
+  # @return [Boolean]
+  def can_push_to_network(post_type)
+    post_type.system? && (is_global_moderator || is_global_admin)
+  end
+
+  # Checks if the user can directly update a given post
+  # @param post [Post] updated post (owners can unilaterally update)
+  # @param post_type [PostType] type of the post (some are freely editable)
+  # @return [Boolean]
+  def can_update(post, post_type)
+    privilege?('edit_posts') || is_moderator || self == post.user || \
+      (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
   def metric(key)
@@ -114,12 +138,60 @@ class User < ApplicationRecord
     website.nil? ? website : URI.parse(website).hostname
   end
 
+  def valid_websites_for
+    user_websites.where.not(url: [nil, '']).order(position: :asc)
+  end
+
+  def ensure_websites
+    pos = user_websites.size
+    while pos < UserWebsite::MAX_ROWS
+      pos += 1
+      UserWebsite.create(user_id: id, position: pos)
+    end
+  end
+
   def is_moderator
     is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
   end
 
   def is_admin
     is_global_admin || community_user&.is_admin || false
+  end
+
+  # Used by network profile: does this user have a profile on that other comm?
+  def has_profile_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    !cu&.user_id.nil? || false
+  end
+
+  def reputation_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.reputation || 1
+  end
+
+  def post_count_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.post_count || 0
+  end
+
+  def is_moderator_on(community_id)
+    cu = community_users.where(community_id: community_id).first
+    # is_moderator is a DB check, not a call to is_moderator()
+    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
+  end
+
+  def has_ability_on(community_id, ability_internal_id)
+    cu = community_users.where(community_id: community_id).first
+    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
+      true
+    elsif cu.nil?
+      false
+    else
+      Ability.unscoped do
+        UserAbility.joins(:ability).where(community_user_id: cu&.id, is_suspended: false,
+                                          ability: { internal_id: ability_internal_id }).exists?
+      end
+    end
   end
 
   def rtl_safe_username
@@ -180,7 +252,7 @@ class User < ApplicationRecord
 
   def email_not_bad_pattern
     return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless saved_changes.include? 'email'
+    return unless changes.include? 'email'
 
     patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
     matched = patterns.select { |p| email.match? Regexp.new(p) }
@@ -217,7 +289,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason)
+  def block(reason, length: 180.days)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -225,10 +297,10 @@ class User < ApplicationRecord
       user_ip << current_sign_in_ip
     end
 
-    BlockedItem.create(item_type: 'email', value: user_email, expires: DateTime.now + 180.days,
+    BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
                        automatic: true, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
-      BlockedItem.create(item_type: 'ip', value: ip, expires: 180.days.from_now,
+      BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
                          automatic: true, reason: "#{reason}: #" + id.to_s)
     end
   end
@@ -269,5 +341,24 @@ class User < ApplicationRecord
   def preference(name, community: false)
     preferences[community ? :community : :global][name]
   end
+
+  def has_active_flags?(post)
+    !post.flags.where(user: self, status: nil).empty?
+  end
+
+  def active_flags(post)
+    post.flags.where(user: self, status: nil)
+  end
+
+  def do_soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
+                      username: "user#{id}", email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+    skip_reconfirmation!
+    save
+  end
+
   # rubocop:enable Naming/PredicateName
 end

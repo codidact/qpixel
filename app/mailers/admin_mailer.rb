@@ -1,5 +1,8 @@
 class AdminMailer < ApplicationMailer
-  default from: 'Codidact Admins <moderators-noreply@codidact.com>'
+  default from: lambda {
+                  "#{SiteSetting['ModeratorDistributionListSenderName']} " \
+                    "<#{SiteSetting['ModeratorDistributionListSenderEmail']}>"
+                }
 
   def to_moderators
     @subject = params[:subject]
@@ -8,14 +11,19 @@ class AdminMailer < ApplicationMailer
             "INNER JOIN community_users cu ON cu.user_id = u.id WHERE s.type = 'moderators' AND " \
             '(u.is_global_admin = 1 OR u.is_global_moderator = 1 OR cu.is_admin = 1 OR cu.is_moderator = 1)'
     emails = ActiveRecord::Base.connection.execute(query).to_a.flatten
-    mail subject: "Codidact Moderators: #{@subject}", to: 'moderators-noreply@codidact.org', bcc: emails
+    from = "#{SiteSetting['ModeratorDistributionListSenderName']} " \
+           "<#{SiteSetting['ModeratorDistributionListSenderEmail']}>"
+    to = SiteSetting['ModeratorDistributionListSenderEmail']
+    mail subject: "Codidact Moderators: #{@subject}", to: to, from: from, bcc: emails
   end
 
   def to_all_users
     @subject = params[:subject]
     @body_markdown = params[:body_markdown]
     @users = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
-    mail subject: @subject, to: 'allusers-noreply@codidact.org', from: 'Codidact Team <allusers-noreply@codidact.org>',
-         reply_to: 'info@codidact.org', bcc: @users
+    to = SiteSetting['AllUsersSenderEmail']
+    from = "#{SiteSetting['AllUsersSenderName']} <#{SiteSetting['AllUsersSenderEmail']}>"
+    reply_to = SiteSetting['AllUsersReplyToEmail']
+    mail subject: @subject, to: to, from: from, reply_to: reply_to, bcc: @users
   end
 end

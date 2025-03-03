@@ -6,12 +6,12 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso]
+                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :avatar]
+                                  :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
@@ -27,13 +27,20 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
-    @posts = if current_user&.privilege?('flag_curate')
-               @user.posts
-             else
-               @user.posts.undeleted
-             end.list_includes.joins(:category)
-             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-             .order(score: :desc).first(15)
+
+    all_posts = if current_user&.privilege?('flag_curate') || @user == current_user
+                  @user.posts
+                else
+                  @user.posts.undeleted
+                end
+                .list_includes
+                .joins(:category)
+                .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                .user_sort({ term: params[:sort], default: :score },
+                           age: :created_at, score: :score)
+
+    @posts = all_posts.first(15)
+    @total_post_count = all_posts.count
     render layout: 'without_sidebar'
   end
 
@@ -58,6 +65,7 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -95,7 +103,7 @@ class UsersController < ApplicationController
   def filters
     respond_to do |format|
       format.html do
-        authenticate_user!
+        render layout: 'without_sidebar'
       end
       format.json do
         render json: filters_json
@@ -174,7 +182,7 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = if current_user&.privilege?('flag_curate')
+    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
                Post.all
              else
                Post.undeleted
@@ -191,6 +199,15 @@ class UsersController < ApplicationController
         render json: @posts
       end
     end
+  end
+
+  def my_network
+    redirect_to network_path(current_user)
+  end
+
+  def network
+    @communities = Community.all
+    render layout: 'without_sidebar'
   end
 
   def activity
@@ -221,7 +238,7 @@ class UsersController < ApplicationController
               PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
             end
 
-    @items = items.sort_by(&:created_at).reverse
+    @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
     render layout: 'without_sidebar'
   end
 
@@ -264,7 +281,7 @@ class UsersController < ApplicationController
                 Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
                   SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
-              end).sort_by(&:created_at).reverse
+              end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
     render layout: 'without_sidebar'
   end
@@ -325,13 +342,7 @@ class UsersController < ApplicationController
         return
       end
 
-      AuditLog.moderator_audit(event_type: 'user_delete', related: @user, user: current_user,
-                               comment: @user.attributes_print(join: "\n"))
-      @user.assign_attributes(deleted: true, deleted_by_id: current_user.id, deleted_at: DateTime.now,
-                              username: "user#{@user.id}", email: "#{@user.id}@deleted.localhost",
-                              password: SecureRandom.hex(32))
-      @user.skip_reconfirmation!
-      @user.save
+      @user.do_soft_delete(current_user)
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
@@ -344,25 +355,24 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def validate_profile_website(profile_params)
-    uri = profile_params[:website]
+  def cleaned_profile_websites(profile_params)
+    sites = profile_params[:user_websites_attributes]
 
-    if URI.parse(uri).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{uri}"
+    sites.transform_values do |w|
+      w.merge({ label: w[:label].presence, url: w[:url].presence })
     end
-  rescue URI::InvalidURIError
-    profile_params.delete(:website)
-    flash[:danger] = 'Invalid profile website link.'
   end
 
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
-    profile_params[:twitter] = profile_params[:twitter].delete('@')
+    profile_params = params.require(:user).permit(:username,
+                                                  :profile_markdown,
+                                                  :website,
+                                                  :discord,
+                                                  :twitter,
+                                                  user_websites_attributes: [:id, :label, :url])
 
-    if profile_params[:website].present?
-      validate_profile_website(profile_params)
+    if profile_params[:user_websites_attributes].present?
+      profile_params[:user_websites_attributes] = cleaned_profile_websites(profile_params)
     end
 
     @user = current_user
@@ -378,8 +388,14 @@ class UsersController < ApplicationController
       end
     end
 
-    profile_rendered = helpers.post_markdown(:user, :profile_markdown)
-    if @user.update(profile_params.merge(profile: profile_rendered))
+    if params[:user][:profile_markdown].present?
+      profile_rendered = helpers.post_markdown(:user, :profile_markdown)
+      profile_params = profile_params.merge(profile: profile_rendered)
+    end
+
+    status = @user.update(profile_params)
+
+    if status
       flash[:success] = 'Your profile details were updated.'
       redirect_to user_path(current_user)
     else
@@ -408,7 +424,7 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege 'mod'
+        @user.community_user.grant_privilege! 'mod'
       else
         @user.community_user.privilege('mod').destroy
       end
@@ -437,7 +453,7 @@ class UsersController < ApplicationController
     case params[:do]
     when 'grant'
       if ua.nil?
-        @user.community_user.grant_privilege(ability.internal_id)
+        @user.community_user.grant_privilege!(ability.internal_id)
         AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
                              comment: ability.internal_id.to_s)
       elsif ua.is_suspended
@@ -563,23 +579,27 @@ class UsersController < ApplicationController
   end
 
   def vote_summary
-    @votes = Vote.where(recv_user: @user) \
-                 .includes(:post).group(:date_of, :post_id, :vote_type)
-    @votes = @votes.select(:post_id, :vote_type) \
-                   .select('count(*) as vote_count') \
-                   .select('date(created_at) as date_of')
+    @votes = Vote.where(recv_user: @user)
+                 .includes(:post)
+                 .group(:date_of, :post_id, :vote_type)
+
+    @votes = @votes.select(:post_id, :vote_type)
+                   .select('count(*) as vote_count')
+                   .select('date(votes.created_at) as date_of')
+
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
                    .group_by(&:date_of).map do |k, vl|
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
-    @votes
+
+    render layout: 'without_sidebar'
   end
 
   def avatar
     respond_to do |format|
       format.png do
-        size = params[:size]&.to_i&.positive? ? params[:size]&.to_i : 64
+        size = params[:size]&.to_i&.positive? ? [params[:size]&.to_i, 256].min : 64
         send_data helpers.user_auto_avatar(size, user: @user).to_blob, type: 'image/png', disposition: 'inline'
       end
     end
@@ -624,7 +644,12 @@ class UsersController < ApplicationController
   end
 
   def set_user
-    @user = user_scope.find_by(id: params[:id])
+    user_id = if params[:id] == 'me' && user_signed_in?
+                current_user.id
+              else
+                params[:id]
+              end
+    @user = user_scope.find_by(id: user_id)
     not_found if @user.nil?
   end
 

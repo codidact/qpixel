@@ -13,4 +13,12 @@ class TagSet < ApplicationRecord
   def self.main
     where(name: 'Main').first
   end
+
+  def with_paths(no_excerpt = false)
+    if no_excerpt
+      tags_with_paths.where(excerpt: ['', nil])
+    else
+      tags_with_paths
+    end
+  end
 end

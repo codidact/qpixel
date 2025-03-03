@@ -1,5 +1,7 @@
 class PostHistory < ApplicationRecord
   include PostRelated
+  include EditsValidations
+
   belongs_to :post_history_type
   belongs_to :user
   has_many :post_history_tags
@@ -17,6 +19,17 @@ class PostHistory < ApplicationRecord
   # @return [Boolean] whether the given user is allowed to see the details of this history item
   def allowed_to_see_details?(user)
     !hidden || user&.is_admin || user_id == user&.id || post.user_id == user&.id
+  end
+
+  # Hides all previous history
+  # @param post [Post]
+  # @param user [User]
+  def self.redact(post, user)
+    where(post: post).update_all(hidden: true)
+    history_hidden(post, user, after: post.body_markdown,
+                                    after_title: post.title,
+                                    after_tags: post.tags,
+                                    comment: 'Detailed history before this event is hidden because of a redaction.')
   end
 
   def self.method_missing(name, *args, **opts)
@@ -53,7 +66,10 @@ class PostHistory < ApplicationRecord
       end
     end.values.compact.flatten
 
-    history.post_history_tags = PostHistoryTag.create(post_history_tags)
+    # do not create post history tags if post history validations failed
+    unless history.errors.any?
+      history.post_history_tags = PostHistoryTag.create(post_history_tags)
+    end
 
     history
   end

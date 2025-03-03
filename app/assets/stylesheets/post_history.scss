@@ -13,6 +13,10 @@
     display: unset;
     font-weight: unset;
     color: unset;
+
+    & .droppanel {
+      position: fixed;
+    }
   }
 
   &:last-of-type {

@@ -19,7 +19,8 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
@@ -158,7 +159,9 @@ Rails.application.routes.draw do
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
+  get    'policy/:slug/history',           to: 'post_history#slug_post', as: :policy_post_history, constraints: { slug: /.*/ }
   get    'policy/:slug',                   to: 'posts#document', as: :policy, constraints: { slug: /.*/ }
+  get    'help/:slug/history',             to: 'post_history#slug_post', as: :help_post_history, constraints: { slug: /.*/ }
   get    'help/:slug',                     to: 'posts#document', as: :help, constraints: { slug: /.*/ }
 
   get    'tags',                           to: 'tags#index', as: :tags
@@ -193,6 +196,7 @@ Rails.application.routes.draw do
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
     get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
+    get    '/me/network',               to: 'users#my_network', as: :my_network
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
@@ -202,6 +206,7 @@ Rails.application.routes.draw do
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/network',              to: 'users#network', as: :network
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
     post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
     post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
@@ -346,6 +351,10 @@ Rails.application.routes.draw do
       post   ':id/edit',                   to: 'micro_auth/apps#update', as: :update_oauth_app
       post   ':id/deactivate',             to: 'micro_auth/apps#deactivate', as: :deactivate_oauth_app
     end
+  end
+
+  scope 'emails' do
+    post   'log', to: 'email_logs#log', as: :create_email_log
   end
 
   get   '403',                             to: 'errors#forbidden'

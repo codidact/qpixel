@@ -34,6 +34,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Allow ngrok connections to dev server
+  config.hosts << /[a-z0-9\-.]+\.ngrok-free\.app/
+
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.delivery_method = :ses
@@ -77,7 +80,10 @@ Rails.application.configure do
   config.i18n.raise_on_missing_translations = true
 
   config.action_mailer.delivery_method = :letter_opener_web
-  config.action_mailer.default_url_options = { host: 'meta.codidact.com', protocol: 'https' }
+
+  config.action_mailer.default_url_options = { 
+    host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
+  }
 
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true

@@ -1,5 +1,7 @@
-require 'coveralls'
-Coveralls.wear!('rails')
+require 'simplecov'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.start 'rails'
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
@@ -25,6 +27,7 @@ class ActiveSupport::TestCase
   def load_fixtures(config)
     # Loading a fixture deletes all data in the same tables, so it has to happen before we load our normal seeds.
     fixture_data = super(config)
+    load_tags_paths
     load_seeds
 
     # We do need to return the same thing as the original method to not break fixtures
@@ -40,6 +43,10 @@ class ActiveSupport::TestCase
   def load_seeds
     set_request_context
     Rails.application.load_seed
+  end
+
+  def load_tags_paths
+    ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
   end
 
   def clear_cache
@@ -76,5 +83,13 @@ class ActionController::TestCase
 
   def load_host
     request.env['HTTP_HOST'] = Community.first.host
+  end
+end
+
+class ActionDispatch::IntegrationTest
+  setup :load_host
+
+  def load_host
+    integration_session.host = Community.first.host
   end
 end

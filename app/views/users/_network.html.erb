@@ -1,0 +1,22 @@
+<table class="table is-with-hover is-full-width">
+  <tr>
+    <th>Profile on Community</th>
+    <th>Posts</th>
+    <th>Reputation</th>
+  </tr>
+
+  <% @communities.each do |c| %>
+    <% if @user.has_profile_on(c) %>
+    <tr>
+      <td><%= user_link @user, { host: c.host}, anchortext: c.name %>
+	<% if @user.is_moderator_on(c) %>
+	(moderator)
+	<% end %>
+      </td>
+      <td><%= @user.post_count_on(c) %> </td>
+      <td><%= @user.reputation_on(c) %> </td>
+    </tr>
+    <% end %>
+  <% end %>
+
+</table>

@@ -19,22 +19,53 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
   def self.search(term)
+    stripped = term.strip
     # Query to search on tags, the name is used for sorting.
-    q1 = where('tags.name LIKE ?', "%#{sanitize_sql_like(term)}%")
-         .or(where('tags.excerpt LIKE ?', "%#{sanitize_sql_like(term)}%"))
+    q1 = where('tags.name LIKE ?', "%#{sanitize_sql_like(stripped)}%")
+         .or(where('tags.excerpt LIKE ?', "%#{sanitize_sql_like(stripped)}%"))
          .select(Arel.sql('name AS sortname, tags.*'))
 
     # Query to search on synonyms, the synonym name is used for sorting.
     # The order clause here actually applies to the union of q1 and q2 (so not just q2).
     q2 = joins(:tag_synonyms)
-         .where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(term)}%")
+         .where('tag_synonyms.name LIKE ?', "%#{sanitize_sql_like(stripped)}%")
          .select(Arel.sql('tag_synonyms.name AS sortname, tags.*'))
-         .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(term)}%"])))
+         .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(stripped)}%"])))
 
     # Select from the union of the above queries, select only the tag columns such that we can distinct them
     from(Arel.sql("(#{q1.to_sql} UNION #{q2.to_sql}) tags"))
       .select(Tag.column_names.map { |c| "tags.#{c}" })
       .distinct
+  end
+
+  ##
+  # Find or create a tag within a given tag set, considering synonyms. If a synonym is given as +name+ then the primary
+  # tag for it is returned instead.
+  # @param name [String] A tag name to find or create.
+  # @param tag_set [TagSet] The tag set within which to search for or create the tag.
+  # @return [Array(Tag, String)] The found or created tag, and the final name used. If a synonymized name was given as
+  #   +name+ then this will be the primary tag name.
+  #
+  # @example +name+ does not yet exist: a new Tag is created
+  #   Tag.find_or_create_synonymized name: 'new-tag', tag_set: ...
+  #   # => [Tag, 'new-tag']
+  #
+  # @example +name+ already exists: the existing Tag is returned
+  #   Tag.find_or_create_synonymized name: 'existing-tag', tag_set: ...
+  #   # => [Tag, 'existing-tag']
+  #
+  # @example +name+ is a synonym of 'other-tag': the Tag for 'other-tag' is returned
+  #   Tag.find_or_create_synonymized name: 'synonym', tag_set: ...
+  #   # => [Tag, 'other-tag']
+  def self.find_or_create_synonymized(name:, tag_set:)
+    existing = Tag.find_by(name: name, tag_set: tag_set)
+    if existing.nil?
+      synonyms = TagSynonym.joins(:tag).where(name: name, tags: { tag_set: tag_set })
+      synonymized_name = synonyms.exists? ? synonyms.first.tag.name : name
+      [Tag.find_or_create_by(name: synonymized_name, tag_set: tag_set), synonymized_name]
+    else
+      [existing, name]
+    end
   end
 
   def all_children

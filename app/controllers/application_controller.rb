@@ -33,6 +33,9 @@ class ApplicationController < ActionController::Base
 
   def dashboard
     @communities = Community.all
+    @edits = Post.unscoped do
+      SuggestedEdit.unscoped.joins(:post).where(active: true).group(Arel.sql('posts.category_id')).count
+    end
     render layout: 'without_sidebar'
   end
 

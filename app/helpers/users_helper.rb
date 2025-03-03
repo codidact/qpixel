@@ -61,10 +61,14 @@ module UsersHelper
 
   def user_link(user, url_opts = nil, **link_opts)
     url_opts ||= {}
-    if deleted_user?(user)
-      link_to 'deleted user', '#', { dir: 'ltr' }.merge(link_opts)
+    anchortext = link_opts[:anchortext]
+    link_opts_reduced = { dir: 'ltr' }.merge(link_opts).except(:anchortext)
+    if !anchortext.nil?
+      link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
+    elsif deleted_user?(user)
+      link_to 'deleted user', '#', link_opts_reduced
     else
-      link_to user.rtl_safe_username, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
+      link_to user.rtl_safe_username, user_url(user, **url_opts), link_opts_reduced
     end
   end
 
@@ -74,5 +78,18 @@ module UsersHelper
 
   def devise_sign_in_enabled?
     SiteSetting['MixedSignIn'] || !sso_sign_in_enabled?
+  end
+
+  ##
+  # Returns a user corresponding to the ID provided, with the caveat that if +user_id+ is 'me' and there is a user
+  # signed in, the signed in user will be returned. Use for /users/me links.
+  # @param [String] user_id The user ID to find, from +params+
+  # @return [User] The User object
+  def user_with_me(user_id)
+    if user_id == 'me' && user_signed_in?
+      current_user
+    else
+      User.find(user_id)
+    end
   end
 end

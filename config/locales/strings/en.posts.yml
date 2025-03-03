@@ -25,10 +25,12 @@ en:
       Can't delete a deleted post.
     cant_delete_responded: >
       This post cannot be deleted because it has responses.
+    cant_delete_community: >
+      This post cannot be deleted because it is owned by the community (freely editable).
     cant_restore_post: >
       Can't restore this post right now. Try again later.
     cant_restore_undeleted: >
-      Can't restore an undeleted post..
+      Can't restore a post that isn't deleted.
     cant_restore_deleted_by_moderator: >
       You cannot restore this post deleted by a moderator.
     cant_change_category: >
@@ -49,7 +51,7 @@ en:
     redact_label: >
       Redact
     redact_explanation: >
-      Redact original content by hiding the previous versions from history?
+      Redact original content by hiding the previous versions from history? Use only for private information such as passwords or personally identifiable information.
     licence_label: >
       License
     unsaved_changes_confirmation: >
@@ -70,3 +72,8 @@ en:
       Responding to:
     no_block_mathjax_title: >
       Title cannot contain block-level MathJax.
+
+    post_closed_guidance: >
+      Your post has been closed and is not accepting new answers. You should read the reason for closure listed below and check for any comments left by others about
+      why your post has been closed and what it needs, then edit your post to improve it to a state where it can be reopened. If you need help, reply to comments to
+      clarify any requests, or join us in chat for more guidance.
