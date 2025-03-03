@@ -33,7 +33,4 @@ class CommentThread < ApplicationRecord
   def self.post_followed?(post, user)
     ThreadFollower.where(post: post, user: user).any?
   end
-
-  private
-
 end
