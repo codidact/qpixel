@@ -22,7 +22,9 @@ module SearchHelper
 
     posts = if search_string.present?
               posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
-                                                           relevance: :search_score, score: :score, age: :created_at, activity: :updated_at)
+                                                           relevance: :search_score,
+                                                           score: :score, age: :created_at,
+                                                           activity: :updated_at)
             else
               posts.user_sort({ term: params[:sort], default: :score },
                               score: :score, age: :created_at, activity: :updated_at)
