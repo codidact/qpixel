@@ -529,7 +529,7 @@
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <% if user_signed_in? %>
-            <% if CommentThread.post_followed?(post, current_user) %>
+            <% if post.followed_by?(current_user) %>
               <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
                           class: "button is-muted is-outlined is-small",
                           title: 'Don\'t follow new comment threads on this post',

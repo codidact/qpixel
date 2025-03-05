@@ -29,8 +29,4 @@ class CommentThread < ApplicationRecord
     (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
   end
-
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
-  end
 end

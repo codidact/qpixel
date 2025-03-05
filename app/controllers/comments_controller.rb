@@ -257,7 +257,7 @@ class CommentsController < ApplicationController
 
   def post_follow
     @post = Post.find(params[:post_id])
-    if CommentThread.post_followed?(@post, current_user)
+    if @post.followed_by?(current_user)
       ThreadFollower.where(post: @post, user: current_user).destroy_all
     else
       ThreadFollower.create(post: @post, user: current_user)

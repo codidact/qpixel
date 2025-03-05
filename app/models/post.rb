@@ -224,6 +224,10 @@ class Post < ApplicationRecord
              .to_h { |_k, v| [v.first.reaction_type, v] }
   end
 
+  def followed_by?(user)
+    ThreadFollower.where(post: self, user: user).any?
+  end
+
   private
 
   ##
