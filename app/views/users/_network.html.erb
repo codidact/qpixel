@@ -13,8 +13,12 @@
 	(moderator)
 	<% end %>
       </td>
-      <td><%= @user.post_count_on(c) %> </td>
-      <td><%= @user.reputation_on(c) %> </td>
+      <td><%= link_to user_posts_url(@user, host: c.host) do %>	
+	<%= @user.post_count_on(c) %>
+	<% end %> </td>
+      <td><%= link_to vote_summary_url(@user, host: c.host) do %>
+	<%= @user.reputation_on(c) %>
+	<% end %> </td>
     </tr>
     <% end %>
   <% end %>
