@@ -44,6 +44,7 @@ class CommentThread < ApplicationRecord
     (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
   end
+<<<<<<< HEAD
 
   # Gets a list of user IDs who should be pingable in the thread.
   # @return [Array<Integer>]
@@ -85,4 +86,6 @@ class CommentThread < ApplicationRecord
       ThreadFollower.create comment_thread: self, user: post.user
     end
   end
+=======
+>>>>>>> 2dc90352 (Move followed_by? method to post model to simplify calling)
 end
