@@ -48,7 +48,7 @@ class Post < ApplicationRecord
                                    user: :avatar_attachment)
                         }
 
-  before_validation :update_tag_associations, if: -> { post_type.has_tags }
+  before_validation :update_tag_associations, if: -> { post_type&.has_tags }
   after_create :create_initial_revision
   after_save :check_attribution_notice
   after_save :modify_author_reputation
