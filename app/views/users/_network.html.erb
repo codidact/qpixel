@@ -9,16 +9,18 @@
     <% if @user.has_profile_on(c) %>
     <tr>
       <td><%= user_link @user, { host: c.host}, anchortext: c.name %>
-	<% if @user.is_moderator_on(c) %>
-	(moderator)
-	<% end %>
+        <% if @user.is_moderator_on(c) %>
+          (moderator)
+        <% end %>
       </td>
       <td><%= link_to user_posts_url(@user, host: c.host) do %>	
-	<%= @user.post_count_on(c) %>
-	<% end %> </td>
+            <%= @user.post_count_on(c) %>
+          <% end %>
+      </td>
       <td><%= link_to vote_summary_url(@user, host: c.host) do %>
-	<%= @user.reputation_on(c) %>
-	<% end %> </td>
+            <%= @user.reputation_on(c) %>
+          <% end %>
+      </td>
     </tr>
     <% end %>
   <% end %>
