@@ -530,7 +530,7 @@
           </h4>
           <% if user_signed_in? %>
             <% if post.followed_by?(current_user) %>
-              <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+              <%= link_to unfollow_post_comments_path(post_id: post.id), method: :post,
                           class: "button is-muted is-outlined is-small",
                           title: 'Don\'t follow new comment threads on this post',
                           role: 'button',
