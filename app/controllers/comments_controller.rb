@@ -4,7 +4,7 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
-  before_action :check_if_target_post_locked, only: [:create, :post_follow]
+  before_action :check_if_target_post_locked, only: [:create]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
   def create_thread
