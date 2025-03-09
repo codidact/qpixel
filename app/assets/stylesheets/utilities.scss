@@ -184,6 +184,7 @@ div:hover > .copy-button {
 
       del, ins {
         text-decoration: none;
+        overflow-wrap: break-word;
       }
 
       del > strong {

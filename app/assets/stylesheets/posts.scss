@@ -42,10 +42,18 @@ h1 .badge.is-tag.is-master-tag {
 
 .post-list--title {
   font-size: 19px;
+  width: 100%;
+  a {
+    display: inline-block;
+    width: 100%;
+    overflow-wrap: break-word;
+  }
 }
 
 .post-list--content {
   font-size: 14px;
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 .post--action-dialog {
@@ -81,6 +89,9 @@ h1 .badge.is-tag.is-master-tag {
   padding: 1em;
   border-bottom: 1px solid $muted-graphic;
   margin-bottom: 1em;
+
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 .post-field.widget--body {
@@ -115,6 +126,10 @@ h1 .badge.is-tag.is-master-tag {
   display: flex;
   align-items: center;
   flex-direction: column-reverse;
+
+  .post--title-text {
+    width: 100%;
+  }
 
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
@@ -215,4 +230,8 @@ pre code.hljs {
 
 .failed-validation {
   border: 2px solid #d21919 !important;
+}
+
+.js-thread-title {
+  overflow-wrap: break-word;
 }
