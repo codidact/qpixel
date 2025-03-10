@@ -281,3 +281,8 @@ img.header--item-image {
 mjx-assistive-mml {
   max-width: 100%;
 }
+
+mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
