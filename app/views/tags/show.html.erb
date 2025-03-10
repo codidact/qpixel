@@ -1,7 +1,7 @@
 <% content_for :title, "Posts tagged #{@tag.name}" %>
 
 <h1 class="has-margin-0 has-margin-top-4">
-  Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large"><%= @tag.name %></span>
+  Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large wrap-anywhere"><%= @tag.name %></span>
   <% if moderator? %>
     <a href="#" class="has-font-size-caption js-rename-tag h-m-r-2"
        data-category="<%= @category.id %>" data-tag="<%= @tag.id %>" data-name="<%= @tag.name %>"
