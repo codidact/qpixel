@@ -15,6 +15,11 @@ fi
 # If this isn't done again, there is a 500 error on the first page about posts
 rails db:seed
 
+
+if [ -f '/code/tmp/pids/server.pid' ]; then
+    rm -rf /code/tmp/pids/server.pid
+fi
+
 # we don't start the server immediately in dev mode
 if [[ "$1" != 'dev' ]]; then
     rails server -b 0.0.0.0
