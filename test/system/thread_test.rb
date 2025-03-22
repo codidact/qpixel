@@ -35,7 +35,7 @@ class ThreadTest < ApplicationSystemTestCase
 
   test 'auto follow comment threads tick causes following threads commented in' do
     category = categories(:meta)
-    log_in :basic_user
+    log_in :standard_user
     visit category_path(category)
     post_body = 'Test body text for testing threads.'
     post_title = 'Test title text for testing threads'
@@ -45,7 +45,7 @@ class ThreadTest < ApplicationSystemTestCase
     create_thread thread_body, thread_title
 
     log_out
-    log_in :editor
+    log_in :basic_user
     visit category_path(category)
     click_on post_title
     click_on thread_title
@@ -53,20 +53,20 @@ class ThreadTest < ApplicationSystemTestCase
     assert_text 'unfollow'
 
     log_out
-    log_in :basic_user
+    log_in :standard_user
     visit category_path(category)
     click_on post_title
     click_on thread_title
     create_comment('Test comment text for testing adding to a comment thread.')
 
     log_out
-    log_in :editor
+    log_in :basic_user
     assert_notification "There are new comments in a followed thread '#{thread_title}'"
   end
 
   test 'no auto follow comment threads tick causes not following threads commented in' do
     category = categories(:meta)
-    log_in :basic_user
+    log_in :standard_user
     visit category_path(category)
     post_body = 'Test body text for testing threads.'
     post_title = 'Test title text for testing threads'
@@ -76,7 +76,7 @@ class ThreadTest < ApplicationSystemTestCase
     create_thread thread_body, thread_title
 
     log_out
-    log_in :editor
+    log_in :basic_user
     click_on 'Manage profile'
     click_on 'Preferences'
     uncheck 'Auto follow comment threads'
@@ -87,14 +87,14 @@ class ThreadTest < ApplicationSystemTestCase
     assert_text 'follow'
 
     log_out
-    log_in :basic_user
+    log_in :standard_user
     visit category_path(category)
     click_on post_title
     click_on thread_title
     create_comment 'Test comment text for testing adding to a comment thread.'
 
     log_out
-    log_in :editor
+    log_in :basic_user
     assert_no_notification "There are new comments in a followed thread '#{thread_title}'"
   end
 end
