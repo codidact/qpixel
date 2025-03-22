@@ -97,6 +97,4 @@ class ThreadTest < ApplicationSystemTestCase
     log_in :editor
     assert_no_notification "There are new comments in a followed thread '#{thread_title}'"
   end
-
-
 end
