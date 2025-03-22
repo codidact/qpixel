@@ -100,4 +100,46 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
             'but could not select it from options without creating a new tag.'
     end
   end
+
+  def create_post(body_text, title_text)
+    click_on 'Create Post'
+    fill_in 'Body', with: body_text
+    fill_in 'Summarize your post with a title:', with: title_text
+    post_form_select_tag tags(:faq).name
+
+    assert_difference 'Post.count' do
+      click_on 'Save Post in '
+    end
+  end
+
+  def create_thread(comment_body_text, thread_title)
+    click_on 'Start new comment thread'
+    fill_in 'Your comment', with: comment_body_text
+    fill_in 'Comment thread title', with: thread_title
+
+    assert_difference 'Comment.count' do
+      click_on 'Create thread'
+    end
+  end
+
+  def create_comment(comment_body_text)
+    click_on 'See the whole thread'
+    fill_in 'Your message', with: comment_body_text
+
+    assert_difference 'Comment.count' do
+      click_on 'Add reply'
+    end
+  end
+
+  def assert_notification(notification_title)
+    click_on 'Open notifications'
+    assert_text(notification_title)
+    click_on 'Open notifications'
+  end
+
+  def assert_no_notification(notification_title)
+    click_on 'Open notifications'
+    assert_no_text(notification_title)
+    click_on 'Open notifications'
+  end
 end
