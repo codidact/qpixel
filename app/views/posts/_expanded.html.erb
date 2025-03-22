@@ -578,8 +578,8 @@
                 <% end %>
               <% end %>
               <% if moderator? || !(post.locked? || post.deleted || post.comments_disabled) %>
-                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
-                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
+                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button" href="#">
+                  Start new comment thread
                 </a>
                 <%= render 'comments/new_thread_modal', post: post %>
               <% end %>
