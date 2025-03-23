@@ -20,11 +20,11 @@ class ThreadTest < ApplicationSystemTestCase
     visit category_path(category)
     post_title = 'Test title text for testing threads'
     create_post('Test body text for testing threads.', post_title)
+    assert_text 'Unfollow new'  # Ensure post has finished saving to avoid timing problems
 
     log_out
     log_in :basic_user
     visit category_path(category)
-    assert_text post_title
     click_on post_title
 
     assert_text 'Follow new'
@@ -41,6 +41,7 @@ class ThreadTest < ApplicationSystemTestCase
     post_body = 'Test body text for testing threads.'
     post_title = 'Test title text for testing threads'
     create_post post_body, post_title
+    assert_text 'Unfollow new'  # Ensure post has finished saving to avoid timing problems
     thread_body = 'Test comment text for testing adding to a comment thread.'
     thread_title = 'Auto followed comment thread'
     create_thread thread_body, thread_title
@@ -48,7 +49,6 @@ class ThreadTest < ApplicationSystemTestCase
     log_out
     log_in :basic_user
     visit category_path(category)
-    assert_text post_title
     click_on post_title
     click_on thread_title
     create_comment 'Test comment text for testing adding to a comment thread.'
@@ -73,6 +73,7 @@ class ThreadTest < ApplicationSystemTestCase
     post_body = 'Test body text for testing threads.'
     post_title = 'Test title text for testing threads'
     create_post post_body, post_title
+    assert_text 'Unfollow new'  # Ensure post has finished saving to avoid timing problems
     thread_body = 'Test comment body text for testing adding to a comment thread.'
     thread_title = 'Not auto followed comment thread'
     create_thread thread_body, thread_title
@@ -83,7 +84,6 @@ class ThreadTest < ApplicationSystemTestCase
     click_on 'Preferences'
     uncheck 'Auto follow comment threads'
     visit category_path(category)
-    assert_text post_title
     click_on post_title
     click_on thread_title
     create_comment 'Test comment text for testing adding to a comment thread.'
