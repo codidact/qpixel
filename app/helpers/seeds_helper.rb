@@ -7,6 +7,20 @@ module SeedsHelper
     end
   end
 
+  # Gets the list of seed file paths
+  # @param seed_name [String, nil] optional specific seed name to run
+  # @return [Array<String>]
+  def self.files(seed_name)
+    find_glob = if seed_name.present?
+                  "db/seeds/**/#{seed_name.underscore}.yml"
+                else
+                  'db/seeds/**/*.yml'
+                end
+
+    # Get all seed files and determine their model types
+    Dir.glob(Rails.root.join(find_glob))
+  end
+
   # Parses model classes from the list of file paths
   # @param files [Array<String>] list of seed file paths
   # @return [Array<Class>]

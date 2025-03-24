@@ -2,14 +2,7 @@
 
 Rails.application.eager_load!
 
-if ENV['SEEDS'].present?
-  find_glob = "db/seeds/**/#{ENV['SEEDS'].underscore}.yml"
-else
-  find_glob = 'db/seeds/**/*.yml'
-end
-
-# Get all seed files and determine their model types
-files = Dir.glob(Rails.root.join(find_glob))
+files = SeedsHelper.files(ENV['SEEDS'])
 types = SeedsHelper.types_from_files(files)
 sorted = SeedsHelper.prioritize(types, files)
 
