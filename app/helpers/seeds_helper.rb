@@ -24,7 +24,7 @@ module SeedsHelper
   # Parses model classes from the list of file paths
   # @param files [Array<String>] list of seed file paths
   # @return [Array<Class>]
-  def self.types_from_files(files)
+  def self.types(files)
     files.map do |f|
       basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
       basename.gsub('.yml', '').singularize.classify.constantize

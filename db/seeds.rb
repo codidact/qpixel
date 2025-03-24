@@ -3,7 +3,7 @@
 Rails.application.eager_load!
 
 files = SeedsHelper.files(ENV['SEEDS'])
-types = SeedsHelper.types_from_files(files)
+types = SeedsHelper.types(files)
 sorted = SeedsHelper.prioritize(types, files)
 
 def expand_communities(type, seed)
