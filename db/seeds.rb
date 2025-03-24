@@ -10,11 +10,7 @@ end
 
 # Get all seed files and determine their model types
 files = Dir.glob(Rails.root.join(find_glob))
-types = files.map do |f|
-  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
-  basename.gsub('.yml', '').singularize.classify.constantize
-end
-
+types = SeedsHelper.types_from_files(files)
 sorted = SeedsHelper.prioritize(types, files)
 
 def expand_communities(type, seed)

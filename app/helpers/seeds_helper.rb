@@ -7,7 +7,17 @@ module SeedsHelper
     end
   end
 
-  # Prioritize models such that dependent ones are created after the specified ones
+  # Parses model classes from the list of file paths
+  # @param files [Array<String>] list of seed file paths
+  # @return [Array<Class>]
+  def self.types_from_files(files)
+    files.map do |f|
+      basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
+      basename.gsub('.yml', '').singularize.classify.constantize
+    end
+  end
+
+  # Prioritizes models such that dependent ones are created after the specified ones
   # @param types [Array<Class>] list of model classes
   # @param files [Array<String>] list of seed file paths
   # @return [Hash<String, Class>]
