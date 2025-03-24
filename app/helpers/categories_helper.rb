@@ -9,7 +9,8 @@ module CategoriesHelper
     (defined?(@category) && !@category&.id.nil? && !current_page?(new_category_url)) ||
       (defined?(@post) && !@post&.category.nil?) ||
       (defined?(@question) && !@question&.category.nil?) ||
-      (defined?(@article) && !@article&.category.nil?)
+      (defined?(@article) && !@article&.category.nil?) ||
+      (defined?(@edit) && !@edit&.post&.category&.nil?)
   end
 
   def current_category
@@ -21,6 +22,8 @@ module CategoriesHelper
                             @question.category
                           elsif defined?(@article) && !@article&.category.nil?
                             @article.category
+                          elsif defined?(@edit) && !@edit&.post&.category.nil?
+                            @edit.post.category
                           end
   end
 

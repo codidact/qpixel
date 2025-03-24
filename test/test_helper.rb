@@ -1,5 +1,7 @@
-require 'coveralls'
-Coveralls.wear!('rails')
+require 'simplecov'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.start 'rails'
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
@@ -81,5 +83,13 @@ class ActionController::TestCase
 
   def load_host
     request.env['HTTP_HOST'] = Community.first.host
+  end
+end
+
+class ActionDispatch::IntegrationTest
+  setup :load_host
+
+  def load_host
+    integration_session.host = Community.first.host
   end
 end

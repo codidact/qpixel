@@ -79,14 +79,14 @@ After about 20 seconds, check to make sure the server is running (and verify por
 
 ```
 qpixel_uwsgi_1  | => Booting Puma
-qpixel_uwsgi_1  | => Rails 7.0.4 application starting in development 
-qpixel_uwsgi_1  | => Run `rails server -h` for more startup options
+qpixel_uwsgi_1  | => Rails 7.0.8.7 application starting in development 
+qpixel_uwsgi_1  | => Run `bin/rails server --help` for more startup options
 qpixel_uwsgi_1  | Puma starting in single mode...
-qpixel_uwsgi_1  | * Puma version: 5.6.5 (ruby 2.7.6-p219) ("Birdie's Version")
-qpixel_uwsgi_1  | * Min threads: 5
-qpixel_uwsgi_1  | * Max threads: 5
-qpixel_uwsgi_1  | * Environment: development
-qpixel_uwsgi_1  | *         PID: 49
+qpixel_uwsgi_1  | * Puma version: 5.6.9 (ruby 3.1.2-p20) ("Birdie's Version")
+qpixel_uwsgi_1  | *  Min threads: 5
+qpixel_uwsgi_1  | *  Max threads: 5
+qpixel_uwsgi_1  | *  Environment: development
+qpixel_uwsgi_1  | *          PID: 99
 qpixel_uwsgi_1  | * Listening on http://0.0.0.0:3000
 qpixel_uwsgi_1  | Use Ctrl-C to stop
 ```
