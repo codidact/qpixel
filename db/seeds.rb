@@ -15,11 +15,7 @@ types = files.map do |f|
   basename.gsub('.yml', '').singularize.classify.constantize
 end
 
-# Prioritize the following models (in this order) such that models depending on them get created after
-priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, Ability, CommunityUser, Filter]
-sorted = files.zip(types).to_h.sort do |a, b|
-  (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
-end.to_h
+sorted = SeedsHelper.prioritize(types, files)
 
 def expand_communities(type, seed)
   if type.column_names.include?('community_id') && !seed.include?('community_id')
