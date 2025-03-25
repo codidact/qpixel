@@ -24,7 +24,7 @@ class PostType < ApplicationRecord
     ['HelpDoc', 'PolicyDoc'].include?(name)
   end
 
-  def self.clear_cache
+  def self.clear_ids_cache
     Rails.cache.delete 'network/post_types/post_type_ids', include_community: false
   end
 

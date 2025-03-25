@@ -49,7 +49,7 @@ def create_objects(type, seed)
   # Post type cache must be manually cleared \
   # (its mappings need it, but only the controller clears the cache on create)
   if type == PostType
-    type.clear_cache
+    type.clear_ids_cache
   end
 
   [created, skipped]
