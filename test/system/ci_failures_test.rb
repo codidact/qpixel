@@ -12,6 +12,14 @@ class CIFailuresTest < ApplicationSystemTestCase
     assert_text 'Nonexistent to force screenshot'
   end
 
+  test 'temporary test to analyse CI failures what does basic user see in main with log out first' do
+    category = categories(:main)
+    log_out
+    log_in :basic_user
+    visit category_path(category)
+    assert_text 'Nonexistent to force screenshot'
+  end
+
   test 'temporary test to analyse CI failures what does standard user see in main' do
     category = categories(:main)
     log_in :standard_user
