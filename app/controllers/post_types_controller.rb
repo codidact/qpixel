@@ -55,8 +55,9 @@ class PostTypesController < ApplicationController
   end
 
   def clear_cache!
+    # FIXME: this is likely not clearing cache for rep changes
     Rails.cache.delete 'network/post_types/rep_changes'
-    Rails.cache.delete 'network/post_types/post_type_ids'
+    PostType.clear_cache
     current_community = RequestContext.community
     Community.all.each do |c|
       RequestContext.community = c
