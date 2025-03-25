@@ -46,6 +46,12 @@ def create_objects(type, seed)
   skipped = objs.select { |o| o.errors.any? }.size
   created = objs.select { |o| !o.errors.any? }.size
 
+  # Post type cache must be manually cleared \
+  # (its mappings need it, but only the controller clears the cache on create)
+  if type == PostType
+    type.clear_cache
+  end
+
   [created, skipped]
 end
 
