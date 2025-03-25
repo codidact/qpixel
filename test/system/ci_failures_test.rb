@@ -1,8 +1,6 @@
 require 'application_system_test_case'
 
 class CIFailuresTest < ApplicationSystemTestCase
-  teardown :log_out
-
   test 'empty test to start with' do
     assert true
   end
