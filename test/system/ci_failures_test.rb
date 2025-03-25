@@ -14,6 +14,7 @@ class CIFailuresTest < ApplicationSystemTestCase
 
   test 'temporary test to analyse CI failures what does basic user see in main with log out first' do
     category = categories(:main)
+    visit category_path(category)
     log_out
     log_in :basic_user
     visit category_path(category)
