@@ -2,24 +2,9 @@
 
 Rails.application.eager_load!
 
-if ENV['SEEDS'].present?
-  find_glob = "db/seeds/**/#{ENV['SEEDS'].underscore}.yml"
-else
-  find_glob = 'db/seeds/**/*.yml'
-end
-
-# Get all seed files and determine their model types
-files = Dir.glob(Rails.root.join(find_glob))
-types = files.map do |f|
-  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
-  basename.gsub('.yml', '').singularize.classify.constantize
-end
-
-# Prioritize the following models (in this order) such that models depending on them get created after
-priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, Ability, CommunityUser, Filter]
-sorted = files.zip(types).to_h.sort do |a, b|
-  (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
-end.to_h
+files = SeedsHelper.files(ENV['SEEDS'])
+types = SeedsHelper.types(files)
+sorted = SeedsHelper.prioritize(types, files)
 
 def expand_communities(type, seed)
   if type.column_names.include?('community_id') && !seed.include?('community_id')
@@ -60,6 +45,12 @@ def create_objects(type, seed)
 
   skipped = objs.select { |o| o.errors.any? }.size
   created = objs.select { |o| !o.errors.any? }.size
+
+  # Post type cache must be manually cleared \
+  # (its mappings need it, but only the controller clears the cache on create)
+  if type == PostType
+    type.clear_ids_cache
+  end
 
   [created, skipped]
 end
