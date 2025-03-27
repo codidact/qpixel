@@ -169,6 +169,13 @@ div:hover > .copy-button {
 }
 
 .diff {
+  .diff-section {
+    .diff-old, 
+    .diff-new {
+      overflow: scroll;
+    }
+  }
+
   .raw-markdown {
     white-space: unset;
   }
