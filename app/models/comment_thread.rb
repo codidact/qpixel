@@ -1,6 +1,7 @@
 class CommentThread < ApplicationRecord
-  include PostRelated
+  include CommunityRelated
 
+  belongs_to :post, optional: true
   has_many :comments
   has_many :thread_follower
   belongs_to :locked_by, class_name: 'User', optional: true
@@ -9,8 +10,8 @@ class CommentThread < ApplicationRecord
 
   scope :deleted, -> { where(deleted: true) }
   scope :undeleted, -> { where(deleted: false) }
-  scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
-  scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
+  scope :initially_visible, -> { where(deleted: false, archived: false, is_private: false).where('reply_count > 0') }
+  scope :publicly_available, -> { where(deleted: false, is_private: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   after_create :create_follower
@@ -27,9 +28,14 @@ class CommentThread < ApplicationRecord
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  def second_follower
+    ThreadFollower.where(comment_thread: self).second
+  end
+
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
-      post.can_access?(user)
+      (!post || post.can_access?(user)) &&
+      (!is_private || followed_by?(user) || user&.is_moderator)
   end
 
   def self.post_followed?(post, user)
@@ -42,7 +48,7 @@ class CommentThread < ApplicationRecord
   # automatically followed on new answer comment threads. Comment author follower creation is done
   # on the Comment model.
   def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
+    if post.present? && post.user.preference('auto_follow_comment_threads') == 'true'
       ThreadFollower.create comment_thread: self, user: post.user
     end
   end

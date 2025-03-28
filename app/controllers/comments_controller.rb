@@ -1,4 +1,5 @@
 # Provides mainly web actions for using and making comments.
+
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread]
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
@@ -6,10 +7,12 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  before_action :check_if_thread_is_private, only: [:update, :destroy, :undelete]
+  before_action :check_if_not_mod_and_thread_is_private, only: [:thread_rename, :thread_restrict, :thread_unrestrict]
 
   def create_thread
     @post = Post.find(params[:post_id])
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && !current_user.is_moderator
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -63,11 +66,13 @@ class CommentsController < ApplicationController
   def create
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
-      return
-    elsif !@post.can_access?(current_user)
-      return not_found
+    unless @post.nil?
+      if !@post.can_access?(current_user)
+        return not_found
+      elsif @post.comments_disabled && !current_user.is_moderator
+        render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
+        return
+      end
     end
 
     body = params[:content]
@@ -89,10 +94,13 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        title = @post.parent.nil? ? @post.title : @post.parent.title
-        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{title}'",
-                                          helpers.comment_link(@comment))
+        if @post.nil?
+          wording = "There are new comments in a private thread '#{@comment_thread.title}'"
+        else
+          post_title = @post.parent.nil? ? @post.title : @post.parent.title
+          wording = "There are new comments in a followed thread '#{@comment_thread.title}' on the post '#{post_title}'"
+        end
+        follower.user.create_notification(wording, helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -161,8 +169,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user.is_moderator || current_user.is_admin
+    return not_found unless current_user.is_moderator
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -292,7 +299,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
+    unless current_user.is_moderator || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
     end
   end
@@ -302,7 +309,7 @@ class CommentsController < ApplicationController
   end
 
   def check_if_target_post_locked
-    check_if_locked(Post.find(params[:post_id]))
+    params[:post_id].present? && check_if_locked(Post.find(params[:post_id]))
   end
 
   def check_for_pings(thread, content)
@@ -326,12 +333,14 @@ class CommentsController < ApplicationController
   end
 
   def comment_rate_limited
+    return false if @comment_thread&.is_private
+
     recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
                              .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
                              .where.not(post: Post.where(user_id: current_user.id)).count
     max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
-    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
+    if (!@post&.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
        && recent_comments >= max_comments_per_day
       comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments. " \
                           'Come back tomorrow to continue commenting. Comments on own posts and on answers ' \
@@ -348,5 +357,18 @@ class CommentsController < ApplicationController
       return true
     end
     false
+  end
+
+  def check_if_thread_is_private
+    if @comment_thread&.is_private
+      flash[:danger] = 'This action is not permitted.'
+      redirect_to comment_thread_path(@comment_thread.id)
+    end
+  end
+
+  def check_if_not_mod_and_thread_is_private
+    unless current_user.is_moderator
+      check_if_thread_is_private
+    end
   end
 end

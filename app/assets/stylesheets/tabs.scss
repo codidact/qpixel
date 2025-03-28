@@ -2,4 +2,8 @@
 
 .tabs {
   margin-bottom: 1em;
+
+  .tabs--push {
+    flex-grow: 1;
+  }
 }

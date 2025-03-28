@@ -55,6 +55,7 @@ module CommentsHelper
 
   def get_pingable(thread)
     post = thread.post
+    return [] unless post.present? # Detached threads do not support individual pings
 
     # post author +
     # answer authors +

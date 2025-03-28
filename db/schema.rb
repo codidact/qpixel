@@ -175,6 +175,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
+    t.boolean "is_private", default: false
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -757,6 +758,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.string "backup_2fa_code"
+    t.boolean "is_globally_suspended", default: false
+    t.datetime "global_suspension_end", precision: nil
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -797,8 +800,11 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "read", default: false
+    t.boolean "is_global", default: false
+    t.bigint "user_id"
     t.index ["author_id"], name: "index_warnings_on_author_id"
     t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.index ["user_id"], name: "index_warnings_on_user_id"
   end
 
   add_foreign_key "abilities", "communities"

@@ -28,4 +28,26 @@
   <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
   All Communities
   <% end %>
+  <div class="tabs--push"></div>
+  <% if current_user&.is_moderator %>
+    <%= link_to mod_user_path(user), class: "tabs--item #{(
+      current_page?(mod_user_path(user)) ||
+      current_page?(full_user_log_path(user)) ||
+      current_page?(user_annotations_path(user)) ||
+      current_page?(mod_vote_summary_path(user)) ||
+      current_page?(user_privileges_path(user)) ||
+      current_page?(mod_contact_path(user)) ||
+      current_page?(mod_warning_log_path(user)) ||
+      current_page?(new_mod_warning_path(user)) ||
+      current_page?(mod_reset_profile_path(user)) ||
+      current_page?(mod_delete_path(user)) ||
+      current_page?(global_user_log_path(user)) ||
+      current_page?(new_global_warning_path(user)) ||
+      current_page?(mod_delete_network_account_path(user)) ||
+      current_page?(mod_failban_path(user)) ||
+      current_page?(start_impersonating_path(user))
+    ) ? 'is-active' : ''}" do %>
+      <i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %>
+    <% end %>
+  <% end %>
 </div>
