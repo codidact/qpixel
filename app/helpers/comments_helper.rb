@@ -76,6 +76,44 @@ module CommentsHelper
 
     ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
+
+  ##
+  # Is the specified user comment rate limited for the specified post?
+  # @param [User] user The user to check.
+  # @param [Post] post The post on which the user proposes to comment.
+  # @param [Boolean] create_audit_log Whether to create an AuditLog if the user is rate limited.
+  # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
+  #   a rate limit message if the user is rate-limited.
+  def comment_rate_limited?(user, post, create_audit_log: true)
+    # Comments created by the current user in the last 24 hours, excluding comments on own posts and responses to them.
+    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: user).where \
+                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
+                             .where.not(post: Post.where(user_id: user.id)).count
+    max_comments_per_day = SiteSetting[user.ability?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+
+    if post.user_id != user.id && post.parent&.user_id != user.id
+      if recent_comments >= max_comments_per_day
+        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
+                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
+        if create_audit_log
+          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                  comment: "limit: #{max_comments_per_day}")
+        end
+        [true, message]
+      elsif !user.ability?('unrestricted')
+        message = 'As a new user, you can only comment on your own posts and on answers to them.'
+        if create_audit_log
+          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                  comment: "limit: #{max_comments_per_day}")
+        end
+        [true, message]
+      else
+        [false, nil]
+      end
+    else
+      [false, nil]
+    end
+  end
 end
 
 class CommentScrubber < Rails::Html::PermitScrubber
