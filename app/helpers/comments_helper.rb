@@ -89,7 +89,7 @@ module CommentsHelper
     recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: user).where \
                              .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
                              .where.not(post: Post.where(user_id: user.id)).count
-    max_comments_per_day = SiteSetting[user.ability?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+    max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
     if post.user_id != user.id && post.parent&.user_id != user.id
       if recent_comments >= max_comments_per_day
@@ -100,7 +100,7 @@ module CommentsHelper
                                   comment: "limit: #{max_comments_per_day}")
         end
         [true, message]
-      elsif !user.ability?('unrestricted')
+      elsif !user.privilege?('unrestricted')
         message = 'As a new user, you can only comment on your own posts and on answers to them.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
