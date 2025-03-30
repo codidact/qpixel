@@ -92,16 +92,16 @@ module CommentsHelper
     max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
     if post.user_id != user.id && post.parent&.user_id != user.id
-      if recent_comments >= max_comments_per_day
-        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
-                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
+      if !user.privilege?('unrestricted')
+        message = 'As a new user, you can only comment on your own posts and on answers to them.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
                                   comment: "limit: #{max_comments_per_day}")
         end
         [true, message]
-      elsif !user.privilege?('unrestricted')
-        message = 'As a new user, you can only comment on your own posts and on answers to them.'
+      elsif recent_comments >= max_comments_per_day
+        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
+                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
                                   comment: "limit: #{max_comments_per_day}")
