@@ -102,16 +102,16 @@
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
         <% if @post.locked? && !moderator? && !admin? %>
-          <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
+          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on locked posts.' %>
         <% elsif @post.deleted %>
-          <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
+          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
         <% elsif @post.comments_disabled && !moderator? && !admin? %>
-          <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on the parent post.</p>
+          <%= render 'shared/lock_notice', text: 'Comments have been disabled on the parent post.' %>
         <% else %>
           <% if @post.locked? %>
-            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
+            <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
           <% elsif @post.comments_disabled %>
-            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
+            <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
           <% end %>
           <h4>Reply to this thread</h4>
           <%= form_tag create_comment_path(@comment_thread.id) do %>
