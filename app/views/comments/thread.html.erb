@@ -107,12 +107,12 @@
           <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
         <% elsif @post.comments_disabled && !moderator? && !admin? %>
           <%= render 'shared/lock_notice', text: 'Comments have been disabled on the parent post.' %>
-        <% else %>
-          <% if @post.locked? %>
-            <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
-          <% elsif @post.comments_disabled %>
+        <% elsif @post.locked? %>
+          <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
+        <% elsif @post.comments_disabled %>
             <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
-          <% end %>
+        <% end %>
+        <% if @post.comments_allowed? || moderator? || admin? %>
           <h4>Reply to this thread</h4>
           <%= form_tag create_comment_path(@comment_thread.id) do %>
             <%= hidden_field_tag :post_id, @post.id %>
