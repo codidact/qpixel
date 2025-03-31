@@ -67,5 +67,5 @@
   <meta property="og:url" content="<%= request.original_url %>" />
   <meta property="og:title" content="<%= page_title %>" />
   <meta property="og:description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
-  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
+  <meta property="og:image" content="<%= "#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
