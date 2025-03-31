@@ -569,12 +569,12 @@
               <% elsif post.comments_disabled %>
                 <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
               <% end %>
-                <% if post.comments_allowed? || moderator? || admin? %>
-                  <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
-                    <i class="fas fa-fw fa-plus"></i> Start new comment thread
-                  </a>
-                  <%= render 'comments/new_thread_modal', post: post %>
-                <% end %>
+              <% if post.comments_allowed? || moderator? || admin? %>
+                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
+                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
+                </a>
+                <%= render 'comments/new_thread_modal', post: post %>
+              <% end %>
             <% end %>
           </div>
         </div>
