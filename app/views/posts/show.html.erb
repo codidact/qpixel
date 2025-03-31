@@ -14,7 +14,7 @@
   <meta property="og:url" content="<%= post_url(@post) %>" />
   <meta property="og:title" content="<%= @post.title %>" />
   <meta property="og:description" content="<%= @post.body_plain[0..150].strip %>..." />
-  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
+  <meta property="og:image" content="<%= "#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
 <%= render 'posts/expanded', post: @post, float_notice: false %>
