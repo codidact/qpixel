@@ -48,7 +48,7 @@ class Post < ApplicationRecord
                                    user: :avatar_attachment)
                         }
 
-  before_validation :update_tag_associations, if: -> { post_type.has_tags }
+  before_validation :update_tag_associations, if: -> { post_type&.has_tags }
   after_create :create_initial_revision
   after_save :check_attribution_notice
   after_save :modify_author_reputation
@@ -61,6 +61,23 @@ class Post < ApplicationRecord
   # @return [ActiveRecord::Relation<Post>]
   def self.search(term)
     match_search term, posts: :body_markdown
+  end
+
+  def self.by_slug(slug, user)
+    post = Post.unscoped.where(
+      doc_slug: slug,
+      community_id: [RequestContext.community_id, nil]
+    ).first
+
+    if post&.help_category == '$Disabled'
+      return nil
+    end
+
+    if post&.help_category == '$Moderator' && !user&.is_moderator
+      return nil
+    end
+
+    post
   end
 
   # Double-define: initial definitions are less efficient, so if we have a record of the post type we'll
@@ -183,6 +200,14 @@ class Post < ApplicationRecord
     end
 
     false
+  end
+
+  # The test here is for flags that are pending (no status). A spam flag
+  # could be marked helpful but the post wouldn't be deleted, and
+  # we don't necessarily want the post to be treated like it's a spam risk
+  # if that happens.
+  def spam_flag_pending?
+    flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
 
   # @param user [User, Nil]

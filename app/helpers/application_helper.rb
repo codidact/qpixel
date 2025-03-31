@@ -55,6 +55,10 @@ module ApplicationHelper
     uri.to_s
   end
 
+  def sign_in_link(title)
+    link_to title, new_user_session_url
+  end
+
   ##
   # Creates a link to the community's default content license based on site settings.
   # @return [ActiveSupport::SafeBuffer] The result of the +link_to+ call.
@@ -323,5 +327,7 @@ module ApplicationHelper
     end
 
     [shasum, date]
+  rescue
+    [nil, nil]
   end
 end

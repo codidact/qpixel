@@ -34,37 +34,45 @@ class Vote < ApplicationRecord
   end
 
   def rep_change(direction)
+    return unless post.present?
+
     change = CategoryPostType.rep_changes[[post.category_id, post.post_type_id]][vote_type] || 0
     recv_user.update!(reputation: recv_user.reputation + (direction * change))
   end
 
   def post_not_deleted
-    if post.deleted?
+    if post&.deleted?
       errors.add(:base, 'Votes are locked on deleted posts')
     end
   end
 
   def check_valid
-    throw :abort unless valid?
+    throw :abort unless valid? || post.blank?
   end
 
   def add_counter
+    return unless post.present?
+
     case vote_type
     when 1
       post.update(upvote_count: post.upvote_count + 1)
     when -1
       post.update(downvote_count: post.downvote_count + 1)
     end
+
     post.recalc_score
   end
 
   def remove_counter
+    return unless post.present?
+
     case vote_type
     when 1
       post.update(upvote_count: [post.upvote_count - 1, 0].max)
     when -1
       post.update(downvote_count: [post.downvote_count - 1, 0].max)
     end
+
     post.recalc_score
   end
 end

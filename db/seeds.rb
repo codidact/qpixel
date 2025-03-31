@@ -2,24 +2,79 @@
 
 Rails.application.eager_load!
 
-if ENV['SEEDS'].present?
-  find_glob = "db/seeds/**/#{ENV['SEEDS'].underscore}.yml"
-else
-  find_glob = 'db/seeds/**/*.yml'
+files = SeedsHelper.files(ENV['SEEDS'])
+types = SeedsHelper.types(files)
+sorted = SeedsHelper.prioritize(types, files)
+
+def expand_communities(type, seed)
+  if type.column_names.include?('community_id') && !seed.include?('community_id')
+    # if model includes a community_id, create the seed for every community
+    Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
+  else
+    # otherwise, no need to worry, just create it
+    [seed]
+  end
 end
 
-# Get all seed files and determine their model types
-files = Dir.glob(Rails.root.join(find_glob))
-types = files.map do |f|
-  basename = Pathname.new(f).relative_path_from(Pathname.new(Rails.root.join('db/seeds'))).to_s
-  basename.gsub('.yml', '').singularize.classify.constantize
+def expand_ids(type, seeds)
+  # Transform all _id relations into the actual rails objects to pass validations
+  seeds.map do |seed|
+    columns = type.column_names.select { |name| name.match(/^.*_id$/) }
+    new_seed = seed.deep_symbolize_keys
+    columns.each do |column|
+      begin
+        column_type_name = column.chomp('_id')
+        column_type = column_type_name.classify.constantize
+        new_seed = new_seed.except(column.to_sym)
+                           .merge(column_type_name.to_sym => column_type.unscoped.find(seed[column.to_sym]))
+      rescue StandardError
+        # Either the type does not exist or the value specified as the id is not valid, ignore.
+        next
+      end
+    end
+    new_seed
+  end
 end
 
-# Prioritize the following models (in this order) such that models depending on them get created after
-priority = [PostType, CloseReason, License, TagSet, PostHistoryType, User, Filter]
-sorted = files.zip(types).to_h.sort do |a, b|
-  (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
-end.to_h
+def create_objects(type, seed)
+  seeds = expand_communities(type, seed)
+  seeds = expand_ids(type, seeds)
+
+  # Actually create the objects and count successes
+  objs = type.create seeds
+
+  skipped = objs.select { |o| o.errors.any? }.size
+  created = objs.select { |o| !o.errors.any? }.size
+
+  # Post type cache must be manually cleared \
+  # (its mappings need it, but only the controller clears the cache on create)
+  if type == PostType
+    type.clear_ids_cache
+  end
+
+  [created, skipped]
+end
+
+def ensure_system_user_abilities
+  system_users = CommunityUser.unscoped.where(user_id: -1)
+
+  system_users.each do |su|
+    abilities = Ability.unscoped
+      .where(internal_id: ['everyone', 'mod', 'unrestricted'])
+      .where(community_id: su.community_id)
+
+    user_abilities = UserAbility.unscoped.where(community_user_id: su.id)
+
+    abilities.each do |ab|
+      unless user_abilities.any? { |ua| ua.ability_id == ab.id }
+        UserAbility.create community_user_id: su.id, ability: ab
+      end
+    rescue => e
+      puts "#{type}: failed to add \"#{ab.name}\" to system user \"#{su.id}\" on \"#{su.community.name}\""
+      puts e
+    end
+  end
+end
 
 sorted.each do |f, type|
   begin
@@ -83,40 +138,17 @@ sorted.each do |f, type|
           end
         end
       else
-        seeds = if type.column_names.include?('community_id') && !seed.include?('community_id')
-                 # if model includes a community_id, create the seed for every community
-                 Community.all.map { |c| seed.deep_symbolize_keys.merge(community_id: c.id) }
-               else
-                 # otherwise, no need to worry, just create it
-                 [seed]
-                end
+        new_created, new_skipped = create_objects(type, seed)
+        created += new_created
+        skipped += new_skipped
 
-        # Transform all _id relations into the actual rails objects to pass validations
-        seeds = seeds.map do |seed|
-          columns = type.column_names.select { |name| name.match(/^.*_id$/) }
-          new_seed = seed.deep_symbolize_keys
-          columns.each do |column|
-            begin
-              column_type_name = column.chomp('_id')
-              column_type = column_type_name.classify.constantize
-              new_seed = new_seed.except(column.to_sym)
-                                 .merge(column_type_name.to_sym => column_type.unscoped.find(seed[column.to_sym]))
-            rescue StandardError
-              # Either the type does not exist or the value specified as the id is not valid, ignore.
-              next
-            end
-          end
-          new_seed
+        if type == CommunityUser
+          ensure_system_user_abilities
         end
-
-        # Actually create the objects and count successes
-        objs = type.create seeds
-        skipped += objs.select { |o| o.errors.any? }.size
-        created += objs.select { |o| !o.errors.any? }.size
       end
     end
     unless Rails.env.test?
-      puts "#{type}: Errored #{errored}, Created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
+      puts "#{type}: errored #{errored}, created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
     end
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."

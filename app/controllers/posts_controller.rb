@@ -464,13 +464,9 @@ class PostsController < ApplicationController
   end
 
   def document
-    @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
-    not_found && return if @post.nil?
+    @post = Post.by_slug(params[:slug], current_user)
 
-    if @post&.help_category == '$Disabled'
-      not_found
-    end
-    if @post&.help_category == '$Moderator' && !current_user&.is_moderator
+    if @post.nil?
       not_found
     end
 
@@ -602,7 +598,13 @@ class PostsController < ApplicationController
       key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
 
       if key == :tags
-        RequestContext.redis.sadd(key_name, params[key])
+        valid_tags = params[key]&.select(&:present?)
+
+        RequestContext.redis.del(key_name)
+
+        if valid_tags.present?
+          RequestContext.redis.sadd(key_name, valid_tags)
+        end
       else
         RequestContext.redis.set(key_name, params[key])
       end

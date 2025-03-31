@@ -1,4 +1,9 @@
 module SearchHelper
+  def check_posts_permissions
+    (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
+      .qa_only.list_includes
+  end
+
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
@@ -10,9 +15,7 @@ module SearchHelper
   #
   # @return [ActiveRecord::Relation<Post>]
   def search_posts
-    # Check permissions
-    posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
-            .qa_only.list_includes
+    posts = check_posts_permissions
 
     qualifiers = params_to_qualifiers
     search_string = params[:search]
@@ -27,13 +30,17 @@ module SearchHelper
     posts = qualifiers_to_sql(qualifiers, posts)
     posts = posts.paginate(page: params[:page], per_page: 25)
 
-    if search_string.present?
-      posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
-                                                   relevance: :search_score, score: :score, age: :created_at)
-    else
-      posts.user_sort({ term: params[:sort], default: :score },
-                      score: :score, age: :created_at)
-    end
+    posts = if search_string.present?
+              posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
+                                                           relevance: :search_score,
+                                                           score: :score, age: :created_at,
+                                                           activity: :updated_at)
+            else
+              posts.user_sort({ term: params[:sort], default: :score },
+                              score: :score, age: :created_at, activity: :updated_at)
+            end
+
+    [posts, qualifiers]
   end
 
   ##
@@ -161,12 +168,12 @@ module SearchHelper
         operator, val = if value.match?(valid_value[:numeric])
                           numeric_value_sql value
                         elsif value == 'me'
-                          ['=', current_user.id]
+                          ['=', current_user&.id&.to_i]
                         else
                           next
                         end
 
-        { param: :user, operator: operator.presence || '=', user_id: val.to_i }
+        { param: :user, operator: operator.presence || '=', user_id: val }
       when 'upvotes'
         next unless value.match?(valid_value[:numeric])
 

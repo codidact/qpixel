@@ -1,0 +1,5 @@
+en:
+  search:
+    # used on the users page (not the main search)
+    no_users:
+      No users found.
