@@ -14,6 +14,9 @@ coverage:
         target: auto
         threshold: 10%
         base: auto
+comment:
+  layout: "condensed_header, condensed_files, components, condensed_footer"
+  hide_project_coverage: false
 component_management:
   individual_components:
     - component_id: module_controllers
