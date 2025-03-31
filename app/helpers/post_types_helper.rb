@@ -5,7 +5,7 @@ module PostTypesHelper
   # @return [ActiveSupport::SafeBuffer]
   def post_type_badge(type)
     tag.span class: 'badge is-tag is-filled is-muted' do
-      "#{tag.i(class: type.icon_name)} #{tag.span(type.name)}"
+      "#{tag.i(class: type.icon_name)} #{tag.span(type.name)}".html_safe
     end
   end
 
