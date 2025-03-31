@@ -101,7 +101,7 @@ module UsersHelper
   # @param user [User]
   # @return [String]
   def rtl_safe_username(user)
-    deleted_user?(user) ? 'deleted user' : user.rtl_safe_username
+    deleted_user?(user) ? 'deleted user' : user&.rtl_safe_username
   end
 
   ##
