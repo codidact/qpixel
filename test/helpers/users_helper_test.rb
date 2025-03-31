@@ -15,6 +15,12 @@ class UsersHelperTest < ActionView::TestCase
     end
   end
 
+  test 'user_link should return placeholder link if user is nil' do
+    link = Nokogiri::HTML4(user_link(nil)).at_css('a')
+    assert_equal '#', link.attribute('href').value
+    assert_equal 'deleted user', link.text
+  end
+
   test 'user_link' do
     standard_user = users(:standard_user)
 
@@ -22,8 +28,7 @@ class UsersHelperTest < ActionView::TestCase
       [{
         href: "http://test.host/users/#{standard_user.id}",
         text: standard_user.rtl_safe_username
-      }, standard_user],
-      [{ href: '#', text: 'deleted user' }, nil]
+      }, standard_user]
     ]
 
     expected.each do |exp, usr|
