@@ -210,8 +210,9 @@ class Post < ApplicationRecord
     flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
 
-  # @param user [User, Nil]
-  # @return [Boolean] whether the given user can view this post
+  # Checks whether a given user can access the post at all
+  # @param user [User, Nil] user to check access for
+  # @return [Boolean] access check result
   def can_access?(user)
     (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
