@@ -53,7 +53,9 @@
   <% end %>
 <% end %>
 
+<% if @tags&.size > 0 %>
 <%= will_paginate @tags, renderer: BootstrapPagination::Rails %>
+<% end %>
 
 <% end %> <%# unless @tags == nil %>
 

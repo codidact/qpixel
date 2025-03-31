@@ -1,18 +1,20 @@
 module AbilitiesHelper
-  # This is a helper that will linearize the Wilson-score
-  # progress used by the ability calculations.
-  #
-  # Problem: 0.98 and 0.99 are not far away on a linear
-  # scale, but mean a change of about 2x for the "actual
-  # limit" used by the algorithm.
-  #
-  # Solution: We transform the ideal case formula y=(x+2)/(x+4)
-  # to x=(4y-2)/(1-y) and use that for the progress bar.
+  ##
+  # Linearizes the Wilson-score progress used by ability calculations. For example, 0.98 and 0.99 are not far away on a
+  # linear scale, but mean a change of about 2x for the actual limit used by the algorithm. This method takes that into
+  # account and provides an indicator of progress on a linear scale, for use in progress bars.
+  # @param score [Float] The Wilson score result to linearize.
+  # @return [Float] The linearized score.
   def linearize_progress(score)
     linear_score = ((4 * score) - 2) / (1 - score)
-    [0, linear_score].max
+    [0, linear_score].max.to_f
   end
 
+  ##
+  # Provides an error message for when a user is unable to complete an ability-restricted action, either because the
+  # user doesn't have the ability or because it has been suspended.
+  # @param internal_id [String] The +internal_id+ attribute of the ability in question.
+  # @return [String] An error message appropriate to the circumstances.
   def ability_err_msg(internal_id, action = nil)
     ability = Ability.find_by internal_id: internal_id
     ua = current_user&.privilege(ability.internal_id)

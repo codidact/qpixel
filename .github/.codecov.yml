@@ -1,0 +1,37 @@
+codecov:
+  require_ci_to_pass: false
+  notify:
+    wait_for_ci: false
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        base: auto
+    patch:
+      default:
+        target: auto
+        threshold: 10%
+        base: auto
+comment:
+  layout: "condensed_header, condensed_files, components, condensed_footer"
+  hide_project_coverage: false
+component_management:
+  individual_components:
+    - component_id: module_controllers
+      name: controllers
+      paths:
+        - app/controllers/**
+    - component_id: module_helpers
+      name: helpers
+      paths:
+        - app/helpers/**
+    - component_id: module_jobs
+      name: jobs
+      paths:
+        - app/jobs/**
+    - component_id: module_models
+      name: models
+      paths:
+        - app/models/**

@@ -2,9 +2,15 @@
   &laquo; Back to help center
 <% end %>
 <% unless @post.nil? %>
-  <% if (moderator? && @post.post_type_id == HelpDoc.post_type_id) || (admin? && @post.post_type_id == PolicyDoc.post_type_id) %>
+  <% 
+    is_hc = @post.post_type_id == HelpDoc.post_type_id
+    is_policy = @post.post_type_id == PolicyDoc.post_type_id
+    history_path = is_hc ? help_post_history_path(@post.doc_slug) : policy_post_history_path(@post.doc_slug)
+  %>
+  <% if (moderator? && is_hc) || (admin? && is_policy) %>
     <%= link_to 'edit', edit_post_path(@post), class: "button is-outlined is-muted" %>
   <% end %>
+  <%= link_to 'history', history_path,  class: "button is-outlined is-muted" %>
 <% end %>
 
 <% if @post.help_category == '$Moderator' %>

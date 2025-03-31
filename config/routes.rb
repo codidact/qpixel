@@ -19,7 +19,8 @@ Rails.application.routes.draw do
 
   root                                     to: 'categories#homepage'
 
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
@@ -158,7 +159,9 @@ Rails.application.routes.draw do
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
+  get    'policy/:slug/history',           to: 'post_history#slug_post', as: :policy_post_history, constraints: { slug: /.*/ }
   get    'policy/:slug',                   to: 'posts#document', as: :policy, constraints: { slug: /.*/ }
+  get    'help/:slug/history',             to: 'post_history#slug_post', as: :help_post_history, constraints: { slug: /.*/ }
   get    'help/:slug',                     to: 'posts#document', as: :help, constraints: { slug: /.*/ }
 
   get    'tags',                           to: 'tags#index', as: :tags
