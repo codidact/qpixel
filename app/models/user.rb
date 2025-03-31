@@ -72,6 +72,7 @@ class User < ApplicationRecord
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
+
   def has_post_privilege?(name, post)
     if post.user == self
       true
