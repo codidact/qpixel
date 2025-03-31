@@ -202,6 +202,12 @@ class Post < ApplicationRecord
     false
   end
 
+  # Checks whether the post allows users to comment on it
+  # @return [Boolean] check result
+  def comments_allowed?
+    !locked? && !deleted && !comments_disabled
+  end
+
   # The test here is for flags that are pending (no status). A spam flag
   # could be marked helpful but the post wouldn't be deleted, and
   # we don't necessarily want the post to be treated like it's a spam risk
