@@ -118,7 +118,7 @@ module UsersHelper
     elsif deleted_user?(user)
       link_to 'deleted user', '#', link_opts_reduced
     else
-      link_to user.rtl_safe_username, user_url(user, **url_opts), link_opts_reduced
+      link_to user&.rtl_safe_username, user_url(user, **url_opts), link_opts_reduced
     end
   end
 
