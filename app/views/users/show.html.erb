@@ -143,23 +143,23 @@
     <table class="table fixed is-full-width">
       <tr>
         <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i> Reputation</td>
-        <td><%= @user.reputation %></td>
+        <td class="overflow-ellipsis" title="<%= @user.reputation %>"><%= @user.reputation %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="far fa-fw fa-comment-alt"></i> Number of top-level posts</td>
-        <td><%= @user.metric '1' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric '1' %>"><%= @user.metric '1' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-reply-all"></i> Number of answers</td>
-        <td><%= @user.metric '2' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric '2' %>"><%= @user.metric '2' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-star-half-alt"></i> Sum of received votes (up minus down)</td>
-        <td><%= @user.metric 's' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric 's' %>"><%= @user.metric 's' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Number of edits made</td>
-        <td><%= @user.metric 'E' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
       <% if current_user&.id == @user.id || current_user&.is_moderator %>
         <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
@@ -196,50 +196,50 @@
 
     <h2>Statistics</h2>
     <%
-      posts_by_post_type = @user.posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+      posts_by_post_type = @user.posts_by_post_type
     %>
     <table class="table fixed is-full-width">
       <tr>
-        <th colspan="3">
-          Posts
-        </th>
+        <th colspan="3">Posts</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
+        <td class="overflow-ellipsis" title="<%= @user.posts.undeleted.count %>">
           <%= @user.posts.undeleted.count %>
         </td>
       </tr>
       <tr>
         <td colspan="2">Questions</td>
-        <td><%= posts_by_post_type[Question.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Question) %>">
+          <%= posts_for(posts_by_post_type, Question) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">Answers</td>
-        <td><%= posts_by_post_type[Answer.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Answer) %>">
+          <%= posts_for(posts_by_post_type, Answer) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">Articles</td>
-        <td><%= posts_by_post_type[Article.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Article) %>">
+          <%= posts_for(posts_by_post_type, Article) %>
+        </td>
       </tr>
     </table>
 
     <br>
     <table class="table fixed is-full-width">
       <%
-        votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
-        votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+        votes_by_type = @user.votes_by_type
+        votes_by_post_type = @user.votes_by_post_type
       %>
       <tr>
-        <th colspan="3">
-          Votes cast
-        </th>
+        <th colspan="3">Votes cast</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
-          <%= @user.votes.count %>
-        </td>
+        <td class="overflow-ellipsis" title="<%= @user.votes.count %>"><%= @user.votes.count %></td>
       </tr>
       <% if @user.id == current_user&.id || current_user&.is_admin %>
       <tr>
@@ -250,7 +250,7 @@
             </svg>Upvotes
           </div>
         </td>
-        <td><%= votes_by_type[1] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_by_type[1] || 0 %>"><%= votes_by_type[1] || 0 %></td>
       </tr>
       <tr>
         <td colspan="2">
@@ -260,32 +260,36 @@
             </svg>Downvotes
           </div>
         </td>
-        <td><%= votes_by_type[-1] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_by_type[-1] || 0 %>"><%= votes_by_type[-1] || 0 %></td>
       </tr>
       <tr>
         <td colspan="2">on Question</td>
-        <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Question) %>">
+          <%= votes_for(votes_by_post_type, Question) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">on Answer</td>
-        <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Answer) %>">
+          <%= votes_for(votes_by_post_type, Answer) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">on Article</td>
-        <td><%= votes_by_post_type[Article.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Article) %>">
+          <%= votes_for(votes_by_post_type, Article) %>
+        </td>
       </tr>
       <% end %>
     </table>
     <br>
     <table class="table fixed is-full-width">
       <tr>
-        <th colspan="3">
-          Flags raised
-        </th>
+        <th colspan="3">Flags raised</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
+        <td class="overflow-ellipsis" title="<%= @user.flags.count %>">
           <% if current_user&.id == @user.id || moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
                         'aria-label': "View flag history for #{@user.flags.count} flags" %>
