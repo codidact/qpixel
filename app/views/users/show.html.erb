@@ -140,7 +140,7 @@
       <% end %>
     </div>
 
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
         <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i> Reputation</td>
         <td><%= @user.reputation %></td>
@@ -161,16 +161,11 @@
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Number of edits made</td>
         <td><%= @user.metric 'E' %></td>
       </tr>
+      <% if current_user&.id == @user.id || current_user&.is_moderator %>
+        <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
+      <% end %>
     </table>
-    
-    <% if current_user&.id == @user.id || current_user&.is_moderator %>
-    <table class="table is-full-width">
-      <tr>
-        <td>User since <%= @user.created_at %></td>
-      </tr>
-    </table>
-    <% end %>
-
+  
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>
 
@@ -203,7 +198,7 @@
     <%
       posts_by_post_type = @user.posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
     %>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
         <th colspan="3">
           Posts
@@ -230,7 +225,7 @@
     </table>
 
     <br>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <%
         votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
         votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
@@ -248,24 +243,22 @@
       </tr>
       <% if @user.id == current_user&.id || current_user&.is_admin %>
       <tr>
-        <td class="has-color-tertiary-600">
-          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-            <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-          </svg>
-        </td>
-        <td>
-          Upvotes
+        <td colspan="2">
+          <div class="flex items-center gap-sm">
+            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+              <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+            </svg>Upvotes
+          </div>
         </td>
         <td><%= votes_by_type[1] || 0 %></td>
       </tr>
       <tr>
-        <td class="has-color-tertiary-600">
-          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-            <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-          </svg>
-        </td>
-        <td>
-          Downvotes
+        <td colspan="2">
+          <div class="flex items-center gap-sm">
+            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+              <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+            </svg>Downvotes
+          </div>
         </td>
         <td><%= votes_by_type[-1] || 0 %></td>
       </tr>
@@ -284,7 +277,7 @@
       <% end %>
     </table>
     <br>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
         <th colspan="3">
           Flags raised
