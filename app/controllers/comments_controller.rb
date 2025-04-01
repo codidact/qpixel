@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
 
   def create_thread
     @post = Post.find(params[:post_id])
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.is_standard
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -68,7 +68,7 @@ class CommentsController < ApplicationController
   def create
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.is_standard
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)

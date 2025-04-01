@@ -166,6 +166,12 @@ class User < ApplicationRecord
     is_global_admin || community_user&.is_admin || false
   end
 
+  # Checks if the user is neither a moderator not an admin (global or on the current community)
+  # @return [Boolean] check result
+  def is_standard
+    !is_moderator && !is_admin
+  end
+
   # Used by network profile: does this user have a profile on that other comm?
   def has_profile_on(community_id)
     cu = community_users.where(community_id: community_id).first
