@@ -155,22 +155,55 @@ div:hover > .copy-button {
 }
 
 @keyframes shake {
-  0% { transform: translate(-5px); }
-  10% { transform: translate(5px); }
-  20% { transform: translate(-5px); }
-  30% { transform: translate(5px); }
-  40% { transform: translate(-5px); }
-  50% { transform: translate(5px); }
-  60% { transform: translate(-5px); }
-  70% { transform: translate(5px); }
-  80% { transform: translate(-5px); }
-  90% { transform: translate(5px); }
-  100% { transform: translate(-5px); }
+  0% {
+    transform: translate(-5px);
+  }
+
+  10% {
+    transform: translate(5px);
+  }
+
+  20% {
+    transform: translate(-5px);
+  }
+
+  30% {
+    transform: translate(5px);
+  }
+
+  40% {
+    transform: translate(-5px);
+  }
+
+  50% {
+    transform: translate(5px);
+  }
+
+  60% {
+    transform: translate(-5px);
+  }
+
+  70% {
+    transform: translate(5px);
+  }
+
+  80% {
+    transform: translate(-5px);
+  }
+
+  90% {
+    transform: translate(5px);
+  }
+
+  100% {
+    transform: translate(-5px);
+  }
 }
 
 .diff {
   .diff-section {
-    .diff-old, 
+
+    .diff-old,
     .diff-new {
       overflow: scroll;
     }
@@ -189,7 +222,8 @@ div:hover > .copy-button {
       min-height: 20px;
       white-space: pre-wrap;
 
-      del, ins {
+      del,
+      ins {
         text-decoration: none;
         overflow-wrap: break-word;
       }
@@ -283,7 +317,8 @@ span.spoiler {
     color: lighten($primary, 30%);
   }
 
-  &:hover span, &:active span {
+  &:hover span,
+  &:active span {
     transition: all 0.2s ease;
     visibility: visible;
     color: $key;
