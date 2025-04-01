@@ -48,6 +48,7 @@ h1 .badge.is-tag.is-master-tag {
 .post-list--title {
   font-size: 19px;
   width: 100%;
+
   a {
     display: inline-block;
     width: 100%;
@@ -99,7 +100,7 @@ h1 .badge.is-tag.is-master-tag {
   overflow-wrap: break-word;
 
   * {
-    max-width: 100%;  
+    max-width: 100%;
   }
 }
 
@@ -162,7 +163,8 @@ h1 .badge.is-tag.is-master-tag {
 .post--meta {
   margin: 0.2em 0;
 
-  .post-meta--post, .post-meta--user {
+  .post-meta--post,
+  .post-meta--user {
     padding: 0.5rem;
     border-radius: 5px;
     color: $muted-text;
@@ -217,10 +219,16 @@ h1 .badge.is-tag.is-master-tag {
   font-weight: lighter;
 }
 
+.post--actions {
+  .droppanel {
+    max-width: 20em;
+  }
+}
+
 .post--content {
   flex: 1;
   word-break: break-word;
-  
+
   * {
     max-width: 100%;
   }

@@ -7,8 +7,8 @@ module UsersHelper
   #   be set in HTML.
   # @return [String]
   def avatar_url(user, size = 16)
-    if deleted_user?(user)
-      user_auto_avatar_url(letter: 'X', color: '#E73737FF', size: size, format: :png)
+    if deleted_user?(user) || user.nil?
+      specific_auto_avatar_url(letter: 'X', color: '#E73737FF', size: size, format: :png)
     elsif user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
@@ -113,7 +113,7 @@ module UsersHelper
   def user_link(user, url_opts = {}, **link_opts)
     anchortext = link_opts[:anchortext]
     link_opts_reduced = { dir: 'ltr' }.merge(link_opts).except(:anchortext)
-    if deleted_user?(user) || user.nil?
+    if user.nil? || (deleted_user?(user) && !moderator?)
       link_to 'deleted user', '#', link_opts_reduced
     elsif !anchortext.nil?
       link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
