@@ -6,7 +6,7 @@ module ApplicationHelper
   # Is the current user a moderator on the current community?
   # @return [Boolean]
   def moderator?
-    user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+    user_signed_in? && current_user.is_privileged
   end
 
   ##
