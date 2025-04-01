@@ -7,7 +7,7 @@ module PostsHelper
   # @param field_name [Symbol] The parameter name for the markdown - i.e. +:body_markdown+ in the same example.
   # @return [String]
   def rendered_post(scope, field_name)
-    if params['__html'].present? && params['__html'] != '<-- g: js, mdit -->'
+    if params['__html'].present? && params['__html'] != '<!-- g: js, mdit -->'
       params['__html']
     else
       render_markdown params[scope][field_name]
