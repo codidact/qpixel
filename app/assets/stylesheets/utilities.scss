@@ -345,6 +345,12 @@ span.spoiler {
   overflow: hidden;
 }
 
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .transparent {
   opacity: 0;
 }
