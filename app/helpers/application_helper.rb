@@ -17,6 +17,13 @@ module ApplicationHelper
   end
 
   ##
+  # Is the current user a standard user (not a moderator or an admin)?
+  # @return [Boolean] check result
+  def standard?
+    !moderator? && !admin?
+  end
+
+  ##
   # Checks if the current user has a specified privilege on a post.
   # @param post [Post] A post to use as context for the privilege.
   # @param privilege [String] The +internal_id+ of the privilege to query.
