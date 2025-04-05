@@ -121,4 +121,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal cu, current_cu
     assert_equal user.community_users.count, original_count + 1
   end
+
+  test 'has_ability_on should always be true for moderators and higher' do
+    community = communities(:sample)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    abilities.each do |ability|
+      assert_equal mod.has_ability_on(community.id, ability.internal_id), true
+      assert_equal admin.has_ability_on(community.id, ability.internal_id), true
+    end
+  end
 end
