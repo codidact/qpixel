@@ -159,4 +159,32 @@ class UserTest < ActiveSupport::TestCase
       assert_equal admin.has_ability_on(community.id, ability.internal_id), true
     end
   end
+
+  test 'has_ability_on should return true for every undeleted user with profile on a community' do
+    everyone = abilities(:everyone)
+
+    communities.each do |community|
+      CommunityUser.unscoped.active.where(community_id: community.id).each do |cu|
+        unless cu.user.deleted
+          assert_equal cu.user.has_ability_on(community.id, everyone.internal_id), true
+        end
+      end
+    end
+  end
+
+  test 'has_ability_on should correctly check for unrestricted ability' do
+    community = communities(:sample)
+    basic = users(:basic_user)
+    system = users(:system)
+
+    unrestricted = abilities(:unrestricted)
+
+    [basic, system].each do |user|
+      assert_equal user.has_ability_on(community.id, unrestricted.internal_id), false
+    end
+
+    CommunityUser.unscoped.active.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
+      assert_equal cu.user.has_ability_on(community.id, unrestricted.internal_id), !cu.user.deleted
+    end
+  end
 end
