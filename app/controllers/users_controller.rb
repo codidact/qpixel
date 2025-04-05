@@ -51,7 +51,16 @@ class UsersController < ApplicationController
         redirect_to user_path(@user)
       end
       format.json do
-        data = [:id, :username, :is_moderator, :is_admin, :is_global_moderator, :is_global_admin, :trust_level,
+        data = [:id,
+                :username,
+                :at_least_moderator?,
+                :at_least_global_moderator?,
+                :admin?,
+                :moderator?,
+                :standard?,
+                :is_global_moderator,
+                :is_global_admin,
+                :trust_level,
                 :se_acct_id].to_h { |a| [a, @user.send(a)] }
         render json: data
       end
