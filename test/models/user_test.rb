@@ -80,6 +80,18 @@ class UserTest < ActiveSupport::TestCase
     assert_equal users(:global_moderator).at_least_moderator?, true
   end
 
+  test 'at_least_global_moderator?' do
+    admin = users(:admin)
+    mod = users(:moderator)
+    global_admin = users(:global_admin)
+    global_mod = users(:global_moderator)
+
+    assert_equal admin.at_least_global_moderator?, false
+    assert_equal mod.at_least_global_moderator?, false
+    assert_equal global_mod.at_least_global_moderator?, true
+    assert_equal global_admin.at_least_global_moderator?, true
+  end
+
   test 'admin? for community admin' do
     assert_equal users(:admin).admin?, true
   end
