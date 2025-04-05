@@ -11,7 +11,7 @@ $(() => {
             return;
         }
 
-        if($rt.is("[data-reaction-require-comment]") && !$comment.val().trim().length) {
+        if($rt.is("[data-reaction-require-comment]") && !$comment.val()?.toString().trim().length) {
             QPixel.createNotification("danger", "This reaction type requires a comment with an explanation.");
             return;
         }
@@ -25,7 +25,7 @@ $(() => {
             },
             body: JSON.stringify({
                 reaction_id: $rt.val(),
-                comment: $comment.val().trim() || null,
+                comment: $comment.val()?.toString().trim() || null,
                 post_id: postId
             })
         });

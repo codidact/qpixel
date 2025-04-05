@@ -116,7 +116,7 @@
           } else if (height === targetHeight) {
             style.lineHeight = computed.lineHeight;
           } else {
-            style.lineHeight = 0;
+            style.lineHeight = '0';
           }
         } else {
           style.lineHeight = computed.height;
