@@ -71,7 +71,7 @@
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
         <% end %>
-        <% if current_user&.is_moderator %>
+        <% if current_user&.at_least_moderator? %>
           <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a> 
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
@@ -133,7 +133,7 @@
       <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
       </div>
-      <% elsif @user.is_moderator %>
+      <% elsif @user.at_least_moderator? %>
       <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i> Moderator
       </div>
@@ -161,7 +161,7 @@
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Number of edits made</td>
         <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
-      <% if current_user&.id == @user.id || current_user&.is_moderator %>
+      <% if current_user&.id == @user.id || current_user&.at_least_moderator? %>
         <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
       <% end %>
     </table>

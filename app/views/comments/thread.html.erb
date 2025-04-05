@@ -78,7 +78,7 @@
   <% end %>
   <div role="list">
     <% comments.each do |comment| %>
-      <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
+      <% if comment.deleted && !(current_user&.at_least_moderator? && params[:show_deleted_comments] == "1") %>
         <% skipped_deleted += 1%>
         <% next %>
       <% elsif skipped_deleted > 0 %>
@@ -151,7 +151,7 @@
   <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
     <div class="droppanel--header">thread options</div>
     <div class="droppanel--menu">
-      <% if current_user.is_moderator || !@comment_thread.read_only? %>
+      <% if current_user.at_least_moderator? || !@comment_thread.read_only? %>
         <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" role="button" aria-label="Rename thread">
           <i class="fas fa-pen fa-fw"></i> rename
         </a>
@@ -193,7 +193,7 @@
         <% end %>
       <% end %>
 
-      <% if current_user&.is_moderator || current_user&.is_admin %>
+      <% if current_user&.at_least_moderator? %>
         <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"
            role="button" aria-label="Show thread followers">
           <i class="fas fa-users"></i> followers
