@@ -438,7 +438,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.deleted_by.is_moderator && !current_user.is_moderator
+    if @post.deleted_by.is_moderator && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
       redirect_to post_path(@post)
       return
