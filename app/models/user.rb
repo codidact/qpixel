@@ -200,10 +200,12 @@ class User < ApplicationRecord
     cu&.post_count || 0
   end
 
+  # Checks whether the user is a moderator on a given community
+  # @param community_id [Integer] community id to check for
+  # @return [Boolean] check result
   def is_moderator_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    # is_moderator is a DB check, not a call to is_moderator()
-    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
+    cu&.at_least_moderator? || cu&.privilege?('mod') || false
   end
 
   # Checks if the user has an ability on a given community
