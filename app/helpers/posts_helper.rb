@@ -1,6 +1,6 @@
 module PostsHelper
   ##
-  # Get HTML for a post - should only be used in Markdown create/edit requests. Prioritises using the client-side
+  # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
   # rendered HTML over rendering server-side.
   # @param scope [Symbol] The parameter scope for the markdown - i.e. if the form submits it as +posts[body_markdown]+,
   #   this should be +:posts+.
