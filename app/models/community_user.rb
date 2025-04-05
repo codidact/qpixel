@@ -64,8 +64,11 @@ class CommunityUser < ApplicationRecord
     end
   end
 
+  # Checks if the community user has a given ability
+  # @param internal_id [String] The +internal_id+ of the ability to check
+  # @return [Boolean] check result
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    if internal_id != 'mod' && !ignore_mod && user.is_moderator
+    if internal_id != 'mod' && !ignore_mod && user.at_least_moderator?
       return true # includes: privilege? 'mod'
     end
 
