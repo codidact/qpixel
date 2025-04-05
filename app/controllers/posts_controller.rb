@@ -556,7 +556,7 @@ class PostsController < ApplicationController
 
     ApplicationRecord.transaction do
       @post.update! locked: true, locked_by: current_user,
-                   locked_at: DateTime.now, locked_until: end_date
+                    locked_at: DateTime.now, locked_until: end_date
       PostHistory.post_locked @post, current_user, before: end_date.nil? ? '' : "Locked until: #{end_date.iso8601}"
     end
     render json: { status: 'success', success: true }
@@ -571,7 +571,7 @@ class PostsController < ApplicationController
 
     ApplicationRecord.transaction do
       @post.update! locked: false, locked_by: nil,
-                   locked_at: nil, locked_until: nil
+                    locked_at: nil, locked_until: nil
       PostHistory.post_unlocked @post, current_user
     end
     render json: { status: 'success', success: true }
