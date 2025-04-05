@@ -152,10 +152,22 @@ class CommunityUser < ApplicationRecord
     attributes['trust_level'] || recalc_trust_level
   end
 
+  # Checks if the community user is an admin (global or on the current community)
+  # @return [Boolean] check result
+  def admin?
+    is_admin || user&.is_global_admin || false
+  end
+
+  # Checks if the community user is a moderator (global or on the current community)
+  # @return [Boolean] check result
+  def moderator?
+    is_moderator || user&.is_global_moderator || false
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
-            elsif is_moderator || user.is_global_moderator || is_admin || user.is_global_admin
+            elsif moderator? || admin?
               4
             elsif privilege?('flag_close') || privilege?('edit_posts')
               3
