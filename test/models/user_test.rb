@@ -122,7 +122,22 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user.community_users.count, original_count + 1
   end
 
-  test 'has_ability_on should always be true for moderators and higher' do
+  test 'has_ability_on should be false for users that do not have a profile on a community' do
+    fake = communities(:fake)
+    basic = users(:basic_user)
+    std = users(:standard_user)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    abilities.each do |ability|
+      assert_equal basic.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal std.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal mod.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal admin.has_ability_on(fake.id, ability.internal_id), false
+    end
+  end
+
+  test 'has_ability_on should always be true for moderators and admins with profile on a community' do
     community = communities(:sample)
     mod = users(:moderator)
     admin = users(:admin)
