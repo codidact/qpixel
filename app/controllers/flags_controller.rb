@@ -42,7 +42,7 @@ class FlagsController < ApplicationController
 
   def history
     @user = helpers.user_with_me params[:id]
-    unless @user == current_user || (current_user.is_admin || current_user.is_moderator)
+    unless @user == current_user || current_user.at_least_moderator?
       not_found
       return
     end
