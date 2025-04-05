@@ -31,7 +31,7 @@
       %>
       <%= link_to user_path(user), dir: 'ltr', class: small ? :'user-card--link-small' :'user-card--link', data: data do %>
         <%= rtl_safe_username(user) %>
-        <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
+        <% if user.admin? && SiteSetting['AdminBadgeCharacter'] %>
           <span class="badge is-user-role" title="Administrator"><i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i></span>
         <% elsif user.at_least_moderator? && SiteSetting['ModBadgeCharacter'] %>
           <span class="badge is-user-role" title="Moderator"><i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i></span>

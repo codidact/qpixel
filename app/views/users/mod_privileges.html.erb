@@ -57,7 +57,7 @@
     <a href="<%= abilities_recalc_url(for: @user.id) %>" class="button is-filled">Recalc Abilities</a>
   </div>
 </div>
-<% if current_user.is_admin %>
+<% if current_user.admin? %>
   <div class="widget">
     <div class="widget--header">
       Roles

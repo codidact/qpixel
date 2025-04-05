@@ -129,7 +129,7 @@
       <div class="widget--body h-ta-center" title="This user is an official Staff member.">
         <i class="fas fa-users-cog"></i> Staff
       </div>
-      <% elsif @user.is_admin %>
+      <% elsif @user.admin? %>
       <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
       </div>
@@ -241,7 +241,7 @@
         <td colspan="2">Count</td>
         <td class="overflow-ellipsis" title="<%= @user.votes.count %>"><%= @user.votes.count %></td>
       </tr>
-      <% if @user.id == current_user&.id || current_user&.is_admin %>
+      <% if @user.id == current_user&.id || current_user&.admin? %>
       <tr>
         <td colspan="2">
           <div class="flex items-center gap-sm">

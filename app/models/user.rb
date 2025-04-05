@@ -153,7 +153,7 @@ class User < ApplicationRecord
 
   # Checks if the user is either a global admin or an admin on the current community
   # @return [Boolean] check result
-  def is_admin
+  def admin?
     is_global_admin || community_user&.is_admin || false
   end
 
@@ -169,7 +169,7 @@ class User < ApplicationRecord
   # - has an explicit moderator privilege on the current community
   # @return [Boolean] check result
   def at_least_moderator?
-    moderator? || is_admin || community_user&.privilege?('mod') || false
+    moderator? || admin? || community_user&.privilege?('mod') || false
   end
 
   # Checks if the user is neither a moderator not an admin (global or on the current community)

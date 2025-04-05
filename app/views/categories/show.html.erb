@@ -19,7 +19,7 @@
     </span>
     <%= render 'shared/rss_link', url: category_feed_path(@category, format: 'rss') %>
     <span class="has-margin-4">
-      <% if current_user&.is_admin %>
+      <% if current_user&.admin? %>
         <%= link_to 'Edit Category', edit_category_path(@category) %>
       <% end %>
     </span>

@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_admin
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -225,7 +225,7 @@ class ApplicationController < ActionController::Base
 
     @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
-    if current_user&.is_admin
+    if current_user&.admin?
       Rack::MiniProfiler.authorize_request
     end
   end

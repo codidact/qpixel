@@ -13,7 +13,7 @@ module ApplicationHelper
   # Is the current user an admin on the current community?
   # @return [Boolean]
   def admin?
-    user_signed_in? && current_user.is_admin
+    user_signed_in? && current_user.admin?
   end
 
   ##

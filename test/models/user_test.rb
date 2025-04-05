@@ -80,17 +80,17 @@ class UserTest < ActiveSupport::TestCase
     assert_equal users(:global_moderator).at_least_moderator?, true
   end
 
-  test 'is_admin for community admin' do
-    assert_equal users(:admin).is_admin, true
+  test 'admin? for community admin' do
+    assert_equal users(:admin).admin?, true
   end
 
-  test 'is_admin for community admin in another context' do
+  test 'admin? for community admin in another context' do
     RequestContext.community = Community.create(host: 'other', name: 'Other')
-    assert_equal users(:admin).is_admin, false
+    assert_equal users(:admin).admin?, false
   end
 
-  test 'is_admin for global admin' do
-    assert_equal users(:global_admin).is_admin, true
+  test 'admin? for global admin' do
+    assert_equal users(:global_admin).admin?, true
   end
 
   test 'ensure_community_user! does not alter existing community_user' do
