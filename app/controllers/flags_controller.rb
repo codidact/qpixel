@@ -86,10 +86,12 @@ class FlagsController < ApplicationController
 
   def flag_verify
     @flag = Flag.find params[:id]
+
     return false if current_user.nil?
 
     type = @flag.post_flag_type
-    unless current_user.is_moderator
+
+    unless current_user.at_least_moderator?
       return not_found unless current_user.privilege? 'flag_curate'
       return not_found if type.nil? || type.confidential
       return not_found if current_user.id == @flag.user.id
