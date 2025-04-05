@@ -187,7 +187,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_rename
-    if @comment_thread.read_only? && !current_user.is_moderator
+    if @comment_thread.read_only? && !current_user.at_least_moderator?
       flash[:danger] = 'This thread has been locked.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
