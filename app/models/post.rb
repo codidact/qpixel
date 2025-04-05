@@ -73,7 +73,7 @@ class Post < ApplicationRecord
       return nil
     end
 
-    if post&.help_category == '$Moderator' && !user&.is_moderator
+    if post&.help_category == '$Moderator' && !user&.at_least_moderator?
       return nil
     end
 
