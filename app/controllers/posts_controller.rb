@@ -569,7 +569,7 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found(errors: ['no_privilege']) unless current_user.is_moderator
+    return not_found(errors: ['no_privilege']) unless current_user&.at_least_moderator?
 
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
