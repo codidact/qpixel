@@ -240,7 +240,7 @@ class CommentsController < ApplicationController
     when 'delete'
       return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
 
-      if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
+      if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
         render json: { status: 'error',
                        message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
         return
