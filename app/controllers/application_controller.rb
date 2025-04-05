@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_moderator
-    if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+    if !user_signed_in? || !current_user.at_least_global_moderator?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
