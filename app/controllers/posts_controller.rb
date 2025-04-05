@@ -520,8 +520,12 @@ class PostsController < ApplicationController
     end
     @post.tags = new_tags
     success = @post.save
-    AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
-                          comment: "from <<#{before.id}: #{before.name}>>\nto <<#{@target.id}: #{@target.name}>>")
+    if success
+      PostHistory.category_changed(@post, current_user, before: "#{before.name} (##{before.id})",
+                                   after: "#{@target.name} (##{@target.id})")
+      AuditLog.action_audit(event_type: 'change_category', related: @post, user: current_user,
+                            comment: "from <<#{before.id}: #{before.name}>>\nto <<#{@target.id}: #{@target.name}>>")
+    end
     render json: { success: success, errors: success ? [] : @post.errors.full_messages }, status: success ? 200 : 409
   end
 
@@ -550,8 +554,11 @@ class PostsController < ApplicationController
       end_date = 7.days.from_now
     end
 
-    @post.update locked: true, locked_by: current_user,
-                 locked_at: DateTime.now, locked_until: end_date
+    ApplicationRecord.transaction do
+      @post.update locked: true, locked_by: current_user,
+                   locked_at: DateTime.now, locked_until: end_date
+      PostHistory.post_locked @post, current_user, before: end_date.nil? ? '' : "Locked until: #{end_date.iso8601}"
+    end
     render json: { status: 'success', success: true }
   end
 
@@ -562,8 +569,11 @@ class PostsController < ApplicationController
       return not_found(errors: ['locked_by_mod'])
     end
 
-    @post.update locked: false, locked_by: nil,
-                 locked_at: nil, locked_until: nil
+    ApplicationRecord.transaction do
+      @post.update locked: false, locked_by: nil,
+                   locked_at: nil, locked_until: nil
+      PostHistory.post_unlocked @post, current_user
+    end
     render json: { status: 'success', success: true }
   end
 
