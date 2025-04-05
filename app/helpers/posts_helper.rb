@@ -1,8 +1,22 @@
 module PostsHelper
-  def post_markdown(scope, field_name)
-    params['__html'].presence || render_markdown(params[scope][field_name])
+  ##
+  # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
+  # rendered HTML over rendering server-side.
+  # @param scope [Symbol] The parameter scope for the markdown - i.e. if the form submits it as +posts[body_markdown]+,
+  #   this should be +:posts+.
+  # @param field_name [Symbol] The parameter name for the markdown - i.e. +:body_markdown+ in the same example.
+  # @return [String]
+  def rendered_post(scope, field_name)
+    if params['__html'].present? && params['__html'] != '<!-- g: js, mdit -->'
+      params['__html']
+    else
+      render_markdown params[scope][field_name]
+    end
   end
 
+  ##
+  # Get the redirect path to use when the user cancels an edit.
+  # @return [String]
   def cancel_redirect_path(post)
     if post.id.present?
       post_url(post)
@@ -15,21 +29,28 @@ module PostsHelper
     end
   end
 
-  # @param category [Category, Nil]
-  # @return [Integer] the minimum length for post bodies
+  ##
+  # Get the minimum body length for the specified category.
+  # @param category [Category, nil]
+  # @return [Integer]
   def min_body_length(category)
     category&.min_body_length || 30
   end
 
-  # @param _category [Category, Nil]
-  # @return [Integer] the maximum length for post bodies
+  ##
+  # Get the maximum body length for the specified category. Returns a constant 30,000 at present but intended to return
+  # a configurable value in the future.
+  # @param _category [Category, nil]
+  # @return [Integer]
   def max_body_length(_category)
     30_000
   end
 
-  # @param category [Category, Nil] post category, if any
-  # @param post_type [PostType] type of the post (system limits are relaxed)
-  # @return [Integer] the minimum length for post titles
+  ##
+  # Get the minimum title length for the specified category.
+  # @param category [Category, nil]
+  # @param post_type [PostType] Type of the post (system limits are relaxed)
+  # @return [Integer]
   def min_title_length(category, post_type)
     if post_type.system?
       1
@@ -38,8 +59,10 @@ module PostsHelper
     end
   end
 
-  # @param _category [Category, Nil]
-  # @return [Integer] the maximum length for post titles
+  ##
+  # Get the maximum title length for the specified category. Has a hard limit of 255 characters.
+  # @param _category [Category, nil]
+  # @return [Integer]
   def max_title_length(_category)
     [SiteSetting['MaxTitleLength'] || 255, 255].min
   end
@@ -58,6 +81,9 @@ module PostsHelper
     end
   end
 
+  ##
+  # Get a post scrubber instance.
+  # @return [PostScrubber]
   def scrubber
     PostsHelper::PostScrubber.new
   end

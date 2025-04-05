@@ -355,25 +355,24 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def validate_profile_website(profile_params)
-    uri = profile_params[:website]
+  def cleaned_profile_websites(profile_params)
+    sites = profile_params[:user_websites_attributes]
 
-    if URI.parse(uri).instance_of?(URI::Generic)
-      # URI::Generic indicates the user didn't include a protocol, so we'll add one now so that it can be
-      # parsed correctly in the view later on.
-      profile_params[:website] = "https://#{uri}"
+    sites.transform_values do |w|
+      w.merge({ label: w[:label].presence, url: w[:url].presence })
     end
-  rescue URI::InvalidURIError
-    profile_params.delete(:website)
-    flash[:danger] = 'Invalid profile website link.'
   end
 
   def update_profile
-    profile_params = params.require(:user).permit(:username, :profile_markdown, :website, :twitter, :discord)
-    profile_params[:twitter] = profile_params[:twitter].delete('@')
+    profile_params = params.require(:user).permit(:username,
+                                                  :profile_markdown,
+                                                  :website,
+                                                  :discord,
+                                                  :twitter,
+                                                  user_websites_attributes: [:id, :label, :url])
 
-    if profile_params[:website].present?
-      validate_profile_website(profile_params)
+    if profile_params[:user_websites_attributes].present?
+      profile_params[:user_websites_attributes] = cleaned_profile_websites(profile_params)
     end
 
     @user = current_user
@@ -389,8 +388,14 @@ class UsersController < ApplicationController
       end
     end
 
-    profile_rendered = helpers.post_markdown(:user, :profile_markdown)
-    if @user.update(profile_params.merge(profile: profile_rendered))
+    if params[:user][:profile_markdown].present?
+      profile_rendered = helpers.rendered_post(:user, :profile_markdown)
+      profile_params = profile_params.merge(profile: profile_rendered)
+    end
+
+    status = @user.update(profile_params)
+
+    if status
       flash[:success] = 'Your profile details were updated.'
       redirect_to user_path(current_user)
     else
@@ -419,7 +424,7 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege 'mod'
+        @user.community_user.grant_privilege! 'mod'
       else
         @user.community_user.privilege('mod').destroy
       end
@@ -448,7 +453,7 @@ class UsersController < ApplicationController
     case params[:do]
     when 'grant'
       if ua.nil?
-        @user.community_user.grant_privilege(ability.internal_id)
+        @user.community_user.grant_privilege!(ability.internal_id)
         AuditLog.admin_audit(event_type: 'ability_grant', related: @user, user: current_user,
                              comment: ability.internal_id.to_s)
       elsif ua.is_suspended
@@ -574,18 +579,21 @@ class UsersController < ApplicationController
   end
 
   def vote_summary
-    @votes = Vote.where(recv_user: @user) \
-                 .includes(:post).group(:date_of, :post_id, :vote_type)
-    @votes = @votes.select(:post_id, :vote_type) \
-                   .select('count(*) as vote_count') \
-                   .select('date(created_at) as date_of')
+    @votes = Vote.where(recv_user: @user)
+                 .includes(:post)
+                 .group(:date_of, :post_id, :vote_type)
+
+    @votes = @votes.select(:post_id, :vote_type)
+                   .select('count(*) as vote_count')
+                   .select('date(votes.created_at) as date_of')
+
     @votes = @votes.order(date_of: :desc, post_id: :desc).all \
                    .group_by(&:date_of).map do |k, vl|
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end \
                    .paginate(page: params[:page], per_page: 15)
+
     render layout: 'without_sidebar'
-    @votes
   end
 
   def avatar

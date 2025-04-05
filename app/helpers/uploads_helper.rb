@@ -6,6 +6,10 @@ module UploadsHelper
     "https://s3.amazonaws.com/#{bucket}/#{blob.is_a?(String) ? blob : blob.key}"
   end
 
+  ##
+  # Test if the given IO object is a valid image file by content type, extension, and content test.
+  # @param io [File] The file to test.
+  # @return [Boolean]
   def valid_image?(io)
     content_types = Rails.application.config.active_storage.web_image_content_types
     extensions = content_types.map { |ct| ct.gsub('image/', '') }

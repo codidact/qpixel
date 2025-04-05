@@ -145,8 +145,17 @@
             on <%= post.locked_at.strftime('%b %e, %Y at %H:%M') %>.
           </p>
         </div>
-      <% end %>
+	<% end %>
 
+	<% if post.spam_flag_pending? && user_signed_in? %>
+	<div class="notice has-margin-2">
+	  <% if post.user == current_user %>
+	  <p>Your post has been flagged by members of our community. Please review our <a href="/help/spam">guidelines for promotional content</a>.</p>
+	  <% else %>
+	  <p><strong>Possible spam:</strong> this post has pending flags for spam.  Be careful when following links.</p>
+	  <% end %>
+	</div>
+	<% end %>
       <% if post_type.is_public_editable && post.pending_suggested_edit? %>
         <% if check_your_post_privilege(post, 'edit_posts') %>
           <div class="notice h-p-2">
@@ -163,10 +172,15 @@
               <%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
           </div>
         <% end %>
-      <% end %>
+	<% end %>
 
-      <div class="post--body">
-        <%= raw(sanitize(post.body, scrubber: scrubber)) %>
+	<div class="post--body">
+	  <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
+	  <% if post.spam_flag_pending? && !user_signed_in? %>
+	    <%= sanitize(effective_post, attributes: %w()) %>
+	  <% else %>
+            <%= effective_post %>
+	  <% end %>
 
         <% been_edited = post.last_edited_by_id != nil %>
         <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>

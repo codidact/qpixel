@@ -46,7 +46,7 @@ class PostsController < ApplicationController
                     @parent.category
                   end
                 end || nil
-    @post = Post.new(post_params.merge(user: current_user, body: helpers.post_markdown(:post, :body_markdown),
+    @post = Post.new(post_params.merge(user: current_user, body: helpers.rendered_post(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
     if @post.title? && (@post.title.include? '$$')
@@ -205,7 +205,7 @@ class PostsController < ApplicationController
 
   def update
     before = { body: @post.body_markdown, title: @post.title, tags: @post.tags.to_a }
-    body_rendered = helpers.post_markdown(:post, :body_markdown)
+    body_rendered = helpers.rendered_post(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
     if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
@@ -464,13 +464,9 @@ class PostsController < ApplicationController
   end
 
   def document
-    @post = Post.unscoped.where(doc_slug: params[:slug], community_id: [RequestContext.community_id, nil]).first
-    not_found && return if @post.nil?
+    @post = Post.by_slug(params[:slug], current_user)
 
-    if @post&.help_category == '$Disabled'
-      not_found
-    end
-    if @post&.help_category == '$Moderator' && !current_user&.is_moderator
+    if @post.nil?
       not_found
     end
 

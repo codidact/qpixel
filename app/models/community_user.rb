@@ -14,6 +14,12 @@ class CommunityUser < ApplicationRecord
 
   after_create :prevent_ulysses_case
 
+  delegate :url_helpers, to: 'Rails.application.routes'
+
+  def system?
+    user_id == -1
+  end
+
   def suspended?
     return true if is_suspended && !suspension_end.past?
 
@@ -22,6 +28,10 @@ class CommunityUser < ApplicationRecord
     end
 
     false
+  end
+
+  def latest_warning
+    mod_warnings&.order(created_at: 'desc')&.first&.created_at
   end
 
   # Calculation functions for privilege scores
@@ -54,8 +64,6 @@ class CommunityUser < ApplicationRecord
     end
   end
 
-  ## Privilege functions
-
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
     if internal_id != 'mod' && !ignore_mod && user.is_moderator
       return true # includes: privilege? 'mod'
@@ -73,11 +81,26 @@ class CommunityUser < ApplicationRecord
     UserAbility.joins(:ability).where(community_user_id: id, abilities: { internal_id: internal_id }).first
   end
 
-  def grant_privilege(internal_id)
+  ##
+  # Grant a specified ability to this CommunityUser.
+  # @param internal_id [String] The +internal_id+ of the ability to grant.
+  # @param notify [Boolean] Whether to send a notification to the user.
+  def grant_privilege!(internal_id, notify: true)
     priv = Ability.where(internal_id: internal_id).first
     UserAbility.create community_user_id: id, ability: priv
+    if notify
+      community_host = priv.community.host
+      user.create_notification("You've earned the #{priv.name} ability! Learn more.",
+                               url_helpers.ability_url(priv.internal_id, host: community_host))
+    end
   end
 
+  ##
+  # Recalculate a specified ability for this CommunityUser. Will not revoke abilities that have already been granted.
+  # @param internal_id [String] The +internal_id+ of the ability to be recalculated.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - if sandboxed, the ability will not be granted but the
+  #   return value indicates whether it would have been.
+  # @return [Boolean] Whether or not the ability was granted.
   def recalc_privilege(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: false)
@@ -96,16 +119,26 @@ class CommunityUser < ApplicationRecord
     end
 
     # If not sandbox mode, create new privilege entry
-    grant_privilege(internal_id) unless sandbox
+    grant_privilege!(internal_id) unless sandbox
     recalc_trust_level unless sandbox
     true
   end
 
+  ##
+  # Recalculate a list of standard abilities for this CommunityUser.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege}.
+  # @return [Array<Boolean>]
   def recalc_privileges(sandbox: false)
     [:everyone, :unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
       recalc_privilege(ability, sandbox: sandbox)
     end
   end
+
+  alias ability? privilege?
+  alias ability privilege
+  alias grant_ability! grant_privilege!
+  alias recalc_ability recalc_privilege
+  alias recalc_abilities recalc_privileges
 
   # This check makes sure that every user gets the
   # 'everyone' permission upon creation. We do not want
