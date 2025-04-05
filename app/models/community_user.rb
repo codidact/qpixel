@@ -164,10 +164,16 @@ class CommunityUser < ApplicationRecord
     is_moderator || user&.is_global_moderator || false
   end
 
+  # Checks if the community user is a moderator or has higher access (global or on the current community)
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin?
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
-            elsif moderator? || admin?
+            elsif at_least_moderator?
               4
             elsif privilege?('flag_close') || privilege?('edit_posts')
               3
