@@ -556,9 +556,10 @@ class PostsController < ApplicationController
   end
 
   def unlock
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found(errors: ['no_privilege']) unless current_user&.privilege? 'flag_curate'
     return not_found(errors: ['not_locked']) unless @post.locked?
-    if @post.locked_by.is_moderator && !current_user.is_moderator
+
+    if @post.locked_by.is_moderator && !current_user&.at_least_moderator?
       return not_found(errors: ['locked_by_mod'])
     end
 
