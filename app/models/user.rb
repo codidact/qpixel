@@ -206,9 +206,13 @@ class User < ApplicationRecord
     is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
   end
 
+  # Checks if the user has an ability on a given community
+  # @param community_id [Integer] community id to check for
+  # @param ability_internal_id [String] internal ability id
+  # @return [Boolean] check result
   def has_ability_on(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
-    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
+    if cu&.at_least_moderator? || cu&.privilege?('mod')
       true
     elsif cu.nil?
       false
