@@ -438,7 +438,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.deleted_by.is_moderator && !current_user&.at_least_moderator?
+    if @post.deleted_by.at_least_moderator? && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
       redirect_to post_path(@post)
       return
@@ -559,7 +559,7 @@ class PostsController < ApplicationController
     return not_found(errors: ['no_privilege']) unless current_user&.privilege? 'flag_curate'
     return not_found(errors: ['not_locked']) unless @post.locked?
 
-    if @post.locked_by.is_moderator && !current_user&.at_least_moderator?
+    if @post.locked_by.at_least_moderator? && !current_user&.at_least_moderator?
       return not_found(errors: ['locked_by_mod'])
     end
 
