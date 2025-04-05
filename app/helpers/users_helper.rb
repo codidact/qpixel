@@ -31,7 +31,7 @@ module UsersHelper
   # @return [Boolean]
   def can_change_category(user, target)
     user.privilege?('flag_curate') &&
-      (user.is_privileged || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
+      (user.at_least_moderator? || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
   end
 
   ##

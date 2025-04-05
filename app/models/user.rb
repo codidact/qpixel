@@ -175,8 +175,8 @@ class User < ApplicationRecord
   # Checks if the user is either a moderator or an admin (global or on the current community).
   # It's the inverse of the is_standard check
   # @return [Boolean] check result
-  def is_privileged
-    !is_standard
+  def at_least_moderator?
+    is_moderator || is_admin
   end
 
   # Used by network profile: does this user have a profile on that other comm?

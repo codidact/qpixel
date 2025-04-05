@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_moderator
-    if !user_signed_in? || !current_user.is_privileged
+    if !user_signed_in? || !current_user.at_least_moderator?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found

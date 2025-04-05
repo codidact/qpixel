@@ -172,7 +172,7 @@ class CommentsController < ApplicationController
 
   def thread_followers
     return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user&.is_privileged
+    return not_found unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -302,7 +302,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user&.is_privileged || current_user == @comment.user
+    unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
     end
   end

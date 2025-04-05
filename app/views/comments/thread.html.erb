@@ -238,7 +238,7 @@
     <% end %>
   </div>
 
-  <% if current_user&.is_privileged %>
+  <% if current_user&.at_least_moderator? %>
     <div class="modal is-with-backdrop is-small" id="js-followers-<%= @comment_thread.id %>">
       <div class="modal--container">
         <div class="modal--header">
