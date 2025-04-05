@@ -118,7 +118,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_locked(post)
-    return if current_user.is_moderator
+    return if current_user.at_least_moderator?
 
     if post.locked?
       respond_to do |format|
