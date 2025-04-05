@@ -364,7 +364,7 @@ class Post < ApplicationRecord
     return unless sc.include? 'tags_cache'
 
     if (sc['tags_cache'][0] || []) & mod_tags != (sc['tags_cache'][1] || []) & mod_tags
-      errors.add(:base, "You don't have permission to change moderator-only tags.")
+      errors.add(:mod_tags, "You don't have permission to change moderator-only tags.")
     end
   end
 
