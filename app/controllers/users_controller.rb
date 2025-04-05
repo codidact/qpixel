@@ -662,7 +662,10 @@ class UsersController < ApplicationController
   end
 
   def check_deleted
-    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.at_least_moderator? || params[:deleted_screen].present?)
+    deleted = @user.deleted? || @user.community_user.deleted?
+    go_to_not_found = !helpers.at_least_moderator? || params[:deleted_screen].present?
+
+    if deleted && go_to_not_found
       render :deleted_user, layout: 'without_sidebar', status: 404
     end
   end
