@@ -168,12 +168,11 @@ class User < ApplicationRecord
 
   # Checks if the user is neither a moderator not an admin (global or on the current community)
   # @return [Boolean] check result
-  def is_standard
+  def standard?
     !is_moderator && !is_admin
   end
 
   # Checks if the user is either a moderator or an admin (global or on the current community).
-  # It's the inverse of the is_standard check
   # @return [Boolean] check result
   def at_least_moderator?
     is_moderator || is_admin
