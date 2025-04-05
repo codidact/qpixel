@@ -673,7 +673,7 @@ class PostsController < ApplicationController
       redirect_back fallback_location: root_path
     end
 
-    if !@post_type.is_public_editable && !(@post.user == current_user || current_user.is_moderator)
+    if !@post_type.is_public_editable && !(@post.user == current_user || current_user&.at_least_moderator?)
       flash[:danger] = helpers.i18ns('posts.not_public_editable')
       redirect_back fallback_location: root_path
     end
