@@ -71,14 +71,12 @@
     <% end %>
   <% end %>
 
-  <% if moderator? || admin? %>
+  <% if at_least_moderator? %>
     <div class="widget has-margin-4">
       <h4 class="widget--header has-margin-0">Moderator Tools</h4>
       <div class="widget--body">
         <ul>
-          <% if moderator? %>
-            <li><%= link_to 'Moderator Tools', moderator_path %></li>
-          <% end %>
+          <li><%= link_to 'Moderator Tools', moderator_path %></li>
           <% if admin? %>
             <li><%= link_to 'Admin Tools', admin_path %></li>
           <% end %>

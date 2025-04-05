@@ -2,7 +2,7 @@
 
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
-<% if moderator? && deleted_user?(@user) %>
+<% if at_least_moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
@@ -290,7 +290,7 @@
       <tr>
         <td colspan="2">Count</td>
         <td class="overflow-ellipsis" title="<%= @user.flags.count %>">
-          <% if current_user&.id == @user.id || moderator? %>
+          <% if current_user&.id == @user.id || at_least_moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
                         'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>

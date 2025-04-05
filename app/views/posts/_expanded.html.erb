@@ -501,7 +501,7 @@
             <button class="toc--header" data-toggle="#toc-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
             <% sorted_answers = post.children.sort_by { |answer| answer.score }.reverse! %>
             <% sorted_answers.each do |answer| %>
-              <% next if answer.deleted? && !moderator? %>
+              <% next if answer.deleted? && !at_least_moderator? %>
               <%= render 'posts/toc_entry', answer: answer %>
             <% end %>
           </div>
@@ -583,7 +583,7 @@
   </div>
 </div>
 
-<% if moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
+<% if at_least_moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
 

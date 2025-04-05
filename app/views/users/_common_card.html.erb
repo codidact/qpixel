@@ -9,7 +9,7 @@
 <% ckb ||= false %>
 <% small ||= false %>
 
-<% if user.nil? || (deleted_user?(user) && !moderator?) %>
+<% if user.nil? || (deleted_user?(user) && !at_least_moderator?) %>
   <div class="user-card deleted-content">
     <div class="user-card--avatar">
       <span class="avatar--deleted"><i class="fas fa-user-times"></i></span>

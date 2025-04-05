@@ -3,9 +3,9 @@ module ApplicationHelper
   include Warden::Test::Helpers
 
   ##
-  # Is the current user a moderator on the current community?
+  # Is the current user a moderator or admin on the current community?
   # @return [Boolean]
-  def moderator?
+  def at_least_moderator?
     user_signed_in? && current_user.at_least_moderator?
   end
 
@@ -20,7 +20,7 @@ module ApplicationHelper
   # Is the current user a standard user (not a moderator or an admin)?
   # @return [Boolean] check result
   def standard?
-    !moderator? && !admin?
+    !at_least_moderator?
   end
 
   ##

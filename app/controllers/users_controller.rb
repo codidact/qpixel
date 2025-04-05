@@ -654,7 +654,7 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if helpers.moderator?
+    if helpers.at_least_moderator?
       User.all
     else
       User.active
@@ -662,7 +662,7 @@ class UsersController < ApplicationController
   end
 
   def check_deleted
-    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
+    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.at_least_moderator? || params[:deleted_screen].present?)
       render :deleted_user, layout: 'without_sidebar', status: 404
     end
   end
