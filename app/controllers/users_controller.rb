@@ -324,7 +324,7 @@ class UsersController < ApplicationController
   end
 
   def soft_delete
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
              status: :unprocessable_entity
       return
