@@ -297,7 +297,7 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
              status: :unprocessable_entity
       return
