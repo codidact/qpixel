@@ -1,7 +1,7 @@
-$(() => {
-  $(document).on('keydown', ev => {
-    if (ev.keyCode === 27) { // Esc
-      $('.modal').removeClass('is-active');
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('keypress', (ev) => {
+    if (ev.code === 'Escape') {
+      document.querySelectorAll('.modal').forEach((el) => el.classList.remove('is-active'));
     }
   });
 });

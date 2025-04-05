@@ -381,5 +381,23 @@ class User < ApplicationRecord
     save
   end
 
+  # Gets user's post counts by post type
+  # @return [Hash{Integer => Integer}]
+  def posts_by_post_type
+    posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+  end
+
+  # Gets user's vote counts by vote type
+  # @return [Hash{Integer => Integer}]
+  def votes_by_type
+    votes.group(:vote_type).count(:vote_type)
+  end
+
+  # Gets user's vote counts by post type
+  # @return [Hash{Integer => Integer}]
+  def votes_by_post_type
+    votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+  end
+
   # rubocop:enable Naming/PredicateName
 end
