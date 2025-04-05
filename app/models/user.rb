@@ -93,7 +93,7 @@ class User < ApplicationRecord
   # @param post_type [PostType] type of the post (some are freely editable)
   # @return [Boolean]
   def can_update(post, post_type)
-    privilege?('edit_posts') || is_moderator || self == post.user || \
+    privilege?('edit_posts') || at_least_moderator? || self == post.user || \
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
