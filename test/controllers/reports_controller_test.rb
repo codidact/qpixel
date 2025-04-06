@@ -26,4 +26,12 @@ class ReportsControllerTest < ActionController::TestCase
       assert_response 200
     end
   end
+
+  test 'every global route should work for global moderators & admins' do
+    sign_in users(:global_admin)
+    [:users_global, :subs_global, :posts_global].each do |route|
+      get route
+      assert_response 200
+    end
+  end
 end
