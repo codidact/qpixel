@@ -9,3 +9,7 @@ one: {}
 #
 two: {}
 # column: value
+#
+confidential:
+  confidential: true
+  name: For your eyes only
