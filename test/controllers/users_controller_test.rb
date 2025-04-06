@@ -310,6 +310,27 @@ class UsersControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  test 'me should redirect to currently signed in user' do
+    std = users(:standard_user)
+
+    sign_in std
+    get :me, format: 'html'
+    assert_redirected_to user_path(std)
+  end
+
+  test "me should return currently signed in user's data for JSON format" do
+    mod = users(:moderator)
+
+    sign_in mod
+    get :me, format: 'json'
+    assert_response 200
+
+    data = JSON.parse(response.body)
+
+    assert_equal data['id'], mod.id
+    assert_equal data['username'], mod.username
+  end
+
   private
 
   def create_other_user
