@@ -15,7 +15,7 @@ class PostHistory < ApplicationRecord
     tags.where(post_history_tags: { relationship: 'after' })
   end
 
-  # Checks whether a given user is allowed to see post history item deltails
+  # Checks whether a given user is allowed to see post history item details
   # @param user [User] user to check for
   # @return [Boolean] check result
   def allowed_to_see_details?(user)
