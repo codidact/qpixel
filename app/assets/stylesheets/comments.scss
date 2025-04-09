@@ -74,6 +74,10 @@
 
 .post--comments-container {
   margin-bottom: 1rem;
+  .comment-meta {
+      min-width: 100%;
+      box-sizing: content-box;
+  }
 }
 
 .post--comments-thread.is-inline {
