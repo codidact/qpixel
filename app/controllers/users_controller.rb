@@ -389,7 +389,7 @@ class UsersController < ApplicationController
     end
 
     if params[:user][:profile_markdown].present?
-      profile_rendered = helpers.post_markdown(:user, :profile_markdown)
+      profile_rendered = helpers.rendered_post(:user, :profile_markdown)
       profile_params = profile_params.merge(profile: profile_rendered)
     end
 

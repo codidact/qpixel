@@ -1,5 +1,5 @@
 $(() => {
-  $(document).on('click', '.js-tag-set-name', async ev => {
+  $(document).on('click', '.js-tag-set-name', async (ev) => {
     const $tgt = $(ev.target);
     const tagSetId = $tgt.data('set-id');
     const response = await fetch(`/admin/tag-sets/${tagSetId}`, {
@@ -14,11 +14,11 @@ $(() => {
     $tgt.html($form);
   });
 
-  $(document).on('click', '.js-edit-set-name, .js-edit-name-submit', ev => {
+  $(document).on('click', '.js-edit-set-name, .js-edit-name-submit', (ev) => {
     ev.stopPropagation();
   });
 
-  $(document).on('click', '.js-edit-name-submit', async ev => {
+  $(document).on('click', '.js-edit-name-submit', async (ev) => {
     const $tgt = $(ev.target);
     console.log($tgt);
     const tagSetId = $tgt.data('set-id');

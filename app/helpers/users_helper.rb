@@ -113,7 +113,7 @@ module UsersHelper
   def user_link(user, url_opts = {}, **link_opts)
     anchortext = link_opts[:anchortext]
     link_opts_reduced = { dir: 'ltr' }.merge(link_opts).except(:anchortext)
-    if deleted_user?(user) || user.nil?
+    if user.nil? || (deleted_user?(user) && !moderator?)
       link_to 'deleted user', '#', link_opts_reduced
     elsif !anchortext.nil?
       link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
@@ -147,5 +147,21 @@ module UsersHelper
     else
       User.find(user_id)
     end
+  end
+
+  # Extracts posts count for a given post type
+  # @param user_posts [Hash{Integer => Integer}] post counts by post type
+  # @param type [PostType] post type to extract count for
+  # @return [Integer] posts count
+  def posts_for(user_posts, type)
+    user_posts[type.post_type_id] || 0
+  end
+
+  # Extracts votes count for a given post type
+  # @param user_votes [Hash{Integer => Integer}] vote counts by post type
+  # @param type [PostType] post type to extract count for
+  # @return [Integer] votes count
+  def votes_for(user_votes, type)
+    user_votes[type.post_type_id] || 0
   end
 end
