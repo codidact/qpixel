@@ -21,7 +21,9 @@
 <% else %>
   <div class="user-card">
     <div class="user-card--avatar">
+      <%= link_to user_path(user), class: small ? :'user-card--link-small' :'user-card--link' do %>
       <img alt="user card" src="<%= avatar_url(user, 48) %>" height="48" width="48" class="has-float-left" />
+      <% end %>
     </div>
     <div class="user-card--content">
       <% data = {} %>
