@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     ev.preventDefault();
 
     const self = /** @type {HTMLElement} */(ev.target);
+    /** @type {HTMLInputElement} */
     const activeRadio = self.closest('.js-close-box').querySelector("input[type='radio'][name='close-reason']:checked");
 
     if (!activeRadio) {
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    /** @type {HTMLInputElement} */
     const otherPostInput = activeRadio.closest('.widget--body').querySelector('.js-close-other-post');
     const otherPostRequired = activeRadio.dataset.rop === 'true';
     const data = {

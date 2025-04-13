@@ -18,7 +18,7 @@ $(() => {
     const value = data[`${type}_score_threshold`];
 
     const form = editField.clone().val(value ? value.toString() : '').attr('data-name', name).attr('data-type', type);
-    $tgt.addClass('editing').html(form).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
+    $tgt.addClass('editing').html(form.html()).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
   });
 
   $(document).on('click', '.js-privilege-submit', async (evt) => {

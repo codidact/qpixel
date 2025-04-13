@@ -13,7 +13,8 @@ $(() => {
     await QPixel.setPreference(prefName, value, community);
   });
 
-  $('.item-list--item').find('.badge.is-tag').each(async (_i, e) => {
+  // We're not using jQuery .each() because it (& TypeScript) has problems accepting async functions.
+  $('.item-list--item').find('.badge.is-tag').toArray().forEach(async e => {
     const prefValue = await QPixel.preference('favorite_tags', true);
     if (!prefValue) {
       return;

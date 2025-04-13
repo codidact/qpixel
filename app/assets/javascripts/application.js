@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const id = tgt.dataset.flagId;
     const data = {
       result: tgt.dataset.result,
-      message: tgt.parentNode.parentNode.querySelector('.flag-resolve-comment').value
+      message: /** @type {HTMLInputElement} */ (tgt.parentNode.parentNode.querySelector('.flag-resolve-comment')).value
     };
 
     const req = await fetch(`/mod/flags/${id}/resolve`, {
