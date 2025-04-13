@@ -1,0 +1,24 @@
+name: Mirror to Codeberg
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  mirror:
+    name: Mirror
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Mirror
+      uses: yesolutions/mirror-action@master
+      with:
+        REMOTE: 'ssh://git@codeberg.org/codidact/qpixel.git'
+        GIT_SSH_PRIVATE_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+        GIT_SSH_NO_VERIFY_HOST: "true"
