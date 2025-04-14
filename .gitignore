@@ -63,3 +63,8 @@ dump.rdb
 # Ignore IRB files
 .irbrc
 .irb_history
+
+node_modules
+
+# YARD data
+.yardoc

@@ -25,6 +25,7 @@
 
 .badge.is-tag {
   margin: 0.1rem;
+  max-width: 100%;
 }
 
 h1 .badge.is-tag.is-master-tag {
@@ -40,12 +41,25 @@ h1 .badge.is-tag.is-master-tag {
   font-size: 14px;
 }
 
+.post-list--tags {
+  max-width: 100%;
+}
+
 .post-list--title {
   font-size: 19px;
+  width: 100%;
+
+  a {
+    display: inline-block;
+    width: 100%;
+    overflow-wrap: break-word;
+  }
 }
 
 .post-list--content {
   font-size: 14px;
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
 .post--action-dialog {
@@ -81,6 +95,13 @@ h1 .badge.is-tag.is-master-tag {
   padding: 1em;
   border-bottom: 1px solid $muted-graphic;
   margin-bottom: 1em;
+
+  width: 100%;
+  overflow-wrap: break-word;
+
+  * {
+    max-width: 100%;
+  }
 }
 
 .post-field.widget--body {
@@ -116,6 +137,10 @@ h1 .badge.is-tag.is-master-tag {
   align-items: center;
   flex-direction: column-reverse;
 
+  .post--title-text {
+    width: 100%;
+  }
+
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
 
@@ -138,7 +163,8 @@ h1 .badge.is-tag.is-master-tag {
 .post--meta {
   margin: 0.2em 0;
 
-  .post-meta--post, .post-meta--user {
+  .post-meta--post,
+  .post-meta--user {
     padding: 0.5rem;
     border-radius: 5px;
     color: $muted-text;
@@ -193,13 +219,24 @@ h1 .badge.is-tag.is-master-tag {
   font-weight: lighter;
 }
 
+.post--actions {
+  .droppanel {
+    max-width: 20em;
+  }
+}
+
 .post--content {
   flex: 1;
   word-break: break-word;
 
+  * {
+    max-width: 100%;
+  }
+
   @media screen and (min-width: $screen-sm) {
     max-width: calc(100% - 3em);
   }
+
 }
 
 .post--body p {
@@ -215,4 +252,8 @@ pre code.hljs {
 
 .failed-validation {
   border: 2px solid #d21919 !important;
+}
+
+.js-thread-title {
+  overflow-wrap: break-word;
 }

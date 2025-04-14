@@ -294,13 +294,13 @@ $(() => {
 
 
 $(() => {
-  const getSuggestions = async term => {
+  const getSuggestions = async (term) => {
     const resp = await fetch(`https://sefaria.org/api/name/${term}`);
     const data = await resp.json();
     return data.completions;
   };
 
-  const doReplacement = ev => {
+  const doReplacement = (ev) => {
     ev.preventDefault();
 
     const $field = $('.js-post-field');
@@ -310,9 +310,9 @@ $(() => {
     $field.trigger('markdown');
   };
 
-  const createPopup = suggestions => {
+  const createPopup = (suggestions) => {
     const $itemTemplate = $(`<a class="item" href="#"></a>`);
-    return suggestions.map(s => {
+    return suggestions.map((s) => {
       return $itemTemplate.clone().text(s).attr('data-text', s);
     });
   };
@@ -381,7 +381,7 @@ window.addEventListener("load", async () => {
   const fields = parsedData[now];
   container.querySelector('._cal_val').innerHTML = "";
 
-  fields.forEach(field => {
+  fields.forEach((field) => {
     const fieldContainer = document.createElement('div');
     fieldContainer.classList.add('has-font-size-larger', 'h-fw-bold', 'h-m-t-2');
     container.querySelector('._cal_val').appendChild(fieldContainer);

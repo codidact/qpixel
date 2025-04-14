@@ -1,7 +1,7 @@
 $(() => {
   const editField = $('<input type="number" step="0.001" class="form-element js-privilege-edit" />');
 
-  $('.js-privilege-threshold').on('click', async evt => {
+  $('.js-privilege-threshold').on('click', async (evt) => {
     const $tgt = $(evt.target);
 
     if ($tgt.hasClass('editing') || !$tgt.is('td')) {
@@ -21,7 +21,7 @@ $(() => {
     $tgt.addClass('editing').html(form).append(`<button class="button is-filled js-privilege-submit">Update</button>`);
   });
 
-  $(document).on('click', '.js-privilege-submit', async evt => {
+  $(document).on('click', '.js-privilege-submit', async (evt) => {
     const $tgt = $(evt.target);
     const $td = $tgt.parent();
     const $input = $td.find('.js-privilege-edit');
@@ -29,7 +29,7 @@ $(() => {
     const type = $input.data('type');
 
     // incorrect input values will cause rawValue to be NaN
-    const rawValue = parseFloat($input.val())
+    const rawValue = parseFloat($input.val()?.toString())
 
     const value = Number.isNaN(rawValue) ? null : rawValue;
 

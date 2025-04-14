@@ -1,5 +1,7 @@
-require 'coveralls'
-Coveralls.wear!('rails')
+require 'simplecov'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.start 'rails'
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
@@ -7,6 +9,67 @@ require 'rails/test_help'
 
 require 'minitest/ci'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
+
+# cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)
+Minitest.after_run do
+  # IMPORTANT: the order is very specific to prevent FK constraint errors without disabling them
+  models = [
+    WarningTemplate,
+    ModWarning,
+    ThreadFollower,
+    Comment,
+    CommentThread,
+    Reaction,
+    ReactionType,
+    Flag,
+    PinnedLink,
+    PostFlagType,
+    SuggestedEdit,
+    Vote,
+    Post,
+    PostHistory,
+    PostHistoryTag,
+    PostHistoryType,
+    UserAbility,
+    AbilityQueue,
+    Ability,
+    CategoryFilterDefault,
+    Category,
+    CloseReason,
+    PostType,
+    License,
+    TagSynonym,
+    Tag,
+    TagSet,
+    Filter,
+    CommunityUser,
+    UserWebsite,
+    AuditLog,
+    BlockedItem,
+    EmailLog,
+    ErrorLog,
+    Subscription,
+    User,
+    Notification,
+    SiteSetting,
+    Community
+  ]
+
+  models.each do |model|
+    if model == PostType
+      model.unscoped.where.not(answer_type_id: nil).delete_all
+      model.unscoped.where(answer_type_id: nil).delete_all
+    elsif model == Tag
+      model.unscoped.where.not(parent_id: nil).delete_all
+      model.unscoped.where(parent_id: nil).delete_all
+    elsif model == User
+      model.unscoped.where.not(deleted_by_id: nil).delete_all
+      model.unscoped.where(deleted_by_id: nil).delete_all
+    else
+      model.unscoped.all.delete_all
+    end
+  end
+end
 
 Dir.glob(Rails.root.join('test/support/**/*.rb')).sort.each { |f| require f }
 
@@ -81,5 +144,13 @@ class ActionController::TestCase
 
   def load_host
     request.env['HTTP_HOST'] = Community.first.host
+  end
+end
+
+class ActionDispatch::IntegrationTest
+  setup :load_host
+
+  def load_host
+    integration_session.host = Community.first.host
   end
 end

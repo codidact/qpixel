@@ -15,7 +15,7 @@ $(() => {
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   };
 
-  $(document).on('click', '.js-markdown-tool', ev => {
+  $(document).on('click', '.js-markdown-tool', (ev) => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const action = $button.attr('data-action');
@@ -43,14 +43,14 @@ $(() => {
     }
   });
 
-  $('#markdown-link-name, #markdown-link-url').on('keydown', ev => {
+  $('#markdown-link-name, #markdown-link-url').on('keydown', (ev) => {
     if (ev.keyCode === 13) {
       // don't submit post form on enter in link modal
       ev.stopPropagation();
     }
   });
 
-  $('.js-post-field').on('keydown', ev => {
+  $('.js-post-field').on('keydown', (ev) => {
     if (ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
       switch (ev.keyCode) {
         case 66:
@@ -83,7 +83,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.js-markdown-insert-link', ev => {
+  $(document).on('click', '.js-markdown-insert-link', (ev) => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
@@ -107,7 +107,7 @@ $(() => {
     $url.val('');
   });
 
-  $(document).on('click', '[data-modal="#markdown-link-insert"]', ev => {
+  $(document).on('click', '[data-modal="#markdown-link-insert"]', (_ev) => {
     const $field = $('.js-post-field');
     const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd);
     if (selection) {
@@ -116,7 +116,7 @@ $(() => {
     $('#markdown-link-url').focus();
   });
 
-  QPixel.addPrePostValidation(text => {
+  QPixel.addPrePostValidation((text) => {
     // This regex catches Markdown images with no or default alt text.
     const altRegex = /!\[(?:Image_alt_text)?\](?:\(.+(?!\\\))\)|\[.+(?!\\\])\])/gi;
     if (text.match(altRegex)) {

@@ -8,7 +8,7 @@ $(() => {
     'text': $(`<textarea rows="5" cols="100" class="form-element js-setting-edit"></textarea>`)
   };
 
-  $('.js-setting-value').on('click', async evt => {
+  $('.js-setting-value').on('click', async (evt) => {
     const $tgt = $(evt.target);
 
     if ($tgt.hasClass('editing') || !$tgt.is('td')) {
@@ -30,7 +30,7 @@ $(() => {
     $tgt.addClass('editing').html(form).append(`<button class="button is-primary is-filled js-setting-submit">Update</button>`);
   });
 
-  $(document).on('click', '.js-setting-submit', async evt => {
+  $(document).on('click', '.js-setting-submit', async (evt) => {
     const $tgt = $(evt.target);
     const $td = $tgt.parent();
     const $input = $td.find('.js-setting-edit');

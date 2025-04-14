@@ -32,7 +32,12 @@ class CommentsController < ApplicationController
 
     pings = check_for_pings @comment_thread, body
 
-    return if comment_rate_limited
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
+      return
+    end
 
     success = ActiveRecord::Base.transaction do
       @comment_thread.save!
@@ -76,7 +81,12 @@ class CommentsController < ApplicationController
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
 
-    return if comment_rate_limited
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
+      return
+    end
 
     if @comment.save
       apply_pings pings
@@ -319,34 +329,9 @@ class CommentsController < ApplicationController
       next if user.id == @comment.post.user_id
 
       title = @post.parent.nil? ? @post.title : @post.parent.title
-      user.create_notification("You were mentioned in a comment to #{@comment_thread.title} " \
+      user.create_notification("You were mentioned in a comment in the thread '#{@comment_thread.title}' " \
                                "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
-  end
-
-  def comment_rate_limited
-    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
-                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
-                             .where.not(post: Post.where(user_id: current_user.id)).count
-    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
-
-    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
-       && recent_comments >= max_comments_per_day
-      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments. " \
-                          'Come back tomorrow to continue commenting. Comments on own posts and on answers ' \
-                          'to own posts are exempt.'
-
-      if recent_comments.zero? && !current_user.privilege?('unrestricted')
-        comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
-      end
-
-      AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
-                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
-
-      render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
-      return true
-    end
-    false
   end
 end
