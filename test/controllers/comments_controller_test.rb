@@ -37,6 +37,32 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
+  test 'non-moderator users without flag_curate ability should not see deleted threads' do
+    sign_in users(:editor)
+    get :post, params: { post_id: posts(:question_one).id }, format: :json
+    threads = JSON.parse(response.body)
+    assert_equal threads.any? { |t| t['deleted'] }, false
+  end
+
+  test 'moderators and users with flag_curate ability should see deleted threads' do
+    sign_in users(:deleter)
+    get :post, params: { post_id: posts(:question_one).id }, format: :json
+    threads = JSON.parse(response.body)
+    assert_equal threads.any? { |t| t['deleted'] }, true
+
+    sign_in users(:moderator)
+    get :post, params: { post_id: posts(:question_one).id }, format: :json
+    threads = JSON.parse(response.body)
+    assert_equal threads.any? { |t| t['deleted'] }, true
+  end
+
+  test 'users should see deleted threads on their own posts even' do
+    sign_in users(:standard_user)
+    get :post, params: { post_id: posts(:question_one).id }, format: :json
+    threads = JSON.parse(response.body)
+    assert_equal threads.any? { |t| t['deleted'] }, true
+  end
+
   test 'should not create thread on inaccessible post' do
     sign_in users(:editor)
     post :create_thread, params: { post_id: posts(:high_trust).id, title: 'sample thread title',
