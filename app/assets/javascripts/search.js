@@ -2,7 +2,7 @@ $(() => {
   let postTypes;
   const $itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
 
-  $(document).on('keyup', 'input[name="search"]', async ev => {
+  $(document).on('keyup', 'input[name="search"]', async (ev) => {
     if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
       return;
     }
@@ -38,7 +38,7 @@ $(() => {
       postTypes = await resp.json();
     }
 
-    const items = postTypes.filter(pt => pt.name.startsWith(currentWord.substr(10))).map(pt => {
+    const items = postTypes.filter((pt) => pt.name.startsWith(currentWord.substr(10))).map((pt) => {
       return $itemTemplate.clone().text(pt.name).attr('data-post-type-id', pt.id);
     });
     QPixel.Popup.getPopup(items, $tgt[0], callback);

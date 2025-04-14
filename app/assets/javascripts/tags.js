@@ -4,13 +4,13 @@ $(() => {
   const splitWordsMaxLength = (text, max) => {
     const words = text.split(' ');
     const splat = [[]];
-    words.forEach(word => {
-      if (sum(splat[splat.length - 1].map(w => w.length + 1)) > max - word.length) {
+    words.forEach((word) => {
+      if (sum(splat[splat.length - 1].map((w) => w.length + 1)) > max - word.length) {
         splat.push([]);
       }
       splat[splat.length - 1].push(word);
     });
-    return splat.map(s => s.join(' '));
+    return splat.map((s) => s.join(' '));
   };
 
   const template = (tag) => {
@@ -59,7 +59,7 @@ $(() => {
             }
           }
           return {
-            results: data.map(t => ({
+            results: data.map((t) => ({
               id: useIds ? t.id : t.name,
               text: t.name.replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;'),
               synonyms: processSynonyms($this, t.tag_synonyms),
@@ -80,7 +80,7 @@ $(() => {
     let displayedSynonyms;
     if (synonyms.length > 3) {
       const searchValue = $search.data('select2').selection.$search.val().toLowerCase();
-      displayedSynonyms = synonyms.filter(ts => ts.name.includes(searchValue)).slice(0, 3);
+      displayedSynonyms = synonyms.filter((ts) => ts.name.includes(searchValue)).slice(0, 3);
     } else {
       displayedSynonyms = synonyms;
     }
@@ -91,7 +91,7 @@ $(() => {
     return synonymsString;
   }
 
-  $('#add-tag-synonym').on('click', (ev) => {
+  $('#add-tag-synonym').on('click', (_ev) => {
     const $wrapper = $('#tag-synonyms-wrapper');
     const lastId = $wrapper.children('.tag-synonym').last().attr('data-id');
     const newId = parseInt(lastId, 10) + 1;

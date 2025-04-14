@@ -1,5 +1,5 @@
 $(() => {
-  $('.js-enable-subscription').on('change', async evt => {
+  $('.js-enable-subscription').on('change', async (evt) => {
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
     const subscriptionId = $sub.data('sub-id');
@@ -17,7 +17,7 @@ $(() => {
     }
   });
 
-  $('.js-remove-subscription').on('click', async evt => {
+  $('.js-remove-subscription').on('click', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
