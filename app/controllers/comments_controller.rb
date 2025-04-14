@@ -258,7 +258,7 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if helpers.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
+    @comment_threads = if current_user&.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
