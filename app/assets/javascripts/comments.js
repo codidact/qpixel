@@ -132,11 +132,7 @@ $(() => {
     const commentId = $comment.attr('data-id');
     const isDelete = !$comment.hasClass('deleted-content');
 
-    const resp = await fetch(`/comments/${commentId}/delete`, {
-      method: isDelete ? 'DELETE' : 'PATCH',
-      credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken() }
-    });
+    const resp = await QPixel.jsonPost(`/comments/${commentId}/delete`, {}, { method: isDelete ? 'DELETE' : 'PATCH' });
     const data = await resp.json();
 
     if (data.status === 'success') {
@@ -178,12 +174,7 @@ $(() => {
     const action = $tgt.data("action")
     const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
 
-    const resp = await fetch(`/comments/thread/${threadID}/${route}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: action })
-    });
+    const resp = await QPixel.jsonPost(`/comments/thread/${threadID}/${route}`, { type: action });
     const data = await resp.json();
 
     if (data.status === 'success') {
