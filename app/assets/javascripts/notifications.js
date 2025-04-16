@@ -73,11 +73,7 @@ $(() => {
   $('.js-read-all-notifs').on('click', async (ev) => {
     ev.preventDefault();
 
-    await fetch(`/notifications/read_all`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
-    });
+    await QPixel.jsonPost('/notifications/read_all', {});
 
     $('.inbox-count').remove();
 
@@ -89,11 +85,7 @@ $(() => {
   $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async (evt) => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
-    const resp = await fetch(`/notifications/${id}/read`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
-    });
+    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {});
     const data = await resp.json();
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
     changeInboxCount(-1);
@@ -104,11 +96,7 @@ $(() => {
 
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const id = $tgt.attr('data-notif-id');
-    const resp = await fetch(`/notifications/${id}/read`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
-    });
+    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {});
     const data = await resp.json();
     if (data.status !== 'success') {
       console.error('Failed to toggle notification read state. Wat?');
