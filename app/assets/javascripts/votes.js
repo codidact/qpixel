@@ -13,12 +13,7 @@ $(() => {
     if (voted) {
       const voteId = $tgt.attr('data-vote-id');
 
-      const resp = await fetch(`/votes/${voteId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'X-CSRF-Token': QPixel.csrfToken() }
-      });
-
+      const resp = await QPixel.jsonPost(`/votes/${voteId}`, {}, { method: 'DELETE' });
       const data = await resp.json();
 
       if (data.status === 'OK') {
@@ -35,13 +30,10 @@ $(() => {
       }
     }
     else {
-      const resp = await fetch('/votes/new', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-        body: JSON.stringify({post_id: $post.data('post-id'), vote_type: voteType})
+      const resp = await QPixel.jsonPost('/votes/new', {
+        post_id: $post.data('post-id'),
+        vote_type: voteType
       });
-
       const data = await resp.json();
 
       if (data.status === 'modified' || data.status === 'OK') {
