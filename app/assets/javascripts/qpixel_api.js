@@ -493,5 +493,26 @@ window.QPixel = {
       splatIdx += 1;
     } while (searchIdx < posIdx);
     return [currentSequence, posInSeq];
+  },
+
+  /**
+   * Send a POST request with JSON data, pre-authorized with QPixel credentials for the signed in user.
+   * @param {string} uri The URI to which to send the request. 
+   * @param {any} data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
+   * @param {RequestInit?} options An optional RequestInit object. Options specified here will override the defaults
+   *  provided by this method. 
+   * @returns {Promise<Response>} The Response promise returned from fetch().
+   */
+  jsonPost: async (uri, data, options) => {
+    const defaultOptions = {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    };
+    return fetch(uri, Object.assign(defaultOptions, options));
   }
 };
