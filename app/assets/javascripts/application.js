@@ -37,36 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     dialog.classList.toggle('is-active');
   });
 
-  QPixel.DOM.addSelectorListener('click', '.flag-resolve', async (ev) => {
-    ev.preventDefault();
-    const tgt = /** @type {HTMLElement} */(ev.target);
-    const id = tgt.dataset.flagId;
-    const data = {
-      result: tgt.dataset.result,
-      message: /** @type {HTMLInputElement} */ (tgt.parentNode.parentNode.querySelector('.flag-resolve-comment')).value
-    };
-
-    const req = await fetch(`/mod/flags/${id}/resolve`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken() }
-    });
-    if (req.status === 200) {
-      const res = await req.json();
-      if (res.status === 'success') {
-        const flagContainer = /** @type {HTMLElement} */(tgt.parentNode.parentNode.parentNode);
-        QPixel.DOM.fadeOut(flagContainer, 200);
-      }
-      else {
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${res.message}`);
-      }
-    }
-    else {
-      QPixel.createNotification('danger', `<strong>Failed:</strong> Unexpected status (${req.status})`);
-    }
-  });
-
   if (document.cookie.indexOf('dismiss_fvn') === -1) {
     QPixel.DOM.addSelectorListener('click', '#fvn-dismiss', (_ev) => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
