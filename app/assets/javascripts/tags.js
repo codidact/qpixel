@@ -65,8 +65,11 @@ $(() => {
     const useIds = $tgt.attr('data-use-ids') === 'true';
     $tgt.select2({
       tags: $tgt.attr('data-create') !== 'false',
+      /**
+       * @param {Select2.IdTextPair[]} data
+       * @param {Select2.IdTextPair & { desc?: string }} tag 
+       */
       insertTag: function (data, tag) {
-        // @ts-expect-error 'desc' is our custom property (see ProcessedTag) but it's incompatible with typings
         tag.desc = "(Create new tag)"
         // Insert the tag at the end of the results
         data.push(tag);
