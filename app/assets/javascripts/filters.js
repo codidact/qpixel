@@ -71,13 +71,19 @@ $(() => {
       $select.children().filter((_, /** @type{HTMLOptionElement} */ option) => {
         return option.value && !filters[option.value];
       }).detach();
-      $select.select2({
-        data: Object.keys(filters),
-        tags: true,
 
+      $select.select2({
+        data: Object.keys(filters).map((filterName) => {
+          return {
+            id: filterName,
+            text: filterName
+          }
+        }),
+        tags: true,
         templateResult: template,
         templateSelection: template
       });
+
       $select.on('select2:select', /** @type {(event: Select2.Event) => void} */ (async (evt) => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
