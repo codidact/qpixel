@@ -19,8 +19,6 @@ $(() => {
      * @returns {string | JQuery}
      */
     templateResult: (option) => {
-      console.log({ option })
-
       if (option.element) {
         const title = $(option.element).attr('data-title');
         const description = !!title ? title :
