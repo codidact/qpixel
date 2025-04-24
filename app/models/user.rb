@@ -173,7 +173,7 @@ class User < ApplicationRecord
   # Is the user either a global moderator or a moderator on the current community?
   # @return [Boolean] check result
   def moderator?
-    global_moderator? || community_user&.is_moderator || false
+    global_moderator? || community_user&.moderator? || false
   end
 
   # Is the user at least a moderator, meaning the user is either:
