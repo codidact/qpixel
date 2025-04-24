@@ -193,7 +193,7 @@ class User < ApplicationRecord
   # Checks if the user is a global moderator or a global admin
   # @return [Boolean] check result
   def at_least_global_moderator?
-    is_global_moderator || is_global_admin || false
+    global_moderator? || global_admin? || false
   end
 
   # Used by network profile: does this user have a profile on that other comm?
