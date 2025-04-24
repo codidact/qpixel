@@ -151,16 +151,28 @@ class User < ApplicationRecord
     end
   end
 
+  # Checks if the user is a global admin (ensures consistent return type & naming scheme)
+  # @return [Boolean] check result
+  def global_admin?
+    is_global_admin || false
+  end
+
+  # Checks if the user is a global moderator (ensures consistent return type & naming scheme)
+  # @return [Boolean] check result
+  def global_moderator?
+    is_global_moderator || false
+  end
+
   # Checks if the user is either a global admin or an admin on the current community
   # @return [Boolean] check result
   def admin?
-    is_global_admin || community_user&.is_admin || false
+    global_admin? || community_user&.is_admin || false
   end
 
   # Checks if the user is either a global moderator or a moderator on the current community
   # @return [Boolean] check result
   def moderator?
-    is_global_moderator || community_user&.is_moderator || false
+    global_moderator? || community_user&.is_moderator || false
   end
 
   # Checks if the user is at least a moderator, meaning the user is either:
