@@ -158,13 +158,13 @@ class CommunityUser < ApplicationRecord
   # Checks if the community user is an admin (global or on the current community)
   # @return [Boolean] check result
   def admin?
-    is_admin || user&.is_global_admin || false
+    is_admin || user&.global_admin? || false
   end
 
   # Checks if the community user is a moderator (global or on the current community)
   # @return [Boolean] check result
   def moderator?
-    is_moderator || user&.is_global_moderator || false
+    is_moderator || user&.global_moderator? || false
   end
 
   # Checks if the community user is a moderator or has higher access (global or on the current community)
