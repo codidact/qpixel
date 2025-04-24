@@ -167,7 +167,7 @@ class User < ApplicationRecord
   # Is the user either a global admin or an admin on the current community?
   # @return [Boolean] check result
   def admin?
-    global_admin? || community_user&.is_admin || false
+    global_admin? || community_user&.admin? || false
   end
 
   # Is the user either a global moderator or a moderator on the current community?
