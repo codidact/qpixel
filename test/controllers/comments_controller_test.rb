@@ -56,7 +56,7 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal threads.any? { |t| t['deleted'] }, true
   end
 
-  test 'users should see deleted threads on their own posts even' do
+  test 'users should see deleted threads on their own posts even if those threads are deleted' do
     sign_in users(:standard_user)
     get :post, params: { post_id: posts(:question_one).id }, format: :json
     threads = JSON.parse(response.body)

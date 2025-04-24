@@ -139,7 +139,7 @@ module UsersHelper
   ##
   # Returns a user corresponding to the ID provided, with the caveat that if +user_id+ is 'me' and there is a user
   # signed in, the signed in user will be returned. Use for /users/me links.
-  # @param [String] user_id The user ID to find, from +params+
+  # @param user_id [String] id of the user to find, from +params+
   # @return [User] The User object
   def user_with_me(user_id)
     if user_id == 'me' && user_signed_in?
