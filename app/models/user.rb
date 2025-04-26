@@ -52,7 +52,7 @@ class User < ApplicationRecord
   end
 
   def self.search(term)
-    where('username LIKE ?', "#{sanitize_sql_like(term)}%")
+    where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 
   def inspect

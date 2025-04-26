@@ -1,6 +1,22 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  test 'search should correctly narrow down users by username' do
+    users = User.search('deleted')
+
+    users.each do |u|
+      assert_equal true, u.username.include?('deleted')
+    end
+  end
+
+  test 'search should match any substring in usernames' do
+    users = User.search('oderat')
+
+    users.each do |u|
+      assert_equal true, u.username.include?('oderat')
+    end
+  end
+
   test 'users should be destructible in a single call' do
     assert_nothing_raised do
       users(:standard_user).destroy!
