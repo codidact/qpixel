@@ -39,7 +39,7 @@ all.each do |q|
     cu.recalc_abilities
 
     # Grant mod ability if mod status is given
-    if (cu.is_moderator || cu.is_admin || u.is_global_moderator || u.is_global_admin) && !cu.ability?('mod')
+    if cu.at_least_moderator? && !cu.ability?('mod')
       cu.grant_ability!('mod')
     end
 

@@ -99,9 +99,9 @@ module CommentsHelper
 
   ##
   # Is the specified user comment rate limited for the specified post?
-  # @param [User] user The user to check.
-  # @param [Post] post The post on which the user proposes to comment.
-  # @param [Boolean] create_audit_log Whether to create an AuditLog if the user is rate limited.
+  # @param user [User] The user to check.
+  # @param post [Post] The post on which the user proposes to comment.
+  # @param create_audit_log [Boolean] Whether to create an AuditLog if the user is rate limited.
   # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)

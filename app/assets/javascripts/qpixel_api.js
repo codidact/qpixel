@@ -21,6 +21,7 @@ let popped_modals_ct = 0;
  * @typedef {{
  *  id: number,
  *  username: string,
+ *  is_standard: boolean,
  *  is_moderator: boolean,
  *  is_admin: boolean,
  *  is_global_moderator: boolean,

@@ -51,9 +51,17 @@ class UsersController < ApplicationController
         redirect_to user_path(@user)
       end
       format.json do
-        data = [:id, :username, :is_moderator, :is_admin, :is_global_moderator, :is_global_admin, :trust_level,
-                :se_acct_id].to_h { |a| [a, @user.send(a)] }
-        render json: data
+        data = [:id, :username, :trust_level, :se_acct_id].to_h { |a| [a, @user.send(a)] }
+
+        data_with_ac = data.merge({
+                                    is_standard: @user.standard?,
+                                    is_admin: @user.admin?,
+                                    is_global_admin: @user.global_admin?,
+                                    is_moderator: @user.at_least_moderator?,
+                                    is_global_moderator: @user.at_least_global_moderator?
+                                  })
+
+        render json: data_with_ac
       end
     end
   end
@@ -297,7 +305,7 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
              status: :unprocessable_entity
       return
@@ -324,7 +332,7 @@ class UsersController < ApplicationController
   end
 
   def soft_delete
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
              status: :unprocessable_entity
       return
@@ -654,7 +662,7 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if helpers.moderator?
+    if current_user&.at_least_moderator?
       User.all
     else
       User.active
@@ -662,7 +670,10 @@ class UsersController < ApplicationController
   end
 
   def check_deleted
-    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
+    deleted = @user.deleted? || @user.community_user.deleted?
+    go_to_not_found = !current_user&.at_least_moderator? || params[:deleted_screen].present?
+
+    if deleted && go_to_not_found
       render :deleted_user, layout: 'without_sidebar', status: 404
     end
   end

@@ -68,6 +68,18 @@ class FlagsControllerTest < ActionController::TestCase
     assert_response(404)
   end
 
+  test 'should not allow non-moderator users to resolve flags on themselves' do
+    sign_in users(:deleter)
+    post :resolve, params: { id: flags(:on_deleter).id }
+    assert_response(404)
+  end
+
+  test 'should not allow non-moderator users to resolve confidential flags' do
+    sign_in users(:deleter)
+    post :resolve, params: { id: flags(:confidential_on_deleter).id }
+    assert_response(404)
+  end
+
   test 'should get handled flags list' do
     sign_in users(:moderator)
     get :handled
@@ -84,5 +96,21 @@ class FlagsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     get :handled
     assert_response 404
+  end
+
+  test 'non-moderator users should only see their flag history' do
+    mod_user = users(:moderator)
+    std_user = users(:standard_user)
+
+    sign_in std_user
+    get :history, params: { id: mod_user.id }
+    assert_response 404
+
+    get :history, params: { id: std_user.id }
+    assert_response 200
+
+    sign_in mod_user
+    get :history, params: { id: std_user.id }
+    assert_response 200
   end
 end

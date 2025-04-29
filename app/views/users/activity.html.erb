@@ -1,6 +1,6 @@
 <%= render 'tabs', user: @user %>
 
-<% if moderator? && deleted_user?(@user) %>
+<% if at_least_moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 

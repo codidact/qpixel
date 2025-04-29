@@ -31,7 +31,7 @@ module UsersHelper
   # @return [Boolean]
   def can_change_category(user, target)
     user.privilege?('flag_curate') &&
-      (user.is_moderator || user.is_admin || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
+      (user.at_least_moderator? || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
   end
 
   ##
@@ -113,7 +113,7 @@ module UsersHelper
   def user_link(user, url_opts = {}, **link_opts)
     anchortext = link_opts[:anchortext]
     link_opts_reduced = { dir: 'ltr' }.merge(link_opts).except(:anchortext)
-    if user.nil? || (deleted_user?(user) && !moderator?)
+    if user.nil? || (deleted_user?(user) && standard?)
       link_to 'deleted user', '#', link_opts_reduced
     elsif !anchortext.nil?
       link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
@@ -139,7 +139,7 @@ module UsersHelper
   ##
   # Returns a user corresponding to the ID provided, with the caveat that if +user_id+ is 'me' and there is a user
   # signed in, the signed in user will be returned. Use for /users/me links.
-  # @param [String] user_id The user ID to find, from +params+
+  # @param user_id [String] id of the user to find, from +params+
   # @return [User] The User object
   def user_with_me(user_id)
     if user_id == 'me' && user_signed_in?

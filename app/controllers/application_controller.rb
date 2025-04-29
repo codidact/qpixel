@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_moderator
-    if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
+    if !user_signed_in? || !current_user.at_least_moderator?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_admin
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_moderator
-    if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+    if !user_signed_in? || !current_user.at_least_global_moderator?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -118,7 +118,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_locked(post)
-    return if current_user.is_moderator
+    return if current_user.at_least_moderator?
 
     if post.locked?
       respond_to do |format|
@@ -219,13 +219,13 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && current_user.is_moderator
+    if user_signed_in? && current_user.at_least_moderator?
       @open_flags = Flag.unhandled.count
     end
 
     @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
-    if current_user&.is_admin
+    if current_user&.admin?
       Rack::MiniProfiler.authorize_request
     end
   end

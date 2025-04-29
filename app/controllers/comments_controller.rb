@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
 
   def create_thread
     @post = Post.find(params[:post_id])
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.standard?
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -68,7 +68,7 @@ class CommentsController < ApplicationController
   def create
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.standard?
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -172,7 +172,7 @@ class CommentsController < ApplicationController
 
   def thread_followers
     return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user.is_moderator || current_user.is_admin
+    return not_found unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -187,7 +187,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_rename
-    if @comment_thread.read_only? && !current_user.is_moderator
+    if @comment_thread.read_only? && !current_user.at_least_moderator?
       flash[:danger] = 'This thread has been locked.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -240,7 +240,7 @@ class CommentsController < ApplicationController
     when 'delete'
       return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
 
-      if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
+      if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
         render json: { status: 'error',
                        message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
         return
@@ -258,7 +258,7 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if helpers.moderator? || current_user&.has_post_privilege?('flag_curate', @post)
+    @comment_threads = if current_user&.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
@@ -302,7 +302,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
+    unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
     end
   end
