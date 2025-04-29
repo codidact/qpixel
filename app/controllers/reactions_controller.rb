@@ -10,7 +10,7 @@ class ReactionsController < ApplicationController
     comment = nil
 
     if !comment_text.blank?
-      if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+      if @post.comments_disabled && !current_user.at_least_moderator?
         render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
         return
       end

@@ -51,7 +51,7 @@ $(() => {
       <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
-          <% if current_user.is_moderator %>
+          <% if current_user.at_least_moderator? %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, 
                 class: 'header--item',
                 title: 'Open moderator dashboard' do %>
@@ -213,7 +213,7 @@ $(() => {
     <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
 
     <% if user_signed_in? %>
-      <% if current_user.is_admin || current_user.is_moderator %>
+      <% if current_user.at_least_moderator? %>
         <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
           Mod
           <% if @open_flags > 0 %>

@@ -64,8 +64,11 @@ class CommunityUser < ApplicationRecord
     end
   end
 
+  # Checks if the community user has a given ability
+  # @param internal_id [String] The +internal_id+ of the ability to check
+  # @return [Boolean] check result
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    if internal_id != 'mod' && !ignore_mod && user.is_moderator
+    if internal_id != 'mod' && !ignore_mod && user.at_least_moderator?
       return true # includes: privilege? 'mod'
     end
 
@@ -152,10 +155,28 @@ class CommunityUser < ApplicationRecord
     attributes['trust_level'] || recalc_trust_level
   end
 
+  # Checks if the community user is an admin (global or on the current community)
+  # @return [Boolean] check result
+  def admin?
+    is_admin || user&.global_admin? || false
+  end
+
+  # Checks if the community user is a moderator (global or on the current community)
+  # @return [Boolean] check result
+  def moderator?
+    is_moderator || user&.global_moderator? || false
+  end
+
+  # Checks if the community user is a moderator or has higher access (global or on the current community)
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin?
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
-            elsif is_moderator || user.is_global_moderator || is_admin || user.is_global_admin
+            elsif at_least_moderator?
               4
             elsif privilege?('flag_close') || privilege?('edit_posts')
               3

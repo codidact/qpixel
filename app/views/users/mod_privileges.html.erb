@@ -57,7 +57,7 @@
     <a href="<%= abilities_recalc_url(for: @user.id) %>" class="button is-filled">Recalc Abilities</a>
   </div>
 </div>
-<% if current_user.is_admin %>
+<% if current_user.admin? %>
   <div class="widget">
     <div class="widget--header">
       Roles
@@ -75,7 +75,7 @@
             and may impose restrictions on user accounts.</p>
         </div>
         <div class="grid--cell">
-          <% if @user.is_moderator %>
+          <% if @user.at_least_moderator? %>
             <button class="button is-filled js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">revoke</button>
           <% else %>
             <button class="button is-outlined js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">grant</button>

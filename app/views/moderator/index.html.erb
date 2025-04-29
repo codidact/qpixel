@@ -1,6 +1,6 @@
 <% content_for :title, "Moderator Dashboard" %>
 
-<% if current_user.is_admin %>
+<% if current_user.admin? %>
   <%= link_to admin_path, class: "has-font-size-small" do %>
     Switch to Admin Tools
   <% end %>

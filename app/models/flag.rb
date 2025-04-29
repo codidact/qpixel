@@ -12,4 +12,10 @@ class Flag < ApplicationRecord
 
   scope :confidential, -> { where(post_flag_type: PostFlagType.confidential).or(where(post_flag_type: nil)) }
   scope :not_confidential, -> { where(post_flag_type: PostFlagType.not_confidential) }
+
+  # Checks if the flag is confidential as per its type
+  # @return [Boolean] check result
+  def confidential?
+    post_flag_type&.confidential || false
+  end
 end
