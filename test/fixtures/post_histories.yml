@@ -1,0 +1,16 @@
+question_one_revision:
+  post_history_type: revision
+  user: editor
+  post: question_one
+  before_title: Q1 - This is test question number one
+  after_title: Revised title for question one
+  comment: A simple revision made by an editor user
+  community: sample
+
+question_one_hidden_revision:
+  post_history_type: revision
+  user: admin
+  post: question_one
+  comment: 'A hidden revision made by an admin user'
+  community: sample
+  hidden: true

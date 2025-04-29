@@ -58,6 +58,6 @@ class CommentsHelperTest < ActionView::TestCase
   test 'comment_rate_limited allows new user to comment on own post' do
     rate_limited, limit_message = comment_rate_limited? users(:basic_user), posts(:new_user_question)
     assert_equal false, rate_limited
-    assert_equal nil, limit_message
+    assert_nil limit_message
   end
 end
