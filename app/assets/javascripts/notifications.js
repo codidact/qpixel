@@ -50,6 +50,7 @@ $(() => {
         credentials: 'include',
         headers: { 'Accept': 'application/json' }
       });
+
       const data = await resp.json();
       const $inboxContainer = $inbox.find(".inbox--container");
       $inboxContainer.html('');
@@ -73,7 +74,9 @@ $(() => {
   $('.js-read-all-notifs').on('click', async (ev) => {
     ev.preventDefault();
 
-    await QPixel.jsonPost('/notifications/read_all', {});
+    await QPixel.jsonPost('/notifications/read_all', {}, {
+      headers: { 'Accept': 'application/json' }
+    });
 
     $('.inbox-count').remove();
 
@@ -85,7 +88,11 @@ $(() => {
   $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async (evt) => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
-    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {});
+
+    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {}, {
+      headers: { 'Accept': 'application/json' }
+    });
+
     const data = await resp.json();
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
     changeInboxCount(-1);
@@ -96,7 +103,11 @@ $(() => {
 
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const id = $tgt.attr('data-notif-id');
-    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {});
+
+    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {}, {
+      headers: { 'Accept': 'application/json' }
+    });
+
     const data = await resp.json();
     if (data.status !== 'success') {
       console.error('Failed to toggle notification read state. Wat?');
