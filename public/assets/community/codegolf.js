@@ -88,17 +88,20 @@
         const full_language = header ? header.innerText.split(',')[0].trim() : undefined
         const regexGroups = full_language?.match(/(?<language>.+?)(?: \((?<variant>.+)\))?(?: \+ (?<extensions>.+))?$/)?.groups ?? {};
         const { language, variant, extensions } = regexGroups;
+        const userlink = answerPost.querySelector(
+          ".user-card--content .user-card--link",
+        );
 
         const entry = {
           answerID: answerPost.id,
           answerURL: answerPost.querySelector('.js-permalink').href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
-          username: answerPost.querySelector('.user-card--link').firstChild.data.trim(),
-          userid: answerPost.querySelector('.user-card--link').href.match(/\d+/)[0],
-          full_language, full_language,
-          language: language,
-          variant: variant,
-          extensions: extensions,
+          username: userlink.firstChild.data.trim(),
+          userid: userlink.href.match(/\d+/)[0],
+          full_language,
+          language,
+          variant,
+          extensions,
           code: code?.innerText,
           score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
         };
