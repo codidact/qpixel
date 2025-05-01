@@ -76,7 +76,8 @@
   };
 
   /**
-   * @param {string} id
+   * @param {string} id challenge id for which to get the leaderboard
+   * @returns {Promise<ChallengeEntry[]>}
    */
   async function getLeaderboard(id) {
     const response = await fetch(`/posts/${id}`);
@@ -135,8 +136,9 @@
   }
 
   /**
-   * @param {ChallengeEntry[]} leaderboard
-   * @param {(a: ChallengeEntry, b: ChallengeEntry) => number} comparator
+   * @param {ChallengeEntry[]} leaderboard list of challenge entries to augment
+   * @param {(a: ChallengeEntry, b: ChallengeEntry) => number} comparator compare function for sorting
+   * @returns {void}
    */
   function augmentLeaderboardWithPlacements(leaderboard, comparator) {
     leaderboard.sort(comparator);
@@ -215,8 +217,10 @@
   }
 
   /**
-   * Helper function
    * Turns arrays into associative arrays
+   * @param {unknown[]} array array to group
+   * @param {(item: unknown) => string} categorizer
+   * @returns {Record<string, unknown[]>}
    */
   function createGroups(array, categorizer) {
     const groups = {};
@@ -233,6 +237,10 @@
     return groups;
   }
 
+  /**
+   * @param {ChallengeEntry} answer challenge entry to create row for
+   * @returns {HTMLAnchorElement}
+   */
   function createRow(answer) {
     const row = document.createElement('a');
     row.classList.add('toc--entry');
