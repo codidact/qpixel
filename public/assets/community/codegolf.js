@@ -3,6 +3,22 @@
  *  License: AGPLv3
  */
 
+/**
+ * @typedef {{
+ *   answerID: string
+ *   answerURL?: string
+ *   page: number
+ *   username: string
+ *   userid: string
+ *   full_language?: string
+ *   language?: string
+ *   variant?: string
+ *   extensions?: string
+ *   code?: string
+ *   score?: string
+ * }} ChallengeEntry
+ */
+
 (() => {
   const dom_parser = new DOMParser();
   const match = location.pathname.match(/(?<=posts\/)\d+/);
@@ -59,6 +75,10 @@
     }
   };
 
+  /**
+   * @param {string} id challenge id for which to get the leaderboard
+   * @returns {Promise<ChallengeEntry[]>}
+   */
   async function getLeaderboard(id) {
     const response = await fetch(`/posts/${id}`);
     const text = await response.text();
@@ -73,6 +93,7 @@
       pagePromises.push(fetch(`/posts/${id}?sort=active&page=${i}`).then((response) => response.text()));
     }
 
+    /** @type {ChallengeEntry[]} */
     const leaderboard = [];
 
     for (let i = 0; i < pagePromises.length; i++) {
@@ -84,23 +105,27 @@
       for (const answerPost of non_deleted_answers) {
 
         const header = answerPost.querySelector('h1, h2, h3');
-        const code = header.parentElement.querySelector(':scope > pre > code');
-        const full_language = header ? header.innerText.split(',')[0].trim() : undefined
+        const code = header?.parentElement.querySelector(':scope > pre > code');
+        const full_language = header?.innerText.split(',')[0].trim();
         const regexGroups = full_language?.match(/(?<language>.+?)(?: \((?<variant>.+)\))?(?: \+ (?<extensions>.+))?$/)?.groups ?? {};
         const { language, variant, extensions } = regexGroups;
+        const userlink = answerPost.querySelector(
+          ".user-card--content .user-card--link",
+        );
 
+        /** @type {ChallengeEntry} */
         const entry = {
           answerID: answerPost.id,
           answerURL: answerPost.querySelector('.js-permalink').href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
-          username: answerPost.querySelector('.user-card--link').firstChild.data.trim(),
-          userid: answerPost.querySelector('.user-card--link').href.match(/\d+/)[0],
-          full_language, full_language,
-          language: language,
-          variant: variant,
-          extensions: extensions,
+          username: userlink.firstChild.data.trim(),
+          userid: userlink.href.match(/\d+/)[0],
+          full_language,
+          language,
+          variant,
+          extensions,
           code: code?.innerText,
-          score: header ? header.innerText.match(/\d+/g)?.pop() : undefined
+          score: header?.innerText.match(/\d+/g)?.pop()
         };
 
         leaderboard.push(entry);
@@ -110,6 +135,11 @@
     return leaderboard;
   }
 
+  /**
+   * @param {ChallengeEntry[]} leaderboard list of challenge entries to augment
+   * @param {(a: ChallengeEntry, b: ChallengeEntry) => number} comparator compare function for sorting
+   * @returns {void}
+   */
   function augmentLeaderboardWithPlacements(leaderboard, comparator) {
     leaderboard.sort(comparator);
 
@@ -187,8 +217,10 @@
   }
 
   /**
-   * Helper function
    * Turns arrays into associative arrays
+   * @param {unknown[]} array array to group
+   * @param {(item: unknown) => string} categorizer
+   * @returns {Record<string, unknown[]>}
    */
   function createGroups(array, categorizer) {
     const groups = {};
@@ -205,6 +237,10 @@
     return groups;
   }
 
+  /**
+   * @param {ChallengeEntry} answer challenge entry to create row for
+   * @returns {HTMLAnchorElement}
+   */
   function createRow(answer) {
     const row = document.createElement('a');
     row.classList.add('toc--entry');
@@ -212,7 +248,7 @@
 
     row.innerHTML = `
     <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
-    <div class="toc--full"><p class="row-summary"><span class='username'></span></p></div>
+    <div class="toc--full"><p class="row-summary"><span class='username has-padding-right-1'></span></p></div>
     ${answer.placement === 1 ? '<div class="toc--badge"><span class="badge is-tag is-yellow"><i class="fas fa-trophy"></i></span></div>'
       : (settings.showPlacements ? `<div class="toc--badge"><span class="badge is-tag">#${answer.placement}</span></div>` : '')}
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
