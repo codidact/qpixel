@@ -387,13 +387,13 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.post_type.is_freely_editable && !current_user&.is_moderator
+    if @post.post_type.is_freely_editable && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_delete_community')
       redirect_to post_path(@post)
       return
     end
 
-    if @post.children.any? { |a| !a.deleted? && a.score >= 0.5 } && !current_user&.is_moderator
+    if @post.children.any? { |a| !a.deleted? && a.score >= 0.5 } && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_delete_responded')
       redirect_to post_path(@post)
       return
@@ -438,7 +438,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.deleted_by.is_moderator && !current_user.is_moderator
+    if @post.deleted_by.at_least_moderator? && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
       redirect_to post_path(@post)
       return
@@ -539,16 +539,16 @@ class PostsController < ApplicationController
   end
 
   def lock
-    return not_found unless current_user.privilege? 'flag_curate'
+    return not_found unless current_user&.privilege? 'flag_curate'
     return not_found if @post.locked?
 
     length = params[:length].present? ? params[:length].to_i : nil
     if length
-      if !current_user.is_moderator && length > 30
+      if !current_user&.at_least_moderator? && length > 30
         length = 30
       end
       end_date = length.days.from_now
-    elsif current_user.is_moderator
+    elsif current_user&.at_least_moderator?
       end_date = nil
     else
       end_date = 7.days.from_now
@@ -563,9 +563,10 @@ class PostsController < ApplicationController
   end
 
   def unlock
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found(errors: ['no_privilege']) unless current_user&.privilege? 'flag_curate'
     return not_found(errors: ['not_locked']) unless @post.locked?
-    if @post.locked_by.is_moderator && !current_user.is_moderator
+
+    if @post.locked_by.at_least_moderator? && !current_user&.at_least_moderator?
       return not_found(errors: ['locked_by_mod'])
     end
 
@@ -578,7 +579,7 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found(errors: ['no_privilege']) unless current_user.is_moderator
+    return not_found(errors: ['no_privilege']) unless current_user&.at_least_moderator?
 
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
@@ -682,7 +683,7 @@ class PostsController < ApplicationController
       redirect_back fallback_location: root_path
     end
 
-    if !@post_type.is_public_editable && !(@post.user == current_user || current_user.is_moderator)
+    if !@post_type.is_public_editable && !(@post.user == current_user || current_user&.at_least_moderator?)
       flash[:danger] = helpers.i18ns('posts.not_public_editable')
       redirect_back fallback_location: root_path
     end

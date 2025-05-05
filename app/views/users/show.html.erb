@@ -2,7 +2,7 @@
 
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
-<% if moderator? && deleted_user?(@user) %>
+<% if at_least_moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
@@ -71,7 +71,7 @@
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
         <% end %>
-        <% if current_user&.is_moderator %>
+        <% if current_user&.at_least_moderator? %>
           <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a> 
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
@@ -129,11 +129,11 @@
       <div class="widget--body h-ta-center" title="This user is an official Staff member.">
         <i class="fas fa-users-cog"></i> Staff
       </div>
-      <% elsif @user.is_admin %>
+      <% elsif @user.admin? %>
       <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
       </div>
-      <% elsif @user.is_moderator %>
+      <% elsif @user.at_least_moderator? %>
       <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i> Moderator
       </div>
@@ -161,7 +161,7 @@
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Number of edits made</td>
         <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
-      <% if current_user&.id == @user.id || current_user&.is_moderator %>
+      <% if current_user&.id == @user.id || current_user&.at_least_moderator? %>
         <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
       <% end %>
     </table>
@@ -241,7 +241,7 @@
         <td colspan="2">Count</td>
         <td class="overflow-ellipsis" title="<%= @user.votes.count %>"><%= @user.votes.count %></td>
       </tr>
-      <% if @user.id == current_user&.id || current_user&.is_admin %>
+      <% if @user.id == current_user&.id || current_user&.admin? %>
       <tr>
         <td colspan="2">
           <div class="flex items-center gap-sm">
@@ -290,7 +290,7 @@
       <tr>
         <td colspan="2">Count</td>
         <td class="overflow-ellipsis" title="<%= @user.flags.count %>">
-          <% if current_user&.id == @user.id || moderator? %>
+          <% if current_user&.id == @user.id || at_least_moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
                         'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>

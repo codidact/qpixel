@@ -15,7 +15,7 @@
       <span class="has-color-tertiary-600 history-meta">
         <span>
           by
-          <% if deleted_user?(event.user) && !moderator? %>
+          <% if deleted_user?(event.user) && !at_least_moderator? %>
             (deleted user)
           <% else %>
             <img class="avatar-16" alt="user avatar" src="<%= avatar_url(event.user) %>" height="16" width="16" />
@@ -45,7 +45,7 @@
               you performed the redaction,
             <% elsif current_user == @post.user %>
               you are the post author,
-            <% elsif current_user&.is_admin %>
+            <% elsif current_user&.admin? %>
               you are an administrator,
             <% end %>
             but you should not share this revision with others.

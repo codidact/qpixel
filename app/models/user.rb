@@ -52,7 +52,7 @@ class User < ApplicationRecord
   end
 
   def self.search(term)
-    where('username LIKE ?', "#{sanitize_sql_like(term)}%")
+    where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 
   def inspect
@@ -63,8 +63,9 @@ class User < ApplicationRecord
     community_user.trust_level
   end
 
-  # Checks whether this user is the same as a given user
-  # @param [User] user user to compare with
+  # Is the user the same as a given other user
+  # @param user [User] user to compare with
+  # @return [Boolean] check result
   def same_as?(user)
     id == user.id
   end
@@ -81,19 +82,19 @@ class User < ApplicationRecord
     end
   end
 
-  # Checks if the user can push a given post type to network
+  # Can the user push a given post type to network
   # @param post_type [PostType] type of the post to be pushed
-  # @return [Boolean]
+  # @return [Boolean] check result
   def can_push_to_network(post_type)
     post_type.system? && (is_global_moderator || is_global_admin)
   end
 
-  # Checks if the user can directly update a given post
+  # Can the user directly update a given post
   # @param post [Post] updated post (owners can unilaterally update)
   # @param post_type [PostType] type of the post (some are freely editable)
-  # @return [Boolean]
+  # @return [Boolean] check result
   def can_update(post, post_type)
-    privilege?('edit_posts') || is_moderator || self == post.user || \
+    privilege?('edit_posts') || at_least_moderator? || self == post.user || \
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
@@ -151,15 +152,54 @@ class User < ApplicationRecord
     end
   end
 
-  def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
+  # Is the user a global admin (ensures consistent return type & naming scheme)?
+  # @return [Boolean] check result
+  def global_admin?
+    is_global_admin || false
   end
 
-  def is_admin
-    is_global_admin || community_user&.is_admin || false
+  # Is the user a global moderator (ensures consistent return type & naming scheme)?
+  # @return [Boolean] check result
+  def global_moderator?
+    is_global_moderator || false
   end
 
-  # Used by network profile: does this user have a profile on that other comm?
+  # Is the user either a global admin or an admin on the current community?
+  # @return [Boolean] check result
+  def admin?
+    global_admin? || community_user&.admin? || false
+  end
+
+  # Is the user either a global moderator or a moderator on the current community?
+  # @return [Boolean] check result
+  def moderator?
+    global_moderator? || community_user&.moderator? || false
+  end
+
+  # Is the user at least a moderator, meaning the user is either:
+  # - a global moderator or a moderator on the current community
+  # - a global admin or an admin on the current community
+  # - has an explicit moderator privilege on the current community
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin? || community_user&.privilege?('mod') || false
+  end
+
+  # Is the user neither a moderator nor an admin (global or on the current community)?
+  # @return [Boolean] check result
+  def standard?
+    !at_least_moderator?
+  end
+
+  # Is the user is a global moderator or a global admin?
+  # @return [Boolean] check result
+  def at_least_global_moderator?
+    global_moderator? || global_admin? || false
+  end
+
+  # Does this user have a profile on a given community?
+  # @param community_id [Integer] id of the community to check
+  # @return [Boolean] check result
   def has_profile_on(community_id)
     cu = community_users.where(community_id: community_id).first
     !cu&.user_id.nil? || false
@@ -175,15 +215,21 @@ class User < ApplicationRecord
     cu&.post_count || 0
   end
 
+  # Is the user a moderator on a given community?
+  # @param community_id [Integer] community id to check for
+  # @return [Boolean] check result
   def is_moderator_on(community_id)
     cu = community_users.where(community_id: community_id).first
-    # is_moderator is a DB check, not a call to is_moderator()
-    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
+    cu&.at_least_moderator? || cu&.privilege?('mod') || false
   end
 
+  # Does the user have an ability on a given community?
+  # @param community_id [Integer] community id to check for
+  # @param ability_internal_id [String] internal ability id
+  # @return [Boolean] check result
   def has_ability_on(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
-    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
+    if cu&.at_least_moderator? || cu&.privilege?('mod')
       true
     elsif cu.nil?
       false
