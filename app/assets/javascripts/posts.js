@@ -21,8 +21,16 @@ $(() => {
     }
   });
 
+  /** @type {JQuery<HTMLFormElement>} */
   const $uploadForm = $('.js-upload-form');
 
+  /**
+   * Inserts text at a given {@link idx} in a given {@link str}
+   * @param {string} str text to insert into
+   * @param {number} idx position to insert at
+   * @param {string} insert text to insert
+   * @returns {string}
+   */
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
 
   const placeholder = "![Uploading, please wait...]()";
@@ -35,9 +43,7 @@ $(() => {
 
     postField.value = stringInsert(postText, cursorPos, placeholder);
 
-    const tgt = evt.target;
-    const form = /** @type {HTMLFormElement} **/ (tgt.parentElement.parentElement);
-    form.submit();
+    $uploadForm.trigger('submit')
   });
 
   $uploadForm.on('submit', async (evt) => {
