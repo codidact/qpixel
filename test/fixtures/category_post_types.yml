@@ -63,3 +63,15 @@ articles_only_article:
   post_type: article
   upvote_rep: 10
   downvote_rep: -2
+
+moderator_tags_question:
+  category: moderator_tags
+  post_type: question
+  upvote_rep: 0
+  downvote_rep: 0
+
+moderator_tags_answer:
+  category: moderator_tags
+  post_type: answer
+  upvote_rep: 0
+  downvote_rep: 0

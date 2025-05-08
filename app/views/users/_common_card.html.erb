@@ -9,7 +9,7 @@
 <% ckb ||= false %>
 <% small ||= false %>
 
-<% if user.nil? || (deleted_user?(user) && !moderator?) %>
+<% if user.nil? || (deleted_user?(user) && standard?) %>
   <div class="user-card deleted-content">
     <div class="user-card--avatar">
       <span class="avatar--deleted"><i class="fas fa-user-times"></i></span>
@@ -33,9 +33,9 @@
       %>
       <%= link_to user_path(user), dir: 'ltr', class: small ? :'user-card--link-small' :'user-card--link', data: data do %>
         <%= rtl_safe_username(user) %>
-        <% if user.is_admin && SiteSetting['AdminBadgeCharacter'] %>
+        <% if user.admin? && SiteSetting['AdminBadgeCharacter'] %>
           <span class="badge is-user-role" title="Administrator"><i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i></span>
-        <% elsif user.is_moderator && SiteSetting['ModBadgeCharacter'] %>
+        <% elsif user.at_least_moderator? && SiteSetting['ModBadgeCharacter'] %>
           <span class="badge is-user-role" title="Moderator"><i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i></span>
         <% end %>
         <% if user.staff? %>
