@@ -21,6 +21,8 @@ $(() => {
     }
   });
 
+  const $postFields = $('.post-field');
+
   /** @type {JQuery<HTMLFormElement>} */
   const $uploadForm = $('.js-upload-form');
 
@@ -87,6 +89,8 @@ $(() => {
     const postText = $postField.val()?.toString();
     $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
+
+    $postFields.trigger('change')
   });
 
   $uploadForm.on('ajax:failure', async (evt, data) => {
@@ -186,8 +190,6 @@ $(() => {
   let featureTimeout = null;
   let draftTimeout = null;
 
-  const postFields = $('.post-field');
-
   const draftFieldsSelectors = [
     '.js-post-field',
     '.js-license-select',
@@ -208,7 +210,7 @@ $(() => {
     }, 1000);
   });
 
-  postFields.on('paste', async (evt) => {
+  $postFields.on('paste', async (evt) => {
     const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
     if (eventData.clipboardData.files.length > 0) {
       /** @type {JQuery<HTMLInputElement>} */
@@ -218,7 +220,7 @@ $(() => {
     }
   });
 
-  postFields.on('focus keyup paste change markdown', (() => {
+  $postFields.on('focus keyup paste change markdown', (() => {
     let previous = null;
     return (evt) => {
       const $tgt = $(evt.target);
@@ -282,7 +284,7 @@ $(() => {
     };
   })()).trigger('markdown');
 
-  postFields.parents('form').on('submit', async (ev) => {
+  $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
     const field = $tgt.find('.post-field');
 
