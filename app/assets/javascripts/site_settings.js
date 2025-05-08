@@ -22,6 +22,7 @@ $(() => {
     const resp = await fetch(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
       credentials: 'include'
     });
+
     const data = await resp.json();
     const value = data.typed;
 
