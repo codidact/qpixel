@@ -72,7 +72,9 @@ $(() => {
       method: $tgt.attr('method'),
       body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
     });
+
     const data = await resp.json();
+
     if (resp.status === 200) {
       $tgt.trigger('ajax:success', data);
     }
@@ -213,6 +215,9 @@ $(() => {
   $postFields.on('paste', async (evt) => {
     const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
     if (eventData.clipboardData.files.length > 0) {
+      // must be called to prevent raw file name to be inserted after the placeholder
+      evt.preventDefault()
+
       /** @type {JQuery<HTMLInputElement>} */
       const $fileInput = $uploadForm.find('input[type="file"]');
       $fileInput[0].files = eventData.clipboardData.files;
