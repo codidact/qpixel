@@ -79,7 +79,7 @@
 
   /**
    * Get the exact screen coordinates of the text caret within a text input.
-   * @param {Element} element The input field in which the caret is located.
+   * @param {HTMLInputElement | HTMLTextAreaElement} element The input field in which the caret is located.
    * @param {Number} position The position of the caret within the field - usually via #selectionStart.
    * @param {Object<string, any>} options An options object. The only supported key is `debug`.
    * @returns {CaretLocation} The location of the caret.
@@ -101,7 +101,7 @@
     document.body.appendChild(div);
 
     var style = div.style;
-    var computed = window.getComputedStyle ? window.getComputedStyle(element) : element.currentStyle;  // currentStyle for IE < 9
+    var computed = window.getComputedStyle(element);
     var isInput = element.nodeName === 'INPUT';
 
     // Default textarea styles
