@@ -20,7 +20,6 @@ $(() => {
 
   $(document).on('click', '.js-edit-name-submit', async (ev) => {
     const $tgt = $(ev.target);
-    console.log($tgt);
     const tagSetId = $tgt.data('set-id');
     const $name = $tgt.parents('.js-tag-set-name');
     const newName = $tgt.parent().children('.js-edit-set-name').val();

@@ -10,7 +10,7 @@ $(() => {
         $caption.find('[data-state="absent"]').hide();
         $caption.find('[data-state="present"]').show();
 
-        $el.find('.js-tag-select').attr('data-tag-set', tagSetId).attr('disabled', false);
+        $el.find('.js-tag-select').attr('data-tag-set', tagSetId).attr('disabled', null);
       });
     }
     else {
@@ -20,7 +20,7 @@ $(() => {
         $caption.find('[data-state="absent"]').show();
         $caption.find('[data-state="present"]').hide();
 
-        $el.find('.js-tag-select').attr('data-tag-set', null).attr('disabled', true);
+        $el.find('.js-tag-select').attr('data-tag-set', null).attr('disabled', 'true');
       });
     }
   });
@@ -28,7 +28,7 @@ $(() => {
   $('.js-add-required-topic').on('click', (_ev) => {
     const $required = $('.js-required-tags');
     const $topic = $('.js-topic-tags');
-    const union = ($required.val() || []).concat($topic.val() || []);
+    const union = /** @type {string[]} */($required.val() || []).concat(/** @type {string[]} */ ($topic.val() || []));
 
     const options = $topic.find('option').toArray();
     const optionIds = options.map((x) => $(x).attr('value'));

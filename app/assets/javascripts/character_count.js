@@ -52,7 +52,7 @@ $(() => {
    */
   const setSubmitButtonDisabledState = (el, state) => {
     const isDisabled = state === 'disabled';
-    el.attr('disabled', isDisabled).toggleClass('is-muted', isDisabled);
+    el.attr('disabled', isDisabled ? 'true' : null).toggleClass('is-muted', isDisabled);
   };
 
   $(document).on('keyup change paste', '[data-character-count]', (ev) => {
