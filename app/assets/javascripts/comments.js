@@ -235,7 +235,7 @@ $(() => {
         return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
           .attr('data-user-id', id);
       });
-      QPixel.Popup.getPopup(items, $tgt, callback);
+      QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
     else {
       QPixel.Popup.destroyAll();
