@@ -68,7 +68,22 @@
 
   var isBrowser = (typeof window !== 'undefined');
   var isFirefox = (isBrowser && window.mozInnerScreenX != null);
+  
+  /**
+   * @typedef CaretLocation
+   * @type {Object}
+   * @property {Number} top The distance in pixels from the top of the page.
+   * @property {Number} left The distance in pixels from the left of the page.
+   * @property {Number} height The height of the caret in pixels.
+   */
 
+  /**
+   * Get the exact screen coordinates of the text caret within a text input.
+   * @param {Element} element The input field in which the caret is located.
+   * @param {Number} position The position of the caret within the field - usually via #selectionStart.
+   * @param {Object<string, any>} options An options object. The only supported key is `debug`.
+   * @returns {CaretLocation} The location of the caret.
+   */
   function getCaretCoordinates(element, position, options) {
     if (!isBrowser) {
       throw new Error('textarea-caret-position#getCaretCoordinates should only be called in a browser');
