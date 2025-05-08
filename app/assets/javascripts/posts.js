@@ -55,13 +55,23 @@ $(() => {
 
     const $fileInput = $tgt.find('input[type="file"]');
     const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
+
+    // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
-      $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+      const isUploadModalOpened = $('#markdown-image-upload').hasClass('is-active');
+
       const postField = $('.js-post-field');
       postField.val(postField.val()?.toString().replace(placeholder, ''));
-      setTimeout(() => {
-        $tgt.find('.js-max-size').removeClass('error-shake');
-      }, 1000);
+
+      if (!isUploadModalOpened) {
+        QPixel.createNotification('danger', `Can't upload files with size more than 2MB`);
+      } else {
+        $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+        setTimeout(() => {
+          $tgt.find('.js-max-size').removeClass('error-shake');
+        }, 1000);
+      }
+
       return;
     }
     else {
