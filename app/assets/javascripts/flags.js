@@ -85,7 +85,9 @@ $(() => {
     const $comment = $('.js-escalation-comment');
     const flagId = $modal.data('flag');
     const comment = $comment.val();
-    const resp = await QPixel.jsonPost(`/mod/flags/${flagId}/escalate`, { comment });
+
+    const resp = await QPixel.fetchJSON(`/mod/flags/${flagId}/escalate`, { comment });
+
     if (resp.status === 200) {
       QPixel.createNotification('success', 'This flag has been escalated for admin review.');
       $modal.toggleClass('is-active');

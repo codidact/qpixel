@@ -70,8 +70,9 @@ $(() => {
     const upvoteRep = parseInt($widget.find('.js-cpt-upvote-rep').val()?.toString(), 10) || 0;
     const downvoteRep = parseInt($widget.find('.js-cpt-downvote-rep').val()?.toString(), 10) || 0;
 
-    const resp = await QPixel.jsonPost(`/categories/${categoryId}/edit/post-types`,
+    const resp = await QPixel.fetchJSON(`/categories/${categoryId}/edit/post-types`,
       { post_type: postTypeId, upvote_rep: upvoteRep, downvote_rep: downvoteRep });
+
     const data = await resp.json();
     const status = resp.status;
 
@@ -92,9 +93,10 @@ $(() => {
     const categoryId = tgt.dataset.category;
     const postTypeId = tgt.dataset.postType;
 
-    const resp = await QPixel.jsonPost(`/categories/${categoryId}/edit/post-types`, { post_type: postTypeId }, {
+    const resp = await QPixel.fetchJSON(`/categories/${categoryId}/edit/post-types`, { post_type: postTypeId }, {
       method: 'DELETE'
     });
+
     if (resp.status === 200) {
       QPixel.DOM.fadeOut(tgt.closest('.widget'), 200);
     }

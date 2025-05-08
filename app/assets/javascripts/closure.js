@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const req = await QPixel.jsonPost(`/posts/${self.dataset.postId}/close`, data);
+    const req = await QPixel.fetchJSON(`/posts/${self.dataset.postId}/close`, data);
+
     if (req.status === 200) {
       const res = await req.json();
       if (res.status === 'success') {

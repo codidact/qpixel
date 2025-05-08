@@ -33,7 +33,8 @@ $(() => {
 
     const value = Number.isNaN(rawValue) ? null : rawValue;
 
-    const resp = await QPixel.jsonPost(`/admin/privileges/${name}`, { type, threshold: value });
+    const resp = await QPixel.fetchJSON(`/admin/privileges/${name}`, { type, threshold: value });
+
     const data = await resp.json();
 
     $td.removeClass('editing').html('').text((data.privilege[`${type}_score_threshold`] || '-').toString());

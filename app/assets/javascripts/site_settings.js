@@ -43,7 +43,8 @@ $(() => {
       body = Object.assign(body, {community_id: communityId});
     }
 
-    const resp = await QPixel.jsonPost(`/admin/settings/${name}`, body);
+    const resp = await QPixel.fetchJSON(`/admin/settings/${name}`, body);
+
     const data = await resp.json();
 
     $td.removeClass('editing').html('').text(data.setting.typed.toString());

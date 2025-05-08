@@ -5,9 +5,10 @@ $(() => {
     const subscriptionId = $sub.data('sub-id');
     const value = !!$tgt.is(':checked');
 
-    const resp = await QPixel.jsonPost(`/subscriptions/${subscriptionId}/enable`, { enabled: value }, {
+    const resp = await QPixel.fetchJSON(`/subscriptions/${subscriptionId}/enable`, { enabled: value }, {
       headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
 
     if (data.status !== 'success') {
@@ -22,9 +23,10 @@ $(() => {
     const $sub = $tgt.parents('details');
     const subscriptionId = $sub.data('sub-id');
 
-    const resp = await QPixel.jsonPost(`/subscriptions/${subscriptionId}`, {}, {
+    const resp = await QPixel.fetchJSON(`/subscriptions/${subscriptionId}`, {}, {
       headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
 
     if (data.status === 'success') {

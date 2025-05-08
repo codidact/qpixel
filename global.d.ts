@@ -127,7 +127,7 @@ interface QPixel {
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;
   user?: () => Promise<User>;
   validatePost?: (postText: string) => [boolean, PostValidatorMessage[]];
-  jsonPost?: (uri: string, data: any, options?: RequestInit) => Promise<Response>;
+  fetchJSON?: (uri: string, data: any, options?: RequestInit) => Promise<Response>;
 
   // qpixel_dom
   DOM?: QPixelDOM;

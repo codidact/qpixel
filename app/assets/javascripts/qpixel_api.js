@@ -35,7 +35,6 @@ window.QPixel = {
   /**
    * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
    * making AJAX POST requests.
-   * @returns {string}
    */
   csrfToken: () => {
     const token = $('meta[name="csrf-token"]').attr('content');
@@ -197,7 +196,6 @@ window.QPixel = {
 
   /**
    * FIFO-style fetch wrapper for /users/me requests
-   * @returns {Promise<Response>}
    */
   _fetchUser () {
     if (QPixel._pendingUserResponse) {
@@ -218,7 +216,7 @@ window.QPixel = {
 
   /**
    * Get the user object for the current user.
-   * @returns {Promise<User>} a JSON object containing user details
+   * @returns JSON object containing user details
    */
   user: async () => {
     if (QPixel._user != null || document.body.dataset.userId === 'none') {
@@ -245,7 +243,7 @@ window.QPixel = {
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * localStorage, or Redis via AJAX.
-   * @returns {Promise<UserPreferences>} a JSON object containing user preferences
+   * @returns JSON object containing user preferences
    */
   _getPreferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
@@ -271,7 +269,7 @@ window.QPixel = {
    * Get a single user preference by name.
    * @param name the name of the requested preference
    * @param community is the requested preference community-local (true), or network-wide (false)?
-   * @returns {Promise<string>} the value of the requested preference
+   * @returns the value of the requested preference
    */
   preference: async (name, community = false) => {
     const user = await QPixel.user();
@@ -300,13 +298,14 @@ window.QPixel = {
    * @param name the name of the preference to set
    * @param value the value to set to - must respond to toString() for localStorage and Redis
    * @param community is this preference community-local (true), or network-wide (false)?
-   * @returns {Promise<void>}
    */
   setPreference: async (name, value, community = false) => {
-    const resp = await QPixel.jsonPost('/users/me/preferences', { name, value, community }, {
+    const resp = await QPixel.fetchJSON('/users/me/preferences', { name, value, community }, {
       headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
+
     if (data.status !== 'success') {
       console.error(`Preference persist failed (${name})`);
       console.error(resp);
@@ -316,9 +315,6 @@ window.QPixel = {
     }
   },
 
-  /**
-   * @returns {Promise<Record<string, Filter>>}
-   */
   filters: async () => {
     if (this._filters == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
@@ -340,7 +336,6 @@ window.QPixel = {
   /**
    * Fetches default user filter for a given category
    * @param categoryId id of the category to fetch
-   * @returns {Promise<string>}
    */
   defaultFilter: async (categoryId) => {
     const user = await QPixel.user();
@@ -361,13 +356,13 @@ window.QPixel = {
   },
 
   setFilterAsDefault: async (categoryId, name) => {
-    await QPixel.jsonPost(`/categories/${categoryId}/filters/default`, { name }, {
+    await QPixel.fetchJSON(`/categories/${categoryId}/filters/default`, { name }, {
       headers: { 'Accept': 'application/json' }
     });
   },
 
   setFilter: async (name, filter, category, isDefault) => {
-    const resp = await QPixel.jsonPost('/users/me/filters',
+    const resp = await QPixel.fetchJSON('/users/me/filters',
       Object.assign(filter, {name, category, is_default: isDefault}), {
         headers: { 'Accept': 'application/json' }
       });
@@ -384,10 +379,12 @@ window.QPixel = {
   },
 
   deleteFilter: async (name, system = false) => {
-    const resp = await QPixel.jsonPost('/users/me/filters', { name, system }, {
+    const resp = await QPixel.fetchJSON('/users/me/filters', { name, system }, {
       headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
+
     if (data.status !== 'success') {
       console.error(`Filter deletion failed (${name})`);
       console.error(resp);
@@ -411,7 +408,6 @@ window.QPixel = {
 
   /**
    * Call _fetchPreferences but only the first time to prevent redundant HTTP requests
-   * @returns {Promise<void>}
    */
   _cachedFetchPreferences: async () => {
     // No 'await' because we want the promise not its value
@@ -427,7 +423,6 @@ window.QPixel = {
 
   /**
    * Update local variable _preferences and localStorage with an AJAX call for the user preferences
-   * @returns {Promise<void>}
    */
   _fetchPreferences: async () => {
     const resp = await fetch('/users/me/preferences', {
@@ -471,14 +466,14 @@ window.QPixel = {
   },
 
   /**
-   * Send a POST request with JSON data, pre-authorized with QPixel credentials for the signed in user.
-   * @param {string} uri The URI to which to send the request. 
-   * @param {any} data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
-   * @param {RequestInit?} options An optional RequestInit object. Options specified here will override the defaults
+   * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
+   * @param uri The URI to which to send the request.
+   * @param data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
+   * @param options An optional RequestInit object. Options specified here will override the defaults
    *  provided by this method. 
-   * @returns {Promise<Response>} The Response promise returned from fetch().
+   * @returns The Response promise returned from fetch().
    */
-  jsonPost: async (uri, data, options) => {
+  fetchJSON: async (uri, data, options) => {
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
       'Content-Type': 'application/json',
