@@ -489,7 +489,7 @@ window.QPixel = {
         ...headers,
       },
       credentials: 'include',
-      body: JSON.stringify(data),
+      body: otherOptions.method === 'GET' ? void 0 : JSON.stringify(data),
       ...otherOptions,
     };
 

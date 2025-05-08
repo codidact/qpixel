@@ -11,13 +11,12 @@ $(() => {
     const name = $tgt.data('name');
     const type = $tgt.data('type');
 
-    const resp = await fetch(`/admin/privileges/${name}`, {
-      credentials: 'include'
+    const resp = await QPixel.fetchJSON(`/admin/privileges/${name}`, {}, {
+      method: 'GET'
     });
 
     const data = await resp.json();
 
-    
     const value = data[`${type}_score_threshold`];
     
     const form = editField.clone().val(value ? value.toString() : '').attr('data-name', name).attr('data-type', type);
