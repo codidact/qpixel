@@ -69,7 +69,7 @@ QPixel.Popup = class Popup {
       });
     });
 
-    const caretPos = getCaretCoordinates(this.field[0], this.field.prop('selectionStart'));
+    const caretPos = getCaretCoordinates(this.field, this.field.prop('selectionStart'));
     const fieldOffset = QPixel.offset(this.field);
     this.$popup.css({
       top: `${fieldOffset.top + caretPos.top + 20}px`,
@@ -102,7 +102,7 @@ QPixel.Popup = class Popup {
    * Update the position of the popup to the current cursor location.
    */
   updatePosition () {
-    const caretPos = getCaretCoordinates(this.field[0], this.field.prop('selectionStart'));
+    const caretPos = getCaretCoordinates(this.field, this.field.prop('selectionStart'));
     const fieldOffset = QPixel.offset(this.field);
     this.$popup.css({
       top: `${fieldOffset.top + caretPos.top + 20}px`,
