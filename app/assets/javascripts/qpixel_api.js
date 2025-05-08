@@ -479,23 +479,25 @@ window.QPixel = {
    * @returns {Promise<Response>} The Response promise returned from fetch().
    */
   jsonPost: async (uri, data, options) => {
-    // Merge headers specifically first because otherwise specifying any headers in `options` removes the defaults.
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     };
-    const headers = Object.assign(defaultHeaders, !!options ? options['headers'] : {});
 
-    // Delete headers from the options if it was passed to avoid overwriting what we've just done.
-    !!options && delete options['headers'];
+    const { headers = {}, ...otherOptions } = options ?? {};
 
-    // Now we can handle the rest of the options.
-    const defaultOptions = {
+    /** @type {RequestInit} */
+    const requestInit = {
       method: 'POST',
-      headers,
+      headers: {
+        ...defaultHeaders,
+        ...headers,
+      },
       credentials: 'include',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      ...otherOptions,
     };
-    return fetch(uri, Object.assign(defaultOptions, options));
+
+    return fetch(uri, requestInit);
   }
 };
