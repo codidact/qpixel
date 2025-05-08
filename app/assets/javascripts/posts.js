@@ -119,15 +119,7 @@ $(() => {
       return;
     }
 
-    const resp = await fetch('/posts/save-draft', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...draft, path: location.pathname })
-    });
+    const resp = await QPixel.jsonPost('/posts/save-draft', { ...draft, path: location.pathname });
 
     if (resp.status === 200) {
       const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
@@ -298,15 +290,7 @@ $(() => {
 
     // Draft handling
     if (!draftDeleted) {
-      const resp = await fetch('/posts/delete-draft', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'X-CSRF-Token': QPixel.csrfToken(),
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ path: location.pathname })
-      });
+      const resp = await QPixel.jsonPost('/posts/delete-draft', { path: location.pathname });
       if (resp.status === 200) {
         $tgt.attr('data-draft-deleted', 'true');
 
@@ -428,13 +412,7 @@ $(() => {
 
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post-id');
-    const resp = await fetch(`/posts/${postId}/promote`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      }
-    });
+    const resp = await QPixel.jsonPost(`/posts/${postId}/promote`, {});
     const data = await resp.json();
     if (data.success) {
       QPixel.createNotification('success', 'Added post to promotion list.');
@@ -454,15 +432,7 @@ $(() => {
       return;
     }
 
-    await fetch('/posts/delete-draft', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ path: location.pathname })
-    });
+    await QPixel.jsonPost('/posts/delete-draft', { path: location.pathname });
 
     location.href = $btn.attr('href');
   });

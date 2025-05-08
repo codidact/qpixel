@@ -67,21 +67,27 @@ interface QPixelKeyboard {
 
 type NotificationType = "warning" | "success" | "danger";
 
+type QPixelPopupCallback = (ev: JQuery.ClickEvent, popup: QPixelPopup) => void
+
 declare class QPixelPopup {
   static destroyAll: () => void;
   static getPopup: (
     items: JQuery[],
-    field: JQuery,
-    callback: (ev: JQuery.Event, popup: QPixelPopup) => void
+    field: HTMLInputElement | HTMLTextAreaElement,
+    callback: QPixelPopupCallback
   ) => QPixelPopup;
   static isSpecialKey: (keyCode: number) => boolean;
 
-  constructor(items: JQuery[], field: JQuery, callback: (ev: JQuery.Event, popup: QPixelPopup) => void);
+  constructor(
+    items: JQuery[], 
+    field: HTMLInputElement | HTMLTextAreaElement, 
+    callback: QPixelPopupCallback
+  );
 
   destroy: () => void;
   getActiveIdx: () => number | null;
   setActive: (index: number) => void;
-  setCallback: (callback: (ev: JQuery.Event, popup: QPixelPopup) => void) => void;
+  setCallback: (callback: QPixelPopupCallback) => void;
   getClickHandler: () => (ev: JQuery.Event) => void;
   getKeyHandler: () => (ev: JQuery.KeyboardEventBase) => void;
   updateItems: (items: JQuery[]) => void;
@@ -113,9 +119,9 @@ interface QPixel {
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
   filters?: () => Promise<Record<string, Filter>>;
-  offset?: ($el: JQuery) => ElementOffset;
+  offset?: (element: HTMLElement) => ElementOffset;
   preference?: (name: string, community?: boolean) => Promise<string>;
-  replaceSelection?: ($field: JQuery<HTMLInputElement>, text: string) => void;
+  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
   setFilter?: (name: string, filter: Filter, category: string, isDefault: boolean) => Promise<void>;
   setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;

@@ -43,11 +43,7 @@ $(() => {
       body = Object.assign(body, {community_id: communityId});
     }
 
-    const resp = await fetch(`/admin/settings/${name}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-      body: JSON.stringify(body)
-    });
+    const resp = await QPixel.jsonPost(`/admin/settings/${name}`, body);
     const data = await resp.json();
 
     $td.removeClass('editing').html('').text(data.setting.typed.toString());

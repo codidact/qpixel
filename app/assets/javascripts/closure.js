@@ -29,15 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const req = await fetch(`/posts/${self.dataset.postId}/close`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      }
-    });
+    const req = await QPixel.jsonPost(`/posts/${self.dataset.postId}/close`, data);
     if (req.status === 200) {
       const res = await req.json();
       if (res.status === 'success') {

@@ -95,7 +95,7 @@ window.QPixel = {
 
   /**
    * Get the absolute offset of an element.
-   * @param el the element for which to find the offset.
+   * @param {HTMLElement} el the element for which to find the offset.
    * @returns {{top: number, left: number, bottom: number, right: number}}
    */
   offset: function (el) {
@@ -303,15 +303,8 @@ window.QPixel = {
    * @returns {Promise<void>}
    */
   setPreference: async (name, value, community = false) => {
-    const resp = await fetch('/users/me/preferences', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name, value, community})
+    const resp = await QPixel.jsonPost('/users/me/preferences', { name, value, community }, {
+      headers: { 'Accept': 'application/json' }
     });
     const data = await resp.json();
     if (data.status !== 'success') {
@@ -368,29 +361,17 @@ window.QPixel = {
   },
 
   setFilterAsDefault: async (categoryId, name) => {
-    await fetch(`/categories/${categoryId}/filters/default`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name})
+    await QPixel.jsonPost(`/categories/${categoryId}/filters/default`, { name }, {
+      headers: { 'Accept': 'application/json' }
     });
   },
 
   setFilter: async (name, filter, category, isDefault) => {
-    const resp = await fetch('/users/me/filters', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(Object.assign(filter, {name, category, is_default: isDefault}))
-    });
+    const resp = await QPixel.jsonPost('/users/me/filters',
+      Object.assign(filter, {name, category, is_default: isDefault}), {
+        headers: { 'Accept': 'application/json' }
+      });
+    
     const data = await resp.json();
     if (data.status !== 'success') {
       console.error(`Filter persist failed (${name})`);
@@ -403,15 +384,8 @@ window.QPixel = {
   },
 
   deleteFilter: async (name, system = false) => {
-    const resp = await fetch('/users/me/filters', {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name, system})
+    const resp = await QPixel.jsonPost('/users/me/filters', { name, system }, {
+      headers: { 'Accept': 'application/json' }
     });
     const data = await resp.json();
     if (data.status !== 'success') {
@@ -505,12 +479,20 @@ window.QPixel = {
    * @returns {Promise<Response>} The Response promise returned from fetch().
    */
   jsonPost: async (uri, data, options) => {
+    // Merge headers specifically first because otherwise specifying any headers in `options` removes the defaults.
+    const defaultHeaders = {
+      'X-CSRF-Token': QPixel.csrfToken(),
+      'Content-Type': 'application/json'
+    };
+    const headers = Object.assign(defaultHeaders, !!options ? options['headers'] : {});
+
+    // Delete headers from the options if it was passed to avoid overwriting what we've just done.
+    !!options && delete options['headers'];
+
+    // Now we can handle the rest of the options.
     const defaultOptions = {
       method: 'POST',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
+      headers,
       credentials: 'include',
       body: JSON.stringify(data)
     };

@@ -23,14 +23,8 @@ $(() => {
     const tagSetId = $tgt.data('set-id');
     const $name = $tgt.parents('.js-tag-set-name');
     const newName = $tgt.parent().children('.js-edit-set-name').val();
-    const response = await fetch(`/admin/tag-sets/${tagSetId}/edit`, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      },
-      method: 'POST',
-      body: JSON.stringify({ name: newName })
+    const response = await QPixel.jsonPost(`/admin/tag-sets/${tagSetId}/edit`, { name: newName }, {
+      headers: { 'Accept': 'application/json' }
     });
     const data = await response.json();
 

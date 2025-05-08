@@ -194,12 +194,7 @@ $(() => {
 
     const renameTo = prompt(`Rename tag ${tagName} to:`);
     if (!!renameTo) {
-      const resp = await fetch(`/categories/${categoryId}/tags/${tagId}/rename`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-        body: JSON.stringify({ name: renameTo })
-      });
+      const resp = await QPixel.jsonPost(`/categories/${categoryId}/tags/${tagId}/rename`, { name: renameTo });
       const data = await resp.json();
       if (data.success) {
         location.reload();

@@ -25,8 +25,8 @@ QPixel.Popup = class Popup {
    * Get a popup for a given input field. You should generally use this method instead of directly
    * calling the constructor, as this accounts for pre-existing popups.
    * @param {JQuery[]} items an array of jQuery-wrappable elements to include - apply the `item` class to each one
-   * @param {JQuery} field the parent textarea HTMLElement that this popup is for
-   * @param {(ev: JQuery.Event, popup: QPixelPopup) => void} cb a callback that will be called when an item is clicked - it will be passed the click event
+   * @param {HTMLInputElement | HTMLTextAreaElement} field parent field that the popup is for
+   * @param {QPixelPopupCallback} cb a callback that will be called when an item is clicked
    * @returns {QPixelPopup}
    */
   static getPopup (items, field, cb) {
@@ -44,10 +44,10 @@ QPixel.Popup = class Popup {
   }
 
   /**
-   * Create a textarea 'suggestions'-type popup that drops down from the current caret position.
+   * Create a 'suggestions'-type popup that drops down from the current caret position.
    * @param {JQuery[]} items an array of jQuery-wrappable elements to include - apply the `item` class to each one
-   * @param {JQuery} field the parent textarea HTMLElement that this popup is for
-   * @param {(ev: JQuery.Event, popup: QPixelPopup) => void} cb a callback that will be called when an item is clicked - it will be passed the click event
+   * @param {HTMLInputElement | HTMLTextAreaElement} field parent field that the popup is for
+   * @param {QPixelPopupCallback} cb a callback to call when an item is clicked
    * @constructor
    */
   constructor (items, field, cb) {
@@ -69,7 +69,7 @@ QPixel.Popup = class Popup {
       });
     });
 
-    const caretPos = getCaretCoordinates(this.field, this.field.prop('selectionStart'));
+    const caretPos = getCaretCoordinates(this.field, this.field.selectionStart);
     const fieldOffset = QPixel.offset(this.field);
     this.$popup.css({
       top: `${fieldOffset.top + caretPos.top + 20}px`,
@@ -102,7 +102,7 @@ QPixel.Popup = class Popup {
    * Update the position of the popup to the current cursor location.
    */
   updatePosition () {
-    const caretPos = getCaretCoordinates(this.field, this.field.prop('selectionStart'));
+    const caretPos = getCaretCoordinates(this.field, this.field.selectionStart);
     const fieldOffset = QPixel.offset(this.field);
     this.$popup.css({
       top: `${fieldOffset.top + caretPos.top + 20}px`,
@@ -114,7 +114,7 @@ QPixel.Popup = class Popup {
    * Change the callback function to the provided function.
    * Necessary because if the callback is in a closure, old variable values (like cursor position)
    * will remain unless we update the callback to a new function in an updated closure.
-   * @param {(ev: JQuery.Event, popup: QPixelPopup) => void} cb the new callback function to apply
+   * @param {QPixelPopupCallback} cb the new callback function to apply
    */
   setCallback (cb) {
     this.callback = cb;
