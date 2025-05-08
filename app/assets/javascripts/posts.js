@@ -28,15 +28,16 @@ $(() => {
   const placeholder = "![Uploading, please wait...]()";
 
   $uploadForm.find('input[type="file"]').on('change', async (evt) => {
-    const $postField = $('.js-post-field');
-    const postText = $postField.val();
-    const cursorPos = $postField[0].selectionStart;
+    /** @type {HTMLInputElement} */
+    const postField = document.querySelector('.js-post-field');
+    const postText = postField.value;
+    const cursorPos = postField.selectionStart;
 
-    $postField.val(stringInsert(postText, cursorPos, placeholder));
+    postField.value = stringInsert(postText, cursorPos, placeholder);
 
-    const $tgt = $(evt.target);
-    const $form = $tgt.parents('form');
-    $form.submit();
+    const tgt = evt.target;
+    const form = /** @type {HTMLFormElement} **/ (tgt.parentElement.parentElement);
+    form.submit();
   });
 
   $uploadForm.on('submit', async (evt) => {
@@ -45,7 +46,7 @@ $(() => {
     const $tgt = $(evt.target);
 
     const $fileInput = $tgt.find('input[type="file"]');
-    const files = $fileInput[0].files;
+    const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
     if (files.length > 0 && files[0].size >= 2000000) {
       $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
       const postField = $('.js-post-field');
@@ -61,7 +62,7 @@ $(() => {
 
     const resp = await fetch($tgt.attr('action'), {
       method: $tgt.attr('method'),
-      body: new FormData($tgt[0])
+      body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
     });
     const data = await resp.json();
     if (resp.status === 200) {
@@ -74,7 +75,7 @@ $(() => {
 
   $uploadForm.on('ajax:success', async (evt, data) => {
     const $tgt = $(evt.target);
-    $tgt[0].reset();
+    /** @type {HTMLFormElement} */ ($tgt[0]).reset();
 
     const $postField = $('.js-post-field');
     const postText = $postField.val()?.toString();
@@ -210,9 +211,11 @@ $(() => {
   });
 
   postFields.on('paste', async (evt) => {
-    if (evt.originalEvent.clipboardData.files.length > 0) {
+    const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
+    if (eventData.clipboardData.files.length > 0) {
+      /** @type {JQuery<HTMLInputElement>} */
       const $fileInput = $uploadForm.find('input[type="file"]');
-      $fileInput[0].files = evt.originalEvent.clipboardData.files;
+      $fileInput[0].files = eventData.clipboardData.files;
       $fileInput.trigger('change');
     }
   });
@@ -355,7 +358,7 @@ $(() => {
       }
 
       setTimeout(() => {
-        $tgt.find('input[type="submit"]').attr('disabled', false);
+        $tgt.find('input[type="submit"]').attr('disabled', null);
       }, 1000);
     }
   });

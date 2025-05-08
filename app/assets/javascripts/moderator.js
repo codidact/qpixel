@@ -14,9 +14,12 @@ $(() => {
     ev.preventDefault();
     const tgt = /** @type {HTMLElement} */(ev.target);
     const id = tgt.dataset.flagId;
+
+    const resolveCommentElem = tgt.parentNode?.parentNode?.querySelector('.flag-resolve-comment');
+
     const data = {
       result: tgt.dataset.result,
-      message: tgt.parentNode.parentNode.querySelector('.flag-resolve-comment').value
+      message: resolveCommentElem instanceof HTMLTextAreaElement ? resolveCommentElem.value : ''
     };
 
     const req = await QPixel.jsonPost(`/mod/flags/${id}/resolve`, data);

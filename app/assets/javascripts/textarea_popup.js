@@ -185,7 +185,6 @@ QPixel.Popup = class Popup {
           break;
         case 13: // Enter
           const selected = self.$popup.find('.item.active');
-          console.log('enter, selected: ', selected);
           if (selected.length > 0) {
             ev.stopPropagation();
             ev.preventDefault();
