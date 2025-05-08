@@ -121,7 +121,7 @@ interface QPixel {
   filters?: () => Promise<Record<string, Filter>>;
   offset?: (element: HTMLElement) => ElementOffset;
   preference?: (name: string, community?: boolean) => Promise<string>;
-  replaceSelection?: ($field: JQuery<HTMLInputElement>, text: string) => void;
+  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
   setFilter?: (name: string, filter: Filter, category: string, isDefault: boolean) => Promise<void>;
   setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;
