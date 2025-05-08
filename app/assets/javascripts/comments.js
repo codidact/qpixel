@@ -205,6 +205,10 @@ $(() => {
     const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
+
+    /**
+     * @type {QPixelPopupCallback}
+     */
     const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');

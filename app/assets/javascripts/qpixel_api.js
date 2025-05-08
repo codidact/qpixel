@@ -95,7 +95,7 @@ window.QPixel = {
 
   /**
    * Get the absolute offset of an element.
-   * @param el the element for which to find the offset.
+   * @param {HTMLElement} el the element for which to find the offset.
    * @returns {{top: number, left: number, bottom: number, right: number}}
    */
   offset: function (el) {
