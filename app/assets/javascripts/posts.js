@@ -21,6 +21,8 @@ $(() => {
     }
   });
 
+  const $postFields = $('.post-field');
+
   /** @type {JQuery<HTMLFormElement>} */
   const $uploadForm = $('.js-upload-form');
 
@@ -53,13 +55,23 @@ $(() => {
 
     const $fileInput = $tgt.find('input[type="file"]');
     const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
+
+    // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
-      $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+      const isUploadModalOpened = $('#markdown-image-upload').hasClass('is-active');
+
       const postField = $('.js-post-field');
       postField.val(postField.val()?.toString().replace(placeholder, ''));
-      setTimeout(() => {
-        $tgt.find('.js-max-size').removeClass('error-shake');
-      }, 1000);
+
+      if (!isUploadModalOpened) {
+        QPixel.createNotification('danger', `Can't upload files with size more than 2MB`);
+      } else {
+        $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+        setTimeout(() => {
+          $tgt.find('.js-max-size').removeClass('error-shake');
+        }, 1000);
+      }
+
       return;
     }
     else {
@@ -70,7 +82,9 @@ $(() => {
       method: $tgt.attr('method'),
       body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
     });
+
     const data = await resp.json();
+
     if (resp.status === 200) {
       $tgt.trigger('ajax:success', data);
     }
@@ -87,6 +101,8 @@ $(() => {
     const postText = $postField.val()?.toString();
     $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
+
+    $postFields.trigger('change')
   });
 
   $uploadForm.on('ajax:failure', async (evt, data) => {
@@ -186,8 +202,6 @@ $(() => {
   let featureTimeout = null;
   let draftTimeout = null;
 
-  const postFields = $('.post-field');
-
   const draftFieldsSelectors = [
     '.js-post-field',
     '.js-license-select',
@@ -208,9 +222,12 @@ $(() => {
     }, 1000);
   });
 
-  postFields.on('paste', async (evt) => {
+  $postFields.on('paste', async (evt) => {
     const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
     if (eventData.clipboardData.files.length > 0) {
+      // must be called to prevent raw file name to be inserted after the placeholder
+      evt.preventDefault()
+
       /** @type {JQuery<HTMLInputElement>} */
       const $fileInput = $uploadForm.find('input[type="file"]');
       $fileInput[0].files = eventData.clipboardData.files;
@@ -218,7 +235,7 @@ $(() => {
     }
   });
 
-  postFields.on('focus keyup paste change markdown', (() => {
+  $postFields.on('focus keyup paste change markdown', (() => {
     let previous = null;
     return (evt) => {
       const $tgt = $(evt.target);
@@ -282,7 +299,7 @@ $(() => {
     };
   })()).trigger('markdown');
 
-  postFields.parents('form').on('submit', async (ev) => {
+  $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
     const field = $tgt.find('.post-field');
 
