@@ -127,7 +127,20 @@ interface QPixel {
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;
   user?: () => Promise<User>;
   validatePost?: (postText: string) => [boolean, PostValidatorMessage[]];
+  /**
+   * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
+   * @param uri The URI to which to send the request.
+   * @param data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
+   * @param options An optional {@link RequestInit} to override the defaults provided by this method. 
+   * @returns The Response promise returned from {@link fetch}.
+   */
   fetchJSON?: (uri: string, data: any, options?: RequestInit) => Promise<Response>;
+  /**
+   * @param uri The URI to which to send the request.
+   * @param options An optional {@link RequestInit} to override the defaults provided by {@link fetchJSON}
+   * @returns 
+   */
+  getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   // qpixel_dom
   DOM?: QPixelDOM;

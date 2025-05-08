@@ -465,14 +465,6 @@ window.QPixel = {
     return [currentSequence, posInSeq];
   },
 
-  /**
-   * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
-   * @param uri The URI to which to send the request.
-   * @param data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
-   * @param options An optional RequestInit object. Options specified here will override the defaults
-   *  provided by this method. 
-   * @returns The Response promise returned from fetch().
-   */
   fetchJSON: async (uri, data, options) => {
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
@@ -494,5 +486,12 @@ window.QPixel = {
     };
 
     return fetch(uri, requestInit);
+  },
+
+  getJSON: async (uri, options = {}) => {
+    return QPixel.fetchJSON(uri, {}, {
+      ...options,
+      method: 'GET',
+    })
   }
 };

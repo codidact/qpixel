@@ -11,9 +11,7 @@ $(() => {
     const name = $tgt.data('name');
     const type = $tgt.data('type');
 
-    const resp = await QPixel.fetchJSON(`/admin/privileges/${name}`, {}, {
-      method: 'GET'
-    });
+    const resp = await QPixel.getJSON(`/admin/privileges/${name}`);
 
     const data = await resp.json();
 
