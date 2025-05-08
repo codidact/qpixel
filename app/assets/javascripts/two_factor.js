@@ -4,7 +4,9 @@ $(() => {
       const $tgt = $(ev.target);
       const $input = $tgt.find('input[name="code"]');
       const code = $input.val();
-      const req = await QPixel.jsonPost('/users/two-factor/backup', { code });
+
+      const req = await QPixel.fetchJSON('/users/two-factor/backup', { code });
+
       const res = await req.json();
 
       if (res.status === 'error') {

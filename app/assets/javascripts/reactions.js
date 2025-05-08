@@ -16,13 +16,14 @@ $(() => {
             return;
         }
 
-        const resp = await QPixel.jsonPost('/posts/reactions/add', {
+        const resp = await QPixel.fetchJSON('/posts/reactions/add', {
             reaction_id: $rt.val(),
             comment: $comment.val()?.toString()?.trim() || null,
             post_id: postId
         }, {
             headers: { 'Accept': 'application/json' }
         });
+
         const data = await resp.json();
 
         if (data.status === 'success') {
@@ -38,7 +39,7 @@ $(() => {
         const postId = $this.attr("data-post")
         const reactionType = $this.attr("data-reaction");
 
-        const resp = await QPixel.jsonPost('/posts/reactions/retract', { reaction_id: reactionType, post_id: postId }, {
+        const resp = await QPixel.fetchJSON('/posts/reactions/retract', { reaction_id: reactionType, post_id: postId }, {
             headers: { 'Accept': 'application/json' }
         });
 

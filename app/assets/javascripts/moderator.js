@@ -22,7 +22,8 @@ $(() => {
       message: resolveCommentElem instanceof HTMLTextAreaElement ? resolveCommentElem.value : ''
     };
 
-    const req = await QPixel.jsonPost(`/mod/flags/${id}/resolve`, data);
+    const req = await QPixel.fetchJSON(`/mod/flags/${id}/resolve`, data);
+
     if (req.status === 200) {
       const res = await req.json();
       if (res.status === 'success') {

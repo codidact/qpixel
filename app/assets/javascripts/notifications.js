@@ -74,7 +74,7 @@ $(() => {
   $('.js-read-all-notifs').on('click', async (ev) => {
     ev.preventDefault();
 
-    await QPixel.jsonPost('/notifications/read_all', {}, {
+    await QPixel.fetchJSON('/notifications/read_all', {}, {
       headers: { 'Accept': 'application/json' }
     });
 
@@ -89,7 +89,7 @@ $(() => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
 
-    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {}, {
+    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
       headers: { 'Accept': 'application/json' }
     });
 
@@ -104,7 +104,7 @@ $(() => {
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const id = $tgt.attr('data-notif-id');
 
-    const resp = await QPixel.jsonPost(`/notifications/${id}/read`, {}, {
+    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
       headers: { 'Accept': 'application/json' }
     });
 

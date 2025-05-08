@@ -119,7 +119,7 @@ $(() => {
       return;
     }
 
-    const resp = await QPixel.jsonPost('/posts/save-draft', { ...draft, path: location.pathname });
+    const resp = await QPixel.fetchJSON('/posts/save-draft', { ...draft, path: location.pathname });
 
     if (resp.status === 200) {
       const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
@@ -290,7 +290,7 @@ $(() => {
 
     // Draft handling
     if (!draftDeleted) {
-      const resp = await QPixel.jsonPost('/posts/delete-draft', { path: location.pathname });
+      const resp = await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
       if (resp.status === 200) {
         $tgt.attr('data-draft-deleted', 'true');
 
@@ -412,8 +412,11 @@ $(() => {
 
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post-id');
-    const resp = await QPixel.jsonPost(`/posts/${postId}/promote`, {});
+
+    const resp = await QPixel.fetchJSON(`/posts/${postId}/promote`, {});
+
     const data = await resp.json();
+
     if (data.success) {
       QPixel.createNotification('success', 'Added post to promotion list.');
     }
@@ -432,7 +435,7 @@ $(() => {
       return;
     }
 
-    await QPixel.jsonPost('/posts/delete-draft', { path: location.pathname });
+    await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
 
     location.href = $btn.attr('href');
   });

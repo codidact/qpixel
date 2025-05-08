@@ -27,7 +27,6 @@ QPixel.Popup = class Popup {
    * @param {JQuery[]} items an array of jQuery-wrappable elements to include - apply the `item` class to each one
    * @param {HTMLInputElement | HTMLTextAreaElement} field parent field that the popup is for
    * @param {QPixelPopupCallback} cb a callback that will be called when an item is clicked
-   * @returns {QPixelPopup}
    */
   static getPopup (items, field, cb) {
     const popupId = $(field).attr('data-popup');

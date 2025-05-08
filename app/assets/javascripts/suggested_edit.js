@@ -5,7 +5,8 @@ $(() => {
     const editId = self.attr('data-suggested-edit-approve');
     const comment = $('#summary').val();
 
-    const resp = await QPixel.jsonPost(`/posts/suggested-edit/${editId}/approve`, { comment });
+    const resp = await QPixel.fetchJSON(`/posts/suggested-edit/${editId}/approve`, { comment });
+
     const data = await resp.json();
 
     if (data.status !== 'success') {
@@ -28,7 +29,8 @@ $(() => {
     const editId = self.attr('data-suggested-edit-reject');
     const comment = $('.js-rejection-reason').val();
 
-    const resp = await QPixel.jsonPost(`/posts/suggested-edit/${editId}/reject`, { rejection_comment: comment });
+    const resp = await QPixel.fetchJSON(`/posts/suggested-edit/${editId}/reject`, { rejection_comment: comment });
+
     const data = await resp.json();
 
     if (data.status !== 'success') {
