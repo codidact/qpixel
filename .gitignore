@@ -38,9 +38,12 @@ test/reports
 
 TODO.md
 
+# configuration files
 config/storage.yml
 config/email.yml
 config/database.yml
+
+storage
 
 deploy
 
