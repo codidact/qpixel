@@ -289,17 +289,34 @@
     }
   }
 
-  window.addEventListener('DOMContentLoaded', (_) => {
-    if (document.querySelector('.category-header--name').innerText.trim() === 'Challenges') {
-      const question_tags = [...document.querySelector('.post--tags').children].map((el) => el.innerText);
-      
-      if (question_tags.includes('code-golf') || question_tags.includes('lowest-score')) {
-        sort = (x, y) => x.score - y.score;
-        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+  window.addEventListener("DOMContentLoaded", (_) => {
+    if (
+      document.querySelector(".category-header--name").innerText.trim() ===
+      "Challenges"
+    ) {
+      const question_tags = [
+        ...document.querySelector(".post--tags").children,
+      ].map((el) => el.innerText);
+
+      if (
+        question_tags.includes("code-golf") ||
+        question_tags.includes("lowest-score")
+      ) {
+        sort = (x, y) =>
+          typeof x.score === "undefined" ? 1 : x.score - y.score; // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        document
+          .querySelector(".post:first-child")
+          .nextElementSibling.insertAdjacentElement("afterend", embed);
         refreshBoard();
-      } else if (question_tags.includes('code-bowling') || question_tags.includes('highest-score')) {
-        sort = (x, y) => y.score - x.score;
-        document.querySelector('.post:first-child').nextElementSibling.insertAdjacentElement('afterend', embed);
+      } else if (
+        question_tags.includes("code-bowling") ||
+        question_tags.includes("highest-score")
+      ) {
+        sort = (x, y) =>
+          typeof x.score === "undefined" ? 1 : y.score - x.score; // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        document
+          .querySelector(".post:first-child")
+          .nextElementSibling.insertAdjacentElement("afterend", embed);
         refreshBoard();
       }
     }
