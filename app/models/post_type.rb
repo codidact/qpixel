@@ -19,6 +19,11 @@ class PostType < ApplicationRecord
     end
   end
 
+  # @return [Boolean] whether the post type has active reactions
+  def active_reactions?
+    (has_reactions && reactions.any?) || false
+  end
+
   # @return [Boolean] whether the post type is a system type
   def system?
     ['HelpDoc', 'PolicyDoc'].include?(name)

@@ -5,6 +5,7 @@ question:
   answer_type: answer
   has_votes: true
   has_tags: true
+  has_reactions: true
   has_parent: false
   has_category: true
   has_license: true
@@ -19,6 +20,7 @@ answer:
   has_answers: false
   has_votes: true
   has_tags: false
+  has_reactions: true
   has_parent: true
   has_category: true
   has_license: true

@@ -36,7 +36,7 @@
   <% end %>
 
   <div class="post--container <%= 'deleted-content' if post.deleted? %> grid is-nowrap">
-    <% if post_type.has_votes || (user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any?) %>
+    <% if post_type.has_votes || (user_signed_in? && post.post_type.active_reactions?) %>
       <div>
         <% if post_type.has_votes %>
           <div class="post--votes has-text-align-center" title="Score: <%= post.score %>">
@@ -65,7 +65,7 @@
             <% end %>
           </div>
         <% end %>
-        <% if user_signed_in? && post.post_type.has_reactions && post.post_type.reactions.any? %>
+        <% if user_signed_in? && post.post_type.active_reactions? %>
           <div class="post--react has-text-align-center">
             <% unless post.locked? %>
               <button class="react-button button is-muted is-icon-only-button h-fw-bold"

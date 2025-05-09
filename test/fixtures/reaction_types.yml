@@ -7,6 +7,7 @@ wfm:
   requires_comment: false
   position: 1
   community: sample
+  active: true
 
 old:
   name: Outdated
