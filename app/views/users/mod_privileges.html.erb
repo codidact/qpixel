@@ -75,7 +75,7 @@
             and may impose restrictions on user accounts.</p>
         </div>
         <div class="grid--cell">
-          <% if @user.at_least_moderator? %>
+          <% if @user.moderator? %>
             <button class="button is-filled js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">revoke</button>
           <% else %>
             <button class="button is-outlined js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">grant</button>

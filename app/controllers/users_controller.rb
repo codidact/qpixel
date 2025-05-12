@@ -421,7 +421,7 @@ class UsersController < ApplicationController
       staff: :staff
     }
 
-    # values must match methods/columns on the User model
+    # values must match methods on the User model
     permission_map = {
       mod: :admin?,
       admin: :global_admin?,
@@ -445,7 +445,7 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege! 'mod'
+        @user.community_user.grant_privilege!('mod')
       else
         @user.community_user.privilege('mod').destroy
       end
