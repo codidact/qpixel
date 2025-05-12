@@ -421,11 +421,12 @@ class UsersController < ApplicationController
       staff: :staff
     }
 
+    # values must match methods/columns on the User model
     permission_map = {
-      mod: :is_admin,
-      admin: :is_global_admin,
-      mod_global: :is_global_admin,
-      admin_global: :is_global_admin,
+      mod: :admin?,
+      admin: :global_admin?,
+      mod_global: :global_admin?,
+      admin_global: :global_admin?,
       staff: :staff
     }
 
