@@ -331,6 +331,24 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal data['username'], mod.username
   end
 
+  test 'role toggle should correctly grant & revoke moderator role' do
+    sign_in users(:global_admin)
+
+    mod = users(:moderator)
+
+    post :role_toggle, params: { id: mod.id, role: 'mod' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.moderator?, false
+
+    post :role_toggle, params: { id: mod.id, role: 'mod' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.moderator?, true
+  end
+
   private
 
   def create_other_user
