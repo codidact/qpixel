@@ -413,10 +413,22 @@ class UsersController < ApplicationController
   end
 
   def role_toggle
-    role_map = { mod: :is_moderator, admin: :is_admin, mod_global: :is_global_moderator, admin_global: :is_global_admin,
-                 staff: :staff }
-    permission_map = { mod: :is_admin, admin: :is_global_admin, mod_global: :is_global_admin,
-    admin_global: :is_global_admin, staff: :staff }
+    role_map = {
+      mod: :is_moderator,
+      admin: :is_admin,
+      mod_global: :is_global_moderator,
+      admin_global: :is_global_admin,
+      staff: :staff
+    }
+
+    permission_map = {
+      mod: :is_admin,
+      admin: :is_global_admin,
+      mod_global: :is_global_admin,
+      admin_global: :is_global_admin,
+      staff: :staff
+    }
+
     unless role_map.keys.include?(params[:role].underscore.to_sym)
       render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: :bad_request
     end
