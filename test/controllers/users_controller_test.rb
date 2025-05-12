@@ -349,6 +349,24 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal mod.moderator?, true
   end
 
+  test 'role toggle should correctly grant & remove admin role' do
+    sign_in users(:global_admin)
+
+    admin = users(:admin)
+
+    post :role_toggle, params: { id: admin.id, role: 'admin' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.admin?, false
+
+    post :role_toggle, params: { id: admin.id, role: 'admin' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.admin?, true
+  end
+
   private
 
   def create_other_user
