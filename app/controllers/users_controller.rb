@@ -447,7 +447,7 @@ class UsersController < ApplicationController
       if new_value
         @user.community_user.grant_privilege!('mod')
       else
-        @user.community_user.privilege('mod').destroy
+        @user.community_user.privilege('mod')&.destroy
       end
 
       @user.community_user.update(attrib => new_value)
