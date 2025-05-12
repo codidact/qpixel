@@ -84,7 +84,7 @@
       </div>
     </div>
 <% end %>
-<% if current_user.is_global_admin %>
+<% if current_user.global_admin? %>
   <div class="widget--body">
     <div class="grid">
       <div class="grid--cell">
@@ -150,7 +150,7 @@
     </div>
   </div>
 <% end %>
-<% if current_user.is_global_admin && current_user.staff? %>
+<% if current_user.global_admin? && current_user.staff? %>
   <div class="widget--body">
     <div class="grid">
       <div class="grid--cell">
