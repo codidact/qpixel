@@ -117,7 +117,7 @@
         <p class="h-m-0 form-caption">This user will have moderator status on every site in this network.</p>
       </div>
       <div class="grid--cell">
-        <% if @user.is_global_moderator %>
+        <% if @user.global_moderator? %>
           <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">revoke</button>
         <% else %>
           <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">grant</button>
@@ -137,7 +137,7 @@
         <p class="h-m-0 form-caption">This user will have admin status on every site in this network.</p>
       </div>
       <div class="grid--cell">
-        <% if @user.is_global_admin %>
+        <% if @user.global_admin? %>
           <% if @user.id == current_user.id %>
             <button class="button is-muted is-filled" disabled title="Nope. You cannot revoke your own network-wide admin status. 😉">granted</button>
           <% else %>
