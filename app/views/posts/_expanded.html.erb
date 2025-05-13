@@ -560,10 +560,12 @@
             <% if user_signed_in? %>
               <% if post.locked? && standard? %>
                 <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on locked posts.' %>
-              <% elsif post.deleted %>
+              <% elsif post.deleted && standard? %>
                 <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
               <% elsif post.comments_disabled && standard? %>
                 <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post.' %>
+              <% elsif post.deleted %>
+                <%= render 'shared/lock_notice', text: 'Comments are disabled on deleted posts, but as a moderator you are exempt from that block.' %>
               <% elsif post.locked? %>
                 <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
               <% elsif post.comments_disabled %>
