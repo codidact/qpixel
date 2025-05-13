@@ -331,6 +331,78 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal data['username'], mod.username
   end
 
+  test 'role toggle should correctly grant & revoke moderator role' do
+    sign_in users(:global_admin)
+
+    mod = users(:moderator)
+
+    post :role_toggle, params: { id: mod.id, role: 'mod' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.moderator?, false
+
+    post :role_toggle, params: { id: mod.id, role: 'mod' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.moderator?, true
+  end
+
+  test 'role toggle should correctly grant & revoke admin role' do
+    sign_in users(:global_admin)
+
+    admin = users(:admin)
+
+    post :role_toggle, params: { id: admin.id, role: 'admin' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.admin?, false
+
+    post :role_toggle, params: { id: admin.id, role: 'admin' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.admin?, true
+  end
+
+  test 'role toggle should correctly grant & revoke global moderator role' do
+    sign_in users(:global_admin)
+
+    mod = users(:moderator)
+
+    post :role_toggle, params: { id: mod.id, role: 'mod_global' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.global_moderator?, true
+
+    post :role_toggle, params: { id: mod.id, role: 'mod_global' }
+    assert_response 200
+
+    mod.reload
+    assert_equal mod.global_moderator?, false
+  end
+
+  test 'role toggle should correctly grant & revoke global admin role' do
+    sign_in users(:global_admin)
+
+    admin = users(:admin)
+
+    post :role_toggle, params: { id: admin.id, role: 'admin_global' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.global_admin?, true
+
+    post :role_toggle, params: { id: admin.id, role: 'admin_global' }
+    assert_response 200
+
+    admin.reload
+    assert_equal admin.global_admin?, false
+  end
+
   private
 
   def create_other_user

@@ -413,10 +413,23 @@ class UsersController < ApplicationController
   end
 
   def role_toggle
-    role_map = { mod: :is_moderator, admin: :is_admin, mod_global: :is_global_moderator, admin_global: :is_global_admin,
-                 staff: :staff }
-    permission_map = { mod: :is_admin, admin: :is_global_admin, mod_global: :is_global_admin,
-    admin_global: :is_global_admin, staff: :staff }
+    role_map = {
+      mod: :is_moderator,
+      admin: :is_admin,
+      mod_global: :is_global_moderator,
+      admin_global: :is_global_admin,
+      staff: :staff
+    }
+
+    # values must match methods on the User model
+    permission_map = {
+      mod: :admin?,
+      admin: :global_admin?,
+      mod_global: :global_admin?,
+      admin_global: :global_admin?,
+      staff: :staff
+    }
+
     unless role_map.keys.include?(params[:role].underscore.to_sym)
       render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: :bad_request
     end
@@ -432,9 +445,9 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege! 'mod'
+        @user.community_user.grant_privilege!('mod')
       else
-        @user.community_user.privilege('mod').destroy
+        @user.community_user.privilege('mod')&.destroy
       end
 
       @user.community_user.update(attrib => new_value)
