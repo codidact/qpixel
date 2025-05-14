@@ -36,7 +36,31 @@ class SiteSetting < ApplicationRecord
     community_id.nil?
   end
 
-  # Is the setting a text value?
+  # Is the setting boolean-valued?
+  # @return [Boolena] check result
+  def boolean?
+    value_type.downcase == 'boolean'
+  end
+
+  # Is the setting floating point number-valued?
+  # @return [Boolena] check result
+  def float?
+    value_type.downcase == 'float'
+  end
+
+  # Is the setting integer-valued?
+  # @return [Boolena] check result
+  def integer?
+    value_type.downcase == 'integer'
+  end
+
+  # Is the setting string-valued (plain text)?
+  # @return [Boolean] check result
+  def string?
+    value_type.downcase == 'string'
+  end
+
+  # Is the setting text-valued (HTML-aware text)?
   # @return [Boolean] check result
   def text?
     value_type.downcase == 'text'
