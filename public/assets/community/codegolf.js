@@ -15,8 +15,10 @@
  *   variant?: string
  *   extensions?: string
  *   code?: string
- *   score?: string
+ *   score?: number
  * }} ChallengeEntry
+ * 
+ * @typedef {(a: ChallengeEntry, b: ChallengeEntry) => number} SortComparator
  */
 
 (() => {
@@ -30,6 +32,10 @@
 
   const CHALLENGE_ID = match[0];
   let leaderboard;
+
+  /**
+   * @type {SortComparator | undefined}
+   */
   let sort;
 
   console.log(`CG Leaderboard active, challenge ID ${CHALLENGE_ID}`);
@@ -104,6 +110,7 @@
 
       for (const answerPost of non_deleted_answers) {
 
+        /** @type {HTMLElement | null} */
         const header = answerPost.querySelector('h1, h2, h3');
         const code = header?.parentElement.querySelector(':scope > pre > code');
         const full_language = header?.innerText.split(',')[0].trim();
@@ -112,6 +119,8 @@
         const userlink = answerPost.querySelector(
           ".user-card--content .user-card--link",
         );
+
+        const matchedScore = header?.innerText.match(/\d+/g)?.pop();
 
         /** @type {ChallengeEntry} */
         const entry = {
@@ -125,7 +134,7 @@
           variant,
           extensions,
           code: code?.innerText,
-          score: header?.innerText.match(/\d+/g)?.pop()
+          score: isFinite(+matchedScore) ? +matchedScore : void 0
         };
 
         leaderboard.push(entry);
@@ -137,7 +146,7 @@
 
   /**
    * @param {ChallengeEntry[]} leaderboard list of challenge entries to augment
-   * @param {(a: ChallengeEntry, b: ChallengeEntry) => number} comparator compare function for sorting
+   * @param {SortComparator} comparator compare function for sorting
    * @returns {void}
    */
   function augmentLeaderboardWithPlacements(leaderboard, comparator) {
@@ -187,7 +196,7 @@
   const toggle = embed.querySelector('#leaderboards-header');
   toggle.addEventListener('click', (_) => { 
     if (leaderboardsTable.style.display === 'none') {
-      refreshBoard();
+      refreshBoard(sort);
       leaderboardsTable.style.display = 'block';
     } else {
       leaderboardsTable.style.display = 'none';
@@ -198,29 +207,34 @@
 
   groupByLanguageInput.addEventListener('click', (_) => {
     settings.groupByLanguage = groupByLanguageInput.checked;
-    refreshBoard();
-  });
-  showPlacementsInput.addEventListener('click', (_) => {
-    settings.showPlacements = showPlacementsInput.checked;
-    refreshBoard();
+    refreshBoard(sort);
   });
 
-  function refreshBoard() {
+  showPlacementsInput.addEventListener('click', (_) => {
+    settings.showPlacements = showPlacementsInput.checked;
+    refreshBoard(sort);
+  });
+
+  /**
+   * @param {SortComparator} comparator
+   */
+  function refreshBoard(comparator) {
     // Clear table
     leaderboardsTable.querySelectorAll('a').forEach((el) => el.remove());
 
     if (settings.groupByLanguage) {
-      renderLeaderboardsByLanguage();
+      renderLeaderboardsByLanguage(comparator);
     } else {
-      renderLeaderboardsByByteCount();
+      renderLeaderboardsByByteCount(comparator);
     }
   }
 
   /**
    * Turns arrays into associative arrays
-   * @param {unknown[]} array array to group
-   * @param {(item: unknown) => string} categorizer
-   * @returns {Record<string, unknown[]>}
+   * @template {unknown} T
+   * @param {T[]} array array to group
+   * @param {(item: T) => string} categorizer
+   * @returns {Record<string, T[]>}
    */
   function createGroups(array, categorizer) {
     const groups = {};
@@ -265,12 +279,18 @@
     return row;
   }
 
-  async function renderLeaderboardsByLanguage() {
+  /**
+   * @param {SortComparator} comparator
+   */
+  async function renderLeaderboardsByLanguage(comparator) {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
     const languageLeaderboards = createGroups(leaderboard, (entry) => entry.full_language);
 
-    for (const language in languageLeaderboards) {
-      augmentLeaderboardWithPlacements(languageLeaderboards[language], sort);
+    // sorted using default alphanumeric sort
+    const sortedLanguageKeys = Object.keys(languageLeaderboards).sort()
+
+    for (const language of sortedLanguageKeys) {
+      augmentLeaderboardWithPlacements(languageLeaderboards[language], comparator);
 
       for (const answer of languageLeaderboards[language]) {
         const row = createRow(answer);
@@ -279,9 +299,12 @@
     }
   }
 
-  async function renderLeaderboardsByByteCount() {
+  /**
+   * @param {SortComparator} comparator
+   */
+  async function renderLeaderboardsByByteCount(comparator) {
     leaderboard = leaderboard || await getLeaderboard(CHALLENGE_ID);
-    augmentLeaderboardWithPlacements(leaderboard, sort);
+    augmentLeaderboardWithPlacements(leaderboard, comparator);
 
     for (const answer of leaderboard) {
       const row = createRow(answer);
@@ -302,22 +325,26 @@
         question_tags.includes("code-golf") ||
         question_tags.includes("lowest-score")
       ) {
-        sort = (x, y) =>
-          typeof x.score === "undefined" ? 1 : x.score - y.score; // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
+
         document
           .querySelector(".post:first-child")
           .nextElementSibling.insertAdjacentElement("afterend", embed);
-        refreshBoard();
+
+        refreshBoard(sort);
       } else if (
         question_tags.includes("code-bowling") ||
         question_tags.includes("highest-score")
       ) {
-        sort = (x, y) =>
-          typeof x.score === "undefined" ? 1 : y.score - x.score; // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+        sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
+
         document
           .querySelector(".post:first-child")
           .nextElementSibling.insertAdjacentElement("afterend", embed);
-        refreshBoard();
+
+        refreshBoard(sort);
       }
     }
   });
