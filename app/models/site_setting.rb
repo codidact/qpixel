@@ -36,6 +36,12 @@ class SiteSetting < ApplicationRecord
     community_id.nil?
   end
 
+  # Is the setting a text value?
+  # @return [Boolean] check result
+  def text?
+    value_type.downcase == 'text'
+  end
+
   def typed
     SettingConverter.new(value).send("as_#{value_type.downcase}")
   end
