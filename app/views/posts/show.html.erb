@@ -19,10 +19,12 @@
 
 <%= render 'posts/expanded', post: @post, float_notice: false %>
 
-<% if @post.post_type.has_answers %>
-  <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
+<% num_answers = @post.children.where(deleted: false).count %>
 
-  <% if @post.answer_count > 0 %>
+<% if @post.post_type.has_answers %>
+  <h2><%= pluralize(num_answers, 'answer') %></h2>
+
+  <% if num_answers > 1 %>
     <div class="button-list is-gutterless has-float-right">
       <%= link_to 'Score', request.params.merge(sort: 'score'),
           class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}",
