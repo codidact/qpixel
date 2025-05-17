@@ -19,7 +19,7 @@
 
 <%= render 'posts/expanded', post: @post, float_notice: false %>
 
-<% num_answers = @post.children.where(deleted: false).count %>
+<% num_answers = @children.count %>
 
 <% if @post.post_type.has_answers %>
   <h2><%= pluralize(num_answers, 'answer') %></h2>
