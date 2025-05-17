@@ -50,7 +50,7 @@
   </div>
 
   <% if user_signed_in? && !@post.closed %>
-    <h2>Your Answer</h2>
+    <h2><%=@children.count > 0 ? 'Add an answer' : 'Be the first to answer' %></h2>
     <%= render 'posts/form', post: Post.new(post_type_id: Answer.post_type_id, category: @post.category,
                                             parent: @post), type_summary: false,
                              category: @post.category, post_type: PostType['Answer'], inline_parent: false,
