@@ -22,8 +22,9 @@
 <% num_answers = @children.count %>
 
 <% if @post.post_type.has_answers %>
-  <h2><%= pluralize(num_answers, 'answer') %></h2>
-
+  <% if num_answers > 0 %>
+    <h2><%= pluralize(num_answers, 'answer') %></h2>
+  <% end %>
   <% if num_answers > 1 %>
     <div class="button-list is-gutterless has-float-right">
       <%= link_to 'Score', request.params.merge(sort: 'score'),
