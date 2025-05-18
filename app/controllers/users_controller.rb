@@ -16,12 +16,18 @@ class UsersController < ApplicationController
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
+
     @users = if params[:search].present?
                user_scope.search(params[:search])
              else
-               user_scope.order(sort_param => :desc)
-             end.where.not(deleted: true).where.not(community_users: { deleted: true })
-                .paginate(page: params[:page], per_page: 48) # rubocop:disable Layout/MultilineMethodCallIndentation
+               user_scope
+             end
+
+    @users = @users.where.not(deleted: true)
+                   .where.not(community_users: { deleted: true })
+                   .order(sort_param => :desc)
+                   .paginate(page: params[:page], per_page: 48)
+
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
   end
 
@@ -197,7 +203,9 @@ class UsersController < ApplicationController
              end.where(user: @user).list_includes.joins(:category)
              .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
              .user_sort({ term: params[:sort], default: :score },
-                        age: :created_at, score: :score)
+                        activity: :last_activity,
+                        age: :created_at,
+                        score: :score)
              .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do

@@ -153,12 +153,17 @@ module ApplicationHelper
   ##
   # Gets a shareable URL to the specified post, taking into account post type.
   # @param post [Post] The post in question.
+  # @param params [Hash{Symbol => #to_s}] additional URL params
   # @return [String]
-  def generic_share_link(post)
+  def generic_share_link(post, **params)
     if second_level_post_types.include?(post.post_type_id)
-      answer_post_url(id: post.parent_id, answer: post.id, anchor: "answer-#{post.id}")
+      answer_post_url({
+        id: post.parent_id,
+        answer: post.id,
+        anchor: "answer-#{post.id}"
+      }.merge(params))
     else
-      post_url(post)
+      post_url(post, params)
     end
   end
 
