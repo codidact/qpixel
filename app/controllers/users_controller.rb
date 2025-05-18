@@ -197,7 +197,9 @@ class UsersController < ApplicationController
              end.where(user: @user).list_includes.joins(:category)
              .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
              .user_sort({ term: params[:sort], default: :score },
-                        age: :created_at, score: :score)
+                        activity: :last_activity,
+                        age: :created_at,
+                        score: :score)
              .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
