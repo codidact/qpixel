@@ -314,39 +314,40 @@
   }
 
   window.addEventListener("DOMContentLoaded", (_) => {
+    const categoryName = document.querySelector(".category-header--name").innerText.trim();
+
+    if (categoryName !== 'Challenges') {
+      return;
+    }
+
+    const question_tags = [
+      ...document.querySelector(".post--tags").children,
+    ].map((el) => el.innerText);
+
     if (
-      document.querySelector(".category-header--name").innerText.trim() ===
-      "Challenges"
+      question_tags.includes("code-golf") ||
+      question_tags.includes("lowest-score")
     ) {
-      const question_tags = [
-        ...document.querySelector(".post--tags").children,
-      ].map((el) => el.innerText);
+      // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+      sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
 
-      if (
-        question_tags.includes("code-golf") ||
-        question_tags.includes("lowest-score")
-      ) {
-        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
-        sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
+      document
+        .querySelector(".post:first-child")
+        .nextElementSibling.insertAdjacentElement("afterend", embed);
 
-        document
-          .querySelector(".post:first-child")
-          .nextElementSibling.insertAdjacentElement("afterend", embed);
+      refreshBoard(sort);
+    } else if (
+      question_tags.includes("code-bowling") ||
+      question_tags.includes("highest-score")
+    ) {
+      // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+      sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
 
-        refreshBoard(sort);
-      } else if (
-        question_tags.includes("code-bowling") ||
-        question_tags.includes("highest-score")
-      ) {
-        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
-        sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
+      document
+        .querySelector(".post:first-child")
+        .nextElementSibling.insertAdjacentElement("afterend", embed);
 
-        document
-          .querySelector(".post:first-child")
-          .nextElementSibling.insertAdjacentElement("afterend", embed);
-
-        refreshBoard(sort);
-      }
+      refreshBoard(sort);
     }
   });
 })();
