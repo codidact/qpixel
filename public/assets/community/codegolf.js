@@ -273,7 +273,7 @@
     if (answer.code) {
       row.querySelector('.username').after(document.createElement('code'));
       row.querySelector('code').innerText = answer.code.split('\n')[0].substring(0, 200);
-    } else {
+    } else if (answer.code !== '') {
       row.querySelector('.username').insertAdjacentHTML('afterend', '<em>Invalid entry format</em>');
     }
 
