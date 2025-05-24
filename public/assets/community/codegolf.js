@@ -120,7 +120,8 @@
           ".user-card--content .user-card--link",
         );
 
-        const matchedScore = header?.innerText.match(/\d+/g)?.pop();
+        // https://regex101.com/r/BjIjk5/2
+        const matchedScore = header?.innerText.match(/\d+(?:\.\d+)?/g)?.pop();
 
         /** @type {ChallengeEntry} */
         const entry = {
