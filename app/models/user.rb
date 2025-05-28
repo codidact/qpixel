@@ -73,7 +73,6 @@ class User < ApplicationRecord
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
-
   def has_post_privilege?(name, post)
     if post.user == self
       true
@@ -103,7 +102,7 @@ class User < ApplicationRecord
   def can_update(post, post_type)
     return false unless can_post_in?(post.category)
 
-    privilege?('edit_posts') || at_least_moderator? || self == post.user || \
+    has_post_privilege?('edit_posts', post) || at_least_moderator? || \
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
