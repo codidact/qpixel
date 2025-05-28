@@ -82,6 +82,13 @@ class User < ApplicationRecord
     end
   end
 
+  # Can the user post in the current category?
+  # @param category [Category] category to check
+  # @return [Boolean] check result
+  def can_post_in?(category)
+    category.min_trust_level.blank? || category.min_trust_level <= trust_level
+  end
+
   # Can the user push a given post type to network
   # @param post_type [PostType] type of the post to be pushed
   # @return [Boolean] check result
