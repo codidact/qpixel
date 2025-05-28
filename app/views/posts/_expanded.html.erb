@@ -243,15 +243,15 @@
             <% if (post_type.is_public_editable && !post.locked?) || current_user&.at_least_moderator? || post.user == current_user %>
               <% if current_user&.can_update(post, post_type) %>
                 <% if post.pending_suggested_edit? %>
-                  <%= render 'review_edit_link', post: post %>
+                  <%= render 'posts/review_edit_link', post: post %>
                 <% else %>
-                  <%= render 'edit_link', post: post %>
+                  <%= render 'posts/edit_link', post: post %>
                 <% end %>
               <% elsif current_user.present? %>
                 <% if post.pending_suggested_edit? %>
                   <span class="tools--item">suggested edit pending...</span>
                 <% elsif post_type.is_freely_editable %>
-                  <%= render 'edit_link', post: post %>
+                  <%= render 'posts/edit_link', post: post %>
                 <% else %>
                   <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Suggest edit to this post' do %>
                     <i class="fa fa-pencil-alt"></i>
