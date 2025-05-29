@@ -56,6 +56,40 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_response(400)
   end
 
+  test 'users without the ability to edit posts shouldn\'t be able to approve' do
+    sign_in users(:moderator)
+
+    edit = suggested_edits(:pending_high_trust)
+
+    post :approve, params: { id: edit.id, format: 'json' }
+    assert_response(:bad_request)
+
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    res_body = JSON.parse(response.body)
+    assert_equal 'error', res_body['status']
+    assert_not_empty res_body['message']
+  end
+
+  test 'users without the ability to edit posts shouldn\'t be able to reject' do
+    sign_in users(:moderator)
+
+    edit = suggested_edits(:pending_high_trust)
+
+    post :reject, params: { id: edit.id, format: 'json' }
+    assert_response(:bad_request)
+
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    res_body = JSON.parse(response.body)
+    assert_equal 'error', res_body['status']
+    assert_not_empty res_body['message']
+  end
+
   test 'already decided edit shouldn\'t be able to be approved' do
     sign_in users(:editor)
 
