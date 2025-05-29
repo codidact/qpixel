@@ -92,7 +92,7 @@ class SuggestedEditController < ApplicationController
     @post = @edit.post
 
     unless current_user&.can_reject?(@edit)
-      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
              status: :bad_request)
       return
     end
@@ -105,7 +105,7 @@ class SuggestedEditController < ApplicationController
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
       render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }
     else
-      render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
+      render json: { status: 'error', message: 'Cannot reject this suggested edit... Strange.' },
              status: :bad_request
     end
   end
