@@ -81,6 +81,20 @@ class User < ApplicationRecord
     end
   end
 
+  # Can the user approve a given suggested edit?
+  # @param edit [SuggestedEdit] edit to check
+  # @return [Boolean] check result
+  def can_approve?(edit)
+    edit.post.present? && can_update(edit.post, edit.post.post_type)
+  end
+
+  # Can the user reject a given suggested edit?
+  # @param edit [SuggestedEdit] edit to check
+  # @return [Boolean] check result
+  def can_reject?(edit)
+    edit.post.present? && can_update(edit.post, edit.post.post_type)
+  end
+
   # Can the user post in the current category?
   # @param category [Category, nil] category to check
   # @return [Boolean] check result
