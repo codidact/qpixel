@@ -23,10 +23,10 @@ class SuggestedEditController < ApplicationController
     end
 
     @post = @edit.post
-    unless check_your_privilege('edit_posts', @post, false)
+
+    unless current_user&.can_approve?(@edit)
       render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
              status: :bad_request)
-
       return
     end
 
@@ -91,10 +91,9 @@ class SuggestedEditController < ApplicationController
 
     @post = @edit.post
 
-    unless check_your_privilege('edit_posts', @post, false)
+    unless current_user&.can_reject?(@edit)
       render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
              status: :bad_request)
-
       return
     end
 
