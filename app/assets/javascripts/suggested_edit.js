@@ -15,12 +15,13 @@ $(() => {
 
     const resp = await QPixel.fetchJSON(`/posts/suggested-edit/${editId}/approve`, { comment });
 
+    /** @type {SuggestedEditActionResult} */
     const data = await resp.json();
 
     if (data.status !== 'success') {
       QPixel.createNotification('danger', '<strong>Failed:</strong> ' + data.message);
     }
-    else {
+    else if (data.redirect_url) {
       location.href = data.redirect_url;
     }
   });
