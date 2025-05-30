@@ -14,7 +14,7 @@
 
 <div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>" data-ckb-list-item data-ckb-item-type="post" data-ckb-post-id="<%= post.id %>">
   <% if is_top_level %>
-    <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
+    <h1 class="post--title has-margin-top-0 has-padding-2">
       <% title = post.title +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
