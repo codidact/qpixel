@@ -466,6 +466,9 @@ class UsersController < ApplicationController
       new_value = !@user.send(attrib)
       @user.update(attrib => new_value)
     end
+
+    @user.community_user.recalc_trust_level
+
     AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                          comment: "#{attrib} to #{new_value}")
     AbilityQueue.add(@user, 'Role Change')

@@ -73,13 +73,33 @@ class User < ApplicationRecord
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
-
   def has_post_privilege?(name, post)
     if post.user == self
       true
     else
       privilege?(name)
     end
+  end
+
+  # Can the user approve a given suggested edit?
+  # @param edit [SuggestedEdit] edit to check
+  # @return [Boolean] check result
+  def can_approve?(edit)
+    edit.post.present? && can_update(edit.post, edit.post.post_type)
+  end
+
+  # Can the user reject a given suggested edit?
+  # @param edit [SuggestedEdit] edit to check
+  # @return [Boolean] check result
+  def can_reject?(edit)
+    edit.post.present? && can_update(edit.post, edit.post.post_type)
+  end
+
+  # Can the user post in the current category?
+  # @param category [Category, nil] category to check
+  # @return [Boolean] check result
+  def can_post_in?(category)
+    category.blank? || category.min_trust_level.blank? || category.min_trust_level <= trust_level
   end
 
   # Can the user push a given post type to network
@@ -94,7 +114,9 @@ class User < ApplicationRecord
   # @param post_type [PostType] type of the post (some are freely editable)
   # @return [Boolean] check result
   def can_update(post, post_type)
-    privilege?('edit_posts') || at_least_moderator? || self == post.user || \
+    return false unless can_post_in?(post.category)
+
+    has_post_privilege?('edit_posts', post) || at_least_moderator? || \
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
