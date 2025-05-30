@@ -45,7 +45,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: true, accepted: false)
 
     post :approve, params: { id: suggested_edit.id }
-    assert_response(400)
+    assert_response(:forbidden)
   end
 
   test 'signed-out shouldn\'t be able to reject' do
@@ -53,7 +53,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: true, accepted: false)
 
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    assert_response(400)
+    assert_response(:forbidden)
   end
 
   test 'users without the ability to edit posts shouldn\'t be able to approve' do
@@ -62,7 +62,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     edit = suggested_edits(:pending_high_trust)
 
     post :approve, params: { id: edit.id, format: 'json' }
-    assert_response(:bad_request)
+    assert_response(:forbidden)
 
     assert_nothing_raised do
       JSON.parse(response.body)
@@ -79,7 +79,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     edit = suggested_edits(:pending_high_trust)
 
     post :reject, params: { id: edit.id, format: 'json' }
-    assert_response(:bad_request)
+    assert_response(:forbidden)
 
     assert_nothing_raised do
       JSON.parse(response.body)
@@ -97,7 +97,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: false)
 
     post :approve, params: { id: suggested_edit.id }
-    assert_response(409)
+    assert_response(:conflict)
   end
 
   test 'already decided edit shouldn\'t be able to be rejected' do
@@ -107,7 +107,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: true)
 
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    assert_response(409)
+    assert_response(:conflict)
   end
 
   test 'approving edit should change status and apply it' do
