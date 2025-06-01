@@ -120,7 +120,8 @@
           ".user-card--content .user-card--link",
         );
 
-        const matchedScore = header?.innerText.match(/\d+/g)?.pop();
+        // https://regex101.com/r/BjIjk5/2
+        const matchedScore = header?.innerText.match(/\d+(?:\.\d+)?/g)?.pop();
 
         /** @type {ChallengeEntry} */
         const entry = {
@@ -272,7 +273,7 @@
     if (answer.code) {
       row.querySelector('.username').after(document.createElement('code'));
       row.querySelector('code').innerText = answer.code.split('\n')[0].substring(0, 200);
-    } else {
+    } else if (answer.code !== '') {
       row.querySelector('.username').insertAdjacentHTML('afterend', '<em>Invalid entry format</em>');
     }
 
@@ -313,39 +314,40 @@
   }
 
   window.addEventListener("DOMContentLoaded", (_) => {
+    const categoryName = document.querySelector(".category-header--name").innerText.trim();
+
+    if (categoryName !== 'Challenges') {
+      return;
+    }
+
+    const question_tags = [
+      ...document.querySelector(".post--tags").children,
+    ].map((el) => el.innerText);
+
     if (
-      document.querySelector(".category-header--name").innerText.trim() ===
-      "Challenges"
+      question_tags.includes("code-golf") ||
+      question_tags.includes("lowest-score")
     ) {
-      const question_tags = [
-        ...document.querySelector(".post--tags").children,
-      ].map((el) => el.innerText);
+      // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+      sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
 
-      if (
-        question_tags.includes("code-golf") ||
-        question_tags.includes("lowest-score")
-      ) {
-        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
-        sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
+      document
+        .querySelector(".post:first-child")
+        .nextElementSibling.insertAdjacentElement("afterend", embed);
 
-        document
-          .querySelector(".post:first-child")
-          .nextElementSibling.insertAdjacentElement("afterend", embed);
+      refreshBoard(sort);
+    } else if (
+      question_tags.includes("code-bowling") ||
+      question_tags.includes("highest-score")
+    ) {
+      // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
+      sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
 
-        refreshBoard(sort);
-      } else if (
-        question_tags.includes("code-bowling") ||
-        question_tags.includes("highest-score")
-      ) {
-        // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
-        sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
+      document
+        .querySelector(".post:first-child")
+        .nextElementSibling.insertAdjacentElement("afterend", embed);
 
-        document
-          .querySelector(".post:first-child")
-          .nextElementSibling.insertAdjacentElement("afterend", embed);
-
-        refreshBoard(sort);
-      }
+      refreshBoard(sort);
     }
   });
 })();
