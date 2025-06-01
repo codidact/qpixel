@@ -137,6 +137,8 @@ class PostTest < ApplicationSystemTestCase
 
     click_on 'Active'
 
+    assert post.children.count > 1, 'Answer buttons are only shown for posts with more than one answer'
+
     assert_current_path post_url(post, sort: 'active')
   end
 
