@@ -342,4 +342,21 @@ module ApplicationHelper
   rescue
     [nil, nil]
   end
+
+  ##
+  # Extracts boundary-safe page num from parameters
+  # @param params [ActionController::Parameters] parameters to parse
+  # @return [Integer] boundary-safe page num
+  def safe_page(params)
+    params[:page].nil? ? 1 : params[:page].to_i
+  end
+
+  ##
+  # Extracts boundary-safe page limit from parameters
+  # @param params [ActionController::Parameters] parameters to parse
+  # @param min [Integer, nil] minimum limit per page
+  # @return [Integer] boundary-safe page limit
+  def safe_per_page(params, min = 20)
+    params[:per_page].nil? || params[:per_page].to_i < min ? min : params[:per_page].to_i
+  end
 end
