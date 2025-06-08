@@ -108,7 +108,9 @@ module CommentsHelper
     comments_count = user.recent_comments_count
     max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
-    if post.user_id != user.id && post.parent&.user_id != user.id
+    if user.owns?(post)
+      [false, nil]
+    else
       if !user.privilege?('unrestricted')
         message = 'As a new user, you can only comment on your own posts and on answers to them.'
         if create_audit_log
@@ -127,8 +129,6 @@ module CommentsHelper
       else
         [false, nil]
       end
-    else
-      [false, nil]
     end
   end
 end
