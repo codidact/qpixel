@@ -114,7 +114,7 @@
         <% elsif @post.comments_disabled %>
             <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
         <% end %>
-        <% if @post.comments_allowed? || !standard? %>
+        <% if current_user&.can_comment_on?(@post) %>
           <h4>Reply to this thread</h4>
           <%= form_tag create_comment_path(@comment_thread.id) do %>
             <%= hidden_field_tag :post_id, @post.id %>
