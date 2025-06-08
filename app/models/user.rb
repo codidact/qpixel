@@ -102,6 +102,15 @@ class User < ApplicationRecord
     edit.post.present? && can_update(edit.post, edit.post.post_type)
   end
 
+  # Can the user comment on a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_comment_on?(post)
+    return false unless post.comments_allowed? || at_least_moderator?
+
+    owns?(post) || (privilege?('unrestricted') && recent_comments_count < max_comments_per_day)
+  end
+
   # Can the user post in the current category?
   # @param category [Category, nil] category to check
   # @return [Boolean] check result
