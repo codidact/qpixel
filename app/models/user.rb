@@ -70,6 +70,13 @@ class User < ApplicationRecord
     id == user.id
   end
 
+  # Does the user own a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def owns?(post)
+    post.user_id == id || post.parent&.user_id == id
+  end
+
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
