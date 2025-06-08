@@ -445,6 +445,15 @@ class User < ApplicationRecord
     save
   end
 
+  # Has the user reached comment limit for a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def comment_rate_limited?(post)
+    return false if owns?(post)
+
+    !privilege?('unrestricted') || recent_comments_count >= max_comments_per_day
+  end
+
   # Gets the max number of comments the user can make per day
   # @return [Integer]
   def max_comments_per_day
