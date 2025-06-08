@@ -106,7 +106,7 @@ module CommentsHelper
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)
     comments_count = user.recent_comments_count
-    max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+    max_comments_per_day = user.max_comments_per_day
 
     if user.owns?(post)
       [false, nil]
