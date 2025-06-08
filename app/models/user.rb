@@ -473,8 +473,8 @@ class User < ApplicationRecord
   # @return [Integer] number of recent comments
   def recent_comments_count
     Comment.where(created_at: 24.hours.ago..DateTime.now, user: self).where \
-           .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
-           .where.not(post: Post.where(user_id: user.id)).count
+           .not(post: Post.includes(:parent).where(parents_posts: { user_id: id })) \
+           .where.not(post: Post.where(user_id: id)).count
   end
 
   # rubocop:enable Naming/PredicateName
