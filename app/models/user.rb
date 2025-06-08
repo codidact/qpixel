@@ -106,9 +106,9 @@ class User < ApplicationRecord
   # @param post [Post] post to check
   # @return [Boolean] check result
   def can_comment_on?(post)
-    return false unless post.comments_allowed? || at_least_moderator?
+    return true if at_least_moderator?
 
-    owns?(post) || (privilege?('unrestricted') && recent_comments_count < max_comments_per_day)
+    post.comments_allowed? && !comment_rate_limited?(post)
   end
 
   # Can the user post in the current category?
