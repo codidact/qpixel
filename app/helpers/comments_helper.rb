@@ -105,10 +105,7 @@ module CommentsHelper
   # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)
-    # Comments created by the current user in the last 24 hours, excluding comments on own posts and responses to them.
-    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: user).where \
-                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
-                             .where.not(post: Post.where(user_id: user.id)).count
+    comments_count = user.recent_comments_count
     max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
 
     if post.user_id != user.id && post.parent&.user_id != user.id
@@ -119,8 +116,8 @@ module CommentsHelper
                                   comment: "limit: #{max_comments_per_day}")
         end
         [true, message]
-      elsif recent_comments >= max_comments_per_day
-        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
+      elsif comments_count >= max_comments_per_day
+        message = "You have used your daily comment limit of #{comments_count} comments. Come back tomorrow to " \
                   'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
