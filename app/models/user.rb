@@ -436,6 +436,12 @@ class User < ApplicationRecord
     save
   end
 
+  # Gets the max number of comments the user can make per day
+  # @return [Integer]
+  def max_comments_per_day
+    SiteSetting[privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments'] || 0
+  end
+
   # Gets user's post counts by post type
   # @return [Hash{Integer => Integer}]
   def posts_by_post_type
