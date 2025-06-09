@@ -108,7 +108,7 @@ module CommentsHelper
     comments_count = user.recent_comments_count
     max_comments_per_day = user.max_comments_per_day
 
-    if user.owns?(post)
+    if user.owns_post_or_parent?(post)
       [false, nil]
     else
       if !user.privilege?('unrestricted')

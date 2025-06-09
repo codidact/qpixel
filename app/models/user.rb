@@ -70,10 +70,10 @@ class User < ApplicationRecord
     id == user.id
   end
 
-  # Does the user own a given post?
+  # Does the user own a given post or its parent, if any?
   # @param post [Post] post to check
   # @return [Boolean] check result
-  def owns?(post)
+  def owns_post_or_parent?(post)
     post.user_id == id || post.parent&.user_id == id
   end
 
@@ -449,7 +449,7 @@ class User < ApplicationRecord
   # @param post [Post] post to check
   # @return [Boolean] check result
   def comment_rate_limited?(post)
-    return false if owns?(post)
+    return false if owns_post_or_parent?(post)
 
     !privilege?('unrestricted') || recent_comments_count >= max_comments_per_day
   end
