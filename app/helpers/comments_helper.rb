@@ -109,7 +109,7 @@ module CommentsHelper
     comments_limit = user.max_comments_per_day
 
     if comments_count >= comments_limit
-      message = "You have used your daily comment limit of #{comments_count} comments. Come back tomorrow to continue."
+      message = "You have used your daily limit of #{comments_count} comments. Come back tomorrow to continue."
 
       if create_audit_log
         AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
