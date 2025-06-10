@@ -225,7 +225,8 @@ class Post < ApplicationRecord
         category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
-  # @return [Hash] a hash with as key the reaction type and value the amount of reactions for that type
+  # Maps reaction types to number of reactions of that type
+  # @return [Hash{ReactionType => Integer}]
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }
