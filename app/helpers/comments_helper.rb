@@ -115,7 +115,7 @@ module CommentsHelper
         message = 'As a new user, you can only comment on your own posts and on answers to them.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "limit: #{max_comments_per_day}")
+                                  comment: "'unrestricted' ability required to comment on non-owned posts")
         end
         [true, message]
       elsif comments_count >= max_comments_per_day
