@@ -449,9 +449,9 @@ class User < ApplicationRecord
   # @param post [Post] post to check
   # @return [Boolean] check result
   def comment_rate_limited?(post)
-    return false if owns_post_or_parent?(post)
+    return true if recent_comments_count >= max_comments_per_day
 
-    !privilege?('unrestricted') || recent_comments_count >= max_comments_per_day
+    !privilege?('unrestricted') && !owns_post_or_parent?(post)
   end
 
   # Gets the max number of comments the user can make per day

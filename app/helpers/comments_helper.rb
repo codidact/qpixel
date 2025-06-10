@@ -108,27 +108,28 @@ module CommentsHelper
     comments_count = user.recent_comments_count
     comments_limit = user.max_comments_per_day
 
-    if user.owns_post_or_parent?(post)
+    if comments_count >= comments_limit
+      message = "You have used your daily comment limit of #{comments_count} comments. Come back tomorrow to continue."
+
+      if create_audit_log
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                comment: "limit: #{comments_limit}")
+      end
+
+      [true, message]
+    end
+
+    if user.owns_post_or_parent?(post) || user.privilege?('unrestricted')
       [false, nil]
     else
-      if !user.privilege?('unrestricted')
-        message = 'As a new user, you can only comment on your own posts and on answers to them.'
-        if create_audit_log
-          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "'unrestricted' ability required to comment on non-owned posts")
-        end
-        [true, message]
-      elsif comments_count >= comments_limit
-        message = "You have used your daily comment limit of #{comments_count} comments. Come back tomorrow to " \
-                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
-        if create_audit_log
-          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "limit: #{comments_limit}")
-        end
-        [true, message]
-      else
-        [false, nil]
+      message = 'As a new user, you can only comment on your own posts and on answers to them.'
+
+      if create_audit_log
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                comment: "'unrestricted' ability required to comment on non-owned posts")
       end
+
+      [true, message]
     end
   end
 end
