@@ -4,6 +4,7 @@ class Comment < ApplicationRecord
 
   scope :deleted, -> { where(deleted: true) }
   scope :undeleted, -> { where(deleted: false) }
+  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
 
   belongs_to :user
   belongs_to :comment_thread
