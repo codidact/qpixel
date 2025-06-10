@@ -106,7 +106,7 @@ module CommentsHelper
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)
     comments_count = user.recent_comments_count
-    max_comments_per_day = user.max_comments_per_day
+    comments_limit = user.max_comments_per_day
 
     if user.owns_post_or_parent?(post)
       [false, nil]
@@ -118,12 +118,12 @@ module CommentsHelper
                                   comment: "'unrestricted' ability required to comment on non-owned posts")
         end
         [true, message]
-      elsif comments_count >= max_comments_per_day
+      elsif comments_count >= comments_limit
         message = "You have used your daily comment limit of #{comments_count} comments. Come back tomorrow to " \
                   'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
         if create_audit_log
           AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "limit: #{max_comments_per_day}")
+                                  comment: "limit: #{comments_limit}")
         end
         [true, message]
       else
