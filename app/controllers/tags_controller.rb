@@ -118,12 +118,15 @@ class TagsController < ApplicationController
   end
 
   def rename
+    status = false
+
     Post.transaction do
       AuditLog.moderator_audit event_type: 'tag_rename', related: @tag, user: current_user,
                                comment: "#{@tag.name} renamed to #{params[:name]}"
       status = @tag.update(name: params[:name])
-      render json: { success: status, tag: @tag }
     end
+
+    render json: { success: status, tag: @tag }
   end
 
   def select_merge; end
