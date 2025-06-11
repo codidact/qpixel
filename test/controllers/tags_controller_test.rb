@@ -199,6 +199,9 @@ class TagsControllerTest < ActionController::TestCase
 
     assert_equal true, res_body['success']
     assert_equal new_tag_name, res_body['tag']['name']
+
+    log_entry = AuditLog.last
+    assert_equal 'tag_rename', log_entry['event_type']
   end
 
   test 'should prevent renaming a tag to an invalid name' do
