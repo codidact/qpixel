@@ -176,7 +176,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test 'should correctly rename a tag' do
-    sign_in users(:admin)
+    sign_in users(:moderator)
 
     tag = tags(:base)
 
@@ -202,7 +202,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test 'should prevent renaming a tag to an invalid name' do
-    sign_in users(:admin)
+    sign_in users(:moderator)
 
     tag = tags(:base)
 
