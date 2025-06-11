@@ -174,4 +174,30 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:tag)
     assert_equal ["The #{tags(:child).name} tag is already a child of this tag."], assigns(:tag).errors.full_messages
   end
+
+  test 'should correctly rename the tag' do
+    sign_in users(:admin)
+
+    tag = tags(:base)
+
+    new_tag_name = 'renamed'
+
+    post :rename, params: {
+      format: :json,
+      id: categories(:main).id,
+      name: new_tag_name,
+      tag_id: tag.id,
+      tag: tag
+    }
+
+    assert_response 200
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    res_body = JSON.parse(response.body)
+
+    assert_equal true, res_body['success']
+    assert_equal new_tag_name, res_body['tag']['name']
+  end
 end
