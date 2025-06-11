@@ -478,12 +478,13 @@ class User < ApplicationRecord
     votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
   end
 
-  # Number of comments by the user in the last 24 hours, excluding comments on own posts and responses to them.
+  # Number of comments by the user on posts of others in the last 24 hours
   # @return [Integer] number of recent comments
   def recent_comments_count
-    Comment.where(created_at: 24.hours.ago..DateTime.now, user: self).where \
-           .not(post: Post.includes(:parent).where(parents_posts: { user_id: id })) \
-           .where.not(post: Post.where(user_id: id)).count
+    Comment.recent.by_user(self) \
+           .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: id })) \
+           .where.not(post: Post.where(user_id: id)) \
+           .count
   end
 
   # rubocop:enable Naming/PredicateName
