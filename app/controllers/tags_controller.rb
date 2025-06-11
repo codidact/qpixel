@@ -120,7 +120,7 @@ class TagsController < ApplicationController
   def rename
     status = false
 
-    Post.transaction do
+    @tag.transaction do
       status = @tag.update(name: params[:name])
 
       if status
