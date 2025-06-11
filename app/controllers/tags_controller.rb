@@ -128,6 +128,8 @@ class TagsController < ApplicationController
                                  related: @tag,
                                  user: current_user,
                                  comment: "#{@tag.name} renamed to #{params[:name]}")
+      else
+        raise ActiveRecord::Rollback
       end
     end
 
