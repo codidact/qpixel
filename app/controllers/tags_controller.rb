@@ -121,13 +121,15 @@ class TagsController < ApplicationController
     status = false
 
     @tag.transaction do
+      old_tag_name = @tag.name
+
       status = @tag.update(name: params[:name])
 
       if status
         AuditLog.moderator_audit(event_type: 'tag_rename',
                                  related: @tag,
                                  user: current_user,
-                                 comment: "#{@tag.name} renamed to #{params[:name]}")
+                                 comment: "#{old_tag_name} renamed to #{params[:name]}")
       else
         raise ActiveRecord::Rollback
       end
