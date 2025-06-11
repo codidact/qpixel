@@ -228,8 +228,8 @@ class UsersController < ApplicationController
 
   def activity
     @posts = Post.undeleted.where(user: @user).count
-    @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
-                                                                      posts: { deleted: false }).count
+    @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
+                                                                                posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.where(user: @user).count
     @edits = PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
                                                                 post_history_types: { name: 'post_edited' }).count
