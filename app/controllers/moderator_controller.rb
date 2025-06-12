@@ -1,8 +1,10 @@
 # Web controller. Provides authenticated actions for use by moderators. A lot of the stuff in here, and hence a lot of
 # the tools, are rather repetitive.
 class ModeratorController < ApplicationController
-  before_action :verify_moderator, except: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
-  before_action :authenticate_user!, only: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
+  before_action :verify_moderator,
+                except: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
+  before_action :authenticate_user!,
+                only: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
   before_action :set_post, only: [:nominate_promotion, :remove_promotion]
   before_action :unless_locked, only: [:nominate_promotion, :remove_promotion]
 
