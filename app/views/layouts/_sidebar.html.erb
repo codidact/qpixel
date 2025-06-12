@@ -71,12 +71,16 @@
     <% end %>
   <% end %>
 
-  <% if at_least_moderator? %>
+  <% if check_your_privilege('flag_curate')  %>
     <div class="widget has-margin-4">
-      <h4 class="widget--header has-margin-0">Moderator Tools</h4>
+      <h4 class="widget--header has-margin-0">Tools</h4>
       <div class="widget--body">
         <ul>
+	  <li><a href="/mod/deleted">Recent Deletions</a></li>
+	  <%# this calls into application_helper, not the user model! %>
+	  <% if at_least_moderator? %>
           <li><%= link_to 'Moderator Tools', moderator_path %></li>
+          <% end %>
           <% if admin? %>
             <li><%= link_to 'Admin Tools', admin_path %></li>
           <% end %>

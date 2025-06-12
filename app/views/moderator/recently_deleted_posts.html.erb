@@ -1,6 +1,9 @@
 <% content_for :title, "Recently Deleted Posts" %>
-<%= link_to moderator_path, class: 'has-font-size-small' do %>
-  &laquo; Return to moderator tools
+
+<% if current_user.at_least_moderator? %>
+  <%= link_to moderator_path, class: 'has-font-size-small' do %>
+    &laquo; Return to moderator tools
+  <% end %>
 <% end %>
 
 <h1>Recently Deleted Posts</h1>

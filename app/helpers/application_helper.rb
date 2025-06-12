@@ -5,6 +5,13 @@ module ApplicationHelper
   ##
   # Is the current user a moderator or admin on the current community?
   # @return [Boolean]
+  def at_least_curator?
+    user_signed_in? && ( check_your_privilege('curate') || current_user.at_least_moderator?)
+  end
+
+  ##
+  # Is the current user a moderator or admin on the current community?
+  # @return [Boolean]
   def at_least_moderator?
     user_signed_in? && current_user.at_least_moderator?
   end
