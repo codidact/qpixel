@@ -7,6 +7,8 @@
 <% end %>
 
 <h1>Recently Deleted Posts</h1>
+
+<% if current_user.privilege?('flag_curate') %>
 <div class="item-list">
   <% @posts.each do |post| %>
     <%= render 'posts/type_agnostic', post: post %>
@@ -14,3 +16,11 @@
 </div>
 
 <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+
+<% else %> 
+<p>You need the Curate ability in order to see deleted posts.</p>
+<% end %>
+
+
+
+
