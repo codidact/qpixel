@@ -223,7 +223,7 @@ class User < ApplicationRecord
   def can_see_deleted?
     at_least_moderator? || community_user&.privilege('flag_curate') || false
   end
-  
+
   # Does this user have a profile on a given community?
   # @param community_id [Integer] id of the community to check
   # @return [Boolean] check result

@@ -22,7 +22,7 @@ module ApplicationHelper
   def can_see_deleted?
     user_signed_in? && current_user.can_see_deleted?
   end
-  
+
   ##
   # Is the current user a standard user (not a moderator or an admin)?
   # @return [Boolean] check result
