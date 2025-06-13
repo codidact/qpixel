@@ -56,7 +56,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   #
   # @param user_or_fixture [User, Symbol] either a user or a symbol referring to a fixture
   def user(user_or_fixture)
-    if user_or_fixture.is_a? User
+    if user_or_fixture.is_a?(User)
       user_or_fixture
     else
       users(user_or_fixture)
