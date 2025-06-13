@@ -8,7 +8,7 @@ class AdminControllerTest < ActionController::TestCase
   test 'should get index' do
     sign_in users(:admin)
     get :index
-    assert_response :success
+    assert_response(:success)
   end
 
   test 'should deny anonymous users access' do
@@ -100,21 +100,21 @@ class AdminControllerTest < ActionController::TestCase
   test 'should access error reports' do
     sign_in users(:admin)
     get :error_reports
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:reports)
   end
 
   test 'should search error reports' do
     sign_in users(:admin)
     get :error_reports, params: { uuid: error_logs(:without_context).uuid }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:reports)
   end
 
   test 'should get audit log' do
     sign_in users(:admin)
     get :audit_log
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:logs)
   end
 end

@@ -10,7 +10,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
     after_history = PostHistory.where(post: posts(:question_one)).count
 
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_equal before_history + 1, after_history, 'PostHistory event not created on closure'
     assert_valid_json_response
@@ -24,7 +24,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
     after_history = PostHistory.where(post: posts(:question_one)).count
 
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_equal before_history + 1, after_history, 'PostHistory event not created on closure'
     assert_valid_json_response
@@ -33,7 +33,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'close requires authentication' do
     post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -44,7 +44,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:question_two).id, reason_id: close_reasons(:not_good).id }
     after_history = PostHistory.where(post: posts(:question_two)).count
 
-    assert_response :forbidden
+    assert_response(:forbidden)
     assert_not_nil assigns(:post)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on closure'
     assert_valid_json_response
@@ -58,7 +58,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:closed).id, reason_id: close_reasons(:not_good).id }
     after_history = PostHistory.where(post: posts(:closed)).count
 
-    assert_response :bad_request
+    assert_response(:bad_request)
     assert_not_nil assigns(:post)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on closure'
     assert_valid_json_response
@@ -72,7 +72,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:question_one).id, reason_id: -999 }
     after_history = PostHistory.where(post: posts(:question_one)).count
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_not_nil assigns(:post)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on closure'
     assert_valid_json_response
@@ -86,7 +86,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:duplicate) }
     after_history = PostHistory.where(post: posts(:question_one)).count
 
-    assert_response :bad_request
+    assert_response(:bad_request)
     assert_not_nil assigns(:post)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on closure'
     assert_valid_json_response
@@ -100,7 +100,7 @@ class PostsControllerTest < ActionController::TestCase
     post :close, params: { id: posts(:locked).id, reason_id: close_reasons(:not_good).id }
     after_history = PostHistory.where(post: posts(:locked)).count
 
-    assert_response :forbidden
+    assert_response(:forbidden)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on close'
   end
 end

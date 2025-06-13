@@ -86,13 +86,13 @@ class FlagsControllerTest < ActionController::TestCase
   test 'should get handled flags list' do
     sign_in users(:moderator)
     get :handled
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:flags)
   end
 
   test 'should require authentication to get handled flags list' do
     get :handled
-    assert_response :found
+    assert_response(:found)
   end
 
   test 'should require moderator status to get handled flags list' do

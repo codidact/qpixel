@@ -153,14 +153,16 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should get full posts list for a user' do
     get :posts, params: { id: users(:standard_user).id }
-    assert_response :success
+
+    assert_response(:success)
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)
   end
 
   test 'should get full posts list in JSON format' do
     get :posts, params: { id: users(:standard_user).id, format: 'json' }
-    assert_response :success
+
+    assert_response(:success)
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)
     assert_valid_json_response
@@ -169,7 +171,7 @@ class UsersControllerTest < ActionController::TestCase
   test 'should sort full posts lists correctly' do
     get :posts, params: { id: users(:standard_user).id, format: :json, sort: 'age' }
 
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:posts)
     assert_valid_json_response
@@ -184,14 +186,15 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should require authentication to get mobile login' do
     get :qr_login_code
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'should allow signed in users to get mobile login' do
     sign_in users(:standard_user)
     get :qr_login_code
-    assert_response :success
+
+    assert_response(:success)
     assert_not_nil assigns(:token)
     assert_not_nil assigns(:qr_code)
     assert_equal 1, User.where(login_token: assigns(:token)).count
@@ -201,7 +204,8 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should sign in user in response to valid mobile login request' do
     get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz01' }
-    assert_response :found
+
+    assert_response(:found)
     assert_equal 'You are now signed in.', flash[:success]
     assert_equal users(:closer).id, current_user.id
     assert_nil current_user.login_token
@@ -210,7 +214,8 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should refuse to sign in user using expired token' do
     get :do_qr_login, params: { token: 'abcdefghijklmnopqrstuvwxyz02' }
-    assert_response :not_found
+
+    assert_response(:not_found)
     assert_not_nil flash[:danger]
     assert_equal true, flash[:danger].start_with?("That login link isn't valid.")
     assert_nil current_user&.id
@@ -218,51 +223,51 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should deny anonymous users access to annotations' do
     get :annotations, params: { id: users(:standard_user).id }
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'should deny non-mods access to annotations' do
     sign_in users(:standard_user)
     get :annotations, params: { id: users(:standard_user).id }
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'should get annotations' do
     sign_in users(:admin)
     get :annotations, params: { id: users(:standard_user).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:logs)
   end
 
   test 'should annotate user' do
     sign_in users(:admin)
     post :annotate, params: { id: users(:standard_user).id, comment: 'some words' }
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to user_annotations_path(users(:standard_user))
   end
 
   test 'should deny access to deleted account' do
     get :show, params: { id: users(:deleted_account).id }
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'should deny access to deleted profile' do
     get :show, params: { id: users(:deleted_profile).id }
-    assert_response :not_found
+    assert_response(:not_found)
     assert_not_nil assigns(:user)
   end
 
   test 'should allow moderator access to deleted account' do
     sign_in users(:moderator)
     get :show, params: { id: users(:deleted_account).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:user)
   end
 
   test 'should allow moderator access to deleted profile' do
     sign_in users(:moderator)
     get :show, params: { id: users(:deleted_profile).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:user)
   end
 
@@ -405,7 +410,7 @@ class UsersControllerTest < ActionController::TestCase
 
   def create_other_user
     other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
-    RequestContext.redis.hset 'network/community_registrations', 'other@example.com', other_community.id
+    RequestContext.redis.hset('network/community_registrations', 'other@example.com', other_community.id)
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user

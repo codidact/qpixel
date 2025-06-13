@@ -10,7 +10,7 @@ class PostsControllerTest < ActionController::TestCase
                             post: { post_type_id: post_types(:help_doc).id, title: sample.title, doc_slug: 'topic',
                                     body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99' } }
 
-    assert_response :found
+    assert_response(:found)
     assert_not_nil assigns(:post).id
     assert_redirected_to help_path(assigns(:post).doc_slug)
   end
@@ -23,7 +23,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache, license_id: licenses(:cc_by_sa).id } }
 
-    assert_response :found
+    assert_response(:found)
     assert_not_nil assigns(:post).id
     assert_redirected_to post_path(assigns(:post))
   end
@@ -38,7 +38,7 @@ class PostsControllerTest < ActionController::TestCase
                                     license_id: licenses(:cc_by_sa).id } }
     after_notifs = posts(:question_one).user.notifications.count
 
-    assert_response :found
+    assert_response(:found)
     assert_not_nil assigns(:post).id
     assert_equal before_notifs + 1, after_notifs, 'Notification not created on answer create'
     assert_redirected_to post_path(posts(:question_one).id, anchor: "answer-#{assigns(:post).id}")
@@ -50,7 +50,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -61,7 +61,7 @@ class PostsControllerTest < ActionController::TestCase
                             post: { post_type_id: post_types(:help_doc).id, title: sample.title, doc_slug: 'topic',
                                     body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99' } }
 
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'moderators cannot create policy posts' do
@@ -71,7 +71,7 @@ class PostsControllerTest < ActionController::TestCase
                             post: { post_type_id: post_types(:policy_doc).id, title: sample.title, doc_slug: 'topic',
                                     body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99' } }
 
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'category post type rejects without category' do
@@ -81,7 +81,7 @@ class PostsControllerTest < ActionController::TestCase
                             post: { post_type_id: post_types(:question).id, title: sample.title,
                                     body_markdown: sample.body_markdown, tags_cache: sample.tags_cache } }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to root_path
     assert_not_nil flash[:danger]
     assert_nil assigns(:post).id
@@ -95,7 +95,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:high_trust).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response :forbidden
+    assert_response(:forbidden)
     assert_nil assigns(:post).id
     assert_not_empty assigns(:post).errors.full_messages
   end
@@ -107,7 +107,7 @@ class PostsControllerTest < ActionController::TestCase
                             post: { post_type_id: post_types(:answer).id, title: sample.title,
                                     body_markdown: sample.body_markdown } }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to root_path
     assert_not_nil flash[:danger]
     assert_nil assigns(:post).id
@@ -135,7 +135,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -147,7 +147,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 end

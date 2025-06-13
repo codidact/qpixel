@@ -5,7 +5,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'anonymous user can get show' do
     get :show, params: { id: posts(:question_one).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
     assert_not assigns(:children).any?(&:deleted), 'Anonymous user can see deleted answers'
@@ -14,7 +14,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'standard user can get show' do
     sign_in users(:standard_user)
     get :show, params: { id: posts(:question_one).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
     assert_not assigns(:children).any?(&:deleted), 'Anonymous user can see deleted answers'
@@ -23,7 +23,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'privileged user can see deleted post' do
     sign_in users(:deleter)
     get :show, params: { id: posts(:deleted).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
   end
@@ -31,7 +31,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'privileged user can see deleted answers' do
     sign_in users(:deleter)
     get :show, params: { id: posts(:question_one).id }
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:children)
     assert assigns(:children).any?(&:deleted), 'Privileged user cannot see deleted answers'
@@ -39,7 +39,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'show redirects parented to parent post' do
     get :show, params: { id: posts(:answer_one).id }
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to answer_post_path(posts(:answer_one).parent_id, answer: posts(:answer_one).id,
                                           anchor: "answer-#{posts(:answer_one).id}")
   end
@@ -47,6 +47,6 @@ class PostsControllerTest < ActionController::TestCase
   test 'unprivileged user cannot see post in high trust level category' do
     sign_in users(:standard_user)
     get :show, params: { id: posts(:high_trust).id }
-    assert_response :not_found
+    assert_response(:not_found)
   end
 end

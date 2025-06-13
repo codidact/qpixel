@@ -7,7 +7,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     post :toggle_comments, params: { id: posts(:question_one).id }
 
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -17,7 +17,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'toggle comments requires authentication' do
     post :toggle_comments, params: { id: posts(:question_one).id }
 
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -25,7 +25,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :toggle_comments, params: { id: posts(:question_one).id }
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_not_nil assigns(:post)
     assert_not assigns(:post).comments_disabled
   end
@@ -34,7 +34,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     post :toggle_comments, params: { id: posts(:question_one).id, delete_all_comments: true }
 
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']

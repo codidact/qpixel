@@ -28,7 +28,7 @@ class ModeratorControllerTest < ActionController::TestCase
   test 'should get recent comments page' do
     sign_in users(:moderator)
     get :recent_comments
-    assert_response 200
+    assert_response(200)
     assert_not_nil assigns(:comments)
   end
 
@@ -36,7 +36,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     post :nominate_promotion, params: { id: posts(:question_one).id }
 
-    assert_response :success
+    assert_response(:success)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
   end
@@ -45,14 +45,14 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     post :nominate_promotion, params: { id: posts(:locked).id, format: :json }
 
-    assert_response :forbidden
+    assert_response(:forbidden)
     assert_valid_json_response
     assert_equal 'failed', JSON.parse(response.body)['status']
   end
 
   test 'nominate requires authentication' do
     post :nominate_promotion, params: { id: posts(:question_one).id }
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -60,7 +60,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :nominate_promotion, params: { id: posts(:question_one).id, format: :json }
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_valid_json_response
     assert_equal ['no_privilege'], JSON.parse(response.body)['errors']
   end
@@ -69,7 +69,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     post :nominate_promotion, params: { id: posts(:answer_one).id, format: :json }
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_valid_json_response
     assert_equal ['unavailable_for_type'], JSON.parse(response.body)['errors']
   end
@@ -77,30 +77,30 @@ class ModeratorControllerTest < ActionController::TestCase
   test 'can get promotions list' do
     sign_in users(:deleter)
     get :promotions
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:promotions)
     assert_not_nil assigns(:posts)
   end
 
   test 'promotions list requires auth' do
     get :promotions
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'promotions list requires privileges' do
     sign_in users(:standard_user)
     get :promotions
-    assert_response :not_found
+    assert_response(:not_found)
   end
 
   test 'can remove a post from promotions' do
-    RequestContext.redis.set 'network/promoted_posts',
-                             JSON.dump({ posts(:question_one).id.to_s => 28.days.from_now.to_i })
+    RequestContext.redis.set('network/promoted_posts',
+                             JSON.dump({ posts(:question_one).id.to_s => 28.days.from_now.to_i }))
     sign_in users(:deleter)
     delete :remove_promotion, params: { id: posts(:question_one).id }
 
-    assert_response :success
+    assert_response(:success)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
     assert_equal '{}', RequestContext.redis.get('network/promoted_posts')
@@ -108,7 +108,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'remove promotion requires auth' do
     delete :remove_promotion, params: { id: posts(:question_one).id }
-    assert_response :found
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -116,7 +116,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     delete :remove_promotion, params: { id: posts(:question_one).id, format: :json }
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_valid_json_response
     assert_equal ['no_privilege'], JSON.parse(response.body)['errors']
   end
@@ -125,7 +125,7 @@ class ModeratorControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     delete :remove_promotion, params: { id: posts(:question_two).id, format: :json }
 
-    assert_response :not_found
+    assert_response(:not_found)
     assert_valid_json_response
     assert_equal ['not_promoted'], JSON.parse(response.body)['errors']
   end

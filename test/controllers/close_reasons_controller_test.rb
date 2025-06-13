@@ -31,7 +31,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
   test 'should get new' do
     sign_in users(:global_admin)
     get :new
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:close_reason)
   end
 
