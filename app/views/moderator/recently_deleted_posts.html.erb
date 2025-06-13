@@ -8,8 +8,6 @@
 
 <h1>Recently Deleted Posts</h1>
 
-<% if current_user.privilege?('flag_curate') %>
-
 <% unless current_user.at_least_moderator? %>
 <p>Because you have the Curate ability, you can see deleted posts regardless of who deleted them. If you feel a post has been deleted in error, you can restore it. If a post was deleted by its author and you decide to restore it, consider leaving a comment explaining why (to reduce confusion).</p>
 <% end %>
@@ -22,6 +20,3 @@
 
 <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
 
-<% else %> 
-<p>You need the Curate ability in order to see deleted posts.</p>
-<% end %>
