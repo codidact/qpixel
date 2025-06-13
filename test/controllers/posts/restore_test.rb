@@ -8,7 +8,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:deleted)).count
     post :restore, params: { id: posts(:deleted).id }
     after_history = PostHistory.where(post: posts(:deleted)).count
-    assert_response 302
+    assert_response :found
     assert_redirected_to post_path(assigns(:post))
     assert_nil flash[:danger]
     assert_equal before_history + 1, after_history, 'PostHistory event not created on deletion'
@@ -16,7 +16,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'restore requires authentication' do
     post :restore, params: { id: posts(:deleted).id }
-    assert_response 302
+    assert_response :found
     assert_redirected_to new_user_session_path
   end
 
@@ -25,7 +25,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:deleted)).count
     post :restore, params: { id: posts(:deleted).id }
     after_history = PostHistory.where(post: posts(:deleted)).count
-    assert_response 302
+    assert_response :found
     assert_redirected_to post_path(assigns(:post))
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
@@ -36,7 +36,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:deleted_mod)).count
     post :restore, params: { id: posts(:deleted_mod).id }
     after_history = PostHistory.where(post: posts(:deleted_mod)).count
-    assert_response 302
+    assert_response :found
     assert_redirected_to post_path(assigns(:post))
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
@@ -47,7 +47,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:question_one)).count
     post :restore, params: { id: posts(:question_one).id }
     after_history = PostHistory.where(post: posts(:question_one)).count
-    assert_response 302
+    assert_response :found
     assert_redirected_to post_path(assigns(:post))
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
@@ -58,7 +58,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post: posts(:locked)).count
     post :restore, params: { id: posts(:locked).id }
     after_history = PostHistory.where(post: posts(:locked)).count
-    assert_response 403
+    assert_response :forbidden
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
   end
 
@@ -70,7 +70,7 @@ class PostsControllerTest < ActionController::TestCase
     before_history = PostHistory.where(post_id: children.where('deleted_at >= ?', deleted_at)).count
     post :restore, params: { id: posts(:deleted).id }
     after_history = PostHistory.where(post_id: children.where('deleted_at >= ?', deleted_at)).count
-    assert_response 302
+    assert_response :found
     assert_redirected_to post_path(assigns(:post))
     assert_nil flash[:danger]
     assert_equal before_history + children_count, after_history,

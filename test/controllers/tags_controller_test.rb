@@ -5,20 +5,19 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'index with json format should return JSON list of tags' do
     get :index, params: { format: 'json' }
+
     assert_response :success
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_valid_json_response
     assert_not_nil assigns(:tags)
   end
 
   test 'index with search params should return tags including search term' do
     get :index, params: { format: 'json', term: 'dis' }
+
     assert_response :success
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_valid_json_response
     assert_not_nil assigns(:tags)
+
     JSON.parse(response.body).each do |tag|
       assert_equal true, tag['name'].include?('dis') || tag['tag_synonyms'].any? { |ts| ts['name'].include?('syn') }
     end
@@ -26,11 +25,11 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'index with search params should return tags whose synonyms include search term' do
     get :index, params: { format: 'json', term: 'syn' }
+
     assert_response :success
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_valid_json_response
     assert_not_nil assigns(:tags)
+
     JSON.parse(response.body).each do |tag|
       assert_equal true, tag['name'].include?('syn') || tag['tag_synonyms'].any? { |ts| ts['name'].include?('syn') }
     end
@@ -191,9 +190,7 @@ class TagsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_valid_json_response
 
     res_body = JSON.parse(response.body)
 
@@ -221,9 +218,7 @@ class TagsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_valid_json_response
 
     res_body = JSON.parse(response.body)
 

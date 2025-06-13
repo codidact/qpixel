@@ -8,7 +8,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
   test 'should get index' do
     sign_in users(:admin)
     get :index
-    assert_response :success
+    assert_response(:success)
     assert_not_nil assigns(:close_reasons)
   end
 
@@ -16,7 +16,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     sign_out :user
     PARAM_LESS_ACTIONS.each do |path|
       get path
-      assert_response(404)
+      assert_response(:not_found)
     end
   end
 
@@ -24,7 +24,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     PARAM_LESS_ACTIONS.each do |path|
       get path
-      assert_response(404)
+      assert_response(:not_found)
     end
   end
 
@@ -39,7 +39,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     sign_in users(:global_admin)
     post :create, params: { close_reason: { name: 'test', description: 'test', requires_other_post: true,
                                             active: true } }
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to close_reasons_path
     assert_not_nil assigns(:close_reason)
     assert_not_nil assigns(:close_reason).id
@@ -48,7 +48,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
   test 'should get edit' do
     sign_in users(:global_admin)
     get :edit, params: { id: close_reasons(:duplicate).id }
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:close_reason)
   end
 
@@ -57,7 +57,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     patch :update, params: { id: close_reasons(:duplicate).id, close_reason: { name: 'test', description: 'test',
                                                                                requires_other_post: true,
                                                                                active: false } }
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to close_reasons_path
     assert_not_nil assigns(:close_reason)
     assert_equal false, assigns(:close_reason).active

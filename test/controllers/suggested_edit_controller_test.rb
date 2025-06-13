@@ -62,11 +62,9 @@ class SuggestedEditControllerTest < ActionController::TestCase
     edit = suggested_edits(:pending_high_trust)
 
     post :approve, params: { id: edit.id, format: 'json' }
-    assert_response(:forbidden)
 
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_response(:forbidden)
+    assert_valid_json_response
 
     res_body = JSON.parse(response.body)
     assert_equal 'error', res_body['status']
@@ -79,11 +77,9 @@ class SuggestedEditControllerTest < ActionController::TestCase
     edit = suggested_edits(:pending_high_trust)
 
     post :reject, params: { id: edit.id, format: 'json' }
-    assert_response(:forbidden)
 
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+    assert_response(:forbidden)
+    assert_valid_json_response
 
     res_body = JSON.parse(response.body)
     assert_equal 'error', res_body['status']

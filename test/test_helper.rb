@@ -120,6 +120,12 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_valid_json_response
+    assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+  end
+
   PostMock = Struct.new(:title, :body_markdown, :body, :tags_cache, :edit, keyword_init: true)
 
   def sample
