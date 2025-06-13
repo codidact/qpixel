@@ -7,7 +7,8 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     before_audits = AuditLog.count
     post :feature, params: { id: posts(:question_one).id }
-    assert_response 200
+
+    assert_response(:success)
     assert_not_nil assigns(:post)
     assert_not_nil assigns(:link).id
     assert_equal before_audits + 1, AuditLog.count, 'AuditLog not created on post feature'
@@ -15,17 +16,17 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'feature requires authentication' do
     post :feature, params: { id: posts(:question_one).id }
-    assert_response 302
+
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'regular user cannot feature' do
     sign_in users(:deleter)
     post :feature, params: { id: posts(:question_one).id, format: :json }
-    assert_response 404
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+
+    assert_response(:not_found)
+    assert_valid_json_response
     assert_equal ['no_privilege'], JSON.parse(response.body)['errors']
   end
 end
