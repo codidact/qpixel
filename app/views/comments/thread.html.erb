@@ -104,19 +104,19 @@
           <% if standard? %>
             <%= render 'shared/lock_notice', level: 'info', text: 'You cannot reply to this thread because it has been deleted.' %>
           <% else %>
-            <%= render 'shared/lock_notice', text: 'You cannot reply to this thread because it has been deleted, but as a moderator you are exempt from that block.' %>
+            <%= render 'shared/lock_notice', text: 'Replies are disabled on deleted threads, but as a moderator you are exempt from that block.' %>
           <% end %>
         <% elsif @comment_thread.locked? %>
           <% if standard? %>
             <%= render 'shared/lock_notice', level: 'info', text: 'You cannot reply to this thread because it has been locked.' %>
           <% else %>
-            <%= render 'shared/lock_notice', text: 'You cannot reply to this thread because it has been locked, but as a moderator you are exempt from that block.' %>
+            <%= render 'shared/lock_notice', text: 'Replies are disabled on locked threads, but as a moderator you are exempt from that block.' %>
           <% end %>
         <% elsif @comment_thread.archived %>
           <% if standard? %>
             <%= render 'shared/lock_notice', level: 'info', text: 'This thread has been archived and cannot be replied to.' %>
           <% else %>
-          <%= render 'shared/lock_notice', text: 'This thread has been archived and cannot be replied to, but as a moderator you are exempt from that block.' %>
+          <%= render 'shared/lock_notice', text: 'Replies are disabled on archived threads, but as a moderator you are exempt from that block.' %>
           <% end %>
         <% elsif @post.locked? %>
           <% if standard? %>
