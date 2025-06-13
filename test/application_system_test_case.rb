@@ -105,9 +105,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     click_on 'Create Post'
     fill_in 'Body', with: body_text
     fill_in 'Summarize your post with a title:', with: title_text
-    post_form_select_tag tags(:faq).name
+    post_form_select_tag(tags(:faq).name)
 
-    assert_difference 'Post.count' do
+    assert_difference('Post.count') do
       click_on 'Save Post in '
     end
   end
@@ -117,7 +117,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in 'Your comment', with: comment_body_text
     fill_in 'Comment thread title', with: thread_title
 
-    assert_difference 'Comment.count' do
+    assert_difference('Comment.count') do
       click_on 'Create thread'
     end
   end
@@ -126,7 +126,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     click_on 'See the whole thread'
     fill_in 'Your message', with: comment_body_text
 
-    assert_difference 'Comment.count' do
+    assert_difference('Comment.count') do
       click_on 'Add reply'
     end
   end
