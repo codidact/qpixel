@@ -1,6 +1,22 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  test 'search should correctly narrow down users by username' do
+    users = User.search('deleted')
+
+    users.each do |u|
+      assert_equal true, u.username.include?('deleted')
+    end
+  end
+
+  test 'search should match any substring in usernames' do
+    users = User.search('oderat')
+
+    users.each do |u|
+      assert_equal true, u.username.include?('oderat')
+    end
+  end
+
   test 'users should be destructible in a single call' do
     assert_nothing_raised do
       users(:standard_user).destroy!
@@ -67,30 +83,42 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user.community_user.reload, cu1
   end
 
-  test 'is_moderator for community moderator' do
-    assert_equal users(:moderator).is_moderator, true
+  test 'at_least_moderator? for community moderator' do
+    assert_equal users(:moderator).at_least_moderator?, true
   end
 
-  test 'is_moderator for community moderator in another context' do
+  test 'at_least_moderator? for community moderator in another context' do
     RequestContext.community = Community.create(host: 'other', name: 'Other')
-    assert_equal users(:moderator).is_moderator, false
+    assert_equal users(:moderator).at_least_moderator?, false
   end
 
-  test 'is_moderator for global moderator' do
-    assert_equal users(:global_moderator).is_moderator, true
+  test 'at_least_moderator? for global moderator' do
+    assert_equal users(:global_moderator).at_least_moderator?, true
   end
 
-  test 'is_admin for community admin' do
-    assert_equal users(:admin).is_admin, true
+  test 'at_least_global_moderator?' do
+    admin = users(:admin)
+    mod = users(:moderator)
+    global_admin = users(:global_admin)
+    global_mod = users(:global_moderator)
+
+    assert_equal admin.at_least_global_moderator?, false
+    assert_equal mod.at_least_global_moderator?, false
+    assert_equal global_mod.at_least_global_moderator?, true
+    assert_equal global_admin.at_least_global_moderator?, true
   end
 
-  test 'is_admin for community admin in another context' do
+  test 'admin? for community admin' do
+    assert_equal users(:admin).admin?, true
+  end
+
+  test 'admin? for community admin in another context' do
     RequestContext.community = Community.create(host: 'other', name: 'Other')
-    assert_equal users(:admin).is_admin, false
+    assert_equal users(:admin).admin?, false
   end
 
-  test 'is_admin for global admin' do
-    assert_equal users(:global_admin).is_admin, true
+  test 'admin? for global admin' do
+    assert_equal users(:global_admin).admin?, true
   end
 
   test 'ensure_community_user! does not alter existing community_user' do
@@ -120,5 +148,82 @@ class UserTest < ActiveSupport::TestCase
     assert_not_nil current_cu
     assert_equal cu, current_cu
     assert_equal user.community_users.count, original_count + 1
+  end
+
+  test 'is_moderator_on should only be true for users that are moderators or admins on a community' do
+    community = communities(:sample)
+    basic = users(:basic_user)
+    std = users(:standard_user)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    assert_equal basic.is_moderator_on(community.id), false
+    assert_equal std.is_moderator_on(community.id), false
+    assert_equal mod.is_moderator_on(community.id), true
+    assert_equal admin.is_moderator_on(community.id), true
+  end
+
+  test 'is_moderator_on should always be true for global moderators and admins with profile on a community' do
+    global_mod = users(:global_moderator)
+    global_admin = users(:global_admin)
+
+    communities.each do |c|
+      assert_equal global_mod.is_moderator_on(c.id), global_mod.has_profile_on(c.id)
+      assert_equal global_admin.is_moderator_on(c.id), global_admin.has_profile_on(c.id)
+    end
+  end
+
+  test 'has_ability_on should be false for users that do not have a profile on a community' do
+    fake = communities(:fake)
+    basic = users(:basic_user)
+    std = users(:standard_user)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    abilities.each do |ability|
+      assert_equal basic.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal std.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal mod.has_ability_on(fake.id, ability.internal_id), false
+      assert_equal admin.has_ability_on(fake.id, ability.internal_id), false
+    end
+  end
+
+  test 'has_ability_on should always be true for moderators and admins with profile on a community' do
+    community = communities(:sample)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    abilities.each do |ability|
+      assert_equal mod.has_ability_on(community.id, ability.internal_id), true
+      assert_equal admin.has_ability_on(community.id, ability.internal_id), true
+    end
+  end
+
+  test 'has_ability_on should return true for every undeleted user with profile on a community' do
+    everyone = abilities(:everyone)
+
+    communities.each do |community|
+      CommunityUser.unscoped.active.where(community_id: community.id).each do |cu|
+        unless cu.user.deleted
+          assert_equal cu.user.has_ability_on(community.id, everyone.internal_id), true
+        end
+      end
+    end
+  end
+
+  test 'has_ability_on should correctly check for unrestricted ability' do
+    community = communities(:sample)
+    basic = users(:basic_user)
+    system = users(:system)
+
+    unrestricted = abilities(:unrestricted)
+
+    [basic, system].each do |user|
+      assert_equal user.has_ability_on(community.id, unrestricted.internal_id), false
+    end
+
+    CommunityUser.unscoped.active.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
+      assert_equal cu.user.has_ability_on(community.id, unrestricted.internal_id), !cu.user.deleted
+    end
   end
 end

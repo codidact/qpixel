@@ -1,4 +1,9 @@
+# Helpers related to comments.
 module CommentsHelper
+  ##
+  # Get a link to the specified comment, accounting for deleted comments.
+  # @param comment [Comment]
+  # @return [String]
   def comment_link(comment)
     if comment.deleted
       comment_thread_url(comment.comment_thread_id, show_deleted_comments: 1, anchor: "comment-#{comment.id}",
@@ -8,6 +13,12 @@ module CommentsHelper
     end
   end
 
+  ##
+  # Process a comment and convert ping-strings (i.e. @#1234) into links.
+  # @param comment [String] The text of the comment to process.
+  # @param pingable [Array<Integer>, nil] A list of user IDs that should be pingable in this comment. Any user IDs not
+  #   present in the list will be displayed as 'unpingable'.
+  # @return [ActiveSupport::SafeBuffer]
   def render_pings(comment, pingable: nil)
     comment.gsub(/@#\d+/) do |id|
       u = User.where(id: id[2..-1].to_i).first
@@ -22,6 +33,11 @@ module CommentsHelper
     end.html_safe
   end
 
+  ##
+  # Process comment text and convert helper links (like [help] and [flags]) into real links.
+  # @param comment_text [String] The text of the comment to process.
+  # @param user [User] Specify a user whose pages to link to from user-related helpers.
+  # @return [String]
   def render_comment_helpers(comment_text, user = current_user)
     comment_text.gsub!(/\[(help( center)?)\]/, "<a href=\"#{help_center_url}\">\\1</a>")
 
@@ -53,6 +69,11 @@ module CommentsHelper
     comment_text
   end
 
+  ##
+  # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
+  # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
+  # @param thread [CommentThread]
+  # @return [Array<Integer>]
   def get_pingable(thread)
     post = thread.post
 
@@ -61,7 +82,6 @@ module CommentsHelper
     # last 500 history event users +
     # last 500 comment authors +
     # all thread followers
-
     query = <<~END_SQL
       SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
       UNION DISTINCT
@@ -76,8 +96,47 @@ module CommentsHelper
 
     ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
+
+  ##
+  # Is the specified user comment rate limited for the specified post?
+  # @param user [User] The user to check.
+  # @param post [Post] The post on which the user proposes to comment.
+  # @param create_audit_log [Boolean] Whether to create an AuditLog if the user is rate limited.
+  # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
+  #   a rate limit message if the user is rate-limited.
+  def comment_rate_limited?(user, post, create_audit_log: true)
+    # Comments created by the current user in the last 24 hours, excluding comments on own posts and responses to them.
+    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: user).where \
+                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
+                             .where.not(post: Post.where(user_id: user.id)).count
+    max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+
+    if post.user_id != user.id && post.parent&.user_id != user.id
+      if !user.privilege?('unrestricted')
+        message = 'As a new user, you can only comment on your own posts and on answers to them.'
+        if create_audit_log
+          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                  comment: "limit: #{max_comments_per_day}")
+        end
+        [true, message]
+      elsif recent_comments >= max_comments_per_day
+        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
+                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
+        if create_audit_log
+          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                  comment: "limit: #{max_comments_per_day}")
+        end
+        [true, message]
+      else
+        [false, nil]
+      end
+    else
+      [false, nil]
+    end
+  end
 end
 
+# HTML sanitizer for use with comments.
 class CommentScrubber < Rails::Html::PermitScrubber
   def initialize
     super

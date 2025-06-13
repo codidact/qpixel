@@ -1,5 +1,5 @@
 $(() => {
-  $('.post--content a').each((i, e) => {
+  $('.post--content a').each((_i, e) => {
     const $tgt = $(e);
     const href = $tgt.attr('href');
 

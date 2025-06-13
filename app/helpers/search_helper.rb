@@ -1,9 +1,19 @@
 module SearchHelper
   def check_posts_permissions
-    (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
+    (current_user&.at_least_moderator? ? Post : Post.undeleted)
       .qa_only.list_includes
   end
 
+  ##
+  # Search & sort a default posts list based on parameters in the current request.
+  #
+  # Generates initial post list using {Post#qa_only}, including deleted posts for mods and admins. Takes search string
+  # from <tt>params[:search]</tt>, applies any qualifiers, and searches post bodies for the remaining term(s).
+  #
+  # Search uses MySQL fulltext search in boolean mode which is what provides advanced search syntax (excluding
+  # qualifiers) - see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
+  #
+  # @return [ActiveRecord::Relation<Post>]
   def search_posts
     posts = check_posts_permissions
 
@@ -33,7 +43,11 @@ module SearchHelper
     [posts, qualifiers]
   end
 
-  # Convert a Filter record into a form parseable by the search function
+  ##
+  # Converts a Filter record into a form parseable by the search function.
+  # @param filter [Filter]
+  # @return [Array<Hash{Symbol => Object}>] An array of hashes, each containing at least a +param+ key and other
+  #   relevant information.
   def filter_to_qualifiers(filter)
     qualifiers = []
     qualifiers.append({ param: :score, operator: '>=', value: filter.min_score }) unless filter.min_score.nil?
@@ -46,6 +60,9 @@ module SearchHelper
     qualifiers
   end
 
+  ##
+  # Provides a filter-like object containing keys for each of the filter parameters.
+  # @return [Hash{Symbol => #to_s}]
   def active_filter
     {
       default: nil,
@@ -60,6 +77,9 @@ module SearchHelper
     }
   end
 
+  ##
+  # Retrieves parameters from +params+, validates their values, and adds them to a qualifiers hash.
+  # @return [Array<Hash{Symbol => Object}>]
   def params_to_qualifiers
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
@@ -101,6 +121,9 @@ module SearchHelper
     filter_qualifiers
   end
 
+  ##
+  # Parses a raw search string and returns the base search term and qualifier strings separately.
+  # @return [Hash{Symbol => String}] A hash containing +:qualifiers+ and +:search+ keys.
   def parse_search(raw_search)
     qualifiers_regex = /([\w\-_]+(?<!\\):[^ ]+)/
     qualifiers = raw_search.scan(qualifiers_regex).flatten
@@ -113,6 +136,11 @@ module SearchHelper
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+
+  ##
+  # Parses a full qualifier string into an array of qualifier objects.
+  # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
+  # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
     valid_value = {
       date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
@@ -189,6 +217,11 @@ module SearchHelper
     # Consider partitioning and telling the user which filters were invalid
   end
 
+  ##
+  # Parses a qualifiers hash and applies it to an ActiveRecord query.
+  # @param qualifiers [Array<Hash{Symbol => Object}>] A qualifiers hash, as returned by other methods in this module.
+  # @param query [ActiveRecord::Relation] An ActiveRecord query to which to add conditions based on the qualifiers.
+  # @return [ActiveRecord::Relation]
   def qualifiers_to_sql(qualifiers, query)
     trust_level = current_user&.trust_level || 0
     allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
@@ -242,6 +275,11 @@ module SearchHelper
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  ##
+  # Parses a qualifier value string, including operator, as a numeric value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10"+
+  # @return [Array(String, String)] A 2-tuple containing operator and value.
+  # @api private
   def numeric_value_sql(value)
     operator = ''
     while ['<', '>', '='].include? value[0]
@@ -254,6 +292,11 @@ module SearchHelper
     [operator, value]
   end
 
+  ##
+  # Parses a qualifier value string, including operator, as a date value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10d"+
+  # @return [Array(String, String, String)] A 3-tuple containing operator, value, and timeframe.
+  # @api private
   def date_value_sql(value)
     operator = ''
 

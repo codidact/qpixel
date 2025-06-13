@@ -16,12 +16,18 @@ class UsersController < ApplicationController
 
   def index
     sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
+
     @users = if params[:search].present?
                user_scope.search(params[:search])
              else
-               user_scope.order(sort_param => :desc)
-             end.where.not(deleted: true).where.not(community_users: { deleted: true })
-                .paginate(page: params[:page], per_page: 48) # rubocop:disable Layout/MultilineMethodCallIndentation
+               user_scope
+             end
+
+    @users = @users.where.not(deleted: true)
+                   .where.not(community_users: { deleted: true })
+                   .order(sort_param => :desc)
+                   .paginate(page: params[:page], per_page: 48)
+
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
   end
 
@@ -51,9 +57,17 @@ class UsersController < ApplicationController
         redirect_to user_path(@user)
       end
       format.json do
-        data = [:id, :username, :is_moderator, :is_admin, :is_global_moderator, :is_global_admin, :trust_level,
-                :se_acct_id].to_h { |a| [a, @user.send(a)] }
-        render json: data
+        data = [:id, :username, :trust_level, :se_acct_id].to_h { |a| [a, @user.send(a)] }
+
+        data_with_ac = data.merge({
+                                    is_standard: @user.standard?,
+                                    is_admin: @user.admin?,
+                                    is_global_admin: @user.global_admin?,
+                                    is_moderator: @user.at_least_moderator?,
+                                    is_global_moderator: @user.at_least_global_moderator?
+                                  })
+
+        render json: data_with_ac
       end
     end
   end
@@ -189,7 +203,9 @@ class UsersController < ApplicationController
              end.where(user: @user).list_includes.joins(:category)
              .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
              .user_sort({ term: params[:sort], default: :score },
-                        age: :created_at, score: :score)
+                        activity: :last_activity,
+                        age: :created_at,
+                        score: :score)
              .paginate(page: params[:page], per_page: 25)
     respond_to do |format|
       format.html do
@@ -297,7 +313,7 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
              status: :unprocessable_entity
       return
@@ -324,7 +340,7 @@ class UsersController < ApplicationController
   end
 
   def soft_delete
-    if @user.is_admin || @user.is_moderator
+    if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
              status: :unprocessable_entity
       return
@@ -389,7 +405,7 @@ class UsersController < ApplicationController
     end
 
     if params[:user][:profile_markdown].present?
-      profile_rendered = helpers.post_markdown(:user, :profile_markdown)
+      profile_rendered = helpers.rendered_post(:user, :profile_markdown)
       profile_params = profile_params.merge(profile: profile_rendered)
     end
 
@@ -405,10 +421,23 @@ class UsersController < ApplicationController
   end
 
   def role_toggle
-    role_map = { mod: :is_moderator, admin: :is_admin, mod_global: :is_global_moderator, admin_global: :is_global_admin,
-                 staff: :staff }
-    permission_map = { mod: :is_admin, admin: :is_global_admin, mod_global: :is_global_admin,
-    admin_global: :is_global_admin, staff: :staff }
+    role_map = {
+      mod: :is_moderator,
+      admin: :is_admin,
+      mod_global: :is_global_moderator,
+      admin_global: :is_global_admin,
+      staff: :staff
+    }
+
+    # values must match methods on the User model
+    permission_map = {
+      mod: :admin?,
+      admin: :global_admin?,
+      mod_global: :global_admin?,
+      admin_global: :global_admin?,
+      staff: :staff
+    }
+
     unless role_map.keys.include?(params[:role].underscore.to_sym)
       render json: { status: 'error', message: "Role not found: #{params[:role]}" }, status: :bad_request
     end
@@ -424,9 +453,9 @@ class UsersController < ApplicationController
 
       # Set/update ability
       if new_value
-        @user.community_user.grant_privilege! 'mod'
+        @user.community_user.grant_privilege!('mod')
       else
-        @user.community_user.privilege('mod').destroy
+        @user.community_user.privilege('mod')&.destroy
       end
 
       @user.community_user.update(attrib => new_value)
@@ -437,6 +466,9 @@ class UsersController < ApplicationController
       new_value = !@user.send(attrib)
       @user.update(attrib => new_value)
     end
+
+    @user.community_user.recalc_trust_level
+
     AuditLog.admin_audit(event_type: 'role_toggle', related: @user, user: current_user,
                          comment: "#{attrib} to #{new_value}")
     AbilityQueue.add(@user, 'Role Change')
@@ -654,7 +686,7 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if helpers.moderator?
+    if current_user&.at_least_moderator?
       User.all
     else
       User.active
@@ -662,7 +694,10 @@ class UsersController < ApplicationController
   end
 
   def check_deleted
-    if (@user.deleted? || @user.community_user.deleted?) && (!helpers.moderator? || params[:deleted_screen].present?)
+    deleted = @user.deleted? || @user.community_user.deleted?
+    go_to_not_found = !current_user&.at_least_moderator? || params[:deleted_screen].present?
+
+    if deleted && go_to_not_found
       render :deleted_user, layout: 'without_sidebar', status: 404
     end
   end

@@ -73,7 +73,7 @@ class Post < ApplicationRecord
       return nil
     end
 
-    if post&.help_category == '$Moderator' && !user&.is_moderator
+    if post&.help_category == '$Moderator' && !user&.at_least_moderator?
       return nil
     end
 
@@ -202,6 +202,12 @@ class Post < ApplicationRecord
     false
   end
 
+  # Checks whether the post allows users to comment on it
+  # @return [Boolean] check result
+  def comments_allowed?
+    !locked? && !deleted && !comments_disabled
+  end
+
   # The test here is for flags that are pending (no status). A spam flag
   # could be marked helpful but the post wouldn't be deleted, and
   # we don't necessarily want the post to be treated like it's a spam risk
@@ -210,8 +216,9 @@ class Post < ApplicationRecord
     flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
 
-  # @param user [User, Nil]
-  # @return [Boolean] whether the given user can view this post
+  # Checks whether a given user can access the post at all
+  # @param user [User, Nil] user to check access for
+  # @return [Boolean] access check result
   def can_access?(user)
     (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
@@ -355,13 +362,13 @@ class Post < ApplicationRecord
   def moderator_tags
     mod_tags = category&.moderator_tags&.map(&:name)
     return unless mod_tags.present? && !mod_tags.empty?
-    return if RequestContext.user&.is_moderator
+    return if RequestContext.user&.at_least_moderator?
 
     sc = changes
     return unless sc.include? 'tags_cache'
 
     if (sc['tags_cache'][0] || []) & mod_tags != (sc['tags_cache'][1] || []) & mod_tags
-      errors.add(:base, "You don't have permission to change moderator-only tags.")
+      errors.add(:mod_tags, "You don't have permission to change moderator-only tags.")
     end
   end
 

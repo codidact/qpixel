@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
 
   def create_thread
     @post = Post.find(params[:post_id])
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.standard?
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -32,7 +32,12 @@ class CommentsController < ApplicationController
 
     pings = check_for_pings @comment_thread, body
 
-    return if comment_rate_limited
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
+      return
+    end
 
     success = ActiveRecord::Base.transaction do
       @comment_thread.save!
@@ -60,7 +65,7 @@ class CommentsController < ApplicationController
   def create
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
-    if @post.comments_disabled && !current_user.is_moderator && !current_user.is_admin
+    if @post.comments_disabled && current_user&.standard?
       render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
       return
     elsif !@post.can_access?(current_user)
@@ -73,7 +78,12 @@ class CommentsController < ApplicationController
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
 
-    return if comment_rate_limited
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
+      return
+    end
 
     if @comment.save
       apply_pings pings
@@ -159,7 +169,7 @@ class CommentsController < ApplicationController
 
   def thread_followers
     return not_found unless @comment_thread.can_access?(current_user)
-    return not_found unless current_user.is_moderator || current_user.is_admin
+    return not_found unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -174,7 +184,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_rename
-    if @comment_thread.read_only? && !current_user.is_moderator
+    if @comment_thread.read_only? && !current_user.at_least_moderator?
       flash[:danger] = 'This thread has been locked.'
       redirect_to comment_thread_path(@comment_thread.id)
       return
@@ -227,7 +237,7 @@ class CommentsController < ApplicationController
     when 'delete'
       return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
 
-      if @comment_thread.deleted_by.is_moderator && !current_user.is_moderator
+      if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
         render json: { status: 'error',
                        message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
         return
@@ -244,7 +254,7 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if helpers.moderator? || current_user&.has_post_privilege?('flag_curate', @post)
+    @comment_threads = if current_user&.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
@@ -290,7 +300,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user.is_moderator || current_user.is_admin || current_user == @comment.user
+    unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
     end
   end
@@ -321,30 +331,5 @@ class CommentsController < ApplicationController
                                "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
-  end
-
-  def comment_rate_limited
-    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: current_user).where \
-                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })) \
-                             .where.not(post: Post.where(user_id: current_user.id)).count
-    max_comments_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
-
-    if (!@post.user_id == current_user.id || @post&.parent&.user_id == current_user.id) \
-       && recent_comments >= max_comments_per_day
-      comment_limit_msg = "You have used your daily comment limit of #{recent_comments} comments. " \
-                          'Come back tomorrow to continue commenting. Comments on own posts and on answers ' \
-                          'to own posts are exempt.'
-
-      if recent_comments.zero? && !current_user.privilege?('unrestricted')
-        comment_limit_msg = 'New users can only comment on their own posts and on answers to them.'
-      end
-
-      AuditLog.rate_limit_log(event_type: 'comment', related: @comment, user: current_user,
-                              comment: "limit: #{max_comments_per_day}\n\comment:\n#{@comment.attributes_print}")
-
-      render json: { status: 'failed', message: comment_limit_msg }, status: :forbidden
-      return true
-    end
-    false
   end
 end
