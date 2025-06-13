@@ -5,13 +5,13 @@ class CategoriesControllerTest < ActionController::TestCase
 
   test 'should get index' do
     get :index
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:categories)
   end
 
   test 'should get show' do
     get :show, params: { id: categories(:main).id }
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:posts)
   end
@@ -21,25 +21,25 @@ class CategoriesControllerTest < ActionController::TestCase
     request.env['HTTP_HOST'] = 'fake.qpixel.com'
 
     get :show, params: { id: categories(:main).id }
-    assert_response(404)
+    assert_response(:not_found)
   end
 
   test 'should require authentication to get new' do
     get :new
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'should require admin to get new' do
     sign_in users(:standard_user)
     get :new
-    assert_response 404
+    assert_response(:not_found)
   end
 
   test 'should allow admins to get new' do
     sign_in users(:admin)
     get :new
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:category)
   end
 
@@ -48,7 +48,8 @@ class CategoriesControllerTest < ActionController::TestCase
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
                                         tag_set: tag_sets(:main).id, color_code: 'blue',
                                         license_id: licenses(:cc_by_sa).id } }
-    assert_response 302
+
+    assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
@@ -58,7 +59,7 @@ class CategoriesControllerTest < ActionController::TestCase
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
                                         tag_set: tag_sets(:main).id, color_code: 'blue',
                                         license_id: licenses(:cc_by_sa).id } }
-    assert_response 404
+    assert_response(:not_found)
   end
 
   test 'should allow admins to create category' do
@@ -67,7 +68,8 @@ class CategoriesControllerTest < ActionController::TestCase
                                         post_type_ids: [Question.post_type_id, Answer.post_type_id],
                                         tag_set_id: tag_sets(:main).id, color_code: 'blue',
                                         license_id: licenses(:cc_by_sa).id } }
-    assert_response 302
+
+    assert_response(:found)
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:category).id
     assert_equal false, assigns(:category).errors.any?
@@ -76,7 +78,8 @@ class CategoriesControllerTest < ActionController::TestCase
 
   test 'should prevent users under min_view_trust_level viewing category that requires higher' do
     get :show, params: { id: categories(:admin_only).id }
-    assert_response 404
+
+    assert_response(:not_found)
     assert_not_nil assigns(:category)
   end
 end

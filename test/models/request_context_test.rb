@@ -36,7 +36,7 @@ class RequestContextTest < ActiveSupport::TestCase
 
     worker1 = Thread.new do
       RequestContext.community = @community2
-      sleep 0.5
+      sleep(0.5)
 
       # this check runs second
       assert_equal RequestContext.community, @community2

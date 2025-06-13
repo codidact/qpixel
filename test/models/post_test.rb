@@ -81,7 +81,7 @@ class PostTest < ActiveSupport::TestCase
     post_with_reactions = posts(:answer_one)
     reaction_list = post_with_reactions.reaction_list
     refute reaction_list.empty?
-    assert reaction_list.key? reaction_types(:wfm)
+    assert reaction_list.key?(reaction_types(:wfm))
     assert_equal 1, reaction_list[reaction_types(:wfm)].count
   end
 

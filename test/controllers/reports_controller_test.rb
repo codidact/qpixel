@@ -6,7 +6,7 @@ class ReportsControllerTest < ActionController::TestCase
   test 'should deny access to anonymous users' do
     [:users, :posts, :subscriptions].each do |route|
       get route
-      assert_response 302
+      assert_response(:found)
       assert_redirected_to new_user_session_path
     end
   end
@@ -15,7 +15,7 @@ class ReportsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     [:users, :posts, :subscriptions].each do |route|
       get route
-      assert_response 404
+      assert_response(:not_found)
     end
   end
 
@@ -23,7 +23,7 @@ class ReportsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
     [:users, :posts, :subscriptions].each do |route|
       get route
-      assert_response 200
+      assert_response(:success)
     end
   end
 
@@ -31,7 +31,7 @@ class ReportsControllerTest < ActionController::TestCase
     sign_in users(:global_admin)
     [:users_global, :subs_global, :posts_global].each do |route|
       get route
-      assert_response 200
+      assert_response(:success)
     end
   end
 end

@@ -7,7 +7,7 @@ class ModWarningControllerTest < ActionController::TestCase
     sign_out :user
     [:log, :new].each do |path|
       get path, params: { user_id: users(:standard_user).id }
-      assert_response(404)
+      assert_response(:not_found)
     end
   end
 
@@ -15,7 +15,7 @@ class ModWarningControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     [:log, :new].each do |path|
       get path, params: { user_id: users(:standard_user).id }
-      assert_response(404)
+      assert_response(:not_found)
     end
   end
 
