@@ -411,16 +411,31 @@ class UsersControllerTest < ActionController::TestCase
     std = users(:standard_user)
 
     sign_in mod
-
     get :full_log, params: { id: std.id }
-
     assert_response(:success)
 
     sign_in std
-
     get :full_log, params: { id: std.id }
-
     assert_response(:not_found)
+  end
+
+  test 'full_log should correctly apply single-type items filter' do
+    sign_in users(:moderator)
+
+    model_map = {
+      'posts' => Post,
+      'comments' => Comment,
+      'flags' => Flag,
+      'warnings' => ModWarning
+    }
+
+    model_map.each do |filter, model|
+      get :full_log, params: { id: users(:standard_user).id, filter: filter }
+      assert_response(:success)
+      items = assigns(:items)
+
+      assert(items.all? { |x| x.instance_of?(model) })
+    end
   end
 
   private
