@@ -406,6 +406,23 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal admin.global_admin?, false
   end
 
+  test 'full_log should only be accessible to mods or admins' do
+    mod = users(:moderator)
+    std = users(:standard_user)
+
+    sign_in mod
+
+    get :full_log, params: { id: std.id }
+
+    assert_response(:success)
+
+    sign_in std
+
+    get :full_log, params: { id: std.id }
+
+    assert_response(:not_found)
+  end
+
   private
 
   def create_other_user
