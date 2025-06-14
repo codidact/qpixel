@@ -50,13 +50,13 @@ class CommentsHelperTest < ActionView::TestCase
   end
 
   test 'comment_rate_limited? prevents new users commenting on others posts' do
-    rate_limited, limit_message = comment_rate_limited? users(:basic_user), posts(:question_one)
+    rate_limited, limit_message = comment_rate_limited?(users(:basic_user), posts(:question_one))
     assert_equal true, rate_limited
     assert_not_nil limit_message
   end
 
   test 'comment_rate_limited? allows new user to comment on own post' do
-    rate_limited, limit_message = comment_rate_limited? users(:basic_user), posts(:new_user_question)
+    rate_limited, limit_message = comment_rate_limited?(users(:basic_user), posts(:new_user_question))
     assert_equal false, rate_limited
     assert_nil limit_message
   end
