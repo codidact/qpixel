@@ -425,6 +425,7 @@ class UsersControllerTest < ActionController::TestCase
     model_map = {
       'posts' => Post,
       'comments' => Comment,
+      'edits' => SuggestedEdit,
       'flags' => Flag,
       'warnings' => ModWarning
     }
