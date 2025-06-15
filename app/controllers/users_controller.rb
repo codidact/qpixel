@@ -266,7 +266,7 @@ class UsersController < ApplicationController
     @flags = Flag.by(@user).count
     @suggested_edits = SuggestedEdit.by(@user).count
     @edits = PostHistory.where(user: @user).count
-    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).count
+    @mod_warnings_received = ModWarning.to(@user).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -288,7 +288,7 @@ class UsersController < ApplicationController
               when 'edits'
                 SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all
               when 'warnings'
-                ModWarning.where(community_user: @user.community_user).all
+                ModWarning.to(@user).all
               when 'interesting'
                 Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
                   SuggestedEdit.by(@user).rejected.all + \
@@ -296,7 +296,7 @@ class UsersController < ApplicationController
               else
                 Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
                   SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all + \
-                  ModWarning.where(community_user: @user.community_user).all
+                  ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
     render layout: 'without_sidebar'
