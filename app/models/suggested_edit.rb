@@ -17,6 +17,8 @@ class SuggestedEdit < ApplicationRecord
 
   after_save :clear_pending_cache, if: proc { saved_change_to_attribute?(:active) }
 
+  scope :by, ->(user) { where(user: user) }
+
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"
   end

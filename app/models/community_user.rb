@@ -48,8 +48,8 @@ class CommunityUser < ApplicationRecord
 
   def edit_score
     Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 3.hours) do
-      good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
-      bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
+      good_edits = SuggestedEdit.by(user).where(active: false, accepted: true).count
+      bad_edits = SuggestedEdit.by(user).where(active: false, accepted: false).count
 
       (good_edits + 2.0) / (good_edits + bad_edits + 4.0)
     end

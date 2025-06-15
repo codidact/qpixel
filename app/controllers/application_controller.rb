@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_edits_limit!(post)
-    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
+    recent_edits = SuggestedEdit.by(current_user).where(created_at: 24.hours.ago..DateTime.now) \
                                 .where('active = TRUE OR accepted = FALSE').count
 
     max_edits = SiteSetting[if current_user.privilege?('unrestricted')
