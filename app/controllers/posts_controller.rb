@@ -277,7 +277,7 @@ class PostsController < ApplicationController
     else
       new_user = !current_user.privilege?('unrestricted')
       rate_limit = SiteSetting["RL_#{new_user ? 'NewUser' : ''}SuggestedEdits"]
-      recent_edits = SuggestedEdit.by(current_user).where(active: true).where('created_at > ?', 24.hours.ago).count
+      recent_edits = SuggestedEdit.by(current_user).where(active: true).recent.count
       if recent_edits >= rate_limit
         key = new_user ? 'rate_limit.new_user_suggested_edits' : 'rate_limit.suggested_edits'
         msg = helpers.i18ns key, count: rate_limit

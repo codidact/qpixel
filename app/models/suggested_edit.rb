@@ -19,6 +19,7 @@ class SuggestedEdit < ApplicationRecord
 
   scope :approved, -> { where(active: false, accepted: true) }
   scope :by, ->(user) { where(user: user) }
+  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :rejected, -> { where(active: false, accepted: false) }
 
   def clear_pending_cache
