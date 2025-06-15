@@ -439,6 +439,42 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'default activity filter should include items of all types' do
+    std = users(:standard_user)
+
+    sign_in std
+
+    get :activity, params: { id: std.id }
+
+    assert_response(:success)
+    items = assigns(:items)
+
+    edit_type = PostHistoryType.find_by(name: 'post_edited')
+
+    [Post, Comment, SuggestedEdit, Flag, PostHistory, ModWarning].each do |model|
+      assert(items.any? do |item|
+               is_valid = if item.instance_of?(model)
+                            case model
+                            when Post
+                              item.deleted == false
+                            when Comment
+                              item.comment_thread.deleted == false && \
+                              item.deleted == false && \
+                              item.post.deleted == false
+                            when PostHistory
+                              item.post_history_type == edit_type
+                            when SuggestedEdit
+                              item.post.deleted == false
+                            end
+                          else
+                            true
+                          end
+
+               is_valid && item.user.same_as?(std)
+             end)
+    end
+  end
+
   test 'full_log should correctly apply single-type items filter' do
     sign_in users(:moderator)
 
