@@ -153,7 +153,7 @@ class User < ApplicationRecord
       when 'V'
         votes.count
       when 'E'
-        PostHistory.where(user: self, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
+        PostHistory.by(self).where(post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
       end
     end
   end

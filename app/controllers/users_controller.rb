@@ -231,8 +231,8 @@ class UsersController < ApplicationController
     @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                                 posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.by(@user).count
-    @edits = PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
-                                                                post_history_types: { name: 'post_edited' }).count
+    @edits = PostHistory.by(@user).joins(:post, :post_history_type).where(posts: { deleted: false },
+                                                                          post_history_types: { name: 'post_edited' }).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -244,14 +244,14 @@ class UsersController < ApplicationController
                                                                               posts: { deleted: false })
             when 'edits'
               SuggestedEdit.by(@user) + \
-              PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
-                                                                 post_history_types: { name: 'post_edited' })
+              PostHistory.by(@user).joins(:post, :post_history_type).where(posts: { deleted: false },
+                                                                           post_history_types: { name: 'post_edited' })
             else
               Post.undeleted.by(@user) + \
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                               posts: { deleted: false }) + \
               SuggestedEdit.by(@user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
+              PostHistory.by(@user).joins(:post).where(posts: { deleted: false }).all
             end
 
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
@@ -265,7 +265,7 @@ class UsersController < ApplicationController
     @comments = Comment.by(@user).count
     @flags = Flag.by(@user).count
     @suggested_edits = SuggestedEdit.by(@user).count
-    @edits = PostHistory.where(user: @user).count
+    @edits = PostHistory.by(@user).count
     @mod_warnings_received = ModWarning.to(@user).count
 
     @all_edits = @suggested_edits + @edits
@@ -286,7 +286,7 @@ class UsersController < ApplicationController
               when 'flags'
                 Flag.by(@user).all
               when 'edits'
-                SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all
+                SuggestedEdit.by(@user).all + PostHistory.by(@user).all
               when 'warnings'
                 ModWarning.to(@user).all
               when 'interesting'
@@ -295,7 +295,7 @@ class UsersController < ApplicationController
                   Post.by(@user).problematic.all
               else
                 Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
-                  SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all + \
+                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all + \
                   ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 

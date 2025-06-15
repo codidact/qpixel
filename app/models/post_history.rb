@@ -7,6 +7,8 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
+  scope :by, ->(user) { where(user: user) }
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
