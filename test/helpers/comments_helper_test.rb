@@ -53,13 +53,22 @@ class CommentsHelperTest < ActionView::TestCase
     basic = users(:basic_user)
     post = posts(:question_one)
 
-    rate_limited, limit_message = comment_rate_limited?(basic, posts(:question_one))
+    rate_limited, limit_message = comment_rate_limited?(basic, post)
     assert_equal true, rate_limited
     assert_not_nil limit_message
 
     log = AuditLog.where(event_type: 'comment', related: post, user: basic).order(created_at: :desc).first
-
     assert log.present?, 'Expected audit log for attempting to comment on a post while rate-limited to be created'
+  end
+
+  test 'comment_rate_limited? prevents users that reached the daily limit from commenting' do
+    std = users(:standard_user)
+
+    SiteSetting['RL_Comments'] = 0
+
+    rate_limited, limit_message = comment_rate_limited?(std, posts(:question_one))
+    assert_equal true, rate_limited
+    assert_not_nil limit_message
   end
 
   test 'comment_rate_limited? allows new users to comment on their own posts' do

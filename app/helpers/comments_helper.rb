@@ -117,9 +117,7 @@ module CommentsHelper
       end
 
       [true, message]
-    end
-
-    if user.owns_post_or_parent?(post) || user.privilege?('unrestricted')
+    elsif user.owns_post_or_parent?(post) || user.privilege?('unrestricted')
       [false, nil]
     else
       message = 'As a new user, you can only comment on your own posts and on answers to them.'
