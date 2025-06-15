@@ -263,7 +263,7 @@ class UsersController < ApplicationController
   def full_log
     @posts = Post.where(user: @user).count
     @comments = Comment.by(@user).count
-    @flags = Flag.where(user: @user).count
+    @flags = Flag.by(@user).count
     @suggested_edits = SuggestedEdit.by(@user).count
     @edits = PostHistory.where(user: @user).count
     @mod_warnings_received = ModWarning.where(community_user: @user.community_user).count
@@ -271,7 +271,7 @@ class UsersController < ApplicationController
     @all_edits = @suggested_edits + @edits
 
     @interesting_comments = Comment.by(@user).deleted.count
-    @interesting_flags = Flag.where(user: @user, status: 'declined').count
+    @interesting_flags = Flag.by(@user).where(status: 'declined').count
     @interesting_edits = SuggestedEdit.by(@user).rejected.count
     @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
 
@@ -284,17 +284,17 @@ class UsersController < ApplicationController
               when 'comments'
                 Comment.by(@user).all
               when 'flags'
-                Flag.where(user: @user).all
+                Flag.by(@user).all
               when 'edits'
                 SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all
               when 'warnings'
                 ModWarning.where(community_user: @user.community_user).all
               when 'interesting'
-                Comment.by(@user).deleted.all + Flag.where(user: @user, status: 'declined').all + \
+                Comment.by(@user).deleted.all + Flag.by(@user).where(status: 'declined').all + \
                   SuggestedEdit.by(@user).rejected.all + \
                   Post.where(user: @user).where('score < 0.25 OR deleted=1').all
               else
-                Post.where(user: @user).all + Comment.by(@user).all + Flag.where(user: @user).all + \
+                Post.where(user: @user).all + Comment.by(@user).all + Flag.by(@user).all + \
                   SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
@@ -328,7 +328,7 @@ class UsersController < ApplicationController
                                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
       Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                             deleted: true)
-      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
       SuggestedEdit.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
