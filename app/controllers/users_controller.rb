@@ -231,8 +231,7 @@ class UsersController < ApplicationController
     @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                                 posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.by(@user).count
-    @edits = PostHistory.by(@user).joins(:post, :post_history_type).where(posts: { deleted: false },
-                                                                          post_history_types: { name: 'post_edited' }).count
+    @edits = PostHistory.by(@user).on_undeleted.joins(:post_history_type).where(post_history_types: { name: 'post_edited' }).count
 
     @all_edits = @suggested_edits + @edits
 
@@ -244,14 +243,13 @@ class UsersController < ApplicationController
                                                                               posts: { deleted: false })
             when 'edits'
               SuggestedEdit.by(@user) + \
-              PostHistory.by(@user).joins(:post, :post_history_type).where(posts: { deleted: false },
-                                                                           post_history_types: { name: 'post_edited' })
+              PostHistory.by(@user).on_undeleted.joins(:post_history_type).where(post_history_types: { name: 'post_edited' })
             else
               Post.undeleted.by(@user) + \
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                               posts: { deleted: false }) + \
               SuggestedEdit.by(@user).all + \
-              PostHistory.by(@user).joins(:post).where(posts: { deleted: false }).all
+              PostHistory.by(@user).on_undeleted.all
             end
 
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
