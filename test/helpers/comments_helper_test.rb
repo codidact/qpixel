@@ -49,13 +49,20 @@ class CommentsHelperTest < ActionView::TestCase
     end
   end
 
-  test 'comment_rate_limited? prevents new users commenting on others posts' do
-    rate_limited, limit_message = comment_rate_limited?(users(:basic_user), posts(:question_one))
+  test 'comment_rate_limited? prevents new users commenting on posts of others' do
+    basic = users(:basic_user)
+    post = posts(:question_one)
+
+    rate_limited, limit_message = comment_rate_limited?(basic, posts(:question_one))
     assert_equal true, rate_limited
     assert_not_nil limit_message
+
+    log = AuditLog.where(event_type: 'comment', related: post, user: basic).order(created_at: :desc).first
+
+    assert log.present?, 'Expected audit log for attempting to comment on a post while rate-limited to be created'
   end
 
-  test 'comment_rate_limited? allows new user to comment on own post' do
+  test 'comment_rate_limited? allows new users to comment on their own posts' do
     rate_limited, limit_message = comment_rate_limited?(users(:basic_user), posts(:new_user_question))
     assert_equal false, rate_limited
     assert_nil limit_message
