@@ -419,6 +419,26 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
+  test 'activity should correctly apply single-type items filter' do
+    std = users(:standard_user)
+
+    sign_in std
+
+    model_map = {
+      'posts' => Post,
+      'comments' => Comment,
+      'edits' => SuggestedEdit
+    }
+
+    model_map.each do |filter, model|
+      get :activity, params: { id: std.id, filter: filter }
+      assert_response(:success)
+      items = assigns(:items)
+
+      assert(items.all? { |x| x.instance_of?(model) })
+    end
+  end
+
   test 'full_log should correctly apply single-type items filter' do
     sign_in users(:moderator)
 
