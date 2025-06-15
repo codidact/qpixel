@@ -451,6 +451,18 @@ class UsersControllerTest < ActionController::TestCase
     assert(items.any? { |x| x.instance_of?(Comment) && x.id == deleted_comment.id })
   end
 
+  test 'full_log\'s \'interesting\' filter should include declined flags' do
+    sign_in users(:moderator)
+
+    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
+    assert_response(:success)
+    items = assigns(:items)
+
+    declined_flag = flags(:declined)
+
+    assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
+  end
+
   private
 
   def create_other_user
