@@ -25,6 +25,18 @@ class SiteSetting < ApplicationRecord
     end
   end
 
+  def self.[]=(name, value)
+    key = "SiteSettings/#{RequestContext.community_id}/#{name}"
+
+    setting = applied_setting(name)
+
+    typed_value = SettingConverter.new(value).send("as_#{setting.value_type.downcase}")
+
+    applied_setting(name).update(value: typed_value)
+
+    Rails.cache.write key, typed_value, include_community: false
+  end
+
   def self.exist?(name)
     Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}", include_community: false) ||
       SiteSetting.where(name: name).count.positive?
