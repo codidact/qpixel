@@ -41,9 +41,10 @@ class Post < ApplicationRecord
   # Other validations (shared with suggested edits) are in concerns/PostValidations
 
   scope :by, ->(user) { where(user: user) }
-  scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
+  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
+  scope :undeleted, -> { where(deleted: false) }
   scope :list_includes, lambda {
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
                                    user: :avatar_attachment)

@@ -79,8 +79,7 @@ class PostsController < ApplicationController
 
     level_name = @post_type.is_top_level? ? 'TopLevel' : 'SecondLevel'
     level_type_ids = @post_type.is_top_level? ? top_level_post_types : second_level_post_types
-    recent_level_posts = Post.by(current_user).where(created_at: 24.hours.ago..DateTime.now)
-                             .where(post_type_id: level_type_ids).count
+    recent_level_posts = Post.by(current_user).recent.where(post_type_id: level_type_ids).count
     setting_name = current_user.privilege?('unrestricted') ? "RL_#{level_name}Posts" : "RL_NewUser#{level_name}Posts"
     max_posts = SiteSetting[setting_name]
     limit_msg = if current_user.privilege?('unrestricted')
