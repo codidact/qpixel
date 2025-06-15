@@ -40,6 +40,7 @@ class Post < ApplicationRecord
 
   # Other validations (shared with suggested edits) are in concerns/PostValidations
 
+  scope :by, ->(user) { where(user: user) }
   scope :undeleted, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }

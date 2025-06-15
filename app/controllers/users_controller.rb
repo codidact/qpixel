@@ -227,7 +227,7 @@ class UsersController < ApplicationController
   end
 
   def activity
-    @posts = Post.undeleted.where(user: @user).count
+    @posts = Post.undeleted.by(@user).count
     @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                                 posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.by(@user).count
@@ -238,7 +238,7 @@ class UsersController < ApplicationController
 
     items = case params[:filter]
             when 'posts'
-              Post.undeleted.where(user: @user)
+              Post.undeleted.by(@user)
             when 'comments'
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                               posts: { deleted: false })
@@ -247,7 +247,7 @@ class UsersController < ApplicationController
               PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
                                                                  post_history_types: { name: 'post_edited' })
             else
-              Post.undeleted.where(user: @user) + \
+              Post.undeleted.by(@user) + \
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                               posts: { deleted: false }) + \
               SuggestedEdit.by(@user).all + \
@@ -261,7 +261,7 @@ class UsersController < ApplicationController
   def mod; end
 
   def full_log
-    @posts = Post.where(user: @user).count
+    @posts = Post.by(@user).count
     @comments = Comment.by(@user).count
     @flags = Flag.by(@user).count
     @suggested_edits = SuggestedEdit.by(@user).count
@@ -273,14 +273,14 @@ class UsersController < ApplicationController
     @interesting_comments = Comment.by(@user).deleted.count
     @interesting_flags = Flag.by(@user).declined.count
     @interesting_edits = SuggestedEdit.by(@user).rejected.count
-    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
+    @interesting_posts = Post.by(@user).where('score < 0.25 OR deleted=1').count
 
     @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
               when 'posts'
-                Post.where(user: @user).all
+                Post.by(@user).all
               when 'comments'
                 Comment.by(@user).all
               when 'flags'
@@ -292,9 +292,9 @@ class UsersController < ApplicationController
               when 'interesting'
                 Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
                   SuggestedEdit.by(@user).rejected.all + \
-                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+                  Post.by(@user).where('score < 0.25 OR deleted=1').all
               else
-                Post.where(user: @user).all + Comment.by(@user).all + Flag.by(@user).all + \
+                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
                   SuggestedEdit.by(@user).all + PostHistory.where(user: @user).all + \
                   ModWarning.where(community_user: @user.community_user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
@@ -323,9 +323,9 @@ class UsersController < ApplicationController
     @user.block('user destroyed')
 
     if @user.destroy
-      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                                        deleted: true, deleted_at: DateTime.now,
-                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
+      Post.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                         deleted: true, deleted_at: DateTime.now,
+                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
       Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
                                             deleted: true)
       Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])

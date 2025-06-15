@@ -140,11 +140,11 @@ class User < ApplicationRecord
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'
-        Post.qa_only.undeleted.where(user: self).count
+        Post.qa_only.undeleted.by(self).count
       when '1'
-        Post.undeleted.where(post_type: PostType.top_level, user: self).count
+        Post.undeleted.by(self).where(post_type: PostType.top_level).count
       when '2'
-        Post.undeleted.where(post_type: PostType.second_level, user: self).count
+        Post.undeleted.by(self).where(post_type: PostType.second_level).count
       when 's'
         Vote.where(recv_user_id: id, vote_type: 1).count - \
           Vote.where(recv_user_id: id, vote_type: -1).count
@@ -488,7 +488,7 @@ class User < ApplicationRecord
   def recent_comments_count
     Comment.recent.by(self) \
            .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: id })) \
-           .where.not(post: Post.where(user_id: id)) \
+           .where.not(post: Post.by(self)) \
            .count
   end
 
