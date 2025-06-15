@@ -58,4 +58,18 @@ class ModWarningControllerTest < ActionController::TestCase
     @warning.reload
     assert_not @warning.active
   end
+
+  test 'only mods or admins should be able to lift suspensions' do
+    sign_in users(:moderator)
+
+    std = users(:standard_user)
+    warning = mod_warnings(:third_warning)
+
+    warning.update(active: true)
+    post :lift, params: { user_id: std.id }
+
+    assert_response(:found)
+    warning.reload
+    assert_not warning.active
+  end
 end
