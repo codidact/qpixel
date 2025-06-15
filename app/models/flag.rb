@@ -8,6 +8,8 @@ class Flag < ApplicationRecord
   belongs_to :escalated_by, class_name: 'User', optional: true
 
   scope :by, ->(user) { where(user: user) }
+  scope :declined, -> { where(status: 'declined') }
+  scope :helpful, -> { where(status: 'helpful') }
 
   scope :handled, -> { where.not(status: nil) }
   scope :unhandled, -> { where(status: nil) }

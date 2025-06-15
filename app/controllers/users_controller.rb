@@ -271,7 +271,7 @@ class UsersController < ApplicationController
     @all_edits = @suggested_edits + @edits
 
     @interesting_comments = Comment.by(@user).deleted.count
-    @interesting_flags = Flag.by(@user).where(status: 'declined').count
+    @interesting_flags = Flag.by(@user).declined.count
     @interesting_edits = SuggestedEdit.by(@user).rejected.count
     @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
 
@@ -290,7 +290,7 @@ class UsersController < ApplicationController
               when 'warnings'
                 ModWarning.where(community_user: @user.community_user).all
               when 'interesting'
-                Comment.by(@user).deleted.all + Flag.by(@user).where(status: 'declined').all + \
+                Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
                   SuggestedEdit.by(@user).rejected.all + \
                   Post.where(user: @user).where('score < 0.25 OR deleted=1').all
               else

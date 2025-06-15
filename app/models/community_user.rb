@@ -57,8 +57,8 @@ class CommunityUser < ApplicationRecord
 
   def flag_score
     Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 3.hours) do
-      good_flags = Flag.by(user).where(status: 'helpful').count
-      bad_flags = Flag.by(user).where(status: 'declined').count
+      good_flags = Flag.by(user).helpful.count
+      bad_flags = Flag.by(user).declined.count
 
       (good_flags + 2.0) / (good_flags + bad_flags + 4.0)
     end
