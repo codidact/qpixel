@@ -439,6 +439,18 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'full_log\'s \'interesting\' filter should include deleted comments' do
+    sign_in users(:moderator)
+
+    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
+    assert_response(:success)
+    items = assigns(:items)
+
+    deleted_comment = comments(:deleted)
+
+    assert(items.any? { |x| x.instance_of?(Comment) && x.id == deleted_comment.id })
+  end
+
   private
 
   def create_other_user
