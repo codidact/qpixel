@@ -226,4 +226,15 @@ class UserTest < ActiveSupport::TestCase
       assert_equal cu.user.has_ability_on(community.id, unrestricted.internal_id), !cu.user.deleted
     end
   end
+
+  test 'metric should correctly return user stats' do
+    std = users(:editor)
+
+    ['p', '1', '2', 's', 'v', 'V', 'E'].each do |name|
+      next if ['s', 'v'].include?(name) # there currently are no votes on the editor
+
+      count = std.metric(name)
+      assert count.positive?, "Expected metric #{name} to be positive, actual: #{count}"
+    end
+  end
 end
