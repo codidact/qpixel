@@ -10,6 +10,7 @@ class Flag < ApplicationRecord
   scope :by, ->(user) { where(user: user) }
   scope :declined, -> { where(status: 'declined') }
   scope :helpful, -> { where(status: 'helpful') }
+  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
 
   scope :handled, -> { where.not(status: nil) }
   scope :unhandled, -> { where(status: nil) }
