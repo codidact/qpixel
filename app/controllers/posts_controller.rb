@@ -212,7 +212,7 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.can_update(@post, @post_type)
+    if current_user.can_update?(@post, @post_type)
       if current_user.can_push_to_network?(@post_type) && params[:network_push] == 'true'
         # post network push & post histories creation must be atomic to prevent sync issues on error
         @post.transaction do

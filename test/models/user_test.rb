@@ -41,7 +41,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'example.com', users(:closer).website_domain
   end
 
-  test 'can_update should determine if the user can update a given post' do
+  test 'can_update? should determine if the user can update a given post' do
     basic_user = users(:basic_user)
     post_owner = users(:standard_user)
     category = categories(:main)
@@ -57,14 +57,14 @@ class UserTest < ActiveSupport::TestCase
                        post_type: post_type,
                        category: category)
 
-    assert_equal true, post_owner.can_update(post, post_type)
-    assert_equal false, basic_user.can_update(post, post_type)
-    assert_equal true, users(:moderator).can_update(post, post_type)
-    assert_equal true, users(:editor).can_update(post, post_type)
+    assert_equal true, post_owner.can_update?(post, post_type)
+    assert_equal false, basic_user.can_update?(post, post_type)
+    assert_equal true, users(:moderator).can_update?(post, post_type)
+    assert_equal true, users(:editor).can_update?(post, post_type)
 
     basic_user.community_user.grant_privilege!('unrestricted')
-    assert_equal false, basic_user.can_update(post, post_type)
-    assert_equal true, basic_user.can_update(post, post_types(:free_edit))
+    assert_equal false, basic_user.can_update?(post, post_type)
+    assert_equal true, basic_user.can_update?(post, post_types(:free_edit))
   end
 
   test 'can_push_to_network? should determine if the user can push updates to network' do

@@ -79,14 +79,14 @@ class User < ApplicationRecord
   # @param edit [SuggestedEdit] edit to check
   # @return [Boolean] check result
   def can_approve?(edit)
-    edit.post.present? && can_update(edit.post, edit.post.post_type)
+    edit.post.present? && can_update?(edit.post, edit.post.post_type)
   end
 
   # Can the user reject a given suggested edit?
   # @param edit [SuggestedEdit] edit to check
   # @return [Boolean] check result
   def can_reject?(edit)
-    edit.post.present? && can_update(edit.post, edit.post.post_type)
+    edit.post.present? && can_update?(edit.post, edit.post.post_type)
   end
 
   # Can the user comment on a given post?
@@ -118,11 +118,11 @@ class User < ApplicationRecord
     post_type.system? && (is_global_moderator || is_global_admin)
   end
 
-  # Can the user directly update a given post
+  # Can the user directly update a given post?
   # @param post [Post] updated post (owners can unilaterally update)
   # @param post_type [PostType] type of the post (some are freely editable)
   # @return [Boolean] check result
-  def can_update(post, post_type)
+  def can_update?(post, post_type)
     return false unless can_post_in?(post.category)
 
     has_post_privilege?('edit_posts', post) || at_least_moderator? || \
