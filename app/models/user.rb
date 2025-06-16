@@ -5,6 +5,7 @@ class User < ApplicationRecord
   include ::SoftDeletable
   include ::SamlInit
   include ::Inspectable
+  include ::Identity
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -58,13 +59,6 @@ class User < ApplicationRecord
   # @return [Boolean] check result
   def new?
     !privilege?('unrestricted')
-  end
-
-  # Is the user the same as a given other user
-  # @param user [User] user to compare with
-  # @return [Boolean] check result
-  def same_as?(user)
-    id == user.id
   end
 
   # Does the user own a given post or its parent, if any?
