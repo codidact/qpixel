@@ -203,7 +203,7 @@ class UserTest < ActiveSupport::TestCase
     everyone = abilities(:everyone)
 
     communities.each do |community|
-      CommunityUser.unscoped.active.where(community_id: community.id).each do |cu|
+      CommunityUser.unscoped.undeleted.where(community_id: community.id).each do |cu|
         unless cu.user.deleted
           assert_equal cu.user.has_ability_on(community.id, everyone.internal_id), true
         end
@@ -222,7 +222,7 @@ class UserTest < ActiveSupport::TestCase
       assert_equal user.has_ability_on(community.id, unrestricted.internal_id), false
     end
 
-    CommunityUser.unscoped.active.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
+    CommunityUser.unscoped.undeleted.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
       assert_equal cu.user.has_ability_on(community.id, unrestricted.internal_id), !cu.user.deleted
     end
   end
