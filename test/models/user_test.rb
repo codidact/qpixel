@@ -231,8 +231,6 @@ class UserTest < ActiveSupport::TestCase
     std = users(:editor)
 
     ['p', '1', '2', 's', 'v', 'V', 'E'].each do |name|
-      next if ['s', 'v'].include?(name) # there currently are no votes on the editor
-
       count = std.metric(name)
       assert count.positive?, "Expected metric #{name} to be positive, actual: #{count}"
     end

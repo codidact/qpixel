@@ -26,17 +26,24 @@ class VoteTest < ActiveSupport::TestCase
     rep_change_down = cpt.downvote_rep
     expected_rep_change = (3 * rep_change_up) + (2 * rep_change_down)
 
-    post.votes.create([
-                        { user: users(:standard_user), recv_user: author, vote_type: 1 },
-                        { user: users(:closer), recv_user: author, vote_type: 1 },
-                        { user: users(:deleter), recv_user: author, vote_type: 1 },
-                        { user: users(:moderator), recv_user: author, vote_type: -1 },
-                        { user: users(:admin), recv_user: author, vote_type: -1 }
-                      ])
+    new_votes = [
+      { user: users(:standard_user), recv_user: author, vote_type: 1 },
+      { user: users(:closer), recv_user: author, vote_type: 1 },
+      { user: users(:deleter), recv_user: author, vote_type: 1 },
+      { user: users(:moderator), recv_user: author, vote_type: -1 },
+      { user: users(:admin), recv_user: author, vote_type: -1 }
+    ]
 
-    assert_equal post.votes.count, 5
-    assert_equal post.upvote_count, 3
-    assert_equal post.downvote_count, 2
+    post.votes.create(new_votes)
+
+    num_votes = new_votes.length
+    num_upvotes = new_votes.inject(0) { |a, c| a + (c[:vote_type] == 1 ? 1 : 0) }
+    num_downvotes = new_votes.inject(0) { |a, c| a + (c[:vote_type] == -1 ? 1 : 0) }
+
+    # NB: fixtures can & should be able to add more votes than created here
+    assert post.votes.count >= num_votes, "Expected more than #{num_votes} votes, actual: #{post.votes.count}"
+    assert post.upvote_count >= num_upvotes, "Expected more than #{num_upvotes} upvotes, actual: #{post.upvote_count}"
+    assert post.downvote_count >= num_downvotes, "Expected more than #{num_downvotes} downvotes, actual: #{post.downvote_count}"
     assert_equal author.reputation, previous_rep + expected_rep_change
   end
 
