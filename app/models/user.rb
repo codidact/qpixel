@@ -63,6 +63,12 @@ class User < ApplicationRecord
     community_user.trust_level
   end
 
+  # Is the user a new user?
+  # @return [Boolean] check result
+  def new?
+    !privilege?('unrestricted')
+  end
+
   # Is the user the same as a given other user
   # @param user [User] user to compare with
   # @return [Boolean] check result
