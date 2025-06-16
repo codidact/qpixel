@@ -497,5 +497,11 @@ class User < ApplicationRecord
            .count
   end
 
+  # Number of votes by the user on posts of others in the last 24 hours
+  # @return [Integer] number of recent votes
+  def recent_votes_count
+    Vote.recent.by(self).where.not(post: Post.parent_by(self)).count
+  end
+
   # rubocop:enable Naming/PredicateName
 end

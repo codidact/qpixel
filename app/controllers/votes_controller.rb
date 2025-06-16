@@ -11,7 +11,7 @@ class VotesController < ApplicationController
       return
     end
 
-    recent_votes = Vote.by(current_user).recent.where.not(post: Post.parent_by(current_user)).count
+    recent_votes = current_user.recent_votes_count
     max_votes_per_day = current_user.max_votes_per_day
 
     if !post.parent&.user_id == current_user.id && recent_votes >= max_votes_per_day
