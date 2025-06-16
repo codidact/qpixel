@@ -1,6 +1,7 @@
 # Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
 # application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
+  include ::UsernameValidations
   include ::UserMerge
   include ::SoftDeletable
   include ::SamlInit
@@ -33,11 +34,7 @@ class User < ApplicationRecord
   has_many :user_websites, dependent: :destroy
   accepts_nested_attributes_for :user_websites
 
-  validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
-  validate :no_links_in_username
-  validate :username_not_fake_admin
-  validate :no_blank_unicode_in_username
   validate :email_domain_not_blocklisted
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
@@ -274,24 +271,6 @@ class User < ApplicationRecord
     "#{username}\u202D"
   end
 
-  def username_not_fake_admin
-    admin_badge = SiteSetting['AdminBadgeCharacter']
-    mod_badge = SiteSetting['ModBadgeCharacter']
-
-    [admin_badge, mod_badge].each do |badge|
-      if badge.present? && username.include?(badge)
-        errors.add(:username, "may not include the #{badge} character")
-      end
-    end
-  end
-
-  def no_blank_unicode_in_username
-    not_valid = !username.scan(/[\u200B-\u200D\uFEFF]/).empty?
-    if not_valid
-      errors.add(:username, 'may not contain blank unicode characters')
-    end
-  end
-
   def email_domain_not_blocklisted
     return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
     return unless saved_changes.include? 'email'
@@ -342,14 +321,6 @@ class User < ApplicationRecord
 
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
-  end
-
-  def no_links_in_username
-    if %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}.match?(username)
-      errors.add(:username, 'cannot contain links')
-      AuditLog.block_log(event_type: 'user_username_link_blocked',
-                         comment: "username: #{username}")
-    end
   end
 
   def extract_ip_from(request)
