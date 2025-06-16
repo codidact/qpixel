@@ -465,19 +465,19 @@ class User < ApplicationRecord
   # Gets the max number of comments the user can make per day on posts made by other users
   # @return [Integer]
   def max_comments_per_day_on_posts_of_others
-    SiteSetting[privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments'] || 0
+    SiteSetting[new? ? 'RL_NewUserComments' : 'RL_Comments'] || 0
   end
 
   # Gets the max number of comments the user can make per day on their own posts or answers to them
   # @return [Integer]
   def max_comments_per_day_on_own_posts
-    SiteSetting[privilege?('unrestricted') ? 'RL_CommentsOwnPosts' : 'RL_NewUserCommentsOwnPosts'] || 0
+    SiteSetting[new? ? 'RL_NewUserCommentsOwnPosts' : 'RL_CommentsOwnPosts'] || 0
   end
 
   # Gets the max number of votes the user can make per day
   # @return [Integer]
   def max_votes_per_day
-    SiteSetting[privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes'] || 0
+    SiteSetting[new? ? 'RL_NewUserVotes' : 'RL_Votes'] || 0
   end
 
   # Gets user's post counts by post type
