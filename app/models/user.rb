@@ -459,15 +459,26 @@ class User < ApplicationRecord
   # @param post [Post] post to check
   # @return [Boolean] check result
   def comment_rate_limited?(post)
-    return true if recent_comments_count >= max_comments_per_day
-
-    !privilege?('unrestricted') && !owns_post_or_parent?(post)
+    recent_comments_count(post) >= max_comments_per_day(post)
   end
 
-  # Gets the max number of comments the user can make per day
+  # Gets the max number of comments the user can make on a given post
+  # @param post [Post] post to get the limit for
   # @return [Integer]
-  def max_comments_per_day
+  def max_comments_per_day(post)
+    owns_post_or_parent?(post) ? max_comments_per_day_on_own_posts : max_comments_per_day_on_posts_of_others
+  end
+
+  # Gets the max number of comments the user can make per day on posts made by other users
+  # @return [Integer]
+  def max_comments_per_day_on_posts_of_others
     SiteSetting[privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments'] || 0
+  end
+
+  # Gets the max number of comments the user can make per day on their own posts or answers to them
+  # @return [Integer]
+  def max_comments_per_day_on_own_posts
+    SiteSetting[privilege?('unrestricted') ? 'RL_CommentsOwnPosts' : 'RL_NewUserCommentsOwnPosts'] || 0
   end
 
   # Gets the max number of votes the user can make per day
@@ -494,9 +505,25 @@ class User < ApplicationRecord
     votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
   end
 
-  # Number of comments by the user on posts of others in the last 24 hours
-  # @return [Integer] number of recent comments
-  def recent_comments_count
+  # Number of comments by the user based on whether they own a given post
+  # @param post [Post] post to use for the check
+  # @return [Integer]
+  def recent_comments_count(post)
+    owns_post_or_parent?(post) ? recent_comments_on_own_posts_count : recent_comments_on_posts_of_others_count
+  end
+
+  # Number of comments by the user on own posts or answers to them in the last 24 hours
+  # @return [Integer]
+  def recent_comments_on_own_posts_count
+    Comment.recent.by(self) \
+           .where(post: Post.parent_by(self)) \
+           .or(Comment.recent.by(self).where(post: Post.by(self))) \
+           .count
+  end
+
+  # Number of comments by the user on posts made by other users in the last 24 hours
+  # @return [Integer]
+  def recent_comments_on_posts_of_others_count
     Comment.recent.by(self) \
            .where.not(post: Post.parent_by(self)) \
            .where.not(post: Post.by(self)) \

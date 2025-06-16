@@ -105,30 +105,31 @@ module CommentsHelper
   # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)
-    comments_count = user.recent_comments_count
-    comments_limit = user.max_comments_per_day
+    comments_count = user.recent_comments_count(post)
+    comments_limit = user.max_comments_per_day(post)
+    is_rate_limited = comments_count >= comments_limit
 
-    if comments_count >= comments_limit
-      message = "You have used your daily limit of #{comments_count} comments. Come back tomorrow to continue."
+    unless is_rate_limited
+      return [false, nil]
+    end
 
-      if create_audit_log
-        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                comment: "limit: #{comments_limit}")
-      end
-
-      [true, message]
-    elsif user.owns_post_or_parent?(post) || user.privilege?('unrestricted')
-      [false, nil]
-    else
+    if user.new? && !user.owns_post_or_parent?(post) && comments_limit.zero?
       message = 'As a new user, you can only comment on your own posts and on answers to them.'
 
       if create_audit_log
         AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
                                 comment: "'unrestricted' ability required to comment on non-owned posts")
       end
+    else
+      message = "You have used your daily limit of #{comments_count} comments. Come back tomorrow to continue."
 
-      [true, message]
+      if create_audit_log
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                comment: "limit: #{comments_limit}")
+      end
     end
+
+    [true, message]
   end
 end
 

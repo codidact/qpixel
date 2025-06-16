@@ -49,31 +49,58 @@ class CommentsHelperTest < ActionView::TestCase
     end
   end
 
-  test 'comment_rate_limited? prevents new users commenting on posts of others' do
+  test 'comment_rate_limited? should prevent users that reached the daily limit from commenting' do
     basic = users(:basic_user)
-    post = posts(:question_one)
+    std = users(:standard_user)
+    own_post = posts(:question_one)
+    other_post = posts(:question_two)
 
-    rate_limited, limit_message = comment_rate_limited?(basic, post)
-    assert_equal true, rate_limited
-    assert_not_nil limit_message
+    SiteSetting['RL_NewUserComments'] = 0
+    SiteSetting['RL_NewUserCommentsOwnPosts'] = 0
+    SiteSetting['RL_Comments'] = 0
+    SiteSetting['RL_CommentsOwnPosts'] = 0
 
-    log = AuditLog.where(event_type: 'comment', related: post, user: basic).order(created_at: :desc).first
-    assert log.present?, 'Expected audit log for attempting to comment on a post while rate-limited to be created'
+    [basic, std].each do |user|
+      [own_post, other_post].each do |post|
+        rate_limited, limit_message = comment_rate_limited?(user, post)
+        assert_equal true, rate_limited
+        assert_not_nil limit_message
+
+        log = AuditLog.where(event_type: 'comment', related: post, user: user).order(created_at: :desc).first
+        assert log.present?, 'Expected audit log for attempting to comment on a post while rate-limited to be created'
+      end
+    end
   end
 
-  test 'comment_rate_limited? prevents users that reached the daily limit from commenting' do
+  test 'comment_rate_limited? should allow users to comment on their own posts' do
+    basic = users(:basic_user)
     std = users(:standard_user)
 
-    SiteSetting['RL_Comments'] = 0
+    SiteSetting['RL_NewUserCommentsOwnPosts'] = 50
 
-    rate_limited, limit_message = comment_rate_limited?(std, posts(:question_one))
-    assert_equal true, rate_limited
-    assert_not_nil limit_message
-  end
-
-  test 'comment_rate_limited? allows new users to comment on their own posts' do
-    rate_limited, limit_message = comment_rate_limited?(users(:basic_user), posts(:new_user_question))
+    rate_limited, limit_message = comment_rate_limited?(basic, posts(:new_user_question))
     assert_equal false, rate_limited
     assert_nil limit_message
+
+    SiteSetting['RL_CommentsOwnPosts'] = 50
+
+    rate_limited, limit_message = comment_rate_limited?(std, posts(:question_one))
+    assert_equal false, rate_limited
+    assert_nil limit_message
+  end
+
+  test 'comment_rate_limited? should allow users to comment on posts of others' do
+    basic = users(:basic_user)
+    std = users(:standard_user)
+    other_post = posts(:question_two)
+
+    SiteSetting['RL_NewUserComments'] = 50
+    SiteSetting['RL_Comments'] = 50
+
+    [basic, std].each do |user|
+      rate_limited, limit_message = comment_rate_limited?(user, other_post)
+      assert_equal false, rate_limited
+      assert_nil limit_message
+    end
   end
 end
