@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   include ::UserMerge
   include ::SamlInit
+  include ::Inspectable
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -53,10 +54,6 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
-  end
-
-  def inspect
-    "#<User #{attributes.compact.map { |k, v| "#{k}: #{v}" }.join(', ')}>"
   end
 
   def trust_level
