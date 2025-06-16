@@ -6,6 +6,7 @@ class Vote < ApplicationRecord
   belongs_to :recv_user, class_name: 'User', optional: false
 
   scope :by, ->(user) { where(user: user) }
+  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
 
   after_create :apply_rep_change
   after_create :add_counter
