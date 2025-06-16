@@ -105,6 +105,12 @@ class User < ApplicationRecord
     category.blank? || category.min_trust_level.blank? || category.min_trust_level <= trust_level
   end
 
+  # Is the user allowed to see deleted posts?
+  # @return [Boolean] check result
+  def can_see_deleted?
+    at_least_moderator? || community_user&.privilege('flag_curate') || false
+  end
+
   # Can the user push a given post type to network
   # @param post_type [PostType] type of the post to be pushed
   # @return [Boolean] check result
@@ -219,11 +225,6 @@ class User < ApplicationRecord
   # @return [Boolean] check result
   def at_least_global_moderator?
     global_moderator? || global_admin? || false
-  end
-
-  # Is the user allowed to see deleted posts?
-  def can_see_deleted?
-    at_least_moderator? || community_user&.privilege('flag_curate') || false
   end
 
   # Does this user have a profile on a given community?
