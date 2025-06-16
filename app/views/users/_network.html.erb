@@ -9,7 +9,7 @@
     <% if @user.has_profile_on(c) %>
     <tr>
       <td><%= user_link @user, { host: c.host}, anchortext: c.name %>
-        <% if @user.is_moderator_on(c) %>
+        <% if @user.moderator_on?(c) %>
           (moderator)
         <% end %>
       </td>

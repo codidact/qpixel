@@ -235,6 +235,14 @@ class User < ApplicationRecord
     !cu&.user_id.nil? || false
   end
 
+  # Is the user a moderator on a given community?
+  # @param community_id [Integer] community id to check for
+  # @return [Boolean] check result
+  def moderator_on?(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.at_least_moderator? || cu&.privilege?('mod') || false
+  end
+
   def reputation_on(community_id)
     cu = community_users.where(community_id: community_id).first
     cu&.reputation || 1
@@ -243,14 +251,6 @@ class User < ApplicationRecord
   def post_count_on(community_id)
     cu = community_users.where(community_id: community_id).first
     cu&.post_count || 0
-  end
-
-  # Is the user a moderator on a given community?
-  # @param community_id [Integer] community id to check for
-  # @return [Boolean] check result
-  def is_moderator_on(community_id)
-    cu = community_users.where(community_id: community_id).first
-    cu&.at_least_moderator? || cu&.privilege?('mod') || false
   end
 
   # Does the user have an ability on a given community?

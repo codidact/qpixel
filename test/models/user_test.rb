@@ -150,26 +150,26 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user.community_users.count, original_count + 1
   end
 
-  test 'is_moderator_on should only be true for users that are moderators or admins on a community' do
+  test 'moderator_on? should only be true for users that are moderators or admins on a community' do
     community = communities(:sample)
     basic = users(:basic_user)
     std = users(:standard_user)
     mod = users(:moderator)
     admin = users(:admin)
 
-    assert_equal basic.is_moderator_on(community.id), false
-    assert_equal std.is_moderator_on(community.id), false
-    assert_equal mod.is_moderator_on(community.id), true
-    assert_equal admin.is_moderator_on(community.id), true
+    assert_equal basic.moderator_on?(community.id), false
+    assert_equal std.moderator_on?(community.id), false
+    assert_equal mod.moderator_on?(community.id), true
+    assert_equal admin.moderator_on?(community.id), true
   end
 
-  test 'is_moderator_on should always be true for global moderators and admins with profile on a community' do
+  test 'moderator_on? should always be true for global moderators and admins with profile on a community' do
     global_mod = users(:global_moderator)
     global_admin = users(:global_admin)
 
     communities.each do |c|
-      assert_equal global_mod.is_moderator_on(c.id), global_mod.has_profile_on(c.id)
-      assert_equal global_admin.is_moderator_on(c.id), global_admin.has_profile_on(c.id)
+      assert_equal global_mod.moderator_on?(c.id), global_mod.has_profile_on(c.id)
+      assert_equal global_admin.moderator_on?(c.id), global_admin.has_profile_on(c.id)
     end
   end
 
