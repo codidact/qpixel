@@ -83,7 +83,7 @@ class ModeratorController < ApplicationController
   end
 
   def verify_can_see_deleted
-    if !user_signed_in? || !current_user.can_see_deleted?
+    if !user_signed_in? || !current_user.can_see_deleted_posts?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
