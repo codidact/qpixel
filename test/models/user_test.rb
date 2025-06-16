@@ -249,4 +249,16 @@ class UserTest < ActiveSupport::TestCase
     assert_equal false, user.valid?
     assert(user.errors[:username]&.any? { |m| m.include?('links') })
   end
+
+  test 'username_not_fake_admin validation should fail if the username contains a resticted badge' do
+    admin_badge = SiteSetting['AdminBadgeCharacter']
+    mod_badge = SiteSetting['ModBadgeCharacter']
+
+    [admin_badge, mod_badge].each do |badge|
+      user = User.new(id: 42, username: "I am totally a #{badge}")
+
+      assert_equal false, user.valid?
+      assert(user.errors[:username]&.any? { |m| m.include?(badge) })
+    end
+  end
 end
