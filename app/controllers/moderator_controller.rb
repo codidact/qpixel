@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by moderators. A lot of the stuff in here, and hence a lot of
 # the tools, are rather repetitive.
 class ModeratorController < ApplicationController
-  before_action :verify_can_see_deleted, only: [:recently_deleted_posts]
+  before_action :verify_can_see_deleted_posts, only: [:recently_deleted_posts]
   before_action :verify_moderator,
                 except: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
   before_action :authenticate_user!,
@@ -82,7 +82,7 @@ class ModeratorController < ApplicationController
     check_if_locked(@post)
   end
 
-  def verify_can_see_deleted
+  def verify_can_see_deleted_posts
     if !user_signed_in? || !current_user.can_see_deleted_posts?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
