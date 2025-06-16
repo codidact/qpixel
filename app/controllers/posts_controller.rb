@@ -213,7 +213,7 @@ class PostsController < ApplicationController
     end
 
     if current_user.can_update(@post, @post_type)
-      if current_user.can_push_to_network(@post_type) && params[:network_push] == 'true'
+      if current_user.can_push_to_network?(@post_type) && params[:network_push] == 'true'
         # post network push & post histories creation must be atomic to prevent sync issues on error
         @post.transaction do
           posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],

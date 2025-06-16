@@ -111,10 +111,10 @@ class User < ApplicationRecord
     at_least_moderator? || community_user&.privilege('flag_curate') || false
   end
 
-  # Can the user push a given post type to network
+  # Can the user push a given post type to network?
   # @param post_type [PostType] type of the post to be pushed
   # @return [Boolean] check result
-  def can_push_to_network(post_type)
+  def can_push_to_network?(post_type)
     post_type.system? && (is_global_moderator || is_global_admin)
   end
 
