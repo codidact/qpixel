@@ -146,10 +146,9 @@ class User < ApplicationRecord
       when '2'
         Post.undeleted.by(self).where(post_type: PostType.second_level).count
       when 's'
-        Vote.where(recv_user_id: id, vote_type: 1).count - \
-          Vote.where(recv_user_id: id, vote_type: -1).count
+        Vote.for(self).where(vote_type: 1).count - Vote.for(self).where(vote_type: -1).count
       when 'v'
-        Vote.where(recv_user_id: id).count
+        Vote.for(self).count
       when 'V'
         votes.count
       when 'E'

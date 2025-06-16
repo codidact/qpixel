@@ -231,7 +231,7 @@ class UsersController < ApplicationController
     @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
                                                                                 posts: { deleted: false }).count
     @suggested_edits = SuggestedEdit.by(@user).count
-    @edits = PostHistory.by(@user).on_undeleted.count
+    @edits = PostHistory.by(@user).of_type('post_edited').on_undeleted.count
 
     @all_edits = @suggested_edits + @edits
 
@@ -608,9 +608,7 @@ class UsersController < ApplicationController
   end
 
   def vote_summary
-    @votes = Vote.where(recv_user: @user)
-                 .includes(:post)
-                 .group(:date_of, :post_id, :vote_type)
+    @votes = Vote.for(@user).includes(:post).group(:date_of, :post_id, :vote_type)
 
     @votes = @votes.select(:post_id, :vote_type)
                    .select('count(*) as vote_count')

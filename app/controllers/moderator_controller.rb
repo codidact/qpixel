@@ -57,7 +57,7 @@ class ModeratorController < ApplicationController
   def user_vote_summary
     @user = User.find params[:id]
     @users = User.where(id: Vote.by(@user).select(:recv_user_id).distinct)
-                 .or(User.where(id: Vote.where(recv_user: @user).select(:user_id).distinct))
+                 .or(User.where(id: Vote.for(@user).select(:user_id).distinct))
     @vote_data = VoteData.new(
       cast: VoteSummary.new(
         breakdown: Vote.by(@user).group(:recv_user_id, :vote_type).count,
@@ -65,9 +65,9 @@ class ModeratorController < ApplicationController
         total: Vote.by(@user).count
       ),
       received: VoteSummary.new(
-        breakdown: Vote.where(recv_user: @user).group(:user_id, :vote_type).count,
-        types: Vote.where(recv_user: @user).group(:vote_type).count,
-        total: Vote.where(recv_user: @user).count
+        breakdown: Vote.for(@user).group(:user_id, :vote_type).count,
+        types: Vote.for(@user).group(:vote_type).count,
+        total: Vote.for(@user).count
       )
     )
   end
