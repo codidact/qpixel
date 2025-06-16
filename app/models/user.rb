@@ -257,7 +257,7 @@ class User < ApplicationRecord
   # @param community_id [Integer] community id to check for
   # @param ability_internal_id [String] internal ability id
   # @return [Boolean] check result
-  def has_ability_on(community_id, ability_internal_id)
+  def ability_on?(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
     if cu&.at_least_moderator? || cu&.privilege?('mod')
       true
