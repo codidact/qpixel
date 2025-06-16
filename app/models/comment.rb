@@ -1,9 +1,8 @@
 # Represents a comment. Comments are attached to both a post and a user.
 class Comment < ApplicationRecord
   include PostRelated
+  include SoftDeletable
 
-  scope :deleted, -> { where(deleted: true) }
-  scope :undeleted, -> { where(deleted: false) }
   scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :by, ->(user) { where(user: user) }
 

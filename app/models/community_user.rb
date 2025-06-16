@@ -1,4 +1,6 @@
 class CommunityUser < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :community
   belongs_to :user
 
@@ -10,7 +12,6 @@ class CommunityUser < ApplicationRecord
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
   scope :active, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
 

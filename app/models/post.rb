@@ -1,6 +1,7 @@
 class Post < ApplicationRecord
   include CommunityRelated
   include PostValidations
+  include SoftDeletable
 
   belongs_to :user, optional: true
   belongs_to :post_type
@@ -42,13 +43,11 @@ class Post < ApplicationRecord
 
   scope :bad, -> { where('score < 0.5') }
   scope :by, ->(user) { where(user: user) }
-  scope :deleted, -> { where(deleted: true) }
   scope :good, -> { where('score > 0.5') }
   scope :problematic, -> { where('score < 0.25 OR deleted=1') }
   scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
-  scope :undeleted, -> { where(deleted: false) }
   scope :list_includes, lambda {
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
                                    user: :avatar_attachment)
