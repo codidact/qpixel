@@ -32,7 +32,6 @@ class User < ApplicationRecord
   has_many :filters, dependent: :destroy
   has_many :user_websites, dependent: :destroy
   accepts_nested_attributes_for :user_websites
-  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :username, presence: true, length: { minimum: 3, maximum: 50 }
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }

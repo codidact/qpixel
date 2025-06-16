@@ -6,7 +6,6 @@ class CommentThread < ApplicationRecord
   has_many :thread_follower
   belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :archived_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
 
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }

@@ -7,7 +7,6 @@ class Post < ApplicationRecord
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
   belongs_to :last_activity_by, class_name: 'User', optional: true
   belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :last_edited_by, class_name: 'User', optional: true
