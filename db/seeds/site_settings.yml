@@ -484,7 +484,7 @@
     The number of comments new users may add on other people's posts within 24h.
 
 - name: RL_NewUserCommentsOwnPosts
-  value: 25
+  value: 30
   value_type: integer
   category: RateLimits
   description: >
@@ -498,7 +498,7 @@
     The number of comments users with the unrestricted ability may add on other people's posts within 24h.
 
 - name: RL_CommentsOwnPosts
-  value: 25
+  value: 50
   value_type: integer
   category: RateLimits
   description: >
