@@ -40,8 +40,10 @@ class Post < ApplicationRecord
 
   # Other validations (shared with suggested edits) are in concerns/PostValidations
 
+  scope :bad, -> { where('score < 0.5') }
   scope :by, ->(user) { where(user: user) }
   scope :deleted, -> { where(deleted: true) }
+  scope :good, -> { where('score > 0.5') }
   scope :problematic, -> { where('score < 0.25 OR deleted=1') }
   scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
