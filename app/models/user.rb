@@ -464,6 +464,12 @@ class User < ApplicationRecord
     SiteSetting[privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments'] || 0
   end
 
+  # Gets the max number of votes the user can make per day
+  # @return [Integer]
+  def max_votes_per_day
+    SiteSetting[privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes'] || 0
+  end
+
   # Gets user's post counts by post type
   # @return [Hash{Integer => Integer}]
   def posts_by_post_type
