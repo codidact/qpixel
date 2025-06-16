@@ -235,4 +235,11 @@ class UserTest < ActiveSupport::TestCase
       assert count.positive?, "Expected metric #{name} to be positive, actual: #{count}"
     end
   end
+
+  test 'no_blank_unicode_in_username validation should fail if the username contains blank Unicode chars' do
+    user = User.new(id: 42, username: "\u200BWhy\u200Bso\u200Bmuch\u200Bspace?")
+
+    assert_equal false, user.valid?
+    assert_not_empty user.errors[:username]
+  end
 end
