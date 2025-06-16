@@ -240,6 +240,13 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(id: 42, username: "\u200BWhy\u200Bso\u200Bmuch\u200Bspace?")
 
     assert_equal false, user.valid?
-    assert_not_empty user.errors[:username]
+    assert(user.errors[:username]&.any? { |m| m.include?('blank unicode') })
+  end
+
+  test 'no_links_in_username validation should fail if the username contains URLs' do
+    user = User.new(id: 42, username: 'Visit our https://example.com site!')
+
+    assert_equal false, user.valid?
+    assert(user.errors[:username]&.any? { |m| m.include?('links') })
   end
 end
