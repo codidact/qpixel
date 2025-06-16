@@ -40,7 +40,7 @@ class VoteTest < ActiveSupport::TestCase
     assert_equal author.reputation, previous_rep + expected_rep_change
   end
 
-  test 'Vote.total_rep_change should result in correct rep change for given votes' do
+  test 'total_rep_change should result in correct rep change for given votes' do
     post = posts(:answer_one)
     cpt = CategoryPostType.find_by(category: posts(:answer_one).category, post_type: posts(:answer_one).post_type)
     rep_change_up = cpt.upvote_rep

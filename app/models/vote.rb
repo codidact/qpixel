@@ -5,11 +5,12 @@ class Vote < ApplicationRecord
   belongs_to :user, optional: false
   belongs_to :recv_user, class_name: 'User', optional: false
 
+  scope :by, ->(user) { where(user: user) }
+
   after_create :apply_rep_change
   after_create :add_counter
   before_destroy :check_valid
   before_destroy :reverse_rep_change
-
   after_destroy :remove_counter
 
   validates :vote_type, inclusion: [1, -1]
