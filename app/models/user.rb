@@ -44,8 +44,6 @@ class User < ApplicationRecord
 
   delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
-  scope :active, -> { where(deleted: false) }
-
   after_create :send_welcome_tour_message, :ensure_websites
 
   def self.list_includes

@@ -684,7 +684,7 @@ class UsersController < ApplicationController
     if current_user&.at_least_moderator?
       User.all
     else
-      User.active
+      User.undeleted
     end.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 
