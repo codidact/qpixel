@@ -87,11 +87,7 @@ class User < ApplicationRecord
   # because of the importance of these methods.
   # rubocop:disable Naming/PredicateName
   def has_post_privilege?(name, post)
-    if post.user == self
-      true
-    else
-      privilege?(name)
-    end
+    post.user == self || privilege?(name)
   end
 
   # Can the user approve a given suggested edit?
