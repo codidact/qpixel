@@ -227,20 +227,20 @@ class User < ApplicationRecord
     global_moderator? || global_admin? || false
   end
 
-  # Does this user have a profile on a given community?
-  # @param community_id [Integer] id of the community to check
-  # @return [Boolean] check result
-  def has_profile_on(community_id)
-    cu = community_users.where(community_id: community_id).first
-    !cu&.user_id.nil? || false
-  end
-
   # Is the user a moderator on a given community?
   # @param community_id [Integer] community id to check for
   # @return [Boolean] check result
   def moderator_on?(community_id)
     cu = community_users.where(community_id: community_id).first
     cu&.at_least_moderator? || cu&.privilege?('mod') || false
+  end
+
+  # Does the user have a profile on a given community?
+  # @param community_id [Integer] id of the community to check
+  # @return [Boolean] check result
+  def profile_on?(community_id)
+    cu = community_users.where(community_id: community_id).first
+    !cu&.user_id.nil? || false
   end
 
   def reputation_on(community_id)

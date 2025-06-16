@@ -168,8 +168,8 @@ class UserTest < ActiveSupport::TestCase
     global_admin = users(:global_admin)
 
     communities.each do |c|
-      assert_equal global_mod.moderator_on?(c.id), global_mod.has_profile_on(c.id)
-      assert_equal global_admin.moderator_on?(c.id), global_admin.has_profile_on(c.id)
+      assert_equal global_mod.moderator_on?(c.id), global_mod.profile_on?(c.id)
+      assert_equal global_admin.moderator_on?(c.id), global_admin.profile_on?(c.id)
     end
   end
 
