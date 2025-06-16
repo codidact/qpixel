@@ -42,7 +42,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   scope :active, -> { where(deleted: false) }
 
@@ -54,10 +54,6 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
-  end
-
-  def trust_level
-    community_user.trust_level
   end
 
   # Is the user a new user?
