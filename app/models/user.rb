@@ -487,7 +487,7 @@ class User < ApplicationRecord
   # @return [Integer] number of recent comments
   def recent_comments_count
     Comment.recent.by(self) \
-           .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: id })) \
+           .where.not(post: Post.parent_by(self)) \
            .where.not(post: Post.by(self)) \
            .count
   end

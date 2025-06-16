@@ -11,7 +11,7 @@ class VotesController < ApplicationController
     end
 
     recent_votes = Vote.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
-                       .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
+                       .where.not(post: Post.parent_by(current_user)).count
     max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes']
 
     if !post.parent&.user_id == current_user.id && recent_votes >= max_votes_per_day
