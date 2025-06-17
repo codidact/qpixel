@@ -178,7 +178,26 @@ RequestContext.community = Community.first
 
 This correctly scopes all database actions to the first (and probably only) community in your system.
 
-## 10. Stop Containers
+## 10. Running tests
+To run the tests (except the system tests):
+
+```bash
+$ docker compose exec uwsgi rails test
+```
+
+To run the system tests:
+
+```bash
+$ docker compose exec uwsgi rails test:system
+```
+
+To run all of the tests (including the system tests):
+
+```bash
+$ docker compose exec uwsgi rails test:all
+```
+
+## 11. Stop Containers
 
 When you are finished, don't forget to clean up.
 
@@ -187,7 +206,7 @@ docker compose stop
 docker compose rm
 ```
 
-## 11. Next steps
+## 12. Next steps
 
 The current goal of this container is to provide a development environment for
 working on QPixel. This deployment has not been tested with email notifications
