@@ -1,6 +1,6 @@
 require 'application_system_test_case'
 
-class PostTest < ApplicationSystemTestCase
+class PostSystemTest < ApplicationSystemTestCase
   # -------------------------------------------------------
   # Create
   # -------------------------------------------------------
