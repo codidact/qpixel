@@ -1,5 +1,7 @@
 require 'application_system_test_case'
 
+# Renamed from PostTest to PostSystemTest to avoid clash with test/models/post_test.rb
+# when running rails test:all
 class PostSystemTest < ApplicationSystemTestCase
   # -------------------------------------------------------
   # Create
