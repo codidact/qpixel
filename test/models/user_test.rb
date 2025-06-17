@@ -261,4 +261,12 @@ class UserTest < ActiveSupport::TestCase
       assert(user.errors[:username]&.any? { |m| m.include?(badge) })
     end
   end
+
+  test 'inspect should work with the model' do
+    std = users(:standard_user)
+
+    assert_nothing_raised do
+      std.inspect
+    end
+  end
 end
