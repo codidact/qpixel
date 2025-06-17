@@ -11,7 +11,8 @@ RUN apt-get update && \
     apt-get install -y bison \
     build-essential \
     libxslt-dev \
-    default-mysql-server
+    default-mysql-server \
+    firefox-esr
 
 # Add core code to container
 WORKDIR /code
