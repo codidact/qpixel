@@ -193,7 +193,7 @@ $ docker compose exec uwsgi rails test:system
 
 The system tests require a browser to be available (by default Firefox). Firefox is included in the uwsgi container if
 you use `Dockerfile.dev`. If you use `Dockerfile` or `Dockerfile.arm` then you will need to add the relevant browser
-yourself.
+yourself if you want to be able to run the system tests.
 
 To run all of the tests (including the system tests):
 
