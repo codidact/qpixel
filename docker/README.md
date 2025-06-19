@@ -179,6 +179,8 @@ RequestContext.community = Community.first
 This correctly scopes all database actions to the first (and probably only) community in your system.
 
 ## 10. Running tests
+For full details, refer to [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
+
 To run the tests (except the system tests):
 
 ```bash
