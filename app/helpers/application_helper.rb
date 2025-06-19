@@ -3,17 +3,31 @@ module ApplicationHelper
   include Warden::Test::Helpers
 
   ##
-  # Is the current user a moderator on the current community?
+  # Is the current user a moderator or admin on the current community?
   # @return [Boolean]
-  def moderator?
-    user_signed_in? && (current_user.is_moderator || current_user.is_admin)
+  def at_least_moderator?
+    user_signed_in? && current_user.at_least_moderator?
   end
 
   ##
   # Is the current user an admin on the current community?
   # @return [Boolean]
   def admin?
-    user_signed_in? && current_user.is_admin
+    user_signed_in? && current_user.admin?
+  end
+
+  ##
+  ## Does the current user have access to deleted posts?
+  # @return [Boolean]
+  def can_see_deleted?
+    user_signed_in? && current_user.can_see_deleted?
+  end
+
+  ##
+  # Is the current user a standard user (not a moderator or an admin)?
+  # @return [Boolean] check result
+  def standard?
+    !at_least_moderator?
   end
 
   ##
@@ -146,12 +160,17 @@ module ApplicationHelper
   ##
   # Gets a shareable URL to the specified post, taking into account post type.
   # @param post [Post] The post in question.
+  # @param params [Hash{Symbol => #to_s}] additional URL params
   # @return [String]
-  def generic_share_link(post)
+  def generic_share_link(post, **params)
     if second_level_post_types.include?(post.post_type_id)
-      answer_post_url(id: post.parent_id, answer: post.id, anchor: "answer-#{post.id}")
+      answer_post_url({
+        id: post.parent_id,
+        answer: post.id,
+        anchor: "answer-#{post.id}"
+      }.merge(params))
     else
-      post_url(post)
+      post_url(post, params)
     end
   end
 
@@ -329,5 +348,22 @@ module ApplicationHelper
     [shasum, date]
   rescue
     [nil, nil]
+  end
+
+  ##
+  # Extracts boundary-safe page num from parameters
+  # @param params [ActionController::Parameters] parameters to parse
+  # @return [Integer] boundary-safe page num
+  def safe_page(params)
+    params[:page].nil? ? 1 : params[:page].to_i
+  end
+
+  ##
+  # Extracts boundary-safe page limit from parameters
+  # @param params [ActionController::Parameters] parameters to parse
+  # @param min [Integer, nil] minimum limit per page
+  # @return [Integer] boundary-safe page limit
+  def safe_per_page(params, min = 20)
+    params[:per_page].nil? || params[:per_page].to_i < min ? min : params[:per_page].to_i
   end
 end

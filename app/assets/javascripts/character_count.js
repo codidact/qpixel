@@ -8,6 +8,7 @@ $(() => {
 
   /**
    * Sets the icon to show before the counter, if any
+   * @param {JQuery} el
    * @param {CounterIcon} icon name of the icon to show
    */
   const setCounterIcon = (el, icon) => {
@@ -36,6 +37,7 @@ $(() => {
 
   /**
    * Sets the input's validation state
+   * @param {JQuery} el
    * @param {InputValidationState} state the state to set
    */
   const setInputValidationState = (el, state) => {
@@ -45,11 +47,12 @@ $(() => {
 
   /**
    * Sets the submit button's disabled state
+   * @param {JQuery} el
    * @param {SubmitButtonDisabledState} state the state to set
    */
   const setSubmitButtonDisabledState = (el, state) => {
     const isDisabled = state === 'disabled';
-    el.attr('disabled', isDisabled).toggleClass('is-muted', isDisabled);
+    el.attr('disabled', isDisabled ? 'true' : null).toggleClass('is-muted', isDisabled);
   };
 
   $(document).on('keyup change paste', '[data-character-count]', (ev) => {
@@ -89,7 +92,7 @@ $(() => {
     $count.text(text);
   });
 
-  $(document).on('ajax:success', 'form', ev => {
+  $(document).on('ajax:success', 'form', (ev) => {
     const $tgt = $(ev.target);
     $tgt.find('[data-character-count]').val('').trigger('change');
   });

@@ -1,15 +1,14 @@
 $(() => {
-  $('.js-enable-subscription').on('change', async evt => {
+  $('.js-enable-subscription').on('change', async (evt) => {
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
     const subscriptionId = $sub.data('sub-id');
     const value = !!$tgt.is(':checked');
 
-    const resp = await fetch(`/subscriptions/${subscriptionId}/enable`, {
-      method: 'POST',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({enabled: value})
+    const resp = await QPixel.fetchJSON(`/subscriptions/${subscriptionId}/enable`, { enabled: value }, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
 
     if (data.status !== 'success') {
@@ -17,17 +16,17 @@ $(() => {
     }
   });
 
-  $('.js-remove-subscription').on('click', async evt => {
+  $('.js-remove-subscription').on('click', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
     const subscriptionId = $sub.data('sub-id');
 
-    const resp = await fetch(`/subscriptions/${subscriptionId}`, {
-      method: 'DELETE',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+    const resp = await QPixel.fetchJSON(`/subscriptions/${subscriptionId}`, {}, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
 
     if (data.status === 'success') {

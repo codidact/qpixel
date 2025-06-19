@@ -1,5 +1,5 @@
 $(() => {
-  $('.js-more-comments').on('click', async evt => {
+  $('.js-more-comments').on('click', async (evt) => {
     evt.preventDefault();
     const $tgt = $(evt.target);
     const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
@@ -13,7 +13,7 @@ $(() => {
     $tgt.parents('.post--comments').find('.js-more-comments').remove();
   });
 
-  $(document).on('click', '.post--comments-thread.is-inline a', async evt => {
+  $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
     if (evt.ctrlKey) { return; }
 
     evt.preventDefault();
@@ -33,7 +33,7 @@ $(() => {
 
     wrapper.innerHTML = data;
 
-    $('a.show-deleted-comments').click(async evt => {
+    $('a.show-deleted-comments').click(async (evt) => {
       if (evt.ctrlKey) { return; }
       evt.preventDefault();
       openThread(wrapper, targetUrl, true);
@@ -43,7 +43,7 @@ $(() => {
     window.hljs && hljs.highlightAll();
   }
 
-  $(document).on('click', '.js-collapse-thread', async ev => {
+  $(document).on('click', '.js-collapse-thread', async (ev) => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
     const $embed = $tgt.parents('.post--comments-thread');
@@ -71,7 +71,7 @@ $(() => {
     $embed[0].outerHTML = $container[0].outerHTML;
   });
 
-  $(document).on('click', '.js-comment-edit', async evt => {
+  $(document).on('click', '.js-comment-edit', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
@@ -124,7 +124,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.js-comment-delete, .js-comment-undelete', async evt => {
+  $(document).on('click', '.js-comment-delete, .js-comment-undelete', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
@@ -132,11 +132,8 @@ $(() => {
     const commentId = $comment.attr('data-id');
     const isDelete = !$comment.hasClass('deleted-content');
 
-    const resp = await fetch(`/comments/${commentId}/delete`, {
-      method: isDelete ? 'DELETE' : 'PATCH',
-      credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken() }
-    });
+    const resp = await QPixel.fetchJSON(`/comments/${commentId}/delete`, {}, { method: isDelete ? 'DELETE' : 'PATCH' });
+
     const data = await resp.json();
 
     if (data.status === 'success') {
@@ -154,7 +151,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.js--show-followers', async evt => {
+  $(document).on('click', '.js--show-followers', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
@@ -170,7 +167,7 @@ $(() => {
     $modal.find('.js-follower-display').html(data);
   });
 
-  $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async evt => {
+  $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
@@ -178,12 +175,8 @@ $(() => {
     const action = $tgt.data("action")
     const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
 
-    const resp = await fetch(`/comments/thread/${threadID}/${route}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'X-CSRF-Token': QPixel.csrfToken(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: action })
-    });
+    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/${route}`, { type: action });
+
     const data = await resp.json();
 
     if (data.status === 'success') {
@@ -194,7 +187,7 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.comment-form input[type="submit"]', async evt => {
+  $(document).on('click', '.comment-form input[type="submit"]', async (evt) => {
     // Comment posting has been clicked.
     $(evt.target).attr('data-disable-with', 'Posting...');
   });
@@ -214,6 +207,10 @@ $(() => {
     const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
     const itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
+
+    /**
+     * @type {QPixelPopupCallback}
+     */
     const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
@@ -236,9 +233,9 @@ $(() => {
         pingable[`${threadId}-${postId}`] = await resp.json();
       }
 
-      const items = Object.entries(pingable[`${threadId}-${postId}`]).filter(e => {
+      const items = Object.entries(pingable[`${threadId}-${postId}`]).filter((e) => {
         return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
-      }).map(e => {
+      }).map((e) => {
         const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
         const id = e[1];
         return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
@@ -251,7 +248,7 @@ $(() => {
     }
   }
 
-  $('.js-new-thread-link').on('click', async ev => {
+  $('.js-new-thread-link').on('click', async (ev) => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post');
@@ -266,7 +263,7 @@ $(() => {
   });
 
   $('.js-comment-permalink > .js-text').text('copy link');
-  $(document).on('click', '.js-comment-permalink', ev => {
+  $(document).on('click', '.js-comment-permalink', (ev) => {
     ev.preventDefault();
 
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');

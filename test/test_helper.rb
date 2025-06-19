@@ -1,7 +1,7 @@
 require 'simplecov'
 require 'simplecov_json_formatter'
 SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
-SimpleCov.start 'rails'
+SimpleCov.start('rails')
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
@@ -107,7 +107,8 @@ class ActiveSupport::TestCase
   end
 
   def load_tags_paths
-    ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
+    sql = File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
+    ActiveRecord::Base.connection.execute(sql)
   end
 
   def clear_cache
@@ -117,6 +118,12 @@ class ActiveSupport::TestCase
   def copy_abilities(community_id)
     Ability.unscoped.where(community: Community.first).each do |a|
       Ability.create(a.attributes.merge(community_id: community_id, id: nil))
+    end
+  end
+
+  def assert_valid_json_response
+    assert_nothing_raised do
+      JSON.parse(response.body)
     end
   end
 

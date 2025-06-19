@@ -81,7 +81,27 @@ class PostTest < ActiveSupport::TestCase
     post_with_reactions = posts(:answer_one)
     reaction_list = post_with_reactions.reaction_list
     refute reaction_list.empty?
-    assert reaction_list.key? reaction_types(:wfm)
+    assert reaction_list.key?(reaction_types(:wfm))
     assert_equal 1, reaction_list[reaction_types(:wfm)].count
+  end
+
+  test 'moderator_tags should correctly validate if the user can use moderator tags on posts' do
+    category = categories(:moderator_tags)
+    post_type = post_types(:question)
+
+    users.each do |user|
+      # moderator_tags validation requires request context user to be set
+      RequestContext.user = user
+
+      post = Post.new(body_markdown: 'm' * category.min_body_length, body: "<p>#{'b' * category.min_body_length}</p>",
+                      title: 't' * category.min_title_length, tags_cache: ['feature-request'], license: licenses(:cc_by_sa),
+                      score: 0, user: user, post_type: post_type, category: category)
+
+      if post.valid?
+        assert_equal user.at_least_moderator?, true
+      else
+        assert_not_empty post.errors[:mod_tags]
+      end
+    end
   end
 end

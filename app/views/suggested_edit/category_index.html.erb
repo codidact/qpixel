@@ -67,6 +67,10 @@
           ><%= edit.active ? 'Pending' : (edit.approved? ? 'Approved' : 'Rejected' ) %></strong> suggested edit
           by <%= user_link edit.user %>,
           <span title="<%= edit.created_at.iso8601 %>"><%= time_ago_in_words(edit.created_at) %> ago</span>
+	  <% unless edit.active %>
+	  <br/>Decided by <%= user_link edit.decided_by %>,
+          <span title="<%= edit.decided_at.iso8601 %>"><%= time_ago_in_words(edit.decided_at) %> ago</span>
+	  <% end %>
         </div>
       </div>
     <% end %>

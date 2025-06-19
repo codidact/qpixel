@@ -24,7 +24,7 @@ class SubscriptionsController < ApplicationController
 
   def enable
     @subscription = Subscription.find params[:id]
-    if current_user.is_admin || current_user.id == @subscription.user_id
+    if current_user.admin? || current_user.id == @subscription.user_id
       if @subscription.update(enabled: params[:enabled] || false)
         render json: { status: 'success', subscription: @subscription }
       else
@@ -38,7 +38,7 @@ class SubscriptionsController < ApplicationController
 
   def destroy
     @subscription = Subscription.find params[:id]
-    if current_user.is_admin || current_user.id == @subscription.user_id
+    if current_user.admin? || current_user.id == @subscription.user_id
       if @subscription.destroy
         render json: { status: 'success' }
       else

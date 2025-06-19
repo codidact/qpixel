@@ -2,8 +2,9 @@
 
 ## Ruby
 
-There is a .rubocop.yml file provided in the project and rubocop is included in the bundle; please run
-`bundle exec rubocop` for Ruby style checking.
+For Ruby style guidance see the [style guide](https://codidact.atlassian.net/wiki/spaces/OPS/pages/766803969/Style+guide+Ruby)
+in Confluence (or [public mirror](https://github.com/codidact/docs/blob/master/Developer-Docs/ruby-style-guide.pdf) in
+our docs repository).
 
 ## CSS
 

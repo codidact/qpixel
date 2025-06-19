@@ -78,7 +78,7 @@
   <% end %>
   <div role="list">
     <% comments.each do |comment| %>
-      <% if comment.deleted && !(current_user&.is_moderator && params[:show_deleted_comments] == "1") %>
+      <% if comment.deleted && !(current_user&.at_least_moderator? && params[:show_deleted_comments] == "1") %>
         <% skipped_deleted += 1%>
         <% next %>
       <% elsif skipped_deleted > 0 %>
@@ -101,18 +101,20 @@
   <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
       <% if !@comment_thread.read_only? %>
-        <% if @post.locked? && !moderator? && !admin? %>
-          <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
+        <% if @post.locked? && standard? %>
+          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on locked posts.' %>
+        <% elsif @post.deleted && standard? %>
+          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
+        <% elsif @post.comments_disabled && standard? %>
+          <%= render 'shared/lock_notice', text: 'Comments have been disabled on the post.' %>
         <% elsif @post.deleted %>
-          <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
-        <% elsif @post.comments_disabled && !moderator? && !admin? %>
-          <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on the parent post.</p>
-        <% else %>
-          <% if @post.locked? %>
-            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
-          <% elsif @post.comments_disabled %>
-            <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
-          <% end %>
+          <%= render 'shared/lock_notice', text: 'Comments are disabled on deleted posts, but as a moderator you are exempt from that block.' %>
+        <% elsif @post.locked? %>
+          <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
+        <% elsif @post.comments_disabled %>
+            <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
+        <% end %>
+        <% if @post.comments_allowed? || !standard? %>
           <h4>Reply to this thread</h4>
           <%= form_tag create_comment_path(@comment_thread.id) do %>
             <%= hidden_field_tag :post_id, @post.id %>
@@ -151,7 +153,7 @@
   <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
     <div class="droppanel--header">thread options</div>
     <div class="droppanel--menu">
-      <% if current_user.is_moderator || !@comment_thread.read_only? %>
+      <% if current_user.at_least_moderator? || !@comment_thread.read_only? %>
         <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" role="button" aria-label="Rename thread">
           <i class="fas fa-pen fa-fw"></i> rename
         </a>
@@ -193,7 +195,7 @@
         <% end %>
       <% end %>
 
-      <% if current_user&.is_moderator || current_user&.is_admin %>
+      <% if current_user&.at_least_moderator? %>
         <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"
            role="button" aria-label="Show thread followers">
           <i class="fas fa-users"></i> followers
@@ -238,7 +240,7 @@
     <% end %>
   </div>
 
-  <% if current_user&.is_moderator || current_user&.is_admin %>
+  <% if current_user&.at_least_moderator? %>
     <div class="modal is-with-backdrop is-small" id="js-followers-<%= @comment_thread.id %>">
       <div class="modal--container">
         <div class="modal--header">

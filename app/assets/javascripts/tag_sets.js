@@ -1,5 +1,5 @@
 $(() => {
-  $(document).on('click', '.js-tag-set-name', async ev => {
+  $(document).on('click', '.js-tag-set-name', async (ev) => {
     const $tgt = $(ev.target);
     const tagSetId = $tgt.data('set-id');
     const response = await fetch(`/admin/tag-sets/${tagSetId}`, {
@@ -14,25 +14,20 @@ $(() => {
     $tgt.html($form);
   });
 
-  $(document).on('click', '.js-edit-set-name, .js-edit-name-submit', ev => {
+  $(document).on('click', '.js-edit-set-name, .js-edit-name-submit', (ev) => {
     ev.stopPropagation();
   });
 
-  $(document).on('click', '.js-edit-name-submit', async ev => {
+  $(document).on('click', '.js-edit-name-submit', async (ev) => {
     const $tgt = $(ev.target);
-    console.log($tgt);
     const tagSetId = $tgt.data('set-id');
     const $name = $tgt.parents('.js-tag-set-name');
     const newName = $tgt.parent().children('.js-edit-set-name').val();
-    const response = await fetch(`/admin/tag-sets/${tagSetId}/edit`, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      },
-      method: 'POST',
-      body: JSON.stringify({ name: newName })
+
+    const response = await QPixel.fetchJSON(`/admin/tag-sets/${tagSetId}/edit`, { name: newName }, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await response.json();
 
     if (data.status === 'success') {

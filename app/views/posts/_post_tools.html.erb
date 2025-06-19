@@ -5,7 +5,7 @@
       Moderator Tools
     </div>
     <div class="modal--body">
-      <% unless post.locked? && !moderator? %>
+      <% unless post.locked? && !at_least_moderator? %>
         <% if post.answer? %>
           <details>
             <summary>Convert to comment</summary>
@@ -48,11 +48,11 @@
         <details>
           <summary>Lock post</summary>
           <p>
-            Locking a post disallows edits, comments and votes. Use post closure to disallow answers, too. You should do that before locking the post, because the interface will be hidden afterwards. <% if moderator? %>If you just want to disable comments to shut down a heated discussion, use that tool.<% end %>
+            Locking a post disallows edits, comments and votes. Use post closure to disallow answers, too. You should do that before locking the post, because the interface will be hidden afterwards. <% if at_least_moderator? %>If you just want to disable comments to shut down a heated discussion, use that tool.<% end %>
           </p>
           <%= form_tag post_lock_path(post), remote: true, class: 'js-lock' do %>
             <%= label_tag :length, 'Locked until', class: 'form-element', for: "purge_comments_id_#{post.id}" %>
-            <% if current_user.is_moderator %>
+            <% if current_user.at_least_moderator? %>
               <div class="form-caption">You can set an number of days, after which the post will automatically unlock.</div>
             <% else %>
               <div class="form-caption">You have to set an number of days, after which the post will automatically unlock. Will default to 7 if none chosen. Maximum value: 30 days</div>
@@ -61,7 +61,7 @@
             <%= submit_tag 'Lock', class: 'button is-filled' %>
           <% end %>
         </details>
-      <% elsif !post.locked_until.nil? || moderator? || post.locked_by.id == current_user.id %>
+      <% elsif !post.locked_until.nil? || at_least_moderator? || post.locked_by.id == current_user.id %>
         <details>
           <summary>Unlock post</summary>
           <p>
@@ -73,7 +73,7 @@
         </details>
         <% end %>
       <% end %>
-      <% if moderator? && !post.comments_disabled %>
+      <% if at_least_moderator? && !post.comments_disabled %>
         <details>
           <summary>Disable comments</summary>
           <p>
@@ -90,7 +90,7 @@
           <% end %>
         </details>
       <% end %>
-      <% if moderator? && post.comments_disabled %>
+      <% if at_least_moderator? && post.comments_disabled %>
         <details>
           <summary>Enable comments</summary>
           <p>
@@ -101,7 +101,7 @@
           <% end %>
         </details>
       <% end %>
-      <% if moderator? %>
+      <% if at_least_moderator? %>
         <details>
           <summary>Feature post</summary>
           <p>

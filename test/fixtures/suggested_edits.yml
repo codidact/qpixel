@@ -61,3 +61,14 @@ rejected_suggested_edit:
   decided_at: 2000-01-01T00:00:00.000000Z
   decided_by: editor
   rejected_comment: NO WAY
+
+pending_high_trust:
+  post: high_trust
+  user: moderator
+  community: sample
+  body: This suggested edit requires high trust to be approved or rejected
+  title: Very important suggestion
+  body_markdown: <p>This suggested edit requires high trust to be approved or rejected</p>
+  comment: High trust only
+  active: true
+  accepted: false

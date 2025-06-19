@@ -1,9 +1,17 @@
 <% content_for :title, "Recently Deleted Posts" %>
-<%= link_to moderator_path, class: 'has-font-size-small' do %>
-  &laquo; Return to moderator tools
+
+<% if current_user.at_least_moderator? %>
+  <%= link_to moderator_path, class: 'has-font-size-small' do %>
+    &laquo; Return to moderator tools
+  <% end %>
 <% end %>
 
 <h1>Recently Deleted Posts</h1>
+
+<% unless current_user.at_least_moderator? %>
+<p>Because you have the Curate ability, you can see deleted posts regardless of who deleted them. If you feel a post has been deleted in error, you can restore it. If a post was deleted by its author and you decide to restore it, consider leaving a comment explaining why (to reduce confusion).</p>
+<% end %>
+
 <div class="item-list">
   <% @posts.each do |post| %>
     <%= render 'posts/type_agnostic', post: post %>
@@ -11,3 +19,4 @@
 </div>
 
 <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+

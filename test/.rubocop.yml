@@ -9,3 +9,9 @@ Metrics/BlockLength:
 
 Metrics/ClassLength:
   Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowedMethods: ['get', 'post', 'put', 'delete', 'puts']
+  AllowedPatterns: ['assert$', 'assert_equal', 'raise', '^click_', '^fill_', 'visit', 'within']
+  IncludedMacros: ['assert_response']

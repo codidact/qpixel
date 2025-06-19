@@ -1,13 +1,17 @@
 module PostsHelper
   ##
-  # Get markdown submitted for a post - should only be used in Markdown create/edit requests. Prioritises using the
-  # client-side rendered HTML over rendering server-side.
+  # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
+  # rendered HTML over rendering server-side.
   # @param scope [Symbol] The parameter scope for the markdown - i.e. if the form submits it as +posts[body_markdown]+,
   #   this should be +:posts+.
   # @param field_name [Symbol] The parameter name for the markdown - i.e. +:body_markdown+ in the same example.
   # @return [String]
-  def post_markdown(scope, field_name)
-    params['__html'].presence || render_markdown(params[scope][field_name])
+  def rendered_post(scope, field_name)
+    if params['__html'].present? && params['__html'] != '<!-- g: js, mdit -->'
+      params['__html']
+    else
+      render_markdown params[scope][field_name]
+    end
   end
 
   ##

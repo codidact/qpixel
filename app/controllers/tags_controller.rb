@@ -118,7 +118,23 @@ class TagsController < ApplicationController
   end
 
   def rename
-    status = @tag.update(name: params[:name])
+    status = false
+
+    @tag.transaction do
+      old_tag_name = @tag.name
+
+      status = @tag.update(name: params[:name])
+
+      if status
+        AuditLog.moderator_audit(event_type: 'tag_rename',
+                                 related: @tag,
+                                 user: current_user,
+                                 comment: "#{old_tag_name} renamed to #{params[:name]}")
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
+
     render json: { success: status, tag: @tag }
   end
 
@@ -226,8 +242,7 @@ class TagsController < ApplicationController
 
   def verify_tag_editor
     unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
-      current_user.is_moderator ||
-      current_user.is_admin)
+      current_user.at_least_moderator?)
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
