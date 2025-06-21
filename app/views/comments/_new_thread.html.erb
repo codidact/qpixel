@@ -1,0 +1,43 @@
+<%#
+  Renders new comment thread button & modal
+
+  Variables:
+    post : post to create a new thread for
+    text : text to display on the button
+    user : user that will create a new thread
+%>
+
+<%
+  can_comment = user.can_comment_on?(post)
+  is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
+  text ||= defined?(text) && text.present? ? text : 'Start new comment thread'
+  title = if post.locked? && standard?
+            'Comments are disabled on locked posts.'
+          elsif post.deleted && standard?
+            'Comments are disabled on deleted posts.'
+          elsif post.comments_disabled && standard? 
+            'Comments have been disabled on this post.'
+          elsif post.deleted
+            'Comments are disabled on deleted posts, but as a moderator you are exempt.'
+          elsif post.locked?
+            'Comments are disabled on locked posts, but as a moderator you are exempt.'
+          elsif post.comments_disabled
+            'Comments have been disabled on this post, but as a moderator you are exempt.'
+          elsif is_rate_limited
+            rate_limit_message
+          else
+            ''
+          end
+%>
+
+<a class="button is-outlined is-small js-new-thread-link"
+   data-post="<%= post.id %>"
+   <%= !can_comment ? 'disabled' : '' %>
+   role="button"
+   title="<%= title %>">
+  <i class="fas fa-fw fa-plus"></i> <%= text %>
+</a>
+
+<% if can_comment %>
+  <%= render 'comments/new_thread_modal', post: post %>
+<% end %>
