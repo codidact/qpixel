@@ -32,7 +32,7 @@ class SiteSetting < ApplicationRecord
 
     typed_value = SettingConverter.new(value).send("as_#{setting.value_type.downcase}")
 
-    applied_setting(name).update(value: typed_value)
+    setting.update(value: typed_value)
 
     Rails.cache.write key, typed_value, include_community: false
   end
