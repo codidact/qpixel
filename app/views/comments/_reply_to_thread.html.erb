@@ -1,0 +1,61 @@
+<%#
+  Renders reply to comment thread button & input
+
+  Variables:
+    post : post the thread is for
+    text : text to display on the button
+    thread : thread to create a reply for
+    user : user that will create a reply to the thread
+%>
+
+<%
+  can_comment = user.can_comment_on?(post)
+  is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
+  text ||= defined?(text) && text.present? ? text : 'Reply to this thread'
+  title = if post.locked? && standard?
+            'Comments are disabled on locked posts.'
+          elsif post.deleted && standard?
+            'Comments are disabled on deleted posts.'
+          elsif post.comments_disabled && standard?
+            'Comments have been disabled on the post.'
+          elsif post.deleted
+            'Comments are disabled on deleted posts, but as a moderator you are exempt.'
+          elsif post.locked?
+            'Comments are disabled on locked posts, but as a moderator you are exempt.'
+          elsif post.comments_disabled
+            'Comments have been disabled on this post, but as a moderator you are exempt.'
+          # TODO: check if thread blocks actually apply to mods & admins
+          elsif thread.deleted
+            'You cannot reply to this thread because it has been deleted.'
+          elsif thread.locked?
+            'You cannot reply to this thread because it has been locked.'
+          elsif thread.archived
+            'This thread has been archived and cannot be replied to.'
+          elsif is_rate_limited
+            rate_limit_message
+          else
+            ''
+          end
+%>
+
+<a class="button is-outlined is-small js-reply-to-thread-link"
+   data-post="<%= post.id %>"
+   <%= !can_comment ? 'disabled' : '' %>
+   role="button"
+   title="<%= title %>">
+  <i class="fas fa-fw fa-plus"></i> <%= text %>
+</a>
+
+<% if can_comment %>
+  <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form', id: "reply-to-thread-form-#{post.id}" do %>
+    <%= hidden_field_tag :post_id, post.id %>
+    <%= label_tag :content, 'Your message', class: 'form-element' %>
+    <%= text_area_tag :content, '',
+                      class: 'form-element js-comment-field',
+                      data: { thread: thread.id,
+                              post: thread.post_id,
+                              character_count: ".js-character-count-#{post.id}" } %>
+    <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
+    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
+  <% end %>
+<% end %>

@@ -262,6 +262,20 @@ $(() => {
     }
   });
 
+  $('.js-reply-to-thread-link').on('click', async (ev) => {
+    ev.preventDefault();
+    const $tgt = $(ev.target);
+    const postId = $tgt.attr('data-post');
+    const $reply = $(`#reply-to-thread-form-${postId}`);
+
+    if ($reply.is(':hidden')) {
+      $reply.show();
+    }
+    else {
+      $reply.hide();
+    }
+  })
+
   $('.js-comment-permalink > .js-text').text('copy link');
   $(document).on('click', '.js-comment-permalink', (ev) => {
     ev.preventDefault();

@@ -100,41 +100,7 @@
   </div>
   <% unless current_user.nil? || params[:inline] == 'true' %>
     <div class="widget--footer">
-      <% if !@comment_thread.read_only? %>
-        <% if @post.locked? && standard? %>
-          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on locked posts.' %>
-        <% elsif @post.deleted && standard? %>
-          <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
-        <% elsif @post.comments_disabled && standard? %>
-          <%= render 'shared/lock_notice', text: 'Comments have been disabled on the post.' %>
-        <% elsif @post.deleted %>
-          <%= render 'shared/lock_notice', text: 'Comments are disabled on deleted posts, but as a moderator you are exempt from that block.' %>
-        <% elsif @post.locked? %>
-          <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
-        <% elsif @post.comments_disabled %>
-            <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
-        <% end %>
-        <% if current_user&.can_comment_on?(@post) %>
-          <h4>Reply to this thread</h4>
-          <%= form_tag create_comment_path(@comment_thread.id) do %>
-            <%= hidden_field_tag :post_id, @post.id %>
-            
-            <%= label_tag :content, 'Your message', class: 'form-element' %>
-            <%= text_area_tag :content, '', class: 'form-element js-comment-field',
-                              data: { thread: @comment_thread.id, post: @comment_thread.post_id,
-                                      character_count: ".js-character-count-#{@post.id}" } %>
-            <%= render 'shared/char_count', type: @post.id, min: 15, max: 1000 %>
-
-            <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
-          <% end %>
-        <% end %>
-      <% elsif @comment_thread.deleted %>
-        <p class="h-c-red-700"><i class="fas fa-trash fa-fw"></i> You cannot reply to this thread because it has been deleted.</p>
-      <% elsif @comment_thread.locked? %>
-        <p class="h-c-red-700"><i class="fas fa-lock fa-fw"></i> You cannot reply to this thread because it has been locked.</p>
-      <% elsif @comment_thread.archived %>
-        <p class="h-c-tertiary-700"><i class="fas fa-archive fa-fw"></i> This thread has been archived and cannot be replied to.</p>
-      <% end %>
+      <%= render 'reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
     </div>
   <% end %>
   <% if params[:inline] == 'true' %>
