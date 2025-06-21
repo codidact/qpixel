@@ -1,21 +1,18 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread]
+
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
+  before_action :set_post, only: [:create_thread]
+  before_action :set_thread,
+                only: [:create, :thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
+
+  before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
   def create_thread
-    @post = Post.find(params[:post_id])
-    if @post.comments_disabled && current_user&.standard?
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
-      return
-    elsif !@post.can_access?(current_user)
-      return not_found
-    end
-
     title = params[:title]
     unless title.present?
       title = if params[:body].length > 100
@@ -66,15 +63,6 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment_thread = CommentThread.find(params[:id])
-    @post = @comment_thread.post
-    if @post.comments_disabled && current_user&.standard?
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
-      return
-    elsif !@post.can_access?(current_user)
-      return not_found
-    end
-
     body = params[:content]
     pings = check_for_pings @comment_thread, body
 
@@ -296,9 +284,28 @@ class CommentsController < ApplicationController
     @comment = Comment.unscoped.find params[:id]
   end
 
+  def set_post
+    @post = Post.find(params[:post_id])
+  end
+
   def set_thread
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
+  end
+
+  # For use with before_action callbacks
+  def check_post_access
+    if @post.comments_disabled && current_user&.standard?
+      respond_to do |format|
+        format.html { render template: 'errors/forbidden', status: :forbidden }
+        format.json do
+          render json: { status: 'failed', message: 'Comments have been disabled on this post.' },
+                 status: :forbidden
+        end
+      end
+    elsif !@post.can_access?(current_user)
+      not_found
+    end
   end
 
   def check_privilege

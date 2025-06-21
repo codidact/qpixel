@@ -5,10 +5,14 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should create new thread' do
     sign_in users(:editor)
+
     before_author_notifs = users(:standard_user).notifications.count
     before_uninvolved_notifs = users(:moderator).notifications.count
-    post :create_thread, params: { post_id: posts(:question_one).id, title: 'sample thread title',
+
+    post :create_thread, params: { post_id: posts(:question_one).id,
+                                   title: 'sample thread title',
                                    body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:found)
     assert_redirected_to post_path(assigns(:post))
     assert_not_nil assigns(:post)
@@ -25,21 +29,30 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should require auth to create thread' do
     post :create_thread, params: { post_id: posts(:question_one).id, title: 'sample thread title',
                                    body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'should not create thread if comments disabled' do
     sign_in users(:editor)
-    post :create_thread, params: { post_id: posts(:comments_disabled).id, title: 'sample thread title',
-                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
+    post :create_thread, params: { post_id: posts(:comments_disabled).id,
+                                   title: 'sample thread title',
+                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" },
+                         format: :json
+
     assert_response(:forbidden)
+    assert_valid_json_response
     assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
   test 'non-moderator users without flag_curate ability should not see deleted threads' do
     sign_in users(:editor)
     get :post, params: { post_id: posts(:question_one).id }, format: :json
+
+    assert_response(:success)
+    assert_valid_json_response
     threads = JSON.parse(response.body)
     assert_equal threads.any? { |t| t['deleted'] }, false
   end
@@ -59,14 +72,19 @@ class CommentsControllerTest < ActionController::TestCase
   test 'users should see deleted threads on their own posts even if those threads are deleted' do
     sign_in users(:standard_user)
     get :post, params: { post_id: posts(:question_one).id }, format: :json
+
+    assert_response(:success)
+    assert_valid_json_response
     threads = JSON.parse(response.body)
     assert_equal threads.any? { |t| t['deleted'] }, true
   end
 
   test 'should not create thread on inaccessible post' do
     sign_in users(:editor)
-    post :create_thread, params: { post_id: posts(:high_trust).id, title: 'sample thread title',
+    post :create_thread, params: { post_id: posts(:high_trust).id,
+                                   title: 'sample thread title',
                                    body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:not_found)
   end
 
@@ -75,8 +93,11 @@ class CommentsControllerTest < ActionController::TestCase
     before_author_notifs = users(:standard_user).notifications.count
     before_follow_notifs = users(:deleter).notifications.count
     before_uninvolved_notifs = users(:moderator).notifications.count
-    post :create, params: { id: comment_threads(:normal).id, post_id: posts(:question_one).id,
+
+    post :create, params: { id: comment_threads(:normal).id,
+                            post_id: posts(:question_one).id,
                             content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:found)
     assert_redirected_to comment_thread_path(assigns(:comment_thread))
     assert_not_nil assigns(:post)
@@ -92,24 +113,34 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test 'should require auth to add comment' do
-    post :create, params: { id: comment_threads(:normal).id, post_id: posts(:question_one).id,
+    post :create, params: { id: comment_threads(:normal).id,
+                            post_id: posts(:question_one).id,
                             content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
   test 'should not add comment if comments disabled' do
     sign_in users(:editor)
-    post :create, params: { id: comment_threads(:comments_disabled).id, post_id: posts(:comments_disabled).id,
-                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
+    post :create, params: { id: comment_threads(:comments_disabled).id,
+                            post_id: posts(:comments_disabled).id,
+                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" },
+                  format: :json
+
     assert_response(:forbidden)
+    assert_valid_json_response
     assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
   test 'should not add comment on inaccessible post' do
     sign_in users(:editor)
-    post :create, params: { id: comment_threads(:high_trust).id, post_id: posts(:high_trust).id,
+
+    post :create, params: { id: comment_threads(:high_trust).id,
+                            post_id: posts(:high_trust).id,
                             content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+
     assert_response(:not_found)
   end
 
