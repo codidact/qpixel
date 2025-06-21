@@ -58,7 +58,7 @@ class ModWarningController < ApplicationController
   end
 
   def lift
-    @warning = ModWarning.to(@user).where(active: true).last
+    @warning = ModWarning.to(@user).active.last
     return not_found if @warning.nil?
 
     @warning.update(active: false, read: false)
@@ -75,7 +75,7 @@ class ModWarningController < ApplicationController
   private
 
   def set_warning
-    @warning = ModWarning.to(current_user).where(active: true).last
+    @warning = ModWarning.to(current_user).active.last
     not_found if @warning.nil?
   end
 

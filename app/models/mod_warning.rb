@@ -5,6 +5,7 @@ class ModWarning < ApplicationRecord
   belongs_to :community_user
   belongs_to :author, class_name: 'User'
 
+  scope :active, -> { where(active: true) }
   scope :to, ->(user) { where(community_user: user.community_user) }
 
   def suspension_active?
