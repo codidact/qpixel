@@ -91,9 +91,7 @@ class CommentsControllerTest < ActionController::TestCase
     before_follow_notifs = users(:deleter).notifications.count
     before_uninvolved_notifs = users(:moderator).notifications.count
 
-    post :create, params: { id: comment_threads(:normal).id,
-                            post_id: posts(:question_one).id,
-                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    try_create_comment(posts(:question_one), comment_threads(:normal), mentions: [users(:deleter), users(:moderator)])
 
     assert_response(:found)
     assert_redirected_to comment_thread_path(assigns(:comment_thread))
@@ -110,34 +108,25 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test 'should require auth to add comment' do
-    post :create, params: { id: comment_threads(:normal).id,
-                            post_id: posts(:question_one).id,
-                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    try_create_comment(posts(:question_one), comment_threads(:normal))
 
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
-  test 'should not add comment if comments disabled' do
+  test 'should not add comment if comments are disabled on the target post' do
     sign_in users(:editor)
 
-    post :create, params: { id: comment_threads(:comments_disabled).id,
-                            post_id: posts(:comments_disabled).id,
-                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" },
-                  format: :json
+    try_create_comment(posts(:comments_disabled), comment_threads(:comments_disabled), format: :json)
 
     assert_response(:forbidden)
     assert_valid_json_response
     assert_json_response_message('Comments have been disabled on this post.')
   end
 
-  test 'should not add comment on inaccessible post' do
+  test 'should not add comment if the target post is inaccessible' do
     sign_in users(:editor)
-
-    post :create, params: { id: comment_threads(:high_trust).id,
-                            post_id: posts(:high_trust).id,
-                            content: "comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
-
+    try_create_comment(posts(:high_trust), comment_threads(:high_trust))
     assert_response(:not_found)
   end
 
@@ -434,5 +423,17 @@ class CommentsControllerTest < ActionController::TestCase
                                    title: 'sample thread title',
                                    body: body_parts.join(' ') },
                          format: format)
+  end
+
+  # @param post [Post]
+  # @param thread [CommentThread]
+  # @param mentions [Array<User>]
+  def try_create_comment(post, thread, mentions: [], format: :html)
+    content_parts = ['sample comment content'] + mentions.map { |u| "@##{u.id}" }
+
+    post(:create, params: { id: thread.id,
+                            post_id: post.id,
+                            content: content_parts.join(' ') },
+                  format: format)
   end
 end
