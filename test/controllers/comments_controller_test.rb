@@ -31,7 +31,7 @@ class CommentsControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path
   end
 
-  test 'should not create thread if comments are disabled' do
+  test 'should not create thread if comments are disabled on the target post' do
     sign_in users(:editor)
 
     try_create_thread(posts(:comments_disabled), format: :json)
@@ -41,11 +41,15 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
   end
 
+  test 'should not create thread if the target post is inaccessible' do
+    sign_in users(:editor)
+    try_create_thread(posts(:high_trust))
+    assert_response(:not_found)
+  end
+
   test 'should not create thread if the target post is deleted' do
     sign_in users(:editor)
-
-    try_create_thread(posts(:deleted), format: :json)
-
+    try_create_thread(posts(:deleted))
     assert_response(:not_found)
   end
 
@@ -79,15 +83,6 @@ class CommentsControllerTest < ActionController::TestCase
     assert_valid_json_response
     threads = JSON.parse(response.body)
     assert_equal threads.any? { |t| t['deleted'] }, true
-  end
-
-  test 'should not create thread on inaccessible post' do
-    sign_in users(:editor)
-    post :create_thread, params: { post_id: posts(:high_trust).id,
-                                   title: 'sample thread title',
-                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
-
-    assert_response(:not_found)
   end
 
   test 'should add comment to existing thread' do
