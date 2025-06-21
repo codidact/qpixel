@@ -56,7 +56,7 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You may not vote on your own posts.', JSON.parse(response.body)['message']
+    assert_json_response_message('You may not vote on your own posts.')
   end
 
   test 'should remove existing vote' do
@@ -76,7 +76,7 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You are not authorized to remove this vote.', JSON.parse(response.body)['message']
+    assert_json_response_message('You are not authorized to remove this vote.')
   end
 
   test 'should require authentication to create a vote' do
@@ -86,7 +86,7 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+    assert_json_response_message('You must be logged in to vote.')
   end
 
   test 'should require authentication to remove a vote' do
@@ -96,7 +96,7 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+    assert_json_response_message('You must be logged in to vote.')
   end
 
   test 'should prevent deleted account casting votes' do
@@ -106,7 +106,7 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+    assert_json_response_message('You must be logged in to vote.')
   end
 
   test 'should prevent deleted profile casting votes' do
@@ -116,6 +116,6 @@ class VotesControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'You must be logged in to vote.', JSON.parse(response.body)['message']
+    assert_json_response_message('You must be logged in to vote.')
   end
 end

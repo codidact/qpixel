@@ -38,7 +38,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
+    assert_json_response_message('Comments have been disabled on this post.')
   end
 
   test 'should not create thread if the target post is inaccessible' do
@@ -128,7 +128,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     assert_response(:forbidden)
     assert_valid_json_response
-    assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
+    assert_json_response_message('Comments have been disabled on this post.')
   end
 
   test 'should not add comment on inaccessible post' do
