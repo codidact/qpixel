@@ -52,8 +52,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'nominate requires authentication' do
     post :nominate_promotion, params: { id: posts(:question_one).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'unprivileged user cannot nominate' do
@@ -84,8 +83,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'promotions list requires auth' do
     get :promotions
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'promotions list requires privileges' do
@@ -108,9 +106,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'remove promotion requires auth' do
     delete :remove_promotion, params: { id: posts(:question_one).id }
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'remove promotion requires privileges' do

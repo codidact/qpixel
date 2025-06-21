@@ -12,8 +12,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'edit requires authentication' do
     get :edit, params: { id: posts(:question_one).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'cannot edit locked post' do

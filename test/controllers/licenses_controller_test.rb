@@ -6,24 +6,19 @@ class LicensesControllerTest < ActionController::TestCase
   test 'should require authentication to access license pages' do
     [:index, :new].each do |action|
       get action
-      assert_response(:found)
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_sign_in
     end
 
     get :edit, params: { id: licenses(:cc_by_sa).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require authentication to modify licenses' do
     post :create, params: { license: { name: 'Test', url: 'Test', default: false } }
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
 
     patch :update, params: { id: licenses(:cc_by_sa).id, license: { name: 'Test', url: 'Test', default: false } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require admin to access license pages' do

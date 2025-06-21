@@ -186,8 +186,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should require authentication to get mobile login' do
     get :qr_login_code
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should allow signed in users to get mobile login' do

@@ -26,8 +26,7 @@ class CategoriesControllerTest < ActionController::TestCase
 
   test 'should require authentication to get new' do
     get :new
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require admin to get new' do
@@ -49,8 +48,7 @@ class CategoriesControllerTest < ActionController::TestCase
                                         tag_set: tag_sets(:main).id, color_code: 'blue',
                                         license_id: licenses(:cc_by_sa).id } }
 
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require admin to create category' do

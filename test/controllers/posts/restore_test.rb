@@ -18,8 +18,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'restore requires authentication' do
     post :restore, params: { id: posts(:deleted).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'unprivileged user cannot restore' do

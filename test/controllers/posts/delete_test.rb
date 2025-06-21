@@ -18,8 +18,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'delete requires authentication' do
     post :delete, params: { id: posts(:question_one).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'unprivileged user cannot delete' do

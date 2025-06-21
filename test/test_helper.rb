@@ -131,6 +131,11 @@ class ActiveSupport::TestCase
     assert_equal expected, JSON.parse(response.body)['message']
   end
 
+  def assert_redirected_to_sign_in
+    assert_response(:found)
+    assert_redirected_to(new_user_session_path)
+  end
+
   PostMock = Struct.new(:title, :body_markdown, :body, :tags_cache, :edit, keyword_init: true)
 
   def sample

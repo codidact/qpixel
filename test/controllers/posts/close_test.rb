@@ -33,8 +33,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'close requires authentication' do
     post :close, params: { id: posts(:question_one).id, reason_id: close_reasons(:not_good).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'unprivileged user cannot close' do

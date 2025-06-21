@@ -26,9 +26,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to create thread' do
     try_create_thread(posts(:question_one))
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should not create thread if comments are disabled on the target post' do
@@ -109,9 +107,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to add comment' do
     try_create_comment(posts(:question_one), comment_threads(:normal))
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should not add comment if comments are disabled on the target post' do
@@ -141,8 +137,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to edit comment' do
     post :update, params: { id: comments(:one).id, comment: { content: 'Edited comment content' } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should allow moderator to edit comment' do
@@ -171,8 +166,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to delete comment' do
     delete :destroy, params: { id: comments(:one).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should allow moderator to delete comment' do
@@ -200,8 +194,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to restore comment' do
     patch :undelete, params: { id: comments(:one).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should allow moderator to restore comment' do
@@ -261,8 +254,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require auth to get thread followers' do
     get :thread_followers, params: { id: comment_threads(:normal).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require moderator to get thread followers' do

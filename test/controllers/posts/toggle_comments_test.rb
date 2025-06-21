@@ -16,9 +16,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'toggle comments requires authentication' do
     post :toggle_comments, params: { id: posts(:question_one).id }
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'regular users cannot toggle comments' do
