@@ -6,7 +6,7 @@ module Identity
     # @param other [ApplicationRecord] record to compare with
     # @return [Boolean] check result
     def same_as?(other)
-      id == other.id
+      instance_of?(other.class) && id == other.id
     end
   end
 end
