@@ -72,19 +72,15 @@ class User < ApplicationRecord
     post.user == self || privilege?(name)
   end
 
-  # Can the user approve a given suggested edit?
+  # Can the user decide (approve or reject) a given suggested edit?
   # @param edit [SuggestedEdit] edit to check
   # @return [Boolean] check result
-  def can_approve?(edit)
+  def can_decide?(edit)
     edit.post.present? && can_update?(edit.post, edit.post.post_type)
   end
 
-  # Can the user reject a given suggested edit?
-  # @param edit [SuggestedEdit] edit to check
-  # @return [Boolean] check result
-  def can_reject?(edit)
-    edit.post.present? && can_update?(edit.post, edit.post.post_type)
-  end
+  alias can_approve? can_decide?
+  alias can_reject? can_decide?
 
   # Can the user comment on a given post?
   # @param post [Post] post to check
