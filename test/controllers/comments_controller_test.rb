@@ -9,9 +9,7 @@ class CommentsControllerTest < ActionController::TestCase
     before_author_notifs = users(:standard_user).notifications.count
     before_uninvolved_notifs = users(:moderator).notifications.count
 
-    post :create_thread, params: { post_id: posts(:question_one).id,
-                                   title: 'sample thread title',
-                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    try_create_thread(posts(:question_one), mentions: [users(:deleter), users(:moderator)])
 
     assert_response(:found)
     assert_redirected_to post_path(assigns(:post))
@@ -27,24 +25,28 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test 'should require auth to create thread' do
-    post :create_thread, params: { post_id: posts(:question_one).id, title: 'sample thread title',
-                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" }
+    try_create_thread(posts(:question_one))
 
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
-  test 'should not create thread if comments disabled' do
+  test 'should not create thread if comments are disabled' do
     sign_in users(:editor)
 
-    post :create_thread, params: { post_id: posts(:comments_disabled).id,
-                                   title: 'sample thread title',
-                                   body: "sample comment content @##{users(:deleter).id} @##{users(:moderator).id}" },
-                         format: :json
+    try_create_thread(posts(:comments_disabled), format: :json)
 
     assert_response(:forbidden)
     assert_valid_json_response
     assert_equal 'Comments have been disabled on this post.', JSON.parse(response.body)['message']
+  end
+
+  test 'should not create thread if the target post is deleted' do
+    sign_in users(:editor)
+
+    try_create_thread(posts(:deleted), format: :json)
+
+    assert_response(:not_found)
   end
 
   test 'non-moderator users without flag_curate ability should not see deleted threads' do
@@ -424,5 +426,18 @@ class CommentsControllerTest < ActionController::TestCase
     get :pingable, params: { id: -1, post: posts(:question_one).id }
     assert_response(:success)
     assert_valid_json_response
+  end
+
+  private
+
+  # @param post [Post]
+  # @param mentions [Array<User>]
+  def try_create_thread(post, mentions: [], format: :html)
+    body_parts = ['sample comment content'] + mentions.map { |u| "@##{u.id}" }
+
+    post(:create_thread, params: { post_id: post.id,
+                                   title: 'sample thread title',
+                                   body: body_parts.join(' ') },
+                         format: format)
   end
 end
