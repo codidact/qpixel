@@ -11,7 +11,7 @@
 <% end %>
 
 <% post_count = @posts.count %>
-<div class="has-color-tertiary-500 category-meta">
+<div class="has-color-tertiary-500 category-meta border-bottom-none">
   <span class=category-meta--start>
     <span title="<%= post_count %> posts">
       <%= short_number_to_human post_count, precision: 1, significant: false %>
@@ -47,7 +47,7 @@
   </div>
 </div>
 
-<details>
+<details class="category-filters">
   <summary>Filters (<%= @filtered ? @active_filter[:name].empty? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
   <% if @active_filter[:default] == :user %>
     <div class="notice is-info">
