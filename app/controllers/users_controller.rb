@@ -200,7 +200,7 @@ class UsersController < ApplicationController
                Post.all
              else
                Post.undeleted
-             end.where(user: @user).list_includes.joins(:category)
+             end.by(@user).list_includes.joins(:category)
              .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
              .user_sort({ term: params[:sort], default: :score },
                         activity: :last_activity,

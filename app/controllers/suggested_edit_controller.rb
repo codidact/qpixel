@@ -4,10 +4,9 @@ class SuggestedEditController < ApplicationController
   def category_index
     @category = params[:category].present? ? Category.find(params[:category]) : nil
     @edits = if params[:show_decided].present? && params[:show_decided] == '1'
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false).newest_first
+               SuggestedEdit.where(post: Post.undeleted.in(@category), active: false).newest_first
              else
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
-                            .oldest_first
+               SuggestedEdit.where(post: Post.undeleted.in(@category), active: true).oldest_first
              end
   end
 

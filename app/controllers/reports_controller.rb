@@ -22,7 +22,7 @@ class ReportsController < ApplicationController
     @this_month = Post.where('created_at >= ?', 1.month.ago).undeleted
     @categories = Category.where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
                           .order(:sequence)
-    @posts_categories = Post.where(category: @categories).group(:category_id).count
+    @posts_categories = Post.in(@categories).group(:category_id).count
   end
 
   def reactions
@@ -52,7 +52,7 @@ class ReportsController < ApplicationController
     @categories = Category.unscoped
                           .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
                           .includes(:community).order(:community_id, :sequence)
-    @posts_categories = Post.unscoped.where(category: @categories).group(:category_id).count
+    @posts_categories = Post.unscoped.in(@categories).group(:category_id).count
     @global = true
     render :posts
   end

@@ -44,6 +44,8 @@ class Post < ApplicationRecord
   scope :bad, -> { where('score < 0.5') }
   scope :by, ->(user) { where(user: user) }
   scope :good, -> { where('score > 0.5') }
+  scope :in, ->(category) { where(category: category) }
+  scope :on, ->(community) { where(community: community) }
   scope :problematic, -> { where('score < 0.25 OR deleted=1') }
   scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
