@@ -25,6 +25,18 @@ class ModeratorControllerTest < ActionController::TestCase
     end
   end
 
+  # TODO: more descriptive test case descriptions
+  test 'should get recently deleted posts page' do
+    sign_in users(:moderator)
+    get :recently_deleted_posts
+
+    posts = assigns(:posts)
+
+    assert_response(:success)
+    assert_not_nil posts
+    assert posts.all?(&:deleted?)
+  end
+
   test 'should get recent comments page' do
     sign_in users(:moderator)
     get :recent_comments

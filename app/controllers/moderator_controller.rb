@@ -12,7 +12,7 @@ class ModeratorController < ApplicationController
   def index; end
 
   def recently_deleted_posts
-    @posts = Post.unscoped.on(@community).deleted.deleted_first.paginate(page: params[:page], per_page: 50)
+    @posts = Post.unscoped.on(@community).deleted.order(deleted_at: :desc).paginate(page: params[:page], per_page: 50)
   end
 
   def recent_comments
