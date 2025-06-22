@@ -128,7 +128,7 @@ class PostSystemTest < ApplicationSystemTestCase
 
     # Check that answers are displayed somewhere on the page
     assert post.children.any?, 'The post for this system test should have answers'
-    post.children.where(deleted: false).each do |child|
+    post.children.undeleted.each do |child|
       assert_text child.body
     end
   end
