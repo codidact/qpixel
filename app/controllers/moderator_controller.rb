@@ -17,7 +17,7 @@ class ModeratorController < ApplicationController
   end
 
   def recent_comments
-    @comments = Comment.all.includes(:user, :post).order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+    @comments = Comment.all.includes(:user, :post).newest_first.paginate(page: params[:page], per_page: 50)
   end
 
   def nominate_promotion

@@ -1,5 +1,6 @@
 class AuditLog < ApplicationRecord
   include CommunityRelated
+  include Timestamped
 
   belongs_to :related, polymorphic: true, optional: true
   belongs_to :user, optional: true

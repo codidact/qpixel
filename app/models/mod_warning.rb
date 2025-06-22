@@ -1,4 +1,6 @@
 class ModWarning < ApplicationRecord
+  include Timestamped
+
   # Warning class name not accepted by Rails, hence this needed
   self.table_name = 'warnings'
 

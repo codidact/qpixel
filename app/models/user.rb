@@ -4,6 +4,7 @@ class User < ApplicationRecord
   include ::UsernameValidations
   include ::UserRateLimits
   include ::UserMerge
+  include ::Timestamped
   include ::SoftDeletable
   include ::SamlInit
   include ::Inspectable

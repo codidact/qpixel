@@ -2,8 +2,8 @@
 class Comment < ApplicationRecord
   include PostRelated
   include SoftDeletable
+  include Timestamped
 
-  scope :recent, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :by, ->(user) { where(user: user) }
 
   belongs_to :user

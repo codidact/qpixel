@@ -587,7 +587,8 @@ class UsersController < ApplicationController
   end
 
   def annotations
-    @logs = AuditLog.where(log_type: 'user_annotation', related: @user).order(created_at: :desc)
+    @logs = AuditLog.where(log_type: 'user_annotation', related: @user)
+                    .newest_first
                     .paginate(page: params[:page], per_page: 20)
     render layout: 'without_sidebar'
   end

@@ -55,7 +55,7 @@ class FlagsController < ApplicationController
   end
 
   def handled
-    @flags = Flag.handled.includes(:post, :user, :handled_by).order(created_at: :desc)
+    @flags = Flag.handled.includes(:post, :user, :handled_by).newest_first
                  .paginate(page: params[:page], per_page: 50)
   end
 

@@ -21,13 +21,13 @@ class ModWarningController < ApplicationController
   end
 
   def log
-    @warnings = ModWarning.to(@user).order(created_at: :desc).all
+    @warnings = ModWarning.to(@user).newest_first.all
     render layout: 'without_sidebar'
   end
 
   def new
     @templates = WarningTemplate.where(active: true).all
-    @prior_warning_count = ModWarning.to(@user).order(created_at: :desc).count
+    @prior_warning_count = ModWarning.to(@user).newest_first.count
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user)
     render layout: 'without_sidebar'
   end
