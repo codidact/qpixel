@@ -22,6 +22,11 @@ $(() => {
     openThread($tgt.closest('.post--comments-thread-wrapper')[0], $tgt.attr("href"));
   });
 
+  /**
+   * @param {HTMLElement} wrapper
+   * @param {string} targetUrl
+   * @param {boolean} [showDeleted]
+   */
   async function openThread(wrapper, targetUrl, showDeleted = false) {
     const resp = await fetch(`${targetUrl}?inline=true&show_deleted_comments=${showDeleted ? 1 : 0}`, {
       headers: { 'Accept': 'text/html' }
