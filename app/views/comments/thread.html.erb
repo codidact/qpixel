@@ -23,81 +23,75 @@
 
 <!-- THREAD STARTS BELOW -->
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
-
-<div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
-     data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
-     data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
-  <div class="widget--header">
+  <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>" data-deleted="<%= @comment_thread.deleted %>"
+      data-archived="<%= @comment_thread.archived %>" data-thread="<%= @comment_thread.id %>"
+      data-comments="<%= @comment_thread.reply_count %>" data-post="<%= @post.id %>">
+    <div class="widget--header">
+      <% if params[:inline] == 'true' %>
+        <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">show thread</a>
+        <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
+      <% else %>
+        <% if current_user&.privilege?('flag_curate') %>
+          <%= render 'thread_tools_link', thread: @comment_thread %>
+        <% end %>
+        <% unless current_user.nil? %>
+          <%= render 'thread_follow_link', thread: @comment_thread, user: current_user %>
+        <% end %>
+      <% end %>
+      <% if @comment_thread.deleted %>
+        <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
+      <% elsif @comment_thread.archived %>
+        <i class="fas fa-archive fa-fw" title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
+      <% elsif @comment_thread.locked? %>
+        <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
+      <% end %>
+      <span class="js-thread-title"><%= @comment_thread.title %></span>
+    </div>
+    <% skipped_deleted = 0 %>
+    <% comments = @comment_thread.comments %>
     <% if params[:inline] == 'true' %>
-      <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">
-        show thread
-      </a>
-      <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">
-        collapse
-      </a>
-    <% else %>
-      <% if current_user&.privilege?('flag_curate') %>
-        <%= render 'thread_tools_link', thread: @comment_thread %>
-      <% end %>
-      <% unless current_user.nil? %>
-        <%= render 'thread_follow_link', thread: @comment_thread, user: current_user %>
+      <% count = 0 %>
+      <% comments = comments.take_while do |comment| %>
+        <% count += 1 unless comment.deleted %>
+        <% count <= 5 %>
       <% end %>
     <% end %>
-    <% if @comment_thread.deleted %>
-      <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
-    <% elsif @comment_thread.archived %>
-      <i class="fas fa-archive fa-fw" title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
-    <% elsif @comment_thread.locked? %>
-      <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
-    <% end %>
-    <span class="js-thread-title"><%= @comment_thread.title %></span>
-  </div>
-  <% skipped_deleted = 0 %>
-  <% comments = @comment_thread.comments %>
-  <% if params[:inline] == 'true' %>
-    <% count = 0 %>
-    <% comments = comments.take_while do |comment| %>
-      <% count += 1 unless comment.deleted %>
-      <% count <= 5 %>
-    <% end %>
-  <% end %>
-  <div role="list">
-    <% comments.each do |comment| %>
-      <% if comment.deleted && !(current_user&.at_least_moderator? && params[:show_deleted_comments] == "1") %>
-        <% skipped_deleted += 1%>
-        <% next %>
-      <% elsif skipped_deleted > 0 %>
+    <div role="list">
+      <% comments.each do |comment| %>
+        <% if comment.deleted && !(current_user&.at_least_moderator? && params[:show_deleted_comments] == "1") %>
+          <% skipped_deleted += 1%>
+          <% next %>
+        <% elsif skipped_deleted > 0 %>
+          <div class="widget--body" role="listitem">
+            <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
+          </div>
+          <% skipped_deleted = 0 %>
+        <% end %>
+        <div class="widget--body" role="listitem">
+          <%= render 'comments/comment', comment: comment, pingable: pingable %>
+        </div>
+      <% end %>
+      <% if skipped_deleted > 0 %>
         <div class="widget--body" role="listitem">
           <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
         </div>
         <% skipped_deleted = 0 %>
       <% end %>
-      <div class="widget--body" role="listitem">
-        <%= render 'comments/comment', comment: comment, pingable: pingable %>
+    </div>
+    <% unless current_user.nil? || params[:inline] == 'true' %>
+      <div class="widget--footer">
+        <%= render 'reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
       </div>
     <% end %>
-    <% if skipped_deleted > 0 %>
-      <div class="widget--body" role="listitem">
-        <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
+    <% if params[:inline] == 'true' %>
+      <div class="widget--footer">
+        <p class="h-m-0">
+          Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
+          <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
+        </p>
       </div>
-      <% skipped_deleted = 0 %>
     <% end %>
   </div>
-  <% unless current_user.nil? || params[:inline] == 'true' %>
-    <div class="widget--footer">
-      <%= render 'reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
-    </div>
-  <% end %>
-  <% if params[:inline] == 'true' %>
-    <div class="widget--footer">
-      <p class="h-m-0">
-        Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
-        <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
-      </p>
-    </div>
-  <% end %>
-</div>
-
 </div>
 
 <% if current_user&.privilege?('flag_curate') && params[:inline] != 'true' %>
