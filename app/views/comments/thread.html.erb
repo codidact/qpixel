@@ -36,7 +36,7 @@
         collapse
       </a>
     <% else %>
-      <% if current_user&.privilege? 'flag_curate' %>
+      <% if current_user&.privilege?('flag_curate') %>
         <%= render 'thread_tools_link', thread: @comment_thread %>
       <% end %>
       <% unless current_user.nil? %>
@@ -101,59 +101,7 @@
 </div>
 
 <% if current_user&.privilege?('flag_curate') && params[:inline] != 'true' %>
-  <div class="droppanel js--tools-thread-<%= @comment_thread.id %>">
-    <div class="droppanel--header">thread options</div>
-    <div class="droppanel--menu">
-      <% if current_user.at_least_moderator? || !@comment_thread.read_only? %>
-        <a href="#" data-modal=".js--rename-thread-<%= @comment_thread.id %>" role="button" aria-label="Rename thread">
-          <i class="fas fa-pen fa-fw"></i> rename
-        </a>
-      <% end %>
-
-      <% unless @comment_thread.archived || @comment_thread.deleted %>
-        <% if @comment_thread.locked? %>
-          <a href="#" class="js--unrestrict-thread" data-action="lock" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Unlock thread">
-            <i class="fas fa-lock fa-fw"></i> unlock
-          </a>
-        <% else %>
-          <a href="#" data-modal=".js--lock-thread-<%= @comment_thread.id %>" role="button" aria-label="Lock thread">
-            <i class="fas fa-lock fa-fw"></i> lock
-          </a>
-        <% end %>
-      <% end %>
-      
-      <% unless @comment_thread.locked? || @comment_thread.deleted %>
-        <% if @comment_thread.archived %>
-          <a href="#" class="js--unrestrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Restore thread">
-            <i class="fas fa-archive fa-fw"></i> restore
-          </a>
-        <% else %>
-          <a href="#" class="js--restrict-thread" data-action="archive" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Archive thread">
-            <i class="fas fa-archive fa-fw"></i> archive
-          </a>
-        <% end %>
-      <% end %>
-
-      <% unless @comment_thread.locked? || @comment_thread.archived %>
-        <% if @comment_thread.deleted %>
-          <a href="#" class="js--unrestrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Undelete thread">
-            <i class="fas fa-trash fa-fw"></i> undelete
-          </a>
-        <% else %>
-          <a href="#" class="js--restrict-thread" data-action="delete" data-thread="<%= @comment_thread.id %>" role="button" aria-label="Delete thread">
-            <i class="fas fa-trash fa-fw"></i> delete
-          </a>
-        <% end %>
-      <% end %>
-
-      <% if current_user&.at_least_moderator? %>
-        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= @comment_thread.id %>" data-thread="<%= @comment_thread.id %>"
-           role="button" aria-label="Show thread followers">
-          <i class="fas fa-users"></i> followers
-        </a>
-      <% end %>
-    </div>
-  </div>
+  <%= render 'thread_actions_modal', thread: @comment_thread, user: current_user %>
 
   <div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
     <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>

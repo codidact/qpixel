@@ -1,0 +1,61 @@
+<%#
+  Helper for rendering comment thread actions modal
+
+  Variables:
+    thread : Comment thread to create the modal for
+    user : user to show the modal for
+%>
+
+<div class="droppanel js--tools-thread-<%= thread.id %>">
+  <div class="droppanel--header">thread options</div>
+    <div class="droppanel--menu">
+      <% if user.at_least_moderator? || !thread.read_only? %>
+        <a href="#" data-modal=".js--rename-thread-<%= thread.id %>" role="button" aria-label="Rename thread">
+          <i class="fas fa-pen fa-fw"></i> rename
+        </a>
+      <% end %>
+
+      <% unless thread.archived || thread.deleted %>
+        <% if thread.locked? %>
+          <a href="#" class="js--unrestrict-thread" data-action="lock" data-thread="<%= thread.id %>" role="button" aria-label="Unlock thread">
+            <i class="fas fa-lock fa-fw"></i> unlock
+          </a>
+        <% else %>
+          <a href="#" data-modal=".js--lock-thread-<%= thread.id %>" role="button" aria-label="Lock thread">
+            <i class="fas fa-lock fa-fw"></i> lock
+          </a>
+        <% end %>
+      <% end %>
+      
+      <% unless thread.locked? || thread.deleted %>
+        <% if thread.archived %>
+          <a href="#" class="js--unrestrict-thread" data-action="archive" data-thread="<%= thread.id %>" role="button" aria-label="Restore thread">
+            <i class="fas fa-archive fa-fw"></i> restore
+          </a>
+        <% else %>
+          <a href="#" class="js--restrict-thread" data-action="archive" data-thread="<%= thread.id %>" role="button" aria-label="Archive thread">
+            <i class="fas fa-archive fa-fw"></i> archive
+          </a>
+        <% end %>
+      <% end %>
+
+      <% unless thread.locked? || thread.archived %>
+        <% if thread.deleted %>
+          <a href="#" class="js--unrestrict-thread" data-action="delete" data-thread="<%= thread.id %>" role="button" aria-label="Undelete thread">
+            <i class="fas fa-trash fa-fw"></i> undelete
+          </a>
+        <% else %>
+          <a href="#" class="js--restrict-thread" data-action="delete" data-thread="<%= thread.id %>" role="button" aria-label="Delete thread">
+            <i class="fas fa-trash fa-fw"></i> delete
+          </a>
+        <% end %>
+      <% end %>
+
+      <% if user.at_least_moderator? %>
+        <a href="#" class="js--show-followers" data-modal="#js-followers-<%= thread.id %>" data-thread="<%= thread.id %>"
+           role="button" aria-label="Show thread followers">
+          <i class="fas fa-users"></i> followers
+        </a>
+      <% end %>
+  </div>
+</div>
