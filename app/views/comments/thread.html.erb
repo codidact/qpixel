@@ -37,10 +37,7 @@
       </a>
     <% else %>
       <% if current_user&.privilege? 'flag_curate' %>
-        <a href="#" class="widget--header-link" data-drop=".js--tools-thread-<%= @comment_thread.id %>"
-          role="button" aria-label="Show more thread tools">
-          <i class="fa fa-cog fa-fw"></i>tools
-        </a>
+        <%= render 'thread_tools_link', thread: @comment_thread %>
       <% end %>
       <% unless current_user.nil? %>
         <% if @comment_thread.followed_by? current_user %>
