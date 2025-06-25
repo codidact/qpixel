@@ -98,24 +98,7 @@
 
   <%= render 'rename_thread_modal', thread: @comment_thread %>
 
-  <div class="modal is-with-backdrop is-small js--lock-thread-<%= @comment_thread.id %>">
-    <%= form_tag restrict_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
-      <%= hidden_field_tag :type, 'lock' %>
-      <div class="modal--header">
-        <button type="button" class="button is-close-button modal--header-button" data-modal=".js--lock-thread-<%= @comment_thread.id %>">&times;</button>
-        Lock...
-      </div>
-      <div class="modal--body">
-        <%= label_tag :duration, 'Duration in days (optional)', class: 'form-element' %>
-        <div class="form-caption">You may enter a lock duration in days. If you leave this blank, the thread will need to be unlocked manually.</div>
-        <%= number_field_tag :duration, nil, class: 'form-element' %>
-      </div>
-      <div class="modal--footer">
-        <%= submit_tag 'Lock thread', class: 'button is-muted is-filled' %>
-        <button type="button" class="button is-muted" data-modal=".js--lock-thread-<%= @comment_thread.id %>">Cancel</button>
-      </div>
-    <% end %>
-  </div>
+  <%= render 'lock_thread_modal', thread: @comment_thread %>
 
   <% if current_user&.at_least_moderator? %>
     <div class="modal is-with-backdrop is-small" id="js-followers-<%= @comment_thread.id %>">
