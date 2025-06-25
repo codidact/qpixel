@@ -54,6 +54,7 @@ $(() => {
     const $embed = $tgt.parents('.post--comments-thread');
 
     const threadId = $widget.data('thread');
+    const isLocked = $widget.data('locked');
     const isDeleted = $widget.data('deleted');
     const isArchived = $widget.data('archived');
     const threadTitle = $widget.find('.js-thread-title').text();
@@ -63,14 +64,21 @@ $(() => {
     const $link = $(`<a href="/comments/thread/${threadId}" class="js--comment-link" data-thread=${threadId}></a>`);
     $link.text(threadTitle);
 
+    if (isLocked) {
+      $container.append(`<i class="fas fa-lock fa-fw" title="Locked thread" aria-label="Locked thread"></i>`);
+      $container.addClass('is-locked');
+    }
+
     if (isDeleted) {
       $container.append(`<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`);
       $container.addClass('is-deleted');
     }
+
     if (isArchived) {
       $container.append(`<i class="fas fa-archive fa-fw" title="Archived thread" aria-label="Archived thread"></i>`);
       $container.addClass('is-archived');
     }
+
     $container.append($link);
     $container.append(`(${replyCount} comment${replyCount !== 1 ? 's' : ''})`);
     $embed[0].outerHTML = $container[0].outerHTML;
