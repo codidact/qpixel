@@ -4,6 +4,7 @@
 %>
 
 <% pingable = get_pingable(@comment_thread) %>
+<% shown_comments_count = [5, @comment_thread.reply_count].min %>
 
 <h1>Comments on
   <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
@@ -86,10 +87,11 @@
         <%= render 'reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
       </div>
     <% end %>
-    <% if params[:inline] == 'true' %>
+    
+    <% if params[:inline] == 'true' && shown_comments_count < @comment_thread.reply_count %>
       <div class="widget--footer">
         <p class="h-m-0">
-          Showing <%= [5, @comment_thread.reply_count].min %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
+          Showing <%= shown_comments_count %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
           <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
         </p>
       </div>
