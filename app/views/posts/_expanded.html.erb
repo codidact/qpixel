@@ -540,7 +540,7 @@
           <% end %>
           </div>
           <div class="post--comments-container" role="list">
-            <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
+            <%= render 'comments/threads_list', comment_threads: comment_threads.first(5) %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>
