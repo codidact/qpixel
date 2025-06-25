@@ -30,13 +30,12 @@
       <% if params[:inline] == 'true' %>
         <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
-      <% else %>
-        <% if current_user&.privilege?('flag_curate') %>
-          <%= render 'thread_tools_link', thread: @comment_thread %>
-        <% end %>
-        <% unless current_user.nil? %>
-          <%= render 'thread_follow_link', thread: @comment_thread, user: current_user %>
-        <% end %>
+      <% end %>
+      <% if current_user&.privilege?('flag_curate') %>
+        <%= render 'thread_tools_link', thread: @comment_thread %>
+      <% end %>
+      <% unless current_user.nil? %>
+        <%= render 'thread_follow_link', thread: @comment_thread, user: current_user %>
       <% end %>
       <% if @comment_thread.deleted %>
         <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
@@ -94,25 +93,10 @@
   </div>
 </div>
 
-<% if current_user&.privilege?('flag_curate') && params[:inline] != 'true' %>
+<% if current_user&.privilege?('flag_curate') %>
   <%= render 'thread_actions_modal', thread: @comment_thread, user: current_user %>
 
-  <div class="modal is-with-backdrop is-small js--rename-thread-<%= @comment_thread.id %>">
-    <%= form_tag rename_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
-      <div class="modal--header">
-        <button type="button" class="button is-close-button modal--header-button" data-modal=".js--rename-thread-<%= @comment_thread.id %>">&times;</button>
-        Rename...
-      </div>
-      <div class="modal--body">
-        <%= label_tag :title, 'Title', class: 'form-element' %>
-        <%= text_field_tag :title, @comment_thread.title, class: 'form-element' %>
-      </div>
-      <div class="modal--footer">
-        <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
-        <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= @comment_thread.id %>">Cancel</button>
-      </div>
-    <% end %>
-  </div>
+  <%= render 'rename_thread_modal', thread: @comment_thread %>
 
   <div class="modal is-with-backdrop is-small js--lock-thread-<%= @comment_thread.id %>">
     <%= form_tag restrict_comment_thread_path(@comment_thread.id), class: 'modal--container' do %>
