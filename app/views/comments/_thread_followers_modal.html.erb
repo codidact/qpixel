@@ -1,0 +1,21 @@
+<%#
+  Helper for rendering comment thread followers action modal
+
+  Variables:
+    thread : Comment thread to create the modal for
+%>
+
+<div class="modal is-with-backdrop is-small" id="js-followers-<%= thread.id %>">
+  <div class="modal--container">
+    <div class="modal--header">
+      <button type="button"
+              class="button is-close-button modal--header-button"
+              data-modal="#js-followers-<%= thread.id %>">&times;
+      </button>
+      Thread Followers
+    </div>
+    <div class="modal--body js-follower-display">
+      Loading...
+    </div>
+  </div>
+</div
