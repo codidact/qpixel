@@ -95,15 +95,6 @@
 
 <% if current_user&.privilege?('flag_curate') %>
   <%= render 'thread_actions_modal', thread: @comment_thread, user: current_user %>
-
-  <%= render 'rename_thread_modal', thread: @comment_thread %>
-
-  <%= render 'lock_thread_modal', thread: @comment_thread %>
-
-
-  <% if current_user&.at_least_moderator? %>
-    <%= render 'thread_followers_modal', thread: @comment_thread  %>
-  <% end %>
 <% end %>
 
 <!-- THREAD ENDS ABOVE -->

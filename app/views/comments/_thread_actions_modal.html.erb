@@ -58,4 +58,10 @@
         </a>
       <% end %>
   </div>
+
+  <%= render 'rename_thread_modal', thread: @comment_thread %>
+  <%= render 'lock_thread_modal', thread: @comment_thread %>
+  <% if current_user&.at_least_moderator? %>
+    <%= render 'thread_followers_modal', thread: @comment_thread  %>
+  <% end %>
 </div>
