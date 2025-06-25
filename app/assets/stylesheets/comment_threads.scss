@@ -8,4 +8,12 @@
       }
     }
   }
+
+  .droppanel {
+    max-width: 15em;
+
+    .droppanel--menu {
+      max-width: unset;
+    }
+  }
 }
