@@ -9,16 +9,14 @@ class SubscriptionTest < ActiveSupport::TestCase
 
   test 'subscription to all should return some questions' do
     questions = subscriptions(:all).questions
-    assert_not_nil questions
-    assert_not questions.empty?, 'No questions returned'
-    assert questions.size <= 100, 'Too many questions returned'
+
+    assert_questions_valid(questions)
   end
 
   test 'tag subscription should return only tag questions' do
     questions = subscriptions(:tag).questions
-    assert_not_nil questions
-    assert_not questions.empty?, 'No questions returned'
-    assert questions.size <= 100, 'Too many questions returned'
+
+    assert_questions_valid(questions)
     questions.each do |question|
       assert question.tags.map(&:name).include?(subscriptions(:tag).qualifier),
              "Tag subscription returned question #{question.id} without specified tag"
@@ -27,12 +25,33 @@ class SubscriptionTest < ActiveSupport::TestCase
 
   test 'user subscription should return only user questions' do
     questions = subscriptions(:user).questions
-    assert_not_nil questions
-    assert_not questions.empty?, 'No questions returned'
-    assert questions.size <= 100, 'Too many questions returned'
+
+    assert_questions_valid(questions)
     questions.each do |question|
       assert question.user_id == subscriptions(:user).qualifier.to_i,
              "User subscription returned question #{question.id} not from specified user"
     end
+  end
+
+  test 'interesting subscription should return only questions with score higher than the threshold' do
+    threshold = 0.5
+
+    SiteSetting['InterestingSubscriptionScoreThreshold'] = threshold
+
+    questions = subscriptions(:interesting).questions
+    assert_questions_valid(questions)
+
+    questions.each do |question|
+      assert question.score >= threshold,
+             "Expected question #{question.id} with a score of #{question.score} to be excluded"
+    end
+  end
+
+  private
+
+  def assert_questions_valid(questions)
+    assert_not_nil(questions)
+    assert_not(questions.empty?, 'No questions returned')
+    assert(questions.size <= 100, 'Too many questions returned')
   end
 end
