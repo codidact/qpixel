@@ -39,11 +39,23 @@ class SubscriptionTest < ActiveSupport::TestCase
     SiteSetting['InterestingSubscriptionScoreThreshold'] = threshold
 
     questions = subscriptions(:interesting).questions
-    assert_questions_valid(questions)
 
+    assert_questions_valid(questions)
     questions.each do |question|
       assert question.score >= threshold,
              "Expected question #{question.id} with a score of #{question.score} to be excluded"
+    end
+  end
+
+  test 'category subscription should return only questions from a specific category' do
+    category = categories(:main)
+    questions = subscriptions(:category).questions
+
+    assert_questions_valid(questions)
+    questions.each do |question|
+      assert question.category == category,
+             "Expected quesiton #{question.id} to be from the #{category.name} category," \
+             "actual: #{question.category.name || 'no category'}"
     end
   end
 
