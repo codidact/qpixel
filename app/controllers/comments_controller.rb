@@ -9,6 +9,8 @@ class CommentsController < ApplicationController
 
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
+  before_action :check_restrict_access, only: [:thread_restrict]
+  before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
@@ -189,8 +191,6 @@ class CommentsController < ApplicationController
   def thread_restrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_lock?(@comment_thread)
-
       lu = nil
       unless params[:duration].blank?
         lu = params[:duration].to_i.days.from_now
@@ -200,12 +200,8 @@ class CommentsController < ApplicationController
       redirect_to comment_thread_path(@comment_thread.id)
       return
     when 'archive'
-      return not_found unless current_user.can_archive?(@comment_thread)
-
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'
-      return not_found unless current_user.can_delete?(@comment_thread)
-
       @comment_thread.update(deleted: true, deleted_by: current_user)
     when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
@@ -219,16 +215,10 @@ class CommentsController < ApplicationController
   def thread_unrestrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_unlock?(@comment_thread)
-
       @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
     when 'archive'
-      return not_found unless current_user.can_unarchive?(@comment_thread)
-
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
     when 'delete'
-      return not_found unless current_user.can_undelete?(@comment_thread)
-
       if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
         render json: { status: 'error',
                        message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
@@ -294,7 +284,6 @@ class CommentsController < ApplicationController
     @post = @comment_thread.post
   end
 
-  # For use with before_action callbacks
   def check_post_access
     if !@post.comments_allowed? && current_user&.standard?
       respond_to do |format|
@@ -322,6 +311,28 @@ class CommentsController < ApplicationController
   def check_privilege
     unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
+    end
+  end
+
+  def check_restrict_access
+    case params[:type]
+    when 'lock'
+      return not_found unless current_user.can_lock?(@comment_thread)
+    when 'archive'
+      return not_found unless current_user.can_archive?(@comment_thread)
+    when 'delete'
+      return not_found unless current_user.can_delete?(@comment_thread)
+    end
+  end
+
+  def check_unrestrict_access
+    case params[:type]
+    when 'lock'
+      return not_found unless current_user.can_unlock?(@comment_thread)
+    when 'archive'
+      return not_found unless current_user.can_unarchive?(@comment_thread)
+    when 'delete'
+      return not_found unless current_user.can_undelete?(@comment_thread)
     end
   end
 
