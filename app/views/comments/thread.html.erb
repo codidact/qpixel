@@ -85,7 +85,7 @@
     </div>
 
     <% if params[:inline] == 'true' && shown_comments_count < @comment_thread.reply_count %>
-      <div class="widget--footer">
+      <div class="widget--footer font-sm">
         <p class="h-m-0">
           Showing <%= shown_comments_count %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
           <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
