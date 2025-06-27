@@ -120,7 +120,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'should do email query' do
     sign_in users(:admin)
-    post :do_email_query, params: { email: users(:standard).email }
+    post :do_email_query, params: { email: users(:standard_user).email }
     assert_response(:success)
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:profiles)
