@@ -201,4 +201,15 @@ class AdminController < ApplicationController
       render :change_back
     end
   end
+
+  def do_email_query
+    users = User.where(email: params[:email])
+    if users.any?
+      @user = users.first
+      @profiles = @user.community_users.includes(:community).where(community: current_user.admin_communities)
+    else
+      flash[:danger] = 'No user found with that email address.'
+    end
+    render :email_query
+  end
 end
