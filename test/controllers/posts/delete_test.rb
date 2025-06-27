@@ -72,17 +72,23 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'delete ensures all children are deleted' do
+    parent = posts(:bad_answers)
+
     sign_in users(:deleter)
 
-    before_history = PostHistory.where(post_id: posts(:bad_answers).children.map(&:id)).count
-    post :delete, params: { id: posts(:bad_answers).id }
-    after_history = PostHistory.where(post_id: posts(:bad_answers).children.map(&:id)).count
+    assert_not_equal(0, parent.children.undeleted)
+
+    before_history = PostHistory.where(post_id: parent.children.map(&:id)).count
+    post :delete, params: { id: parent.id }
+    after_history = PostHistory.where(post_id: parent.children.map(&:id)).count
+
+    parent.reload
 
     assert_response(:found)
     assert_redirected_to post_path(assigns(:post))
     assert_nil flash[:danger]
     assert assigns(:post).children.all?(&:deleted), 'Answers not deleted with question'
-    assert_equal before_history + posts(:bad_answers).children.count, after_history,
+    assert_equal before_history + parent.children.count, after_history,
                  'Answer PostHistory events not created on question deletion'
   end
 end
