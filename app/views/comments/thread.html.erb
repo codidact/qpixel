@@ -1,6 +1,7 @@
 <%#
     Comment thread view.
-    params[:inline] : If true shown within the Q&A page, else shown as separate comment thread page
+    params[:inline] : Whether to display the thread inline with the parent post or as a separate page
+    params[:show_deleted_comments] : whether to display deleted comments for those who can see them
 %>
 
 <% pingable = get_pingable(@comment_thread) %>
@@ -82,7 +83,7 @@
         <% skipped_deleted = 0 %>
       <% end %>
     </div>
-    <% unless current_user.nil? || params[:inline] == 'true' %>
+    <% unless current_user.nil? %>
       <div class="widget--footer">
         <%= render 'reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
       </div>
