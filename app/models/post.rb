@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include Lockable
   include PostValidations
   include SoftDeletable
   include Timestamped
@@ -9,7 +10,6 @@ class Post < ApplicationRecord
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
   belongs_to :last_activity_by, class_name: 'User', optional: true
-  belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :last_edited_by, class_name: 'User', optional: true
   belongs_to :category, optional: true
   belongs_to :license, optional: true
@@ -193,19 +193,6 @@ class Post < ApplicationRecord
     self.score = (upvote_count + variable).to_f / (upvote_count + downvote_count + (2 * variable))
     # prevents AR from accidentally saving the dirty state
     clear_attribute_changes([:score])
-  end
-
-  # This method will update the locked status of this post if locked_until is in the past.
-  # @return [Boolean] whether this post is locked
-  def locked?
-    return true if locked && locked_until.nil? # permanent lock
-    return true if locked && !locked_until.past?
-
-    if locked
-      update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
-    end
-
-    false
   end
 
   # Checks whether the post allows users to comment on it
