@@ -1,5 +1,5 @@
 $(() => {
-  $('.js-more-comments').on('click', async (evt) => {
+  $(document).on('click', '.js-more-comments', async (evt) => {
     evt.preventDefault();
     const $tgt = $(evt.target);
     const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
@@ -261,7 +261,7 @@ $(() => {
     }
   }
 
-  $('.js-new-thread-link').on('click', async (ev) => {
+  $(document).on('click', '.js-new-thread-link', async (ev) => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post');
@@ -275,7 +275,7 @@ $(() => {
     }
   });
 
-  $('.js-reply-to-thread-link').on('click', async (ev) => {
+  $(document).on('click', '.js-reply-to-thread-link', async (ev) => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post');
