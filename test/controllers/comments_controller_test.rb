@@ -27,14 +27,16 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should correctly default thread title if not provided' do
     sign_in users(:editor)
 
-    content = 'a' * 200
+    {
+      'a' * 99 => ->(thread) { thread.comments.first.content },
+      'a' * 200 => ->(thread) { "#{thread.comments.first.content[0..100]}..." }
+    }.each do |content, matcher|
+      try_create_thread(posts(:question_one), content: content, mentions: [], title: '')
 
-    try_create_thread(posts(:question_one), content: content, mentions: [], title: '')
-    assert_response(:found)
-
-    thread = assigns(:comment_thread)
-
-    assert_equal thread.title, "#{thread.comments.first.content[0..100]}..."
+      assert_response(:found)
+      thread = assigns(:comment_thread)
+      assert_equal thread.title, matcher.call(thread)
+    end
   end
 
   test 'should require auth to create thread' do
