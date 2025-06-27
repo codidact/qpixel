@@ -301,7 +301,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should delete thread' do
     sign_in users(:deleter)
-    post :thread_restrict, params: { id: comment_threads(:normal).id, type: 'delete' }
+    try_delete_thread(comment_threads(:normal))
+
     assert_response(:success)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -309,9 +310,37 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require privilege to delete thread' do
     sign_in users(:standard_user)
-    post :thread_restrict, params: { id: comment_threads(:normal).id, type: 'delete' }
+    try_delete_thread(comment_threads(:normal))
+
     assert_response(:not_found)
     assert_not_nil assigns(:comment_thread)
+  end
+
+  test 'only mods or admins should be able to undelete threads deleted by one of them' do
+    thread = comment_threads(:normal)
+
+    sign_in users(:moderator)
+    try_delete_thread(thread)
+
+    assert_response(:success)
+
+    sign_in users(:deleter)
+    try_undelete_thread(thread)
+
+    assert_response(:success)
+    assert_valid_json_response
+    response_body = JSON.parse(response.body)
+    assert_equal('error', response_body['status'])
+    assert_not_nil response_body['message']
+
+    sign_in users(:moderator)
+    try_undelete_thread(thread)
+
+    assert_response(:success)
+    assert_valid_json_response
+    response_body = JSON.parse(response.body)
+    assert_equal('success', response_body['status'])
+    assert_nil response_body['message']
   end
 
   test 'should archive thread' do
@@ -354,7 +383,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should undelete thread' do
     sign_in users(:moderator)
-    post :thread_unrestrict, params: { id: comment_threads(:deleted).id, type: 'delete' }
+    try_undelete_thread(comment_threads(:deleted))
+
     assert_response(:success)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -362,7 +392,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require privilege to undelete thread' do
     sign_in users(:standard_user)
-    post :thread_unrestrict, params: { id: comment_threads(:deleted).id, type: 'delete' }
+    try_undelete_thread(comment_threads(:deleted))
+
     assert_response(:not_found)
     assert_not_nil assigns(:comment_thread)
   end
@@ -427,5 +458,15 @@ class CommentsControllerTest < ActionController::TestCase
                             post_id: post.id,
                             content: content_parts.join(' ') },
                   format: format)
+  end
+
+  # @param thread [CommentThread]
+  def try_delete_thread(thread)
+    post :thread_restrict, params: { id: thread.id, type: 'delete' }
+  end
+
+  # @param thread [CommentThread]
+  def try_undelete_thread(thread)
+    post :thread_unrestrict, params: { id: thread.id, type: 'delete' }
   end
 end
