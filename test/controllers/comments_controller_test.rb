@@ -62,8 +62,18 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should not create thread if the target post is deleted' do
     sign_in users(:editor)
-    try_create_thread(posts(:deleted))
+    try_create_thread(posts(:deleted), format: :json)
     assert_response(:forbidden)
+    assert_valid_json_response
+    assert_json_response_message('Comments are disabled on deleted posts.')
+  end
+
+  test 'should not create thread if target post is locked' do
+    sign_in users(:editor)
+    try_create_thread(posts(:locked), format: :json)
+    assert_response(:forbidden)
+    assert_valid_json_response
+    assert_json_response_message('Comments are disabled on locked posts.')
   end
 
   test 'non-moderator users without flag_curate ability should not see deleted threads' do
