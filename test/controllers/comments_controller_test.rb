@@ -296,18 +296,34 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal before_title, assigns(:comment_thread).title
   end
 
-  test 'should lock thread' do
+  test 'should lock thread indefinitely by default' do
     sign_in users(:deleter)
-    post :thread_restrict, params: { id: comment_threads(:normal).id, type: 'lock' }
+    try_lock_thread(comment_threads(:normal))
+
+    @thread = assigns(:comment_thread)
+
     assert_response(:found)
-    assert_not_nil assigns(:comment_thread)
-    assert_redirected_to comment_thread_path(assigns(:comment_thread))
-    assert_equal true, assigns(:comment_thread).locked
+    assert_not_nil @thread
+    assert_redirected_to comment_thread_path(@thread)
+    assert_equal true, @thread.locked
+  end
+
+  test 'should lock thread for a specific duration if provided' do
+    sign_in users(:deleter)
+    try_lock_thread(comment_threads(:normal), duration: 2)
+
+    @thread = assigns(:comment_thread)
+
+    assert_not_nil @thread
+    assert @thread.lock_active?
+    travel_to 3.days.from_now
+    assert_not @thread.lock_active?
   end
 
   test 'should require privilege to lock thread' do
     sign_in users(:standard_user)
-    post :thread_restrict, params: { id: comment_threads(:normal).id, type: 'lock' }
+    try_lock_thread(comment_threads(:normal))
+
     assert_response(:not_found)
     assert_not_nil assigns(:comment_thread)
   end
@@ -381,7 +397,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should unlock thread' do
     sign_in users(:deleter)
-    post :thread_unrestrict, params: { id: comment_threads(:locked).id, type: 'lock' }
+    try_unlock_thread(comment_threads(:locked))
+
     assert_response(:success)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -389,7 +406,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should require privilege to unlock thread' do
     sign_in users(:standard_user)
-    post :thread_unrestrict, params: { id: comment_threads(:locked).id, type: 'lock' }
+    try_unlock_thread(comment_threads(:locked))
+
     assert_response(:not_found)
     assert_not_nil assigns(:comment_thread)
   end
@@ -487,5 +505,16 @@ class CommentsControllerTest < ActionController::TestCase
   # @param thread [CommentThread]
   def try_undelete_thread(thread)
     post :thread_unrestrict, params: { id: thread.id, type: 'delete' }
+  end
+
+  # @param thread [CommentThread]
+  # @param duration [Integer]
+  def try_lock_thread(thread, duration: nil)
+    post :thread_restrict, params: { duration: duration, id: thread.id, type: 'lock' }
+  end
+
+  # @param thread [CommentThread]
+  def try_unlock_thread(thread)
+    post :thread_unrestrict, params: { id: thread.id, type: 'lock' }
   end
 end
