@@ -73,6 +73,20 @@ class User < ApplicationRecord
     post.user == self || privilege?(name)
   end
 
+  # Can the user archive a given comment thread?
+  # @param thread [CommentThread] thread to archive
+  # @return [Boolean] check result
+  def can_archive?(thread)
+    privilege?('flag_curate') && !thread.archived?
+  end
+
+  # Can the user unarchive a given comment thread?
+  # @param thread [CommentThread] thread to archive
+  # @return [Boolean] check result
+  def can_unarchive?(thread)
+    privilege?('flag_curate') && thread.archived?
+  end
+
   # Can the user decide (approve or reject) a given suggested edit?
   # @param edit [SuggestedEdit] edit to check
   # @return [Boolean] check result
@@ -92,6 +106,34 @@ class User < ApplicationRecord
     post.comments_allowed? && !comment_rate_limited?(post)
   end
 
+  # Can the user delete a given target?
+  # @param target [ApplicationRecord] record to delete
+  # @return [Boolean] check result
+  def can_delete?(target)
+    privilege?('flag_curate') && !target.deleted?
+  end
+
+  # Can the user undelete a given target?
+  # @param target [ApplicationRecord] record to undelete
+  # @return [Boolean] check result
+  def can_undelete?(target)
+    privilege?('flag_curate') && target.deleted?
+  end
+
+  # Can the user lock a given target?
+  # @param target [Lockable] record to lock
+  # @return [Boolean] check result
+  def can_lock?(target)
+    privilege?('flag_curate') && !target.locked?
+  end
+
+  # Can the user unlock a given target?
+  # @param target [Lockable] record to unlock
+  # @return [Boolean] check result
+  def can_unlock?(target)
+    privilege?('flag_curate') && target.locked?
+  end
+
   # Can the user post in the current category?
   # @param category [Category, nil] category to check
   # @return [Boolean] check result
@@ -102,7 +144,7 @@ class User < ApplicationRecord
   # Is the user allowed to see deleted posts?
   # @return [Boolean] check result
   def can_see_deleted_posts?
-    at_least_moderator? || privilege?('flag_curate') || false
+    privilege?('flag_curate') || false
   end
 
   # Can the user push a given post type to network?

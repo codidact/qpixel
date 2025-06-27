@@ -189,7 +189,7 @@ class CommentsController < ApplicationController
   def thread_restrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.locked?
+      return not_found unless current_user.can_lock?(@comment_thread)
 
       lu = nil
       unless params[:duration].blank?
@@ -200,11 +200,11 @@ class CommentsController < ApplicationController
       redirect_to comment_thread_path(@comment_thread.id)
       return
     when 'archive'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.archived?
+      return not_found unless current_user.can_archive?(@comment_thread)
 
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.deleted?
+      return not_found unless current_user.can_delete?(@comment_thread)
 
       @comment_thread.update(deleted: true, deleted_by: current_user)
     when 'follow'
@@ -219,15 +219,15 @@ class CommentsController < ApplicationController
   def thread_unrestrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.locked?
+      return not_found unless current_user.can_unlock?(@comment_thread)
 
       @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
     when 'archive'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.archived?
+      return not_found unless current_user.can_unarchive?(@comment_thread)
 
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
     when 'delete'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
+      return not_found unless current_user.can_undelete?(@comment_thread)
 
       if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
         render json: { status: 'error',

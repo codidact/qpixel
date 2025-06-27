@@ -540,8 +540,7 @@ class PostsController < ApplicationController
   end
 
   def lock
-    return not_found unless current_user&.privilege? 'flag_curate'
-    return not_found if @post.locked?
+    return not_found unless current_user&.can_lock?(@post)
 
     length = params[:length].present? ? params[:length].to_i : nil
     if length
@@ -564,8 +563,7 @@ class PostsController < ApplicationController
   end
 
   def unlock
-    return not_found(errors: ['no_privilege']) unless current_user&.privilege? 'flag_curate'
-    return not_found(errors: ['not_locked']) unless @post.locked?
+    return not_found unless current_user&.can_unlock?(@post)
 
     if @post.locked_by.at_least_moderator? && !current_user&.at_least_moderator?
       return not_found(errors: ['locked_by_mod'])
