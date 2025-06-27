@@ -24,6 +24,17 @@ class CommentsControllerTest < ActionController::TestCase
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for thread author'
   end
 
+  test 'should correctly default thread title if not provided' do
+    sign_in users(:editor)
+
+    try_create_thread(posts(:question_one), title: '')
+    assert_response(:found)
+
+    thread = assigns(:comment_thread)
+
+    assert_equal thread.title, thread.comments.first.content
+  end
+
   test 'should require auth to create thread' do
     try_create_thread(posts(:question_one))
     assert_redirected_to_sign_in
@@ -439,11 +450,12 @@ class CommentsControllerTest < ActionController::TestCase
 
   # @param post [Post]
   # @param mentions [Array<User>]
-  def try_create_thread(post, mentions: [], format: :html)
+  # @param title [String]
+  def try_create_thread(post, mentions: [], title: 'sample thread title', format: :html)
     body_parts = ['sample comment content'] + mentions.map { |u| "@##{u.id}" }
 
     post(:create_thread, params: { post_id: post.id,
-                                   title: 'sample thread title',
+                                   title: title,
                                    body: body_parts.join(' ') },
                          format: format)
   end
