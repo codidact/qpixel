@@ -105,8 +105,7 @@ class CommentsController < ApplicationController
     before_pings = check_for_pings @comment_thread, before
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_update', related: @comment, user: current_user,
-                                 comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
+        audit('comment_update', @comment, "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
       after_pings = check_for_pings @comment_thread, @comment.content
@@ -124,10 +123,11 @@ class CommentsController < ApplicationController
   def destroy
     if @comment.update(deleted: true)
       @comment_thread = @comment.comment_thread
+
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_delete', related: @comment, user: current_user,
-                                 comment: "content <<#{@comment.content}>>")
+        audit('comment_delete', @comment, "content <<#{@comment.content}>>")
       end
+
       render json: { status: 'success' }
     else
       render json: { status: 'failed' }, status: :internal_server_error
@@ -137,10 +137,11 @@ class CommentsController < ApplicationController
   def undelete
     if @comment.update(deleted: false)
       @comment_thread = @comment.comment_thread
+
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_undelete', related: @comment, user: current_user,
-                                 comment: "content <<#{@comment.content}>>")
+        audit('comment_undelete', @comment, "content <<#{@comment.content}>>")
       end
+
       render json: { status: 'success' }
     else
       render json: { status: 'failed' }, status: :internal_server_error
@@ -350,5 +351,15 @@ class CommentsController < ApplicationController
                                "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
+  end
+
+  # @param event_type [String] audit log event type
+  # @param comment [Comment] comment the audit is about
+  # @param audit_comment [String] additional info to log
+  def audit(event_type, comment, audit_comment = '')
+    AuditLog.moderator_audit(event_type: event_type,
+                             comment: audit_comment,
+                             related: comment,
+                             user: current_user)
   end
 end
