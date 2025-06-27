@@ -102,7 +102,7 @@ class User < ApplicationRecord
   # Is the user allowed to see deleted posts?
   # @return [Boolean] check result
   def can_see_deleted_posts?
-    at_least_moderator? || community_user&.privilege('flag_curate') || false
+    at_least_moderator? || privilege?('flag_curate') || false
   end
 
   # Can the user push a given post type to network?
