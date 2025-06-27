@@ -295,11 +295,21 @@ class CommentsController < ApplicationController
 
   # For use with before_action callbacks
   def check_post_access
-    if @post.comments_disabled && current_user&.standard?
+    if !@post.comments_allowed? && current_user&.standard?
       respond_to do |format|
         format.html { render template: 'errors/forbidden', status: :forbidden }
         format.json do
-          render json: { status: 'failed', message: 'Comments have been disabled on this post.' },
+          message = if @post.locked?
+                      'Comments are disabled on locked posts.'
+                    elsif @post.deleted?
+                      'Comments are disabled on deleted posts.'
+                    elsif @post.comments_disabled
+                      'Comments have been disabled on this post.'
+                    else
+                      'You cannot comment on this post.' # just in case
+                    end
+
+          render json: { status: 'failed', message: message },
                  status: :forbidden
         end
       end

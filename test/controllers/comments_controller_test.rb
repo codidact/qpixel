@@ -48,7 +48,7 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should not create thread if the target post is deleted' do
     sign_in users(:editor)
     try_create_thread(posts(:deleted))
-    assert_response(:not_found)
+    assert_response(:forbidden)
   end
 
   test 'non-moderator users without flag_curate ability should not see deleted threads' do
