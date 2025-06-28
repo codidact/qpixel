@@ -141,6 +141,15 @@ class User < ApplicationRecord
     category.blank? || category.min_trust_level.blank? || category.min_trust_level <= trust_level
   end
 
+  # Can the user reply to a given comment thread?
+  # @param [CommentThread] thread to check
+  # @return [Boolean] check result
+  def can_reply_to?(thread)
+    return true if at_least_moderator?
+
+    can_comment_on?(thread.post) && !thread.read_only?
+  end
+
   # Is the user allowed to see deleted posts?
   # @return [Boolean] check result
   def can_see_deleted_posts?

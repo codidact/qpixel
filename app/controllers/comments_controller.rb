@@ -9,6 +9,7 @@ class CommentsController < ApplicationController
 
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
+  before_action :check_reply_access, only: [:create]
   before_action :check_restrict_access, only: [:thread_restrict]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
@@ -311,6 +312,28 @@ class CommentsController < ApplicationController
   def check_privilege
     unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
+    end
+  end
+
+  def check_reply_access
+    if @comment_thread.read_only? && current_user&.standard?
+      respond_to do |format|
+        format.html { render template: 'errors/forbidden', status: :forbidden }
+        format.json do
+          message = if @comment_thread.locked?
+                      'Locked threads cannot be replied to.'
+                    elsif @comment_thread.deleted
+                      'Deleted threads cannot be replied to.'
+                    elsif @comment_thread.archived
+                      'Archived threads cannot be replied to.'
+                    else
+                      'You cannot reply to this thread.'
+                    end
+
+          render json: { status: 'failed', message: message },
+                 status: :forbidden
+        end
+      end
     end
   end
 

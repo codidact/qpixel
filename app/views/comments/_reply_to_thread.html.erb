@@ -9,7 +9,7 @@
 %>
 
 <%
-  can_comment = user.can_comment_on?(post) && !thread.read_only?
+  can_comment = user.can_reply_to?(thread)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : 'Reply to this thread'
   exempt_text = standard? ? '' : ', but as a moderator you are exempt'
@@ -19,13 +19,12 @@
             "Comments are disabled on deleted posts#{exempt_text}."
           elsif post.comments_disabled
             "Comments have been disabled on the post#{exempt_text}."
-          # TODO: check if thread blocks actually apply to mods & admins
           elsif thread.locked?
-            'You cannot reply to this thread because it has been locked.'
+            "Locked threads cannot be replied to#{exempt_text}."
           elsif thread.deleted
-            'You cannot reply to this thread because it has been deleted.'
+            "Deleted threads cannot be replied to#{exempt_text}."
           elsif thread.archived
-            'This thread has been archived and cannot be replied to.'
+            "Archived threads cannot be replied to#{exempt_text}."
           elsif is_rate_limited
             rate_limit_message
           else
