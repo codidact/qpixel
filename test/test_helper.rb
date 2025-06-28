@@ -8,6 +8,7 @@ require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 
 require 'minitest/ci'
+require 'minitest/mock'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
 # cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)

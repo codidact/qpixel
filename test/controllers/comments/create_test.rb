@@ -47,7 +47,6 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should not create thread if comments are disabled on the target post' do
     sign_in users(:editor)
-
     try_create_thread(posts(:comments_disabled), format: :json)
 
     assert_response(:forbidden)
@@ -64,17 +63,34 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should not create thread if the target post is deleted' do
     sign_in users(:editor)
     try_create_thread(posts(:deleted), format: :json)
+
     assert_response(:forbidden)
     assert_valid_json_response
     assert_json_response_message('Comments are disabled on deleted posts.')
   end
 
-  test 'should not create thread if target post is locked' do
+  test 'should not create thread if the target post is locked' do
     sign_in users(:editor)
     try_create_thread(posts(:locked), format: :json)
+
     assert_response(:forbidden)
     assert_valid_json_response
     assert_json_response_message('Comments are disabled on locked posts.')
+  end
+
+  test 'should not create thread if the target post does not allow comments for some reason' do
+    sign_in users(:editor)
+
+    post = posts(:question_one)
+
+    post.stub(:comments_allowed?, false) do
+      Post.stub(:find, post) do
+        try_create_thread(post, format: :json)
+        assert_response(:forbidden)
+        assert_valid_json_response
+        assert_json_response_message('You cannot comment on this post.')
+      end
+    end
   end
 
   test 'should correclty create comments in threads' do
