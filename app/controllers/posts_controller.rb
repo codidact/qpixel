@@ -379,6 +379,18 @@ class PostsController < ApplicationController
     redirect_to post_path(@post)
   end
 
+  # Attempts to delete a given post
+  # @param post [Post] post to delete
+  # @param user [User] user attempting to delete the post
+  # @return [Boolean] status of the operation
+  def do_delete(post, user)
+    post.update(deleted: true,
+                deleted_at: DateTime.now,
+                deleted_by: user,
+                last_activity: DateTime.now,
+                last_activity_by: user)
+  end
+
   def delete
     unless check_your_privilege('flag_curate', @post, false)
       flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
@@ -404,8 +416,7 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
-                    last_activity: DateTime.now, last_activity_by: current_user)
+    if do_delete(@post, current_user)
       PostHistory.post_deleted(@post, current_user)
       if @post.children.undeleted.any?
         @post.children.undeleted.update_all(deleted: true,
