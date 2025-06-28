@@ -428,19 +428,32 @@ class PostsController < ApplicationController
       return
     end
 
-    if do_delete(@post, current_user)
-      PostHistory.post_deleted(@post, current_user)
+    # post deletion, its children deletion, and post history creation must all be made as one atomic operation
+    @post.transaction do
+      unless do_delete(@post, current_user)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+
+      history_entry = PostHistory.post_deleted(@post, current_user)
+
+      if history_entry&.errors&.any?
+        @post.errors.merge!(history_entry.errors)
+        raise ActiveRecord::Rollback
+      end
+
       if @post.children.undeleted.any?
-        do_delete_children(@post, current_user)
+        unless do_delete_children(@post, current_user)
+          raise ActiveRecord::Rollback
+        end
 
         histories = @post.children.map do |c|
           { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
             community: RequestContext.community }
         end
-        PostHistory.create(histories)
+
+        PostHistory.create!(histories)
       end
-    else
-      flash[:danger] = helpers.i18ns('posts.cant_delete_post')
     end
 
     redirect_to post_path(@post)
