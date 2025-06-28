@@ -92,4 +92,33 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal before_history + parent.children.count, after_history,
                  'Expected deletion history events to be created for every child'
   end
+
+  test 'delete should be an atomic operation' do
+    parent = posts(:question_one)
+
+    sign_in users(:moderator)
+
+    assert_not_equal(0, parent.children.undeleted.count, 'Expected post to have undeleted children')
+
+    old_parent_events_count = PostHistory.where(post: parent).count
+    old_children_events_count = PostHistory.where(post: parent.children)
+
+    assert_delete_atomic = lambda do
+      post :delete, params: { id: parent.id }
+      parent.reload
+
+      assert_not_nil(flash[:danger])
+      assert_not_equal(0, parent.children.undeleted.count)
+      assert_equal old_parent_events_count, PostHistory.where(post: parent).count
+      assert_equal old_children_events_count, PostHistory.where(post: parent.children)
+    end
+
+    @controller.stub(:do_delete, false) do
+      assert_delete_atomic.call
+    end
+
+    @controller.stub(:do_delete_children, false) do
+      assert_delete_atomic.call
+    end
+  end
 end
