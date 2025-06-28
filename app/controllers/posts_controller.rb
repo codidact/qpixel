@@ -391,6 +391,18 @@ class PostsController < ApplicationController
                 last_activity_by: user)
   end
 
+  # Attempts to delete children of a given post
+  # @param post [Post] post to delete children of
+  # @param user [User] user attempting to delete the post's children
+  # @return [Boolean] status of the operation
+  def do_delete_children(post, user)
+    post.children.undeleted.update_all(deleted: true,
+                                       deleted_at: DateTime.now,
+                                       deleted_by_id: user.id,
+                                       last_activity: DateTime.now,
+                                       last_activity_by_id: user.id)
+  end
+
   def delete
     unless check_your_privilege('flag_curate', @post, false)
       flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
@@ -419,11 +431,8 @@ class PostsController < ApplicationController
     if do_delete(@post, current_user)
       PostHistory.post_deleted(@post, current_user)
       if @post.children.undeleted.any?
-        @post.children.undeleted.update_all(deleted: true,
-                                            deleted_at: DateTime.now,
-                                            deleted_by_id: current_user.id,
-                                            last_activity: DateTime.now,
-                                            last_activity_by_id: current_user.id)
+        do_delete_children(@post, current_user)
+
         histories = @post.children.map do |c|
           { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
             community: RequestContext.community }
