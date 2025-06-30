@@ -36,3 +36,6 @@ en:
       post_types: 'Post Types'
       email_query: 'User Lookup by Email'
     user_fed_stat: 'User fed to STAT.'
+    errors:
+      email_query_email_not_found:
+        No user found with that email address.
