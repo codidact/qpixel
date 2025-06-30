@@ -46,40 +46,29 @@ class CommentsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
-  test 'should not create thread if comments are disabled on the target post' do
-    sign_in users(:editor)
-    try_create_thread(posts(:comments_disabled), format: :json)
-
-    assert_response(:forbidden)
-    assert_valid_json_response
-    assert_json_response_message('Comments have been disabled on this post.')
-  end
-
   test 'should not create thread if the target post is inaccessible' do
     sign_in users(:editor)
     try_create_thread(posts(:high_trust))
     assert_response(:not_found)
   end
 
-  test 'should not create thread if the target post is deleted' do
+  test 'should not create thread if the target post does not allow comments for known reasons' do
     sign_in users(:editor)
-    try_create_thread(posts(:deleted), format: :json)
 
-    assert_response(:forbidden)
-    assert_valid_json_response
-    assert_json_response_message('Comments are disabled on deleted posts.')
+    [:comments_disabled, :deleted, :locked].each do |name|
+      post = posts(name)
+
+      assert !post.comments_allowed?
+
+      try_create_thread(post, format: :json)
+
+      assert_response(:forbidden)
+      assert_valid_json_response
+      assert_json_response_message(@controller.helpers.comments_post_error_msg(post))
+    end
   end
 
-  test 'should not create thread if the target post is locked' do
-    sign_in users(:editor)
-    try_create_thread(posts(:locked), format: :json)
-
-    assert_response(:forbidden)
-    assert_valid_json_response
-    assert_json_response_message('Comments are disabled on locked posts.')
-  end
-
-  test 'should not create thread if the target post does not allow comments for some reason' do
+  test 'should return a catch-all response if the target post does not allow comments for an unknown reason' do
     sign_in users(:editor)
 
     post = posts(:question_one)
@@ -87,9 +76,10 @@ class CommentsControllerTest < ActionController::TestCase
     post.stub(:comments_allowed?, false) do
       Post.stub(:find, post) do
         try_create_thread(post, format: :json)
+
         assert_response(:forbidden)
         assert_valid_json_response
-        assert_json_response_message('You cannot comment on this post.')
+        assert_json_response_message(@controller.helpers.comments_post_error_msg(post))
       end
     end
   end
@@ -121,16 +111,6 @@ class CommentsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
-  test 'should not create comment if comments are disabled on the target post' do
-    sign_in users(:editor)
-
-    try_create_comment(comment_threads(:comments_disabled), format: :json)
-
-    assert_response(:forbidden)
-    assert_valid_json_response
-    assert_json_response_message('Comments have been disabled on this post.')
-  end
-
   test 'should not create comment if the target post is inaccessible' do
     sign_in users(:editor)
     try_create_comment(comment_threads(:high_trust))
@@ -138,13 +118,6 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test 'should not create comment if the target thread is readonly' do
-    # TODO: translation strings instead of WET
-    message_map = {
-      locked: 'Locked threads cannot be replied to.',
-      deleted: 'Deleted threads cannot be replied to.',
-      archived: 'Archived threads cannot be replied to.'
-    }
-
     sign_in users(:editor)
 
     [:locked, :deleted, :archived].each do |name|
@@ -156,7 +129,7 @@ class CommentsControllerTest < ActionController::TestCase
 
       assert_response(:forbidden)
       assert_valid_json_response
-      assert_json_response_message(message_map[name])
+      assert_json_response_message(@controller.helpers.comments_thread_error_msg(thread))
     end
   end
 end

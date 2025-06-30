@@ -69,6 +69,36 @@ module CommentsHelper
     comment_text
   end
 
+  # Gets a standard comments error message for a given post
+  # @param post [Post] target post
+  # @return [String] error message
+  def comments_post_error_msg(post)
+    if post.locked?
+      'Comments are disabled on locked posts.'
+    elsif post.deleted?
+      'Comments are disabled on deleted posts.'
+    elsif post.comments_disabled
+      'Comments on this post are disabled.'
+    else
+      'This post cannot be commented on.' # just in case
+    end
+  end
+
+  # Gets a standard comments error message for a given thread
+  # @param thread [CommentThread] target thread
+  # @return [String] error message
+  def comments_thread_error_msg(thread)
+    if thread.locked?
+      'Locked threads cannot be replied to.'
+    elsif thread.deleted
+      'Deleted threads cannot be replied to.'
+    elsif thread.archived
+      'Archived threads cannot be replied to.'
+    else
+      'This thread cannot be replied to.' # just in case
+    end
+  end
+
   ##
   # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
   # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.

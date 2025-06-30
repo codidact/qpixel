@@ -11,13 +11,9 @@
   can_comment = user.can_comment_on?(post)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : 'Start new comment thread'
-  exempt_text = standard? ? '' : ', but as a moderator you are exempt'
-  title = if post.locked?
-            "Comments are disabled on locked posts#{exempt_text}."
-          elsif post.deleted
-            "Comments are disabled on deleted posts#{exempt_text}."
-          elsif post.comments_disabled
-            "Comments have been disabled on this post#{exempt_text}."
+  exempt_text = standard? ? '' : ' However, you are exempt as a moderator.'
+  title = if !post.comments_allowed?
+            "#{comments_post_error_msg(post)}#{exempt_text}"
           elsif is_rate_limited
             rate_limit_message
           else

@@ -12,19 +12,11 @@
   can_comment = user.can_reply_to?(thread)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : 'Reply to this thread'
-  exempt_text = standard? ? '' : ', but as a moderator you are exempt'
-  title = if post.locked?
-            "Comments are disabled on locked posts#{exempt_text}."
-          elsif post.deleted
-            "Comments are disabled on deleted posts#{exempt_text}."
-          elsif post.comments_disabled
-            "Comments have been disabled on the post#{exempt_text}."
-          elsif thread.locked?
-            "Locked threads cannot be replied to#{exempt_text}."
-          elsif thread.deleted
-            "Deleted threads cannot be replied to#{exempt_text}."
-          elsif thread.archived
-            "Archived threads cannot be replied to#{exempt_text}."
+  exempt_text = standard? ? '' : ' However, you are exempt as a moderator.'
+  title = if !post.comments_allowed?
+            "#{comments_post_error_msg(post)}#{exempt_text}"
+          elsif thread.read_only?
+            "#{comments_thread_error_msg(thread)}#{exempt_text}"
           elsif is_rate_limited
             rate_limit_message
           else

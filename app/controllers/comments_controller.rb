@@ -290,16 +290,7 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.html { render template: 'errors/forbidden', status: :forbidden }
         format.json do
-          message = if @post.locked?
-                      'Comments are disabled on locked posts.'
-                    elsif @post.deleted?
-                      'Comments are disabled on deleted posts.'
-                    elsif @post.comments_disabled
-                      'Comments have been disabled on this post.'
-                    else
-                      'You cannot comment on this post.' # just in case
-                    end
-
+          message = helpers.comments_post_error_msg(@post)
           render json: { status: 'failed', message: message },
                  status: :forbidden
         end
@@ -320,16 +311,7 @@ class CommentsController < ApplicationController
       respond_to do |format|
         format.html { render template: 'errors/forbidden', status: :forbidden }
         format.json do
-          message = if @comment_thread.locked?
-                      'Locked threads cannot be replied to.'
-                    elsif @comment_thread.deleted
-                      'Deleted threads cannot be replied to.'
-                    elsif @comment_thread.archived
-                      'Archived threads cannot be replied to.'
-                    else
-                      'You cannot reply to this thread.'
-                    end
-
+          message = helpers.comments_thread_error_msg(@comment_thread)
           render json: { status: 'failed', message: message },
                  status: :forbidden
         end
