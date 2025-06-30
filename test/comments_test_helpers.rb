@@ -93,6 +93,12 @@ module CommentsControllerTestHelpers
     get :show, params: { id: comment.id, format: format }
   end
 
+  # Attempts to undelete a single comment
+  # @param comment [Comment] comment to undelete
+  def try_undelete_comment(comment)
+    patch :undelete, params: { id: comment.id }
+  end
+
   # Attempts to update a given comment
   # @param comment [Comment] comment to update
   # @param content [String] new content of the comment, if any
