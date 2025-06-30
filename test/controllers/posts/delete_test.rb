@@ -95,30 +95,40 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'delete should be an atomic operation' do
     parent = posts(:question_one)
+    user = users(:moderator)
 
-    sign_in users(:moderator)
+    sign_in user
 
     assert_not_equal(0, parent.children.undeleted.count, 'Expected post to have undeleted children')
 
     old_parent_events_count = PostHistory.where(post: parent).count
     old_children_events_count = PostHistory.where(post: parent.children)
 
-    assert_delete_atomic = lambda do
+    assert_delete_atomic = lambda do |check_flash: true|
       post :delete, params: { id: parent.id }
       parent.reload
 
-      assert_not_nil(flash[:danger])
+      if check_flash
+        assert_not_nil(flash[:danger])
+      end
+
       assert_not_equal(0, parent.children.undeleted.count)
       assert_equal old_parent_events_count, PostHistory.where(post: parent).count
       assert_equal old_children_events_count, PostHistory.where(post: parent.children)
     end
 
-    @controller.stub(:do_delete, false) do
-      assert_delete_atomic.call
-    end
+    @controller.stub(:do_delete, false) { assert_delete_atomic.call }
+    @controller.stub(:do_delete_children, false) { assert_delete_atomic.call }
 
-    @controller.stub(:do_delete_children, false) do
-      assert_delete_atomic.call
-    end
+    failed_history = PostHistory.new(
+      community: parent.community,
+      post: parent,
+      post_history_type: PostHistoryType.find_by(name: 'post_deleted'),
+      user: user
+    )
+
+    failed_history.errors.add(:test, 'this is only to make deletion fial')
+
+    PostHistory.stub(:post_deleted, failed_history) { assert_delete_atomic.call(check_flash: false) }
   end
 end
