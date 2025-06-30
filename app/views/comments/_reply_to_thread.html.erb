@@ -11,7 +11,7 @@
 <%
   can_comment = user.can_reply_to?(thread)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
-  text ||= defined?(text) && text.present? ? text : 'Reply to this thread'
+  text ||= defined?(text) && text.present? ? text : t('comments.labels.reply_to_thread')
   exempt_text = standard? ? nil : t('comments.errors.exempt_from_disabled')
   title = if !post.comments_allowed?
             [comments_post_error_msg(post), exempt_text].compact.join(' ')

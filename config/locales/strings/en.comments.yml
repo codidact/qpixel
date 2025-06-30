@@ -19,4 +19,8 @@ en:
         This thread cannot be replied to.
       exempt_from_disabled: >
         However, you are exempt as a moderator.
-
+    labels:
+      create_new_thread: >
+        Start new comment thread
+      reply_to_thread: >
+        Reply to this thread
