@@ -136,4 +136,27 @@ class CommentsControllerTest < ActionController::TestCase
     try_create_comment(comment_threads(:high_trust))
     assert_response(:not_found)
   end
+
+  test 'should not create comment if the target thread is readonly' do
+    # TODO: translation strings instead of WET
+    message_map = {
+      locked: 'Locked threads cannot be replied to.',
+      deleted: 'Deleted threads cannot be replied to.',
+      archived: 'Archived threads cannot be replied to.'
+    }
+
+    sign_in users(:editor)
+
+    [:locked, :deleted, :archived].each do |name|
+      thread = comment_threads(name)
+
+      assert thread.read_only?
+
+      try_create_comment(thread, format: :json)
+
+      assert_response(:forbidden)
+      assert_valid_json_response
+      assert_json_response_message(message_map[name])
+    end
+  end
 end
