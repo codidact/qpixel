@@ -8,10 +8,10 @@
 <% comment_threads.each do |thread| %>
   <%
     state_class = [
-      thread.deleted ? 'is-deleted' : '',
-      thread.archived ? 'is-archived' : '',
-      thread.locked? ? 'is-locked' : ''
-    ].select(&:present?).join(' ')
+      thread.deleted ? 'is-deleted' : nil,
+      thread.archived ? 'is-archived' : nil,
+      thread.locked? ? 'is-locked' : nil
+    ].compact.join(' ')
   %>
 
   <div class="post--comments-thread-wrapper" role="listitem">
