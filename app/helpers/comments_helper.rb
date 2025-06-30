@@ -74,14 +74,14 @@ module CommentsHelper
   # @return [String] error message
   def comments_post_error_msg(post)
     if post.locked?
-      'Comments are disabled on locked posts.'
+      I18n.t('comments.errors.disabled_on_locked_posts')
     elsif post.deleted?
-      'Comments are disabled on deleted posts.'
+      I18n.t('comments.errors.disabled_on_deleted_posts')
     elsif post.comments_disabled
-      'Comments on this post are disabled.'
+      I18n.t('comments.errors.disabled_on_post_specific')
     else
-      'This post cannot be commented on.' # just in case
-    end
+      I18n.t('comments.errors.disabled_on_post_generic')
+    end.strip
   end
 
   # Gets a standard comments error message for a given thread
@@ -89,14 +89,14 @@ module CommentsHelper
   # @return [String] error message
   def comments_thread_error_msg(thread)
     if thread.locked?
-      'Locked threads cannot be replied to.'
+      I18n.t('comments.errors.disabled_on_locked_threads')
     elsif thread.deleted
-      'Deleted threads cannot be replied to.'
+      I18n.t('comments.errors.disabled_on_deleted_threads')
     elsif thread.archived
-      'Archived threads cannot be replied to.'
+      I18n.t('comments.errors.disabled_on_archived_threads')
     else
-      'This thread cannot be replied to.' # just in case
-    end
+      I18n.t('comments.errors.disabled_on_thread_generic')
+    end.strip
   end
 
   ##
