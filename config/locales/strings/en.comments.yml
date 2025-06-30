@@ -17,4 +17,6 @@ en:
         This post cannot be commented on.
       disabled_on_thread_generic: >
         This thread cannot be replied to.
+      exempt_from_disabled: >
+        However, you are exempt as a moderator.
 

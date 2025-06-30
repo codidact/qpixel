@@ -11,9 +11,9 @@
   can_comment = user.can_comment_on?(post)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : 'Start new comment thread'
-  exempt_text = standard? ? '' : ' However, you are exempt as a moderator.'
+  exempt_text = standard? ? nil : t('comments.errors.exempt_from_disabled')
   title = if !post.comments_allowed?
-            "#{comments_post_error_msg(post)}#{exempt_text}"
+            [comments_post_error_msg(post), exempt_text].compact.join(' ')
           elsif is_rate_limited
             rate_limit_message
           else
