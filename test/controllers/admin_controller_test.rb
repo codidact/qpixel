@@ -125,4 +125,11 @@ class AdminControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
     assert_not_nil assigns(:profiles)
   end
+
+  test 'do_email_query should add a notice if the email does not exist' do
+    sign_in users(:admin)
+    post :do_email_query, params: { email: 'spock@vulcan.ufp' }
+    assert_response(:success)
+    assert_equal flash[:danger], I18n.t('admin.errors.email_query_not_found')
+  end
 end

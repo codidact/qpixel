@@ -208,7 +208,7 @@ class AdminController < ApplicationController
       @user = users.first
       @profiles = @user.community_users.includes(:community).where(community: current_user.admin_communities)
     else
-      flash[:danger] = helpers.i18ns('admin.errors.email_query_email_not_found')
+      flash[:danger] = helpers.i18ns('admin.errors.email_query_not_found')
     end
     render :email_query
   end
