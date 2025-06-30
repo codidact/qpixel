@@ -117,7 +117,7 @@ class CommentsControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
-  test 'should not create comment if the target thread is readonly' do
+  test 'should not create comment if the target thread is readonly for a known reason' do
     sign_in users(:editor)
 
     [:locked, :deleted, :archived].each do |name|
@@ -130,6 +130,22 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response(:forbidden)
       assert_valid_json_response
       assert_json_response_message(@controller.helpers.comments_thread_error_msg(thread))
+    end
+  end
+
+  test 'should return a catch-all response if the target thread is readonly for an unknown reason' do
+    sign_in users(:editor)
+
+    thread = comment_threads(:normal)
+
+    thread.stub(:read_only?, true) do
+      CommentThread.stub(:find, thread) do
+        try_create_comment(thread, format: :json)
+
+        assert_response(:forbidden)
+        assert_valid_json_response
+        assert_json_response_message(@controller.helpers.comments_thread_error_msg(thread))
+      end
     end
   end
 end
