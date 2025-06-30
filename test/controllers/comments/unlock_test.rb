@@ -1,8 +1,9 @@
 require 'test_helper'
+require 'comments_test_helpers'
 
 class CommentsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
-  include CommentsControllerHelper
+  include CommentsControllerTestHelpers
 
   test 'should correctly unlock threads' do
     sign_in users(:deleter)

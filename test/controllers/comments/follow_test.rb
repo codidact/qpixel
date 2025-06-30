@@ -1,8 +1,9 @@
 require 'test_helper'
+require 'comments_test_helpers'
 
 class CommentsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
-  include CommentsControllerHelper
+  include CommentsControllerTestHelpers
 
   test 'any non-deleted user with a profile should be able to follow threads' do
     thread = comment_threads(:normal)
