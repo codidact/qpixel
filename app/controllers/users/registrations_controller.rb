@@ -1,4 +1,9 @@
 class Users::RegistrationsController < Devise::RegistrationsController
+  layout 'without_sidebar', only: :edit
+
+  before_action :check_sso, only: :update
+  before_action :authenticate_user!, only: [:delete, :do_delete]
+
   def create
     super do |user|
       unless user.errors.any?
@@ -19,11 +24,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def delete; end
+
+  def do_delete; end
+
   protected
-
-  layout 'without_sidebar', only: :edit
-
-  before_action :check_sso, only: :update
 
   def after_update_path_for(resource)
     edit_user_registration_path(resource)

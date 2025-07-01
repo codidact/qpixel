@@ -203,6 +203,8 @@ Rails.application.routes.draw do
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
+    get    '/delete',                   to: 'users#delete', as: :delete_account
+    post   '/delete',                   to: 'users#do_delete', as: :do_delete_account
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
