@@ -12,7 +12,8 @@ class SendSummaryEmailsJob < ApplicationJob
     users = User.where(created_at: SummaryMailer::TIMEFRAME.ago..DateTime.now).includes(:community_users)
     staff.each do |u|
       SummaryMailer.with(to: u.email, posts: posts, flags: flags, comments: comments, users: users)
-                   .content_summary.deliver_later
+                   .content_summary
+                   .deliver_later
     end
   end
 end
