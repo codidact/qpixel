@@ -12,8 +12,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
           user.ensure_websites
         else
           user.delete
-          flash[:danger] = 'You cannot create an account right now because of the volume of accounts originating from ' \
-                           'your network. Try again later.'
+          flash[:danger] = 'You cannot create an account right now because of the volume of accounts originating ' \
+                           'from your network. Try again later.'
         end
       end
     end
