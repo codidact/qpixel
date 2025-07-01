@@ -226,4 +226,24 @@ class UserTest < ActiveSupport::TestCase
       assert_equal cu.user.has_ability_on(community.id, unrestricted.internal_id), !cu.user.deleted
     end
   end
+
+  test 'moderator_communities should correctly list mod communities' do
+    Community.create(name: 'Test', host: 'test.host')
+
+    global_result = users(:global_moderator).moderator_communities
+    assert_equal Community.all.size, global_result.size
+
+    local_result = users(:moderator).moderator_communities
+    assert_equal 1, local_result.size
+  end
+
+  test 'admin_communities should correctly list admin communities' do
+    Community.create(name: 'Test', host: 'test.host')
+
+    global_result = users(:global_admin).admin_communities
+    assert_equal Community.all.size, global_result.size
+
+    local_result = users(:admin).admin_communities
+    assert_equal 1, local_result.size
+  end
 end
