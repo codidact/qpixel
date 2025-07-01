@@ -16,7 +16,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:user]
     User.create(username: 'test', email: 'test2@example.com', password: 'testtest', current_sign_in_ip: '0.0.0.0')
     try_register_user('test', 'test@example.com', 'testtest')
-    assert_response(:success)
+    assert_response(:found)
     assert_redirected_to users_path
     assert_not_nil flash[:danger]
   end
@@ -25,7 +25,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     @request.env['devise.mapping'] = Devise.mappings[:user]
     existing_user = users(:standard_user)
     try_register_user(existing_user.username, existing_user.email, 'testtest')
-    assert_response(:found)
+    assert_response(:success)
     assert_redirected_to new_user_registration_path
     assert_not_nil flash[:danger]
   end
