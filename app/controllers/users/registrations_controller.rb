@@ -24,7 +24,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  def delete; end
+  def delete
+    @user = current_user
+  end
 
   def do_delete; end
 

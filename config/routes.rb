@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     get  'users/saml/sign_in_request_from_other/:id', to: 'users/saml_sessions#sign_in_request_from_other', as: :sign_in_request_from_other
     get  'users/saml/sign_in_return_from_base',       to: 'users/saml_sessions#sign_in_return_from_base', as: :sign_in_return_from_base
     get  'users/saml/after_sign_in_check',            to: 'users/saml_sessions#after_sign_in_check', as: :after_sign_in_check
+    get  'users/delete',                   to: 'users/registrations#delete', as: :delete_account
+    post 'users/delete',                   to: 'users/registrations#do_delete', as: :do_delete_account
   end
 
   root                                     to: 'categories#homepage'
@@ -203,8 +205,6 @@ Rails.application.routes.draw do
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
-    get    '/delete',                   to: 'users#delete', as: :delete_account
-    post   '/delete',                   to: 'users#do_delete', as: :do_delete_account
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
