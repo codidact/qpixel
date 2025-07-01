@@ -123,6 +123,7 @@ $(() => {
     </form>`;
 
     $commentBody.html(formTemplate);
+    $commentBody.find('textarea#comment-content').trigger('focus');
 
     $commentBody.find(`#comment-content`).on('keyup', pingable_popup);
 
