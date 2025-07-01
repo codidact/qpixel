@@ -43,8 +43,6 @@ class User < ApplicationRecord
 
   delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
-  after_create :send_welcome_tour_message, :ensure_websites
-
   def self.list_includes
     includes(:posts, :avatar_attachment)
   end
