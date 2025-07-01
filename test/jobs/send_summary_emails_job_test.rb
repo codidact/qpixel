@@ -8,9 +8,12 @@ class SendSummaryEmailsJobTest < ActiveJob::TestCase
 
     assert_performed_jobs(2)
 
-    staff_mail = SummaryMailer.deliveries.first
+    delivered = SummaryMailer.deliveries.first
 
-    assert_equal 1, staff_mail.recipients.size
-    assert staff_mail.recipients.include?(users(:staff).email)
+    to_email = users(:staff).email
+
+    assert_equal 1, delivered.recipients.size
+    assert delivered.recipients.include?(to_email),
+           "Expected #{to_email} to be a recipient, actual: #{delivered.recipients.join(', ')}"
   end
 end
