@@ -55,6 +55,9 @@ Rails.application.routes.draw do
     post   'impersonate/:id',              to: 'admin#change_users', as: :impersonate
     get    'impersonate/:id',              to: 'admin#impersonate', as: :start_impersonating
 
+    get    'email-query',                  to: 'admin#email_query', as: :admin_email_query
+    post   'email-query',                  to: 'admin#do_email_query', as: :do_email_query
+
     scope 'post-types' do
       root                                 to: 'post_types#index', as: :post_types
       get    'new',                        to: 'post_types#new', as: :new_post_type
