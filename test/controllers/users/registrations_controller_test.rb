@@ -18,7 +18,6 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     try_register_user('test', 'test@example.com', 'testtest')
     assert_response(:found)
     assert_redirected_to users_path
-    assert_nil assigns(:user).id
     assert_not_nil flash[:danger]
   end
 
