@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class SendSummaryEmailsJobTest < ActiveJob::TestCase
+  include ActionMailer::TestCase::ClearTestDeliveries
+
   test 'should correctly send summary emails' do
     perform_enqueued_jobs do
       SendSummaryEmailsJob.perform_later
