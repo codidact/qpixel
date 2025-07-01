@@ -29,6 +29,57 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not_empty assigns(:user).errors
   end
 
+  test 'should show deletion information page' do
+    sign_in users(:standard_user)
+    get :delete
+    assert_response(:success)
+  end
+
+  test 'should require authentication for deletion information' do
+    get :delete
+    assert_response(:found)
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should delete user account' do
+    sign_in users(:standard_user)
+    post :delete, params: { username: users(:standard_user).username }
+    assert_response(:found)
+    assert_redirected_to root_path
+    assert_equal 'Sorry to see you go!', flash[:info]
+    assert assigns(:user).deleted
+  end
+
+  test 'should require authentication to delete user account' do
+    post :delete, params: { username: 'anything' }
+    assert_response(:found)
+    assert_redirected_to new_user_session_path
+  end
+
+  test 'should prevent deletion if username is incorrect' do
+    sign_in users(:standard_user)
+    post :delete, params: { username: 'wrong' }
+    assert_response(:success)
+    assert_equal ['The username you entered was incorrect.'], assigns(:user).errors.full_messages
+    assert_not assigns(:user).deleted
+  end
+
+  test 'should prevent deletion of moderators' do
+    sign_in users(:moderator)
+    post :delete, params: { username: users(:moderator).username }
+    assert_response(:success)
+    assert_equal ['Moderator accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
+    assert_not assigns(:user).deleted
+  end
+
+  test 'should prevent deletion of admins' do
+    sign_in users(:admin)
+    post :delete, params: { username: users(:admin).username }
+    assert_response(:success)
+    assert_equal ['Admin accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
+    assert_not assigns(:user).deleted
+  end
+
   private
 
   def try_register_user(username, email, password)
