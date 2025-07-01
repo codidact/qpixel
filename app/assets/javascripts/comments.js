@@ -91,9 +91,16 @@ $(() => {
     const $comment = $tgt.parents('.comment');
     const $commentBody = $comment.find('.comment--body');
     const $thread = $comment.parents('.thread');
+
     const commentId = $comment.attr('data-id');
     const postId = $thread.attr('data-post');
     const threadId = $thread.attr('data-thread');
+
+    // if this matches, this means we are already in edit mode
+    if ($(`.js-discard-edit[data-comment-id="${commentId}"]`).length) {
+      return;
+    }
+
     const originalComment = $commentBody.clone();
 
     const resp = await fetch(`/comments/${commentId}`, {
@@ -119,7 +126,7 @@ $(() => {
 
     $commentBody.find(`#comment-content`).on('keyup', pingable_popup);
 
-    $(`.js-discard-edit[data-comment-id="${commentId}"]`).click(() => {
+    $(`.js-discard-edit[data-comment-id="${commentId}"]`).on('click', () => {
       $commentBody.html(originalComment.html());
     });
   });
