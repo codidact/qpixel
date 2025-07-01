@@ -3,7 +3,7 @@ require 'test_helper'
 class AdminControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log].freeze
+  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log, :email_query].freeze
 
   test 'should get index' do
     sign_in users(:admin)
@@ -116,5 +116,20 @@ class AdminControllerTest < ActionController::TestCase
     get :audit_log
     assert_response(:success)
     assert_not_nil assigns(:logs)
+  end
+
+  test 'should do email query' do
+    sign_in users(:admin)
+    post :do_email_query, params: { email: users(:standard_user).email }
+    assert_response(:success)
+    assert_not_nil assigns(:user)
+    assert_not_nil assigns(:profiles)
+  end
+
+  test 'do_email_query should add a notice if the email does not exist' do
+    sign_in users(:admin)
+    post :do_email_query, params: { email: 'spock@vulcan.ufp' }
+    assert_response(:success)
+    assert_equal flash[:danger], I18n.t('admin.errors.email_query_not_found')
   end
 end

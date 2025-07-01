@@ -272,6 +272,26 @@ class User < ApplicationRecord
     global_moderator? || global_admin? || false
   end
 
+  # Which communities is this user a moderator (local or global) on?
+  # @return [Community[]] list of communities
+  def moderator_communities
+    if global_moderator?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_moderator: true })
+    end
+  end
+
+  # Which communities is this user an admin (local or global) of?
+  # @return [Community[]] list of communities
+  def admin_communities
+    if global_admin?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_admin: true })
+    end
+  end
+
   # Is the user a moderator on a given community?
   # @param community_id [Integer] community id to check for
   # @return [Boolean] check result
