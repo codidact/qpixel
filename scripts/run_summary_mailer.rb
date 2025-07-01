@@ -1,0 +1,1 @@
+SendSummaryEmailsJob.perform_later
