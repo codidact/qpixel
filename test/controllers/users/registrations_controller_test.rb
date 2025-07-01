@@ -26,7 +26,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     existing_user = users(:standard_user)
     try_register_user(existing_user.username, existing_user.email, 'testtest')
     assert_response(:success)
-    assert_not_nil flash[:danger]
+    assert_not_empty assigns(:user).errors
   end
 
   private
