@@ -21,6 +21,15 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not_nil flash[:danger]
   end
 
+  test 'ensure Devise errors are handled properly' do
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+    existing_user = users(:standard_user)
+    try_register_user(existing_user.username, existing_user.email, 'testtest')
+    assert_response(:found)
+    assert_redirected_to new_user_registration_path
+    assert_not_nil flash[:danger]
+  end
+
   private
 
   def try_register_user(username, email, password)
