@@ -10,7 +10,8 @@ class SummaryMailerPreview < ActionMailer::Preview
     comments = Comment.unscoped.where(created_at: test_timeframe.ago..DateTime.now)
                       .includes(:user, :post, :comment_thread, post: :community)
     users = User.where(created_at: test_timeframe.ago..DateTime.now).includes(:community_users)
-    SummaryMailer.with(to: staff.first.email, posts: posts, flags: flags, comments: comments, users: users)
+
+    SummaryMailer.with(to: staff.first.email, posts: posts.to_a, flags: flags.to_a, comments: comments.to_a, users: users.to_a)
                  .content_summary
   end
 end
