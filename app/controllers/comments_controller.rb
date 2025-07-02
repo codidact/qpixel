@@ -197,9 +197,6 @@ class CommentsController < ApplicationController
         lu = params[:duration].to_i.days.from_now
       end
       @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
-
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
     when 'archive'
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'

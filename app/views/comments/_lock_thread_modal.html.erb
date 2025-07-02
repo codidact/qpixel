@@ -23,7 +23,8 @@
       <%= number_field_tag :duration, nil, class: 'form-element' %>
     </div>
     <div class="modal--footer">
-      <%= submit_tag 'Lock thread', class: 'button is-muted is-filled' %>
+      <%= submit_tag 'Lock thread', class: 'button is-muted is-filled',
+                                    data: { thread: thread.id } %>
       <button type="button" class="button is-muted" data-modal=".js--lock-thread-<%= thread.id %>">Cancel</button>
     </div>
   <% end %>

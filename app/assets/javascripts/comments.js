@@ -188,12 +188,34 @@ $(() => {
     $modal.find('.js-follower-display').html(data);
   });
 
+  $(document).on('click', '[class*=js--lock-thread] form', async (evt) => {
+    evt.preventDefault();
+
+    const $tgt = $(evt.target);
+    console.log({$tgt})
+    const threadID = $tgt.data("thread");
+
+    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/restrict`, {
+      type: 'lock'
+    });
+
+    const data = await resp.json();
+
+    if (data.status === 'success') {
+      window.location.reload();
+    }
+    else {
+      QPixel.createNotification('danger', data.message);
+    }
+
+  })
+
   $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
-    const threadID = $tgt.data("thread")
-    const action = $tgt.data("action")
+    const threadID = $tgt.data("thread");
+    const action = $tgt.data("action");
     const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
 
     const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/${route}`, { type: action });

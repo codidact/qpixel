@@ -6,15 +6,17 @@ class CommentsControllerTest < ActionController::TestCase
   include CommentsControllerTestHelpers
 
   test 'should lock thread indefinitely by default' do
+    thread = comment_threads(:normal)
+
     sign_in users(:deleter)
-    try_lock_thread(comment_threads(:normal))
 
-    @thread = assigns(:comment_thread)
+    try_lock_thread(thread)
+    thread.reload
 
-    assert_response(:found)
-    assert_not_nil @thread
-    assert_redirected_to comment_thread_path(@thread)
-    assert_equal true, @thread.locked
+    assert_response(:success)
+    assert_valid_json_response
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert thread.locked?, "Expected thread #{thread.title} to be locked"
   end
 
   test 'should lock thread for a specific duration if provided' do
