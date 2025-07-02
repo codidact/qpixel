@@ -252,6 +252,13 @@ interface QPixel {
    */
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
+  /**
+   * Attempts to lock a comment thread
+   * @param id id of the comment thread to lock
+   * @returns result of the operation
+   */
+  lockThread?: (id: string) => Promise<{ status: 'success' | 'failed', message?: string, errors?: string[] }>;
+
   // qpixel_dom
   DOM?: QPixelDOM;
   Popup?: typeof QPixelPopup;

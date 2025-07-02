@@ -192,14 +192,9 @@ $(() => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
-    console.log({$tgt})
     const threadID = $tgt.data("thread");
 
-    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/restrict`, {
-      type: 'lock'
-    });
-
-    const data = await resp.json();
+    const data = await QPixel.lockThread(threadID);
 
     if (data.status === 'success') {
       window.location.reload();
@@ -207,8 +202,7 @@ $(() => {
     else {
       QPixel.createNotification('danger', data.message);
     }
-
-  })
+  });
 
   $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
     evt.preventDefault();

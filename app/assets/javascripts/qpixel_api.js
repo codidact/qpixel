@@ -401,5 +401,15 @@ window.QPixel = {
       ...options,
       method: 'GET',
     })
+  },
+
+  lockThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/restrict`, {
+      type: 'lock'
+    });
+
+    const data = await resp.json();
+
+    return data;
   }
 };
