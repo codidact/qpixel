@@ -23,8 +23,8 @@ class SudoControllerTest < ActionController::TestCase
   end
 
   test 'should enter sudo mode' do
-    sign_in users(:standard_user)
     set_password(users(:standard_user), 'test1234')
+    sign_in users(:standard_user)
     session[:sudo_return] = users_me_path
     post :enter_sudo, params: { password: 'test1234' }
     assert_response(:found)
