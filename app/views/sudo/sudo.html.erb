@@ -1,0 +1,16 @@
+<h1>Re-enter your password</h1>
+
+<div class="notice is-info has-font-size-caption has-color-teal-900">
+  <p>
+    <i class="fas fa-info-circle"></i>
+    You are entering <strong>sudo mode</strong>, where you are required to verify your password to take certain
+    security-sensitive actions. This mode will last for <%= AppConfig.server_settings['user_sudo_duration'] %>
+    minutes, during which time you will not be asked for your password again.
+  </p>
+</div>
+
+<%= form_tag enter_sudo_path, method: :post do %>
+  <%= label_tag :password, 'Re-enter your password', class: 'form-element' %>
+  <%= password_field_tag :password, nil, class: 'form-element' %>
+  <%= submit_tag 'Verify', class: 'button is-primary is-filled' %>
+<% end %>

@@ -3,6 +3,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   before_action :check_sso, only: :update
   before_action :authenticate_user!, only: [:delete, :do_delete]
+  before_action :require_sudo, only: [:delete, :do_delete]
 
   def create
     super do |user|

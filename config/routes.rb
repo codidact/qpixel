@@ -205,6 +205,8 @@ Rails.application.routes.draw do
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
+    get    '/sudo',                     to: 'sudo#sudo', as: :user_sudo
+    post   '/sudo',                     to: 'sudo#enter_sudo', as: :enter_sudo
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity

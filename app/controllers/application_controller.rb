@@ -434,4 +434,12 @@ class ApplicationController < ActionController::Base
   def store_user_location!
     store_location_for(:user, request.fullpath)
   end
+
+  def require_sudo
+    unless user_signed_in? && session[:sudo].present? &&
+           DateTime.iso8601(session[:sudo]) >= AppConfig.server_settings['user_sudo_duration'].minutes.ago
+      session[:sudo_return] = request.fullpath
+      redirect_to user_sudo_path
+    end
+  end
 end
