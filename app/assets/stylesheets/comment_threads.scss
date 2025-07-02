@@ -1,7 +1,7 @@
 .post--comments-thread-wrapper {
   .post--comments-thread {
-    .widget--body {
-      padding: 0;
+    .widget--body:not(.deleted-comments) {
+        padding: 0;
 
       .comment {
         margin: 0;

@@ -58,11 +58,16 @@
 }
 
 .deleted-comments {
-  margin: -0.75rem 0;
-  padding: 0 0.25rem;
-  font-size: 0.8rem;
-  color: #666;
-  font-style: italic;
+  font-size: 0.9em;
+  text-align: center;
+  
+  &.deleted-comments {
+    padding: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 .post--comments-header {

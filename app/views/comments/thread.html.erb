@@ -67,9 +67,7 @@
           <% skipped_deleted += 1%>
           <% next %>
         <% elsif skipped_deleted > 0 %>
-          <div class="widget--body" role="listitem">
-            <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
-          </div>
+          <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
           <% skipped_deleted = 0 %>
         <% end %>
         <div class="widget--body" role="listitem">
@@ -77,9 +75,7 @@
         </div>
       <% end %>
       <% if skipped_deleted > 0 %>
-        <div class="widget--body" role="listitem">
-          <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
-        </div>
+        <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted%>
         <% skipped_deleted = 0 %>
       <% end %>
     </div>
