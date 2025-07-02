@@ -22,7 +22,6 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   end
 
   test 'ensure Devise errors are handled properly' do
-    @request.env['devise.mapping'] = Devise.mappings[:user]
     existing_user = users(:standard_user)
     try_register_user(existing_user.username, existing_user.email, 'testtest')
     assert_response(:success)
@@ -31,6 +30,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   test 'should show deletion information page' do
     sign_in users(:standard_user)
+    session[:sudo] = DateTime.now.iso8601
     get :delete
     assert_response(:success)
   end
@@ -41,8 +41,16 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path
   end
 
+  test 'should require sudo for deletion information' do
+    sign_in users(:standard_user)
+    get :delete
+    assert_response(:found)
+    assert_redirected_to user_sudo_path
+  end
+
   test 'should delete user account' do
     sign_in users(:standard_user)
+    session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: users(:standard_user).username }
     assert_response(:found)
     assert_redirected_to root_path
@@ -56,8 +64,16 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path
   end
 
+  test 'should require sudo to delete user account' do
+    sign_in users(:standard_user)
+    post :do_delete, params: { username: 'anything' }
+    assert_response(:found)
+    assert_redirected_to user_sudo_path
+  end
+
   test 'should prevent deletion if username is incorrect' do
     sign_in users(:standard_user)
+    session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: 'wrong' }
     assert_response(:success)
     assert_equal ['The username you entered was incorrect.'], assigns(:user).errors.full_messages
@@ -66,6 +82,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   test 'should prevent deletion of moderators' do
     sign_in users(:moderator)
+    session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: users(:moderator).username }
     assert_response(:success)
     assert_equal ['Moderator accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
@@ -74,6 +91,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   test 'should prevent deletion of admins' do
     sign_in users(:admin)
+    session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: users(:admin).username }
     assert_response(:success)
     assert_equal ['Admin accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
