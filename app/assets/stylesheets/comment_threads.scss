@@ -25,3 +25,13 @@
     text-align: center;
   }
 }
+
+.thread-followers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+
+  .user-card--content {
+    max-width: 75%;
+  }
+}
