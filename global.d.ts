@@ -69,6 +69,8 @@ type NotificationType = "warning" | "success" | "danger";
 
 type QPixelPopupCallback = (ev: JQuery.ClickEvent, popup: QPixelPopup) => void
 
+type QPixelPingablePopupCallback = (ev: JQuery.KeyUpEvent)=> Promise<void>
+
 declare class QPixelPopup {
   static destroyAll: () => void;
   static getPopup: (

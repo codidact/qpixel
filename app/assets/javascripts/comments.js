@@ -8,7 +8,9 @@ $(() => {
     const resp = await fetch(`/comments/post/${postId}`, {
       headers: { 'Accept': 'text/html' }
     });
+
     const data = await resp.text();
+
     $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
     $tgt.parents('.post--comments').find('.js-more-comments').remove();
   });
@@ -31,6 +33,7 @@ $(() => {
     const resp = await fetch(`${targetUrl}?inline=true&show_deleted_comments=${showDeleted ? 1 : 0}`, {
       headers: { 'Accept': 'text/html' }
     });
+
     let data = await resp.text();
 
     data = data.split("<!-- THREAD STARTS BELOW -->")[1];
@@ -107,7 +110,9 @@ $(() => {
       credentials: 'include',
       headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
+
     const content = data.content;
 
     const formTemplate = `<form action="/comments/${commentId}/edit" method="POST" class="comment-edit-form" data-remote="true">
@@ -182,7 +187,9 @@ $(() => {
       credentials: 'include',
       headers: { 'Accept': 'text/html' }
     });
+
     const data = await resp.text();
+
     $modal.find('.js-follower-display').html(data);
   });
 
@@ -230,6 +237,9 @@ $(() => {
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', pingable_popup);
 
+  /**
+   * @type {QPixelPingablePopupCallback}
+   */
   async function pingable_popup(ev) {
     if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
       return;
