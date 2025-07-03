@@ -11,6 +11,7 @@ class CommentsController < ApplicationController
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_reply_access, only: [:create]
   before_action :check_restrict_access, only: [:thread_restrict]
+  before_action :check_thread_access, only: [:thread, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
@@ -158,12 +159,9 @@ class CommentsController < ApplicationController
     end
   end
 
-  def thread
-    not_found unless @comment_thread.can_access?(current_user)
-  end
+  def thread; end
 
   def thread_followers
-    return not_found unless @comment_thread.can_access?(current_user)
     return not_found unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
@@ -295,6 +293,10 @@ class CommentsController < ApplicationController
     elsif !@post.can_access?(current_user)
       not_found
     end
+  end
+
+  def check_thread_access
+    not_found unless @comment_thread.can_access?(current_user)
   end
 
   def check_privilege
