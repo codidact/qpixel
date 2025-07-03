@@ -403,6 +403,22 @@ window.QPixel = {
     })
   },
 
+  deleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'DELETE' });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  undeleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'PATCH' });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
   lockThread: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/thread/${id}/restrict`, {
       type: 'lock'

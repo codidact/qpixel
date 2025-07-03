@@ -153,9 +153,7 @@ $(() => {
     const commentId = $comment.attr('data-id');
     const isDelete = !$comment.hasClass('deleted-content');
 
-    const resp = await QPixel.fetchJSON(`/comments/${commentId}/delete`, {}, { method: isDelete ? 'DELETE' : 'PATCH' });
-
-    const data = await resp.json();
+    const data = await (isDelete ? QPixel.deleteComment(commentId) : QPixel.undeleteComment(commentId));
 
     if (data.status === 'success') {
       if (isDelete) {

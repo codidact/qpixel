@@ -94,6 +94,12 @@ declare class QPixelPopup {
   updatePosition: () => void;
 }
 
+type QPixelResponseJSON = {
+  status: 'success' | 'failed',
+  message?: string,
+  errors?: string[]
+}
+
 interface QPixel {
   // private properties
   _filters?: Filter[] | null;
@@ -253,11 +259,25 @@ interface QPixel {
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   /**
+   * Attempts to delete a comment
+   * @param id id of the comment to delete
+   * @returns result of the operation
+   */
+  deleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to undelete a comment
+   * @param id id of the comment to undelete
+   * @returns result of the operation
+   */
+  undeleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to lock a comment thread
    * @param id id of the comment thread to lock
    * @returns result of the operation
    */
-  lockThread?: (id: string) => Promise<{ status: 'success' | 'failed', message?: string, errors?: string[] }>;
+  lockThread?: (id: string) => Promise<QPixelResponseJSON>;
 
   // qpixel_dom
   DOM?: QPixelDOM;
