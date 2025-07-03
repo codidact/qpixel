@@ -10,7 +10,9 @@
   <div class="droppanel--header">thread options</div>
   <div class="droppanel--menu">
     <% if user.at_least_moderator? || !thread.read_only? %>
-      <a href="javascript:void(0)" data-modal=".js--rename-thread-<%= thread.id %>" role="button" aria-label="Rename thread">
+      <a href="javascript:void(0)" data-modal=".js--rename-thread-<%= thread.id %>"
+                                   role="button"
+                                   aria-label="Rename thread">
         <i class="fas fa-pen fa-fw"></i> rename
       </a>
     <% end %>
