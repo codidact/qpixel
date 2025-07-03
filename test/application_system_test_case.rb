@@ -74,8 +74,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     end
 
     # Wait for tag search to finish
-    assert_text("Searching…")
-    assert_no_text("Searching…")
+    assert_text('Searching…')
+    assert_no_text('Searching…')
 
     # Get the first and last options listed
     first_option = find('#select2-post_tags_cache-results li:first-child')
