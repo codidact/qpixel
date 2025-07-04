@@ -103,24 +103,27 @@ $(() => {
 
     const originalComment = $commentBody.clone();
 
-    const resp = await fetch(`/comments/${commentId}`, {
-      credentials: 'include',
-      headers: { 'Accept': 'application/json' }
-    });
-
-    const data = await resp.json();
-
-    const content = data.content;
+    const data = await QPixel.getComment(commentId);
 
     const formTemplate = `<form action="/comments/${commentId}/edit" method="POST" class="comment-edit-form" data-remote="true">
       <label for="comment-content" class="form-element">Comment body:</label>
-      <textarea id="comment-content" rows="6" class="form-element is-small" data-thread="${threadId}" data-post="${postId}" data-character-count=".js-character-count-comment-body" name="comment[content]">${content}</textarea>
+      <textarea id="comment-content"
+                class="form-element is-small"
+                data-character-count=".js-character-count-comment-body"
+                data-post="${postId}"
+                data-thread="${threadId}"
+                name="comment[content]"
+                rows="6">${data.content}</textarea>
       <input type="submit" class="button is-muted is-filled" value="Update comment" />
-      <input type="button" name="js-discard-edit" data-comment-id="${commentId}" value="Discard Edit" class="button is-danger is-outlined js-discard-edit" />
+      <input type="button"
+             class="button is-danger is-outlined js-discard-edit"
+             data-comment-id="${commentId}"
+             name="js-discard-edit"
+             value="Discard Edit" />
       <span class="has-float-right has-font-size-caption js-character-count-comment-body"
             data-max="1000" data-min="15">
         <i class="fas fa-ellipsis-h js-character-count__icon"></i>
-        <span class="js-character-count__count">${content.length} / 1000</span>
+        <span class="js-character-count__count">${data.content.length} / 1000</span>
       </span>
     </form>`;
 

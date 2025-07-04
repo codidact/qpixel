@@ -403,6 +403,17 @@ window.QPixel = {
     });
   },
 
+  getComment: async (id) => {
+    const resp = await fetch(`/comments/${id}`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
   getThreadContent: async (id, options) => {
     const inline = options.inline ?? true;
     const showDeleted = options.showDeleted ?? false;

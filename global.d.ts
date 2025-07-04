@@ -102,6 +102,21 @@ type QPixelResponseJSON = {
   errors?: string[]
 }
 
+type QPixelComment = {
+  id: number
+  created_at: string
+  updated_at: string
+  post_id: number
+  content: string
+  deleted: boolean
+  user_id: number
+  community_id: number
+  comment_thread_id: number
+  has_reference: false
+  reference_text: string | null
+  references_comment_id: string | null
+}
+
 interface QPixel {
   // private properties
   _filters?: Filter[] | null;
@@ -261,8 +276,14 @@ interface QPixel {
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   /**
+   * Attempts get a JSON reprentation of a comment
+   * @param id id of the comment to get
+   */
+  getComment?: (id: string) => Promise<QPixelComment>
+
+  /**
    * Attempts to dynamically load thread content
-   * @param id id o fthe comment thread
+   * @param id id of the comment thread
    * @param options configuration options
    */
   getThreadContent?: (id: string, options?: {
