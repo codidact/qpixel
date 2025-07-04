@@ -21,20 +21,17 @@ $(() => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
-    openThread($tgt.closest('.post--comments-thread-wrapper')[0], $tgt.attr("href"));
+    const $threadId = $tgt.data('thread');
+    openThread($tgt.closest('.post--comments-thread-wrapper')[0], $threadId);
   });
 
   /**
    * @param {HTMLElement} wrapper
-   * @param {string} targetUrl
+   * @param {string} threadId
    * @param {boolean} [showDeleted]
    */
-  async function openThread(wrapper, targetUrl, showDeleted = false) {
-    const resp = await fetch(`${targetUrl}?inline=true&show_deleted_comments=${showDeleted ? 1 : 0}`, {
-      headers: { 'Accept': 'text/html' }
-    });
-
-    let data = await resp.text();
+  async function openThread(wrapper, threadId, showDeleted = false) {
+    let data = await QPixel.getThreadContent(threadId, { showDeleted });
 
     data = data.split("<!-- THREAD STARTS BELOW -->")[1];
     data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
@@ -44,7 +41,7 @@ $(() => {
     $('a.show-deleted-comments').click(async (evt) => {
       if (evt.ctrlKey) { return; }
       evt.preventDefault();
-      openThread(wrapper, targetUrl, true);
+      openThread(wrapper, threadId, true);
     });
 
     window.MathJax && MathJax.typeset();
@@ -234,6 +231,9 @@ $(() => {
     $(evt.target).attr('data-disable-with', 'Posting...');
   });
 
+  /**
+   * @type {Record<`${number}-${number}`, Record<string, number>>}
+   */
   const pingable = {};
   $(document).on('keyup', '.js-comment-field', pingable_popup);
 

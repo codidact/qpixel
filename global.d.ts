@@ -261,6 +261,16 @@ interface QPixel {
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   /**
+   * Attempts to dynamically load thread content
+   * @param id id o fthe comment thread
+   * @param options configuration options
+   */
+  getThreadContent?: (id: string, options?: {
+    inline?: boolean,
+    showDeleted?: boolean
+  }) => Promise<string>
+
+  /**
    * Attempts to delete a comment
    * @param id id of the comment to delete
    * @returns result of the operation

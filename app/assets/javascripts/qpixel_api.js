@@ -400,7 +400,24 @@ window.QPixel = {
     return QPixel.fetchJSON(uri, {}, {
       ...options,
       method: 'GET',
-    })
+    });
+  },
+
+  getThreadContent: async (id, options) => {
+    const inline = options.inline ?? true;
+    const showDeleted = options.showDeleted ?? false;
+
+    const url = new URL(`/comments/thread/${id}`, window.location.origin);
+    url.searchParams.append('inline', `${inline}`);
+    url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
   },
 
   deleteComment: async (id) => {
