@@ -45,8 +45,6 @@ class User < ApplicationRecord
   scope :active, -> { where(deleted: false) }
   scope :deleted, -> { where(deleted: true) }
 
-  after_create :send_welcome_tour_message, :ensure_websites
-
   def self.list_includes
     includes(:posts, :avatar_attachment)
   end
@@ -217,6 +215,26 @@ class User < ApplicationRecord
   # @return [Boolean] check result
   def at_least_global_moderator?
     global_moderator? || global_admin? || false
+  end
+
+  # Which communities is this user a moderator (local or global) on?
+  # @return [Community[]] list of communities
+  def moderator_communities
+    if global_moderator?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_moderator: true })
+    end
+  end
+
+  # Which communities is this user an admin (local or global) of?
+  # @return [Community[]] list of communities
+  def admin_communities
+    if global_admin?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_admin: true })
+    end
   end
 
   # Is the user allowed to see deleted posts?
