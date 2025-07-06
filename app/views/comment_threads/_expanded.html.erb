@@ -1,6 +1,19 @@
+<%#
+    Full thread view with all the details & actions
+
+    Instance variables:
+      @comment_thread : comment thread to display
+      @post : parent post for the comment thread
+
+    Parameters:
+      params[:inline] : Whether to display the thread inline with the parent post or as a separate page
+      params[:show_deleted_comments] : whether to display deleted comments for those who can see them
+%>
+
 <% pingable = get_pingable(@comment_thread) %>
 <% shown_comments_count = [5, @comment_thread.reply_count].min %>
 <% is_inline = params[:inline] == 'true' %>
+<% show_deleted = params[:show_deleted_comments] == "1" %>
 
 <div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= is_inline ? 'post--comments-thread is-embedded' : '' %>">
   <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>"
@@ -41,7 +54,7 @@
     <% end %>
     <div role="list">
       <% comments.each do |comment| %>
-        <% if comment.deleted && !(current_user&.at_least_moderator? && params[:show_deleted_comments] == "1") %>
+        <% if comment.deleted && !(current_user&.at_least_moderator? && show_deleted) %>
           <% skipped_deleted += 1%>
           <% next %>
         <% elsif skipped_deleted > 0 %>
