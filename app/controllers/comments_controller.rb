@@ -167,7 +167,14 @@ class CommentsController < ApplicationController
 
   def thread
     respond_to do |format|
-      format.html { render 'comments/thread' }
+      format.html do
+        if params[:inline] == 'true'
+          render partial: 'comment_threads/expanded', locals: { thread: @comment_thread }
+        else
+          render 'comments/thread'
+        end
+      end
+
       format.json { render json: @comment_thread }
     end
   end

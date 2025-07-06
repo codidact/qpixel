@@ -31,10 +31,7 @@ $(() => {
    * @param {boolean} [showDeleted]
    */
   async function openThread(wrapper, threadId, showDeleted = false) {
-    let data = await QPixel.getThreadContent(threadId, { showDeleted });
-
-    data = data.split("<!-- THREAD STARTS BELOW -->")[1];
-    data = data.split("<!-- THREAD ENDS ABOVE -->")[0];
+    const data = await QPixel.getThreadContent(threadId, { showDeleted });
 
     wrapper.innerHTML = data;
 
