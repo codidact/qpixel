@@ -168,7 +168,7 @@ class CommentsController < ApplicationController
   def thread
     respond_to do |format|
       format.html { render 'comments/thread' }
-      format.json { render json: @thread }
+      format.json { render json: @comment_thread }
     end
   end
 

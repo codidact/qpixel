@@ -124,7 +124,8 @@ class ActiveSupport::TestCase
 
   def assert_valid_json_response
     assert_nothing_raised do
-      JSON.parse(response.body)
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
     end
   end
 
