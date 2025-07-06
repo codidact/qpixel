@@ -2,6 +2,7 @@
     Comment thread view.
 
     Instance variables:
+      @comment_thread : CommentThread to display
       @post : Post the thread belongs to
 %>
 
@@ -22,5 +23,5 @@
 </details>
 
 <!-- THREAD STARTS BELOW -->
-<%= render 'comment_threads/expanded' %>
+<%= render 'comment_threads/expanded', thread: @comment_thread %>
 <!-- THREAD ENDS ABOVE -->

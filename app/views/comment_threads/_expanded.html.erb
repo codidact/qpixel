@@ -1,50 +1,49 @@
 <%#
     Full thread view with all the details & actions
 
-    Instance variables:
-      @comment_thread : comment thread to display
-      @post : parent post for the comment thread
-
     Parameters:
       params[:inline] : Whether to display the thread inline with the parent post or as a separate page
       params[:show_deleted_comments] : whether to display deleted comments for those who can see them
+
+    Variables:
+      thread : CommentThread to display
 %>
 
-<% pingable = get_pingable(@comment_thread) %>
-<% shown_comments_count = [5, @comment_thread.reply_count].min %>
+<% pingable = get_pingable(thread) %>
+<% shown_comments_count = [5, thread.reply_count].min %>
 <% is_inline = params[:inline] == 'true' %>
 <% show_deleted = params[:show_deleted_comments] == "1" %>
 
-<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= is_inline ? 'post--comments-thread is-embedded' : '' %>">
-  <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>"
-       data-archived="<%= @comment_thread.archived %>"
-       data-deleted="<%= @comment_thread.deleted %>"
-       data-locked="<%= @comment_thread.locked? %>"
-       data-thread="<%= @comment_thread.id %>"
-       data-comments="<%= @comment_thread.reply_count %>"
-       data-post="<%= @post.id %>">
+<div class="<%= thread.deleted ? 'h-bg-red-050' : '' %> <%= is_inline ? 'post--comments-thread is-embedded' : '' %>">
+  <div class="widget thread <%= thread.deleted ? 'is-red' : '' %>"
+       data-archived="<%= thread.archived %>"
+       data-deleted="<%= thread.deleted %>"
+       data-locked="<%= thread.locked? %>"
+       data-thread="<%= thread.id %>"
+       data-comments="<%= thread.reply_count %>"
+       data-post="<%= thread.post.id %>">
     <div class="widget--header">
       <% if is_inline %>
-        <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">show thread</a>
+        <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
       <% end %>
       <% if current_user&.privilege?('flag_curate') %>
-        <%= render 'comments/thread_tools_link', thread: @comment_thread %>
+        <%= render 'comments/thread_tools_link', thread: thread %>
       <% end %>
       <% unless current_user.nil? %>
-        <%= render 'comments/thread_follow_link', thread: @comment_thread, user: current_user %>
+        <%= render 'comments/thread_follow_link', thread: thread, user: current_user %>
       <% end %>
-      <% if @comment_thread.deleted %>
+      <% if thread.deleted %>
         <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
-      <% elsif @comment_thread.archived %>
+      <% elsif thread.archived %>
         <i class="fas fa-archive fa-fw" title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
-      <% elsif @comment_thread.locked? %>
+      <% elsif thread.locked? %>
         <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
       <% end %>
-      <span class="js-thread-title"><%= @comment_thread.title %></span>
+      <span class="js-thread-title"><%= thread.title %></span>
     </div>
     <% skipped_deleted = 0 %>
-    <% comments = @comment_thread.comments %>
+    <% comments = thread.comments %>
     <% if is_inline %>
       <% count = 0 %>
       <% comments = comments.take_while do |comment| %>
@@ -71,11 +70,11 @@
       <% end %>
     </div>
 
-    <% if is_inline && shown_comments_count < @comment_thread.reply_count %>
+    <% if is_inline && shown_comments_count < thread.reply_count %>
       <div class="widget--footer widget--show-more">
         <p class="h-m-0">
-          Showing <%= shown_comments_count %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
-          <%= link_to 'See the whole thread', comment_thread_path(@comment_thread) %>.
+          Showing <%= shown_comments_count %> of <%= pluralize(thread.reply_count, 'comment') %>.
+          <%= link_to 'See the whole thread', comment_thread_path(thread) %>.
         </p>
       </div>
     <% end %>
@@ -83,8 +82,8 @@
     <% unless current_user.nil? %>
       <div class="widget--footer">
         <%= render 'comments/reply_to_thread', inline: is_inline,
-                                               post: @post,
-                                               thread: @comment_thread,
+                                               post: thread.post,
+                                               thread: thread,
                                                user: current_user %>
       </div>
     <% end %>
@@ -92,5 +91,5 @@
 </div>
 
 <% if current_user&.privilege?('flag_curate') %>
-  <%= render 'comments/thread_actions_modal', thread: @comment_thread, user: current_user %>
+  <%= render 'comments/thread_actions_modal', thread: thread, user: current_user %>
 <% end %>
