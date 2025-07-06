@@ -139,7 +139,7 @@ module CommentsHelper
     comments_limit = user.max_comments_per_day(post)
     is_rate_limited = comments_count >= comments_limit
 
-    unless is_rate_limited
+    unless is_rate_limited && user.standard?
       return [false, nil]
     end
 
