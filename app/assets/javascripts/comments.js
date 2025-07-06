@@ -5,11 +5,7 @@ $(() => {
     const $anchor = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const postId = $anchor.attr('data-post-id');
 
-    const resp = await fetch(`/comments/post/${postId}`, {
-      headers: { 'Accept': 'text/html' }
-    });
-
-    const data = await resp.text();
+    const data = await QPixel.getThreadsListContent(postId);
 
     $tgt.parents('.post--comments').find('.post--comments-container').html(data).trigger('ajax:success');
     $tgt.parents('.post--comments').find('.js-more-comments').remove();

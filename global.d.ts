@@ -292,6 +292,12 @@ interface QPixel {
   }) => Promise<string>
 
   /**
+   * Attempts to dynamically load a list of comment threads for a given post
+   * @param id id of the post to load
+   */
+  getThreadsListContent?: (id: string) => Promise<string>
+
+  /**
    * Attempts to delete a comment
    * @param id id of the comment to delete
    * @returns result of the operation

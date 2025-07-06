@@ -431,6 +431,18 @@ window.QPixel = {
     return content;
   },
 
+  getThreadsListContent: async (id) => {
+    const url = new URL(`/comments/post/${id}`, window.location.origin);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
+  },
+
   deleteComment: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'DELETE' });
 
