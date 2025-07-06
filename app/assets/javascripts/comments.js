@@ -22,6 +22,7 @@ $(() => {
 
     const $tgt = $(evt.target);
     const $threadId = $tgt.data('thread');
+
     openThread($tgt.closest('.post--comments-thread-wrapper')[0], $threadId);
   });
 
@@ -319,7 +320,7 @@ $(() => {
     else {
       $reply.hide();
     }
-  })
+  });
 
   $('.js-comment-permalink > .js-text').text('copy link');
   $(document).on('click', '.js-comment-permalink', (ev) => {
