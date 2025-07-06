@@ -169,7 +169,9 @@ class CommentsController < ApplicationController
     respond_to do |format|
       format.html do
         if params[:inline] == 'true'
-          render partial: 'comment_threads/expanded', locals: { thread: @comment_thread }
+          render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
+                                                                show_deleted: params[:show_deleted_comments] == '1',
+                                                                thread: @comment_thread }
         else
           render 'comments/thread'
         end

@@ -1,9 +1,12 @@
 <%#
     Comment thread view.
 
+    Parameters:
+      params[:inline] : whether the parent thread is displayed inline
+
     Instance variables:
       @comment_thread : CommentThread to display
-      @post : Post the thread belongs to
+      @post           : Post the thread belongs to
 %>
 
 <h1>Comments on
@@ -22,4 +25,6 @@
   <%= render 'posts/expanded', post: @post %>
 </details>
 
-<%= render 'comment_threads/expanded', thread: @comment_thread %>
+<%= render 'comment_threads/expanded', inline: params[:inline] == 'true',
+                                       show_deleted: params[:show_deleted_comments] == '1',
+                                       thread: @comment_thread %>
