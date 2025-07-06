@@ -165,7 +165,12 @@ class CommentsController < ApplicationController
     end
   end
 
-  def thread; end
+  def thread
+    respond_to do |format|
+      format.html { render 'comments/thread' }
+      format.json { render json: @thread }
+    end
+  end
 
   def thread_followers
     return not_found unless current_user&.at_least_moderator?

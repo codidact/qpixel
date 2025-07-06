@@ -97,6 +97,12 @@ module CommentsControllerTestHelpers
     get :show, params: { id: comment.id, format: format }
   end
 
+  # Attempts to show a single comment thread
+  # @param thread [CommentThread] comment thread to show
+  def try_show_thread(thread, format: :html)
+    get :thread, params: { id: thread.id, format: format }
+  end
+
   # Attempts to undelete a single comment
   # @param comment [Comment] comment to undelete
   def try_undelete_comment(comment)

@@ -6,16 +6,29 @@ class CommentsControllerTest < ActionController::TestCase
   include CommentsControllerTestHelpers
 
   test 'should correctly get one comment' do
-    try_show_comment(comments(:one))
+    [:html, :json].each do |format|
+      try_show_comment(comments(:one), format: format)
 
-    assert_response(:success)
-    assert_not_nil assigns(:comment)
+      assert_response(:success)
+      assert_not_nil assigns(:comment)
+
+      if format == :json
+        assert_valid_json_response
+      end
+    end
   end
 
-  test 'should correctly respond to the JSON format' do
-    try_show_comment(comments(:one), format: :json)
+  test 'should correctly get one thread' do
+    [:html, :json].each do |format|
+      try_show_thread(comment_threads(:normal), format: format)
 
-    assert_response(:success)
-    assert_valid_json_response
+      assert_response(:success)
+      assert_not_nil assigns(:comment_thread)
+      assert_not_nil assigns(:post)
+
+      if format == :json
+        assert_valid_json_response
+      end
+    end
   end
 end
