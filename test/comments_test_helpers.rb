@@ -31,15 +31,19 @@ module CommentsControllerTestHelpers
   # @param thread [CommentThread] thread to create the comment in
   # @param mentions [Array<User>] list of user @-mentions, if any
   # @param content [String] content of the comment, if any
+  # @param format [Symbol] whether to respond with HTML or JSON
+  # @param inline [Boolean] whether to stay on the post page
   def try_create_comment(thread,
                          mentions: [],
                          content: 'sample comment content',
-                         format: :html)
+                         format: :html,
+                         inline: false)
     content_parts = [content] + mentions.map { |u| "@##{u.id}" }
 
     post(:create, params: { id: thread.id,
                             post_id: thread.post.id,
-                            content: content_parts.join(' ') },
+                            content: content_parts.join(' '),
+                            inline: inline },
                             format: format)
   end
 

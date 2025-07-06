@@ -106,6 +106,24 @@ class CommentsControllerTest < ActionController::TestCase
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for comment author'
   end
 
+  test 'should correctly redirect depending on the inline parameter' do
+    thread = comment_threads(:normal)
+
+    sign_in users(:editor)
+
+    [false, true].each do |inline|
+      try_create_comment(thread, inline: inline)
+
+      assert_response(:found)
+
+      if inline
+        assert_redirected_to @controller.helpers.generic_share_link(thread.post)
+      else
+        assert_redirected_to comment_thread_path(thread)
+      end
+    end
+  end
+
   test 'should require auth to create comments' do
     try_create_comment(comment_threads(:normal))
     assert_redirected_to_sign_in

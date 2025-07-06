@@ -2,6 +2,7 @@
   Renders reply to comment thread button & input
 
   Variables:
+    inline : whether the reply is done via inline thread view
     post : post the thread is for
     text : text to display on the button
     thread : thread to create a reply for
@@ -35,6 +36,7 @@
 <% if can_comment %>
   <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form', id: "reply-to-thread-form-#{post.id}" do %>
     <%= hidden_field_tag :post_id, post.id %>
+    <%= hidden_field_tag :inline, inline %>
     <%= label_tag :content, 'Your message', class: 'form-element' %>
     <%= text_area_tag :content, '',
                       class: 'form-element js-comment-field',

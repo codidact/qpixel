@@ -1,7 +1,8 @@
 <% pingable = get_pingable(@comment_thread) %>
 <% shown_comments_count = [5, @comment_thread.reply_count].min %>
+<% is_inline = params[:inline] == 'true' %>
 
-<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= params[:inline] == 'true' ? 'post--comments-thread is-embedded' : '' %>">
+<div class="<%= @comment_thread.deleted ? 'h-bg-red-050' : '' %> <%= is_inline ? 'post--comments-thread is-embedded' : '' %>">
   <div class="widget thread <%= @comment_thread.deleted ? 'is-red' : '' %>"
        data-archived="<%= @comment_thread.archived %>"
        data-deleted="<%= @comment_thread.deleted %>"
@@ -10,7 +11,7 @@
        data-comments="<%= @comment_thread.reply_count %>"
        data-post="<%= @post.id %>">
     <div class="widget--header">
-      <% if params[:inline] == 'true' %>
+      <% if is_inline %>
         <a href="<%= comment_thread_path(@comment_thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
       <% end %>
@@ -31,7 +32,7 @@
     </div>
     <% skipped_deleted = 0 %>
     <% comments = @comment_thread.comments %>
-    <% if params[:inline] == 'true' %>
+    <% if is_inline %>
       <% count = 0 %>
       <% comments = comments.take_while do |comment| %>
         <% count += 1 unless comment.deleted %>
@@ -57,7 +58,7 @@
       <% end %>
     </div>
 
-    <% if params[:inline] == 'true' && shown_comments_count < @comment_thread.reply_count %>
+    <% if is_inline && shown_comments_count < @comment_thread.reply_count %>
       <div class="widget--footer widget--show-more">
         <p class="h-m-0">
           Showing <%= shown_comments_count %> of <%= pluralize(@comment_thread.reply_count, 'comment') %>.
@@ -68,7 +69,10 @@
 
     <% unless current_user.nil? %>
       <div class="widget--footer">
-        <%= render 'comments/reply_to_thread', post: @post, thread: @comment_thread, user: current_user %>
+        <%= render 'comments/reply_to_thread', inline: is_inline,
+                                               post: @post,
+                                               thread: @comment_thread,
+                                               user: current_user %>
       </div>
     <% end %>
   </div>
