@@ -32,15 +32,22 @@ $(() => {
 
     wrapper.innerHTML = data;
 
-    $('a.show-deleted-comments').click(async (evt) => {
-      if (evt.ctrlKey) { return; }
-      evt.preventDefault();
-      openThread(wrapper, threadId, true);
-    });
-
     window.MathJax && MathJax.typeset();
     window.hljs && hljs.highlightAll();
   }
+
+  $(document).on('click', '.js-show-deleted-comments', (ev) => {
+    if (ev.ctrlKey) { return; } // do we really need it?
+
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const $threadId = $tgt.data('thread');
+
+    const wrapper = $tgt.closest('.post--comments-thread-wrapper')[0];
+
+    openThread(wrapper, $threadId, true);
+  });
 
   $(document).on('click', '.js-collapse-thread', async (ev) => {
     const $tgt = $(ev.target);
