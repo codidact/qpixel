@@ -68,7 +68,6 @@ class CommentsController < ApplicationController
 
   def create
     body = params[:content]
-    inline = params[:inline]
     pings = check_for_pings @comment_thread, body
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
@@ -101,8 +100,8 @@ class CommentsController < ApplicationController
       flash[:danger] = @comment.errors.full_messages.join(', ')
     end
 
-    if inline == 'true'
-      redirect_to helpers.generic_share_link(@post)
+    if params[:inline] == 'true'
+      redirect_to helpers.generic_share_link(@post, expand: @comment_thread.id)
     else
       redirect_to comment_thread_path(@comment_thread.id)
     end

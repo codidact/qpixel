@@ -6,6 +6,7 @@
       @post_type : PostType of the post
 
     Parameters:
+      params[:expand] : CommentThread ID to render expanded view for
       params[:sort] : sorting type for the post's children
 
     Variables:
@@ -548,7 +549,8 @@
           <% end %>
           </div>
           <div class="post--comments-container" role="list">
-            <%= render 'comments/threads_list', comment_threads: comment_threads.first(5) %>
+            <%= render 'comments/threads_list', comment_threads: comment_threads.first(5),
+                                                expand: params[:expand] %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>
