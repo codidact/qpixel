@@ -7,7 +7,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should correctly undelete comments' do
     sign_in users(:standard_user)
-    try_undelete_comment(comments(:deleted))
+    try_undelete_comment(comments(:deleted), format: :json)
 
     assert_response(:success)
     assert_valid_json_response
@@ -21,7 +21,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should allow moderators to undelete comments' do
     sign_in users(:moderator)
-    try_undelete_comment(comments(:deleted))
+    try_undelete_comment(comments(:deleted), format: :json)
 
     assert_response(:success)
     assert_valid_json_response
@@ -43,7 +43,7 @@ class CommentsControllerTest < ActionController::TestCase
     comment.stub(:update, false) do
       Comment.stub(:unscoped, Comment) do
         Comment.stub(:find, comment) do
-          try_undelete_comment(comment)
+          try_undelete_comment(comment, format: :json)
 
           assert_response(:internal_server_error)
         end

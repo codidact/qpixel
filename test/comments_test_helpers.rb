@@ -105,8 +105,8 @@ module CommentsControllerTestHelpers
 
   # Attempts to undelete a single comment
   # @param comment [Comment] comment to undelete
-  def try_undelete_comment(comment)
-    patch :undelete, params: { id: comment.id }
+  def try_undelete_comment(comment, format: :html)
+    patch :undelete, params: { id: comment.id, format: format }
   end
 
   # Attempts to update a given comment
