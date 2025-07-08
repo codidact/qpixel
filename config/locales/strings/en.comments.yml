@@ -17,6 +17,10 @@ en:
         This post cannot be commented on.
       disabled_on_thread_generic: >
         This thread cannot be replied to.
+      new_user_rate_limited: >
+        As a new user, you can only comment on your own posts and on answers to them.
+      rate_limited: >
+        You have used your daily limit of %{count} comments. Come back tomorrow to continue.
       exempt_from_disabled: >
         However, you are exempt as a moderator.
     labels:

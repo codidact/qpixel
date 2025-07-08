@@ -64,9 +64,14 @@ class CommentsHelperTest < ActionView::TestCase
       [own_post, other_post].each do |post|
         rate_limited, limit_message = comment_rate_limited?(user, post)
         assert_equal true, rate_limited
-        assert_not_nil limit_message
 
-        log = AuditLog.where(event_type: 'comment', related: post, user: user).order(created_at: :desc).first
+        if user.same_as?(basic)
+          assert_equal I18n.t('comments.errors.new_user_rate_limited'), limit_message
+        else
+          assert_equal rate_limited_error_msg(user, post), limit_message
+        end
+
+        log = AuditLog.of_type('comment').where(related: post, user: user).order(created_at: :desc).first
         assert log.present?, 'Expected audit log for attempting to comment on a post while rate-limited to be created'
       end
     end

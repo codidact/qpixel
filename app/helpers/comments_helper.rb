@@ -99,6 +99,14 @@ module CommentsHelper
     end.strip
   end
 
+  # Gets a standard comments rate limit error message for a given user & post
+  # @param user [User] user to get the comments count for
+  # @param post [Post] post to get the comments count for
+  def rate_limited_error_msg(user, post)
+    comments_count = user.recent_comments_count(post)
+    I18n.t('comments.errors.rate_limited', count: comments_count)
+  end
+
   ##
   # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
   # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
@@ -144,18 +152,17 @@ module CommentsHelper
     end
 
     if user.new? && !user.owns_post_or_parent?(post) && comments_limit.zero?
-      message = 'As a new user, you can only comment on your own posts and on answers to them.'
+      message = I18n.t('comments.errors.new_user_rate_limited')
 
       if create_audit_log
         AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
                                 comment: "'unrestricted' ability required to comment on non-owned posts")
       end
     else
-      message = "You have used your daily limit of #{comments_count} comments. Come back tomorrow to continue."
+      message = rate_limited_error_msg(user, post)
 
       if create_audit_log
-        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                comment: "limit: #{comments_limit}")
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user, comment: "limit: #{comments_limit}")
       end
     end
 
