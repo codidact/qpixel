@@ -1,7 +1,8 @@
 $(() => {
-    $(".reaction-submit").on("click", async (e) => {
-        e.preventDefault();
-        const $this = $(e.target);
+    $(".reaction-submit").on("click", async (ev) => {
+        ev.preventDefault();
+
+        const $this = $(ev.target);
         const $rt = $this.parent().find('.reaction-type:checked');
         const $comment = $this.parent().find('.reaction-comment-field');
         const postId = $this.attr("data-post-id")
@@ -26,16 +27,15 @@ $(() => {
 
         const data = await resp.json();
 
-        if (data.status === 'success') {
+        QPixel.handleJSONResponse(data, () => {
             window.location.reload();
-        }
-        else {
-            QPixel.createNotification("danger", data.message);
-        }
+        });
     });
-    $(".reaction-retract").on("click", async (e) => {
-        e.preventDefault();
-        const $this = $(e.target);
+
+    $(".reaction-retract").on("click", async (ev) => {
+        ev.preventDefault();
+
+        const $this = $(ev.target);
         const postId = $this.attr("data-post")
         const reactionType = $this.attr("data-reaction");
 
@@ -45,11 +45,8 @@ $(() => {
 
         const data = await resp.json();
 
-        if (data.status === 'success') {
+        QPixel.handleJSONResponse(data, () => {
             window.location.reload();
-        }
-        else {
-            QPixel.createNotification("danger", data.message);
-        }
+        });
     });
 });

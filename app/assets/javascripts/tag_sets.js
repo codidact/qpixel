@@ -2,12 +2,13 @@ $(() => {
   $(document).on('click', '.js-tag-set-name', async (ev) => {
     const $tgt = $(ev.target);
     const tagSetId = $tgt.data('set-id');
+
     const response = await fetch(`/admin/tag-sets/${tagSetId}`, {
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await response.json();
+
     const name = data.name;
     const $form = `<input type="text" class="js-edit-set-name form-element" value="${name}" />
                    <input type="button" class="js-edit-name-submit button is-filled" data-set-id="${tagSetId}" value="Update" />`;
@@ -30,11 +31,8 @@ $(() => {
 
     const data = await response.json();
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, (data) => {
       $name.text(data.tag_set.name);
-    }
-    else {
-      QPixel.createNotification('danger', `Failed to change name (${response.status})`);
-    }
+    });
   });
 });

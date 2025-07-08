@@ -11,9 +11,7 @@ $(() => {
 
     const data = await resp.json();
 
-    if (data.status !== 'success') {
-      QPixel.createNotification('danger', 'Failed to update your subscription. Please report this bug on Meta.');
-    }
+    QPixel.handleJSONResponse(data, () => {});
   });
 
   $('.js-remove-subscription').on('click', async (evt) => {
@@ -29,11 +27,8 @@ $(() => {
 
     const data = await resp.json();
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, () => {
       $sub.remove();
-    }
-    else {
-      QPixel.createNotification('danger', 'Failed to remove your subscription. Please report this bug on Meta.');
-    }
+    });
   });
 });

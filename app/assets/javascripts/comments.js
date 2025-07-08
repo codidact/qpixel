@@ -142,13 +142,10 @@ $(() => {
     const $tgt = $(evt.target);
     const $comment = $tgt.parents('.comment');
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, (data) => {
       const newComment = $(data.comment);
       $comment.html(newComment[0].innerHTML);
-    }
-    else {
-      QPixel.createNotification('danger', data.message);
-    }
+    });
   });
 
   $(document).on('click', '.js-comment-delete, .js-comment-undelete', async (evt) => {
@@ -161,7 +158,7 @@ $(() => {
 
     const data = await (isDelete ? QPixel.deleteComment(commentId) : QPixel.undeleteComment(commentId));
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, () => {
       if (isDelete) {
         $comment.addClass('deleted-content');
         $tgt.removeClass('js-comment-delete').addClass('js-comment-undelete').text('undelete');
@@ -170,10 +167,7 @@ $(() => {
         $comment.removeClass('deleted-content');
         $tgt.removeClass('js-comment-undelete').addClass('js-comment-delete').text('delete');
       }
-    }
-    else {
-      QPixel.createNotification('danger', data.message);
-    }
+    });
   });
 
   $(document).on('click', '.js--show-followers', async (evt) => {
@@ -202,12 +196,9 @@ $(() => {
 
     const data = await QPixel.lockThread(threadID);
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, () => {
       window.location.reload();
-    }
-    else {
-      QPixel.createNotification('danger', data.message);
-    }
+    });
   });
 
   $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
@@ -222,12 +213,9 @@ $(() => {
 
     const data = await resp.json();
 
-    if (data.status === 'success') {
+    QPixel.handleJSONResponse(data, () => {
       window.location.reload();
-    }
-    else {
-      QPixel.createNotification('danger', data.message);
-    }
+    });
   });
 
   $(document).on('click', '.comment-form input[type="submit"]', async (evt) => {

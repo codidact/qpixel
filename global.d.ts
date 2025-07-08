@@ -298,6 +298,13 @@ interface QPixel {
   getThreadsListContent?: (id: string) => Promise<string>
 
   /**
+   * Processes JSON responses from QPixel API
+   * @param data 
+   * @param onSuccess callback to call for successful requests
+   */
+  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T, onSuccess: (data: T) => void) => void
+
+  /**
    * Attempts to delete a comment
    * @param id id of the comment to delete
    * @returns result of the operation

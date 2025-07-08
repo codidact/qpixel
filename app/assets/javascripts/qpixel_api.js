@@ -443,6 +443,15 @@ window.QPixel = {
     return content;
   },
 
+  handleJSONResponse: (data, onSuccess) => {
+    if (data.status === 'success') {
+      onSuccess(data)
+    }
+    else {
+      QPixel.createNotification('danger', data.message);
+    }
+  },
+
   deleteComment: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'DELETE' });
 
