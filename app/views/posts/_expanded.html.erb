@@ -2,16 +2,17 @@
     Full post view, containing all details and interactions.
 
     Instance variables:
-      @category : Category the post belongs to, if any
-      @post_type : PostType of the post
+    ? @category  : Category the post belongs to, if any
+    ? @post_type : PostType of the post
 
     Parameters:
-      params[:expand] : CommentThread ID to render expanded view for
-      params[:sort] : sorting type for the post's children
+    ? params[:comment_id] : Comment ID to show even if it would be hidden otherwise 
+    ? params[:thread_id]  : CommentThread ID to render expanded view for
+    ? params[:sort]       : sorting type for the post's children
 
     Variables:
-      post : the Post instance to display
-      float_notice : whether to display the float notice
+      post         : the Post instance to display
+    ? float_notice : whether to display the float notice
 %>
 
 <% float_notice ||= false %>
@@ -550,7 +551,8 @@
           </div>
           <div class="post--comments-container" role="list">
             <%= render 'comments/threads_list', comment_threads: comment_threads.first(5),
-                                                expand: params[:expand] %>
+                                                comment_id: params[:comment_id],
+                                                thread_id: params[:thread_id] %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>

@@ -108,8 +108,9 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should correctly redirect depending on the inline parameter' do
     thread = comment_threads(:normal)
+    editor = users(:editor)
 
-    sign_in users(:editor)
+    sign_in editor
 
     [false, true].each do |inline|
       try_create_comment(thread, inline: inline)
@@ -117,7 +118,11 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response(:found)
 
       if inline
-        assert_redirected_to @controller.helpers.generic_share_link(thread.post, expand: thread.id)
+        comment = Comment.by(editor).where(comment_thread: thread).last
+
+        assert_redirected_to @controller.helpers.generic_share_link(thread.post,
+                                                                    comment_id: comment.id,
+                                                                    thread_id: thread.id)
       else
         assert_redirected_to comment_thread_path(thread)
       end

@@ -3,12 +3,14 @@
 
     Variables:
       comment_threads : an Array of CommentThread instances to list
-    ? expand          : CommentThread ID to render expanded view for
+    ? comment_id      : Comment to show even if it would be hidden otherwise
+    ? thread_id       : CommentThread ID to render expanded view for
     ? show_deleted    : whether to display deleted comments in the expanded view
 %>
 
 <%
-  expand ||= defined?(expand) ? expand : nil
+  comment_id ||= defined?(comment_id) ? comment_id : nil
+  thread_id ||= defined?(thread_id) ? thread_id : nil
   show_deleted ||= defined?(show_deleted) ? show_deleted : false
 %>
 
@@ -22,8 +24,11 @@
   %>
 
   <div class="post--comments-thread-wrapper" role="listitem">
-    <% if expand.to_i == thread.id.to_i %>
-      <%= render 'comment_threads/expanded', inline: true, show_deleted: show_deleted, thread: thread %>
+    <% if thread_id.to_i == thread.id.to_i %>
+      <%= render 'comment_threads/expanded', comment_id: comment_id,
+                                             inline: true,
+                                             show_deleted: show_deleted,
+                                             thread: thread %>
     <% else %>
       <%= render 'comment_threads/collapsed', thread: thread %>
     <% end %>

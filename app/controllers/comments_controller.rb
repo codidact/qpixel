@@ -80,7 +80,9 @@ class CommentsController < ApplicationController
       return
     end
 
-    if @comment.save
+    status = @comment.save
+
+    if status
       apply_pings pings
       @comment_thread.thread_follower.each do |follower|
         next if follower.user_id == current_user.id
@@ -101,7 +103,8 @@ class CommentsController < ApplicationController
     end
 
     if params[:inline] == 'true'
-      redirect_to helpers.generic_share_link(@post, expand: @comment_thread.id)
+      redirect_to helpers.generic_share_link(@post, comment_id: status ? @comment.id : nil,
+                                                    thread_id: @comment_thread.id)
     else
       redirect_to comment_thread_path(@comment_thread.id)
     end

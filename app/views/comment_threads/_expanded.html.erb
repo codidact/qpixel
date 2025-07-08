@@ -2,13 +2,16 @@
     Full thread view with all the details & actions
 
     Variables:
+    ? comment_id   : Comment ID to show even if it would be hidden otherwise
       inline       : whether the thread is diplayed inline with the parent post
       show_deleted : whether to display deleted comments for those who can see them
       thread       : CommentThread to display
 %>
 
+<% max_shown_comments = 5 %>
+<% comment_id ||= defined?(comment_id) ? comment_id : nil %>
 <% pingable = get_pingable(thread) %>
-<% shown_comments_count = [5, thread.reply_count].min %>
+<% shown_comments_count = [max_shown_comments, thread.reply_count].min %>
 
 <div class="<%= thread.deleted ? 'h-bg-red-050' : '' %> <%= inline ? 'post--comments-thread is-embedded' : '' %>">
   <div class="widget thread <%= thread.deleted ? 'is-red' : '' %>"
@@ -42,9 +45,12 @@
     <% comments = thread.comments %>
     <% if inline %>
       <% count = 0 %>
-      <% comments = comments.take_while do |comment| %>
+      <% comments = comments.select do |comment| %>
         <% count += 1 unless comment.deleted %>
-        <% count <= 5 %>
+        <% count <= max_shown_comments || comment.id.to_i == comment_id.to_i %>
+      <% end %>
+      <% if comments.size > max_shown_comments %>
+        <% shown_comments_count += comments.select { |c| c.id.to_i == comment_id.to_i }.size %>
       <% end %>
     <% end %>
     <div role="list">
