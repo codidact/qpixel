@@ -51,10 +51,11 @@ $(() => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
+    const $inline = $tgt.data('inline');
     const $threadId = $tgt.data('thread');
     const wrapper = getCommentThreadWrapper($tgt);
 
-    openThread(wrapper, $threadId, { showDeleted: true });
+    openThread(wrapper, $threadId, { inline: $inline, showDeleted: true });
   });
 
   $(document).on('click', '.js-collapse-thread', async (ev) => {

@@ -2,16 +2,20 @@
     Renders widgets indicating that deleted comments are not shown
 
     Variables:
-      skipped_deleted : number of skipped deleted comments
-      thread          : CommentThread to display the widget for
+      num_skipped : number of skipped deleted comments
+      inline      : whether the thread is shown inline or not
+      thread      : CommentThread to display the widget for
 %>
 
 <div class="widget--body widget--deleted-comments" role="listitem">
   <p>
-    Skipping <%= pluralize(skipped_deleted, 'deleted comment') %>.
+    Skipping <%= pluralize(num_skipped, 'deleted comment') %>.
     <% if current_user&.at_least_moderator? %>
-      <a class="js-show-deleted-comments" href="?show_deleted_comments=1" data-thread="<%= thread.id %>">
-        Show <%= skipped_deleted > 1 ? 'them' : 'it' %> anyway.
+      <a class="js-show-deleted-comments"
+         data-inline="<%= inline %>"
+         data-thread="<%= thread.id %>"
+         href="?show_deleted_comments=1">
+        Show <%= num_skipped > 1 ? 'them' : 'it' %> anyway.
       </a>
     <% end %>
   </p>

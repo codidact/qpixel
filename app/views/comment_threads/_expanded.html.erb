@@ -28,6 +28,7 @@
                            archived: thread.archived,
                            comments: thread.reply_count,
                            deleted: thread.deleted,
+                           inline: inline,
                            locked: thread.locked,
                            post: thread.post.id,
                            thread: thread.id,
@@ -70,7 +71,7 @@
           <% skipped_deleted += 1%>
           <% next %>
         <% elsif skipped_deleted > 0 %>
-          <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted, thread: thread %>
+          <%= render 'comments/skip_deleted', inline: inline, num_skipped: skipped_deleted, thread: thread %>
           <% skipped_deleted = 0 %>
         <% end %>
         <% if shown_comments_count > max_shown_comments && comment.id.to_i == comment_id.to_i %>
@@ -81,7 +82,7 @@
         </div>
       <% end %>
       <% if skipped_deleted > 0 %>
-        <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted, thread: thread %>
+        <%= render 'comments/skip_deleted', inline: inline, num_skipped: skipped_deleted, thread: thread %>
         <% skipped_deleted = 0 %>
       <% end %>
     </div>
