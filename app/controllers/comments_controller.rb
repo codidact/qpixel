@@ -1,17 +1,18 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
-  before_action :authenticate_user!, except: [:post, :show, :thread]
+  before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
 
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :set_post, only: [:create_thread]
   before_action :set_thread,
-                only: [:create, :thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
+                only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
+                       :thread_followers]
 
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_reply_access, only: [:create]
   before_action :check_restrict_access, only: [:thread_restrict]
-  before_action :check_thread_access, only: [:thread, :thread_followers]
+  before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
@@ -169,18 +170,15 @@ class CommentsController < ApplicationController
 
   def thread
     respond_to do |format|
-      format.html do
-        if params[:inline] == 'true'
-          render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
-                                                                show_deleted: params[:show_deleted_comments] == '1',
-                                                                thread: @comment_thread }
-        else
-          render 'comments/thread'
-        end
-      end
-
+      format.html { render 'comments/thread' }
       format.json { render json: @comment_thread }
     end
+  end
+
+  def thread_content
+    render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
+                                                          show_deleted: params[:show_deleted_comments] == '1',
+                                                          thread: @comment_thread }
   end
 
   def thread_followers

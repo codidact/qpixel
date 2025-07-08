@@ -418,7 +418,7 @@ window.QPixel = {
     const inline = options?.inline ?? true;
     const showDeleted = options?.showDeleted ?? false;
 
-    const url = new URL(`/comments/thread/${id}`, window.location.origin);
+    const url = new URL(`/comments/thread/${id}/content`, window.location.origin);
     url.searchParams.append('inline', `${inline}`);
     url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
 

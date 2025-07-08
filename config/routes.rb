@@ -242,6 +242,7 @@ Rails.application.routes.draw do
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
+    get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
     post   ':id/edit',                     to: 'comments#update', as: :update_comment
     delete ':id/delete',                   to: 'comments#destroy', as: :delete_comment
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
