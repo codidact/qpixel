@@ -10,7 +10,7 @@
   <p>
     Skipping <%= pluralize(skipped_deleted, 'deleted comment') %>.
     <% if current_user&.at_least_moderator? %>
-      <a class="js-show-deleted-comments" href="javascript:void(0)" data-thread="<%= thread.id %>">
+      <a class="js-show-deleted-comments" href="?show_deleted_comments=1" data-thread="<%= thread.id %>">
         Show <%= skipped_deleted > 1 ? 'them' : 'it' %> anyway.
       </a>
     <% end %>
