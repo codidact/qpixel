@@ -13,7 +13,8 @@
   can_comment = user.can_reply_to?(thread)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : t('comments.labels.reply_to_thread')
-  exempt_text = standard? ? nil : t('comments.errors.exempt_from_disabled')
+  is_exempt = (!post.comments_allowed? || thread.read_only?) && at_least_moderator?
+  exempt_text = is_exempt ? t('comments.errors.exempt_from_disabled') : nil
   title = if !post.comments_allowed?
             [comments_post_error_msg(post), exempt_text].compact.join(' ')
           elsif thread.read_only?
@@ -25,13 +26,18 @@
           end
 %>
 
-<a class="button is-outlined is-small js-reply-to-thread-link"
-   data-post="<%= post.id %>"
-   <%= !can_comment ? 'disabled' : '' %>
-   role="button"
-   title="<%= title %>">
-  <i class="fas fa-fw fa-plus"></i> <%= text %>
-</a>
+<div class="reply-to-thread-wrapper">
+  <%= link_to 'javascript:void(0)', class: 'button is-outlined is-small js-reply-to-thread-link',
+                                          data: { post: post.id },
+                                          disabled: !can_comment,
+                                          role: 'button',
+                                          title: is_exempt ? '' : title do %>
+    <i class="fas fa-fw fa-plus"></i> <%= text %>
+  <% end %>
+  <% if is_exempt %>
+    <i class="fas fa-fw fa-unlock-alt has-color-tertiary-300" title="<%= title %>"></i>
+  <% end %>
+</div>
 
 <% if can_comment %>
   <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form', id: "reply-to-thread-form-#{post.id}" do %>
