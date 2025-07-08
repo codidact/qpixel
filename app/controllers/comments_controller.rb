@@ -205,12 +205,8 @@ class CommentsController < ApplicationController
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
     respond_to do |format|
-      format.json do
-        render json: @followers
-      end
-      format.html do
-        render layout: false
-      end
+      format.html { render layout: false }
+      format.json { render json: @followers }
     end
   end
 
