@@ -13,8 +13,13 @@
 <% pingable = get_pingable(thread) %>
 <% shown_comments_count = [max_shown_comments, thread.reply_count].min %>
 
+<%
+  thread_classes = ['widget', 'thread']
+  if thread.deleted; thread_classes << 'is-red'; end
+%>
+
 <div class="<%= thread.deleted ? 'h-bg-red-050' : '' %> <%= inline ? 'post--comments-thread is-embedded' : '' %>">
-  <div class="widget thread <%= thread.deleted ? 'is-red' : '' %>"
+  <div class="<%= thread_classes.join(' ') %>"
        data-archived="<%= thread.archived %>"
        data-deleted="<%= thread.deleted %>"
        data-locked="<%= thread.locked? %>"
