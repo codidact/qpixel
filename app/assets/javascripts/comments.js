@@ -170,11 +170,11 @@ $(() => {
     QPixel.handleJSONResponse(data, () => {
       if (isDelete) {
         $comment.addClass('deleted-content');
-        $tgt.removeClass('js-comment-delete').addClass('js-comment-undelete').text('undelete');
+        $tgt.removeClass('js-comment-delete').addClass('js-comment-undelete').val('undelete');
       }
       else {
         $comment.removeClass('deleted-content');
-        $tgt.removeClass('js-comment-undelete').addClass('js-comment-delete').text('delete');
+        $tgt.removeClass('js-comment-undelete').addClass('js-comment-delete').val('delete');
       }
     });
   });

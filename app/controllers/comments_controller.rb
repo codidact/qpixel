@@ -141,9 +141,18 @@ class CommentsController < ApplicationController
         audit('comment_delete', @comment, "content <<#{@comment.content}>>")
       end
 
-      render json: { status: 'success' }
+      respond_to do |format|
+        format.html { redirect_to comment_thread_path(@comment_thread.id) }
+        format.json { render json: { status: 'success' } }
+      end
     else
-      render json: { status: 'failed' }, status: :internal_server_error
+      respond_to do |format|
+        format.html do
+          flash[:danger] = I18n.t('comments.errors.delete_comment_server_error')
+          redirect_to comment_thread_path(@comment_thread.id)
+        end
+        format.json { render json: { status: 'failed' }, status: :internal_server_error }
+      end
     end
   end
 
@@ -155,9 +164,18 @@ class CommentsController < ApplicationController
         audit('comment_undelete', @comment, "content <<#{@comment.content}>>")
       end
 
-      render json: { status: 'success' }
+      respond_to do |format|
+        format.html { redirect_to comment_thread_path(@comment_thread.id) }
+        format.json { render json: { status: 'success' } }
+      end
     else
-      render json: { status: 'failed' }, status: :internal_server_error
+      respond_to do |format|
+        format.html do
+          flash[:danger] = I18n.t('comments.errors.undelete_comment_server_error')
+          redirect_to comment_thread_path(@comment_thread.id)
+        end
+        format.json { render json: { status: 'failed' }, status: :internal_server_error }
+      end
     end
   end
 

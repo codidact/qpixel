@@ -56,9 +56,13 @@
       <% if user_signed_in? && (comment.user == current_user || current_user.at_least_moderator?) %>
         <a href="#" class="js-comment-edit nowrap" role="button" aria-label="Edit comment">edit</a>
         <% if comment.deleted %>
-          <a href="#" class="is-red js-comment-undelete nowrap" role="button" aria-label="Undelete comment">undelete</a>
+          <%= form_tag undelete_comment_path(comment), method: :patch do %>
+            <%= submit_tag 'undelete', class: 'link is-red js-comment-undelete nowrap', aria: { label: 'Undelete comment' } %>
+          <% end %>
         <% else %>
-          <a href="#" class="is-red js-comment-delete nowrap" role="button" aria-label="Delete comment">delete</a>
+          <%= form_tag delete_comment_path(comment), method: :delete do %>
+            <%= submit_tag 'delete', class: 'link is-red js-comment-delete nowrap', aria: { label: 'Delete comment' } %>
+          <% end %>
         <% end %>
       <% end %>
       <% if user_signed_in? %>

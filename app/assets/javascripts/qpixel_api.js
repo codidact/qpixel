@@ -453,7 +453,10 @@ window.QPixel = {
   },
 
   deleteComment: async (id) => {
-    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'DELETE' });
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'DELETE'
+    });
 
     const data = await resp.json();
 
@@ -461,7 +464,10 @@ window.QPixel = {
   },
 
   undeleteComment: async (id) => {
-    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, { method: 'PATCH' });
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'PATCH'
+    });
 
     const data = await resp.json();
 

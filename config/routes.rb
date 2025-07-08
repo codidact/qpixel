@@ -367,7 +367,7 @@ Rails.application.routes.draw do
   get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '423',                             to: 'errors#read_only'
-  get   '500',                             to: 'errors#internal_server_error'
+  get   '500',                             to: 'errors#internal_server_error', as: :server_error
 
   get   'osd',                             to: 'application#osd', as: :osd
 
