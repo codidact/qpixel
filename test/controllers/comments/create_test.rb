@@ -117,7 +117,7 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response(:found)
 
       if inline
-        assert_redirected_to @controller.helpers.generic_share_link(thread.post)
+        assert_redirected_to @controller.helpers.generic_share_link(thread.post, expand: thread.id)
       else
         assert_redirected_to comment_thread_path(thread)
       end
