@@ -254,8 +254,7 @@ class CommentsController < ApplicationController
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
     when 'delete'
       if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
-        render json: { status: 'error',
-                       message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
+        render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
         return
       end
       @comment_thread.update(deleted: false, deleted_by: nil)

@@ -17,6 +17,8 @@ en:
         This post cannot be commented on.
       disabled_on_thread_generic: >
         This thread cannot be replied to.
+      mod_only_undelete: >
+        Threads deleted by a moderator can only be undeleted by a moderator.
       new_user_rate_limited: >
         As a new user, you can only comment on your own posts and on answers to them.
       rate_limited: >

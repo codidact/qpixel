@@ -66,7 +66,7 @@ class CommentsControllerTest < ActionController::TestCase
     assert_valid_json_response
     response_body = JSON.parse(response.body)
     assert_equal('error', response_body['status'])
-    assert_not_nil response_body['message']
+    assert_equal I18n.t('comments.errors.mod_only_undelete'), response_body['message']
 
     sign_in users(:moderator)
     try_undelete_thread(thread)
