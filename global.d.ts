@@ -117,6 +117,11 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+interface GetThreadContentOptions {
+  inline?: boolean,
+  showDeleted?: boolean
+}
+
 interface QPixel {
   // private properties
   _filters?: Filter[] | null;
@@ -286,10 +291,7 @@ interface QPixel {
    * @param id id of the comment thread
    * @param options configuration options
    */
-  getThreadContent?: (id: string, options?: {
-    inline?: boolean,
-    showDeleted?: boolean
-  }) => Promise<string>
+  getThreadContent?: (id: string, options?: GetThreadContentOptions) => Promise<string>
 
   /**
    * Attempts to dynamically load a list of comment threads for a given post

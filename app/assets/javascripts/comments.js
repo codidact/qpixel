@@ -11,6 +11,14 @@ $(() => {
     $tgt.parents('.post--comments').find('.js-more-comments').remove();
   });
 
+  /**
+   * @param {JQuery<HTMLElement>} $tgt
+   * @returns {HTMLElement | null}
+   */
+  const getCommentThreadWrapper = ($tgt) => {
+    return $tgt.closest('.js-comment-thread-wrapper')[0] ?? null;
+  };
+
   $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
     if (evt.ctrlKey) { return; }
 
@@ -18,17 +26,18 @@ $(() => {
 
     const $tgt = $(evt.target);
     const $threadId = $tgt.data('thread');
+    const wrapper = getCommentThreadWrapper($tgt);
 
-    openThread($tgt.closest('.post--comments-thread-wrapper')[0], $threadId);
+    openThread(wrapper, $threadId);
   });
 
   /**
    * @param {HTMLElement} wrapper
    * @param {string} threadId
-   * @param {boolean} [showDeleted]
+   * @param {GetThreadContentOptions} [options]
    */
-  async function openThread(wrapper, threadId, showDeleted = false) {
-    const data = await QPixel.getThreadContent(threadId, { showDeleted });
+  async function openThread(wrapper, threadId, options) {
+    const data = await QPixel.getThreadContent(threadId, options);
 
     wrapper.innerHTML = data;
 
@@ -43,10 +52,9 @@ $(() => {
 
     const $tgt = $(ev.target);
     const $threadId = $tgt.data('thread');
+    const wrapper = getCommentThreadWrapper($tgt);
 
-    const wrapper = $tgt.closest('.post--comments-thread-wrapper')[0];
-
-    openThread(wrapper, $threadId, true);
+    openThread(wrapper, $threadId, { showDeleted: true });
   });
 
   $(document).on('click', '.js-collapse-thread', async (ev) => {

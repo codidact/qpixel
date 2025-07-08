@@ -26,6 +26,9 @@
   <%= render 'posts/expanded', post: @post %>
 </details>
 
-<%= render 'comment_threads/expanded', inline: params[:inline] == 'true',
-                                       show_deleted: params[:show_deleted_comments] == '1',
-                                       thread: @comment_thread %>
+<div class="js-comment-thread-wrapper">
+  <%= render 'comment_threads/expanded', inline: params[:inline] == 'true',
+                                        show_deleted: params[:show_deleted_comments] == '1',
+                                        thread: @comment_thread %>
+</div>
+

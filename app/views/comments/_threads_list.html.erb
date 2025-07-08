@@ -23,7 +23,7 @@
     ].compact.join(' ')
   %>
 
-  <div class="post--comments-thread-wrapper" role="listitem">
+  <div class="js-comment-thread-wrapper post--comments-thread-wrapper" role="listitem">
     <% if thread_id.to_i == thread.id.to_i %>
       <%= render 'comment_threads/expanded', comment_id: comment_id,
                                              inline: true,

@@ -415,8 +415,8 @@ window.QPixel = {
   },
 
   getThreadContent: async (id, options) => {
-    const inline = options.inline ?? true;
-    const showDeleted = options.showDeleted ?? false;
+    const inline = options?.inline ?? true;
+    const showDeleted = options?.showDeleted ?? false;
 
     const url = new URL(`/comments/thread/${id}`, window.location.origin);
     url.searchParams.append('inline', `${inline}`);
