@@ -103,6 +103,12 @@ module CommentsControllerTestHelpers
     get :thread, params: { id: thread.id, format: format }
   end
 
+  # Attempts to delete a single comment
+  # @param comment [Comment] comment to delete
+  def try_delete_comment(comment, format: :html)
+    delete :destroy, params: { id: comment.id, format: format }
+  end
+
   # Attempts to undelete a single comment
   # @param comment [Comment] comment to undelete
   def try_undelete_comment(comment, format: :html)

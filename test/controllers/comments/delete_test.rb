@@ -7,7 +7,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should delete comment' do
     sign_in users(:standard_user)
-    delete :destroy, params: { id: comments(:one).id }
+
+    try_delete_comment(comments(:one), format: :json)
 
     assert_response(:success)
     assert_valid_json_response
@@ -15,13 +16,22 @@ class CommentsControllerTest < ActionController::TestCase
   end
 
   test 'should require auth to delete comment' do
-    delete :destroy, params: { id: comments(:one).id }
-    assert_redirected_to_sign_in
+    [:html, :json].each do |format|
+      try_delete_comment(comments(:one), format: format)
+
+      if format == :html
+        assert_redirected_to_sign_in
+      else
+        assert_response(:unauthorized)
+        assert_valid_json_response
+      end
+    end
   end
 
-  test 'should allow moderator to delete comment' do
+  test 'should allow moderators to delete comments' do
     sign_in users(:moderator)
-    delete :destroy, params: { id: comments(:one).id }
+
+    try_delete_comment(comments(:one), format: :json)
 
     assert_response(:success)
     assert_valid_json_response
@@ -30,7 +40,8 @@ class CommentsControllerTest < ActionController::TestCase
 
   test 'should not allow other users to delete comment' do
     sign_in users(:editor)
-    delete :destroy, params: { id: comments(:one).id }
+    try_delete_comment(comments(:one))
+
     assert_response(:forbidden)
   end
 
