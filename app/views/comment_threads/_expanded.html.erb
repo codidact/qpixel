@@ -62,6 +62,12 @@
           <%= render 'comments/skip_deleted', skipped_deleted: skipped_deleted, thread: thread %>
           <% skipped_deleted = 0 %>
         <% end %>
+        <% if shown_comments_count > max_shown_comments && comment.id.to_i == comment_id.to_i %>
+          <div class="widget--body widget--more-comments" role="listitem">
+            <% skipped_count = thread.reply_count - shown_comments_count %>
+            <p>Skipping <%= pluralize(skipped_count, 'more comment') %></p>
+          </div>
+        <% end %>
         <div class="widget--body" role="listitem">
           <%= render 'comments/comment', comment: comment, pingable: pingable %>
         </div>
@@ -73,7 +79,7 @@
     </div>
 
     <% if inline && shown_comments_count < thread.reply_count %>
-      <div class="widget--footer widget--show-more">
+      <div class="widget--footer widget--full-thread">
         <p class="h-m-0">
           Showing <%= shown_comments_count %> of <%= pluralize(thread.reply_count, 'comment') %>.
           <%= link_to 'See the whole thread', comment_thread_path(thread) %>.

@@ -1,7 +1,7 @@
 .post--comments-thread-wrapper {
   .post--comments-thread {
-    .widget--body:not(.deleted-comments) {
-        padding: 0;
+    .widget--body:not(.widget--deleted-comments):not(.widget--more-comments) {
+      padding: 0;
 
       .comment {
         margin: 0;
@@ -19,10 +19,17 @@
 }
 
 .thread {
-  .widget--show-more {
-    font-size: 0.9em;
+
+  .widget--full-thread,
+  .widget--more-comments,
+  .widget--deleted-comments {
+    font-size: 0.8em;
     padding: 0.5em;
     text-align: center;
+
+    p {
+      margin: 0;
+    }
   }
 }
 
@@ -36,7 +43,8 @@
   }
 }
 
-.new-thread-wrapper, .reply-to-thread-wrapper {
+.new-thread-wrapper,
+.reply-to-thread-wrapper {
   align-items: center;
   gap: 0.25em;
   display: flex;

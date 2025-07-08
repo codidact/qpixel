@@ -6,7 +6,7 @@
       thread          : CommentThread to display the widget for
 %>
 
-<div class="widget--body deleted-comments" role="listitem">
+<div class="widget--body widget--deleted-comments" role="listitem">
   <p>
     Skipping <%= pluralize(skipped_deleted, 'deleted comment') %>.
     <% if current_user&.at_least_moderator? %>
