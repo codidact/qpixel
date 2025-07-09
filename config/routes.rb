@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   root                                     to: 'categories#homepage'
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount Rack::Directory.new('coverage/'), at: '/coverage' if Rails.env.development?
   mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
