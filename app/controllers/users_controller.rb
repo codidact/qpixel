@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
-    sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
+    @sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
 
     @users = if params[:search].present?
                user_scope.search(params[:search])
@@ -25,7 +25,7 @@ class UsersController < ApplicationController
 
     @users = @users.where.not(deleted: true)
                    .where.not(community_users: { deleted: true })
-                   .order(sort_param => :desc)
+                   .order(@sort_param => :desc)
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
