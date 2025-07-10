@@ -80,7 +80,8 @@ Style/HashEachMethods:
 Style/HashExcept:
   Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Style/HashSyntax:
-  EnforcedShorthandSyntax: either # 3.1 prefers key: when for same-name key-value pairs, but it'd be a huge change
+  EnforcedStyle: ruby19_no_mixed_keys
+  EnforcedShorthandSyntax: never
 Style/HashTransformKeys:
   Enabled: true
 Style/HashTransformValues:
