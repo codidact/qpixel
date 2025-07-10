@@ -10,6 +10,7 @@ class CommentsController < ApplicationController
 
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
+  before_action :check_create_access, only: [:create_thread, :create]
   before_action :check_reply_access, only: [:create]
   before_action :check_restrict_access, only: [:thread_restrict]
   before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
@@ -33,13 +34,6 @@ class CommentsController < ApplicationController
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     pings = check_for_pings @comment_thread, body
-
-    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
-    if rate_limited
-      flash[:danger] = limit_message
-      redirect_to helpers.generic_share_link(@post)
-      return
-    end
 
     success = ActiveRecord::Base.transaction do
       @comment_thread.save!
@@ -73,13 +67,6 @@ class CommentsController < ApplicationController
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
-
-    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
-    if rate_limited
-      flash[:danger] = limit_message
-      redirect_to helpers.generic_share_link(@post)
-      return
-    end
 
     status = @comment.save
 
@@ -335,6 +322,14 @@ class CommentsController < ApplicationController
   def check_privilege
     unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
+    end
+  end
+
+  def check_create_access
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
     end
   end
 

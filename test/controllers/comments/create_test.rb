@@ -46,6 +46,19 @@ class CommentsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
+  test 'should not create threads on posts of others without the unrestricted ability when rate-limited' do
+    sign_in users(:basic_user)
+
+    SiteSetting['RL_NewUserComments'] = 0
+
+    post = posts(:question_one)
+
+    try_create_thread(post)
+
+    assert_not_nil flash[:danger]
+    assert_redirected_to @controller.helpers.generic_share_link(post)
+  end
+
   test 'should not create thread if the target post is inaccessible' do
     sign_in users(:editor)
     try_create_thread(posts(:high_trust))
@@ -132,6 +145,19 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should require auth to create comments' do
     try_create_comment(comment_threads(:normal))
     assert_redirected_to_sign_in
+  end
+
+  test 'should not create comments on threads on posts of others without the unrestricted ability when rate-limited' do
+    sign_in users(:basic_user)
+
+    SiteSetting['RL_NewUserComments'] = 0
+
+    thread = comment_threads(:normal)
+
+    try_create_comment(thread)
+
+    assert_not_nil flash[:danger]
+    assert_redirected_to @controller.helpers.generic_share_link(thread.post)
   end
 
   test 'should not create comment if the target post is inaccessible' do
