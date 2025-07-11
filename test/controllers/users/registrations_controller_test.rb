@@ -76,7 +76,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: 'wrong' }
     assert_response(:success)
-    assert_equal ['The username you entered was incorrect.'], assigns(:user).errors.full_messages
+    assert_equal [I18n.t('users.errors.self_delete_wrong_username')], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
   end
 
@@ -87,7 +87,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     try_do_delete_user(users(:moderator))
 
     assert_response(:success)
-    assert_equal ['Moderator accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
+    assert_equal [I18n.t('users.errors.no_mod_self_delete')], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
   end
 
@@ -98,7 +98,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     try_do_delete_user(users(:admin))
 
     assert_response(:success)
-    assert_equal ['Admin accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
+    assert_equal [I18n.t('users.errors.no_admin_self_delete')], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
   end
 
