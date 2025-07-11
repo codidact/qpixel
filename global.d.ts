@@ -69,6 +69,8 @@ type NotificationType = "warning" | "success" | "danger";
 
 type QPixelPopupCallback = (ev: JQuery.ClickEvent, popup: QPixelPopup) => void
 
+type QPixelPingablePopupCallback = (ev: JQuery.KeyUpEvent)=> Promise<void>
+
 declare class QPixelPopup {
   static destroyAll: () => void;
   static getPopup: (
@@ -92,6 +94,32 @@ declare class QPixelPopup {
   getKeyHandler: () => (ev: JQuery.KeyboardEventBase) => void;
   updateItems: (items: JQuery[]) => void;
   updatePosition: () => void;
+}
+
+type QPixelResponseJSON = {
+  status: 'success' | 'failed',
+  message?: string,
+  errors?: string[]
+}
+
+type QPixelComment = {
+  id: number
+  created_at: string
+  updated_at: string
+  post_id: number
+  content: string
+  deleted: boolean
+  user_id: number
+  community_id: number
+  comment_thread_id: number
+  has_reference: false
+  reference_text: string | null
+  references_comment_id: string | null
+}
+
+interface GetThreadContentOptions {
+  inline?: boolean,
+  showDeleted?: boolean
 }
 
 interface QPixel {
@@ -251,6 +279,53 @@ interface QPixel {
    * @returns 
    */
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
+
+  /**
+   * Attempts get a JSON reprentation of a comment
+   * @param id id of the comment to get
+   */
+  getComment?: (id: string) => Promise<QPixelComment>
+
+  /**
+   * Attempts to dynamically load thread content
+   * @param id id of the comment thread
+   * @param options configuration options
+   */
+  getThreadContent?: (id: string, options?: GetThreadContentOptions) => Promise<string>
+
+  /**
+   * Attempts to dynamically load a list of comment threads for a given post
+   * @param id id of the post to load
+   */
+  getThreadsListContent?: (id: string) => Promise<string>
+
+  /**
+   * Processes JSON responses from QPixel API
+   * @param data 
+   * @param onSuccess callback to call for successful requests
+   */
+  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T, onSuccess: (data: T) => void) => void
+
+  /**
+   * Attempts to delete a comment
+   * @param id id of the comment to delete
+   * @returns result of the operation
+   */
+  deleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to undelete a comment
+   * @param id id of the comment to undelete
+   * @returns result of the operation
+   */
+  undeleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to lock a comment thread
+   * @param id id of the comment thread to lock
+   * @returns result of the operation
+   */
+  lockThread?: (id: string) => Promise<QPixelResponseJSON>;
 
   // qpixel_dom
   DOM?: QPixelDOM;

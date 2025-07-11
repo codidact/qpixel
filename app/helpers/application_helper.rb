@@ -19,8 +19,8 @@ module ApplicationHelper
   ##
   ## Does the current user have access to deleted posts?
   # @return [Boolean]
-  def can_see_deleted?
-    user_signed_in? && current_user.can_see_deleted?
+  def can_see_deleted_posts?
+    user_signed_in? && current_user.can_see_deleted_posts?
   end
 
   ##

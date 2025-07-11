@@ -1,9 +1,14 @@
 class ModWarning < ApplicationRecord
+  include Timestamped
+
   # Warning class name not accepted by Rails, hence this needed
   self.table_name = 'warnings'
 
   belongs_to :community_user
   belongs_to :author, class_name: 'User'
+
+  scope :active, -> { where(active: true) }
+  scope :to, ->(user) { where(community_user: user.community_user) }
 
   def suspension_active?
     active && is_suspension && !suspension_end.past?

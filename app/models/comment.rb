@@ -1,9 +1,10 @@
 # Represents a comment. Comments are attached to both a post and a user.
 class Comment < ApplicationRecord
   include PostRelated
+  include SoftDeletable
+  include Timestamped
 
-  scope :deleted, -> { where(deleted: true) }
-  scope :undeleted, -> { where(deleted: false) }
+  scope :by, ->(user) { where(user: user) }
 
   belongs_to :user
   belongs_to :comment_thread

@@ -23,7 +23,7 @@ Layout/LineLength:
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 Layout/SpaceInsideArrayLiteralBrackets:
-  Enabled: false
+  Enabled: true
 
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true

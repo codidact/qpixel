@@ -362,3 +362,15 @@ span.spoiler {
 .nowrap {
   white-space: nowrap;
 }
+
+@each $side in $sides {
+  .border-#{$side}-none {
+    border-#{$side}: none;
+  }
+}
+
+@each $align in $text-aligns {
+  .text-#{$align} {
+    text-align: $align;
+  }
+}

@@ -1,16 +1,15 @@
 class CommunityUser < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :community
   belongs_to :user
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
-  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
-  scope :active, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
 
@@ -39,8 +38,8 @@ class CommunityUser < ApplicationRecord
   def post_score
     Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 3.hours) do
       exclude_types = ApplicationController.helpers.post_type_ids(is_freely_editable: true)
-      good_posts = Post.where(user: user).where('score > 0.5').where.not(post_type_id: exclude_types).count
-      bad_posts = Post.where(user: user).where('score < 0.5').where.not(post_type_id: exclude_types).count
+      good_posts = Post.by(user).good.where.not(post_type_id: exclude_types).count
+      bad_posts = Post.by(user).bad.where.not(post_type_id: exclude_types).count
 
       (good_posts + 2.0) / (good_posts + bad_posts + 4.0)
     end
@@ -48,8 +47,8 @@ class CommunityUser < ApplicationRecord
 
   def edit_score
     Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 3.hours) do
-      good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
-      bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
+      good_edits = SuggestedEdit.by(user).approved.count
+      bad_edits = SuggestedEdit.by(user).rejected.count
 
       (good_edits + 2.0) / (good_edits + bad_edits + 4.0)
     end
@@ -57,8 +56,8 @@ class CommunityUser < ApplicationRecord
 
   def flag_score
     Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 3.hours) do
-      good_flags = Flag.where(user: user).where(status: 'helpful').count
-      bad_flags = Flag.where(user: user).where(status: 'declined').count
+      good_flags = Flag.by(user).helpful.count
+      bad_flags = Flag.by(user).declined.count
 
       (good_flags + 2.0) / (good_flags + bad_flags + 4.0)
     end

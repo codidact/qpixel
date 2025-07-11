@@ -4,6 +4,13 @@ one:
   user: standard_user
   community: sample
 
+declined:
+  reason: Please decline it
+  post: question_one (Post)
+  user: standard_user
+  community: sample
+  status: declined
+
 on_deleter:
   reason: For science!
   post: deleted (Post)

@@ -75,4 +75,7 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+  
+  # Don't colorize logs - we are writing to log files directly
+  config.colorize_logging = false
 end

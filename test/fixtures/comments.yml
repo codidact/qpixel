@@ -47,3 +47,10 @@ on_answer:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: on_answer
+
+new_user_on_own_post:
+  user: basic_user
+  post: new_user_question
+  content: ABCDEF GHIJKL MNOPQR
+  community: sample
+  comment_thread: new_user_on_own_post

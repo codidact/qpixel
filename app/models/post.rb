@@ -1,14 +1,15 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include Lockable
   include PostValidations
+  include SoftDeletable
+  include Timestamped
 
   belongs_to :user, optional: true
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
   belongs_to :last_activity_by, class_name: 'User', optional: true
-  belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :last_edited_by, class_name: 'User', optional: true
   belongs_to :category, optional: true
   belongs_to :license, optional: true
@@ -40,8 +41,13 @@ class Post < ApplicationRecord
 
   # Other validations (shared with suggested edits) are in concerns/PostValidations
 
-  scope :undeleted, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
+  scope :bad, -> { where('score < 0.5') }
+  scope :by, ->(user) { where(user: user) }
+  scope :good, -> { where('score > 0.5') }
+  scope :in, ->(category) { where(category: category) }
+  scope :on, ->(community) { where(community: community) }
+  scope :problematic, -> { where('score < 0.25 OR deleted=1') }
+  scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, lambda {
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
@@ -189,19 +195,6 @@ class Post < ApplicationRecord
     clear_attribute_changes([:score])
   end
 
-  # This method will update the locked status of this post if locked_until is in the past.
-  # @return [Boolean] whether this post is locked
-  def locked?
-    return true if locked && locked_until.nil? # permanent lock
-    return true if locked && !locked_until.past?
-
-    if locked
-      update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
-    end
-
-    false
-  end
-
   # Checks whether the post allows users to comment on it
   # @return [Boolean] check result
   def comments_allowed?
@@ -225,7 +218,8 @@ class Post < ApplicationRecord
         category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
-  # @return [Hash] a hash with as key the reaction type and value the amount of reactions for that type
+  # Maps reaction types to number of reactions of that type
+  # @return [Hash{ReactionType => Integer}]
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }

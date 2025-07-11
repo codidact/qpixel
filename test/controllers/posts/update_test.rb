@@ -35,8 +35,8 @@ class PostsControllerTest < ActionController::TestCase
     patch :update, params: { id: posts(:question_one).id,
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+
+    assert_redirected_to_sign_in
   end
 
   test 'update by unprivileged user generates suggested edit' do

@@ -79,8 +79,7 @@ class PostsController < ApplicationController
 
     level_name = @post_type.is_top_level? ? 'TopLevel' : 'SecondLevel'
     level_type_ids = @post_type.is_top_level? ? top_level_post_types : second_level_post_types
-    recent_level_posts = Post.where(created_at: 24.hours.ago..DateTime.now, user: current_user)
-                             .where(post_type_id: level_type_ids).count
+    recent_level_posts = Post.by(current_user).recent.where(post_type_id: level_type_ids).count
     setting_name = current_user.privilege?('unrestricted') ? "RL_#{level_name}Posts" : "RL_NewUser#{level_name}Posts"
     max_posts = SiteSetting[setting_name]
     limit_msg = if current_user.privilege?('unrestricted')
@@ -213,8 +212,8 @@ class PostsController < ApplicationController
       return redirect_to post_path(@post)
     end
 
-    if current_user.can_update(@post, @post_type)
-      if current_user.can_push_to_network(@post_type) && params[:network_push] == 'true'
+    if current_user.can_update?(@post, @post_type)
+      if current_user.can_push_to_network?(@post_type) && params[:network_push] == 'true'
         # post network push & post histories creation must be atomic to prevent sync issues on error
         @post.transaction do
           posts = Post.unscoped.where(post_type_id: [PolicyDoc.post_type_id, HelpDoc.post_type_id],
@@ -277,7 +276,7 @@ class PostsController < ApplicationController
     else
       new_user = !current_user.privilege?('unrestricted')
       rate_limit = SiteSetting["RL_#{new_user ? 'NewUser' : ''}SuggestedEdits"]
-      recent_edits = SuggestedEdit.where(user: current_user, active: true).where('created_at > ?', 24.hours.ago).count
+      recent_edits = SuggestedEdit.by(current_user).where(active: true).recent.count
       if recent_edits >= rate_limit
         key = new_user ? 'rate_limit.new_user_suggested_edits' : 'rate_limit.suggested_edits'
         msg = helpers.i18ns key, count: rate_limit
@@ -380,6 +379,30 @@ class PostsController < ApplicationController
     redirect_to post_path(@post)
   end
 
+  # Attempts to delete a given post
+  # @param post [Post] post to delete
+  # @param user [User] user attempting to delete the post
+  # @return [Boolean] status of the operation
+  def do_delete(post, user)
+    post.update(deleted: true,
+                deleted_at: DateTime.now,
+                deleted_by: user,
+                last_activity: DateTime.now,
+                last_activity_by: user)
+  end
+
+  # Attempts to delete children of a given post
+  # @param post [Post] post to delete children of
+  # @param user [User] user attempting to delete the post's children
+  # @return [Boolean] status of the operation
+  def do_delete_children(post, user)
+    post.children.undeleted.update_all(deleted: true,
+                                       deleted_at: DateTime.now,
+                                       deleted_by_id: user.id,
+                                       last_activity: DateTime.now,
+                                       last_activity_by_id: user.id)
+  end
+
   def delete
     unless check_your_privilege('flag_curate', @post, false)
       flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
@@ -405,21 +428,32 @@ class PostsController < ApplicationController
       return
     end
 
-    if @post.update(deleted: true, deleted_at: DateTime.now, deleted_by: current_user,
-                    last_activity: DateTime.now, last_activity_by: current_user)
-      PostHistory.post_deleted(@post, current_user)
-      if @post.children.where(deleted: false).any?
-        @post.children.where(deleted: false).update_all(deleted: true, deleted_at: DateTime.now,
-                                                        deleted_by_id: current_user.id, last_activity: DateTime.now,
-                                                        last_activity_by_id: current_user.id)
+    # post deletion, its children deletion, and post history creation must all be made as one atomic operation
+    @post.transaction do
+      unless do_delete(@post, current_user)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+
+      history_entry = PostHistory.post_deleted(@post, current_user)
+
+      if history_entry&.errors&.any?
+        @post.errors.merge!(history_entry.errors)
+        raise ActiveRecord::Rollback
+      end
+
+      if @post.children.undeleted.any?
+        unless do_delete_children(@post, current_user)
+          raise ActiveRecord::Rollback
+        end
+
         histories = @post.children.map do |c|
           { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
             community: RequestContext.community }
         end
-        PostHistory.create(histories)
+
+        PostHistory.create!(histories)
       end
-    else
-      flash[:danger] = helpers.i18ns('posts.cant_delete_post')
     end
 
     redirect_to post_path(@post)
@@ -539,8 +573,7 @@ class PostsController < ApplicationController
   end
 
   def lock
-    return not_found unless current_user&.privilege? 'flag_curate'
-    return not_found if @post.locked?
+    return not_found unless current_user&.can_lock?(@post)
 
     length = params[:length].present? ? params[:length].to_i : nil
     if length
@@ -563,8 +596,7 @@ class PostsController < ApplicationController
   end
 
   def unlock
-    return not_found(errors: ['no_privilege']) unless current_user&.privilege? 'flag_curate'
-    return not_found(errors: ['not_locked']) unless @post.locked?
+    return not_found unless current_user&.can_unlock?(@post)
 
     if @post.locked_by.at_least_moderator? && !current_user&.at_least_moderator?
       return not_found(errors: ['locked_by_mod'])

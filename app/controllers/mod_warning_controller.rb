@@ -21,13 +21,13 @@ class ModWarningController < ApplicationController
   end
 
   def log
-    @warnings = ModWarning.where(community_user: @user.community_user).order(created_at: :desc).all
+    @warnings = ModWarning.to(@user).newest_first.all
     render layout: 'without_sidebar'
   end
 
   def new
     @templates = WarningTemplate.where(active: true).all
-    @prior_warning_count = ModWarning.where(community_user: @user.community_user).order(created_at: :desc).count
+    @prior_warning_count = ModWarning.to(@user).newest_first.count
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user)
     render layout: 'without_sidebar'
   end
@@ -58,7 +58,7 @@ class ModWarningController < ApplicationController
   end
 
   def lift
-    @warning = ModWarning.where(community_user: @user.community_user, active: true).last
+    @warning = ModWarning.to(@user).active.last
     return not_found if @warning.nil?
 
     @warning.update(active: false, read: false)
@@ -75,7 +75,7 @@ class ModWarningController < ApplicationController
   private
 
   def set_warning
-    @warning = ModWarning.where(community_user: current_user.community_user, active: true).last
+    @warning = ModWarning.to(current_user).active.last
     not_found if @warning.nil?
   end
 

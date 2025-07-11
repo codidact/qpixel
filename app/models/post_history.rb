@@ -7,6 +7,10 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
+  scope :by, ->(user) { where(user: user) }
+  scope :of_type, ->(name) { joins(:post_history_type).where(post_history_types: { name: name }) }
+  scope :on_undeleted, -> { joins(:post).where(posts: { deleted: false }) }
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
