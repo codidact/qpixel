@@ -47,6 +47,24 @@ class PostTest < ActiveSupport::TestCase
     end
   end
 
+  test 'accessible_to should correctly check user access' do
+    adm_user = users(:admin)
+    mod_user = users(:moderator)
+    std_user = users(:standard_user)
+
+    adm_posts = Post.accessible_to(adm_user)
+    mod_posts = Post.accessible_to(mod_user)
+    std_posts = Post.accessible_to(std_user)
+
+    can_admin_get_deleted_posts = adm_posts.any?(&:deleted)
+    can_mod_get_deleted_posts = mod_posts.any?(&:deleted)
+    can_user_get_deleted_posts = std_posts.any?(&:deleted)
+
+    assert can_admin_get_deleted_posts
+    assert can_mod_get_deleted_posts
+    assert_not can_user_get_deleted_posts
+  end
+
   test 'should allow specified post types in a category' do
     category = categories(:main)
     post_type = post_types(:question)

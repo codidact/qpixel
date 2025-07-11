@@ -36,24 +36,6 @@ class SearchHelperTest < ActionView::TestCase
     end
   end
 
-  test 'accessible_posts_for should correctly check access' do
-    adm_user = users(:admin)
-    mod_user = users(:moderator)
-    std_user = users(:standard_user)
-
-    adm_posts = accessible_posts_for(adm_user)
-    mod_posts = accessible_posts_for(mod_user)
-    std_posts = accessible_posts_for(std_user)
-
-    can_admin_get_deleted_posts = adm_posts.any?(&:deleted)
-    can_mod_get_deleted_posts = mod_posts.any?(&:deleted)
-    can_user_get_deleted_posts = std_posts.any?(&:deleted)
-
-    assert can_admin_get_deleted_posts
-    assert can_mod_get_deleted_posts
-    assert_not can_user_get_deleted_posts
-  end
-
   test 'qualifiers_to_sql should correctly narrow by :category qualifier' do
     main = categories(:main)
     admin_only = categories(:admin_only)
@@ -61,8 +43,8 @@ class SearchHelperTest < ActionView::TestCase
     std_user = users(:standard_user)
     adm_user = users(:admin)
 
-    posts_query_std = accessible_posts_for(std_user)
-    posts_query_adm = accessible_posts_for(adm_user)
+    posts_query_std = Post.accessible_to(std_user)
+    posts_query_adm = Post.accessible_to(adm_user)
 
     std_post = [{ param: :category, operator: '=', category_id: main.id }]
     adm_post = [{ param: :category, operator: '=', category_id: admin_only.id }]
@@ -84,7 +66,7 @@ class SearchHelperTest < ActionView::TestCase
     std_user = users(:standard_user)
     edt_user = users(:editor)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     edt_post = [{ param: :user, operator: '=', user_id: edt_user.id }]
     edt_query = qualifiers_to_sql(edt_post, posts_query, std_user)
 
@@ -98,7 +80,7 @@ class SearchHelperTest < ActionView::TestCase
   test 'qualifiers_to_sql should correctly narrow by :score qualifier' do
     std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     bad_post = [{ param: :score, operator: '<', value: 0.5 }]
     good_post = [{ param: :score, operator: '>', value: 0.5 }]
     neut_post = [{ param: :score, operator: '=', value: 0.5 }]
@@ -127,7 +109,7 @@ class SearchHelperTest < ActionView::TestCase
   test 'qualifiers_to_sql should correctly narrow by :status qualifier' do
     std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     open_post = [{ param: :status, value: 'open' }]
     closed_post = [{ param: :status, value: 'closed' }]
 
@@ -149,7 +131,7 @@ class SearchHelperTest < ActionView::TestCase
   test 'qualifiers_to_sql should correctly narrow by :upvotes qualifier' do
     std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     upvoted_post = [{ param: :upvotes, operator: '>', value: 0 }]
     neutral_post = [{ param: :upvotes, operator: '=', value: 0 }]
 
@@ -171,7 +153,7 @@ class SearchHelperTest < ActionView::TestCase
   test 'qualifiers_to_sql should correctly narrow by :downvotes qualifier' do
     std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     downvoted_post = [{ param: :downvotes, operator: '>', value: 0 }]
     neutral_post = [{ param: :downvotes, operator: '=', value: 0 }]
 
@@ -193,7 +175,7 @@ class SearchHelperTest < ActionView::TestCase
   test 'qualifiers_to_sql should correctly narrow by :net_votes qualifier' do
     std_user = users(:standard_user)
 
-    posts_query = accessible_posts_for(std_user)
+    posts_query = Post.accessible_to(std_user)
     divisive_post = [{ param: :net_votes, operator: '=', value: 2 }]
 
     divisive_query = qualifiers_to_sql(divisive_post, posts_query, std_user)

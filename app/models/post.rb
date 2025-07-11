@@ -57,6 +57,13 @@ class Post < ApplicationRecord
   after_save :update_category_activity, if: -> { post_type.has_category && !destroyed? }
   after_save :recalc_score
 
+  # Gets posts appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<Post>]
+  def self.accessible_to(user)
+    (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
+  end
+
   # @param term [String] the search term
   # @return [ActiveRecord::Relation<Post>]
   def self.search(term)

@@ -1,9 +1,4 @@
 module SearchHelper
-  # @param user [User] user to check
-  def accessible_posts_for(user)
-    (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
-  end
-
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
@@ -15,7 +10,7 @@ module SearchHelper
   #
   # @return [ActiveRecord::Relation<Post>]
   def search_posts(user)
-    posts = accessible_posts_for(user)
+    posts = Post.accessible_to(user)
     qualifiers = params_to_qualifiers
     search_string = params[:search]
 

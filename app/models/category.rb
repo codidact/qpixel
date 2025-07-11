@@ -31,7 +31,7 @@ class Category < ApplicationRecord
     RequestContext.redis.set("#{community_id}/#{id}/last_activity", last_activity)
   end
 
-  # Gets categories appropriately scoped for the user
+  # Gets categories appropriately scoped for a given user
   # @param user [User] user to check
   # @return [ActiveRecord::Relation<category>]
   def self.accessible_to(user)
