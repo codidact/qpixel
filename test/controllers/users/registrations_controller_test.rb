@@ -80,25 +80,35 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not assigns(:user).deleted
   end
 
-  test 'should prevent deletion of moderators' do
+  test 'should prevent moderators from deleting themselves' do
     sign_in users(:moderator)
     session[:sudo] = DateTime.now.iso8601
-    post :do_delete, params: { username: users(:moderator).username }
+
+    try_do_delete_user(users(:moderator))
+
     assert_response(:success)
     assert_equal ['Moderator accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
   end
 
-  test 'should prevent deletion of admins' do
+  test 'should prevent admins from deleting themselves' do
     sign_in users(:admin)
     session[:sudo] = DateTime.now.iso8601
-    post :do_delete, params: { username: users(:admin).username }
+
+    try_do_delete_user(users(:admin))
+
     assert_response(:success)
     assert_equal ['Admin accounts cannot be self-deleted. Contact support.'], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
   end
 
   private
+
+  # Attempts to sudo delete a given user
+  # @param user [User] user to delete
+  def try_do_delete_user(user)
+    post :do_delete, params: { username: user.username }
+  end
 
   def try_register_user(username, email, password)
     post :create, params: { user: { username: username, email: email, password: password,
