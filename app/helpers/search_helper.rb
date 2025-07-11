@@ -1,15 +1,5 @@
 module SearchHelper
   # @param user [User] user to check
-  def accessible_categories_for(user)
-    if user&.mod_or_admin?
-      return Category.all
-    end
-
-    trust_level = user&.trust_level || 0
-    Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
-  end
-
-  # @param user [User] user to check
   def accessible_posts_for(user)
     (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
   end
@@ -209,7 +199,7 @@ module SearchHelper
   end
 
   def qualifiers_to_sql(qualifiers, query, user)
-    categories = accessible_categories_for(user)
+    categories = Category.accessible_to(user)
     query = query.where(category_id: categories)
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
