@@ -14,6 +14,16 @@ module SearchHelper
     (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
   end
 
+  ##
+  # Search & sort a default posts list based on parameters in the current request.
+  #
+  # Generates initial post list using {Post#qa_only}, including deleted posts for mods and admins. Takes search string
+  # from <tt>params[:search]</tt>, applies any qualifiers, and searches post bodies for the remaining term(s).
+  #
+  # Search uses MySQL fulltext search in boolean mode which is what provides advanced search syntax (excluding
+  # qualifiers) - see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
+  #
+  # @return [ActiveRecord::Relation<Post>]
   def search_posts(user)
     posts = accessible_posts_for(user)
     qualifiers = params_to_qualifiers
