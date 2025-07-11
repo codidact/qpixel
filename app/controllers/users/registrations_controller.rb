@@ -32,13 +32,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def do_delete
     @user = current_user
     if @user.admin?
-      @user.errors.add(:base, 'Admin accounts cannot be self-deleted. Contact support.')
+      @user.errors.add(:base, I18n.t('users.errors.no_admin_self_delete'))
       render :delete
     elsif @user.moderator?
-      @user.errors.add(:base, 'Moderator accounts cannot be self-deleted. Contact support.')
+      @user.errors.add(:base, I18n.t('users.errors.no_mod_self_delete'))
       render :delete
     elsif params[:username] != @user.username
-      @user.errors.add(:base, 'The username you entered was incorrect.')
+      @user.errors.add(:base, I18n.t('users.errors.self_delete_wrong_username'))
       render :delete
     else
       @user.do_soft_delete(@user)

@@ -17,7 +17,8 @@ class SudoControllerTest < ActionController::TestCase
 
   test 'should fail sudo mode with wrong password' do
     sign_in users(:standard_user)
-    post :enter_sudo, params: { password: 'wrong' }
+    try_enter_sudo('wrong')
+
     assert_response(:success)
     assert_equal 'The password you entered was incorrect.', flash[:danger]
   end
@@ -26,7 +27,8 @@ class SudoControllerTest < ActionController::TestCase
     set_password(users(:standard_user), 'test1234')
     sign_in users(:standard_user)
     session[:sudo_return] = users_me_path
-    post :enter_sudo, params: { password: 'test1234' }
+    try_enter_sudo('test1234')
+
     assert_response(:found)
     assert_redirected_to users_me_path
     assert_not_nil session[:sudo]
@@ -36,6 +38,12 @@ class SudoControllerTest < ActionController::TestCase
   end
 
   private
+
+  # Attempts to enter sudo mode for the current user
+  # @param password [String] password of the user entering sudo mode
+  def try_enter_sudo(password)
+    post :enter_sudo, params: { password: password }
+  end
 
   def set_password(user, password)
     user.password = password
