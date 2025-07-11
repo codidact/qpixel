@@ -1,0 +1,29 @@
+<%#
+  Helper for rendering comment thread follow/unfollow link buttons
+
+  Variables:
+    thread : Comment thread to create the link for
+    user : user to show the link for
+%>
+
+<% if thread.followed_by?(user) %>
+  <a href="#"
+     class="widget--header-link js--unrestrict-thread"
+     data-action="follow"
+     data-thread="<%= thread.id %>"
+     title="You are following this thread and will be notified of every response. You can unfollow at any time."
+     role="button"
+     aria-label="Unfollow this thread">
+    <i class="fas fa-fw fa-bell-slash"></i> unfollow
+  </a>
+<% else %>
+  <a href="#"
+     class="widget--header-link js--restrict-thread"
+     data-action="follow"
+     data-thread="<%= thread.id %>"
+     title="Follow this thread to be notified of every response."
+     role="button"
+     aria-label="Follow this thread">
+    <i class="fas fa-fw fa-bell"></i> follow
+  </a>
+<% end %>

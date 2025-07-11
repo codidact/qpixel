@@ -53,3 +53,7 @@ d_ep:
 d_et:
   community_user: sample_deleter
   ability: edit_tags
+
+b_eo:
+  community_user: sample_basic_user
+  ability: everyone

@@ -23,6 +23,9 @@ $(() => {
       is_mod: !!$('.header--item[href="/mod/flags"]').length,
       categories: function () {
         const category_elements = $("a.category-header--tab");
+        /**
+         * @type {Record<string, string>}
+         */
         const return_obj = {};
         category_elements.each(function () {
           return_obj[this.innerText] = this.getAttribute('href');
@@ -48,7 +51,7 @@ $(() => {
           _CodidactKeyboard.selectedItem.focus();
 
           _CodidactKeyboard.selectedItemData = {
-            type: _CodidactKeyboard.selectedItem.getAttribute("data-ckb-item-type"),
+            type: /** @type {SelectedItemType} */(_CodidactKeyboard.selectedItem.getAttribute("data-ckb-item-type")),
             post_id: _CodidactKeyboard.selectedItem.getAttribute("data-ckb-post-id")
           };
         }
@@ -79,7 +82,7 @@ $(() => {
 
     /**
      * Checks common modifier states on a given keyboard event
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      * @returns {boolean}
      */
     const getModifierState = (e) => {
@@ -88,7 +91,7 @@ $(() => {
 
     /**
      * Handles the "home" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function homeMenu(e) {
       const isHelp = e.key === "?";
@@ -177,7 +180,7 @@ $(() => {
 
     /**
      * Handles "goto" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function gotoMenu(e) {
       if (getModifierState(e)) {
@@ -237,7 +240,7 @@ $(() => {
 
     /**
      * Handles the "goto/category" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function categoryMenu(e) {
       if (getModifierState(e)) {
@@ -256,7 +259,7 @@ $(() => {
 
     /**
      * Handles the "goto/category-tags" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function categoryTagsMenu(e) {
       if (getModifierState(e)) {
@@ -274,7 +277,7 @@ $(() => {
 
     /**
      * Handles the "goto/category-edits" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function categorySuggestedEditsMenu(e) {
       if (getModifierState(e)) {
@@ -292,7 +295,7 @@ $(() => {
 
     /**
      * Handles the "tools" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function toolsMenu(e) {
       if (getModifierState(e)) {
@@ -337,7 +340,7 @@ $(() => {
 
     /**
      * Handles the "tools/vote" keyboard state
-     * @param {KeyboardEvent} e
+     * @param {JQuery.KeyboardEventBase} e
      */
     function voteMenu(e) {
       if (getModifierState(e)) {

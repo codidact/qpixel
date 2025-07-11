@@ -4,11 +4,9 @@ class SuggestedEditController < ApplicationController
   def category_index
     @category = params[:category].present? ? Category.find(params[:category]) : nil
     @edits = if params[:show_decided].present? && params[:show_decided] == '1'
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false) \
-                            .order('created_at DESC')
+               SuggestedEdit.where(post: Post.undeleted.in(@category), active: false).newest_first
              else
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
-                            .order('created_at ASC')
+               SuggestedEdit.where(post: Post.undeleted.in(@category), active: true).oldest_first
              end
   end
 
@@ -23,10 +21,11 @@ class SuggestedEditController < ApplicationController
     end
 
     @post = @edit.post
-    unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: :bad_request)
 
+    unless current_user&.can_approve?(@edit)
+      render(json: { status: 'error',
+                     message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :forbidden)
       return
     end
 
@@ -85,16 +84,18 @@ class SuggestedEditController < ApplicationController
 
   def reject
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
+      render json: { status: 'error',
+                     message: 'This edit has already been reviewed.' },
+             status: :conflict
       return
     end
 
     @post = @edit.post
 
-    unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: :bad_request)
-
+    unless current_user&.can_reject?(@edit)
+      render json: { status: 'error',
+                     message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :forbidden
       return
     end
 
@@ -104,10 +105,16 @@ class SuggestedEditController < ApplicationController
                     decided_by: current_user, updated_at: now)
       flash[:success] = 'Edit rejected successfully.'
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
-      render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }
+      render json: {
+        status: 'success',
+        redirect_url: helpers.generic_share_link(@post)
+      }
     else
-      render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
-             status: :bad_request
+      render json: {
+               status: 'error',
+               message: 'Cannot reject this suggested edit... Strange.'
+             },
+             status: :internal_server_error
     end
   end
 

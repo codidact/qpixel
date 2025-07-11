@@ -1,16 +1,15 @@
 class CommunityUser < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :community
   belongs_to :user
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
-  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
-  scope :active, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
 
@@ -39,8 +38,8 @@ class CommunityUser < ApplicationRecord
   def post_score
     Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 3.hours) do
       exclude_types = ApplicationController.helpers.post_type_ids(is_freely_editable: true)
-      good_posts = Post.where(user: user).where('score > 0.5').where.not(post_type_id: exclude_types).count
-      bad_posts = Post.where(user: user).where('score < 0.5').where.not(post_type_id: exclude_types).count
+      good_posts = Post.by(user).good.where.not(post_type_id: exclude_types).count
+      bad_posts = Post.by(user).bad.where.not(post_type_id: exclude_types).count
 
       (good_posts + 2.0) / (good_posts + bad_posts + 4.0)
     end
@@ -48,8 +47,8 @@ class CommunityUser < ApplicationRecord
 
   def edit_score
     Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 3.hours) do
-      good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
-      bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
+      good_edits = SuggestedEdit.by(user).approved.count
+      bad_edits = SuggestedEdit.by(user).rejected.count
 
       (good_edits + 2.0) / (good_edits + bad_edits + 4.0)
     end
@@ -57,15 +56,18 @@ class CommunityUser < ApplicationRecord
 
   def flag_score
     Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 3.hours) do
-      good_flags = Flag.where(user: user).where(status: 'helpful').count
-      bad_flags = Flag.where(user: user).where(status: 'declined').count
+      good_flags = Flag.by(user).helpful.count
+      bad_flags = Flag.by(user).declined.count
 
       (good_flags + 2.0) / (good_flags + bad_flags + 4.0)
     end
   end
 
+  # Checks if the community user has a given ability
+  # @param internal_id [String] The +internal_id+ of the ability to check
+  # @return [Boolean] check result
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    if internal_id != 'mod' && !ignore_mod && user.is_moderator
+    if internal_id != 'mod' && !ignore_mod && user.at_least_moderator?
       return true # includes: privilege? 'mod'
     end
 
@@ -152,10 +154,28 @@ class CommunityUser < ApplicationRecord
     attributes['trust_level'] || recalc_trust_level
   end
 
+  # Checks if the community user is an admin (global or on the current community)
+  # @return [Boolean] check result
+  def admin?
+    is_admin || user&.global_admin? || false
+  end
+
+  # Checks if the community user is a moderator (global or on the current community)
+  # @return [Boolean] check result
+  def moderator?
+    is_moderator || user&.global_moderator? || false
+  end
+
+  # Checks if the community user is a moderator or has higher access (global or on the current community)
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin?
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
-            elsif is_moderator || user.is_global_moderator || is_admin || user.is_global_admin
+            elsif at_least_moderator?
               4
             elsif privilege?('flag_close') || privilege?('edit_posts')
               3

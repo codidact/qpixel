@@ -14,7 +14,7 @@ class AdminController < ApplicationController
                  ErrorLog.all
                else
                  ErrorLog.where(community: RequestContext.community)
-               end.order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+               end.newest_first.paginate(page: params[:page], per_page: 50)
   end
 
   def privileges
@@ -65,6 +65,9 @@ class AdminController < ApplicationController
   end
 
   def audit_log
+    @page = helpers.safe_page(params)
+    @per_page = helpers.safe_per_page(params)
+
     @logs = if current_user.is_global_admin
               AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
             else
@@ -72,7 +75,8 @@ class AdminController < ApplicationController
             end.user_sort({ term: params[:sort], default: :created_at },
                           age: :created_at, type: :log_type, event: :event_type,
                           related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-            .paginate(page: params[:page], per_page: 100)
+            .paginate(page: @page, per_page: @per_page)
+
     render layout: 'without_sidebar'
   end
 
@@ -196,5 +200,16 @@ class AdminController < ApplicationController
       flash[:danger] = 'Incorrect password.'
       render :change_back
     end
+  end
+
+  def do_email_query
+    users = User.where(email: params[:email])
+    if users.any?
+      @user = users.first
+      @profiles = @user.community_users.includes(:community).where(community: current_user.admin_communities)
+    else
+      flash[:danger] = helpers.i18ns('admin.errors.email_query_not_found')
+    end
+    render :email_query
   end
 end

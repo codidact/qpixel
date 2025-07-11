@@ -53,4 +53,12 @@ class SiteSettingTest < ActiveSupport::TestCase
     SiteSetting.create(community_id: nil, name: 'test', value: 'bar', value_type: 'string')
     assert_equal SiteSetting.where(name: 'test').first, setting1
   end
+
+  test 'text? should correctly check if the setting accepts long text values' do
+    text_setting = site_settings(:text)
+    int_setting = site_settings(:int)
+
+    assert_equal text_setting.text?, true
+    assert_equal int_setting.text?, false
+  end
 end

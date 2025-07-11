@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_moderator
-    if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
+    if !user_signed_in? || !current_user.at_least_moderator?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_admin
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_moderator
-    if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+    if !user_signed_in? || !current_user.at_least_global_moderator?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -118,7 +118,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_locked(post)
-    return if current_user.is_moderator
+    return if current_user.at_least_moderator?
 
     if post.locked?
       respond_to do |format|
@@ -134,33 +134,6 @@ class ApplicationController < ActionController::Base
 
   def second_level_post_types
     helpers.post_type_ids(is_top_level: false, has_parent: true)
-  end
-
-  def check_edits_limit!(post)
-    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
-                                .where('active = TRUE OR accepted = FALSE').count
-
-    max_edits = SiteSetting[if current_user.privilege?('unrestricted')
-                              'RL_SuggestedEdits'
-                            else
-                              'RL_NewUserSuggestedEdits'
-                            end]
-
-    edit_limit_msg = if current_user.privilege? 'unrestricted'
-                       "You may only suggest #{max_edits} edits per day."
-                     else
-                       "You may only suggest #{max_edits} edits per day. " \
-                         'Once you have some well-received posts, that limit will increase.'
-                     end
-
-    if recent_edits >= max_edits
-      post.errors.add :base, edit_limit_msg
-      AuditLog.rate_limit_log(event_type: 'suggested_edits', related: post, user: current_user,
-                              comment: "limit: #{max_edits}")
-      render :edit, status: :bad_request
-      return true
-    end
-    false
   end
 
   private
@@ -219,13 +192,13 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && current_user.is_moderator
+    if user_signed_in? && current_user.at_least_moderator?
       @open_flags = Flag.unhandled.count
     end
 
     @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
-    if current_user&.is_admin
+    if current_user&.admin?
       Rack::MiniProfiler.authorize_request
     end
   end
@@ -278,8 +251,7 @@ class ApplicationController < ActionController::Base
 
     @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(closed: false)
-            .where(locked: false)
+        Post.undeleted.not_locked.where(closed: false)
             .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
@@ -299,7 +271,7 @@ class ApplicationController < ActionController::Base
   def check_if_warning_or_suspension_pending
     return if current_user.nil?
 
-    warning = ModWarning.where(community_user: current_user.community_user, active: true).any?
+    warning = ModWarning.to(current_user).active.any?
     return unless warning
 
     # Ignore devise and warning routes
@@ -433,5 +405,13 @@ class ApplicationController < ActionController::Base
   # Stores the location in the system for the current session, such that after login we send them back to the same page.
   def store_user_location!
     store_location_for(:user, request.fullpath)
+  end
+
+  def require_sudo
+    unless user_signed_in? && session[:sudo].present? &&
+           DateTime.iso8601(session[:sudo]) >= AppConfig.server_settings['user_sudo_duration'].minutes.ago
+      session[:sudo_return] = request.fullpath
+      redirect_to user_sudo_path
+    end
   end
 end

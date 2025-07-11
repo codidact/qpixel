@@ -46,3 +46,12 @@ articles_only:
     - <%= Article.post_type_id %>
   tag_set: main
   license: cc_by_sa
+
+moderator_tags:
+  community: sample
+  name: Moderator Tags
+  short_wiki: Category with a couple of moderator tags
+  tag_set: main
+  license: cc_by_sa
+  moderator_tags:
+    - feature-request

@@ -4,7 +4,7 @@ require:
   - ./lib/rubocop/path_in_helpers.rb
 
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.1
   Exclude:
     - 'config/**/*'
     - 'db/**/*'
@@ -23,7 +23,7 @@ Layout/LineLength:
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 Layout/SpaceInsideArrayLiteralBrackets:
-  Enabled: false
+  Enabled: true
 
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
@@ -33,6 +33,8 @@ Lint/PathInHelpers:
     - app/helpers/**/*.rb
 Lint/RaiseException:
   Enabled: true
+Lint/RedundantDirGlobSort:
+  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Lint/StructNewOverride:
   Enabled: true
 
@@ -53,6 +55,9 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/BlockForwarding:
+  EnforcedStyle: explicit
+
 Style/ClassAndModuleChildren:
   Enabled: false
 Style/ClassVars:
@@ -72,6 +77,11 @@ Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
   Enabled: true
+Style/HashExcept:
+  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+  EnforcedShorthandSyntax: never
 Style/HashTransformKeys:
   Enabled: true
 Style/HashTransformValues:
@@ -82,6 +92,8 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/OptionalBooleanParameter:
   Enabled: false
+Style/RedundantFreeze:
+  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Style/RegexpLiteral:
   Enabled: false
 Style/RescueStandardError:

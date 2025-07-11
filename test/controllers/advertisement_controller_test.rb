@@ -5,7 +5,7 @@ class AdvertisementControllerTest < ActionController::TestCase
 
   test 'index should return html' do
     get :index
-    assert_response(200)
+    assert_response(:success)
     assert_equal 'text/html', response.media_type
   end
 
@@ -14,14 +14,14 @@ class AdvertisementControllerTest < ActionController::TestCase
     # of hot posts, which isn't provided via get helper.
     [:codidact, :community].each do |path|
       get path
-      assert_response(200)
+      assert_response(:success)
       assert_equal 'image/png', response.media_type
     end
   end
 
   test 'post image path should return png' do
     get :specific_question, params: { id: posts(:question_one).id }
-    assert_response(200)
+    assert_response(:success)
     assert_equal 'image/png', response.media_type
   end
 end

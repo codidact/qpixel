@@ -4,5 +4,14 @@ inherit_from:
 Layout/LineLength:
   Max: 150
 
+Metrics/BlockLength:
+  CountAsOne: ['array']
+
 Metrics/ClassLength:
   Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowedMethods: ['get', 'post', 'put', 'delete', 'puts', 'patch']
+  AllowedPatterns: ['assert$', 'assert_equal', 'raise', '^click_', '^fill_', 'visit', 'within']
+  IncludedMacros: ['assert_response']

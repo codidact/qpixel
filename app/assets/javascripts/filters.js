@@ -1,18 +1,18 @@
 $(() => {
-  $('.js-filter-select').each(async (_, el) => {
+  $('.js-filter-select').toArray().forEach(async (el) => {
     const $select = $(el);
     const $form = $select.closest('form');
     const $formFilters = $form.find('.form--filter');
     const $saveButton = $form.find('.filter-save');
     const $isDefaultCheckbox = $form.find('.filter-is-default');
-    const categoryId = $isDefaultCheckbox.val();
+    const categoryId = $isDefaultCheckbox.val()?.toString();
     let defaultFilter = await QPixel.defaultFilter(categoryId);
     const $deleteButton = $form.find('.filter-delete');
 
     // Enables/Disables Save & Delete buttons programatically
     async function computeEnables() {
       const filters = await QPixel.filters();
-      const filterName = $select.val();
+      const filterName = $select.val()?.toString();
 
       // Nothing set
       if (!filterName) {
@@ -33,9 +33,9 @@ $(() => {
       // Not a new filter
       $deleteButton.prop('disabled', filter.system);
 
-      const hasChanges = [...$formFilters].some(el => {
+      const hasChanges = [...$formFilters].some((el) => {
         const filterValue = filter[el.dataset.name];
-        let elValue = $(el).val();
+        let elValue = /** @type {string | undefined[]} */ ($(el).val());
         if (filterValue?.constructor == Array) {
           elValue = elValue ?? [];
           return filterValue.length != elValue.length || filterValue.some((v, i) => v[1] != elValue[i]);
@@ -68,14 +68,23 @@ $(() => {
       }
 
       // Clear out any old options
-      $select.children().filter((_, option) => option.value && !filters[option.value]).detach();
-      $select.select2({
-        data: Object.keys(filters),
-        tags: true,
+      $select.children().filter((_, /** @type{HTMLOptionElement} */ option) => {
+        return option.value && !filters[option.value];
+      }).detach();
 
+      $select.select2({
+        data: Object.keys(filters).map((filterName) => {
+          return {
+            id: filterName,
+            text: filterName
+          }
+        }),
+        tags: true,
         templateResult: template,
         templateSelection: template
-      }).on('select2:select', async evt => {
+      });
+
+      $select.on('select2:select', /** @type {(event: Select2.Event) => void} */ (async (evt) => {
         const filterName = evt.params.data.id;
         const preset = filters[filterName];
 
@@ -92,14 +101,15 @@ $(() => {
           if (value?.constructor == Array) {
             $el.val(null);
             for (const val of value) {
-              $el.append(new Option(val[0], val[1], false, true));
+              $el.append(new Option(val[0], val[1].toString(), false, true));
             }
             $el.trigger('change');
-          } else {
-            $el.val(value).trigger('change');
+          }
+          else {
+            $el.val(/** @type {string} */ (value)).trigger('change');
           }
         }
-      });
+      }));
       computeEnables();
     }
 
@@ -112,13 +122,13 @@ $(() => {
     async function saveFilter() {
       if (!$form[0].reportValidity()) { return; }
 
-      const filter = {};
+      const filter = /** @type {Filter} */({});
 
       for (const el of $formFilters) {
         filter[el.dataset.name] = $(el).val();
       }
 
-      await QPixel.setFilter($select.val(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
+      await QPixel.setFilter($select.val()?.toString(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
       defaultFilter = await QPixel.defaultFilter(categoryId);
 
       // Reinitialize to get new options
@@ -134,9 +144,9 @@ $(() => {
       computeEnables();
     }
 
-    $deleteButton?.on('click', async evt => {
+    $deleteButton?.on('click', async (_evt) => {
       if (confirm(`Are you sure you want to delete ${$select.val()}?`)) {
-        await QPixel.deleteFilter($select.val());
+        await QPixel.deleteFilter($select.val()?.toString());
         // Reinitialize to get new options
         await initializeSelect();
         clear();

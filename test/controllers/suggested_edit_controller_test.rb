@@ -5,14 +5,14 @@ class SuggestedEditControllerTest < ActionController::TestCase
 
   test 'should get page with all pending edits' do
     get :category_index, params: { category: categories(:main).id }
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:edits)
   end
 
   test 'should get page with all decided edits' do
     get :category_index, params: { category: categories(:main).id, show_decided: 1 }
-    assert_response 200
+    assert_response(:success)
     assert_not_nil assigns(:category)
     assert_not_nil assigns(:edits)
   end
@@ -21,7 +21,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     get :show, params: { id: suggested_edits(:pending_suggested_edit).id }
     assert_not_nil assigns(:edit)
     assert_equal assigns(:edit).active, true
-    assert_response(200)
+    assert_response(:success)
   end
 
   test 'should get approved suggested edit page' do
@@ -29,7 +29,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_not_nil assigns(:edit)
     assert_equal assigns(:edit).active, false
     assert_equal assigns(:edit).accepted, true
-    assert_response(200)
+    assert_response(:success)
   end
 
   test 'should get rejected suggested edit page' do
@@ -37,7 +37,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     assert_not_nil assigns(:edit)
     assert_equal assigns(:edit).active, false
     assert_equal assigns(:edit).accepted, false
-    assert_response(200)
+    assert_response(:success)
   end
 
   test 'signed-out shouldn\'t be able to approve' do
@@ -45,7 +45,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: true, accepted: false)
 
     post :approve, params: { id: suggested_edit.id }
-    assert_response(400)
+    assert_response(:forbidden)
   end
 
   test 'signed-out shouldn\'t be able to reject' do
@@ -53,7 +53,37 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: true, accepted: false)
 
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    assert_response(400)
+    assert_response(:forbidden)
+  end
+
+  test 'users without the ability to edit posts shouldn\'t be able to approve' do
+    sign_in users(:moderator)
+
+    edit = suggested_edits(:pending_high_trust)
+
+    post :approve, params: { id: edit.id, format: 'json' }
+
+    assert_response(:forbidden)
+    assert_valid_json_response
+
+    res_body = JSON.parse(response.body)
+    assert_equal 'error', res_body['status']
+    assert_not_empty res_body['message']
+  end
+
+  test 'users without the ability to edit posts shouldn\'t be able to reject' do
+    sign_in users(:moderator)
+
+    edit = suggested_edits(:pending_high_trust)
+
+    post :reject, params: { id: edit.id, format: 'json' }
+
+    assert_response(:forbidden)
+    assert_valid_json_response
+
+    res_body = JSON.parse(response.body)
+    assert_equal 'error', res_body['status']
+    assert_not_empty res_body['message']
   end
 
   test 'already decided edit shouldn\'t be able to be approved' do
@@ -63,7 +93,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: false)
 
     post :approve, params: { id: suggested_edit.id }
-    assert_response(409)
+    assert_response(:conflict)
   end
 
   test 'already decided edit shouldn\'t be able to be rejected' do
@@ -73,7 +103,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     suggested_edit.update(active: false, accepted: true)
 
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    assert_response(409)
+    assert_response(:conflict)
   end
 
   test 'approving edit should change status and apply it' do
@@ -85,7 +115,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     post :approve, params: { id: suggested_edit.id }
     suggested_edit.reload
 
-    assert_response(200)
+    assert_response(:success)
     assert_not_nil assigns(:edit)
 
     assert_equal suggested_edit.active, false
@@ -104,7 +134,7 @@ class SuggestedEditControllerTest < ActionController::TestCase
     post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
     suggested_edit.reload
 
-    assert_response(200)
+    assert_response(:success)
     assert_not_nil assigns(:edit)
 
     assert_equal suggested_edit.active, false

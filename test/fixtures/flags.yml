@@ -3,3 +3,23 @@ one:
   post: answer_two (Post)
   user: standard_user
   community: sample
+
+declined:
+  reason: Please decline it
+  post: question_one (Post)
+  user: standard_user
+  community: sample
+  status: declined
+
+on_deleter:
+  reason: For science!
+  post: deleted (Post)
+  user: deleter
+  community: sample
+
+confidential_on_deleter:
+  reason: TOP SECRET DO NOT SHARE
+  post: deleted (Post)
+  post_flag_type: confidential
+  user: deleter
+  community: sample

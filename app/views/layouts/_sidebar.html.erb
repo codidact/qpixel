@@ -71,12 +71,16 @@
     <% end %>
   <% end %>
 
-  <% if moderator? || admin? %>
+  <% if can_see_deleted_posts? || at_least_moderator? %>
     <div class="widget has-margin-4">
-      <h4 class="widget--header has-margin-0">Moderator Tools</h4>
+      <h4 class="widget--header has-margin-0">Tools</h4>
       <div class="widget--body">
         <ul>
-          <% if moderator? %>
+          <% if can_see_deleted_posts? && !at_least_moderator? %>
+            <li><a href="/mod/deleted">Recent Deletions</a></li>
+          <% end %>
+	        <%# this calls into application_helper, not the user model! %>
+	        <% if at_least_moderator? %>
             <li><%= link_to 'Moderator Tools', moderator_path %></li>
           <% end %>
           <% if admin? %>

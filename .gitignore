@@ -15,6 +15,10 @@ docker/mysql
 # allow custom docker-compose files as users might have different needs
 docker-compose*.yml
 !docker-compose.yml
+# Ignore Dockerfiles in project root
+Dockerfile
+Dockerfile.*
+*.Dockerfile
 
 # Don't track changes to the docker-compose .env file only in project root
 /.env
@@ -66,3 +70,8 @@ dump.rdb
 # Ignore IRB files
 .irbrc
 .irb_history
+
+node_modules
+
+# YARD data
+.yardoc

@@ -18,3 +18,7 @@
 </div>
 
 <%= render 'log_table' %>
+
+<div class="has-padding-top-4">
+  <%= will_paginate @logs, renderer: BootstrapPagination::Rails %>
+</div>

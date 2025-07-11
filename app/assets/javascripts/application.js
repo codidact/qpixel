@@ -15,65 +15,37 @@
 //= require jquery_ujs
 //= require_tree .
 
-$(document).on('ready', function() {
-  $("a.flag-dialog-link").bind("click", (ev) => {
+document.addEventListener('DOMContentLoaded', async () => {
+  QPixel.DOM.addSelectorListener('click', 'a.flag-dialog-link', (ev) => {
     ev.preventDefault();
-    const self = $(ev.target);
-    self.parents(".post--body").find(".js-flag-box").toggleClass("is-active");
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const flagDialog = tgt.closest('.post--body').querySelector('.js-flag-box');
+    flagDialog.classList.toggle('is-active');
   });
 
-  $('.close-dialog-link').on('click', (ev) => {
+  QPixel.DOM.addSelectorListener('click', '.close-dialog-link', (ev) => {
     ev.preventDefault();
-    const self = $(ev.target);
-    console.log(self.parents(".post--body").find(".js-close-box").toggleClass("is-active"));
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const dialog = tgt.closest('.post--body').querySelector('.js-close-box');
+    dialog.classList.toggle('is-active');
   });
 
-  $("a.show-all-flags-dialog-link").bind("click", (ev) => {
+  QPixel.DOM.addSelectorListener('click', '.show-all-flags-dialog-link', (ev) => {
     ev.preventDefault();
-    const self = $(ev.target);
-    self.parents(".post--body").find(".js-flags").toggleClass("is-active");
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const dialog = tgt.closest('.post--body').querySelector('.js-flags');
+    dialog.classList.toggle('is-active');
   });
 
-  $("a.flag-resolve").bind("click", function(ev) {
-    ev.preventDefault();
-    var self = $(this);
-    var id = self.data("flag-id");
-    var data = {
-      'result': self.data("result"),
-      'message': self.parent().parent().find(".flag-resolve-comment").val()
-    };
-
-    $.ajax({
-      'type': 'POST',
-      'url': '/mod/flags/' + id + '/resolve',
-      'data': data,
-      'el': self
-    })
-    .done(function(response) {
-      if(response['status'] !== 'success') {
-        QPixel.createNotification('danger', "<strong>Failed:</strong> " + response['message']);
-      }
-      else {
-        $(this.el).parent().parent().parent().fadeOut(200, function() {
-          $(this).remove();
-        });
-      }
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-      QPixel.createNotification('danger', "<strong>Failed:</strong> " + jqXHR.status);
-      console.log(jqXHR.responseText);
-    });
-  });
-
-  if (document.cookie.indexOf('dismiss_fvn') === -1 ) {
-    $('#fvn-dismiss').on('click', () => {
+  if (document.cookie.indexOf('dismiss_fvn') === -1) {
+    QPixel.DOM.addSelectorListener('click', '#fvn-dismiss', (_ev) => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';
     });
   }
 });
 
-const cssVar = name => window.getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
+const cssVar = (name) => window.getComputedStyle(document.documentElement).getPropertyValue(`--${name}`).trim();
 
 Chartkick.setDefaultOptions({
-  colors: Array.from(Array(5).keys()).map(idx => cssVar(`data-${idx}`))
+  colors: Array.from(Array(5).keys()).map((idx) => cssVar(`data-${idx}`))
 });

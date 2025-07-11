@@ -40,6 +40,27 @@ question_two:
   upvote_count: 0
   downvote_count: 0
 
+new_user_question:
+  post_type: question
+  title: Q1 - This is test question number one
+  body: This is the body of test question one. Note that we did not include any markdown or HTML in here.
+  body_markdown: This is the body of test question one. Note that we did not include any markdown or HTML in here.
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: basic_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 bad_answers:
   post_type: question
   title: Q3B - This question has bad answers
@@ -445,3 +466,17 @@ blog_post:
   category: main
   license: cc_by_sa
 
+question_without_votes:
+  post_type: question
+  title: This is a question for testing votes without affecting existing ones
+  body: This is the body of test question for votes.
+  body_markdown: This is the body of test question for votes.
+  tags_cache:
+    - support
+  tags:
+    - support
+  score: 0.5
+  user: editor
+  community: sample
+  category: main
+  license: cc_by_sa
