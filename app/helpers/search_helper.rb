@@ -193,6 +193,11 @@ module SearchHelper
     # Consider partitioning and telling the user which filters were invalid
   end
 
+  ##
+  # Parses a qualifiers hash and applies it to an ActiveRecord query.
+  # @param qualifiers [Array<Hash{Symbol => Object}>] A qualifiers hash, as returned by other methods in this module.
+  # @param query [ActiveRecord::Relation] An ActiveRecord query to which to add conditions based on the qualifiers.
+  # @return [ActiveRecord::Relation]
   def qualifiers_to_sql(qualifiers, query, user)
     categories = Category.accessible_to(user)
     query = query.where(category_id: categories)
