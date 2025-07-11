@@ -316,6 +316,7 @@ $(() => {
 
     if ($reply.is(':hidden')) {
       $reply.show();
+      $reply.find('.js-comment-field').trigger('focus');
     }
     else {
       $reply.hide();
