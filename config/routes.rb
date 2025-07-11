@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   root                                     to: 'categories#homepage'
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount Rack::Directory.new('coverage/'), at: '/coverage' if Rails.env.development?
   mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
@@ -246,6 +247,7 @@ Rails.application.routes.draw do
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
+    get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
     post   ':id/edit',                     to: 'comments#update', as: :update_comment
     delete ':id/delete',                   to: 'comments#destroy', as: :delete_comment
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
@@ -370,7 +372,7 @@ Rails.application.routes.draw do
   get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '423',                             to: 'errors#read_only'
-  get   '500',                             to: 'errors#internal_server_error'
+  get   '500',                             to: 'errors#internal_server_error', as: :server_error
 
   get   'osd',                             to: 'application#osd', as: :osd
 

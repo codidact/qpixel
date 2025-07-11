@@ -1,0 +1,40 @@
+<%#
+  Renders new comment thread button & modal
+
+  Variables:
+    post : post to create a new thread for
+    text : text to display on the button
+    user : user that will create a new thread
+%>
+
+<%
+  can_comment = user.can_comment_on?(post)
+  is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
+  text ||= defined?(text) && text.present? ? text : t('comments.labels.create_new_thread')
+  is_exempt = !post.comments_allowed? && at_least_moderator?
+  exempt_text = is_exempt ? t('comments.errors.exempt_from_disabled') : nil
+  title = if !post.comments_allowed?
+            [comments_post_error_msg(post), exempt_text].compact.join(' ')
+          elsif is_rate_limited
+            rate_limit_message
+          else
+            ''
+          end
+%>
+
+<div class="new-thread-wrapper">
+  <%= link_to 'javascript:void(0)', class: 'button is-outlined is-small js-new-thread-link',
+                                    data: { post: post.id },
+                                    disabled: !can_comment,
+                                    role: 'button',
+                                    title: is_exempt ? '' : title do %>
+    <i class="fas fa-fw fa-plus"></i> <%= text %>
+  <% end %>
+  <% if is_exempt %>
+    <i class="fas fa-fw fa-unlock-alt has-color-tertiary-300" title="<%= title %>"></i>
+  <% end %>
+</div>
+
+<% if can_comment %>
+  <%= render 'comments/new_thread_modal', post: post %>
+<% end %>

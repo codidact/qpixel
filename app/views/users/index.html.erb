@@ -7,7 +7,7 @@
     <div class="form-group">
       <%= label_tag :search, "Search", class: "form-element" %>
       <%= text_field_tag :search, params[:search], class: 'form-element' %>
-      <%= hidden_field_tag :sort, params[:sort]  %>
+      <%= hidden_field_tag :sort, params[:sort] || @sort_param  %>
     </div>
     <div class="actions has-padding-bottom-1">
       <button type="submit" class="button is-filled is-medium"><i class="fas fa-search"></i><span class="sr-only">Search</span></button>

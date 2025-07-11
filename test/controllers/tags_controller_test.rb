@@ -93,8 +93,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should deny edit to anonymous user' do
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should deny edit to unprivileged user' do
@@ -114,8 +113,7 @@ class TagsControllerTest < ActionController::TestCase
   test 'should deny update to anonymous user' do
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:discussion).id, excerpt: 'things' } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should deny update to unprivileged user' do

@@ -1,3 +1,5 @@
+@use "sass:map";
+
 // Breakpoints
 $screen-sm: 576px;
 $screen-md: 780px;
@@ -45,3 +47,16 @@ $data: (
 $font-stack-plain: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 $font-stack-display: 'Red Hat Display', $font-stack-plain;
 $font-stack-code: 'Cascadia Code', 'Roboto Mono', monospace;
+
+$sides: top, right, bottom, left;
+
+$font-sizes: (
+  xxs: 0.8em,
+  xs: 0.85em,
+  sm: 0.9em,
+  md: 1em,
+  lg: 1.2em,
+  xl: 1.5em
+);
+
+$text-aligns: left, center, right, justify;

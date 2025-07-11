@@ -14,7 +14,7 @@ class AdminController < ApplicationController
                  ErrorLog.all
                else
                  ErrorLog.where(community: RequestContext.community)
-               end.order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+               end.newest_first.paginate(page: params[:page], per_page: 50)
   end
 
   def privileges

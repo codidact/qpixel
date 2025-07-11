@@ -17,8 +17,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'reopen requires authentication' do
     post :reopen, params: { id: posts(:closed).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'unprivileged user cannot reopen' do
