@@ -302,6 +302,7 @@ $(() => {
 
     if ($thread.is(':hidden')) {
       $thread.show();
+      $thread.find('.js-comment-field').trigger('focus');
     }
     else {
       $thread.hide();
