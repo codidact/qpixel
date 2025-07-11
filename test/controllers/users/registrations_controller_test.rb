@@ -80,26 +80,22 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not assigns(:user).deleted
   end
 
-  test 'should prevent moderators from deleting themselves' do
-    sign_in users(:moderator)
-    session[:sudo] = DateTime.now.iso8601
+  test 'should prevent self-deletion if the user is at least a moderator' do
+    locale_string_map = {
+      moderator: 'users.errors.no_mod_self_delete',
+      admin: 'users.errors.no_admin_self_delete'
+    }
 
-    try_do_delete_user(users(:moderator))
+    [:moderator, :admin].each do |name|
+      sign_in users(name)
+      session[:sudo] = DateTime.now.iso8601
 
-    assert_response(:success)
-    assert_equal [I18n.t('users.errors.no_mod_self_delete')], assigns(:user).errors.full_messages
-    assert_not assigns(:user).deleted
-  end
+      try_do_delete_user(users(name))
 
-  test 'should prevent admins from deleting themselves' do
-    sign_in users(:admin)
-    session[:sudo] = DateTime.now.iso8601
-
-    try_do_delete_user(users(:admin))
-
-    assert_response(:success)
-    assert_equal [I18n.t('users.errors.no_admin_self_delete')], assigns(:user).errors.full_messages
-    assert_not assigns(:user).deleted
+      assert_response(:success)
+      assert_equal [I18n.t(locale_string_map[name])], assigns(:user).errors.full_messages
+      assert_not assigns(:user).deleted
+    end
   end
 
   private
