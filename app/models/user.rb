@@ -217,10 +217,6 @@ class User < ApplicationRecord
     user_websites.where.not(url: [nil, '']).order(position: :asc)
   end
 
-  def mod_or_admin?
-    is_admin || is_moderator
-  end
-
   def ensure_websites
     pos = user_websites.size
     while pos < UserWebsite::MAX_ROWS

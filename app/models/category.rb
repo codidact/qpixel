@@ -35,7 +35,7 @@ class Category < ApplicationRecord
   # @param user [User] user to check
   # @return [ActiveRecord::Relation<category>]
   def self.accessible_to(user)
-    if user&.mod_or_admin?
+    if user&.at_least_moderator?
       return Category.all
     end
 

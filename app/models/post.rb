@@ -67,7 +67,7 @@ class Post < ApplicationRecord
   # @param user [User] user to check
   # @return [ActiveRecord::Relation<Post>]
   def self.accessible_to(user)
-    (user&.mod_or_admin? ? Post : Post.undeleted).qa_only.list_includes
+    (user&.at_least_moderator? ? Post : Post.undeleted).qa_only.list_includes
   end
 
   # @param term [String] the search term
