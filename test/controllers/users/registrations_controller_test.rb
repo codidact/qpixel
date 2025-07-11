@@ -8,6 +8,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   test 'should register user' do
     try_register_user('test', 'test@example.com', 'testtest')
+
     assert_response(:found)
     assert_not_nil assigns(:user).id
     assert_redirected_to root_path
@@ -16,6 +17,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   test 'should prevent rapid registrations from same IP' do
     User.create(username: 'test', email: 'test2@example.com', password: 'testtest', current_sign_in_ip: '0.0.0.0')
     try_register_user('test', 'test@example.com', 'testtest')
+
     assert_response(:found)
     assert_redirected_to users_path
     assert_not_nil flash[:danger]
@@ -24,6 +26,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   test 'ensure Devise errors are handled properly' do
     existing_user = users(:standard_user)
     try_register_user(existing_user.username, existing_user.email, 'testtest')
+
     assert_response(:success)
     assert_not_empty assigns(:user).errors
   end
@@ -51,7 +54,8 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   test 'should delete user account' do
     sign_in users(:standard_user)
     session[:sudo] = DateTime.now.iso8601
-    post :do_delete, params: { username: users(:standard_user).username }
+    try_do_delete_user(users(:standard_user))
+
     assert_response(:found)
     assert_redirected_to root_path
     assert_equal 'Sorry to see you go!', flash[:info]
@@ -60,6 +64,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   test 'should require authentication to delete user account' do
     post :do_delete, params: { username: 'anything' }
+
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
@@ -67,6 +72,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   test 'should require sudo to delete user account' do
     sign_in users(:standard_user)
     post :do_delete, params: { username: 'anything' }
+
     assert_response(:found)
     assert_redirected_to user_sudo_path
   end
@@ -75,6 +81,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     session[:sudo] = DateTime.now.iso8601
     post :do_delete, params: { username: 'wrong' }
+
     assert_response(:success)
     assert_equal [I18n.t('users.errors.self_delete_wrong_username')], assigns(:user).errors.full_messages
     assert_not assigns(:user).deleted
