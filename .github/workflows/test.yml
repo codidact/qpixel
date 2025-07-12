@@ -12,9 +12,13 @@ env:
   RAILS_ENV: test
 
 jobs:
-  ruby-3_1:
-    name: Ruby 3.1 testing
+  tests:
+    name: General Ruby on Rails tests
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby_version: [3.1, 3.2]
 
     services:
       mysql:
@@ -40,7 +44,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1
+          ruby-version: ${{ matrix.ruby_version }}
           bundler-cache: true
       - name: Prepare for testing
         run: |
