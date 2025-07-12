@@ -13,8 +13,19 @@ env:
 
 jobs:
   ruby-3_1:
-    name: Ruby 3_1 testing
+    name: Ruby 3.1 testing
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: 'qpixel_test'
+        ports:
+          3306:3306
+        options: --default-authentication-plugin=mysql_native_password
 
     steps:
       - name: Checkout repo
@@ -26,7 +37,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
+          ruby-version: 3.1
           bundler-cache: true
       - name: Prepare for testing
         run: |
