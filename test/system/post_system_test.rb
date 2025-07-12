@@ -7,6 +7,11 @@ class PostSystemTest < ApplicationSystemTestCase
   # Create
   # -------------------------------------------------------
 
+  test 'dummy test for screenshot uploading' do
+    visit root_url
+    take_screenshot
+  end
+
   test 'Not-signed in user cannot create a post' do
     visit root_url
     click_on 'Create Post'
