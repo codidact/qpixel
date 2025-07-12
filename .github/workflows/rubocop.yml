@@ -25,5 +25,4 @@ jobs:
         with:
           ruby-version: 3.1.2
           bundler-cache: true
-      - run: gem install rubocop-rake
       - run: bundle exec rubocop
