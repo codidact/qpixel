@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup dependencies
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -yq libmagickwand-dev
+          sudo apt-get update -qq
+          sudo apt-get install -yqq libmagickwand-dev
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
