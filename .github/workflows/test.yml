@@ -27,6 +27,8 @@ jobs:
           - 3306:3306
       redis:
         image: redis:8.0
+        ports:
+          - 6379:6379
 
     steps:
       - name: Checkout repo
