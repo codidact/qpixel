@@ -25,6 +25,8 @@ jobs:
           MYSQL_DATABASE: 'qpixel_test'
         ports:
           - 3306:3306
+      redis:
+        image: redis:8.0
 
     steps:
       - name: Checkout repo
