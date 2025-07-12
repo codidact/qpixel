@@ -1,0 +1,38 @@
+name: Rails testing
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  ruby-3_1:
+    name: Ruby 3_1 testing
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+  
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
+      - name: Prepare for testing
+        run: |
+          cp config/database.sample.yml config/database.yml
+          cp config/storage.sample.yml config/storage.yml
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
+          bundle exec rails test:prepare
+      - run: bundle exec rails test
