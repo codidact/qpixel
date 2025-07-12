@@ -8,13 +8,14 @@ on:
     branches:
       - develop
 
+env:
+  RAILS_ENV: test
+
 jobs:
   ruby-3_1:
     name: Ruby 3_1 testing
     runs-on: ubuntu-latest
-    env:
-      RAILS_ENV: test
-  
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
