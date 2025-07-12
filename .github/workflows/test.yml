@@ -25,7 +25,6 @@ jobs:
           MYSQL_DATABASE: 'qpixel_test'
         ports:
           - 3306:3306
-        options: --default-authentication-plugin=mysql_native_password
 
     steps:
       - name: Checkout repo
