@@ -6,11 +6,11 @@ module SearchHelper
   # see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
   #
   # @param user [User] user for search context
+  # @param search_string [String, nil] search query string, if any
   # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
-  def search_posts(user)
+  def search_posts(user, search_string)
     posts = Post.accessible_to(user)
     qualifiers = params_to_qualifiers
-    search_string = params[:search]
 
     # Filter based on search string qualifiers
     if search_string.present?

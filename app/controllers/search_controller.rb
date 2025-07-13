@@ -1,6 +1,6 @@
 class SearchController < ApplicationController
   def search
-    @posts, @qualifiers = helpers.search_posts(current_user)
+    @posts, @qualifiers = helpers.search_posts(current_user, params[:search])
 
     @signed_out_me = @qualifiers.any? { |q| q[:param] == :user && q[:user_id].nil? }
 
