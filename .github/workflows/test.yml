@@ -62,14 +62,6 @@ jobs:
           bundle exec rails db:migrate
           bundle exec rails test:prepare
       - run: bundle exec rails ${{ matrix.test_type }}
-
-      - uses: codecov/codecov-action@v5
-        with:
-          directory: test/reports
-          dry_run: true # temporary
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Upload screenshots
         if: ${{ matrix.test_type == 'test:system' }}
         uses: actions/upload-artifact@v4
@@ -77,3 +69,14 @@ jobs:
           name: screenshots-${{ matrix.ruby_version }}
           path: tmp/screenshots
           if-no-files-found: ignore
+
+      - run: ls -la test/reports
+
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' }}
+        with:
+          directory: test/reports
+          dry_run: true # temporary
+          # fail_ci_if_error: true
+          report_type: test_results
+          token: ${{ secrets.CODECOV_TOKEN }}
