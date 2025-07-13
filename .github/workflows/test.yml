@@ -77,6 +77,7 @@ jobs:
         with:
           directory: test/reports
           dry_run: true # temporary
-          # fail_ci_if_error: true
+          fail_ci_if_error: true
           report_type: test_results
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
