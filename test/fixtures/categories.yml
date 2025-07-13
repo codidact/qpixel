@@ -29,8 +29,8 @@ high_trust:
 
 admin_only:
   community: sample
-  name: High Trust
-  short_wiki: High Trust
+  name: Admin Only
+  short_wiki: Admin Only
   display_post_types:
     - <%= Question.post_type_id %>
   tag_set: main
