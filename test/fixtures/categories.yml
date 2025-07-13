@@ -34,8 +34,8 @@ admin_only:
   display_post_types:
     - <%= Question.post_type_id %>
   tag_set: main
-  min_trust_level: 6
-  min_view_trust_level: 6
+  min_trust_level: 5
+  min_view_trust_level: 5
   license: cc_by_sa
 
 articles_only:
