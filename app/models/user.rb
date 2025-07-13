@@ -158,7 +158,8 @@ class User < ApplicationRecord
   # @param category [Category] category to check
   # @return [Boolean] check result
   def can_see_category?(category)
-    community_user&.trust_level&.>= category.min_view_trust_level
+    category_trust_level = category.min_view_trust_level || -1
+    trust_level >= category_trust_level
   end
 
   # Is the user allowed to see deleted posts?
