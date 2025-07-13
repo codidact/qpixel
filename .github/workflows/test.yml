@@ -73,7 +73,6 @@ jobs:
         if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' }}
         with:
           directory: coverage
-          dry_run: true
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
