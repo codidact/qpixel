@@ -62,11 +62,10 @@ jobs:
           bundle exec rails db:migrate
           bundle exec rails test:prepare
       - run: bundle exec rails ${{ matrix.test_type }}
-      - run: ls -la ~
       - name: Upload screenshots
         if: ${{ matrix.test_type == 'test:system' }}
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-${{ matrix.ruby_version }}
-          path: ~/tmp/screenshots
+          path: tmp/screenshots
           if-no-files-found: ignore
