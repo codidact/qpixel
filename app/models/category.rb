@@ -15,6 +15,13 @@ class Category < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
+  # Can anyone view the category (even if not logged in)?
+  # @return [Boolean] check result
+  def public?
+    trust_level = min_view_trust_level || -1
+    trust_level <= 0
+  end
+
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
     Rails.cache.fetch key, expires_in: 5.minutes do
