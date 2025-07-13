@@ -61,6 +61,13 @@ sample_global_admin:
   is_moderator: false
   reputation: 1
 
+sample_staff:
+  user: staff
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
 sample_deleted_account:
   user: deleted_account
   community: sample
