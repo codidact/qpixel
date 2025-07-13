@@ -75,9 +75,25 @@ class CategoriesControllerTest < ActionController::TestCase
   end
 
   test 'should prevent users under min_view_trust_level viewing category that requires higher' do
-    get :show, params: { id: categories(:admin_only).id }
+    staff_only = categories(:admin_only)
 
-    assert_response(:not_found)
-    assert_not_nil assigns(:category)
+    users.reject { |u| u.can_see_category?(staff_only) && !u.staff? }.each do |user|
+      sign_in user
+      try_show_category(staff_only)
+
+      if user.staff?
+        assert_response(:success)
+      else
+        assert_response(:not_found)
+      end
+
+      assert_not_nil assigns(:category)
+    end
+  end
+
+  private
+
+  def try_show_category(category)
+    get :show, params: { id: category.id }
   end
 end
