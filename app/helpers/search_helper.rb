@@ -6,16 +6,17 @@ module SearchHelper
   # see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
   #
   # @param user [User] user for search context
-  # @param search_string [String, nil] search query string, if any
+  # @param params [ActionController::Parameters] search parameters
   # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
-  def search_posts(user, search_string)
+  def search_posts(user, params)
     posts = Post.accessible_to(user)
-    qualifiers = params_to_qualifiers
+    qualifiers = params_to_qualifiers(params)
+    search_string = params[:search]
 
     # Filter based on search string qualifiers
     if search_string.present?
       search_data = parse_search(search_string)
-      qualifiers += parse_qualifier_strings search_data[:qualifiers]
+      qualifiers += parse_qualifier_strings(search_data[:qualifiers])
       search_string = search_data[:search]
     end
 
@@ -71,8 +72,9 @@ module SearchHelper
 
   ##
   # Retrieves parameters from +params+, validates their values, and adds them to a qualifiers hash.
+  # @param params [ActionController::Parameters] params to convert to qualifiers
   # @return [Array<Hash{Symbol => Object}>]
-  def params_to_qualifiers
+  def params_to_qualifiers(params)
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
       status: /any|open|closed/,
