@@ -8,7 +8,7 @@ module SearchHelper
   # Search uses MySQL fulltext search in boolean mode which is what provides advanced search syntax (excluding
   # qualifiers) - see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
   #
-  # @return [ActiveRecord::Relation<Post>]
+  # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
   def search_posts(user)
     posts = Post.accessible_to(user)
     qualifiers = params_to_qualifiers
