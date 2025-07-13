@@ -74,20 +74,21 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_redirected_to category_path(assigns(:category))
   end
 
-  test 'should prevent users under min_view_trust_level viewing category that requires higher' do
-    staff_only = categories(:admin_only)
-
-    users.reject { |u| u.can_see_category?(staff_only) && !u.staff? }.each do |user|
+  test ':show should only succeed for users who can see the category in the first place' do
+    users.each do |user|
       sign_in user
-      try_show_category(staff_only)
 
-      if user.staff?
-        assert_response(:success)
-      else
-        assert_response(:not_found)
+      categories.each do |category|
+        try_show_category(category)
+
+        if category.public? || user.can_see_category?(category)
+          assert_response(:success)
+        else
+          assert_response(:not_found)
+        end
+
+        assert_not_nil assigns(:category)
       end
-
-      assert_not_nil assigns(:category)
     end
   end
 
