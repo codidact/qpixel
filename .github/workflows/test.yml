@@ -69,15 +69,10 @@ jobs:
           name: screenshots-${{ matrix.ruby_version }}
           path: tmp/screenshots
           if-no-files-found: ignore
-
-      - run: ls -la test/reports
-
       - uses: codecov/codecov-action@v5
         if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' }}
         with:
           directory: test/reports
-          dry_run: true # temporary
           fail_ci_if_error: true
           report_type: test_results
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
