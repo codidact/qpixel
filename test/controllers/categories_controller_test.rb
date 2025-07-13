@@ -9,37 +9,62 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:categories)
   end
 
-  test 'should get show' do
-    get :show, params: { id: categories(:main).id }
-    assert_response(:success)
-    assert_not_nil assigns(:category)
-    assert_not_nil assigns(:posts)
+  test 'should correctly show public categories' do
+    public_categories = categories.select(&:public?)
+
+    assert_not public_categories.size.zero?
+
+    public_categories.each do |category|
+      try_show_category(category)
+
+      assert_response(:success)
+      assert_not_nil assigns(:category)
+      assert_not_nil assigns(:posts)
+    end
   end
 
-  test 'fake community should not get show' do
+  test 'fake community should never be shown' do
     RequestContext.community = communities(:fake)
     request.env['HTTP_HOST'] = 'fake.qpixel.com'
 
-    get :show, params: { id: categories(:main).id }
+    try_show_category(categories(:main))
+
     assert_response(:not_found)
   end
 
-  test 'should require authentication to get new' do
-    get :new
-    assert_redirected_to_sign_in
+  test 'categories should only be shown to those who can see them' do
+    users.each do |user|
+      sign_in user
+
+      categories.each do |category|
+        try_show_category(category)
+
+        if category.public? || user.can_see_category?(category)
+          assert_response(:success)
+        else
+          assert_response(:not_found)
+        end
+
+        assert_not_nil assigns(:category)
+      end
+    end
   end
 
-  test 'should require admin to get new' do
-    sign_in users(:standard_user)
-    get :new
-    assert_response(:not_found)
-  end
+  test ':new should require the user to be an admin' do
+    users.each do |user|
+      sign_in user
 
-  test 'should allow admins to get new' do
-    sign_in users(:admin)
-    get :new
-    assert_response(:success)
-    assert_not_nil assigns(:category)
+      get :new
+
+      if user.admin?
+        assert_response(:success)
+        assert_not_nil assigns(:category)
+      elsif @controller.helpers.user_signed_in?
+        assert_response(:not_found)
+      else
+        assert_redirected_to_sign_in
+      end
+    end
   end
 
   test 'should require authentication to create category' do
@@ -62,24 +87,6 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:category).id
     assert_equal false, assigns(:category).errors.any?
     assert_redirected_to category_path(assigns(:category))
-  end
-
-  test ':show should only succeed for users who can see the category in the first place' do
-    users.each do |user|
-      sign_in user
-
-      categories.each do |category|
-        try_show_category(category)
-
-        if category.public? || user.can_see_category?(category)
-          assert_response(:success)
-        else
-          assert_response(:not_found)
-        end
-
-        assert_not_nil assigns(:category)
-      end
-    end
   end
 
   private
