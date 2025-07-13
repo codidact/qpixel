@@ -41,7 +41,7 @@ class User < ApplicationRecord
   validate :is_not_blocklisted
   validate :email_not_bad_pattern
 
-  delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -49,6 +49,12 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
+
+  # Safely gets the user's trust level even if they don't have a community user
+  # @return [Integer] user's trust level
+  def trust_level
+    community_user&.trust_level || 0
   end
 
   # Is the user a new user?
