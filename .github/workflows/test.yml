@@ -41,7 +41,11 @@ jobs:
       - name: Setup dependencies
         run: |
           sudo apt-get -qq update
-          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev firefox-esr
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+      - name: Setup Firefox
+        if: ${{ matrix.test_type == 'test:system' }}
+        uses: browser-actions/setup-firefox@v1.5.4
+      - run: firefox --version
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
