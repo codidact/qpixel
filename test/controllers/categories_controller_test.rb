@@ -43,29 +43,19 @@ class CategoriesControllerTest < ActionController::TestCase
   end
 
   test 'should require authentication to create category' do
-    post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
-                                        post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue',
-                                        license_id: licenses(:cc_by_sa).id } }
-
+    try_create_category
     assert_redirected_to_sign_in
   end
 
   test 'should require admin to create category' do
     sign_in users(:standard_user)
-    post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
-                                        post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set: tag_sets(:main).id, color_code: 'blue',
-                                        license_id: licenses(:cc_by_sa).id } }
+    try_create_category
     assert_response(:not_found)
   end
 
   test 'should allow admins to create category' do
     sign_in users(:admin)
-    post :create, params: { category: { name: 'test', short_wiki: 'test', display_post_types: [Question.post_type_id],
-                                        post_type_ids: [Question.post_type_id, Answer.post_type_id],
-                                        tag_set_id: tag_sets(:main).id, color_code: 'blue',
-                                        license_id: licenses(:cc_by_sa).id } }
+    try_create_category
 
     assert_response(:found)
     assert_not_nil assigns(:category)
@@ -93,6 +83,24 @@ class CategoriesControllerTest < ActionController::TestCase
   end
 
   private
+
+  def try_create_category(**opts)
+    name = opts[:name] || 'test'
+    short_wiki = opts[:short_wiki] || 'test'
+    license = opts[:license] || licenses(:cc_by_sa)
+    color_code = opts[:color_code] || 'blue'
+    display_post_types = opts[:display_post_types] || [Question.post_type_id]
+    post_types = opts[:post_types] || [Question, Answer]
+    tag_set = opts[:tag_set] || tag_sets(:main)
+
+    post :create, params: { category: { name: name,
+                                        short_wiki: short_wiki,
+                                        display_post_types: display_post_types,
+                                        post_type_ids: post_types.map(&:post_type_id),
+                                        tag_set_id: tag_set.id,
+                                        color_code: color_code,
+                                        license_id: license.id } }
+  end
 
   def try_show_category(category)
     get :show, params: { id: category.id }
