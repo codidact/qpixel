@@ -188,4 +188,15 @@ class SearchHelperTest < ActionView::TestCase
     assert_not_equal divisive_query.size, 0
     assert only_divisive_posts
   end
+
+  test 'search_posts should not show posts in categories that a user cannot view' do
+    std_user = users(:standard_user)
+
+    params = ActionController::Parameters.new({ search: 'high trust' })
+    posts, _qualifiers = search_posts(std_user, params)
+
+    admin_category = categories(:admin_only)
+
+    assert_not(posts.any? { |p| p.category.id == admin_category.id })
+  end
 end
