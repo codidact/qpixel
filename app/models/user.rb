@@ -148,6 +148,13 @@ class User < ApplicationRecord
     can_comment_on?(thread.post) && !thread.read_only?
   end
 
+  # Can the user see a given category at all?
+  # @param category [Category] category to check
+  # @return [Boolean] check result
+  def can_see_category?(category)
+    community_user&.trust_level&.>= category.min_view_trust_level
+  end
+
   # Is the user allowed to see deleted posts?
   # @return [Boolean] check result
   def can_see_deleted_posts?
