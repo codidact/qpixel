@@ -2,12 +2,10 @@ module SearchHelper
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
-  # Generates initial post list using {Post#qa_only}, including deleted posts for mods and admins. Takes search string
-  # from <tt>params[:search]</tt>, applies any qualifiers, and searches post bodies for the remaining term(s).
+  # Search uses MySQL FTS in boolean mode which is what provides advanced search syntax (excluding qualifiers)
+  # see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
   #
-  # Search uses MySQL fulltext search in boolean mode which is what provides advanced search syntax (excluding
-  # qualifiers) - see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
-  #
+  # @param user [User] user for search context
   # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
   def search_posts(user)
     posts = Post.accessible_to(user)
