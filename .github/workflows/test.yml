@@ -45,7 +45,9 @@ jobs:
       - name: Setup Firefox
         if: ${{ matrix.test_type == 'test:system' }}
         uses: browser-actions/setup-firefox@v1.5.4
-      - run: firefox --version
+      - name: Check Firefox setup
+        if: ${{ matrix.test_type == 'test:system' }}
+        run: firefox --version
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -60,6 +62,7 @@ jobs:
           bundle exec rails db:migrate
           bundle exec rails test:prepare
       - run: bundle exec rails ${{ matrix.test_type }}
+      - run: ls -la ~
       - name: Upload screenshots
         if: ${{ matrix.test_type == 'test:system' }}
         uses: actions/upload-artifact@v4
