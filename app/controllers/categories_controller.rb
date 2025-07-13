@@ -150,9 +150,7 @@ class CategoriesController < ApplicationController
   end
 
   def verify_view_access
-    unless (current_user&.trust_level || 0) >= (@category.min_view_trust_level || -1)
-      not_found
-    end
+    not_found unless @category.public? || current_user&.can_see_category?(@category)
   end
 
   def set_list_posts
