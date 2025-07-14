@@ -23,9 +23,9 @@
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
       <%= user_link flag.user %> at <%= flag.created_at.iso8601 %>
       <% if flag.post_type == 'Post' && flag.post.updated_at > flag.created_at %>
-      <%= link_to post_history_path(flag.post) do %>
-	(post modified after flag)
-      <% end %>
+        <%= link_to post_history_path(flag.post) do %>
+          (post modified after flag)
+        <% end %>
       <% end %>
     </p>
   </div>
@@ -36,13 +36,15 @@
         <%= user_link flag.escalated_by %> <%= flag.escalated_at.iso8601 %>
       </p>
       <p>
-	<strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this flag. Do not share sensitive, mod-only information.
+	      <strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this
+        flag. Do not share sensitive, mod-only information.
       </p>
     </div>
   <% end %>
   <% if controls %>
     <div class="widget--footer flex-row jc-sb">
-      <textarea class="form-element flag-resolve-comment has-rows primary" placeholder="Optional comment for flagger" rows="2"></textarea>
+      <textarea class="form-element flag-resolve-comment has-rows primary" placeholder="Optional comment for flagger"
+                rows="2"></textarea>
       <div class="has-padding-1">
         <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
         <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
