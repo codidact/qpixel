@@ -11,7 +11,7 @@
     ] 
   end
 end.sort_by { |a| a }.map { |_, v| v }.each do |name, sub| %>
-  <details data-sub-id="<%= sub %>">
+  <details data-sub-id="<%= sub.id %>">
     <summary><%= name %></summary>
     <p>Subscription to <%= phrase_for sub.type, sub.qualifier %>, emailed every <%= 
       pluralize(sub.frequency, 'day') 
