@@ -1,5 +1,5 @@
 question_one_revision:
-  post_history_type: revision
+  post_history_type: post_edited
   user: editor
   post: question_one
   before_title: Q1 - This is test question number one
@@ -8,7 +8,7 @@ question_one_revision:
   community: sample
 
 question_one_hidden_revision:
-  post_history_type: revision
+  post_history_type: post_edited
   user: admin
   post: question_one
   comment: 'A hidden revision made by an admin user'

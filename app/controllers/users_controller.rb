@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
-    sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
+    @sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
 
     @users = if params[:search].present?
                user_scope.search(params[:search])
@@ -25,7 +25,7 @@ class UsersController < ApplicationController
 
     @users = @users.where.not(deleted: true)
                    .where.not(community_users: { deleted: true })
-                   .order(sort_param => :desc)
+                   .order(@sort_param => :desc)
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
@@ -200,7 +200,7 @@ class UsersController < ApplicationController
                Post.all
              else
                Post.undeleted
-             end.where(user: @user).list_includes.joins(:category)
+             end.by(@user).list_includes.joins(:category)
              .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
              .user_sort({ term: params[:sort], default: :score },
                         activity: :last_activity,
@@ -227,31 +227,28 @@ class UsersController < ApplicationController
   end
 
   def activity
-    @posts = Post.undeleted.where(user: @user).count
-    @comments = Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
-                                                                      posts: { deleted: false }).count
-    @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
-                                                                post_history_types: { name: 'post_edited' }).count
+    @posts = Post.undeleted.by(@user).count
+    @comments = Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
+                                                                                posts: { deleted: false }).count
+    @suggested_edits = SuggestedEdit.by(@user).count
+    @edits = PostHistory.by(@user).of_type('post_edited').on_undeleted.count
 
     @all_edits = @suggested_edits + @edits
 
     items = case params[:filter]
             when 'posts'
-              Post.undeleted.where(user: @user)
+              Post.undeleted.by(@user)
             when 'comments'
-              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
-                                                                    posts: { deleted: false })
+              Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
+                                                                              posts: { deleted: false })
             when 'edits'
-              SuggestedEdit.where(user: @user) + \
-              PostHistory.joins(:post, :post_history_type).where(user: @user, posts: { deleted: false },
-                                                                 post_history_types: { name: 'post_edited' })
+              SuggestedEdit.by(@user) + PostHistory.by(@user).of_type('post_edited').on_undeleted
             else
-              Post.undeleted.where(user: @user) + \
-              Comment.joins(:comment_thread, :post).undeleted.where(user: @user, comment_threads: { deleted: false },
-                                                                    posts: { deleted: false }) + \
-              SuggestedEdit.where(user: @user).all + \
-              PostHistory.joins(:post).where(user: @user, posts: { deleted: false }).all
+              Post.undeleted.by(@user) + \
+              Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
+                                                                              posts: { deleted: false }) + \
+              SuggestedEdit.by(@user).all + \
+              PostHistory.by(@user).on_undeleted.all
             end
 
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
@@ -261,42 +258,42 @@ class UsersController < ApplicationController
   def mod; end
 
   def full_log
-    @posts = Post.where(user: @user).count
-    @comments = Comment.where(user: @user).count
-    @flags = Flag.where(user: @user).count
-    @suggested_edits = SuggestedEdit.where(user: @user).count
-    @edits = PostHistory.where(user: @user).count
-    @mod_warnings_received = ModWarning.where(community_user: @user.community_user).count
+    @posts = Post.by(@user).count
+    @comments = Comment.by(@user).count
+    @flags = Flag.by(@user).count
+    @suggested_edits = SuggestedEdit.by(@user).count
+    @edits = PostHistory.by(@user).count
+    @mod_warnings_received = ModWarning.to(@user).count
 
     @all_edits = @suggested_edits + @edits
 
-    @interesting_comments = Comment.where(user: @user, deleted: true).count
-    @interesting_flags = Flag.where(user: @user, status: 'declined').count
-    @interesting_edits = SuggestedEdit.where(user: @user, active: false, accepted: false).count
-    @interesting_posts = Post.where(user: @user).where('score < 0.25 OR deleted=1').count
+    @interesting_comments = Comment.by(@user).deleted.count
+    @interesting_flags = Flag.by(@user).declined.count
+    @interesting_edits = SuggestedEdit.by(@user).rejected.count
+    @interesting_posts = Post.by(@user).problematic.count
 
     @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
               when 'posts'
-                Post.where(user: @user).all
+                Post.by(@user).all
               when 'comments'
-                Comment.where(user: @user).all
+                Comment.by(@user).all
               when 'flags'
-                Flag.where(user: @user).all
+                Flag.by(@user).all
               when 'edits'
-                SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all
+                SuggestedEdit.by(@user).all + PostHistory.by(@user).all
               when 'warnings'
-                ModWarning.where(community_user: @user.community_user).all
+                ModWarning.to(@user).all
               when 'interesting'
-                Comment.where(user: @user, deleted: true).all + Flag.where(user: @user, status: 'declined').all + \
-                  SuggestedEdit.where(user: @user, active: false, accepted: false).all + \
-                  Post.where(user: @user).where('score < 0.25 OR deleted=1').all
+                Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
+                  SuggestedEdit.by(@user).rejected.all + \
+                  Post.by(@user).problematic.all
               else
-                Post.where(user: @user).all + Comment.where(user: @user).all + Flag.where(user: @user).all + \
-                  SuggestedEdit.where(user: @user).all + PostHistory.where(user: @user).all + \
-                  ModWarning.where(community_user: @user.community_user).all
+                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
+                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all + \
+                  ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
     render layout: 'without_sidebar'
@@ -323,13 +320,13 @@ class UsersController < ApplicationController
     @user.block('user destroyed')
 
     if @user.destroy
-      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                                        deleted: true, deleted_at: DateTime.now,
-                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
-      Comment.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                                           deleted: true)
-      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      SuggestedEdit.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      Post.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                         deleted: true, deleted_at: DateTime.now,
+                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
+      Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
+                                            deleted: true)
+      Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
+      SuggestedEdit.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
       AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
       render json: { status: 'success' }
     else
@@ -590,7 +587,8 @@ class UsersController < ApplicationController
   end
 
   def annotations
-    @logs = AuditLog.where(log_type: 'user_annotation', related: @user).order(created_at: :desc)
+    @logs = AuditLog.where(log_type: 'user_annotation', related: @user)
+                    .newest_first
                     .paginate(page: params[:page], per_page: 20)
     render layout: 'without_sidebar'
   end
@@ -611,9 +609,7 @@ class UsersController < ApplicationController
   end
 
   def vote_summary
-    @votes = Vote.where(recv_user: @user)
-                 .includes(:post)
-                 .group(:date_of, :post_id, :vote_type)
+    @votes = Vote.for(@user).includes(:post).group(:date_of, :post_id, :vote_type)
 
     @votes = @votes.select(:post_id, :vote_type)
                    .select('count(*) as vote_count')
@@ -689,7 +685,7 @@ class UsersController < ApplicationController
     if current_user&.at_least_moderator?
       User.all
     else
-      User.active
+      User.undeleted
     end.joins(:community_user).includes(:community_user, :avatar_attachment)
   end
 

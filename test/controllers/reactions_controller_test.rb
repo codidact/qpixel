@@ -6,8 +6,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'add should require sign in' do
     post :add, params: { reaction_id: reaction_types(:wfm).id, comment: nil, post_id: posts(:answer_two) }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'add should fail if no post id given' do
@@ -101,8 +100,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'retract should require sign in' do
     post :retract, params: { reaction_id: reaction_types(:wfm).id, post_id: posts(:answer_two) }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'retract should fail if no post id given' do
@@ -142,8 +140,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'index should fail for signed-out' do
     get :index
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'index should fail for standard users' do
@@ -166,8 +163,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'edit should fail for signed-out' do
     get :edit, params: { id: reaction_types(:wfm).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'edit should fail for standard users' do
@@ -191,8 +187,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'update should fail for signed-out' do
     patch :update, params: { id: reaction_types(:wfm).id, reaction_type: { name: 'WORKZ', active: false } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'update should fail for standard users' do
@@ -220,8 +215,7 @@ class ReactionsControllerTest < ActionController::TestCase
 
   test 'new should fail for signed-out' do
     get :new
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'new should fail for standard users' do
@@ -248,8 +242,7 @@ class ReactionsControllerTest < ActionController::TestCase
       icon: 'aaaaaah-icon', color: 'is-deeppurple is-orangegreen', requires_comment: false,
       position: 42 }
     post :create, params: { id: reaction_types(:wfm).id, reaction_type: data }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'create should fail for standard users' do

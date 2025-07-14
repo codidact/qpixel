@@ -1,6 +1,6 @@
 .post--comments-thread-wrapper {
   .post--comments-thread {
-    .widget--body {
+    .widget--body:not(.widget--deleted-comments):not(.widget--more-comments) {
       padding: 0;
 
       .comment {
@@ -8,4 +8,44 @@
       }
     }
   }
+
+  .droppanel {
+    max-width: 15em;
+
+    .droppanel--menu {
+      max-width: unset;
+    }
+  }
+}
+
+.thread {
+
+  .widget--full-thread,
+  .widget--more-comments,
+  .widget--deleted-comments {
+    font-size: 0.8em;
+    padding: 0.5em;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.thread-followers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+
+  .user-card--content {
+    max-width: 75%;
+  }
+}
+
+.new-thread-wrapper,
+.reply-to-thread-wrapper {
+  align-items: center;
+  gap: 0.25em;
+  display: inline-flex;
 }

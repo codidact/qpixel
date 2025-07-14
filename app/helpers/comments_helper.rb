@@ -69,6 +69,44 @@ module CommentsHelper
     comment_text
   end
 
+  # Gets a standard comments error message for a given post
+  # @param post [Post] target post
+  # @return [String] error message
+  def comments_post_error_msg(post)
+    if post.locked?
+      I18n.t('comments.errors.disabled_on_locked_posts')
+    elsif post.deleted?
+      I18n.t('comments.errors.disabled_on_deleted_posts')
+    elsif post.comments_disabled
+      I18n.t('comments.errors.disabled_on_post_specific')
+    else
+      I18n.t('comments.errors.disabled_on_post_generic')
+    end.strip
+  end
+
+  # Gets a standard comments error message for a given thread
+  # @param thread [CommentThread] target thread
+  # @return [String] error message
+  def comments_thread_error_msg(thread)
+    if thread.locked?
+      I18n.t('comments.errors.disabled_on_locked_threads')
+    elsif thread.deleted
+      I18n.t('comments.errors.disabled_on_deleted_threads')
+    elsif thread.archived
+      I18n.t('comments.errors.disabled_on_archived_threads')
+    else
+      I18n.t('comments.errors.disabled_on_thread_generic')
+    end.strip
+  end
+
+  # Gets a standard comments rate limit error message for a given user & post
+  # @param user [User] user to get the comments count for
+  # @param post [Post] post to get the comments count for
+  def rate_limited_error_msg(user, post)
+    comments_count = user.recent_comments_count(post)
+    I18n.t('comments.errors.rate_limited', count: comments_count)
+  end
+
   ##
   # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
   # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
@@ -105,34 +143,30 @@ module CommentsHelper
   # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
   #   a rate limit message if the user is rate-limited.
   def comment_rate_limited?(user, post, create_audit_log: true)
-    # Comments created by the current user in the last 24 hours, excluding comments on own posts and responses to them.
-    recent_comments = Comment.where(created_at: 24.hours.ago..DateTime.now, user: user).where \
-                             .not(post: Post.includes(:parent).where(parents_posts: { user_id: user.id })) \
-                             .where.not(post: Post.where(user_id: user.id)).count
-    max_comments_per_day = SiteSetting[user.privilege?('unrestricted') ? 'RL_Comments' : 'RL_NewUserComments']
+    comments_count = user.recent_comments_count(post)
+    comments_limit = user.max_comments_per_day(post)
+    is_rate_limited = comments_count >= comments_limit
 
-    if post.user_id != user.id && post.parent&.user_id != user.id
-      if !user.privilege?('unrestricted')
-        message = 'As a new user, you can only comment on your own posts and on answers to them.'
-        if create_audit_log
-          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "limit: #{max_comments_per_day}")
-        end
-        [true, message]
-      elsif recent_comments >= max_comments_per_day
-        message = "You have used your daily comment limit of #{recent_comments} comments. Come back tomorrow to " \
-                  'continue commenting. Comments on your own posts and on answers to own posts are exempt.'
-        if create_audit_log
-          AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
-                                  comment: "limit: #{max_comments_per_day}")
-        end
-        [true, message]
-      else
-        [false, nil]
+    unless is_rate_limited && user.standard?
+      return [false, nil]
+    end
+
+    if user.new? && !user.owns_post_or_parent?(post) && comments_limit.zero?
+      message = I18n.t('comments.errors.new_user_rate_limited')
+
+      if create_audit_log
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user,
+                                comment: "'unrestricted' ability required to comment on non-owned posts")
       end
     else
-      [false, nil]
+      message = rate_limited_error_msg(user, post)
+
+      if create_audit_log
+        AuditLog.rate_limit_log(event_type: 'comment', related: post, user: user, comment: "limit: #{comments_limit}")
+      end
     end
+
+    [true, message]
   end
 end
 

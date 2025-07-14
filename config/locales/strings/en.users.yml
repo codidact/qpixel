@@ -1,0 +1,9 @@
+en:
+  users:
+    errors:
+      no_admin_self_delete: >
+        Admin accounts cannot be self-deleted. Contact support.
+      no_mod_self_delete: >
+        Moderator accounts cannot be self-deleted. Contact support.
+      self_delete_wrong_username: >
+        The username you entered was incorrect.

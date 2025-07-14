@@ -50,8 +50,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'standard users cannot create help posts' do
@@ -135,8 +134,7 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should prevent deleted profile creating post' do
@@ -147,7 +145,6 @@ class PostsControllerTest < ActionController::TestCase
                                     body_markdown: sample.body_markdown, category_id: categories(:main).id,
                                     tags_cache: sample.tags_cache } }
 
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 end

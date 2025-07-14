@@ -5,14 +5,12 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
   test 'should require authentication to access new' do
     get :new, params: { type: 'all' }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should require authentication to access index' do
     get :index
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should get index when logged in' do

@@ -29,6 +29,10 @@
   white-space: nowrap;
 }
 
+.category-filters:not([open]) {
+  border-top: 1px solid $muted-graphic;
+}
+
 .category--description {
   color: $muted-text;
 }

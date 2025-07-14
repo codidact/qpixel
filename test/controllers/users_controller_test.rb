@@ -186,8 +186,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test 'should require authentication to get mobile login' do
     get :qr_login_code
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'should allow signed in users to get mobile login' do
@@ -404,6 +403,119 @@ class UsersControllerTest < ActionController::TestCase
 
     admin.reload
     assert_equal admin.global_admin?, false
+  end
+
+  test 'full_log should only be accessible to mods or admins' do
+    mod = users(:moderator)
+    std = users(:standard_user)
+
+    sign_in mod
+    get :full_log, params: { id: std.id }
+    assert_response(:success)
+
+    sign_in std
+    get :full_log, params: { id: std.id }
+    assert_response(:not_found)
+  end
+
+  test 'activity should correctly apply single-type items filter' do
+    std = users(:standard_user)
+
+    sign_in std
+
+    model_map = {
+      'posts' => Post,
+      'comments' => Comment,
+      'edits' => SuggestedEdit
+    }
+
+    model_map.each do |filter, model|
+      get :activity, params: { id: std.id, filter: filter }
+      assert_response(:success)
+      items = assigns(:items)
+
+      assert(items.all? { |x| x.instance_of?(model) })
+    end
+  end
+
+  test 'default activity filter should include items of all types' do
+    std = users(:standard_user)
+
+    sign_in std
+
+    get :activity, params: { id: std.id }
+
+    assert_response(:success)
+    items = assigns(:items)
+
+    edit_type = PostHistoryType.find_by(name: 'post_edited')
+
+    [Post, Comment, SuggestedEdit, Flag, PostHistory, ModWarning].each do |model|
+      assert(items.any? do |item|
+               is_valid = if item.instance_of?(model)
+                            case model
+                            when Post
+                              item.deleted == false
+                            when Comment
+                              item.comment_thread.deleted == false && \
+                              item.deleted == false && \
+                              item.post.deleted == false
+                            when PostHistory
+                              item.post_history_type == edit_type
+                            when SuggestedEdit
+                              item.post.deleted == false
+                            end
+                          else
+                            true
+                          end
+
+               is_valid && item.user.same_as?(std)
+             end)
+    end
+  end
+
+  test 'full_log should correctly apply single-type items filter' do
+    sign_in users(:moderator)
+
+    model_map = {
+      'posts' => Post,
+      'comments' => Comment,
+      'edits' => SuggestedEdit,
+      'flags' => Flag,
+      'warnings' => ModWarning
+    }
+
+    model_map.each do |filter, model|
+      get :full_log, params: { id: users(:standard_user).id, filter: filter }
+      assert_response(:success)
+      items = assigns(:items)
+
+      assert(items.all? { |x| x.instance_of?(model) })
+    end
+  end
+
+  test 'full_log\'s \'interesting\' filter should include deleted comments' do
+    sign_in users(:moderator)
+
+    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
+    assert_response(:success)
+    items = assigns(:items)
+
+    deleted_comment = comments(:deleted)
+
+    assert(items.any? { |x| x.instance_of?(Comment) && x.id == deleted_comment.id })
+  end
+
+  test 'full_log\'s \'interesting\' filter should include declined flags' do
+    sign_in users(:moderator)
+
+    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
+    assert_response(:success)
+    items = assigns(:items)
+
+    declined_flag = flags(:declined)
+
+    assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
   end
 
   private

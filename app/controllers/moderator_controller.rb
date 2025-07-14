@@ -1,7 +1,7 @@
 # Web controller. Provides authenticated actions for use by moderators. A lot of the stuff in here, and hence a lot of
 # the tools, are rather repetitive.
 class ModeratorController < ApplicationController
-  before_action :verify_can_see_deleted, only: [:recently_deleted_posts]
+  before_action :verify_can_see_deleted_posts, only: [:recently_deleted_posts]
   before_action :verify_moderator,
                 except: [:nominate_promotion, :promotions, :remove_promotion, :recently_deleted_posts]
   before_action :authenticate_user!,
@@ -12,12 +12,11 @@ class ModeratorController < ApplicationController
   def index; end
 
   def recently_deleted_posts
-    @posts = Post.unscoped.where(community: @community, deleted: true).order('deleted_at DESC')
-                 .paginate(page: params[:page], per_page: 50)
+    @posts = Post.unscoped.on(@community).deleted.order(deleted_at: :desc).paginate(page: params[:page], per_page: 50)
   end
 
   def recent_comments
-    @comments = Comment.all.includes(:user, :post).order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+    @comments = Comment.all.includes(:user, :post).newest_first.paginate(page: params[:page], per_page: 50)
   end
 
   def nominate_promotion
@@ -56,18 +55,18 @@ class ModeratorController < ApplicationController
 
   def user_vote_summary
     @user = User.find params[:id]
-    @users = User.where(id: Vote.where(user: @user).select(:recv_user_id).distinct)
-                 .or(User.where(id: Vote.where(recv_user: @user).select(:user_id).distinct))
+    @users = User.where(id: Vote.by(@user).select(:recv_user_id).distinct)
+                 .or(User.where(id: Vote.for(@user).select(:user_id).distinct))
     @vote_data = VoteData.new(
       cast: VoteSummary.new(
-        breakdown: Vote.where(user: @user).group(:recv_user_id, :vote_type).count,
-        types: Vote.where(user: @user).group(:vote_type).count,
-        total: Vote.where(user: @user).count
+        breakdown: Vote.by(@user).group(:recv_user_id, :vote_type).count,
+        types: Vote.by(@user).group(:vote_type).count,
+        total: Vote.by(@user).count
       ),
       received: VoteSummary.new(
-        breakdown: Vote.where(recv_user: @user).group(:user_id, :vote_type).count,
-        types: Vote.where(recv_user: @user).group(:vote_type).count,
-        total: Vote.where(recv_user: @user).count
+        breakdown: Vote.for(@user).group(:user_id, :vote_type).count,
+        types: Vote.for(@user).group(:vote_type).count,
+        total: Vote.for(@user).count
       )
     )
   end
@@ -82,8 +81,8 @@ class ModeratorController < ApplicationController
     check_if_locked(@post)
   end
 
-  def verify_can_see_deleted
-    if !user_signed_in? || !current_user.can_see_deleted?
+  def verify_can_see_deleted_posts
+    if !user_signed_in? || !current_user.can_see_deleted_posts?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end

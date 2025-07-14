@@ -12,8 +12,7 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'index requires auth' do
     get :index
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'index requires global admin' do
@@ -31,8 +30,7 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'new requires auth' do
     get :new
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'new requires global admin' do
@@ -61,8 +59,7 @@ class PostTypesControllerTest < ActionController::TestCase
   test 'create requires auth' do
     post :create, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
                                          has_answers: 'true', has_license: 'true', has_category: 'true' } }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'create requires global admin' do
@@ -81,8 +78,7 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'edit requires auth' do
     get :edit, params: { id: post_types(:question).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'edit requires global admin' do
@@ -113,8 +109,7 @@ class PostTypesControllerTest < ActionController::TestCase
     patch :update, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
                                           has_answers: 'true', has_license: 'true', has_category: 'true' },
                              id: post_types(:question).id }
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'update requires global admin' do

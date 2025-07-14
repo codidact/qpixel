@@ -1,0 +1,12 @@
+<%#
+    Renders widgets indicating that there more comments are not shown
+
+    Variables:
+      shown_count : number of comments shown on the thread
+      thread      : CommentThread to display the widget for
+%>
+
+<div class="widget--body widget--more-comments" role="listitem">
+  <% skipped_count = thread.reply_count - shown_count %>
+  <p>Skipping <%= pluralize(skipped_count, 'more comment') %></p>
+</div>

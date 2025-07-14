@@ -16,9 +16,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'feature requires authentication' do
     post :feature, params: { id: posts(:question_one).id }
-
-    assert_response(:found)
-    assert_redirected_to new_user_session_path
+    assert_redirected_to_sign_in
   end
 
   test 'regular user cannot feature' do
