@@ -3,25 +3,10 @@ require 'test_helper'
 class PostsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test 'can create help post' do
-    sign_in users(:moderator)
-
-    post :create, params: { post_type: post_types(:help_doc).id,
-                            post: { post_type_id: post_types(:help_doc).id, title: sample.title, doc_slug: 'topic',
-                                    body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99' } }
-
-    assert_response(:found)
-    assert_not_nil assigns(:post).id
-    assert_redirected_to help_path(assigns(:post).doc_slug)
-  end
-
   test 'can create category post' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache, license_id: licenses(:cc_by_sa).id } }
+    try_create_post
 
     assert_response(:found)
     assert_not_nil assigns(:post).id
@@ -32,10 +17,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:closer)
 
     before_notifs = posts(:question_one).user.notifications.count
-    post :create, params: { post_type: post_types(:answer).id, parent: posts(:question_one).id,
-                            post: { post_type_id: post_types(:answer).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, parent_id: posts(:question_one).id,
-                                    license_id: licenses(:cc_by_sa).id } }
+    try_create_post(post_type: post_types(:answer), parent: posts(:question_one))
     after_notifs = posts(:question_one).user.notifications.count
 
     assert_response(:found)
@@ -45,12 +27,20 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'create requires authentication' do
-    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache } }
-
+    try_create_post
     assert_redirected_to_sign_in
+  end
+
+  test 'can create help post' do
+    sign_in users(:moderator)
+
+    post :create, params: { post_type: post_types(:help_doc).id,
+                            post: { post_type_id: post_types(:help_doc).id, title: sample.title, doc_slug: 'topic',
+                                    body_markdown: sample.body_markdown, help_category: 'A', help_ordering: '99' } }
+
+    assert_response(:found)
+    assert_not_nil assigns(:post).id
+    assert_redirected_to help_path(assigns(:post).doc_slug)
   end
 
   test 'standard users cannot create help posts' do
@@ -76,9 +66,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'category post type rejects without category' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_type: post_types(:question).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, tags_cache: sample.tags_cache } }
+    try_create_post(category: nil)
 
     assert_response(:found)
     assert_redirected_to root_path
@@ -89,10 +77,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'category post type checks required trust level' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_type: post_types(:question).id, category: categories(:high_trust).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:high_trust).id,
-                                    tags_cache: sample.tags_cache } }
+    try_create_post(category: categories(:high_trust))
 
     assert_response(:forbidden)
     assert_nil assigns(:post).id
@@ -102,9 +87,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'parented post type rejects without parent' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_type: post_types(:answer).id,
-                            post: { post_type_id: post_types(:answer).id, title: sample.title,
-                                    body_markdown: sample.body_markdown } }
+    try_create_post(post_type: post_types(:answer))
 
     assert_response(:found)
     assert_redirected_to root_path
@@ -117,34 +100,44 @@ class PostsControllerTest < ActionController::TestCase
     before = CommunityUser.where(user: user, community: communities(:sample)).count
 
     sign_in user
-    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache } }
+    try_create_post
 
     after = CommunityUser.where(user: user, community: communities(:sample)).count
     assert_equal before + 1, after, 'No CommunityUser record was created'
   end
 
-  test 'should prevent deleted account creating post' do
+  test 'should prevent deleted accounts from creating posts' do
     sign_in users(:deleted_account)
-
-    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache } }
-
+    try_create_post
     assert_redirected_to_sign_in
   end
 
-  test 'should prevent deleted profile creating post' do
+  test 'should prevent deleted profiles from creating posts' do
     sign_in users(:deleted_profile)
-
-    post :create, params: { post_type: post_types(:question).id, category: categories(:main).id,
-                            post: { post_type_id: post_types(:question).id, title: sample.title,
-                                    body_markdown: sample.body_markdown, category_id: categories(:main).id,
-                                    tags_cache: sample.tags_cache } }
-
+    try_create_post
     assert_redirected_to_sign_in
+  end
+
+  private
+
+  # Attempts to create a post
+  # @param post_type [PostType]
+  # @param category [Category, nil]
+  # @param parent [Post, nil]
+  # @param license [String]
+  def try_create_post(post_type: post_types(:question),
+                      category: categories(:main),
+                      parent: nil,
+                      license: licenses(:cc_by_sa))
+    post :create, params: { post_type: post_type.id,
+                            parent: parent&.id,
+                            category: category&.id,
+                            post: { post_type_id: post_type.id,
+                                    title: sample.title,
+                                    body_markdown: sample.body_markdown,
+                                    category_id: category&.id,
+                                    parent_id: parent&.id,
+                                    tags_cache: sample.tags_cache,
+                                    license_id: license.id } }
   end
 end
