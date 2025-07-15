@@ -21,9 +21,9 @@
   <div class="widget--body">
     <p>
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
-      <%= user_link flag.user %> at <%= flag.created_at.iso8601 %>
+      <%= user_link flag.user, { host: flag.community.host } %> at <%= flag.created_at.iso8601 %>
       <% if flag.post_type == 'Post' && flag.post.updated_at > flag.created_at %>
-        <%= link_to post_history_path(flag.post) do %>
+        <%= link_to post_history_url(flag.post, { host: flag.community.host }) do %>
           (post modified after flag)
         <% end %>
       <% end %>
@@ -33,7 +33,7 @@
     <div class="widget--body">
       <p>
         <strong>Escalation reason</strong>: <%= flag.escalation_comment %> &mdash;
-        <%= user_link flag.escalated_by %> <%= flag.escalated_at.iso8601 %>
+        <%= user_link flag.escalated_by, { host: flag.community.host } %> at <%= flag.escalated_at.iso8601 %>
       </p>
       <p>
 	      <strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this

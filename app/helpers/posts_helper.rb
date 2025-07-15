@@ -1,4 +1,13 @@
 module PostsHelper
+  # Gets a link to a given post's user
+  # @param post [Post] post to link the user for
+  # @param active [Boolean] if +true+, will link to the user with the last activity on the post
+  # @return [String] user link
+  def post_user_link(post, active: false)
+    user = active ? post.last_activity_by || post.user : post.user
+    user_link(user, { host: post.community.host })
+  end
+
   ##
   # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
   # rendered HTML over rendering server-side.

@@ -1,7 +1,6 @@
 <%# is_question = post.post_type_id == Question.post_type_id %>
 <%# is_article = post.post_type_id == Article.post_type_id %>
 <%# is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
-<% active_user = post.last_activity_by || post.user %>
 <% @show_type_tag = !!defined?(show_type_tag) ? show_type_tag : false %>
 <% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
 <% @last_activity = !!defined?(last_activity) ? last_activity : true %>
@@ -47,11 +46,11 @@
         </span>&nbsp;&middot;&nbsp;
       <% end %>
       posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
-      by <%= user_link post.user %>
+      by <%= post_user_link(post) %>
       <% if post.last_activity != post.created_at %>
         &nbsp;&middot;&nbsp; <%= post.last_activity_type %>
         <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
-        by <%= user_link active_user %>
+        by <%= post_user_link(post, active: true) %>
       <% end %>
     </p>
     <div class="has-padding-top-2 post-list--tags">
