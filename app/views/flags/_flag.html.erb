@@ -23,7 +23,7 @@
       <strong><%= flag.post_flag_type&.name || 'Flag reason' %></strong>: <%= flag.reason %> &mdash;
       <%= user_link flag.user, { host: flag.community.host } %> at <%= flag.created_at.iso8601 %>
       <% if flag.post_type == 'Post' && flag.post.updated_at > flag.created_at %>
-        <%= link_to post_history_path(flag.post) do %>
+        <%= link_to post_history_url(flag.post, { host: flag.community.host }) do %>
           (post modified after flag)
         <% end %>
       <% end %>
