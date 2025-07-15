@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
         render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
       end
       format.any do
-        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        render 'errors/not_found', formats: [:html], layout: 'without_sidebar', status: :not_found
       end
     end
     false

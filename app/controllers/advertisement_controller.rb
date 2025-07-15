@@ -19,7 +19,7 @@ class AdvertisementController < ApplicationController
   end
 
   def specific_question
-    @post = Post.unscoped.find(params[:id])
+    @post = Post.unscoped.find_by(id: params[:id])
 
     if @post.nil?
       not_found!
@@ -90,7 +90,7 @@ class AdvertisementController < ApplicationController
       category = Category.where(use_for_advertisement: true)
     end
     Post.undeleted.joins(:post_type).where(post_types: { is_top_level: true })
-        .where(posts: { last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now })
+        .where(posts: { last_activity: (Rails.env.development? || Rails.env.test? ? 365 : 7).days.ago..DateTime.now })
         .where(posts: { category: category })
         .where('posts.score > ?', SiteSetting['HotPostsScoreThreshold'])
         .order('posts.score DESC').limit(SiteSetting['HotQuestionsCount']).all.sample
