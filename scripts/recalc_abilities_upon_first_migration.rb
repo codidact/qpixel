@@ -7,7 +7,7 @@ User.unscoped.all.map do |u|
   u.community_users.each do |cu|
     puts "  Attempt CommunityUser.Id=#{cu.id}"
     RequestContext.community = cu.community
-    cu.recalc_privileges
+    cu.recalc_privileges!
 
     if cu.at_least_moderator? && !cu.privilege?('mod')
       puts "  Granting mod privilege to CommunityUser.Id=#{cu.id}"

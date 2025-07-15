@@ -147,7 +147,7 @@ class CommunityUser < ApplicationRecord
   # to create a no permissions user by accident.
   # Polyphemus is very grateful for this.
   def prevent_ulysses_case
-    recalc_privileges
+    recalc_privileges!
   end
 
   def trust_level

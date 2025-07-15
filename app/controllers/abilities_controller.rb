@@ -14,7 +14,7 @@ class AbilitiesController < ApplicationController
   end
 
   def recalc
-    @user.community_user.recalc_privileges
+    @user.community_user.recalc_privileges!
     redirect_to user_privileges_url(@user.id)
   end
 
