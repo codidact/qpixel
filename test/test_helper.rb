@@ -72,7 +72,7 @@ Minitest.after_run do
   end
 end
 
-Dir.glob(Rails.root.join('test/support/**/*.rb')).sort.each { |f| require f }
+Dir.glob(Rails.root.join('test/support/**/*.rb')).each { |f| require f }
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.

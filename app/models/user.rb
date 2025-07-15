@@ -444,7 +444,7 @@ class User < ApplicationRecord
     }.each do |key, prefs|
       saved = RequestContext.redis.hgetall(key)
       valid_prefs = prefs.keys
-      deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
+      deprecated = saved.except(*valid_prefs).map { |k, _v| k }
       unless deprecated.empty?
         RequestContext.redis.hdel key, *deprecated
       end

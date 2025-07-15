@@ -74,11 +74,14 @@ module PostValidations
   end
 
   def required_tags?
-    required = category&.required_tag_ids
-    return unless required.present? && !required.empty?
+    required = category&.required_tag_ids || []
+    return false unless required.present? && !required.empty?
 
-    unless tag_ids.any? { |t| required.include? t }
+    if tag_ids.any? { |t| required.include? t }
+      true
+    else
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
+      false
     end
   end
 end

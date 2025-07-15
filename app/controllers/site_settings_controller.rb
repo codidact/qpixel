@@ -75,7 +75,7 @@ class SiteSettingsController < ApplicationController
 
     @setting = if params[:community_id].present?
                  matches = SiteSetting.unscoped.where(community_id: RequestContext.community_id, name: params[:name])
-                 if matches.count.zero?
+                 if matches.none?
                    global = SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
                    do_create(global, RequestContext.community_id)
                  else
