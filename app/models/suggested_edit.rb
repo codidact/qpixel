@@ -6,8 +6,8 @@ class SuggestedEdit < ApplicationRecord
 
   belongs_to :user
 
-  serialize :tags_cache, Array
-  serialize :before_tags_cache, Array
+  serialize :tags_cache, coder: JSON, type: Array
+  serialize :before_tags_cache, coder: JSON, type: Array
 
   belongs_to :decided_by, class_name: 'User', optional: true
   has_and_belongs_to_many :tags
