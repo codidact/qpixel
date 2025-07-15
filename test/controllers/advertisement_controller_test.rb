@@ -18,11 +18,10 @@ class AdvertisementControllerTest < ActionController::TestCase
   end
 
   test 'specific_question for different post types' do
-    { 123456789 => :not_found,
+    { 123_456_789 => :not_found,
       posts(:question_one).id => :success,
       posts(:article_one).id => :success,
-      posts(:answer_one).id => :not_found
-    }.each do |id, status|
+      posts(:answer_one).id => :not_found }.each do |id, status|
       try_specific_question(id)
       assert_response(status)
       if status == :success
@@ -34,7 +33,7 @@ class AdvertisementControllerTest < ActionController::TestCase
   test 'specific_category' do
     # :specific_category uses random post selection, so we can't easily test for different post types
     get :specific_category, params: { id: categories(:main).id }
-    assert_response :success
+    assert_response(:success)
     assert_equal 'image/png', response.media_type
   end
 
