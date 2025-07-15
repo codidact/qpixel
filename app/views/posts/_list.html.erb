@@ -59,16 +59,15 @@
         <%= post_type_badge(post.post_type) %>
       <% end %>
       <% if post.post_type.has_tags %>
-        <% required_ids = post.category&.required_tag_ids %>
-        <% moderator_ids = post.category&.moderator_tag_ids %>
-        <% topic_ids = post.category&.topic_tag_ids %>
-        <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-          <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-          <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-          <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-          <%= link_to tag.name, tag_url(id: post.category_id, tag_id: tag.id),
-                           class: "badge is-tag #{required} #{topic} #{moderator}",
-                           title: tag.excerpt.present? ? tag.excerpt : "(no description yet)" %>
+        <% required_tag_ids = post.category&.required_tag_ids %>
+        <% moderator_tag_ids = post.category&.moderator_tag_ids %>
+        <% topic_tag_ids = post.category&.topic_tag_ids %>
+        <% category_sort_tags(post.tags, required_tag_ids, topic_tag_ids, moderator_tag_ids).each do |tag| %>
+          <%= render 'posts/tag_badge', post: post,
+                                        tag: tag,
+                                        moderator_tag_ids: moderator_tag_ids,
+                                        required_tag_ids: required_tag_ids,
+                                        topic_tag_ids: topic_tag_ids %>
         <% end %>
       <% end %>
       <% display_label = user_preference('display_import_labels', community: true) == 'true' %>
