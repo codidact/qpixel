@@ -2,7 +2,7 @@ class MicroAuth::Token < ApplicationRecord
   belongs_to :app, class_name: 'MicroAuth::App'
   belongs_to :user
 
-  serialize :scope, coder: JSON
+  serialize :scope, coder: YAML
 
   scope :active, -> { where('expires_at > ?', DateTime.now) }
 

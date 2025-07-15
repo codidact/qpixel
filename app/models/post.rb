@@ -28,7 +28,7 @@ class Post < ApplicationRecord
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
   counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
 
-  serialize :tags_cache, coder: JSON, type: Array
+  serialize :tags_cache, coder: YAML, type: Array
 
   validates :body, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }

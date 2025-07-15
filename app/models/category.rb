@@ -11,7 +11,7 @@ class Category < ApplicationRecord
   belongs_to :license
   belongs_to :default_filter, class_name: 'Filter', optional: true
 
-  serialize :display_post_types, coder: JSON, type: Array
+  serialize :display_post_types, coder: YAML, type: Array
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
