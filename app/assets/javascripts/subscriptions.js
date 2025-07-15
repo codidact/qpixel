@@ -22,7 +22,8 @@ $(() => {
     const subscriptionId = $sub.data('sub-id');
 
     const resp = await QPixel.fetchJSON(`/subscriptions/${subscriptionId}`, {}, {
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' },
+      method: 'DELETE',
     });
 
     const data = await resp.json();
