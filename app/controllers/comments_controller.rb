@@ -349,22 +349,22 @@ class CommentsController < ApplicationController
   def check_restrict_access
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_lock?(@comment_thread)
+      not_found unless current_user.can_lock?(@comment_thread)
     when 'archive'
-      return not_found unless current_user.can_archive?(@comment_thread)
+      not_found unless current_user.can_archive?(@comment_thread)
     when 'delete'
-      return not_found unless current_user.can_delete?(@comment_thread)
+      not_found unless current_user.can_delete?(@comment_thread)
     end
   end
 
   def check_unrestrict_access
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_unlock?(@comment_thread)
+      not_found unless current_user.can_unlock?(@comment_thread)
     when 'archive'
-      return not_found unless current_user.can_unarchive?(@comment_thread)
+      not_found unless current_user.can_unarchive?(@comment_thread)
     when 'delete'
-      return not_found unless current_user.can_undelete?(@comment_thread)
+      not_found unless current_user.can_undelete?(@comment_thread)
     end
   end
 

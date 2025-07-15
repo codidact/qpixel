@@ -137,8 +137,8 @@ class PostsController < ApplicationController
     @top_level_post_types = top_level_post_types
     @second_level_post_types = second_level_post_types
 
-    if @post.category_id.present? && @post.category.min_view_trust_level.present? && \
-       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level) && \
+    if @post.category_id.present? && @post.category.min_view_trust_level.present? &&
+       (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level) &&
        @post.category.min_view_trust_level.positive?
       return not_found
     end
@@ -275,7 +275,7 @@ class PostsController < ApplicationController
       end
     else
       new_user = !current_user.privilege?('unrestricted')
-      rate_limit = SiteSetting["RL_#{new_user ? 'NewUser' : ''}SuggestedEdits"]
+      rate_limit = SiteSetting["RL_#{'NewUser' if new_user}SuggestedEdits"]
       recent_edits = SuggestedEdit.by(current_user).where(active: true).recent.count
       if recent_edits >= rate_limit
         key = new_user ? 'rate_limit.new_user_suggested_edits' : 'rate_limit.suggested_edits'

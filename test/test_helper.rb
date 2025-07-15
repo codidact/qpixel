@@ -88,7 +88,7 @@ class ActiveSupport::TestCase
   # This means that we can leverage it's smart transaction behavior to significantly speed up our tests (by a factor of 6).
   def load_fixtures(config)
     # Loading a fixture deletes all data in the same tables, so it has to happen before we load our normal seeds.
-    fixture_data = super(config)
+    fixture_data = super
     load_tags_paths
     load_seeds
 

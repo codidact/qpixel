@@ -244,10 +244,10 @@ class UsersController < ApplicationController
             when 'edits'
               SuggestedEdit.by(@user) + PostHistory.by(@user).of_type('post_edited').on_undeleted
             else
-              Post.undeleted.by(@user) + \
+              Post.undeleted.by(@user) +
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
-                                                                              posts: { deleted: false }) + \
-              SuggestedEdit.by(@user).all + \
+                                                                              posts: { deleted: false }) +
+              SuggestedEdit.by(@user).all +
               PostHistory.by(@user).on_undeleted.all
             end
 
@@ -272,7 +272,7 @@ class UsersController < ApplicationController
     @interesting_edits = SuggestedEdit.by(@user).rejected.count
     @interesting_posts = Post.by(@user).problematic.count
 
-    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received +
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
@@ -287,12 +287,12 @@ class UsersController < ApplicationController
               when 'warnings'
                 ModWarning.to(@user).all
               when 'interesting'
-                Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
-                  SuggestedEdit.by(@user).rejected.all + \
+                Comment.by(@user).deleted.all + Flag.by(@user).declined.all +
+                  SuggestedEdit.by(@user).rejected.all +
                   Post.by(@user).problematic.all
               else
-                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
-                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all + \
+                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all +
+                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all +
                   ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
@@ -615,10 +615,10 @@ class UsersController < ApplicationController
                    .select('count(*) as vote_count')
                    .select('date(votes.created_at) as date_of')
 
-    @votes = @votes.order(date_of: :desc, post_id: :desc).all \
+    @votes = @votes.order(date_of: :desc, post_id: :desc).all
                    .group_by(&:date_of).map do |k, vl|
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
-                   end \
+                   end
                    .paginate(page: params[:page], per_page: 15)
 
     render layout: 'without_sidebar'

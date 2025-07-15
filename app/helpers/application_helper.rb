@@ -102,7 +102,7 @@ module ApplicationHelper
     end
   end
 
-  # rubocop:disable Layout/LineLength because obviously rubocop has a problem with documentation
+  # because obviously rubocop has a problem with documentation
 
   ##
   # Converts a number to short-form humanized display, i.e. 100,000 = 100k. Parameters as for
@@ -113,8 +113,6 @@ module ApplicationHelper
              format: '%n%u' }.merge(opts)
     ActiveSupport::NumberHelper.number_to_human(*args, **opts)
   end
-
-  # rubocop:enable Layout/LineLength
 
   ##
   # Render a markdown string to HTML with consistent options.

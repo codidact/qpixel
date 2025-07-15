@@ -26,7 +26,7 @@ module CommentsHelper
         id
       else
         was_pung = pingable.present? && pingable.include?(u.id)
-        classes = "ping #{u.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
+        classes = "ping #{'me' if u.id == current_user&.id} #{'unpingable' unless was_pung}"
         user_link u, class: classes, dir: 'ltr',
                   title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
       end

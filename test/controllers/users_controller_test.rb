@@ -457,8 +457,8 @@ class UsersControllerTest < ActionController::TestCase
                             when Post
                               item.deleted == false
                             when Comment
-                              item.comment_thread.deleted == false && \
-                              item.deleted == false && \
+                              item.comment_thread.deleted == false &&
+                              item.deleted == false &&
                               item.post.deleted == false
                             when PostHistory
                               item.post_history_type == edit_type

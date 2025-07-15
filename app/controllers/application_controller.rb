@@ -146,7 +146,7 @@ class ApplicationController < ActionController::Base
         not_found
       end
     else
-      return not_found if ['fake_community'].include?(controller_name)
+      not_found if ['fake_community'].include?(controller_name)
     end
   end
 

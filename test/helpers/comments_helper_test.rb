@@ -40,7 +40,7 @@ class CommentsHelperTest < ActionView::TestCase
     expected = {
       'you can go to [category:main]' => "you can go to <a href=\"#{category_url(categories(:main).id)}\">Main</a>",
       'or [category:Meta]' => "or <a href=\"#{category_url(categories(:meta).id)}\">Meta</a>",
-      "maybe even to [category##{categories(:high_trust).id}]" => \
+      "maybe even to [category##{categories(:high_trust).id}]" =>
         "maybe even to <a href=\"#{category_url(categories(:high_trust).id)}\">High Trust</a>",
       'but not to [category:blah]' => 'but not to [category:blah]'
     }

@@ -36,18 +36,18 @@ module UserRateLimits
   # Number of comments by the user on own posts or answers to them in the last 24 hours
   # @return [Integer]
   def recent_comments_on_own_posts_count
-    Comment.recent.by(self) \
-           .where(post: Post.parent_by(self)) \
-           .or(Comment.recent.by(self).where(post: Post.by(self))) \
+    Comment.recent.by(self)
+           .where(post: Post.parent_by(self))
+           .or(Comment.recent.by(self).where(post: Post.by(self)))
            .count
   end
 
   # Number of comments by the user on posts made by other users in the last 24 hours
   # @return [Integer]
   def recent_comments_on_posts_of_others_count
-    Comment.recent.by(self) \
-           .where.not(post: Post.parent_by(self)) \
-           .where.not(post: Post.by(self)) \
+    Comment.recent.by(self)
+           .where.not(post: Post.parent_by(self))
+           .where.not(post: Post.by(self))
            .count
   end
 

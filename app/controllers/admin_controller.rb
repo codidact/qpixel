@@ -33,7 +33,7 @@ class AdminController < ApplicationController
     type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
     return not_found if type.nil?
 
-    pre = @ability.send("#{type}_score_threshold".to_sym)
+    pre = @ability.send(:"#{type}_score_threshold")
     @ability.update("#{type}_score_threshold" => params[:threshold])
     AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
                          comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
@@ -114,7 +114,7 @@ class AdminController < ApplicationController
     # Set settings from config page
     { primary_color: 'SiteCategoryHeaderDefaultColor', logo_url: 'SiteLogoPath', ad_slogan: 'SiteAdSlogan',
       mathjax: 'MathJaxEnabled', syntax_highlighting: 'SyntaxHighlightingEnabled', chat_link: 'ChatLink',
-      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' } \
+      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' }
       .each do |key, setting|
       settings.find_by(name: setting).update(value: params[key])
     end

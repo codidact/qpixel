@@ -61,7 +61,7 @@ module PostValidations
 
   def maximum_title_length
     max_title_len = SiteSetting['MaxTitleLength']
-    if title.length > [(max_title_len || 255), 255].min
+    if title.length > [max_title_len || 255, 255].min
       errors.add(:title, "can't be more than #{max_title_len} characters")
     end
   end
