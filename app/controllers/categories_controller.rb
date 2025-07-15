@@ -151,7 +151,7 @@ class CategoriesController < ApplicationController
 
   def verify_view_access
     unless (current_user&.trust_level || 0) >= (@category.min_view_trust_level || -1)
-      not_found
+      not_found!
     end
   end
 

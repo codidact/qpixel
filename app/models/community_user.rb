@@ -30,7 +30,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def latest_warning
-    mod_warnings&.order(created_at: 'desc')&.first&.created_at
+    mod_warnings.order(created_at: 'desc')&.first&.created_at
   end
 
   # Calculation functions for privilege scores
@@ -103,7 +103,7 @@ class CommunityUser < ApplicationRecord
   # @param sandbox [Boolean] Whether to run in sandbox mode - if sandboxed, the ability will not be granted but the
   #   return value indicates whether it would have been.
   # @return [Boolean] Whether or not the ability was granted.
-  def recalc_privilege(internal_id, sandbox: false)
+  def recalc_privilege!(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: false)
 
@@ -128,19 +128,19 @@ class CommunityUser < ApplicationRecord
 
   ##
   # Recalculate a list of standard abilities for this CommunityUser.
-  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege}.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege!}.
   # @return [Array<Boolean>]
-  def recalc_privileges(sandbox: false)
+  def recalc_privileges!(sandbox: false)
     [:everyone, :unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
-      recalc_privilege(ability, sandbox: sandbox)
+      recalc_privilege!(ability, sandbox: sandbox)
     end
   end
 
   alias ability? privilege?
   alias ability privilege
   alias grant_ability! grant_privilege!
-  alias recalc_ability recalc_privilege
-  alias recalc_abilities recalc_privileges
+  alias recalc_ability! recalc_privilege!
+  alias recalc_abilities! recalc_privileges!
 
   # This check makes sure that every user gets the
   # 'everyone' permission upon creation. We do not want

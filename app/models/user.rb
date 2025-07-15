@@ -1,5 +1,3 @@
-# Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
-# application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
   include ::UsernameValidations
   include ::UserRateLimits
@@ -38,7 +36,7 @@ class User < ApplicationRecord
 
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
   validate :email_domain_not_blocklisted
-  validate :is_not_blocklisted
+  validate :not_blocklisted?
   validate :email_not_bad_pattern
 
   delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
@@ -66,7 +64,7 @@ class User < ApplicationRecord
 
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
-  def has_post_privilege?(name, post)
+  def post_privilege?(name, post)
     post.user == self || privilege?(name)
   end
 
@@ -167,7 +165,7 @@ class User < ApplicationRecord
   def can_update?(post, post_type)
     return false unless can_post_in?(post.category)
 
-    has_post_privilege?('edit_posts', post) || at_least_moderator? ||
+    post_privilege?('edit_posts', post) || at_least_moderator? ||
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
@@ -352,8 +350,8 @@ class User < ApplicationRecord
     end
   end
 
-  def is_not_blocklisted
-    return unless saved_changes.include? 'email'
+  def not_blocklisted?
+    return true unless saved_changes.include? 'email'
 
     email_domain = email.split('@')[-1]
     is_mail_blocked = BlockedItem.emails.where(value: email)
@@ -455,7 +453,7 @@ class User < ApplicationRecord
     preferences[community ? :community : :global][name]
   end
 
-  def has_active_flags?(post)
+  def active_flags_on?(post)
     !post.flags.where(user: self, status: nil).empty?
   end
 

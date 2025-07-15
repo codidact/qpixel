@@ -38,13 +38,13 @@ class PinnedLinksController < ApplicationController
 
   def edit
     if !current_user.is_global_moderator && @link.community_id != RequestContext.community_id
-      not_found
+      not_found!
     end
   end
 
   def update
     if !current_user.is_global_moderator && @link.community_id != RequestContext.community_id
-      return not_found
+      return not_found!
     end
 
     before = @link.attributes_print

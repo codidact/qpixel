@@ -130,8 +130,8 @@ class PostsController < ApplicationController
       redirect_to policy_path(@post.doc_slug)
     end
 
-    if @post.deleted? && !current_user&.has_post_privilege?('flag_curate', @post)
-      return not_found
+    if @post.deleted? && !current_user&.post_privilege?('flag_curate', @post)
+      return not_found!
     end
 
     @top_level_post_types = top_level_post_types
@@ -140,7 +140,7 @@ class PostsController < ApplicationController
     if @post.category_id.present? && @post.category.min_view_trust_level.present? &&
        (!user_signed_in? || current_user.trust_level < @post.category.min_view_trust_level) &&
        @post.category.min_view_trust_level.positive?
-      return not_found
+      return not_found!
     end
 
     # @post = @post.includes(:flags, flags: :post_flag_type)
@@ -501,7 +501,7 @@ class PostsController < ApplicationController
     @post = Post.by_slug(params[:slug], current_user)
 
     if @post.nil?
-      not_found
+      not_found!
     end
 
     # Make sure we don't leak featured posts in the sidebar
@@ -573,7 +573,7 @@ class PostsController < ApplicationController
   end
 
   def lock
-    return not_found unless current_user&.can_lock?(@post)
+    return not_found! unless current_user&.can_lock?(@post)
 
     length = params[:length].present? ? params[:length].to_i : nil
     if length
@@ -596,10 +596,10 @@ class PostsController < ApplicationController
   end
 
   def unlock
-    return not_found unless current_user&.can_unlock?(@post)
+    return not_found! unless current_user&.can_unlock?(@post)
 
     if @post.locked_by.at_least_moderator? && !current_user&.at_least_moderator?
-      return not_found(errors: ['locked_by_mod'])
+      return not_found!(errors: ['locked_by_mod'])
     end
 
     ApplicationRecord.transaction do
@@ -611,7 +611,7 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found(errors: ['no_privilege']) unless current_user&.at_least_moderator?
+    return not_found!(errors: ['no_privilege']) unless current_user&.at_least_moderator?
 
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
@@ -701,7 +701,7 @@ class PostsController < ApplicationController
     elsif @post.post_type_id == PolicyDoc.post_type_id
       verify_admin
     else
-      not_found
+      not_found!
     end
   end
 

@@ -34,7 +34,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'has_post_privilege should grant all to OP' do
-    assert_equal true, users(:standard_user).has_post_privilege?('flag_curate', posts(:question_one))
+    assert_equal true, users(:standard_user).post_privilege?('flag_curate', posts(:question_one))
   end
 
   test 'website_domain should strip out everything but domain' do

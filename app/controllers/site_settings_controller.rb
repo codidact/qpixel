@@ -69,7 +69,7 @@ class SiteSettingsController < ApplicationController
 
   def update
     unless access?(current_user, params[:community_id])
-      not_found
+      not_found!
       return
     end
 

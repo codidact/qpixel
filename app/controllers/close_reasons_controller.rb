@@ -13,7 +13,7 @@ class CloseReasonsController < ApplicationController
     @close_reason = CloseReason.unscoped.find(params[:id])
 
     if !current_user.is_global_admin && @close_reason.community.nil?
-      not_found
+      not_found!
       nil
     end
   end
@@ -22,7 +22,7 @@ class CloseReasonsController < ApplicationController
     @close_reason = CloseReason.unscoped.find(params[:id])
 
     if !current_user.is_global_admin && @close_reason.community.nil?
-      not_found
+      not_found!
       return
     end
 
@@ -41,7 +41,7 @@ class CloseReasonsController < ApplicationController
 
   def new
     if !current_user.is_global_admin && params[:global] == '1'
-      not_found
+      not_found!
       return
     end
 
@@ -50,7 +50,7 @@ class CloseReasonsController < ApplicationController
 
   def create
     if !current_user.is_global_admin && params[:global] == '1'
-      not_found
+      not_found!
       return
     end
 

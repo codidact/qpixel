@@ -187,7 +187,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found unless current_user&.at_least_moderator?
+    return not_found! unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -223,7 +223,7 @@ class CommentsController < ApplicationController
     when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
     else
-      return not_found
+      return not_found!
     end
 
     render json: { status: 'success' }
@@ -245,7 +245,7 @@ class CommentsController < ApplicationController
       tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
       tf&.destroy
     else
-      return not_found
+      return not_found!
     end
 
     render json: { status: 'success' }
@@ -253,7 +253,7 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if current_user&.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
+    @comment_threads = if current_user&.at_least_moderator? || current_user&.post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
@@ -311,12 +311,12 @@ class CommentsController < ApplicationController
         end
       end
     elsif !@post.can_access?(current_user)
-      not_found
+      not_found!
     end
   end
 
   def check_thread_access
-    not_found unless @comment_thread.can_access?(current_user)
+    not_found! unless @comment_thread.can_access?(current_user)
   end
 
   def check_privilege
@@ -349,22 +349,22 @@ class CommentsController < ApplicationController
   def check_restrict_access
     case params[:type]
     when 'lock'
-      not_found unless current_user.can_lock?(@comment_thread)
+      not_found! unless current_user.can_lock?(@comment_thread)
     when 'archive'
-      not_found unless current_user.can_archive?(@comment_thread)
+      not_found! unless current_user.can_archive?(@comment_thread)
     when 'delete'
-      not_found unless current_user.can_delete?(@comment_thread)
+      not_found! unless current_user.can_delete?(@comment_thread)
     end
   end
 
   def check_unrestrict_access
     case params[:type]
     when 'lock'
-      not_found unless current_user.can_unlock?(@comment_thread)
+      not_found! unless current_user.can_unlock?(@comment_thread)
     when 'archive'
-      not_found unless current_user.can_unarchive?(@comment_thread)
+      not_found! unless current_user.can_unarchive?(@comment_thread)
     when 'delete'
-      not_found unless current_user.can_undelete?(@comment_thread)
+      not_found! unless current_user.can_undelete?(@comment_thread)
     end
   end
 

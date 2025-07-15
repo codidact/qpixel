@@ -36,7 +36,7 @@ module ApplicationHelper
   # @param privilege [String] The +internal_id+ of the privilege to query.
   # @return [Boolean]
   def check_your_post_privilege(post, privilege)
-    !current_user.nil? && current_user&.has_post_privilege?(privilege, post)
+    !current_user.nil? && current_user&.post_privilege?(privilege, post)
   end
 
   ##

@@ -31,7 +31,7 @@ class AdminController < ApplicationController
   def update_privilege
     @ability = Ability.find_by internal_id: params[:name]
     type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
-    return not_found if type.nil?
+    return not_found! if type.nil?
 
     pre = @ability.send(:"#{type}_score_threshold")
     @ability.update("#{type}_score_threshold" => params[:threshold])
@@ -177,13 +177,13 @@ class AdminController < ApplicationController
   end
 
   def change_back
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
   end
 
   def verify_elevation
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
     if @impersonator&.sso_profile.present?

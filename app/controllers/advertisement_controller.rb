@@ -22,13 +22,13 @@ class AdvertisementController < ApplicationController
     @post = Post.unscoped.find(params[:id])
 
     if @post.nil?
-      not_found
+      not_found!
     elsif @post.question?
       send_resp helpers.question_ad(@post)
     elsif @post.article?
       send_resp helpers.article_ad(@post)
     else
-      not_found
+      not_found!
       false
     end
   end
@@ -41,13 +41,13 @@ class AdvertisementController < ApplicationController
     end
 
     if @post.nil?
-      not_found
+      not_found!
     elsif @post.question?
       send_resp helpers.question_ad(@post)
     elsif @post.article?
       send_resp helpers.article_ad(@post)
     else
-      not_found
+      not_found!
       false
     end
   end
@@ -65,7 +65,7 @@ class AdvertisementController < ApplicationController
     elsif @post.article?
       send_resp helpers.article_ad(@post)
     else
-      not_found
+      not_found!
     end
   end
 

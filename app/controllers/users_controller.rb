@@ -442,7 +442,7 @@ class UsersController < ApplicationController
     key = params[:role].underscore.to_sym
     attrib = role_map[key]
     permission = permission_map[key]
-    return not_found unless current_user.send(permission)
+    return not_found! unless current_user.send(permission)
 
     case key
     when :mod
@@ -475,7 +475,7 @@ class UsersController < ApplicationController
 
   def mod_privilege_action
     ability = Ability.find_by internal_id: params[:ability]
-    return not_found if ability.internal_id == 'mod'
+    return not_found! if ability.internal_id == 'mod'
 
     ua = @user.community_user.privilege(ability.internal_id)
 
@@ -492,7 +492,7 @@ class UsersController < ApplicationController
       end
 
     when 'suspend'
-      return not_found if ua.nil?
+      return not_found! if ua.nil?
 
       duration = params[:duration]&.to_i
       duration = duration <= 0 ? nil : duration.days.from_now
@@ -505,7 +505,7 @@ class UsersController < ApplicationController
                            comment: "#{ability.internal_id} ability suspended\n\n#{message}")
 
     when 'delete'
-      return not_found if ua.nil?
+      return not_found! if ua.nil?
 
       ua.destroy
       AuditLog.admin_audit(event_type: 'ability_remove', related: @user, user: current_user,
@@ -514,7 +514,7 @@ class UsersController < ApplicationController
       AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
                             comment: ability.internal_id)
     else
-      return not_found
+      return not_found!
     end
     render json: { status: 'success' }
   end
@@ -582,7 +582,7 @@ class UsersController < ApplicationController
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
-      not_found
+      not_found!
     end
   end
 
@@ -678,7 +678,7 @@ class UsersController < ApplicationController
                 params[:id]
               end
     @user = user_scope.find_by(id: user_id)
-    not_found if @user.nil?
+    not_found! if @user.nil?
   end
 
   def user_scope
