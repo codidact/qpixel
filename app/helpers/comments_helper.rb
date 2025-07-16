@@ -34,18 +34,11 @@ module CommentsHelper
     user_link(comment.user, { host: comment.community.host })
   end
 
-  # Gets a list of pinged user IDs from a given content
-  # @param content [String] content to get pinged user IDs from
-  # @return [Array<String>] list of pinged user IDs
-  def pinged_user_ids(content)
-    content.scan(/@#(\d+)/).map { |g| g[0].to_i }
-  end
-
   # Gets a list of pinged users for a given content
   # @param content [String] content to get pinged users from
   # @return [Hash{String => User}] list of pinged users
   def pinged_users(content)
-    user_ids = pinged_user_ids(content)
+    user_ids = content.scan(/@#(\d+)/).map { |g| g[0].to_i }
     User.where(id: user_ids).to_a.to_h { |u| [u.id, u] }
   end
 
