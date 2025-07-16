@@ -1,5 +1,19 @@
 # Helpers related to comments.
 module CommentsHelper
+  # Generates a comment thread title from its body
+  # @param body [String] coment thread body
+  # @return [String] generated title
+  def generate_thread_title(body)
+    body = strip_markdown(body)
+    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+
+    if body.length > 100
+      "#{body[0..100]}..."
+    else
+      body
+    end
+  end
+
   ##
   # Get a link to the specified comment, accounting for deleted comments.
   # @param comment [Comment]
