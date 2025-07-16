@@ -27,6 +27,13 @@ module CommentsHelper
     end
   end
 
+  # Gets a link to a given comment's user
+  # @param comment [Comment] comment to link the user for
+  # @return [String] comment user link
+  def comment_user_link(comment)
+    user_link(comment.user, { host: comment.community.host })
+  end
+
   ##
   # Process a comment and convert ping-strings (i.e. @#1234) into links.
   # @param comment [String] The text of the comment to process.

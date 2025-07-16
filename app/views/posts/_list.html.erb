@@ -1,7 +1,6 @@
 <%# is_question = post.post_type_id == Question.post_type_id %>
 <%# is_article = post.post_type_id == Article.post_type_id %>
 <%# is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
-<% active_user = post.last_activity_by || post.user %>
 <% @show_type_tag = !!defined?(show_type_tag) ? show_type_tag : false %>
 <% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
 <% @last_activity = !!defined?(last_activity) ? last_activity : true %>
@@ -47,11 +46,11 @@
         </span>&nbsp;&middot;&nbsp;
       <% end %>
       posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
-      by <%= user_link post.user %>
+      by <%= post_user_link(post) %>
       <% if post.last_activity != post.created_at %>
         &nbsp;&middot;&nbsp; <%= post.last_activity_type %>
         <span title="<%= post.last_activity.iso8601 %>"><%= time_ago_in_words(post.last_activity, locale: :en_abbrev) %> ago</span>
-        by <%= user_link active_user %>
+        by <%= post_user_link(post, active: true) %>
       <% end %>
     </p>
     <div class="has-padding-top-2 post-list--tags">
@@ -60,16 +59,15 @@
         <%= post_type_badge(post.post_type) %>
       <% end %>
       <% if post.post_type.has_tags %>
-        <% required_ids = post.category&.required_tag_ids %>
-        <% moderator_ids = post.category&.moderator_tag_ids %>
-        <% topic_ids = post.category&.topic_tag_ids %>
-        <% category_sort_tags(post.tags, required_ids, topic_ids, moderator_ids).each do |tag| %>
-          <% required = required_ids&.include?(tag.id) ? 'is-filled' : '' %>
-          <% topic = topic_ids&.include?(tag.id) ? 'is-outlined' : '' %>
-          <% moderator = moderator_ids.include?(tag.id) ? 'is-red is-outlined' : '' %>
-          <%= link_to tag.name, tag_url(id: post.category_id, tag_id: tag.id),
-                           class: "badge is-tag #{required} #{topic} #{moderator}",
-                           title: tag.excerpt.present? ? tag.excerpt : "(no description yet)" %>
+        <% required_tag_ids = post.category&.required_tag_ids %>
+        <% moderator_tag_ids = post.category&.moderator_tag_ids %>
+        <% topic_tag_ids = post.category&.topic_tag_ids %>
+        <% category_sort_tags(post.tags, required_tag_ids, topic_tag_ids, moderator_tag_ids).each do |tag| %>
+          <%= render 'posts/tag_badge', post: post,
+                                        tag: tag,
+                                        moderator_tag_ids: moderator_tag_ids,
+                                        required_tag_ids: required_tag_ids,
+                                        topic_tag_ids: topic_tag_ids %>
         <% end %>
       <% end %>
       <% display_label = user_preference('display_import_labels', community: true) == 'true' %>
