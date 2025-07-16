@@ -34,6 +34,13 @@ module CommentsHelper
     user_link(comment.user, { host: comment.community.host })
   end
 
+  # Extracts user ID from a given ping string (i.e. @#1234)
+  # @param ping [String] ping to extract from
+  # @return [Integer] extracted ID
+  def uid_from_ping(ping)
+    ping[2..-1].to_i
+  end
+
   ##
   # Process a comment and convert ping-strings (i.e. @#1234) into links.
   # @param comment [String] The text of the comment to process.
@@ -41,14 +48,14 @@ module CommentsHelper
   #   present in the list will be displayed as 'unpingable'.
   # @return [ActiveSupport::SafeBuffer]
   def render_pings(comment, pingable: nil)
-    comment.gsub(/@#\d+/) do |id|
-      u = User.where(id: id[2..-1].to_i).first
-      if u.nil?
-        id
+    comment.gsub(/@#\d+/) do |ping|
+      user = User.where(id: uid_from_ping(ping)).first
+      if user.nil?
+        ping
       else
-        was_pung = pingable.present? && pingable.include?(u.id)
-        classes = "ping #{u.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
-        user_link u, class: classes, dir: 'ltr',
+        was_pung = pingable.present? && pingable.include?(user.id)
+        classes = "ping #{user.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
+        user_link user, class: classes, dir: 'ltr',
                   title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
       end
     end.html_safe
@@ -58,9 +65,9 @@ module CommentsHelper
   # @param content [String] content to convert ping strings for
   # @return [String] processed content
   def render_pings_text(content)
-    content.gsub(/@#\d+/) do |id|
-      user = User.where(id: id[2..-1].to_i).first
-      "@#{user.nil? ? id : rtl_safe_username(user)}"
+    content.gsub(/@#\d+/) do |ping|
+      user = User.where(id: uid_from_ping(ping)).first
+      "@#{user.nil? ? ping : rtl_safe_username(user)}"
     end
   end
 
