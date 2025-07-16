@@ -34,18 +34,11 @@ module CommentsHelper
     user_link(comment.user, { host: comment.community.host })
   end
 
-  # Extracts user ID from a given ping string (i.e. @#1234)
-  # @param ping [String] ping to extract from
-  # @return [Integer] extracted ID
-  def uid_from_ping(ping)
-    ping[2..-1].to_i
-  end
-
   # Gets a list of pinged user IDs from a given content
   # @param content [String] content to get pinged user IDs from
   # @return [Array<String>] list of pinged user IDs
   def pinged_user_ids(content)
-    content.scan(/@#\d+/).map { |ping| uid_from_ping(ping) }
+    content.scan(/@#(\d+)/).map { |g| g[0].to_i }
   end
 
   # Gets a list of pinged users for a given content
@@ -64,8 +57,8 @@ module CommentsHelper
   def render_pings(content, pingable: nil)
     users = pinged_users(content)
 
-    content.gsub(/@#\d+/) do |ping|
-      user = users[uid_from_ping(ping)]
+    content.gsub(/@#(\d+)/) do |ping|
+      user = users[Regexp.last_match(1).to_i]
       if user.nil?
         ping
       else
@@ -83,9 +76,9 @@ module CommentsHelper
   def render_pings_text(content)
     users = pinged_users(content)
 
-    content.gsub(/@#\d+/) do |ping|
-      user = users[uid_from_ping(ping)]
-      "@#{user.nil? ? ping : rtl_safe_username(user)}"
+    content.gsub(/@#(\d+)/) do |ping|
+      user = users[Regexp.last_match(1).to_i]
+      user.nil? ? ping : "@#{rtl_safe_username(user)}"
     end
   end
 
