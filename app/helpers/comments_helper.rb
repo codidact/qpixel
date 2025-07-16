@@ -47,6 +47,16 @@ module CommentsHelper
     end.html_safe
   end
 
+  # Converts all ping strings (i.e. @#1234) in content into usernames for use in text-only contexts
+  # @param content [String] content to convert ping strings for
+  # @return [String] processed content
+  def render_pings_text(content)
+    content.gsub(/@#\d+/) do |id|
+      user = User.where(id: id[2..-1].to_i).first
+      "@#{user.nil? ? id : rtl_safe_username(user)}"
+    end
+  end
+
   ##
   # Process comment text and convert helper links (like [help] and [flags]) into real links.
   # @param comment_text [String] The text of the comment to process.
