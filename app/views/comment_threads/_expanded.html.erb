@@ -51,7 +51,7 @@
       <% elsif thread.locked? %>
         <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
       <% end %>
-      <span class="js-thread-title"><%= thread.title %></span>
+      <span class="js-thread-title"><%= render_pings_text(thread.title) %></span>
     </div>
     <% skipped_deleted = 0 %>
     <% comments = thread.comments %>
