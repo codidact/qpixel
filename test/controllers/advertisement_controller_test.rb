@@ -32,7 +32,7 @@ class AdvertisementControllerTest < ActionController::TestCase
 
   test 'specific_category' do
     # :specific_category uses random post selection, so we can't easily test for different post types
-    get :specific_category, params: { id: categories(:main).id }
+    get :specific_category, params: { id: categories(:main).id, score: -1, days: 3650 }
     assert_response(:success)
     assert_equal 'image/png', response.media_type
   end
