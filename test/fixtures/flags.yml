@@ -4,6 +4,13 @@ one:
   user: standard_user
   community: sample
 
+declined:
+  reason: Please decline it
+  post: question_one (Post)
+  user: standard_user
+  community: sample
+  status: declined
+
 on_deleter:
   reason: For science!
   post: deleted (Post)
@@ -16,3 +23,13 @@ confidential_on_deleter:
   post_flag_type: confidential
   user: deleter
   community: sample
+
+escalated:
+  reason: because I said so
+  post: question_one (Post)
+  user: standard_user
+  community: sample
+  escalated: true
+  escalation_comment: what do I do with this
+  escalated_at: 2025-01-01T00:00:00.000000Z
+  escalated_by: moderator

@@ -25,3 +25,7 @@ end
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end
+
+every 30.minutes do
+  runner 'scripts/run_summary_mailer.rb'
+end

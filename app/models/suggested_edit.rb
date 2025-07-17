@@ -2,6 +2,7 @@ class SuggestedEdit < ApplicationRecord
   include PostRelated
   include PostValidations
   include EditsValidations
+  include Timestamped
 
   belongs_to :user
 
@@ -16,6 +17,10 @@ class SuggestedEdit < ApplicationRecord
   has_one :category, through: :post
 
   after_save :clear_pending_cache, if: proc { saved_change_to_attribute?(:active) }
+
+  scope :approved, -> { where(active: false, accepted: true) }
+  scope :by, ->(user) { where(user: user) }
+  scope :rejected, -> { where(active: false, accepted: false) }
 
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"

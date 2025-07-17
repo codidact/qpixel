@@ -400,6 +400,87 @@ window.QPixel = {
     return QPixel.fetchJSON(uri, {}, {
       ...options,
       method: 'GET',
-    })
+    });
+  },
+
+  getComment: async (id) => {
+    const resp = await fetch(`/comments/${id}`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  getThreadContent: async (id, options) => {
+    const inline = options?.inline ?? true;
+    const showDeleted = options?.showDeleted ?? false;
+
+    const url = new URL(`/comments/thread/${id}/content`, window.location.origin);
+    url.searchParams.append('inline', `${inline}`);
+    url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
+  },
+
+  getThreadsListContent: async (id) => {
+    const url = new URL(`/comments/post/${id}`, window.location.origin);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
+  },
+
+  handleJSONResponse: (data, onSuccess) => {
+    if (data.status === 'success') {
+      onSuccess(data)
+    }
+    else {
+      QPixel.createNotification('danger', data.message);
+    }
+  },
+
+  deleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'DELETE'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  undeleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'PATCH'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  lockThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/restrict`, {
+      type: 'lock'
+    });
+
+    const data = await resp.json();
+
+    return data;
   }
 };

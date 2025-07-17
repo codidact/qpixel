@@ -19,8 +19,8 @@ module ApplicationHelper
   ##
   ## Does the current user have access to deleted posts?
   # @return [Boolean]
-  def can_see_deleted?
-    user_signed_in? && current_user.can_see_deleted?
+  def can_see_deleted_posts?
+    user_signed_in? && current_user.can_see_deleted_posts?
   end
 
   ##
@@ -163,6 +163,10 @@ module ApplicationHelper
   # @param params [Hash{Symbol => #to_s}] additional URL params
   # @return [String]
   def generic_share_link(post, **params)
+    unless params.key?(:host)
+      params.store(:host, post.community.host)
+    end
+
     if second_level_post_types.include?(post.post_type_id)
       answer_post_url({
         id: post.parent_id,

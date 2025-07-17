@@ -1,8 +1,18 @@
 <%#
-  Full post view, containing all details and interactions.
-  Variables:
-    post : the Post instance to display
-    float_notice : whether to display the float notice
+    Full post view, containing all details and interactions.
+
+    Instance variables:
+    ? @category  : Category the post belongs to, if any
+    ? @post_type : PostType of the post
+
+    Parameters:
+    ? params[:comment_id] : Comment ID to show even if it would be hidden otherwise
+    ? params[:thread_id]  : CommentThread ID to render expanded view for
+    ? params[:sort]       : sorting type for the post's children
+
+    Variables:
+      post         : the Post instance to display
+    ? float_notice : whether to display the float notice
 %>
 
 <% float_notice ||= false %>
@@ -157,7 +167,7 @@
 	</div>
 	<% end %>
       <% if post_type.is_public_editable && post.pending_suggested_edit? %>
-        <% if current_user&.can_update(post, post_type) %>
+        <% if current_user&.can_update?(post, post_type) %>
           <div class="notice h-p-2">
             <p class="h-m-0">
               <i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i>
@@ -241,7 +251,7 @@
               History
             <% end %>
             <% if (post_type.is_public_editable && !post.locked?) || current_user&.at_least_moderator? || post.user == current_user %>
-              <% if current_user&.can_update(post, post_type) %>
+              <% if current_user&.can_update?(post, post_type) %>
                 <% if post.pending_suggested_edit? %>
                   <%= render 'posts/review_edit_link', post: post %>
                 <% else %>
@@ -540,7 +550,9 @@
           <% end %>
           </div>
           <div class="post--comments-container" role="list">
-            <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
+            <%= render 'comments/threads_list', comment_threads: comment_threads.first(5),
+                                                comment_id: params[:comment_id],
+                                                thread_id: params[:thread_id] %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>
@@ -549,32 +561,7 @@
               </a>
             <% end %>
             <% if user_signed_in? %>
-              <% if post.locked? %>
-                <% if standard? %>
-                  <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on locked posts.' %>
-                <% else %>
-                  <%= render 'shared/lock_notice', text: 'Comments are disabled on locked posts, but as a moderator you are exempt from that block.' %>
-                <% end %>
-              <% elsif post.deleted %>
-                <% if standard? %>
-                  <%= render 'shared/lock_notice', level: 'info', text: 'Comments are disabled on deleted posts.' %>
-                <% else %>
-                  <%= render 'shared/lock_notice', text: 'Comments are disabled on deleted posts, but as a moderator you are exempt from that block.' %>
-                <% end %>
-              <% elsif post.comments_disabled %>
-                <% if standard? %>
-                  <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post.' %>
-                <% else %>
-                  <%= render 'shared/lock_notice', text: 'Comments have been disabled on this post, but as a moderator you are exempt from that block.' %>
-                <% end %>
-              <% end %>
-
-              <% if post.comments_allowed? || !standard? %>
-                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
-                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
-                </a>
-                <%= render 'comments/new_thread_modal', post: post %>
-              <% end %>
+              <%= render 'comments/new_thread', post: post, user: current_user %>
             <% end %>
           </div>
         </div>

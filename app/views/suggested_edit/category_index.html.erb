@@ -27,7 +27,7 @@
     </tr>
   <% categories.each do |cat| %>
       <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
-      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.where(category: cat), active: true).count %>
+      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: true).count %>
     <tr>
       <td>
       <% if cat == current_cat %>

@@ -1,8 +1,10 @@
 <%#
     Single comment view.
+
     Variables:
+      comment : Comment to display
     ? with_post_link : includes share labelled post
-    ? pingable       : ???
+    ? pingable       : an Array of user IDs to ping
 %>
 
 <% with_post_link ||= false %>
@@ -38,29 +40,33 @@
       </div>
     <% end %>
     <div class="comment--info">
-      <%= user_link comment.user %> wrote
+      <%= comment_user_link(comment) %> wrote
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
       <% if comment.updated_at > comment.created_at %>
         · <span title="<%= comment.updated_at.iso8601 %>">edited <%= time_ago_in_words(comment.updated_at) %> ago</span>
       <% end %>
     </div>
     <div class="comment--links">
-      <%= link_to comment_link(comment), class: 'js-comment-permalink', role: 'button' do %>
+      <%= link_to comment_link(comment), class: 'js-comment-permalink nowrap', role: 'button' do %>
         <span class="js-text">copy link</span>
       <% end %>
       <% if with_post_link %>
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
-      <% if user_signed_in? && (comment.user == current_user || current_user.at_least_moderator?) && params[:inline] != 'true' %>
-        <a href="#" class="js-comment-edit" role="button" aria-label="Edit comment">edit</a>
+      <% if user_signed_in? && (comment.user == current_user || current_user.at_least_moderator?) %>
+        <a href="#" class="js-comment-edit nowrap" role="button" aria-label="Edit comment">edit</a>
         <% if comment.deleted %>
-          <a href="#" class="is-red js-comment-undelete" role="button" aria-label="Undelete comment">undelete</a>
+          <%= form_tag undelete_comment_path(comment), method: :patch do %>
+            <%= submit_tag 'undelete', class: 'link is-red js-comment-undelete nowrap', aria: { label: 'Undelete comment' } %>
+          <% end %>
         <% else %>
-          <a href="#" class="is-red js-comment-delete" role="button" aria-label="Delete comment">delete</a>
+          <%= form_tag delete_comment_path(comment), method: :delete do %>
+            <%= submit_tag 'delete', class: 'link is-red js-comment-delete nowrap', aria: { label: 'Delete comment' } %>
+          <% end %>
         <% end %>
       <% end %>
-      <% if user_signed_in? && params[:inline] != 'true' %>
-        <a href="javascript:void(0)" data-drop="#flag-comment-<%= comment.id %>" role="button" aria-label="Flag comment">flag</a>
+      <% if user_signed_in? %>
+        <a href="javascript:void(0)" class="nowrap" data-drop="#flag-comment-<%= comment.id %>" role="button" aria-label="Flag comment">flag</a>
         <div class="droppanel is-large h-c-black" id="flag-comment-<%= comment.id %>">
           <label for="flag-post-<%= comment.id %>">Flag reason</label>
           <input type="text" id="flag-post-<%= comment.id %>" class="form-element" />

@@ -11,6 +11,10 @@
   <p class="has-font-size-caption">
     <%= deletion_type.capitalize %> deleted
     <span title="<%= deleted_object.deleted_at %>"><%= time_ago_in_words(deleted_object.deleted_at) %> ago</span>
-    by <%= link_to deleted_object.deleted_by.username, user_path(deleted_object.deleted_by) %>.
+    <% if deleted_object.deleted_by == user %>
+      (self-deleted).
+    <% else %>
+      by <%= link_to deleted_object.deleted_by.username, user_path(deleted_object.deleted_by) %>.
+    <% end %>
   </p>
 </div>

@@ -1,24 +1,18 @@
 class CommentThread < ApplicationRecord
+  include Lockable
   include PostRelated
+  include SoftDeletable
 
   has_many :comments
   has_many :thread_follower
-  belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :archived_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
 
-  scope :deleted, -> { where(deleted: true) }
-  scope :undeleted, -> { where(deleted: false) }
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   def read_only?
     locked? || archived? || deleted?
-  end
-
-  def locked?
-    locked && (locked_until.nil? || locked_until > DateTime.now)
   end
 
   def followed_by?(user)

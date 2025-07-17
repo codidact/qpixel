@@ -156,7 +156,7 @@ That's it!
 Running in this docker-compose setup, the system does not actually send emails. However, you can see the emails that would have been sent by going to [http://localhost:3000/letter_opener](http://localhost:3000/letter_opener).
 This is especially useful to confirm other accounts that you make in the container.
 
-### 9. Running commands in the docker container
+## 9. Running commands in the docker container
 Often, it may be useful to run some ruby/rails code directly, e.g. for debugging purposes. You can do so with the following command:
 
 ```bash
@@ -178,7 +178,31 @@ RequestContext.community = Community.first
 
 This correctly scopes all database actions to the first (and probably only) community in your system.
 
-### 10. Stop Containers
+## 10. Running tests
+For full details, refer to [The Rails Test Runner](https://guides.rubyonrails.org/testing.html#the-rails-test-runner).
+
+To run the tests (except the system tests):
+
+```bash
+$ docker compose exec uwsgi rails test
+```
+
+To run the system tests:
+
+```bash
+$ docker compose exec uwsgi rails test:system
+```
+
+The system tests require a browser to be available (by default Firefox). Firefox is included in the uwsgi container if
+you use `Dockerfile.dev`, otherwise you will need to install a browser.
+
+To run all of the tests (including the system tests):
+
+```bash
+$ docker compose exec uwsgi rails test:all
+```
+
+## 11. Stop Containers
 
 When you are finished, don't forget to clean up.
 
@@ -187,7 +211,7 @@ docker compose stop
 docker compose rm
 ```
 
-### 11. Next steps
+## 12. Next steps
 
 The current goal of this container is to provide a development environment for
 working on QPixel. This deployment has not been tested with email notifications

@@ -7,12 +7,12 @@ class VotesController < ApplicationController
     post = Post.find(params[:post_id])
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
-      render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: :forbidden) && return
+      render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: :forbidden)
+      return
     end
 
-    recent_votes = Vote.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
-                       .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
-    max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes']
+    recent_votes = current_user.recent_votes_count
+    max_votes_per_day = current_user.max_votes_per_day
 
     if !post.parent&.user_id == current_user.id && recent_votes >= max_votes_per_day
       vote_limit_msg = "You have used your daily vote limit of #{recent_votes} votes. " \

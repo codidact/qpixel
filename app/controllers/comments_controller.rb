@@ -1,21 +1,24 @@
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
-  before_action :authenticate_user!, except: [:post, :show, :thread]
+  before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
+
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_thread, only: [:thread, :thread_rename, :thread_restrict, :thread_unrestrict, :thread_followers]
+  before_action :set_post, only: [:create_thread]
+  before_action :set_thread,
+                only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
+                       :thread_followers]
+
+  before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
+  before_action :check_create_access, only: [:create_thread, :create]
+  before_action :check_reply_access, only: [:create]
+  before_action :check_restrict_access, only: [:thread_restrict]
+  before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
+  before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :create_thread]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
   def create_thread
-    @post = Post.find(params[:post_id])
-    if @post.comments_disabled && current_user&.standard?
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
-      return
-    elsif !@post.can_access?(current_user)
-      return not_found
-    end
-
     title = params[:title]
     unless title.present?
       title = if params[:body].length > 100
@@ -31,13 +34,6 @@ class CommentsController < ApplicationController
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     pings = check_for_pings @comment_thread, body
-
-    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
-    if rate_limited
-      flash[:danger] = limit_message
-      redirect_to helpers.generic_share_link(@post)
-      return
-    end
 
     success = ActiveRecord::Base.transaction do
       @comment_thread.save!
@@ -63,29 +59,15 @@ class CommentsController < ApplicationController
   end
 
   def create
-    @comment_thread = CommentThread.find(params[:id])
-    @post = @comment_thread.post
-    if @post.comments_disabled && current_user&.standard?
-      render json: { status: 'failed', message: 'Comments have been disabled on this post.' }, status: :forbidden
-      return
-    elsif !@post.can_access?(current_user)
-      return not_found
-    end
-
     body = params[:content]
     pings = check_for_pings @comment_thread, body
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
 
-    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
-    if rate_limited
-      flash[:danger] = limit_message
-      redirect_to helpers.generic_share_link(@post)
-      return
-    end
+    status = @comment.save
 
-    if @comment.save
+    if status
       apply_pings pings
       @comment_thread.thread_follower.each do |follower|
         next if follower.user_id == current_user.id
@@ -104,7 +86,13 @@ class CommentsController < ApplicationController
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
     end
-    redirect_to comment_thread_path(@comment_thread.id)
+
+    if params[:inline] == 'true'
+      redirect_to helpers.generic_share_link(@post, comment_id: status ? @comment.id : nil,
+                                                    thread_id: @comment_thread.id)
+    else
+      redirect_to comment_thread_path(@comment_thread.id)
+    end
   end
 
   def update
@@ -114,8 +102,7 @@ class CommentsController < ApplicationController
     before_pings = check_for_pings @comment_thread, before
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_update', related: @comment, user: current_user,
-                                 comment: "from <<#{before}>>\nto <<#{@comment.content}>>")
+        audit('comment_update', @comment, "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
       after_pings = check_for_pings @comment_thread, @comment.content
@@ -133,26 +120,46 @@ class CommentsController < ApplicationController
   def destroy
     if @comment.update(deleted: true)
       @comment_thread = @comment.comment_thread
+
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_delete', related: @comment, user: current_user,
-                                 comment: "content <<#{@comment.content}>>")
+        audit('comment_delete', @comment, "content <<#{@comment.content}>>")
       end
-      render json: { status: 'success' }
+
+      respond_to do |format|
+        format.html { redirect_to comment_thread_path(@comment_thread.id) }
+        format.json { render json: { status: 'success' } }
+      end
     else
-      render json: { status: 'failed' }, status: :internal_server_error
+      respond_to do |format|
+        format.html do
+          flash[:danger] = I18n.t('comments.errors.delete_comment_server_error')
+          redirect_to comment_thread_path(@comment_thread.id)
+        end
+        format.json { render json: { status: 'failed' }, status: :internal_server_error }
+      end
     end
   end
 
   def undelete
     if @comment.update(deleted: false)
       @comment_thread = @comment.comment_thread
+
       unless current_user.id == @comment.user_id
-        AuditLog.moderator_audit(event_type: 'comment_undelete', related: @comment, user: current_user,
-                                 comment: "content <<#{@comment.content}>>")
+        audit('comment_undelete', @comment, "content <<#{@comment.content}>>")
       end
-      render json: { status: 'success' }
+
+      respond_to do |format|
+        format.html { redirect_to comment_thread_path(@comment_thread.id) }
+        format.json { render json: { status: 'success' } }
+      end
     else
-      render json: { status: 'failed' }, status: :internal_server_error
+      respond_to do |format|
+        format.html do
+          flash[:danger] = I18n.t('comments.errors.undelete_comment_server_error')
+          redirect_to comment_thread_path(@comment_thread.id)
+        end
+        format.json { render json: { status: 'failed' }, status: :internal_server_error }
+      end
     end
   end
 
@@ -164,22 +171,26 @@ class CommentsController < ApplicationController
   end
 
   def thread
-    not_found unless @comment_thread.can_access?(current_user)
+    respond_to do |format|
+      format.html { render 'comments/thread' }
+      format.json { render json: @comment_thread }
+    end
+  end
+
+  def thread_content
+    render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
+                                                          show_deleted: params[:show_deleted_comments] == '1',
+                                                          thread: @comment_thread }
   end
 
   def thread_followers
-    return not_found unless @comment_thread.can_access?(current_user)
     return not_found unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
     respond_to do |format|
-      format.json do
-        render json: @followers
-      end
-      format.html do
-        render layout: false
-      end
+      format.html { render layout: false }
+      format.json { render json: @followers }
     end
   end
 
@@ -197,23 +208,14 @@ class CommentsController < ApplicationController
   def thread_restrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.locked?
-
       lu = nil
       unless params[:duration].blank?
         lu = params[:duration].to_i.days.from_now
       end
       @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
-
-      redirect_to comment_thread_path(@comment_thread.id)
-      return
     when 'archive'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.archived?
-
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'
-      return not_found unless current_user.privilege?('flag_curate') && !@comment_thread.deleted?
-
       @comment_thread.update(deleted: true, deleted_by: current_user)
     when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
@@ -227,19 +229,12 @@ class CommentsController < ApplicationController
   def thread_unrestrict
     case params[:type]
     when 'lock'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.locked?
-
       @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
     when 'archive'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.archived?
-
       @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
     when 'delete'
-      return not_found unless current_user.privilege?('flag_curate') && @comment_thread.deleted?
-
       if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
-        render json: { status: 'error',
-                       message: 'Threads deleted by a moderator can only be undeleted by a moderator.' }
+        render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
         return
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
@@ -294,14 +289,80 @@ class CommentsController < ApplicationController
     @comment = Comment.unscoped.find params[:id]
   end
 
+  def set_post
+    @post = Post.find(params[:post_id])
+  end
+
   def set_thread
     @comment_thread = CommentThread.find(params[:id])
     @post = @comment_thread.post
   end
 
+  def check_post_access
+    if !@post.comments_allowed? && current_user&.standard?
+      respond_to do |format|
+        format.html { render template: 'errors/forbidden', status: :forbidden }
+        format.json do
+          message = helpers.comments_post_error_msg(@post)
+          render json: { status: 'failed', message: message },
+                 status: :forbidden
+        end
+      end
+    elsif !@post.can_access?(current_user)
+      not_found
+    end
+  end
+
+  def check_thread_access
+    not_found unless @comment_thread.can_access?(current_user)
+  end
+
   def check_privilege
     unless current_user&.at_least_moderator? || current_user == @comment.user
       render template: 'errors/forbidden', status: :forbidden
+    end
+  end
+
+  def check_create_access
+    rate_limited, limit_message = helpers.comment_rate_limited?(current_user, @post)
+    if rate_limited
+      flash[:danger] = limit_message
+      redirect_to helpers.generic_share_link(@post)
+    end
+  end
+
+  def check_reply_access
+    if @comment_thread.read_only? && current_user&.standard?
+      respond_to do |format|
+        format.html { render template: 'errors/forbidden', status: :forbidden }
+        format.json do
+          message = helpers.comments_thread_error_msg(@comment_thread)
+          render json: { status: 'failed', message: message },
+                 status: :forbidden
+        end
+      end
+    end
+  end
+
+  def check_restrict_access
+    case params[:type]
+    when 'lock'
+      return not_found unless current_user.can_lock?(@comment_thread)
+    when 'archive'
+      return not_found unless current_user.can_archive?(@comment_thread)
+    when 'delete'
+      return not_found unless current_user.can_delete?(@comment_thread)
+    end
+  end
+
+  def check_unrestrict_access
+    case params[:type]
+    when 'lock'
+      return not_found unless current_user.can_unlock?(@comment_thread)
+    when 'archive'
+      return not_found unless current_user.can_unarchive?(@comment_thread)
+    when 'delete'
+      return not_found unless current_user.can_undelete?(@comment_thread)
     end
   end
 
@@ -331,5 +392,15 @@ class CommentsController < ApplicationController
                                "on the post '#{title}'",
                                helpers.comment_link(@comment))
     end
+  end
+
+  # @param event_type [String] audit log event type
+  # @param comment [Comment] comment the audit is about
+  # @param audit_comment [String] additional info to log
+  def audit(event_type, comment, audit_comment = '')
+    AuditLog.moderator_audit(event_type: event_type,
+                             comment: audit_comment,
+                             related: comment,
+                             user: current_user)
   end
 end
