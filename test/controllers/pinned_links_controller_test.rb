@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PinnedLinksControllerTest < ActionDispatch::IntegrationTest
+class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
   test 'edit should require moderator' do
