@@ -95,7 +95,7 @@ class FlagsController < ApplicationController
       return not_found! unless current_user.privilege? 'flag_curate'
       return not_found! if type.nil? || type.confidential
 
-      not_found! if current_user.id == @flag.user.id
+      not_found! if current_user.same_as?(@flag.user)
     end
   end
 
