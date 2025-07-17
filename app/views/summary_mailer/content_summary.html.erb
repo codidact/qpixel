@@ -10,7 +10,7 @@
 <% if @posts.any? %>
   <% @posts.first(10).each do |p| %>
     <p>
-      <strong><%= link_to p.title, generic_share_link(p, host: p.community.host) %></strong><br/>
+      <strong><%= link_to p.title, generic_share_link(p) %></strong><br/>
       by <%= user_link p.user, { host: p.community.host } %> on <%= p.community.name %>
     </p>
   <% end %>
@@ -32,7 +32,7 @@
         <%= f.status || 'pending' %>
       </span><br/>
       by <%= user_link f.user, { host: f.community.host } %>
-      on <%= link_to f.post.title, generic_share_link(f.post, host: f.community.host) %>
+      on <%= link_to f.post.title, generic_share_link(f.post) %>
       on <%= f.community.name %><br/>
     </p>
   <% end %>
@@ -49,7 +49,7 @@
     <blockquote><%= c.content %></blockquote>
     <p class="has-margin-top-0">
       by <%= user_link c.user, { host: c.post.community.host } %>
-      on <%= link_to c.post.title, generic_share_link(c.post, host: c.post.community.host) %>
+      on <%= link_to c.post.title, generic_share_link(c.post) %>
       on <%= c.post.community.name %>
     </p>
   <% end %>

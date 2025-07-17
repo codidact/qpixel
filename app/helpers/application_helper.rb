@@ -163,6 +163,10 @@ module ApplicationHelper
   # @param params [Hash{Symbol => #to_s}] additional URL params
   # @return [String]
   def generic_share_link(post, **params)
+    unless params.key?(:host)
+      params.store(:host, post.community.host)
+    end
+
     if second_level_post_types.include?(post.post_type_id)
       answer_post_url({
         id: post.parent_id,

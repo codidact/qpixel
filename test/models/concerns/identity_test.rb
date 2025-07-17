@@ -36,4 +36,14 @@ class IdentityTest < ActiveSupport::TestCase
 
     assert_not first.same_as?(second)
   end
+
+  test 'same_as? should not fail if the compared model is nil' do
+    first = @klass1.new(42)
+
+    assert_nothing_raised do
+      first.same_as?(nil)
+    end
+
+    assert_not first.same_as?(nil)
+  end
 end
