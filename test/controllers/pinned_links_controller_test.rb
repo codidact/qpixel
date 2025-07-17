@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class PinnedLinksControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::ControllerHelpers
+
   test 'edit should require moderator' do
     sign_in users(:standard_user)
     get :edit, params: { id: pinned_links(:active_with_label).id }
