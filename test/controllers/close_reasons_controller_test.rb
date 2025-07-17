@@ -52,6 +52,12 @@ class CloseReasonsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:close_reason)
   end
 
+  test 'edit should fail for non-global admin on global reason' do
+    sign_in users(:admin)
+    get :edit, params: { id: close_reasons(:global).id }
+    assert_response(:not_found)
+  end
+
   test 'should update close reason' do
     sign_in users(:global_admin)
     patch :update, params: { id: close_reasons(:duplicate).id, close_reason: { name: 'test', description: 'test',
