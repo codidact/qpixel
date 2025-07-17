@@ -21,11 +21,7 @@ class CommentsController < ApplicationController
   def create_thread
     title = params[:title]
     unless title.present?
-      title = if params[:body].length > 100
-                "#{params[:body][0..100]}..."
-              else
-                params[:body]
-              end
+      title = helpers.generate_thread_title(params[:body])
     end
 
     body = params[:body]
