@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  helper :users
+  helper :application, :users
 
   default from: lambda {
     "#{SiteSetting['NoReplySenderName']} <#{SiteSetting['NoReplySenderEmail']}>"
