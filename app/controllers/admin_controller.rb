@@ -56,7 +56,7 @@ class AdminController < ApplicationController
 
   def send_all_email
     Thread.new do
-      emails = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+      emails = User.where.not(confirmed_at: nil).where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
       emails.each_slice(50) do |slice|
         AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject], emails: slice)
                    .to_all_users.deliver_later
