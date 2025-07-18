@@ -56,7 +56,11 @@ class AdminController < ApplicationController
 
   def send_all_email
     Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_all_users.deliver_now
+      emails = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+      emails.each_slice(50) do |slice|
+        AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject], emails: slice)
+                   .to_all_users.deliver_later
+      end
     end
     AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")

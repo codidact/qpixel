@@ -20,7 +20,7 @@ class AdminMailer < ApplicationMailer
   def to_all_users
     @subject = params[:subject]
     @body_markdown = params[:body_markdown]
-    @users = User.where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+    @users = params[:emails]
     to = SiteSetting['AllUsersSenderEmail']
     from = "#{SiteSetting['AllUsersSenderName']} <#{SiteSetting['AllUsersSenderEmail']}>"
     reply_to = SiteSetting['AllUsersReplyToEmail']
