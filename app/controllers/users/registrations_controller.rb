@@ -41,8 +41,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
       @user.errors.add(:base, I18n.t('users.errors.self_delete_wrong_username'))
       render :delete
     else
-      @user.do_soft_delete(@user)
       UserMailer.with(user: @user, host: RequestContext.community.host).deletion_confirmation.deliver_later
+      @user.do_soft_delete(@user)
       flash[:info] = 'Sorry to see you go!'
       redirect_to root_path
     end
