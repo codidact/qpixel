@@ -18,7 +18,6 @@ question_one:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 question_two:
   post_type: question
@@ -40,7 +39,6 @@ question_two:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 new_user_question:
   post_type: question
@@ -62,7 +60,6 @@ new_user_question:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 bad_answers:
   post_type: question
@@ -84,7 +81,6 @@ bad_answers:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 deleted:
   post_type: question
@@ -157,7 +153,6 @@ closed:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 locked:
   post_type: question
@@ -182,7 +177,6 @@ locked:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 locked_mod:
   post_type: question
@@ -207,7 +201,6 @@ locked_mod:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 free_edit:
   post_type: free_edit
@@ -229,7 +222,6 @@ free_edit:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 high_trust:
   post_type: question
@@ -251,7 +243,6 @@ high_trust:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 answer_one:
   post_type: answer
@@ -265,7 +256,6 @@ answer_one:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 answer_two:
   post_type: answer
@@ -279,7 +269,6 @@ answer_two:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 comments_disabled:
   post_type: answer
@@ -294,7 +283,6 @@ comments_disabled:
   upvote_count: 0
   downvote_count: 0
   comments_disabled: true
-  deleted: false
 
 bad_answer:
   post_type: answer
@@ -308,7 +296,6 @@ bad_answer:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 1
-  deleted: false
 
 really_old_answer:
   post_type: answer
@@ -323,7 +310,6 @@ really_old_answer:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 deleted_answer:
   post_type: answer
@@ -350,7 +336,6 @@ policy_doc:
   user: admin
   community: sample
   license: cc_by_sa
-  deleted: false
 
 help_doc:
   post_type: help_doc
@@ -361,7 +346,6 @@ help_doc:
   user: admin
   community: sample
   license: cc_by_sa
-  deleted: false
 
 article_one:
   post_type: article
@@ -383,7 +367,6 @@ article_one:
   license: cc_by_sa
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 deleted_article:
   post_type: article
@@ -408,7 +391,6 @@ deleted_article:
   deleted_by: deleter
   upvote_count: 0
   downvote_count: 0
-  deleted: false
 
 help_article:
   post_type: help_doc
@@ -419,7 +401,6 @@ help_article:
   help_category: Site Information
   help_ordering: 99
   doc_slug: sample
-  deleted: false
 
 mod_help_article:
   post_type: help_doc
@@ -430,7 +411,6 @@ mod_help_article:
   help_category: $Moderator
   help_ordering: 99
   doc_slug: sample-mod
-  deleted: false
 
 disabled_help_article:
   post_type: help_doc
@@ -441,7 +421,6 @@ disabled_help_article:
   help_category: $Disabled
   help_ordering: 99
   doc_slug: sample-disable
-  deleted: false
 
 blog_post:
   post_type: blog_post
@@ -460,7 +439,6 @@ blog_post:
   community: sample
   category: main
   license: cc_by_sa
-  deleted: false
 
 question_without_votes:
   post_type: question
@@ -476,4 +454,3 @@ question_without_votes:
   community: sample
   category: main
   license: cc_by_sa
-  deleted: false
