@@ -57,3 +57,7 @@ d_et:
 b_eo:
   community_user: sample_basic_user
   ability: everyone
+
+f_eo:
+  community_user: sample_filters_user
+  ability: everyone
