@@ -136,7 +136,7 @@ class AdminControllerTest < ActionController::TestCase
   test 'send email methods should require auth' do
     [:send_admin_email, :send_all_email].each do |action|
       post action, params: { subject: 'test', body_markdown: 'test' }
-      assert_redirected_to_sign_in
+      assert_response(:not_found)
     end
   end
 
@@ -152,7 +152,8 @@ class AdminControllerTest < ActionController::TestCase
     [:send_admin_email, :send_all_email].each do |action|
       sign_in users(:global_admin)
       post action, params: { subject: 'test', body_markdown: 'test' }
-      assert_response(:success)
+      assert_response(:found)
+      assert_redirected_to admin_path
       assert_not_nil flash[:success]
     end
   end
