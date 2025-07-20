@@ -2,8 +2,8 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban]
-  before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
+                                             :setup_save, :hellban, :all_email, :send_all_email]
+  before_action :verify_developer, only: [:change_users, :impersonate]
 
   def index; end
 
