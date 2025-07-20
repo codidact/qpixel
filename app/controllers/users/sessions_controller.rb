@@ -58,7 +58,7 @@ class Users::SessionsController < Devise::SessionsController
   # If you make changes here, you may also have to update that method.
   # @param user [User]
   # @return [Boolean] false if the handling by the calling method should be stopped
-  def post_sign_in(user) # rubocop:disable Naming/PredicateMethod -- because it's not
+  def post_sign_in(user)
     # For a deleted user (banished), tell them non-specifically that there was a mistake with their credentials.
     if user.deleted?
       sign_out user

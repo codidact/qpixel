@@ -184,7 +184,7 @@ module CommentsHelper
   # @param create_audit_log [Boolean] Whether to create an AuditLog if the user is rate limited.
   # @return [Array(Boolean, String)] 2-tuple: boolean indicating if the user is rate-limited, and a string containing
   #   a rate limit message if the user is rate-limited.
-  def comment_rate_limited?(user, post, create_audit_log: true) # rubocop:disable Naming/PredicateMethod
+  def comment_rate_limited?(user, post, create_audit_log: true)
     comments_count = user.recent_comments_count(post)
     comments_limit = user.max_comments_per_day(post)
     is_rate_limited = comments_count >= comments_limit

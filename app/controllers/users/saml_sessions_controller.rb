@@ -101,7 +101,7 @@ class Users::SamlSessionsController < Devise::SamlSessionsController
   # @param user [User]
   # @param final_destination [Boolean] whether the current community is the one the user is trying to sign into
   # @return [Boolean] false if the user was redirected by this
-  def post_sign_in(user, final_destination = false) # rubocop:disable Naming/PredicateMethod -- because it's not
+  def post_sign_in(user, final_destination = false)
     # If the user was banished, let them know non-specifically.
     if user.deleted? || user.community_user&.deleted?
       # The IDP already confirmed the sign in, so we can't fool the user any more that their credentials were incorrect.
