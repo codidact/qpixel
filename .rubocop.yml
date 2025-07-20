@@ -58,6 +58,9 @@ Naming/BlockForwarding:
 Naming/PredicateMethod:
   Mode: conservative
   AllowedPatterns: ['verify_.*', 'check_.*', 'enforce_.*', 'setup_.*']
+  AllowedMethods:
+    - post_sign_in # returns a boolean but is a necessary after-sign-in method for both normal and SAML flows
+    - comment_rate_limited? # returns a tuple with the boolean as the first value
   AllowBangMethods: true
 
 Style/ClassAndModuleChildren:

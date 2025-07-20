@@ -102,8 +102,6 @@ module ApplicationHelper
     end
   end
 
-  # because obviously rubocop has a problem with documentation
-
   ##
   # Converts a number to short-form humanized display, i.e. 100,000 = 100k. Parameters as for
   # {ActiveSupport::NumberHelper#number_to_human}[https://www.rubydoc.info/gems/activesupport/ActiveSupport/NumberHelper#number_to_human-instance_method]

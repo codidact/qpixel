@@ -10,7 +10,7 @@ module PostValidations
     validate :stripped_minimum_body, if: -> { !body_markdown.nil? }
     validate :stripped_minimum_title, if: -> { !title.nil? }
     validate :maximum_title_length, if: -> { !title.nil? }
-    validate :required_tags?, if: -> { post_type.has_tags && post_type.has_category }
+    validate :check_required_tags, if: -> { post_type.has_tags && post_type.has_category }
   end
 
   def maximum_tags
@@ -60,8 +60,8 @@ module PostValidations
   end
 
   def maximum_title_length
-    max_title_len = SiteSetting['MaxTitleLength']
-    if title.length > [max_title_len || 255, 255].min
+    max_title_len = SiteSetting['MaxTitleLength'] || 255
+    if title.length > [max_title_len, 255].min
       errors.add(:title, "can't be more than #{max_title_len} characters")
     end
   end
@@ -73,15 +73,12 @@ module PostValidations
     end
   end
 
-  def required_tags?
+  def check_required_tags
     required = category&.required_tag_ids || []
-    return false unless required.present? && !required.empty?
+    return unless required.present? && !required.empty?
 
-    if tag_ids.any? { |t| required.include? t }
-      true
-    else
+    unless tag_ids.any? { |t| required.include? t }
       errors.add(:tags, "must contain at least one required tag (#{category.required_tags.pluck(:name).join(', ')})")
-      false
     end
   end
 end
