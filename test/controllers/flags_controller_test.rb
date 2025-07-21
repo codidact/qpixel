@@ -32,7 +32,8 @@ class FlagsControllerTest < ActionController::TestCase
 
   test 'should add status to flag' do
     sign_in users(:moderator)
-    post :resolve, params: { id: flags(:one).id, result: 'ABCDEF', message: 'ABCDEF GHIJKL MNOPQR STUVWX YZ' }
+
+    try_resolve_flag(flags(:one), result: 'Helpful', message: 'Please send us more flags')
 
     assert_not_nil assigns(:flag)
     assert_not_nil assigns(:flag).status
