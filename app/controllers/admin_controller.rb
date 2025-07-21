@@ -45,16 +45,16 @@ class AdminController < ApplicationController
   def send_admin_email
     community = RequestContext.community
 
-    Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown],
-                       subject: params[:subject],
-                       community: community)
-                 .to_moderators
-                 .deliver_now
-    end
+    AdminMailer.with(body_markdown: params[:body_markdown],
+                     subject: params[:subject],
+                     community: community)
+               .to_moderators
+               .deliver_later
+
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
-    flash[:success] = t 'admin.email_being_sent'
+
+    flash[:success] = t('admin.email_being_sent')
     redirect_to admin_path
   end
 
