@@ -50,6 +50,8 @@ Minitest.after_run do
     EmailLog,
     ErrorLog,
     Subscription,
+    MicroAuth::Token,
+    MicroAuth::App,
     User,
     Notification,
     SiteSetting,
