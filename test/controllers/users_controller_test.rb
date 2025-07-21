@@ -1,4 +1,5 @@
 require 'test_helper'
+require_relative 'concerns/users/users_abilities_test'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
