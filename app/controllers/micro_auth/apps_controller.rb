@@ -66,7 +66,7 @@ class MicroAuth::AppsController < ApplicationController
   end
 
   def verify_ownership
-    not_found! unless @app.user == current_user || helpers.admin?
+    not_found! unless @app.user.same_as?(current_user) || helpers.admin?
   end
 
   def app_params
