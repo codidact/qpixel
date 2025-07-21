@@ -12,6 +12,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :lockable, :omniauthable, :saml_authenticatable
 
+  has_many :apps, class_name: 'MicroAuth::App', dependent: :destroy
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy

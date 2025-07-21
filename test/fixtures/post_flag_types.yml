@@ -14,3 +14,8 @@ confidential:
   community: sample
   confidential: true
   name: For your eyes only
+
+not_confidential:
+  community: sample
+  confidential: false
+  name: Definitely not confidential
