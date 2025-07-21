@@ -53,7 +53,7 @@ gem 'whenever', '~> 1.0', require: false
 gem 'awesome_print', '~> 1.9'
 gem 'rubocop', '~> 1'
 gem 'rubocop-rails', '~> 2.15'
-gem 'rubocop-rake', '~> 0.6.0'
+gem 'rubocop-rake', '~> 0.7.1'
 
 # MiniProfiler support, including stack traces & memory dumps, plus flamegraphs.
 gem 'flamegraph', '~> 0.9'
