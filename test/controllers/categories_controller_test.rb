@@ -12,7 +12,7 @@ class CategoriesControllerTest < ActionController::TestCase
   test 'should correctly show public categories' do
     public_categories = categories.select(&:public?)
 
-    assert_not public_categories.size.zero?
+    assert_not public_categories.empty?
 
     public_categories.each do |category|
       try_show_category(category)
