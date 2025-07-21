@@ -98,16 +98,17 @@ class AdminController < ApplicationController
       end
     end
 
-    if params[:from].present? || params[:to].present?
-      from = params[:from] || params[:to]
-      to = params[:to] || params[:from] # these lines are deliberate so that if only one is set it's an exact date query
-      @logs = @logs.where('date(created_at) >= ?', from)
-                   .where('date(created_at) <= ?', to)
+    if params[:from].present?
+      @logs = @logs.where('date(created_at) >= ?', params[:from])
+    end
+
+    if params[:to].present?
+      @logs = @logs.where('date(created_at) <= ?', params[:to])
     end
 
     @logs = @logs.user_sort({ term: params[:sort], default: :created_at },
-                           age: :created_at, type: :log_type, event: :event_type,
-                           related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
+                            age: :created_at, type: :log_type, event: :event_type,
+                            related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
                  .paginate(page: @page, per_page: @per_page)
 
     render layout: 'without_sidebar'
