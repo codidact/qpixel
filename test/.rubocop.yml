@@ -6,6 +6,8 @@ Layout/LineLength:
 
 Metrics/BlockLength:
   CountAsOne: ['array']
+  AllowedMethods:
+    - included
 
 Metrics/ClassLength:
   Enabled: false

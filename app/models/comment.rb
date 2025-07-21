@@ -42,7 +42,7 @@ class Comment < ApplicationRecord
   end
 
   def delete_thread
-    if deleted? && comment_thread.comments.undeleted.count.zero?
+    if deleted? && comment_thread.comments.undeleted.none?
       comment_thread.update(deleted: true, deleted_by_id: -1)
     end
   end

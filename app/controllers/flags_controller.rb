@@ -43,7 +43,7 @@ class FlagsController < ApplicationController
   def history
     @user = helpers.user_with_me params[:id]
     unless @user == current_user || current_user.at_least_moderator?
-      not_found
+      not_found!
       return
     end
     @flags = @user.flags.includes(:post).order(id: :desc).paginate(page: params[:page], per_page: 50)
@@ -92,9 +92,10 @@ class FlagsController < ApplicationController
     type = @flag.post_flag_type
 
     unless current_user.at_least_moderator?
-      return not_found unless current_user.privilege? 'flag_curate'
-      return not_found if type.nil? || type.confidential
-      return not_found if current_user.id == @flag.user.id
+      return not_found! unless current_user.privilege? 'flag_curate'
+      return not_found! if type.nil? || type.confidential
+
+      not_found! if current_user.same_as?(@flag.user)
     end
   end
 

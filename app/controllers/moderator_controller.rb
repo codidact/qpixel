@@ -20,8 +20,8 @@ class ModeratorController < ApplicationController
   end
 
   def nominate_promotion
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
-    return not_found(errors: ['unavailable_for_type']) unless top_level_post_types.include? @post.post_type_id
+    return not_found!(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found!(errors: ['unavailable_for_type']) unless top_level_post_types.include? @post.post_type_id
 
     PostHistory.nominated_for_promotion(@post, current_user)
     nominations = helpers.promoted_posts
@@ -32,7 +32,7 @@ class ModeratorController < ApplicationController
   end
 
   def promotions
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found!(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
 
     # This is network-wide, but the Post selection will default to current site only, so not a problem.
     @promotions = helpers.promoted_posts
@@ -40,10 +40,10 @@ class ModeratorController < ApplicationController
   end
 
   def remove_promotion
-    return not_found(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
+    return not_found!(errors: ['no_privilege']) unless current_user.privilege? 'flag_curate'
 
     promotions = helpers.promoted_posts
-    return not_found(errors: ['not_promoted']) unless promotions.keys.include? @post.id.to_s
+    return not_found!(errors: ['not_promoted']) unless promotions.keys.include? @post.id.to_s
 
     promotions = promotions.reject { |k, _v| k == @post.id.to_s }
     RequestContext.redis.set 'network/promoted_posts', JSON.dump(promotions)

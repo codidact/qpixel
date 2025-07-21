@@ -34,8 +34,6 @@ Lint/PathInHelpers:
     - app/helpers/**/*.rb
 Lint/RaiseException:
   Enabled: true
-Lint/RedundantDirGlobSort:
-  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Lint/StructNewOverride:
   Enabled: true
 
@@ -58,6 +56,13 @@ Metrics/PerceivedComplexity:
 
 Naming/BlockForwarding:
   EnforcedStyle: explicit
+Naming/PredicateMethod:
+  Mode: conservative
+  AllowedPatterns: ['verify_.*', 'check_.*', 'enforce_.*', 'setup_.*']
+  AllowedMethods:
+    - post_sign_in # returns a boolean but is a necessary after-sign-in method for both normal and SAML flows
+    - comment_rate_limited? # returns a tuple with the boolean as the first value
+  AllowBangMethods: true
 
 Style/ClassAndModuleChildren:
   Enabled: false
@@ -78,8 +83,6 @@ Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
   Enabled: true
-Style/HashExcept:
-  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
   EnforcedShorthandSyntax: never
@@ -93,8 +96,6 @@ Style/IfUnlessModifier:
   Enabled: false
 Style/OptionalBooleanParameter:
   Enabled: false
-Style/RedundantFreeze:
-  Enabled: false # reenable when we can be sure no one uses Ruby <3.0
 Style/RegexpLiteral:
   Enabled: false
 Style/RescueStandardError:

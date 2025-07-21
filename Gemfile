@@ -9,7 +9,7 @@ gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 5.6'
-gem 'rails', '~> 7.0.8'
+gem 'rails', '~> 7.2'
 gem 'rails-html-sanitizer', '~> 1.6'
 gem 'redis', '~> 4.8'
 gem 'rotp', '~> 6.2'
@@ -22,6 +22,7 @@ gem 'tzinfo-data', '~> 1.2022.3'
 # Sign in
 gem 'devise', '~> 4.8'
 gem 'devise_saml_authenticatable', '~> 1.9'
+gem 'msgpack', '~> 1.8' # required for ActiveSupport::MessageEncryptor
 gem 'omniauth', '~> 2.1'
 
 # Markdown support in both directions.

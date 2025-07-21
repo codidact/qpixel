@@ -22,7 +22,7 @@ class CommentThread < ApplicationRecord
   end
 
   def can_access?(user)
-    (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
+    (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
   end
 

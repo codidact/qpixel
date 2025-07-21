@@ -13,7 +13,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         previous_ip_users = User.where(current_sign_in_ip: ip_list).or(User.where(last_sign_in_ip: ip_list))
                                 .where(created_at: rate_limit.seconds.ago..DateTime.now)
                                 .where.not(id: user.id)
-        if previous_ip_users.size.zero?
+        if previous_ip_users.empty?
           user.send_welcome_tour_message
           user.ensure_websites
         else
@@ -41,6 +41,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
       @user.errors.add(:base, I18n.t('users.errors.self_delete_wrong_username'))
       render :delete
     else
+      UserMailer.with(user: @user, host: RequestContext.community.host, community: RequestContext.community)
+                .deletion_confirmation.deliver_later
       @user.do_soft_delete(@user)
       flash[:info] = 'Sorry to see you go!'
       redirect_to root_path

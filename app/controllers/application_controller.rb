@@ -48,13 +48,13 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:profile, :website, :twitter])
   end
 
-  def not_found(**add)
+  def not_found!(**add)
     respond_to do |format|
       format.json do
         render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
       end
       format.any do
-        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        render 'errors/not_found', formats: [:html], layout: 'without_sidebar', status: :not_found
       end
     end
     false
@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_your_privilege(name, post = nil, render_error = true)
-    unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
+    unless current_user&.privilege?(name) || (current_user&.post_privilege?(name, post) if post)
       @privilege = Ability.find_by(name: name)
       render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: :forbidden if render_error
       return false
@@ -143,22 +143,22 @@ class ApplicationController < ActionController::Base
       return redirect_to :fc_communities if request.fullpath == '/'
 
       unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
-        not_found
+        not_found!
       end
     else
-      return not_found if ['fake_community'].include?(controller_name)
+      not_found! if ['fake_community'].include?(controller_name)
     end
   end
 
   def stop_the_awful_troll
     # There shouldn't be any trolls in the test environment... :D
-    return true if Rails.env.test?
+    return if Rails.env.test?
 
     # Only stop trolls doing things, not looking at them.
-    return true if request.method.upcase == 'GET'
+    return if request.method.upcase == 'GET'
 
     # Trolls can't be awful without user accounts. User model is already checking for creation cases.
-    return true if current_user.nil?
+    return if current_user.nil?
 
     ip = current_user.extract_ip_from(request)
     email_domain = current_user.email.split('@')[-1]
@@ -180,9 +180,7 @@ class ApplicationController < ActionController::Base
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
         format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
       end
-      return false
     end
-    true
   end
 
   def set_globals
