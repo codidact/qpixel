@@ -57,3 +57,10 @@ d_et:
 b_eo:
   community_user: sample_basic_user
   ability: everyone
+
+e2_ep_susp:
+  community_user: sample_enabled_2fa
+  ability: edit_posts
+  is_suspended: true
+  suspension_end: ~
+  suspension_message: go away

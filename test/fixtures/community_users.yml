@@ -77,3 +77,10 @@ sample_deleted_profile:
   deleted: true
   deleted_at: 2020-01-02T00:00:00.000000Z
   deleted_by: global_admin
+
+sample_enabled_2fa:
+  user: enabled_2fa
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

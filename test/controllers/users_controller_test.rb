@@ -3,6 +3,7 @@ require 'test_helper'
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
+  include UsersAbilitiesTest
 
   test 'should get index' do
     get :index
