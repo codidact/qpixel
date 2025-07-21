@@ -85,6 +85,8 @@ Rails.application.configure do
     host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
 
+  config.active_job.queue_adapter = :inline
+
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true
     host_ip = `/sbin/ip route|awk '/default/ { print $3 }'`.strip

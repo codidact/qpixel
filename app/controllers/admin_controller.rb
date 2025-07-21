@@ -2,8 +2,8 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban]
-  before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
+                                             :setup_save, :hellban, :all_email, :send_all_email]
+  before_action :verify_developer, only: [:change_users, :impersonate]
 
   def index; end
 
@@ -43,8 +43,14 @@ class AdminController < ApplicationController
   def admin_email; end
 
   def send_admin_email
+    community = RequestContext.community
+
     Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
+      AdminMailer.with(body_markdown: params[:body_markdown],
+                       subject: params[:subject],
+                       community: community)
+                 .to_moderators
+                 .deliver_now
     end
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
@@ -55,8 +61,17 @@ class AdminController < ApplicationController
   def all_email; end
 
   def send_all_email
+    community = RequestContext.community
+
     Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_all_users.deliver_now
+      emails = User.where.not(confirmed_at: nil).where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+      emails.each_slice(50) do |slice|
+        AdminMailer.with(body_markdown: params[:body_markdown],
+                         subject: params[:subject],
+                         emails: slice, community: community)
+                   .to_all_users
+                   .deliver_later
+      end
     end
     AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")

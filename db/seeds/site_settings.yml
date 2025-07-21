@@ -224,12 +224,30 @@
   value_type: string
   category: Email
   description: >
+    Community-specific name of the sender of no-reply emails
+    (see NoReplySenderName in <a href="/admin/settings/global">global site settings</a> for details)
+
+- name: NoReplySenderName
+  value: Codidact
+  value_type: string
+  category: Email
+  community_id: ~
+  description: >
     The name of the sender of no-reply emails.
 
 - name: NoReplySenderEmail
   value: noreply@codidact.com
   value_type: string
   category: Email
+  description: >
+    Community-specific address to send no-reply emails from
+    (see NoReplySenderEmail in <a href="/admin/settings/global">global site settings</a> for details).
+
+- name: NoReplySenderEmail
+  value: noreply@codidact.com
+  value_type: string
+  category: Email
+  community_id: ~
   description: >
     The address to send no-reply emails from (can be a fake address).
     Example uses of this address are 2FA emails, flag notifications, account emails, and more.

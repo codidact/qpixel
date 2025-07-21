@@ -9,15 +9,15 @@ class SiteSetting < ApplicationRecord
   scope :global, -> { for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
-  def self.[](name)
-    key = "SiteSettings/#{RequestContext.community_id}/#{name}"
+  def self.[](name, community: nil)
+    key = "SiteSettings/#{community.present? ? community.id : RequestContext.community_id}/#{name}"
     cached = Rails.cache.fetch key, include_community: false do
-      SiteSetting.applied_setting(name)&.typed
+      SiteSetting.applied_setting(name, community: community)&.typed
     end
 
     if cached.nil?
       Rails.cache.delete key, include_community: false
-      value = SiteSetting.applied_setting(name)&.typed
+      value = SiteSetting.applied_setting(name, community: community)&.typed
       Rails.cache.write key, value, include_community: false
       value
     else
@@ -86,8 +86,9 @@ class SiteSetting < ApplicationRecord
     SettingConverter.new(setting.value).send("as_#{setting.value_type.downcase}")
   end
 
-  def self.applied_setting(name)
-    SiteSetting.for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
+  def self.applied_setting(name, community: nil)
+    SiteSetting.for_community_id(community.present? ? community.id : RequestContext.community_id)
+               .or(global).where(name: name).priority_order.first
   end
 
   def self.all_communities(name)
