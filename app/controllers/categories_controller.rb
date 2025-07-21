@@ -128,7 +128,7 @@ class CategoriesController < ApplicationController
 
   def post_types
     @post_types = @category.post_types.where(is_top_level: true)
-    if @post_types.count == 1
+    if @post_types.one?
       redirect_to new_category_post_path(post_type: @post_types.first, category: @category)
     end
   end
@@ -151,7 +151,7 @@ class CategoriesController < ApplicationController
 
   def verify_view_access
     unless (current_user&.trust_level || 0) >= (@category.min_view_trust_level || -1)
-      not_found
+      not_found!
     end
   end
 

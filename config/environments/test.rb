@@ -63,7 +63,7 @@ Rails.application.configure do
     protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
 
-  config.active_job.queue_adapter = :inline
+  config.active_job.queue_adapter = :test
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

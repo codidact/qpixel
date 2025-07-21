@@ -39,7 +39,7 @@ class SiteSetting < ApplicationRecord
 
   def self.exist?(name)
     Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}", include_community: false) ||
-      SiteSetting.where(name: name).count.positive?
+      SiteSetting.where(name: name).any?
   end
 
   # Checks whether the setting is a global site setting

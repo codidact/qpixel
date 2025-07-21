@@ -31,9 +31,9 @@ class AdminController < ApplicationController
   def update_privilege
     @ability = Ability.find_by internal_id: params[:name]
     type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
-    return not_found if type.nil?
+    return not_found! if type.nil?
 
-    pre = @ability.send("#{type}_score_threshold".to_sym)
+    pre = @ability.send(:"#{type}_score_threshold")
     @ability.update("#{type}_score_threshold" => params[:threshold])
     AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
                          comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
@@ -45,16 +45,16 @@ class AdminController < ApplicationController
   def send_admin_email
     community = RequestContext.community
 
-    Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown],
-                       subject: params[:subject],
-                       community: community)
-                 .to_moderators
-                 .deliver_now
-    end
+    AdminMailer.with(body_markdown: params[:body_markdown],
+                     subject: params[:subject],
+                     community: community)
+               .to_moderators
+               .deliver_later
+
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
-    flash[:success] = t 'admin.email_being_sent'
+
+    flash[:success] = t('admin.email_being_sent')
     redirect_to admin_path
   end
 
@@ -129,7 +129,7 @@ class AdminController < ApplicationController
     # Set settings from config page
     { primary_color: 'SiteCategoryHeaderDefaultColor', logo_url: 'SiteLogoPath', ad_slogan: 'SiteAdSlogan',
       mathjax: 'MathJaxEnabled', syntax_highlighting: 'SyntaxHighlightingEnabled', chat_link: 'ChatLink',
-      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' } \
+      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' }
       .each do |key, setting|
       settings.find_by(name: setting).update(value: params[key])
     end
@@ -192,13 +192,13 @@ class AdminController < ApplicationController
   end
 
   def change_back
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
   end
 
   def verify_elevation
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
     if @impersonator&.sso_profile.present?

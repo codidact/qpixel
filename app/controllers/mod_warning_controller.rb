@@ -9,7 +9,7 @@ class ModWarningController < ApplicationController
   end
 
   def approve
-    return not_found if @warning.suspension_active?
+    return not_found! if @warning.suspension_active?
 
     if params[:approve_checkbox].nil?
       @failed_to_click_checkbox = true
@@ -59,7 +59,7 @@ class ModWarningController < ApplicationController
 
   def lift
     @warning = ModWarning.to(@user).active.last
-    return not_found if @warning.nil?
+    return not_found! if @warning.nil?
 
     @warning.update(active: false, read: false)
     @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
@@ -76,12 +76,12 @@ class ModWarningController < ApplicationController
 
   def set_warning
     @warning = ModWarning.to(current_user).active.last
-    not_found if @warning.nil?
+    not_found! if @warning.nil?
   end
 
   def set_user
     @user = user_scope.find_by(id: params[:user_id])
-    not_found if @user.nil?
+    not_found! if @user.nil?
   end
 
   def user_scope
