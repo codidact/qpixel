@@ -139,6 +139,8 @@ jobs:
       - name: Deploy
         run: |
           ssh -o 'StrictHostKeyChecking no' \
+              -o 'KbdInteractiveAuthentication no' \
+              -o 'PasswordAuthentication no' \
               -p "$SSH_PORT" \
               -i ~/.ssh/deploy.key \
               -v \
