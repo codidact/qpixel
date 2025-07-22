@@ -52,7 +52,13 @@
     <% if defined?(@post) && @post.inbound_duplicates.any? %>
       <% cache [@post, @post.inbound_duplicates] do %>
         <div class="widget has-margin-4 is-green">
-          <div class="widget--header">Related Posts</div>
+          <div class="widget--header">
+            Related Posts
+            <button type="button" class="widget--header-link button is-icon-only-button js-widget-hide"
+                    aria-label="Collapse Related Posts">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+          </div>
           <% @post.inbound_duplicates.each do |dp| %>
             <div class="widget--body">
               <% unless dp.category.nil? %>
@@ -72,7 +78,13 @@
     <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
       <% cache @hot_questions do %>
         <div class="widget has-margin-4 is-tertiary">
-          <div class="widget--header">Hot Posts</div>
+          <div class="widget--header">
+            Hot Posts
+            <button type="button" class="widget--header-link button is-icon-only-button js-widget-hide"
+                    aria-label="Collapse Hot Posts">
+              <i class="fas fa-chevron-up"></i>
+            </button>
+          </div>
           <% @hot_questions.each do |hq| %>
             <div class="widget--body">
               <% unless hq.category.nil? %>
