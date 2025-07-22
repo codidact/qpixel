@@ -5,5 +5,7 @@ en:
         Admin accounts cannot be self-deleted. Contact support.
       no_mod_self_delete: >
         Moderator accounts cannot be self-deleted. Contact support.
+      no_2fa_self_delete: >
+        Accounts using 2FA cannot be self-deleted. Disable 2FA first.
       self_delete_wrong_username: >
         The username you entered was incorrect.

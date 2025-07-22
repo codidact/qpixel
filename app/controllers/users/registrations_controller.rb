@@ -37,6 +37,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     elsif @user.moderator?
       @user.errors.add(:base, I18n.t('users.errors.no_mod_self_delete'))
       render :delete
+    elsif @user.enabled_2fa
+      @user.errors.add(:base, I18n.t('users.errors.no_2fa_self_delete'))
+      render :delete
     elsif params[:username] != @user.username
       @user.errors.add(:base, I18n.t('users.errors.self_delete_wrong_username'))
       render :delete
