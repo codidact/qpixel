@@ -112,3 +112,31 @@ jobs:
           fail_ci_if_error: true
           report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  deploy:
+    name: Dev server deployment
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'push' }} # this is INTENTIONAL
+    needs:
+      - rubocop
+      - typescript
+      - tests
+
+    env:
+      SSH_IP: ${{ secrets.DEV_SSH_IP }}
+      SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      SSH_PORT: ${{ secrets.DEV_SSH_PORT }}
+      SSH_USER: ${{ secrets.DEV_SSH_USER }}
+
+    steps:
+      - name: Import key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" | base64 --decode > ~/.ssh/deploy.key
+          chmod 0700 ~/.ssh/deploy.key
+      - name: Deploy
+      - run: |
+          ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" \
+              -p "$SSH_PORT" \
+              -i ~/.ssh/deploy.key \
+              "sudo su -l qpixel /var/apps/deploy-dev"
