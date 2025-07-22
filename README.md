@@ -5,6 +5,7 @@
 </div>
 <br>
 <p align="center">
+  <a href="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml"><img src="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml/badge.svg" alt="Pipeline status" /></a>
   <a href="https://codecov.io/gh/codidact/qpixel"><img src="https://codecov.io/gh/codidact/qpixel/graph/badge.svg?token=RM60WJLP1V" alt="Coverage Status"/></a>
   <a href="https://zenodo.org/badge/latestdoi/237078806"><img src="https://zenodo.org/badge/237078806.svg" alt="DOI"></a>
 </p>
