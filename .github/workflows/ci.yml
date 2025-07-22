@@ -135,7 +135,7 @@ jobs:
           echo "$SSH_KEY" | base64 --decode > ~/.ssh/deploy.key
           chmod 0700 ~/.ssh/deploy.key
       - name: Deploy
-      - run: |
+        run: |
           ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" \
               -p "$SSH_PORT" \
               -i ~/.ssh/deploy.key \
