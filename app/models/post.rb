@@ -23,7 +23,8 @@ class Post < ApplicationRecord
   has_many :flags, as: :post, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
-  has_many :reactions
+  has_many :reactions, dependent: :destroy
+  has_many :inbound_duplicates, class_name: 'Post', foreign_key: 'duplicate_post_id', dependent: :nullify
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
   counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
@@ -53,6 +54,7 @@ class Post < ApplicationRecord
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
                                    user: :avatar_attachment)
                         }
+  scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
 
   before_validation :update_tag_associations, if: -> { post_type&.has_tags }
   after_create :create_initial_revision

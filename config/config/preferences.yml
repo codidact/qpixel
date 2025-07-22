@@ -84,3 +84,17 @@ default_filter_name:
   type: ~
   default: none
   category: true
+
+collapse_hot_posts:
+  type: boolean
+  description: >
+    Collapse the Hot Posts widget in the sidebar by default.
+  default: 'false'
+  global: true
+
+collapse_related_posts:
+  type: boolean
+  description: >
+    Collapse the Related Posts widget in the sidebar by default.
+  default: 'false'
+  global: true
