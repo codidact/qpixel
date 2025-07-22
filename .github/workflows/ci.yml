@@ -129,10 +129,12 @@ jobs:
       SSH_USER: ${{ secrets.DEV_SSH_USER }}
 
     steps:
+      - name: Check SSH version
+        run: ssh -V
       - name: Import key
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" | base64 --decode > ~/.ssh/deploy.key
+          echo "$SSH_KEY" > ~/.ssh/deploy.key
           chmod 0700 ~/.ssh/deploy.key
       - name: Deploy
         run: |
