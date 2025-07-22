@@ -138,8 +138,9 @@ jobs:
           chmod 0700 ~/.ssh/deploy.key
       - name: Deploy
         run: |
-          ssh -o 'StrictHostKeyChecking no' "$SSH_USER"@"$SSH_IP" \
+          ssh -o 'StrictHostKeyChecking no' \
               -p "$SSH_PORT" \
               -i ~/.ssh/deploy.key \
               -v \
+              "$SSH_USER"@"$SSH_IP" \
               "sudo su -l qpixel /var/apps/deploy-dev"
