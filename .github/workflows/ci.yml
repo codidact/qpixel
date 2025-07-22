@@ -116,7 +116,7 @@ jobs:
   deploy:
     name: Dev server deployment
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'push' }} # this is INTENTIONAL
+    if: ${{ github.event_name == 'push' }}
     needs:
       - rubocop
       - typescript
