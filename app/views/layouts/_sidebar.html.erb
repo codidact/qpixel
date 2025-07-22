@@ -50,17 +50,18 @@
 
     <%# Related Posts widget %>
     <% if defined?(@post) && @post.inbound_duplicates.any? %>
+      <% collapse_related = user_preference('collapse_related_posts') == 'true' %>
       <% cache [@post, @post.inbound_duplicates] do %>
-        <div class="widget has-margin-4 is-green">
+        <div class="widget has-margin-4 is-green" data-collapsed="<%= user_preference('collapse_related_posts') %>">
           <div class="widget--header">
             Related Posts
             <button type="button" class="widget--header-link button is-icon-only-button js-widget-hide"
                     aria-label="Collapse Related Posts">
-              <i class="fas fa-chevron-up"></i>
+              <i class="fas <%= collapse_related ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
             </button>
           </div>
           <% @post.inbound_duplicates.each do |dp| %>
-            <div class="widget--body">
+            <div class="widget--body <%= 'hidden' if collapse_related %>">
               <% unless dp.category.nil? %>
                 <%= dp.category.name %>
                 &mdash;
@@ -76,17 +77,18 @@
 
     <%# Hot Posts widget %>
     <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
+      <% collapse_hot = user_preference('collapse_hot_posts') == 'true' %>
       <% cache @hot_questions do %>
-        <div class="widget has-margin-4 is-tertiary">
+        <div class="widget has-margin-4 is-tertiary" data-collapsed="<%= user_preference('collapse_hot_posts') %>">
           <div class="widget--header">
             Hot Posts
             <button type="button" class="widget--header-link button is-icon-only-button js-widget-hide"
                     aria-label="Collapse Hot Posts">
-              <i class="fas fa-chevron-up"></i>
+              <i class="fas <%= collapse_hot ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
             </button>
           </div>
           <% @hot_questions.each do |hq| %>
-            <div class="widget--body">
+            <div class="widget--body <%= 'hidden' if collapse_hot %>">
               <% unless hq.category.nil? %>
                 <%= hq.category.name %>
                 &mdash;
