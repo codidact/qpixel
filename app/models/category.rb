@@ -22,6 +22,10 @@ class Category < ApplicationRecord
     trust_level <= 0
   end
 
+  def top_level_post_types
+    post_types.where(is_top_level: true)
+  end
+
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
     Rails.cache.fetch key, expires_in: 5.minutes do
