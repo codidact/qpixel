@@ -33,6 +33,7 @@ jobs:
       uses: github/codeql-action/analyze@v3
 
   analyze:
+    needs: CodeQL-Build
     name: Analyze JS and Ruby
     runs-on: ubuntu-latest
    # Apply principle of least privilege to GITHUB_TOKEN 
