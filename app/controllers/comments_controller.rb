@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
     @comment_thread = CommentThread.new(title: title, post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
-    pings = check_for_pings @comment_thread, body
+    pings = check_for_pings(@comment_thread, body)
 
     success = ActiveRecord::Base.transaction do
       @comment_thread.save!
@@ -49,7 +49,7 @@ class CommentsController < ApplicationController
         ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
       end
 
-      apply_pings pings
+      apply_pings(pings)
     else
       flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
@@ -59,7 +59,7 @@ class CommentsController < ApplicationController
 
   def create
     body = params[:content]
-    pings = check_for_pings @comment_thread, body
+    pings = check_for_pings(@comment_thread, body)
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
@@ -67,7 +67,7 @@ class CommentsController < ApplicationController
     status = @comment.save
 
     if status
-      apply_pings pings
+      apply_pings(pings)
       @comment_thread.thread_follower.each do |follower|
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
@@ -98,13 +98,13 @@ class CommentsController < ApplicationController
     @post = @comment.post
     @comment_thread = @comment.comment_thread
     before = @comment.content
-    before_pings = check_for_pings @comment_thread, before
+    before_pings = check_for_pings(@comment_thread, before)
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
         audit('comment_update', @comment, "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
-      after_pings = check_for_pings @comment_thread, @comment.content
+      after_pings = check_for_pings(@comment_thread, @comment.content)
       apply_pings(after_pings - before_pings - @comment_thread.thread_follower.to_a)
 
       render json: { status: 'success',
@@ -372,12 +372,16 @@ class CommentsController < ApplicationController
     check_if_locked(Post.find(params[:post_id]))
   end
 
+  # @param thread [CommentThread] thread to extract pings for
+  # @param content [String] content to extract pings from
+  # @return [Array<Integer>] list of pinged user ids
   def check_for_pings(thread, content)
     pingable = helpers.get_pingable(thread)
     matches = content.scan(/@#(\d+)/)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
+  # @param pings [Array<Integer>] list of pinged user ids
   def apply_pings(pings)
     pings.each do |p|
       user = User.where(id: p).first
