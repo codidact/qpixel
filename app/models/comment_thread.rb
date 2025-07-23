@@ -13,6 +13,10 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
+  def self.post_followed?(post, user)
+    ThreadFollower.where(post: post, user: user).any?
+  end
+
   def read_only?
     locked? || archived? || deleted?
   end
@@ -26,8 +30,27 @@ class CommentThread < ApplicationRecord
       post.can_access?(user)
   end
 
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
+  # Gets a list of user IDs who should be pingable in the thread.
+  # @return [Array<Integer>]
+  def pingable
+    # post author +
+    # answer authors +
+    # last 500 history event users +
+    # last 500 comment authors +
+    # all thread followers
+    query = <<~END_SQL
+      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{id || '-1'}
+    END_SQL
+
+    ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 
   private

@@ -33,6 +33,12 @@ class Comment < ApplicationRecord
     end
   end
 
+  def pings
+    pingable = thread.pingable
+    matches = content.scan(/@#(\d+)/)
+    matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
+  end
+
   private
 
   def create_follower
