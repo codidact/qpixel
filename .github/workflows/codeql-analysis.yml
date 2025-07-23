@@ -15,7 +15,7 @@ jobs:
   CodeQL-Build:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      actions: write
       contents: read
       security-events: write
     steps:
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
    # Apply principle of least privilege to GITHUB_TOKEN 
     permissions:
-      actions: read
+      actions: write
       contents: read
       security-events: write
 
