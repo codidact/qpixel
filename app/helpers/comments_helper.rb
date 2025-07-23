@@ -58,7 +58,7 @@ module CommentsHelper
         was_pung = pingable.present? && pingable.include?(user.id)
         classes = "ping #{'me' if user.same_as?(current_user)} #{'unpingable' unless was_pung}"
         user_link user, class: classes, dir: 'ltr',
-                  title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
+                  title: was_pung ? '' : I18n.t('comments.warnings.unrelated_user_not_pinged')
       end
     end.html_safe
   end
@@ -147,34 +147,6 @@ module CommentsHelper
   def rate_limited_error_msg(user, post)
     comments_count = user.recent_comments_count(post)
     I18n.t('comments.errors.rate_limited', count: comments_count)
-  end
-
-  ##
-  # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
-  # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
-  # @param thread [CommentThread]
-  # @return [Array<Integer>]
-  def get_pingable(thread)
-    post = thread.post
-
-    # post author +
-    # answer authors +
-    # last 500 history event users +
-    # last 500 comment authors +
-    # all thread followers
-    query = <<~END_SQL
-      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{thread.id || '-1'}
-    END_SQL
-
-    ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 
   ##

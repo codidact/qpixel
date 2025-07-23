@@ -11,6 +11,7 @@ AllCops:
     - 'scripts/**/*'
     - 'bin/**/*'
     - 'lib/namespaced_env_cache.rb'
+    - 'vendor/bundle/**/*'
   NewCops: enable
   SuggestExtensions: false
 

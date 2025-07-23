@@ -16,7 +16,7 @@
       <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
     </div>
   <% elsif flag.post_type == 'Comment' %>
-    <%= render 'comments/comment', comment: flag.post, with_post_link: true %>
+    <%= render 'comments/comment', comment: flag.post, with_post_link: true, pingable: flag.post.comment_thread.pingable %>
   <% end %>
   <div class="widget--body">
     <p>

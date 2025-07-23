@@ -40,7 +40,7 @@ class User < ApplicationRecord
   validate :not_blocklisted?
   validate :email_not_bad_pattern
 
-  delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -48,6 +48,12 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
+
+  # Safely gets the user's trust level even if they don't have a community user
+  # @return [Integer] user's trust level
+  def trust_level
+    community_user&.trust_level || 0
   end
 
   # Is the user a new user?
@@ -144,6 +150,14 @@ class User < ApplicationRecord
     return true if at_least_moderator?
 
     can_comment_on?(thread.post) && !thread.read_only?
+  end
+
+  # Can the user see a given category at all?
+  # @param category [Category] category to check
+  # @return [Boolean] check result
+  def can_see_category?(category)
+    category_trust_level = category.min_view_trust_level || -1
+    trust_level >= category_trust_level
   end
 
   # Is the user allowed to see deleted posts?
