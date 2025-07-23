@@ -11,6 +11,23 @@ on:
     - cron: '0 21 * * *'
 
 jobs:
+  # TEMPORARY RESTORE - REMOVE WITH CONFIG
+  CodeQL-Build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
   analyze:
     name: Analyze JS and Ruby
     runs-on: ubuntu-latest
