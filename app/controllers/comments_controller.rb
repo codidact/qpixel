@@ -108,7 +108,8 @@ class CommentsController < ApplicationController
       apply_pings(after_pings - before_pings - @comment_thread.thread_follower.to_a)
 
       render json: { status: 'success',
-                     comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+                     comment: render_to_string(partial: 'comments/comment',
+                                               locals: { comment: @comment, pingable: after_pings }) }
     else
       render json: { status: 'failed',
                      message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" },
