@@ -24,8 +24,10 @@
 
       <%= label_tag :body, 'Your comment', class: 'form-element' %>
       <div class="form-caption">Start the thread with a comment.</div>
-      <%= text_area_tag :body, '', 
-                        class: 'form-element js-comment-field', 
+      <%= text_area_tag :body, '',
+                        class: 'form-element js-comment-field',
+                        minlength: min_chars,
+                        maxlength: max_chars,
                         required: true,
                         data: { post: post.id,
                                 thread: '-1',
