@@ -283,7 +283,7 @@ $(() => {
           <% end %>
           <div class="category-header--nav-separator"></div>
           <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
-          <% if current_cat&.top_level_post_types.any? %>
+          <% if current_cat&.top_level_post_types.any? || admin? %>
             <%= link_to category_post_types_path(current_cat.id),
                         class: "category-header--nav-item is-button" do %>
               <%= button_text %>
