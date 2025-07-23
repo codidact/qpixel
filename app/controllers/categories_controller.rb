@@ -130,6 +130,8 @@ class CategoriesController < ApplicationController
     @post_types = @category.top_level_post_types
     if @post_types.one?
       redirect_to new_category_post_path(post_type: @post_types.first, category: @category)
+    elsif @post_types.empty? && current_user&.admin?
+      redirect_to edit_category_post_types_path(@category, no_return: '1')
     end
   end
 
