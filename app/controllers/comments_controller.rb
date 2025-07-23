@@ -32,8 +32,12 @@ class CommentsController < ApplicationController
     pings = check_for_pings @comment_thread, body
 
     success = ActiveRecord::Base.transaction do
-      @comment_thread.save!
-      @comment.save!
+      thread_success = @comment_thread.save
+      comment_success = @comment.save
+
+      unless thread_success && comment_success
+        raise ActiveRecord::Rollback
+      end
     end
 
     if success
