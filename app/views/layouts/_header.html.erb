@@ -282,9 +282,16 @@ $(() => {
             <% end %>
           <% end %>
           <div class="category-header--nav-separator"></div>
-          <%= link_to category_post_types_path(current_cat.id),
-                      class: 'category-header--nav-item is-button' do %>
-            <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% if current_cat&.top_level_post_types.any? %>
+            <%= link_to category_post_types_path(current_cat.id),
+                        class: "category-header--nav-item is-button" do %>
+              <%= button_text %>
+            <% end %>
+          <% else %>
+            <%= button_tag button_text, class: "button is-muted is-outlined",
+                                        disabled: true,
+                                        title: "The category doesn't have any allowed post types" %>
           <% end %>
         </div>
       </div>
