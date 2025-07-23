@@ -107,7 +107,7 @@ jobs:
           path: tmp/screenshots
           if-no-files-found: ignore
       - uses: codecov/codecov-action@v5
-        if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' && github.actor != DEPBOT_NAME }}
+        if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' && github.actor != env.DEPBOT_NAME }}
         with:
           directory: coverage
           fail_ci_if_error: true
@@ -117,7 +117,7 @@ jobs:
   deploy:
     name: Dev server deployment
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.actor != DEPBOT_NAME }}
+    if: ${{ github.event_name == 'push' && github.actor != env.DEPBOT_NAME }}
     needs:
       - rubocop
       - typescript
