@@ -273,8 +273,7 @@ class CommentsController < ApplicationController
 
   def pingable
     thread = params[:id] == '-1' ? CommentThread.new(post_id: params[:post]) : CommentThread.find(params[:id])
-    ids = helpers.get_pingable(thread)
-    users = User.where(id: ids)
+    users = User.where(id: thread.pingable)
     render json: users.to_h { |u| [u.username, u.id] }
   end
 
@@ -377,7 +376,7 @@ class CommentsController < ApplicationController
   # @param content [String] content to extract pings from
   # @return [Array<Integer>] list of pinged user ids
   def check_for_pings(thread, content)
-    pingable = helpers.get_pingable(thread)
+    pingable = thread.pingable
     matches = content.scan(/@#(\d+)/)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end

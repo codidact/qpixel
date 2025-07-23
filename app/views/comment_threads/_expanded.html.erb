@@ -10,7 +10,7 @@
 
 <% max_shown_comments = 5 %>
 <% comment_id ||= defined?(comment_id) ? comment_id : nil %>
-<% pingable = get_pingable(thread) %>
+<% pingable = thread.pingable %>
 <% shown_comments_count = [max_shown_comments, thread.reply_count].min %>
 
 <%
