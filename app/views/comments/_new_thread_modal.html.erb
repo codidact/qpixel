@@ -2,6 +2,12 @@
     Start new comment thread dialog.
 %>
 
+<%
+  # TODO: make configurable
+  min_chars = 15
+  max_chars = 1000
+%>
+
 <div class="modal--container new-thread-modal" id="new-thread-modal-<%= post.id %>">
   <div class="modal--header">
     <b>Start a new comment thread</b>
@@ -18,9 +24,13 @@
 
       <%= label_tag :body, 'Your comment', class: 'form-element' %>
       <div class="form-caption">Start the thread with a comment.</div>
-      <%= text_area_tag :body, '', class: 'form-element js-comment-field', required: true,
-                        data: { post: post.id, thread: '-1', character_count: ".js-character-count-#{post.id}" } %>
-      <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
+      <%= text_area_tag :body, '', 
+                        class: 'form-element js-comment-field', 
+                        required: true,
+                        data: { post: post.id,
+                                thread: '-1',
+                                character_count: ".js-character-count-#{post.id}" } %>
+      <%= render 'shared/char_count', type: post.id, min: min_chars, max: max_chars %>
 
       <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
       <span class="form-caption">
