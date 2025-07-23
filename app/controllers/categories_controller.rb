@@ -127,7 +127,7 @@ class CategoriesController < ApplicationController
   end
 
   def post_types
-    @post_types = @category.post_types.where(is_top_level: true)
+    @post_types = @category.top_level_post_types
     if @post_types.one?
       redirect_to new_category_post_path(post_type: @post_types.first, category: @category)
     end
