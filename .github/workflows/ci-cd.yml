@@ -73,6 +73,10 @@ jobs:
   tests:
     name: Ruby on Rails tests
     runs-on: ubuntu-latest
+    needs:
+      - erb_lint
+      - rubocop
+      - typescript
 
     strategy:
       matrix:
