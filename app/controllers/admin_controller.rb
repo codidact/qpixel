@@ -83,14 +83,33 @@ class AdminController < ApplicationController
     @page = helpers.safe_page(params)
     @per_page = helpers.safe_per_page(params)
 
+    @log_types = AuditLog.unscoped.select(:log_type).distinct.map(&:log_type) - ['user_annotation', 'user_history']
+    @event_types = AuditLog.unscoped.select(:event_type).distinct.map(&:event_type)
+
     @logs = if current_user.is_global_admin
               AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
             else
               AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
-            end.user_sort({ term: params[:sort], default: :created_at },
-                          age: :created_at, type: :log_type, event: :event_type,
-                          related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-            .paginate(page: @page, per_page: @per_page)
+            end
+
+    [:log_type, :event_type].each do |key|
+      if params[key].present?
+        @logs = @logs.where(key => params[key])
+      end
+    end
+
+    if params[:from].present?
+      @logs = @logs.where('date(created_at) >= ?', params[:from])
+    end
+
+    if params[:to].present?
+      @logs = @logs.where('date(created_at) <= ?', params[:to])
+    end
+
+    @logs = @logs.user_sort({ term: params[:sort], default: :created_at },
+                            age: :created_at, type: :log_type, event: :event_type,
+                            related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
+                 .paginate(page: @page, per_page: @per_page)
 
     render layout: 'without_sidebar'
   end
