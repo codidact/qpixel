@@ -1,0 +1,43 @@
+# configuration reference: https://github.com/Shopify/erb_lint?tab=readme-ov-file#configuration
+
+EnableDefaultLinters: false
+
+exclude:
+  - 'config/**/*'
+  - 'db/**/*'
+  - 'scripts/**/*'
+  - 'bin/**/*'
+  - 'lib/namespaced_env_cache.rb'
+  - 'vendor/bundle/**/*'
+  # TODO: fix clobbering (autocorrect conflics) first:
+  - 'app/views/admin/_error_report.html.erb'
+  - 'app/views/categories/show.html.erb'
+  - 'app/views/micro_auth/authentication/initiate.html.erb'
+  - 'app/views/reactions/_form.html.erb'
+  - 'app/views/reports/reactions.html.erb'
+  - 'app/views/suggested_edit/category_index.html.erb'
+  - 'app/views/questions/_list.html.erb'
+  - 'app/views/tags/category.html.erb'
+  - 'app/views/users/_activity_items.html.erb'
+
+glob: '**/*.{html,text,js}{+*,}.erb'
+
+linters:
+  ErbSafety:
+    enabled: true
+    better_html_config: .better-html.yml
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      Layout/LeadingEmptyLines:
+        Enabled: false # false positives on embedded Ruby indentation in tags
+      Layout/InitialIndentation:
+        Enabled: false # false positives on embedded Ruby indentation in tags
+      Layout/TrailingEmptyLines:
+        Enabled: false # enable when we are ready to solve ~3K errors
+      Layout/TrailingWhitespace:
+        Enabled: false # false positives on embedded Ruby indentation in tags
+      Lint/UselessAssignment:
+        Enabled: false # false positives on single-line embedded Ruby assignments

@@ -51,6 +51,7 @@ gem 'whenever', '~> 1.0', require: false
 
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.9'
+gem 'erb_lint', '~> 0.9.0'
 gem 'rubocop', '~> 1'
 gem 'rubocop-rails', '~> 2.15'
 gem 'rubocop-rake', '~> 0.7.1'
