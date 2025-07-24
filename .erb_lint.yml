@@ -20,3 +20,5 @@ linters:
     rubocop_config:
       inherit_from:
         - .rubocop.yml
+      Layout/TrailingEmptyLines:
+        Enabled: false # enable when we are ready to solve ~3K errors
