@@ -50,6 +50,6 @@
                               post: thread.post_id,
                               character_count: ".js-character-count-#{post.id}" } %>
     <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
-    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
+    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled: true %>
   <% end %>
 <% end %>
