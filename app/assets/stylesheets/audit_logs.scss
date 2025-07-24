@@ -1,0 +1,22 @@
+@import 'variables';
+
+.audit-log-filters {
+  .select2-container {
+    height: 37px;
+    margin: 4px 0px;
+
+    .selection {
+
+      .select2-selection {
+        border-color: $muted-graphic;
+        height: 100%;
+        padding: 4px 0;
+      }
+
+      .select2-selection__arrow {
+        top: 50%;
+        translate: 0 -50%;
+      }
+    }
+  }
+}
