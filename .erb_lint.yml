@@ -1,0 +1,22 @@
+# configuration reference: https://github.com/Shopify/erb_lint?tab=readme-ov-file#configuration
+
+EnableDefaultLinters: false
+
+exclude:
+  - 'config/**/*'
+  - 'db/**/*'
+  - 'scripts/**/*'
+  - 'bin/**/*'
+  - 'lib/namespaced_env_cache.rb'
+  - 'vendor/bundle/**/*'
+glob: '**/*.{html,text,js}{+*,}.erb'
+
+linters:
+  ErbSafety:
+    enabled: true
+    better_html_config: .better-html.yml
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
