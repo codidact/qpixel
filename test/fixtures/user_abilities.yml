@@ -61,3 +61,7 @@ b_eo:
 f_eo:
   community_user: sample_filters_user
   ability: everyone
+
+f_ur:
+  community_user: sample_filters_user
+  ability: unrestricted
