@@ -37,5 +37,7 @@ linters:
         Enabled: false # false positives on embedded Ruby indentation in tags
       Layout/TrailingEmptyLines:
         Enabled: false # enable when we are ready to solve ~3K errors
+      Layout/TrailingWhitespace:
+        Enabled: false # false positives on embedded Ruby indentation in tags
       Lint/UselessAssignment:
         Enabled: false # false positives on single-line embedded Ruby assignments
