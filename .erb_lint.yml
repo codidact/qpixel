@@ -22,3 +22,5 @@ linters:
         - .rubocop.yml
       Layout/TrailingEmptyLines:
         Enabled: false # enable when we are ready to solve ~3K errors
+      Layout/InitialIndentation:
+        Enabled: false # false positives on embedded Ruby indentation in tags
