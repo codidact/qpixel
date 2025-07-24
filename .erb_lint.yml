@@ -31,6 +31,8 @@ linters:
     rubocop_config:
       inherit_from:
         - .rubocop.yml
+      Layout/LeadingEmptyLines:
+        Enabled: false # false positives on embedded Ruby indentation in tags
       Layout/InitialIndentation:
         Enabled: false # false positives on embedded Ruby indentation in tags
       Layout/TrailingEmptyLines:
