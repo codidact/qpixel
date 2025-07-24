@@ -9,6 +9,17 @@ exclude:
   - 'bin/**/*'
   - 'lib/namespaced_env_cache.rb'
   - 'vendor/bundle/**/*'
+  # TODO: fix clobbering (autocorrect conflics) first:
+  - 'app/views/admin/_error_report.html.erb'
+  - 'app/views/categories/show.html.erb'
+  - 'app/views/micro_auth/authentication/initiate.html.erb'
+  - 'app/views/reactions/_form.html.erb'
+  - 'app/views/reports/reactions.html.erb'
+  - 'app/views/suggested_edit/category_index.html.erb'
+  - 'app/views/questions/_list.html.erb'
+  - 'app/views/tags/category.html.erb'
+  - 'app/views/users/_activity_items.html.erb'
+
 glob: '**/*.{html,text,js}{+*,}.erb'
 
 linters:
