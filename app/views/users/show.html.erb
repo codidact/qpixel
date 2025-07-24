@@ -1,6 +1,8 @@
+<%= render 'tabs', user: @user %>
+
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
-<% if moderator? && deleted_user?(@user) %>
+<% if at_least_moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
@@ -18,25 +20,44 @@
   </div>
 <% end %>
 
-<%= render 'tabs', user: @user %>
-
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
-    <div class="h-p-6 h-p-t-2">
+    <div class="h-p-0 h-p-t-0">
       <div class="profile-text">
+
+      <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
+      <% if effective_profile.blank? %>
+        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
+      <% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+        <%= sanitize(effective_profile, attributes: %w()) %>
+      <% else %>
+        <%= effective_profile %>
+      <% end %>
+      </div>
+
+      <% unless !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
+        <% if @user.valid_websites_for.size.positive? %>
+        <div>
+          <p><strong>Extra fields</strong></p>
+          <table class="table is-with-hover">
+            <% @user.valid_websites_for.each do |w| %>
+            <tr>
+              <td><%= w.label %></td>
+              <td>
+              <% if w.url[0,4] == 'http' %>
+                <%= link_to w.url, w.url, rel: 'nofollow' %>
+              <% else %>
+              <%= w.url %>
+              <% end %>
+              </td>
+            </tr>
+            <% end %>
+          </table>
+        </div>
+        <% end %>
+      <% end %>
+     
       <p>
-        <% if @user.website.present? %>
-          <span class="h-m-r-4">
-            <i class="fas fa-link"></i> <%= link_to @user.website_domain, @user.website, rel: 'nofollow',
-                                                    'aria-label': "Visit website of #{rtl_safe_username(@user)} at #{@user.website_domain}" %>
-          </span>
-        <% end %>
-        <% if @user.twitter.present? %>
-          <span class="h-m-r-4">
-            <i class="fab fa-twitter"></i> <%= link_to @user.twitter, "https://twitter.com/#{@user.twitter}",
-                                                       'aria-label': "Visit twitter account of #{rtl_safe_username(@user)}" %>
-          </span>
-        <% end %>
         <% if @user.discord.present? %>
           <span class="h-m-r-4">
             <i class="fab fa-discord h-m-r-1"></i> <%= @user.discord %>
@@ -44,29 +65,25 @@
         <% end %>
       </p>
 
-      <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
-      <% if effective_profile.blank? %>
-        <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
-      <% else %>
-        <%= effective_profile %>
-      <% end %>
-      </div>
-
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
           <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
         <% end %>
-        <% if current_user&.is_moderator %>
-          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools</a>
+        <% if current_user&.at_least_moderator? %>
+          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a> 
           <div class="droppanel" id="mod-tools-drop">
             <div class="droppanel--header">quick actions</div>
             <div class="droppanel--menu">
               <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
               <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
               <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user <% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em><% end %></a>
+              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user
+		<% if @user.community_user.suspended? %><em>(includes lifting the suspension)</em>
+		<% elsif @user.community_user.mod_warnings&.size.positive? %>
+		(latest <%= time_ago_in_words(@user.community_user.latest_warning) %> ago)
+		<% end %></a>
               <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
             </div>
             <div class="h-m-t-6">
@@ -74,7 +91,7 @@
             </div>
           </div>
         <% end %>
-        <% if current_user&.id == @user.id %>
+        <% if current_user&.same_as?(@user) %>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
             <i class="fas fa-mobile-alt"></i> Mobile Sign In
           <% end %>
@@ -85,7 +102,7 @@
         <h2 class="user-profile-heading">Posts</h2>
         <% if @posts.size > 0 %>
           <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
-            See all &raquo;
+            See all <%= @total_post_count %> &raquo;
           <% end %>
         <% end %>
       </div>
@@ -98,7 +115,7 @@
           <% end %>
         </div>
         <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
-          See all &raquo;
+          See all <%= @total_post_count %> &raquo;
         <% end %>
       <% end %>
     </div>
@@ -112,53 +129,56 @@
       <div class="widget--body h-ta-center" title="This user is an official Staff member.">
         <i class="fas fa-users-cog"></i> Staff
       </div>
-      <% elsif @user.is_admin %>
+      <% elsif @user.admin? %>
       <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
       </div>
-      <% elsif @user.is_moderator %>
+      <% elsif @user.at_least_moderator? %>
       <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
         <i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i> Moderator
       </div>
       <% end %>
     </div>
 
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
-      </tr>
-      <tr>
-        <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i>&nbsp; Reputation</td>
-        <td><%= @user.reputation %></td>
+        <td colspan="2"><i class="fas fa-award" style="font-size:19px;"></i> Reputation</td>
+        <td class="overflow-ellipsis" title="<%= @user.reputation %>"><%= @user.reputation %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="far fa-fw fa-comment-alt"></i> Number of top-level posts</td>
-        <td><%= @user.metric '1' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric '1' %>"><%= @user.metric '1' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-reply-all"></i> Number of answers</td>
-        <td><%= @user.metric '2' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric '2' %>"><%= @user.metric '2' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-star-half-alt"></i> Sum of received votes (up minus down)</td>
-        <td><%= @user.metric 's' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric 's' %>"><%= @user.metric 's' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Number of edits made</td>
-        <td><%= @user.metric 'E' %></td>
+        <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
+      <% if current_user&.id == @user.id || current_user&.at_least_moderator? %>
+        <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
+      <% end %>
     </table>
-
+  
     <% unless @abilities.empty? %>
       <h2>Earned Abilities</h2>
 
       <div class="widget">
         <% @abilities.each do |a| %>
+        <% if @user.privilege?(a.internal_id) %>
           <div class="widget--body" title="<%= a.summary %>">
             <i class="fa-fw fas fa-<%= a.icon %>"></i>
             <a href="<%= ability_url(a.internal_id, for: @user.id) %>">
               <%= a.name %>
             </a>
           </div>
+        <% end %>
         <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
@@ -176,99 +196,101 @@
 
     <h2>Statistics</h2>
     <%
-      posts_by_post_type = @user.posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+      posts_by_post_type = @user.posts_by_post_type
     %>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
-        <th colspan="3">
-          Posts
-        </th>
+        <th colspan="3">Posts</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
+        <td class="overflow-ellipsis" title="<%= @user.posts.undeleted.count %>">
           <%= @user.posts.undeleted.count %>
         </td>
       </tr>
       <tr>
         <td colspan="2">Questions</td>
-        <td><%= posts_by_post_type[Question.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Question) %>">
+          <%= posts_for(posts_by_post_type, Question) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">Answers</td>
-        <td><%= posts_by_post_type[Answer.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Answer) %>">
+          <%= posts_for(posts_by_post_type, Answer) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">Articles</td>
-        <td><%= posts_by_post_type[Article.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Article) %>">
+          <%= posts_for(posts_by_post_type, Article) %>
+        </td>
       </tr>
     </table>
 
     <br>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <%
-        votes_by_type = @user.votes.group(:vote_type).count(:vote_type)
-        votes_by_post_type = @user.votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+        votes_by_type = @user.votes_by_type
+        votes_by_post_type = @user.votes_by_post_type
       %>
       <tr>
-        <th colspan="3">
-          Votes cast
-        </th>
+        <th colspan="3">Votes cast</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
-          <%= @user.votes.count %>
-        </td>
+        <td class="overflow-ellipsis" title="<%= @user.votes.count %>"><%= @user.votes.count %></td>
       </tr>
-      <% if @user.id == current_user&.id || current_user&.is_admin %>
+      <% if @user.id == current_user&.id || current_user&.admin? %>
       <tr>
-        <td class="has-color-tertiary-600">
-          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-            <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-          </svg>
+        <td colspan="2">
+          <div class="flex items-center gap-sm">
+            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+              <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+            </svg>Upvotes
+          </div>
         </td>
-        <td>
-          Upvotes
-        </td>
-        <td><%= votes_by_type[1] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_by_type[1] || 0 %>"><%= votes_by_type[1] || 0 %></td>
       </tr>
       <tr>
-        <td class="has-color-tertiary-600">
-          <svg width="1em" height="0.67em" viewbox="0 0 100 50">
-            <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-          </svg>
+        <td colspan="2">
+          <div class="flex items-center gap-sm">
+            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+              <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+            </svg>Downvotes
+          </div>
         </td>
-        <td>
-          Downvotes
-        </td>
-        <td><%= votes_by_type[-1] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_by_type[-1] || 0 %>"><%= votes_by_type[-1] || 0 %></td>
       </tr>
       <tr>
         <td colspan="2">on Question</td>
-        <td><%= votes_by_post_type[Question.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Question) %>">
+          <%= votes_for(votes_by_post_type, Question) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">on Answer</td>
-        <td><%= votes_by_post_type[Answer.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Answer) %>">
+          <%= votes_for(votes_by_post_type, Answer) %>
+        </td>
       </tr>
       <tr>
         <td colspan="2">on Article</td>
-        <td><%= votes_by_post_type[Article.post_type_id] || 0 %></td>
+        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Article) %>">
+          <%= votes_for(votes_by_post_type, Article) %>
+        </td>
       </tr>
       <% end %>
     </table>
     <br>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tr>
-        <th colspan="3">
-          Flags raised
-        </th>
+        <th colspan="3">Flags raised</th>
       </tr>
       <tr>
         <td colspan="2">Count</td>
-        <td>
-          <% if current_user&.id == @user.id || moderator? %>
+        <td class="overflow-ellipsis" title="<%= @user.flags.count %>">
+          <% if current_user&.id == @user.id || at_least_moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
                         'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>

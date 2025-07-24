@@ -13,6 +13,8 @@ Rails.application.configure do
   config.cache_classes = false
   config.action_view.cache_template_loading = true
 
+  config.log_level = :info
+
   # Do not eager load code on boot. This avoids loading your whole application
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
@@ -56,7 +58,12 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  config.action_mailer.default_url_options = { host: 'test.host' }
+  config.action_mailer.default_url_options = { 
+    host: 'test.host',
+    protocol: ENV['MAILER_PROTOCOL'] || 'https'
+  }
+
+  config.active_job.queue_adapter = :test
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
@@ -72,4 +79,7 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+  
+  # Don't colorize logs - we are writing to log files directly
+  config.colorize_logging = false
 end

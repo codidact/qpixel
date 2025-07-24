@@ -16,11 +16,21 @@
     align-items: center;
     justify-content: space-between;
   }
+
+  & .category-meta--start {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
 }
 
 .category-header--nav {
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.category-filters:not([open]) {
+  border-top: 1px solid $muted-graphic;
 }
 
 .category--description {

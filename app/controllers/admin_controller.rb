@@ -2,8 +2,8 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban]
-  before_action :verify_developer, only: [:change_users, :impersonate, :all_email, :send_all_email]
+                                             :setup_save, :hellban, :all_email, :send_all_email]
+  before_action :verify_developer, only: [:change_users, :impersonate]
 
   def index; end
 
@@ -14,7 +14,7 @@ class AdminController < ApplicationController
                  ErrorLog.all
                else
                  ErrorLog.where(community: RequestContext.community)
-               end.order(created_at: :desc).paginate(page: params[:page], per_page: 50)
+               end.newest_first.paginate(page: params[:page], per_page: 50)
   end
 
   def privileges
@@ -31,9 +31,9 @@ class AdminController < ApplicationController
   def update_privilege
     @ability = Ability.find_by internal_id: params[:name]
     type = ['post', 'edit', 'flag'].include?(params[:type]) ? params[:type] : nil
-    return not_found if type.nil?
+    return not_found! if type.nil?
 
-    pre = @ability.send("#{type}_score_threshold".to_sym)
+    pre = @ability.send(:"#{type}_score_threshold")
     @ability.update("#{type}_score_threshold" => params[:threshold])
     AuditLog.admin_audit(event_type: 'ability_threshold_update', related: @ability, user: current_user,
                          comment: "#{params[:type]} score\nfrom <<#{pre}>>\nto <<#{params[:threshold]}>>")
@@ -43,20 +43,35 @@ class AdminController < ApplicationController
   def admin_email; end
 
   def send_admin_email
-    Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_moderators.deliver_now
-    end
+    community = RequestContext.community
+
+    AdminMailer.with(body_markdown: params[:body_markdown],
+                     subject: params[:subject],
+                     community: community)
+               .to_moderators
+               .deliver_later
+
     AuditLog.admin_audit(event_type: 'send_admin_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
-    flash[:success] = t 'admin.email_being_sent'
+
+    flash[:success] = t('admin.email_being_sent')
     redirect_to admin_path
   end
 
   def all_email; end
 
   def send_all_email
+    community = RequestContext.community
+
     Thread.new do
-      AdminMailer.with(body_markdown: params[:body_markdown], subject: params[:subject]).to_all_users.deliver_now
+      emails = User.where.not(confirmed_at: nil).where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+      emails.each_slice(50) do |slice|
+        AdminMailer.with(body_markdown: params[:body_markdown],
+                         subject: params[:subject],
+                         emails: slice, community: community)
+                   .to_all_users
+                   .deliver_later
+      end
     end
     AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
@@ -65,14 +80,37 @@ class AdminController < ApplicationController
   end
 
   def audit_log
+    @page = helpers.safe_page(params)
+    @per_page = helpers.safe_per_page(params)
+
+    @log_types = AuditLog.unscoped.select(:log_type).distinct.map(&:log_type) - ['user_annotation', 'user_history']
+    @event_types = AuditLog.unscoped.select(:event_type).distinct.map(&:event_type)
+
     @logs = if current_user.is_global_admin
               AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
             else
               AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
-            end.user_sort({ term: params[:sort], default: :created_at },
-                          age: :created_at, type: :log_type, event: :event_type,
-                          related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
-            .paginate(page: params[:page], per_page: 100)
+            end
+
+    [:log_type, :event_type].each do |key|
+      if params[key].present?
+        @logs = @logs.where(key => params[key])
+      end
+    end
+
+    if params[:from].present?
+      @logs = @logs.where('date(created_at) >= ?', params[:from])
+    end
+
+    if params[:to].present?
+      @logs = @logs.where('date(created_at) <= ?', params[:to])
+    end
+
+    @logs = @logs.user_sort({ term: params[:sort], default: :created_at },
+                            age: :created_at, type: :log_type, event: :event_type,
+                            related: Arel.sql('related_type DESC, related_id DESC'), user: :user_id)
+                 .paginate(page: @page, per_page: @per_page)
+
     render layout: 'without_sidebar'
   end
 
@@ -110,7 +148,7 @@ class AdminController < ApplicationController
     # Set settings from config page
     { primary_color: 'SiteCategoryHeaderDefaultColor', logo_url: 'SiteLogoPath', ad_slogan: 'SiteAdSlogan',
       mathjax: 'MathJaxEnabled', syntax_highlighting: 'SyntaxHighlightingEnabled', chat_link: 'ChatLink',
-      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' } \
+      analytics_url: 'AnalyticsURL', analytics_id: 'AnalyticsSiteId', content_transfer: 'AllowContentTransfer' }
       .each do |key, setting|
       settings.find_by(name: setting).update(value: params[key])
     end
@@ -173,13 +211,13 @@ class AdminController < ApplicationController
   end
 
   def change_back
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
   end
 
   def verify_elevation
-    return not_found unless session[:impersonator_id].present?
+    return not_found! unless session[:impersonator_id].present?
 
     @impersonator = User.find session[:impersonator_id]
     if @impersonator&.sso_profile.present?
@@ -196,5 +234,16 @@ class AdminController < ApplicationController
       flash[:danger] = 'Incorrect password.'
       render :change_back
     end
+  end
+
+  def do_email_query
+    users = User.where(email: params[:email])
+    if users.any?
+      @user = users.first
+      @profiles = @user.community_users.includes(:community).where(community: current_user.admin_communities)
+    else
+      flash[:danger] = helpers.i18ns('admin.errors.email_query_not_found')
+    end
+    render :email_query
   end
 end

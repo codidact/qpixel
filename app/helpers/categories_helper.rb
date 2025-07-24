@@ -1,17 +1,28 @@
 module CategoriesHelper
+  ##
+  # Checks if the specified category is the currently active page.
+  # @param category [Category]
+  # @return [Boolean]
   def active?(category)
     current_category
     current_page?(category_url(category)) || (category.is_homepage && current_page?(root_url)) ||
       (defined?(@current_category) && @current_category&.id == category.id)
   end
 
+  ##
+  # Checks if the current page is within the scope of a category and can use an expanded header.
+  # @return [Boolean]
   def expandable?
     (defined?(@category) && !@category&.id.nil? && !current_page?(new_category_url)) ||
       (defined?(@post) && !@post&.category.nil?) ||
       (defined?(@question) && !@question&.category.nil?) ||
-      (defined?(@article) && !@article&.category.nil?)
+      (defined?(@article) && !@article&.category.nil?) ||
+      (defined?(@edit) && !@edit&.post&.category.nil?)
   end
 
+  ##
+  # Sets and returns the currently-active category.
+  # @return [Category]
   def current_category
     @current_category ||= if defined?(@category) && !@category&.id.nil?
                             @category
@@ -21,12 +32,18 @@ module CategoriesHelper
                             @question.category
                           elsif defined?(@article) && !@article&.category.nil?
                             @article.category
+                          elsif defined?(@edit) && !@edit&.post&.category.nil?
+                            @edit.post.category
                           end
   end
 
+  ##
+  # Checks if there are any pending edit suggestions in the current category.
+  # @note Cached - cache is manually broken when new suggestions are created.
+  # @return [Boolean]
   def pending_suggestions?
     Rails.cache.fetch "pending_suggestions/#{current_category.id}" do
-      SuggestedEdit.where(post: Post.undeleted.where(category: current_category), active: true).any?
+      SuggestedEdit.where(post: Post.undeleted.in(current_category), active: true).any?
     end
   end
 end

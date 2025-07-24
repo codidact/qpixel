@@ -1,7 +1,7 @@
 <% content_for :title, "Suggested Edit #" + @edit.id.to_s %>
 <% post = @edit.post %>
 <% is_question_or_article = @edit.on_question? || @edit.on_article? %>
-<% may_decide = check_your_post_privilege(post, 'edit_posts') && @edit.user.id != current_user.id %>
+<% may_decide = check_your_post_privilege(post, 'edit_posts') %>
 
 <h1>Review Suggested Edit</h1>
 
@@ -26,7 +26,7 @@
 <form class="widget">
   <div class="widget--body h-bg-tertiary-050">
     <div class="h-f-r">
-      <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">Return to post</a>
+      <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">View post</a>
     </div>
     <% if @edit.pending? %>
       <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>

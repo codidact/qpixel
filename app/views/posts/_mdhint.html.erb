@@ -15,8 +15,11 @@
   max_length = (defined?(max_length) ? max_length : nil) || 30_000
 %>
 
-<div class="form-caption widget--footer js-post-field-footer">
-  We <a href="/help/formatting">support Markdown</a> for posts:
-  <strong>**bold**</strong>, <em>*italics*</em>, <code>`code`</code>, two newlines for paragraphs
-  <%= render 'shared/char_count', type: 'post-body', cur: cur_length, min: min_length, max: max_length %>
+<div class="mdhint form-caption widget--footer js-post-field-footer">
+  <span>Markdown <a href="/help/formatting">support</a> for posts:
+  <strong>**bold**</strong>, <em>*italics*</em>, <code>`code`</code>, 2 newlines for paragraphs</span>
+  <span class="draft-status transparent has-color-green-600 js-post-draft-status">draft saved</span>
+  <div class="clearfix">
+    <%= render 'shared/char_count', type: 'post-body', cur: cur_length, min: min_length, max: max_length %>
+  </div>
 </div>

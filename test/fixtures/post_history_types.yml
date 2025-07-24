@@ -1,3 +1,7 @@
 initial_revision:
   name: initial_revision
   description: initial revision
+
+post_edited:
+  name: post_edited
+  description: normal revision

@@ -15,11 +15,15 @@ Rails.application.routes.draw do
     get  'users/saml/sign_in_request_from_other/:id', to: 'users/saml_sessions#sign_in_request_from_other', as: :sign_in_request_from_other
     get  'users/saml/sign_in_return_from_base',       to: 'users/saml_sessions#sign_in_return_from_base', as: :sign_in_return_from_base
     get  'users/saml/after_sign_in_check',            to: 'users/saml_sessions#after_sign_in_check', as: :after_sign_in_check
+    get  'users/delete',                   to: 'users/registrations#delete', as: :delete_account
+    post 'users/delete',                   to: 'users/registrations#do_delete', as: :do_delete_account
   end
 
   root                                     to: 'categories#homepage'
 
-  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?  
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount Rack::Directory.new('coverage/'), at: '/coverage' if Rails.env.development?
+  mount MaintenanceTasks::Engine, at: '/maintenance'
   
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
@@ -53,6 +57,9 @@ Rails.application.routes.draw do
     post   'impersonate/stop',             to: 'admin#verify_elevation', as: :verify_elevation
     post   'impersonate/:id',              to: 'admin#change_users', as: :impersonate
     get    'impersonate/:id',              to: 'admin#impersonate', as: :start_impersonating
+
+    get    'email-query',                  to: 'admin#email_query', as: :admin_email_query
+    post   'email-query',                  to: 'admin#do_email_query', as: :do_email_query
 
     scope 'post-types' do
       root                                 to: 'post_types#index', as: :post_types
@@ -158,7 +165,9 @@ Rails.application.routes.draw do
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
 
+  get    'policy/:slug/history',           to: 'post_history#slug_post', as: :policy_post_history, constraints: { slug: /.*/ }
   get    'policy/:slug',                   to: 'posts#document', as: :policy, constraints: { slug: /.*/ }
+  get    'help/:slug/history',             to: 'post_history#slug_post', as: :help_post_history, constraints: { slug: /.*/ }
   get    'help/:slug',                     to: 'posts#document', as: :help, constraints: { slug: /.*/ }
 
   get    'tags',                           to: 'tags#index', as: :tags
@@ -193,15 +202,19 @@ Rails.application.routes.draw do
     get    '/edit/profile',             to: 'users#edit_profile', as: :edit_user_profile
     patch  '/edit/profile',             to: 'users#update_profile', as: :update_user_profile
     get    '/me/vote-summary',          to: 'users#my_vote_summary', as: :my_vote_summary
+    get    '/me/network',               to: 'users#my_network', as: :my_network
     get    '/avatar/:letter/:color/:size', to: 'users#specific_avatar', as: :specific_auto_avatar
     get    '/disconnect-sso',           to: 'users#disconnect_sso', as: :user_disconnect_sso
     post   '/disconnect-sso',           to: 'users#confirm_disconnect_sso', as: :user_confirm_disconnect_sso
+    get    '/sudo',                     to: 'sudo#sudo', as: :user_sudo
+    post   '/sudo',                     to: 'sudo#enter_sudo', as: :enter_sudo
     get    '/:id',                      to: 'users#show', as: :user
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
+    get    '/:id/network',              to: 'users#network', as: :network
     get    '/:id/mod/privileges',       to: 'users#mod_privileges', as: :user_privileges
     post   '/:id/mod/privileges',       to: 'users#mod_privilege_action', as: :user_privilege_action
     post   '/:id/mod/toggle-role',      to: 'users#role_toggle', as: :toggle_user_role
@@ -234,6 +247,7 @@ Rails.application.routes.draw do
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
+    get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
     post   ':id/edit',                     to: 'comments#update', as: :update_comment
     delete ':id/delete',                   to: 'comments#destroy', as: :delete_comment
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
@@ -348,13 +362,17 @@ Rails.application.routes.draw do
     end
   end
 
+  scope 'emails' do
+    post   'log', to: 'email_logs#log', as: :create_email_log
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
   get   '418',                             to: 'errors#stat'
   get   '422',                             to: 'errors#unprocessable_entity'
   get   '423',                             to: 'errors#read_only'
-  get   '500',                             to: 'errors#internal_server_error'
+  get   '500',                             to: 'errors#internal_server_error', as: :server_error
 
   get   'osd',                             to: 'application#osd', as: :osd
 

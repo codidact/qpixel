@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  app: one
-  user: one
-  token: MyString
+  app: owned_by_standard
+  user: standard_user
+  token: q9sYGB637q
   expires_at: 2021-11-21 19:51:00
 
 two:
-  app: two
-  user: two
-  token: MyString
+  app: owned_by_admin
+  user: admin
+  token: KXYnnCSgEM
   expires_at: 2021-11-21 19:51:00

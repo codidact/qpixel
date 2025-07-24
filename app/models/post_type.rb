@@ -24,6 +24,10 @@ class PostType < ApplicationRecord
     ['HelpDoc', 'PolicyDoc'].include?(name)
   end
 
+  def self.clear_ids_cache
+    Rails.cache.delete 'network/post_types/post_type_ids', include_community: false
+  end
+
   def self.mapping
     Rails.cache.fetch 'network/post_types/post_type_ids', include_community: false do
       PostType.all.to_h { |pt| [pt.name, pt.id] }

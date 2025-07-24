@@ -14,20 +14,30 @@
   <meta property="og:url" content="<%= post_url(@post) %>" />
   <meta property="og:title" content="<%= @post.title %>" />
   <meta property="og:description" content="<%= @post.body_plain[0..150].strip %>..." />
-  <meta property="og:image" content="<%= "https://#{RequestContext.community.host}#{SiteSetting['SiteLogoPath']}" %>" />
+  <meta property="og:image" content="<%= "#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
 <%= render 'posts/expanded', post: @post, float_notice: false %>
 
-<% if @post.post_type.has_answers %>
-  <h2><%= pluralize(@post.children.where(deleted: false).count, 'answer') %></h2>
+<% num_answers = @children.count %>
 
-  <div class="button-list is-gutterless has-float-right">
-    <%= link_to 'Score', request.params.merge(sort: 'score'),
-                class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}" %>
-    <%= link_to 'Active', request.params.merge(sort: 'active'),
-                class: "button is-muted is-outlined #{params[:sort] == 'active' ? 'is-active' : ''}" %>
-  </div>
+<% if @post.post_type.has_answers %>
+  <% if num_answers > 0 %>
+    <h2><%= pluralize(num_answers, 'answer') %></h2>
+  <% end %>
+  <% if num_answers > 1 %>
+    <div class="button-list is-gutterless has-float-right">
+      <%= link_to 'Score', request.params.merge(sort: 'score'),
+          class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}",
+    title: 'highest score first (not the same as net votes)' %>
+      <%= link_to 'Active', request.params.merge(sort: 'active'),
+          class: "button is-muted is-outlined #{params[:sort] == 'active' ? 'is-active' : ''}",
+    title: 'most recent changes first: new answers, edits, delete/undelete' %>
+      <%= link_to 'Age', request.params.merge(sort: 'age'),
+    class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
+    title: 'newest posts first (ignores other activity)' %>
+    </div>
+  <% end %>
 
   <div class="has-clear-clear"></div>
 
@@ -40,7 +50,7 @@
   </div>
 
   <% if user_signed_in? && !@post.closed %>
-    <h2>Your Answer</h2>
+    <h2><%=@children.count > 0 ? 'Add an answer' : 'Be the first to answer' %></h2>
     <%= render 'posts/form', post: Post.new(post_type_id: Answer.post_type_id, category: @post.category,
                                             parent: @post), type_summary: false,
                              category: @post.category, post_type: PostType['Answer'], inline_parent: false,

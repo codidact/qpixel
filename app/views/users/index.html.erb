@@ -7,6 +7,7 @@
     <div class="form-group">
       <%= label_tag :search, "Search", class: "form-element" %>
       <%= text_field_tag :search, params[:search], class: 'form-element' %>
+      <%= hidden_field_tag :sort, params[:sort] || @sort_param  %>
     </div>
     <div class="actions has-padding-bottom-1">
       <button type="submit" class="button is-filled is-medium"><i class="fas fa-search"></i><span class="sr-only">Search</span></button>
@@ -22,10 +23,14 @@
               role: 'button', 'aria-label': 'Sort by age' %>
 </div>
 
-<div class="user-list">
-  <% @users.each do |user| %>
-    <%= render 'user', user: user %>
-  <% end %>
-</div>
+<% if @users.count == 0 %>
+  <p><%= I18n.t('search.no_users') %></p>
+<% else %>
+  <div class="user-list">
+    <% @users.each do |user| %>
+      <%= render 'user', user: user %>
+    <% end %>
+  </div>
+<% end %>
 
 <%= will_paginate @users, renderer: BootstrapPagination::Rails %>

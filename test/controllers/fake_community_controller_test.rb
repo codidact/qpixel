@@ -8,7 +8,7 @@ class FakeCommunityControllerTest < ActionController::TestCase
     request.env['HTTP_HOST'] = 'sample.qpixel.com'
 
     get(:communities)
-    assert_response(404)
+    assert_response(:not_found)
   end
 
   test 'fake community should be able to access fake community controller' do
@@ -16,7 +16,7 @@ class FakeCommunityControllerTest < ActionController::TestCase
     request.env['HTTP_HOST'] = 'fake.qpixel.com'
 
     get(:communities)
-    assert_response(200)
+    assert_response(:success)
     assert_not_nil assigns(:communities)
   end
 end

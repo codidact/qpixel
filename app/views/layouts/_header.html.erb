@@ -2,6 +2,23 @@
 <% mobile_logo_path = SiteSetting['MobileLogoPath'] %>
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
+<script>
+const toggleSearchFocus = () => {
+  const $input = $('#search');
+
+  if ($input.is(':focus')) {
+    $input.blur();
+  }
+  else {
+      $input.focus();
+  }
+};
+
+$(() => {
+  $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
+});
+</script>
+
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
   <div class="container header--container">
     <div class="header--brand">
@@ -34,7 +51,7 @@
       <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
-          <% if current_user.is_moderator %>
+          <% if current_user.at_least_moderator? %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, 
                 class: 'header--item',
                 title: 'Open moderator dashboard' do %>
@@ -196,7 +213,7 @@
     <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
 
     <% if user_signed_in? %>
-      <% if current_user.is_admin || current_user.is_moderator %>
+      <% if current_user.at_least_moderator? %>
         <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
           Mod
           <% if @open_flags > 0 %>
@@ -265,9 +282,16 @@
             <% end %>
           <% end %>
           <div class="category-header--nav-separator"></div>
-          <%= link_to category_post_types_path(current_cat.id),
-                      class: 'category-header--nav-item is-button' do %>
-            <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% if current_cat&.top_level_post_types.any? || admin? %>
+            <%= link_to category_post_types_path(current_cat.id),
+                        class: "category-header--nav-item is-button" do %>
+              <%= button_text %>
+            <% end %>
+          <% else %>
+            <%= button_tag button_text, class: "button is-muted is-outlined",
+                                        disabled: true,
+                                        title: "The category doesn't have any allowed post types" %>
           <% end %>
         </div>
       </div>

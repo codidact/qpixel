@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": false,
+    "module": "none",
+    "noEmit": true,
+    "target": "ES2021",
+    "types": ["./global.d.ts", "@types/jquery", "@types/select2"]
+  },
+  "include": ["./app/assets/javascripts"],
+  "exclude": [
+    "config",
+    "db",
+    "docker",
+    "images",
+    "img",
+    "lib",
+    "log",
+    "public",
+    "scripts",
+    "static",
+    "test",
+    "tmp",
+    "vendor",
+    "node_modules"
+  ]
+}

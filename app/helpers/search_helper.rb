@@ -1,32 +1,46 @@
 module SearchHelper
-  def search_posts
-    # Check permissions
-    posts = (current_user&.is_moderator || current_user&.is_admin ? Post : Post.undeleted)
-            .qa_only.list_includes
-
-    qualifiers = params_to_qualifiers
+  ##
+  # Search & sort a default posts list based on parameters in the current request.
+  #
+  # Search uses MySQL FTS in boolean mode which is what provides advanced search syntax (excluding qualifiers)
+  # see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
+  #
+  # @param user [User] user for search context
+  # @param params [ActionController::Parameters] search parameters
+  # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
+  def search_posts(user, params)
+    posts = Post.accessible_to(user)
+    qualifiers = params_to_qualifiers(params)
     search_string = params[:search]
 
     # Filter based on search string qualifiers
     if search_string.present?
       search_data = parse_search(search_string)
-      qualifiers += parse_qualifier_strings search_data[:qualifiers]
+      qualifiers += parse_qualifier_strings(search_data[:qualifiers])
       search_string = search_data[:search]
     end
 
-    posts = qualifiers_to_sql(qualifiers, posts)
+    posts = qualifiers_to_sql(qualifiers, posts, user)
     posts = posts.paginate(page: params[:page], per_page: 25)
 
-    if search_string.present?
-      posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
-                                                   relevance: :search_score, score: :score, age: :created_at)
-    else
-      posts.user_sort({ term: params[:sort], default: :score },
-                      score: :score, age: :created_at)
-    end
+    posts = if search_string.present?
+              posts.search(search_data[:search]).user_sort({ term: params[:sort], default: :search_score },
+                                                           relevance: :search_score,
+                                                           score: :score, age: :created_at,
+                                                           activity: :updated_at)
+            else
+              posts.user_sort({ term: params[:sort], default: :score },
+                              score: :score, age: :created_at, activity: :updated_at)
+            end
+
+    [posts, qualifiers]
   end
 
-  # Convert a Filter record into a form parseable by the search function
+  ##
+  # Converts a Filter record into a form parseable by the search function.
+  # @param filter [Filter]
+  # @return [Array<Hash{Symbol => Object}>] An array of hashes, each containing at least a +param+ key and other
+  #   relevant information.
   def filter_to_qualifiers(filter)
     qualifiers = []
     qualifiers.append({ param: :score, operator: '>=', value: filter.min_score }) unless filter.min_score.nil?
@@ -39,6 +53,9 @@ module SearchHelper
     qualifiers
   end
 
+  ##
+  # Provides a filter-like object containing keys for each of the filter parameters.
+  # @return [Hash{Symbol => #to_s}]
   def active_filter
     {
       default: nil,
@@ -53,7 +70,11 @@ module SearchHelper
     }
   end
 
-  def params_to_qualifiers
+  ##
+  # Retrieves parameters from +params+, validates their values, and adds them to a qualifiers hash.
+  # @param params [ActionController::Parameters] params to convert to qualifiers
+  # @return [Array<Hash{Symbol => Object}>]
+  def params_to_qualifiers(params)
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
       status: /any|open|closed/,
@@ -94,6 +115,9 @@ module SearchHelper
     filter_qualifiers
   end
 
+  ##
+  # Parses a raw search string and returns the base search term and qualifier strings separately.
+  # @return [Hash{Symbol => String}] A hash containing +:qualifiers+ and +:search+ keys.
   def parse_search(raw_search)
     qualifiers_regex = /([\w\-_]+(?<!\\):[^ ]+)/
     qualifiers = raw_search.scan(qualifiers_regex).flatten
@@ -101,11 +125,16 @@ module SearchHelper
     qualifiers.each do |q|
       search = search.gsub(q, '')
     end
-    search = search.gsub(/\\:/, ':').strip
+    search = search.gsub('\\:', ':').strip
     { qualifiers: qualifiers, search: search }
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+
+  ##
+  # Parses a full qualifier string into an array of qualifier objects.
+  # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
+  # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
     valid_value = {
       date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
@@ -133,12 +162,12 @@ module SearchHelper
         operator, val = if value.match?(valid_value[:numeric])
                           numeric_value_sql value
                         elsif value == 'me'
-                          ['=', current_user.id]
+                          ['=', current_user&.id&.to_i]
                         else
                           next
                         end
 
-        { param: :user, operator: operator.presence || '=', user_id: val.to_i }
+        { param: :user, operator: operator.presence || '=', user_id: val }
       when 'upvotes'
         next unless value.match?(valid_value[:numeric])
 
@@ -182,10 +211,14 @@ module SearchHelper
     # Consider partitioning and telling the user which filters were invalid
   end
 
-  def qualifiers_to_sql(qualifiers, query)
-    trust_level = current_user&.trust_level || 0
-    allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
-    query = query.where(category_id: allowed_categories)
+  ##
+  # Parses a qualifiers hash and applies it to an ActiveRecord query.
+  # @param qualifiers [Array<Hash{Symbol => Object}>] A qualifiers hash, as returned by other methods in this module.
+  # @param query [ActiveRecord::Relation] An ActiveRecord query to which to add conditions based on the qualifiers.
+  # @return [ActiveRecord::Relation]
+  def qualifiers_to_sql(qualifiers, query, user)
+    categories = Category.accessible_to(user)
+    query = query.where(category_id: categories)
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
       case qualifier[:param]
@@ -235,6 +268,11 @@ module SearchHelper
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  ##
+  # Parses a qualifier value string, including operator, as a numeric value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10"+
+  # @return [Array(String, String)] A 2-tuple containing operator and value.
+  # @api private
   def numeric_value_sql(value)
     operator = ''
     while ['<', '>', '='].include? value[0]
@@ -247,6 +285,11 @@ module SearchHelper
     [operator, value]
   end
 
+  ##
+  # Parses a qualifier value string, including operator, as a date value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10d"+
+  # @return [Array(String, String, String)] A 3-tuple containing operator, value, and timeframe.
+  # @api private
   def date_value_sql(value)
     operator = ''
 

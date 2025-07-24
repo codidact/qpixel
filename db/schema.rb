@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
+ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -226,9 +226,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
+    t.integer "post_count", default: 0, null: false
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["deleted_by_id"], name: "index_community_users_on_deleted_by_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
+  end
+
+  create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "log_type"
+    t.string "destination"
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "error_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -298,6 +307,27 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.text "description"
     t.index ["community_id"], name: "index_licenses_on_community_id"
     t.index ["name"], name: "index_licenses_on_name"
+  end
+
+  create_table "maintenance_tasks_runs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "task_name", null: false
+    t.datetime "started_at", precision: nil
+    t.datetime "ended_at", precision: nil
+    t.float "time_running", default: 0.0, null: false
+    t.bigint "tick_count", default: 0, null: false
+    t.bigint "tick_total"
+    t.string "job_id"
+    t.string "cursor"
+    t.string "status", default: "enqueued", null: false
+    t.string "error_class"
+    t.string "error_message"
+    t.text "backtrace"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "arguments"
+    t.integer "lock_version", default: 0, null: false
+    t.text "metadata"
+    t.index ["task_name", "status", "created_at"], name: "index_maintenance_tasks_runs", order: { created_at: :desc }
   end
 
   create_table "micro_auth_apps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -675,6 +705,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
     t.index ["community_user_id"], name: "index_user_abilities_on_community_user_id"
   end
 
+  create_table "user_websites", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "label", limit: 80
+    t.string "url"
+    t.integer "position"
+    t.bigint "user_id", null: false
+    t.index ["user_id", "url"], name: "index_user_websites_on_user_id_and_url", unique: true
+    t.index ["user_id"], name: "index_user_websites_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "email"
     t.string "encrypted_password"
@@ -817,6 +856,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_213150) do
   add_foreign_key "thread_followers", "posts"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
+  add_foreign_key "user_websites", "users"
   add_foreign_key "users", "users", column: "deleted_by_id"
   add_foreign_key "votes", "communities"
   add_foreign_key "warning_templates", "communities"

@@ -38,6 +38,14 @@
   help_category: About the Network
   community_id: ~
 
+- post_type_id: <%= PolicyDoc.post_type_id %>
+  title: Accessibility Statement
+  body_markdown: $FILE posts/accessibility-policy.html
+  body: $FILE posts/accessibility-policy.html
+  doc_slug: accessibility-policy
+  help_category: About the Network
+  community_id: ~
+
 - post_type_id: <%= HelpDoc.post_type_id %>
   title: FAQ
   body_markdown: $FILE posts/local_faq.html
@@ -102,6 +110,13 @@
   help_category: Guidance
 
 - post_type_id: <%= HelpDoc.post_type_id %>
+  title: Accessibility
+  body_markdown: $FILE posts/accessibility.html
+  body: $FILE posts/accessibility.html
+  doc_slug: accessibility
+  help_category: Guidance
+
+- post_type_id: <%= HelpDoc.post_type_id %>
   title: Search options
   body_markdown: $FILE posts/search.html
   body: $FILE posts/search.html
@@ -149,3 +164,4 @@
   body: $FILE posts/advanced-formatting.html
   doc_slug: advanced-formatting
   help_category: Site Information
+

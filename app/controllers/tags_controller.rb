@@ -24,21 +24,36 @@ class TagsController < ApplicationController
 
   def category
     @tag_set = @category.tag_set
+
+    if @tag_set.nil?
+      not_found!
+      return
+    end
+
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
-              @tag_set.tags_with_paths.order(:path)
+              @tag_set.with_paths(params[:no_excerpt])
             elsif params[:no_excerpt].present?
-              @tag_set.tags.where(excerpt: '').or(@tag_set.tags.where(excerpt: nil))
-                      .order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set.tags.where(excerpt: ['', nil])
             else
-              @tag_set.tags.order(Arel.sql('COUNT(posts.id) DESC'))
+              @tag_set.tags
             end
-    @count = @tags.count
+
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
-    @tags = @tags.left_joins(:posts).group(Arel.sql("#{table}.id"))
+
+    @tags = @tags.left_joins(:posts)
+                 .group(Arel.sql("#{table}.id"))
                  .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
                  .paginate(per_page: 96, page: params[:page])
+
+    @tags = if params[:hierarchical].present?
+              @tags.order(:path)
+            else
+              @tags.order(Arel.sql('COUNT(posts.id) DESC'))
+            end
+
+    @count = @tags.length || 0
   end
 
   def show
@@ -109,7 +124,23 @@ class TagsController < ApplicationController
   end
 
   def rename
-    status = @tag.update(name: params[:name])
+    status = false
+
+    @tag.transaction do
+      old_tag_name = @tag.name
+
+      status = @tag.update(name: params[:name])
+
+      if status
+        AuditLog.moderator_audit(event_type: 'tag_rename',
+                                 related: @tag,
+                                 user: current_user,
+                                 comment: "#{old_tag_name} renamed to #{params[:name]}")
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
+
     render json: { success: status, tag: @tag }
   end
 
@@ -217,8 +248,7 @@ class TagsController < ApplicationController
 
   def verify_tag_editor
     unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
-      current_user.is_moderator ||
-      current_user.is_admin)
+      current_user.at_least_moderator?)
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found

@@ -5,15 +5,9 @@
 </div>
 <br>
 <p align="center">
-  <a href="https://circleci.com/gh/codidact/qpixel">
-    <img src="https://circleci.com/gh/codidact/qpixel.svg?style=svg" alt="CircleCI Build Status">
-  </a>
-  <a href="https://coveralls.io/github/codidact/qpixel">
-    <img src="https://coveralls.io/repos/github/codidact/qpixel/badge.svg" alt="Coverage Status">
-  </a>
-  <a href="https://zenodo.org/badge/latestdoi/237078806">
-    <img src="https://zenodo.org/badge/237078806.svg" alt="DOI">
-  </a>
+  <a href="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml"><img src="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml/badge.svg" alt="Pipeline status" /></a>
+  <a href="https://codecov.io/gh/codidact/qpixel"><img src="https://codecov.io/gh/codidact/qpixel/graph/badge.svg?token=RM60WJLP1V" alt="Coverage Status"/></a>
+  <a href="https://zenodo.org/badge/latestdoi/237078806"><img src="https://zenodo.org/badge/237078806.svg" alt="DOI"></a>
 </p>
 
 Rails-based version of our core software, powering [codidact.com](https://codidact.com). Currently under active development towards MVP.

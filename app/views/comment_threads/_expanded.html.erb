@@ -1,0 +1,112 @@
+<%#
+    Full thread view with all the details & actions
+
+    Variables:
+    ? comment_id   : Comment ID to show even if it would be hidden otherwise
+      inline       : whether the thread is diplayed inline with the parent post
+      show_deleted : whether to display deleted comments for those who can see them
+      thread       : CommentThread to display
+%>
+
+<% max_shown_comments = 5 %>
+<% comment_id ||= defined?(comment_id) ? comment_id : nil %>
+<% pingable = thread.pingable %>
+<% shown_comments_count = [max_shown_comments, thread.reply_count].min %>
+
+<%
+  wrapper_classes = []
+  if thread.deleted; wrapper_classes << 'h-bg-red-050'; end
+  if inline; wrapper_classes += ['post--comments-thread', 'is-embedded']; end
+
+  widget_classes = ['widget', 'thread']
+  if thread.deleted; widget_classes << 'is-red'; end
+%>
+
+<%= content_tag 'div', class: wrapper_classes.empty? ? nil : wrapper_classes do %>
+  <%= content_tag 'div', class: widget_classes.empty? ? nil : widget_classes,
+                         data: {
+                           archived: thread.archived,
+                           comments: thread.reply_count,
+                           deleted: thread.deleted,
+                           inline: inline,
+                           locked: thread.locked,
+                           post: thread.post.id,
+                           thread: thread.id,
+                         } do %>
+    <div class="widget--header">
+      <% if inline %>
+        <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
+        <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
+      <% end %>
+      <% if current_user&.privilege?('flag_curate') %>
+        <%= render 'comments/thread_tools_link', thread: thread %>
+      <% end %>
+      <% unless current_user.nil? %>
+        <%= render 'comments/thread_follow_link', thread: thread, user: current_user %>
+      <% end %>
+      <% if thread.deleted %>
+        <i class="fas fa-trash fa-fw" title="Deleted. This thread has been deleted."></i>
+      <% elsif thread.archived %>
+        <i class="fas fa-archive fa-fw" title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
+      <% elsif thread.locked? %>
+        <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
+      <% end %>
+      <span class="js-thread-title"><%= render_pings_text(thread.title) %></span>
+    </div>
+    <% skipped_deleted = 0 %>
+    <% comments = thread.comments %>
+    <% if inline %>
+      <% count = 0 %>
+      <% comments = comments.select do |comment| %>
+        <% count += 1 unless comment.deleted %>
+        <% count <= max_shown_comments || comment.id.to_i == comment_id.to_i %>
+      <% end %>
+      <% if comments.size > max_shown_comments %>
+        <% shown_comments_count += comments.select { |c| c.id.to_i == comment_id.to_i }.size %>
+      <% end %>
+    <% end %>
+    <div role="list">
+      <% comments.each do |comment| %>
+        <% if comment.deleted && !(current_user&.at_least_moderator? && show_deleted) %>
+          <% skipped_deleted += 1%>
+          <% next %>
+        <% elsif skipped_deleted > 0 %>
+          <%= render 'comments/skip_deleted', inline: inline, num_skipped: skipped_deleted, thread: thread %>
+          <% skipped_deleted = 0 %>
+        <% end %>
+        <% if shown_comments_count > max_shown_comments && comment.id.to_i == comment_id.to_i %>
+          <%= render 'comments/skip_more', shown_count: shown_comments_count, thread: thread %>
+        <% end %>
+        <div class="widget--body" role="listitem">
+          <%= render 'comments/comment', comment: comment, pingable: pingable %>
+        </div>
+      <% end %>
+      <% if skipped_deleted > 0 %>
+        <%= render 'comments/skip_deleted', inline: inline, num_skipped: skipped_deleted, thread: thread %>
+        <% skipped_deleted = 0 %>
+      <% end %>
+    </div>
+
+    <% if inline && shown_comments_count < thread.reply_count %>
+      <div class="widget--footer widget--full-thread">
+        <p class="h-m-0">
+          Showing <%= shown_comments_count %> of <%= pluralize(thread.reply_count, 'comment') %>.
+          <%= link_to 'See the whole thread', comment_thread_path(thread) %>.
+        </p>
+      </div>
+    <% end %>
+
+    <% unless current_user.nil? %>
+      <div class="widget--footer">
+        <%= render 'comments/reply_to_thread', inline: inline,
+                                               post: thread.post,
+                                               thread: thread,
+                                               user: current_user %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if current_user&.privilege?('flag_curate') %>
+  <%= render 'comments/thread_actions_modal', thread: thread, user: current_user %>
+<% end %>

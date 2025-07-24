@@ -1,0 +1,38 @@
+<h1 class="has-color-red">Delete my account</h1>
+<p>
+  If you no longer want to use our network of communities, you can delete your account. This means:
+</p>
+<ul>
+  <li>Your profiles will be deleted on <strong>every community</strong> in the network.
+  <li>Your user account will be deleted and anonymized.</li>
+  <li>
+    The content of your posts and comments will remain, under the licenses you set for them. Your username will no
+    longer be shown alongside them.
+  </li>
+</ul>
+
+<div class="notice is-danger has-color-red-900 flex-row-always jc-sb ai-c">
+  <i class="fas fa-exclamation-triangle"></i>
+  <p>
+    This will take effect immediately and <strong>cannot be undone</strong>. If you're sure, type your username below to
+    confirm.
+  </p>
+</div>
+
+<% if @user.errors.any? %>
+  <div class="notice is-danger has-color-red-900">
+    <p>Couldn't delete your account:</p>
+    <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_tag do_delete_account_path, method: :post do %>
+  <%= label_tag :username, 'Type your username', class: 'form-element' %>
+  <%= text_field_tag :username, params[:username], class: 'form-element' %>
+
+  <%= submit_tag 'Delete my account', class: 'button is-danger is-filled' %>
+<% end %>

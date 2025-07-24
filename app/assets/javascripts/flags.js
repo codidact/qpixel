@@ -1,5 +1,5 @@
 $(() => {
-  $(document).on('click', '.flag-link', ev => {
+  $(document).on('click', '.flag-link', (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
     const isCommentFlag = self.hasClass('js-comment-flag');
@@ -8,7 +8,7 @@ $(() => {
     let reason = -1;
     if (!isCommentFlag) {
       activeRadio = self.parents('.js-flag-box').find("input[type='radio'][name='flag-reason']:checked");
-      reason = parseInt(activeRadio.val(), 10) || null;
+      reason = parseInt(activeRadio.val()?.toString(), 10) || null;
       requiresDetails = activeRadio.attr('data-requires-details') === 'true';
 
       if (reason === null) {
@@ -25,7 +25,7 @@ $(() => {
       'flag_type': (reason !== -1) ? reason : null,
       'post_id': postId,
       'post_type': isCommentFlag ? 'Comment' : 'Post',
-      'reason': $(`#flag-post-${postId}`).val()
+      'reason': $(`#flag-post-${postId}`).val()?.toString()
     };
 
     if (requiresDetails && data['reason'].length < 1) {
@@ -40,7 +40,8 @@ $(() => {
       'type': 'POST',
       'url': '/flags/new',
       'data': data,
-      'target': self
+      // TODO: review
+      // 'target': self
     })
       .done((response) => {
         if(response.status !== 'success') {
@@ -50,7 +51,7 @@ $(() => {
           const messages = {
             comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
           };
-          const defaultMessage = `<strong>Thanks!</strong> A moderator will review your flag.`;
+          const defaultMessage = `<strong>Thanks!</strong> We will review your flag.`;
           QPixel.createNotification('success', messages[responseType] || defaultMessage);
           $(`#flag-post-${postId}`).val('');
         }
@@ -58,7 +59,7 @@ $(() => {
         $(`#flag-comment-${postId}`).removeClass('is-active');
 
       })
-      .fail((jqXHR, textStatus, errorThrown) => {
+      .fail((jqXHR, _textStatus, _errorThrown) => {
         let message = jqXHR.status;
         try {
           message = JSON.parse(jqXHR.responseText)['message'];
@@ -71,7 +72,7 @@ $(() => {
       });
   });
 
-  $('.js-start-escalate').on('click', ev => {
+  $('.js-start-escalate').on('click', (ev) => {
     const $modal = $('.js-escalation-modal');
     const $tgt = $(ev.target);
     const flagId = $tgt.data('flag');
@@ -84,15 +85,9 @@ $(() => {
     const $comment = $('.js-escalation-comment');
     const flagId = $modal.data('flag');
     const comment = $comment.val();
-    const resp = await fetch(`/mod/flags/${flagId}/escalate`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ comment })
-    });
+
+    const resp = await QPixel.fetchJSON(`/mod/flags/${flagId}/escalate`, { comment });
+
     if (resp.status === 200) {
       QPixel.createNotification('success', 'This flag has been escalated for admin review.');
       $modal.toggleClass('is-active');

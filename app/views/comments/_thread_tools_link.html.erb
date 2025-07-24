@@ -1,0 +1,14 @@
+<%#
+  Helper for rendering comment thread tools link buttons
+
+  Variables:
+    thread : Comment thread to create the link for
+%>
+
+<a href="javascript:void(0)"
+   class="widget--header-link"
+   data-drop=".js--tools-thread-<%= thread.id %>"
+   role="button"
+   aria-label="Show more thread tools">
+  <i class="fa fa-cog fa-fw"></i> tools
+</a>

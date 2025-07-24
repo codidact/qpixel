@@ -1,26 +1,24 @@
 class CommentThread < ApplicationRecord
+  include Lockable
   include PostRelated
+  include SoftDeletable
 
   has_many :comments
   has_many :thread_follower
-  belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :archived_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
 
-  scope :deleted, -> { where(deleted: true) }
-  scope :undeleted, -> { where(deleted: false) }
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   after_create :create_follower
 
-  def read_only?
-    locked? || archived? || deleted?
+  def self.post_followed?(post, user)
+    ThreadFollower.where(post: post, user: user).any?
   end
 
-  def locked?
-    locked && (locked_until.nil? || locked_until > DateTime.now)
+  def read_only?
+    locked? || archived? || deleted?
   end
 
   def followed_by?(user)
@@ -28,12 +26,31 @@ class CommentThread < ApplicationRecord
   end
 
   def can_access?(user)
-    (!deleted? || user&.privilege?('flag_curate') || user&.has_post_privilege?('flag_curate', post)) &&
+    (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
   end
 
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
+  # Gets a list of user IDs who should be pingable in the thread.
+  # @return [Array<Integer>]
+  def pingable
+    # post author +
+    # answer authors +
+    # last 500 history event users +
+    # last 500 comment authors +
+    # all thread followers
+    query = <<~END_SQL
+      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
+      UNION DISTINCT
+      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{id || '-1'}
+    END_SQL
+
+    ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 
   private

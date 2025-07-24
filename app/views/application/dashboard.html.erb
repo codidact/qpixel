@@ -1,6 +1,7 @@
 <%= content_for :title, 'Dashboard' %>
 
 <h1>Dashboard</h1>
+<p>All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of each page.</p>
 <div class="grid community-list">
   <% @communities.each do |c| %>
     <% categories = Category.unscoped.where(community: c).order(sequence: :asc, id: :asc) %>
@@ -29,7 +30,7 @@
               <% end %>
             <% end %>
 
-            <% if current_user&.has_ability_on(c.id, 'edit_posts') %>
+            <% if current_user&.ability_on?(c.id, 'edit_posts') %>
               <% sug_edits = @edits[cat.id] || 0 %>
               <% if sug_edits > 0 %>
                 <%= link_to suggested_edits_queue_url(cat, host: c.host), class: 'widget--body-extra' do %>

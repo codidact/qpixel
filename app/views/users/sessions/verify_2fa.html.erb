@@ -1,4 +1,5 @@
 <h1>Two-factor authentication</h1>
+
 <p>
   Your account has two-factor authentication enabled. Enter a code from your authenticator app here.
 </p>
@@ -8,7 +9,7 @@
 
   <div class="form-group">
     <%= label_tag 'code', 'Code', class: 'form-element' %>
-    <%= text_field_tag 'code', '', class: 'form-element', autocomplete: 'one-time-code' %>
+    <%= number_field_tag 'code', '', class: 'form-element', autocomplete: 'one-time-code', autofocus: 'true', inputmode: 'numeric' %>
   </div>
 
   <div class="actions">

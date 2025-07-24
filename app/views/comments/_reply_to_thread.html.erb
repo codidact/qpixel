@@ -1,0 +1,55 @@
+<%#
+  Renders reply to comment thread button & input
+
+  Variables:
+    inline : whether the reply is done via inline thread view
+    post : post the thread is for
+    text : text to display on the button
+    thread : thread to create a reply for
+    user : user that will create a reply to the thread
+%>
+
+<%
+  can_comment = user.can_reply_to?(thread)
+  is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
+  text ||= defined?(text) && text.present? ? text : t('comments.labels.reply_to_thread')
+  is_exempt = (!post.comments_allowed? || thread.read_only?) && at_least_moderator?
+  exempt_text = is_exempt ? t('comments.errors.exempt_from_disabled') : nil
+  title = if !post.comments_allowed?
+            [comments_post_error_msg(post), exempt_text].compact.join(' ')
+          elsif thread.read_only?
+            [comments_thread_error_msg(thread), exempt_text].compact.join(' ')
+          elsif is_rate_limited
+            rate_limit_message
+          else
+            ''
+          end
+%>
+
+<div class="reply-to-thread-wrapper">
+  <%= link_to 'javascript:void(0)', class: 'button is-outlined is-small js-reply-to-thread-link',
+                                    data: { post: post.id },
+                                    disabled: !can_comment,
+                                    role: 'button',
+                                    title: is_exempt ? '' : title do %>
+    <i class="fas fa-fw fa-plus"></i> <%= text %>
+  <% end %>
+  <% if is_exempt %>
+    <i class="fas fa-fw fa-unlock-alt has-color-tertiary-300" title="<%= title %>"></i>
+  <% end %>
+</div>
+
+<% if can_comment %>
+  <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form', id: "reply-to-thread-form-#{post.id}" do %>
+    <%= hidden_field_tag :post_id, post.id %>
+    <%= hidden_field_tag :inline, inline %>
+    <%= label_tag :content, 'Your message', class: 'form-element' %>
+    <%= text_area_tag :content, '',
+                      class: 'form-element js-comment-field',
+                      data: { thread: thread.id,
+                              post: thread.post_id,
+                              character_count: ".js-character-count-#{post.id}" } %>
+    <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
+    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
+  <% end %>
+<% end %>
