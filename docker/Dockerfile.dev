@@ -11,7 +11,8 @@ RUN apt-get update && \
     apt-get install -y bison \
     build-essential \
     libxslt-dev \
-    default-mysql-server
+    default-mysql-server \
+    firefox-esr
 
 # Add core code to container
 WORKDIR /code
@@ -22,17 +23,19 @@ RUN bundle install
 
 # cherry pick only what we really need to run Node.js
 COPY --from=node /usr/local/bin/node /usr/local/bin
-COPY --from=node /usr/local/bin/nodejs /usr/local/bin
-COPY --from=node /usr/local/bin/npm /usr/local/bin
-COPY --from=node /usr/local/bin/npx /usr/local/bin
-COPY --from=node /usr/local/bin/yarn /usr/local/bin
-COPY --from=node /usr/local/bin/yarnpkg /usr/local/bin
 COPY --from=node /usr/local/include/node /usr/local/include
-COPY --from=node /usr/local/lib/node_modules /usr/local/lib
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node /usr/local/share/doc/node /usr/local/share/doc
 COPY --from=node /usr/local/share/man/man1/node.1 /usr/local/share/man/man1
 COPY --from=node /usr/local/share/systemtap/tapset/node.stp /usr/local/share/systemtap/tapset
 COPY --from=node /opt/yarn-v1.22.4 /opt/yarn-v1.22.4
+
+# create symlinks needed to run Node.js & NPM
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN ln -s /opt/yarn-v1.22.4/bin/yarn /usr/local/bin/yarn
+RUN ln -s /opt/yarn-v1.22.4/bin/yarnpkg /usr/local/bin/yarnpkg
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 FROM build
 

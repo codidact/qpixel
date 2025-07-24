@@ -56,7 +56,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   #
   # @param user_or_fixture [User, Symbol] either a user or a symbol referring to a fixture
   def user(user_or_fixture)
-    if user_or_fixture.is_a? User
+    if user_or_fixture.is_a?(User)
       user_or_fixture
     else
       users(user_or_fixture)
@@ -73,29 +73,26 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       find('.select2-search__field').fill_in(with: tag_name)
     end
 
-    # Get the first item listed that is not the "Searching..." item
-    first_option = find('#select2-post_tags_cache-results li:first-child') { |el| el.text != 'Searching…' }
+    # Wait for tag search to finish
+    assert_text('Searching…')
+    assert_no_text('Searching…')
 
-    if first_option.first('span').text == tag_name
-      # If the text matches the tag name, first check whether we are creating a new tag.
-      # If so, confirm that we are allowed to. If all is good, actually click on the item.
-      if create_new || !first_option.text.include?('Create new tag')
-        first_option.click
-      else
-        raise "Expected to find tag with the name #{tag_name}, " \
-              'but could not select it from options without creating a new tag.'
-      end
+    # Get the first and last options listed
+    first_option = find('#select2-post_tags_cache-results li:first-child')
+    last_option = find('#select2-post_tags_cache-results li:last-child')
+
+    # If the first option matches the tag name, and the tag already exists, click it.
+    if first_option.first('span').text == tag_name && !first_option.text.include?('Create new tag')
+      first_option.click
+    # If we are allowed to create a tag, select the last option from the list, which is always the tag creation.
     elsif create_new
-      # The first item returned is not the tag we were looking for (another tag partial match + not existing)
-      # If we are allowed to create a tag, select the last option from the list, which is always the tag creation.
-      last_option = find('#select2-post_tags_cache-results li:last-child')
       if last_option.first('span').text == tag_name
         last_option.click
       else
         raise "Tried to select tag #{tag_name} for creation, but it does not seem to be a presented option."
       end
+    # The first option is not the tag we were looking for, and we are not allowed to create a tag.
     else
-      # The first item returned is not the tag we were looking for, and we are not allowed to create a tag.
       raise "Expected to find tag with the name #{tag_name}, " \
             'but could not select it from options without creating a new tag.'
     end

@@ -5,23 +5,41 @@ class AdvertisementControllerTest < ActionController::TestCase
 
   test 'index should return html' do
     get :index
-    assert_response(200)
+    assert_response(:success)
     assert_equal 'text/html', response.media_type
   end
 
   test 'image paths should return png' do
-    # Cannot test :random_question, as it requires initialization
-    # of hot posts, which isn't provided via get helper.
-    [:codidact, :community].each do |path|
+    [:codidact, :community, :random_question, :promoted_post].each do |path|
       get path
-      assert_response(200)
+      assert_response(:success)
       assert_equal 'image/png', response.media_type
     end
   end
 
-  test 'post image path should return png' do
-    get :specific_question, params: { id: posts(:question_one).id }
-    assert_response(200)
+  test 'specific_question for different post types' do
+    { 123_456_789 => :not_found,
+      posts(:question_one).id => :success,
+      posts(:article_one).id => :success,
+      posts(:answer_one).id => :not_found }.each do |id, status|
+      try_specific_question(id)
+      assert_response(status)
+      if status == :success
+        assert_equal 'image/png', response.media_type
+      end
+    end
+  end
+
+  test 'specific_category' do
+    # :specific_category uses random post selection, so we can't easily test for different post types
+    get :specific_category, params: { id: categories(:main).id, score: -1, days: 3650 }
+    assert_response(:success)
     assert_equal 'image/png', response.media_type
+  end
+
+  private
+
+  def try_specific_question(id)
+    get :specific_question, params: { id: id }
   end
 end

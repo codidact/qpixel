@@ -15,6 +15,10 @@ docker/mysql
 # allow custom docker-compose files as users might have different needs
 docker-compose*.yml
 !docker-compose.yml
+# Ignore Dockerfiles in project root
+Dockerfile
+Dockerfile.*
+*.Dockerfile
 
 # Don't track changes to the docker-compose .env file only in project root
 /.env
@@ -38,9 +42,12 @@ test/reports
 
 TODO.md
 
+# configuration files
 config/storage.yml
 config/email.yml
 config/database.yml
+
+storage
 
 deploy
 

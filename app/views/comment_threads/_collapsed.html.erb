@@ -1,0 +1,26 @@
+<%#
+    Collapsed thread view
+
+    Variables:
+      thread : thread to display
+%>
+
+<%
+  state_class = [
+    thread.deleted ? 'is-deleted' : nil,
+    thread.archived ? 'is-archived' : nil,
+    thread.locked? ? 'is-locked' : nil
+  ].compact.join(' ')
+%>
+
+<div class="post--comments-thread is-inline <%= state_class %>">
+  <% if thread.deleted %>
+    <i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>
+  <% elsif thread.archived %>
+    <i class="fas fa-archive fa-fw" title="Archived thread" aria-label="Archived thread"></i>
+  <% elsif thread.locked? %>
+    <i class="fas fa-lock fa-fw" title="Locked thread" aria-label="Locked thread"></i>
+  <% end %>
+  <%= link_to render_pings_text(thread.title), comment_thread_path(thread), class: 'js--comment-link', data: { thread: thread.id }, role: 'button' %>
+  (<%= pluralize(thread.reply_count, 'comment') %>)
+</div>

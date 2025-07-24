@@ -1,6 +1,38 @@
-$(() => {
-  const sum = (ary) => ary.reduce((a, b) => a + b, 0);
+/**
+ * @typedef {{
+ *  name: string
+ * }} RemoteTagSynonym
+ * 
+ * @typedef {{
+ *  id: number
+ *  community_id: number
+ *  parent_id: number | null
+ *  tag_set_id: number
+ *  excerpt: string
+ *  name: string
+ *  tag_synonyms: RemoteTagSynonym[]
+ *  wiki: string | null
+ *  wiki_markdown: string
+ *  created_at: string
+ *  updated_at: string
+ * }} RemoteTag
+ * 
+ * @typedef {{
+ *  id: number | string
+ *  text: string
+ *  desc: string
+ *  synonyms?: string | RemoteTagSynonym[]
+ * }} ProcessedTag
+ */
 
+$(() => {
+  const sum = (/** @type {number[]} */ ary) => ary.reduce((a, b) => a + b, 0);
+
+  /**
+   * @param {string} text
+   * @param {number} max
+   * @returns {string[]}
+   */
   const splitWordsMaxLength = (text, max) => {
     const words = text.split(' ');
     const splat = [[]];
@@ -13,6 +45,10 @@ $(() => {
     return splat.map((s) => s.join(' '));
   };
 
+  /**
+   * @param {ProcessedTag} tag
+   * @returns {JQuery}
+   */
   const template = (tag) => {
     const tagSynonyms = !!tag.synonyms ? ` <i>(${tag.synonyms})</i>` : '';
     const tagSpan = `<span>${tag.text}${tagSynonyms}</span>`;
@@ -29,6 +65,10 @@ $(() => {
     const useIds = $tgt.attr('data-use-ids') === 'true';
     $tgt.select2({
       tags: $tgt.attr('data-create') !== 'false',
+      /**
+       * @param {Select2.IdTextPair[]} data
+       * @param {Select2.IdTextPair & { desc?: string }} tag 
+       */
       insertTag: function (data, tag) {
         tag.desc = "(Create new tag)"
         // Insert the tag at the end of the results
@@ -46,6 +86,10 @@ $(() => {
         },
         headers: { 'Accept': 'application/json' },
         delay: 100,
+        /**
+         * @param {RemoteTag[]} data
+         * @returns {Select2.ProcessedResult<ProcessedTag>}
+         */
         processResults: (data) => {
           // (for the tour)
           if (Number($this.data('tag-set')) === -1) {
@@ -74,6 +118,11 @@ $(() => {
     });
   });
 
+  /**
+   * @param {JQuery} $search
+   * @param {RemoteTagSynonym[]} synonyms
+   * @returns {string | RemoteTagSynonym[]}
+   */
   function processSynonyms($search, synonyms) {
     if (!synonyms) return synonyms;
 
@@ -145,13 +194,10 @@ $(() => {
 
     const renameTo = prompt(`Rename tag ${tagName} to:`);
     if (!!renameTo) {
-      const resp = await fetch(`/categories/${categoryId}/tags/${tagId}/rename`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-        body: JSON.stringify({ name: renameTo })
-      });
+      const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name: renameTo });
+  
       const data = await resp.json();
+
       if (data.success) {
         location.reload();
       }

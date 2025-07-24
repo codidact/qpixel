@@ -22,6 +22,7 @@ $(() => {
     const resp = await fetch(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
       credentials: 'include'
     });
+
     const data = await resp.json();
     const value = data.typed;
 
@@ -43,11 +44,8 @@ $(() => {
       body = Object.assign(body, {community_id: communityId});
     }
 
-    const resp = await fetch(`/admin/settings/${name}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-      body: JSON.stringify(body)
-    });
+    const resp = await QPixel.fetchJSON(`/admin/settings/${name}`, body);
+
     const data = await resp.json();
 
     $td.removeClass('editing').html('').text(data.setting.typed.toString());

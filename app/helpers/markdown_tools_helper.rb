@@ -22,6 +22,7 @@ module MarkdownToolsHelper
     attribs.merge! href: 'javascript:void(0)',
                    class: "#{attribs[:class] || ''} button is-muted is-outlined js-markdown-tool",
                    data_action: action,
+                   draggable: false,
                    aria_label: label,
                    title: label,
                    role: 'button'
@@ -42,6 +43,7 @@ module MarkdownToolsHelper
     attribs.merge! href: 'javascript:void(0)',
                    class: "#{attribs[:class] || ''}js-markdown-tool",
                    data_action: action,
+                   draggable: false,
                    aria_label: label,
                    title: label,
                    role: 'button'

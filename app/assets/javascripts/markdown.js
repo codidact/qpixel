@@ -19,6 +19,8 @@ $(() => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const action = $button.attr('data-action');
+  
+    /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
     const $field = $('.js-post-field');
 
     const actions = {
@@ -92,6 +94,8 @@ $(() => {
     const $url = $('#markdown-link-url');
     const url = $url.val();
     const markdown = `[${text}](${url})`;
+
+    /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
     const $field = $('.js-post-field');
 
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
@@ -108,7 +112,9 @@ $(() => {
   });
 
   $(document).on('click', '[data-modal="#markdown-link-insert"]', (_ev) => {
+    /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
     const $field = $('.js-post-field');
+
     const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd);
     if (selection) {
       $('#markdown-link-name').val(selection);

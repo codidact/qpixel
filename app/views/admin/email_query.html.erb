@@ -1,0 +1,18 @@
+<h1><%= t 'admin.tools.email_query' %></h1>
+<p><%= t 'admin.email_query_blurb' %></p>
+
+<% if defined?(@user) %>
+  <p>Your query for <strong><%= params[:email] %></strong> returned profiles in these communities:</p>
+  <ul>
+    <% @profiles.each do |p| %>
+      <li><%= user_link @user, { host: p.community.host }, anchortext: p.community.name %></li>
+    <% end %>
+  </ul>
+  <p class="has-font-size-caption">These results only include communities where you are an admin.</p>
+<% else %>
+  <%= form_tag do_email_query_path, method: 'POST' do %>
+    <%= label_tag :email, 'Email', class: 'form-element' %>
+    <%= text_field_tag :email, params[:email], class: 'form-element' %>
+    <%= submit_tag 'Search', class: 'button is-filled' %>
+  <% end %>
+<% end %>

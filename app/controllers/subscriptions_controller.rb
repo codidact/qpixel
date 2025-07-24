@@ -24,28 +24,34 @@ class SubscriptionsController < ApplicationController
 
   def enable
     @subscription = Subscription.find params[:id]
-    if current_user.is_admin || current_user.id == @subscription.user_id
+    if current_user.admin? || current_user.id == @subscription.user_id
       if @subscription.update(enabled: params[:enabled] || false)
         render json: { status: 'success', subscription: @subscription }
       else
-        render json: { status: 'failed' }, status: :internal_server_error
+        render json: { status: 'failed',
+                       message: 'Failed to update your subscription. Please report this bug on Meta.' },
+               status: :internal_server_error
       end
     else
-      render json: { status: 'failed', message: 'You do not have permission to update this subscription.' },
+      render json: { status: 'failed',
+                     message: 'You do not have permission to update this subscription.' },
              status: :forbidden
     end
   end
 
   def destroy
     @subscription = Subscription.find params[:id]
-    if current_user.is_admin || current_user.id == @subscription.user_id
+    if current_user.admin? || current_user.id == @subscription.user_id
       if @subscription.destroy
         render json: { status: 'success' }
       else
-        render json: { status: 'failed' }, status: :internal_server_error
+        render json: { status: 'failed',
+                       message: 'Failed to remove your subscription. Please report this bug on Meta.' },
+               status: :internal_server_error
       end
     else
-      render json: { status: 'failed', message: 'You do not have permission to remove this subscription.' },
+      render json: { status: 'failed',
+                     message: 'You do not have permission to remove this subscription.' },
              status: :forbidden
     end
   end

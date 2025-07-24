@@ -24,9 +24,9 @@ module TabsHelper
     active = opts[:is_active] || false
     opts.delete :is_active
     opts[:class] = if opts[:class]
-                     "#{opts[:class]} tabs--tab#{active ? ' tab__active' : ''}"
+                     "#{opts[:class]} tabs--tab#{' tab__active' if active}"
                    else
-                     "tabs--tab#{active ? ' tab__active' : ''}"
+                     "tabs--tab#{' tab__active' if active}"
                    end
 
     @building_tabs << if block_given?

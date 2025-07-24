@@ -1,0 +1,39 @@
+en:
+  comments:
+    errors:
+      disabled_on_archived_threads: >
+        Archived threads cannot be replied to.
+      disabled_on_deleted_posts: >
+        Comments are disabled on deleted posts.
+      disabled_on_deleted_threads: >
+        Deleted threads cannot be replied to.
+      disabled_on_locked_posts: >
+        Comments are disabled on locked posts.
+      disabled_on_locked_threads: >
+        Locked threads cannot be replied to.
+      disabled_on_post_specific: >
+        Comments on this post are disabled.
+      disabled_on_post_generic: >
+        This post cannot be commented on.
+      disabled_on_thread_generic: >
+        This thread cannot be replied to.
+      mod_only_undelete: >
+        Threads deleted by a moderator can only be undeleted by a moderator.
+      new_user_rate_limited: >
+        As a new user, you can only comment on your own posts and on answers to them.
+      rate_limited: >
+        You have used your daily limit of %{count} comments. Come back tomorrow to continue.
+      exempt_from_disabled: >
+        However, you are exempt as a moderator.
+      delete_comment_server_error: >
+        Something went wrong when trying to delete the comment.
+      undelete_comment_server_error: >
+        Something went wrong when trying to undelete the comment.
+    labels:
+      create_new_thread: >
+        Start new comment thread
+      reply_to_thread: >
+        Reply to this thread
+    warnings:
+      unrelated_user_not_pinged: >
+        This user was not notified because they have not participated in this thread.

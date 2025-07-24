@@ -14,7 +14,7 @@
   <img src="/assets/codidactyl.png" height="16" width="16" alt="Codidactyl" />
 </p>
 
-<% if moderator? %>
+<% if at_least_moderator? %>
   <% deleted_object = @user.deleted? ? @user : @user.community_user %>
   <% deletion_type = @user.deleted? ? 'User' : 'Profile' %>
   <p class="has-font-size-caption has-color-tertiary-600">

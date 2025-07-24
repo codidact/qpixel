@@ -6,7 +6,7 @@
     "module": "none",
     "noEmit": true,
     "target": "ES2021",
-    "types": ["./global.d.ts", "jquery", "select2"]
+    "types": ["./global.d.ts", "@types/jquery", "@types/select2"]
   },
   "include": ["./app/assets/javascripts"],
   "exclude": [

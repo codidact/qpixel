@@ -21,22 +21,31 @@ $(() => {
     }
   });
 
+  const $postFields = $('.post-field');
+
+  /** @type {JQuery<HTMLFormElement>} */
   const $uploadForm = $('.js-upload-form');
 
+  /**
+   * Inserts text at a given {@link idx} in a given {@link str}
+   * @param {string} str text to insert into
+   * @param {number} idx position to insert at
+   * @param {string} insert text to insert
+   * @returns {string}
+   */
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
 
   const placeholder = "![Uploading, please wait...]()";
 
   $uploadForm.find('input[type="file"]').on('change', async (evt) => {
-    const $postField = $('.js-post-field');
-    const postText = $postField.val();
-    const cursorPos = $postField[0].selectionStart;
+    /** @type {HTMLInputElement} */
+    const postField = document.querySelector('.js-post-field');
+    const postText = postField.value;
+    const cursorPos = postField.selectionStart;
 
-    $postField.val(stringInsert(postText, cursorPos, placeholder));
+    postField.value = stringInsert(postText, cursorPos, placeholder);
 
-    const $tgt = $(evt.target);
-    const $form = $tgt.parents('form');
-    $form.submit();
+    $uploadForm.trigger('submit')
   });
 
   $uploadForm.on('submit', async (evt) => {
@@ -45,14 +54,24 @@ $(() => {
     const $tgt = $(evt.target);
 
     const $fileInput = $tgt.find('input[type="file"]');
-    const files = $fileInput[0].files;
+    const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
+
+    // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
-      $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+      const isUploadModalOpened = $('#markdown-image-upload').hasClass('is-active');
+
       const postField = $('.js-post-field');
       postField.val(postField.val()?.toString().replace(placeholder, ''));
-      setTimeout(() => {
-        $tgt.find('.js-max-size').removeClass('error-shake');
-      }, 1000);
+
+      if (!isUploadModalOpened) {
+        QPixel.createNotification('danger', `Can't upload files with size more than 2MB`);
+      } else {
+        $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
+        setTimeout(() => {
+          $tgt.find('.js-max-size').removeClass('error-shake');
+        }, 1000);
+      }
+
       return;
     }
     else {
@@ -61,9 +80,11 @@ $(() => {
 
     const resp = await fetch($tgt.attr('action'), {
       method: $tgt.attr('method'),
-      body: new FormData($tgt[0])
+      body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
     });
+
     const data = await resp.json();
+
     if (resp.status === 200) {
       $tgt.trigger('ajax:success', data);
     }
@@ -74,12 +95,14 @@ $(() => {
 
   $uploadForm.on('ajax:success', async (evt, data) => {
     const $tgt = $(evt.target);
-    $tgt[0].reset();
+    /** @type {HTMLFormElement} */ ($tgt[0]).reset();
 
     const $postField = $('.js-post-field');
     const postText = $postField.val()?.toString();
     $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
     $tgt.parents('.modal').removeClass('is-active');
+
+    $postFields.trigger('change')
   });
 
   $uploadForm.on('ajax:failure', async (evt, data) => {
@@ -118,15 +141,7 @@ $(() => {
       return;
     }
 
-    const resp = await fetch('/posts/save-draft', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ...draft, path: location.pathname })
-    });
+    const resp = await QPixel.fetchJSON('/posts/save-draft', { ...draft, path: location.pathname });
 
     if (resp.status === 200) {
       const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
@@ -187,8 +202,6 @@ $(() => {
   let featureTimeout = null;
   let draftTimeout = null;
 
-  const postFields = $('.post-field');
-
   const draftFieldsSelectors = [
     '.js-post-field',
     '.js-license-select',
@@ -209,15 +222,20 @@ $(() => {
     }, 1000);
   });
 
-  postFields.on('paste', async (evt) => {
-    if (evt.originalEvent.clipboardData.files.length > 0) {
+  $postFields.on('paste', async (evt) => {
+    const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
+    if (eventData.clipboardData.files.length > 0) {
+      // must be called to prevent raw file name to be inserted after the placeholder
+      evt.preventDefault()
+
+      /** @type {JQuery<HTMLInputElement>} */
       const $fileInput = $uploadForm.find('input[type="file"]');
-      $fileInput[0].files = evt.originalEvent.clipboardData.files;
+      $fileInput[0].files = eventData.clipboardData.files;
       $fileInput.trigger('change');
     }
   });
 
-  postFields.on('focus keyup paste change markdown', (() => {
+  $postFields.on('focus keyup paste change markdown', (() => {
     let previous = null;
     return (evt) => {
       const $tgt = $(evt.target);
@@ -281,7 +299,7 @@ $(() => {
     };
   })()).trigger('markdown');
 
-  postFields.parents('form').on('submit', async (ev) => {
+  $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
     const field = $tgt.find('.post-field');
 
@@ -295,15 +313,7 @@ $(() => {
 
     // Draft handling
     if (!draftDeleted) {
-      const resp = await fetch('/posts/delete-draft', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'X-CSRF-Token': QPixel.csrfToken(),
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ path: location.pathname })
-      });
+      const resp = await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
       if (resp.status === 200) {
         $tgt.attr('data-draft-deleted', 'true');
 
@@ -355,7 +365,7 @@ $(() => {
       }
 
       setTimeout(() => {
-        $tgt.find('input[type="submit"]').attr('disabled', false);
+        $tgt.find('input[type="submit"]').attr('disabled', null);
       }, 1000);
     }
   });
@@ -425,14 +435,11 @@ $(() => {
 
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post-id');
-    const resp = await fetch(`/posts/${postId}/promote`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      }
-    });
+
+    const resp = await QPixel.fetchJSON(`/posts/${postId}/promote`, {});
+
     const data = await resp.json();
+
     if (data.success) {
       QPixel.createNotification('success', 'Added post to promotion list.');
     }
@@ -451,15 +458,7 @@ $(() => {
       return;
     }
 
-    await fetch('/posts/delete-draft', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ path: location.pathname })
-    });
+    await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
 
     location.href = $btn.attr('href');
   });

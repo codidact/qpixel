@@ -7,7 +7,7 @@ class ModWarningControllerTest < ActionController::TestCase
     sign_out :user
     [:log, :new].each do |path|
       get path, params: { user_id: users(:standard_user).id }
-      assert_response(404)
+      assert_response(:not_found)
     end
   end
 
@@ -15,7 +15,18 @@ class ModWarningControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     [:log, :new].each do |path|
       get path, params: { user_id: users(:standard_user).id }
-      assert_response(404)
+      assert_response(:not_found)
+    end
+  end
+
+  test 'mods or admins should be able to access pages' do
+    [users(:moderator), users(:admin)].each do |user|
+      sign_in user
+
+      [:log, :new].each do |path|
+        get path, params: { user_id: users(:standard_user).id }
+        assert_response(:success)
+      end
     end
   end
 
@@ -57,5 +68,19 @@ class ModWarningControllerTest < ActionController::TestCase
     post :approve, params: { approve_checkbox: true }
     @warning.reload
     assert_not @warning.active
+  end
+
+  test 'lift should correctly deactivate user suspensions' do
+    sign_in users(:moderator)
+
+    std = users(:standard_user)
+    warning = mod_warnings(:third_warning)
+
+    warning.update(active: true)
+    post :lift, params: { user_id: std.id }
+
+    assert_response(:found)
+    warning.reload
+    assert_not warning.active
   end
 end

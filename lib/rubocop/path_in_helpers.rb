@@ -5,7 +5,7 @@ module RuboCop::Cop::Lint
     def_node_matcher :method_call, '(send nil? $_ ...)'
 
     MSG = "Don't use _path URL helpers in helper methods; use _url instead.".freeze
-    PATH_HELPER = /^[\da-zA-z_]+_path$/.freeze
+    PATH_HELPER = /^[\da-zA-Z_]+_path$/
 
     def on_send(node)
       method_call(node) do |name|

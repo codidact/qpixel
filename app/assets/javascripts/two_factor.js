@@ -4,14 +4,9 @@ $(() => {
       const $tgt = $(ev.target);
       const $input = $tgt.find('input[name="code"]');
       const code = $input.val();
-      const req = await fetch('/users/two-factor/backup', {
-          method: 'POST',
-          headers: {
-              'X-CSRF-Token': QPixel.csrfToken(),
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ code })
-      });
+
+      const req = await QPixel.fetchJSON('/users/two-factor/backup', { code });
+
       const res = await req.json();
 
       if (res.status === 'error') {

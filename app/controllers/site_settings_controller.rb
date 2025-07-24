@@ -4,10 +4,10 @@ class SiteSettingsController < ApplicationController
   before_action :verify_admin
   before_action :verify_global_admin, only: [:global]
 
-  # Checks if a given user has access to site settings on a given community
-  # @param [User] user user to check access for
-  # @param [String, nil] community_id id of the community to check access on
-  # @return [Boolean]
+  # Does a given user have access to site settings on a given community?
+  # @param user [User] user to check access for
+  # @param community_id [String, nil] id of the community to check access on
+  # @return [Boolean] Check result
   def access?(user, community_id)
     community_id.present? || user.is_global_admin
   end
@@ -35,9 +35,9 @@ class SiteSettingsController < ApplicationController
   end
 
   # Adds an audit log for a given site setting update event
-  # @param [User] user initiating user
-  # @param [SiteSetting] before current site setting
-  # @param [SiteSetting] after updated site setting
+  # @param user [User] initiating user
+  # @param before [SiteSetting] current site setting
+  # @param after [SiteSetting] updated site setting
   # @return [void]
   def audit_update(user, before, after)
     AuditLog.admin_audit(event_type: 'setting_update',
@@ -47,16 +47,16 @@ class SiteSettingsController < ApplicationController
   end
 
   # Deletes cache for a given site setting for a given community
-  # @param [SiteSetting] setting site setting to clear cache for
-  # @param [String, nil] community_id community id to clear cache for
-  # @return [Boolean]
+  # @param setting [SiteSetting] site setting to clear cache for
+  # @param community_id [String, nil] community id to clear cache for
+  # @return [Boolean] Whether th cache has been successfully deleted
   def clear_cache(setting, community_id)
     Rails.cache.delete("SiteSettings/#{community_id}/#{setting.name}", include_community: false)
   end
 
   # Actually creates a given site setting
-  # @param [SiteSetting] setting site setting to create
-  # @param [String, nil] community_id community id to create a setting for
+  # @param setting [SiteSetting] site setting to create
+  # @param community_id [String, nil] community id to create a setting for
   # @return [SiteSetting]
   def do_create(setting, community_id)
     SiteSetting.create(name: setting.name,
@@ -69,13 +69,13 @@ class SiteSettingsController < ApplicationController
 
   def update
     unless access?(current_user, params[:community_id])
-      not_found
+      not_found!
       return
     end
 
     @setting = if params[:community_id].present?
                  matches = SiteSetting.unscoped.where(community_id: RequestContext.community_id, name: params[:name])
-                 if matches.count.zero?
+                 if matches.none?
                    global = SiteSetting.unscoped.where(community_id: nil, name: params[:name]).first
                    do_create(global, RequestContext.community_id)
                  else

@@ -1,6 +1,8 @@
 require 'application_system_test_case'
 
-class PostTest < ApplicationSystemTestCase
+# Renamed from PostTest to PostSystemTest to avoid clash with test/models/post_test.rb
+# when running rails test:all
+class PostSystemTest < ApplicationSystemTestCase
   # -------------------------------------------------------
   # Create
   # -------------------------------------------------------
@@ -126,7 +128,7 @@ class PostTest < ApplicationSystemTestCase
 
     # Check that answers are displayed somewhere on the page
     assert post.children.any?, 'The post for this system test should have answers'
-    post.children.where(deleted: false).each do |child|
+    post.children.undeleted.each do |child|
       assert_text child.body
     end
   end
@@ -136,6 +138,8 @@ class PostTest < ApplicationSystemTestCase
     visit post_url(post)
 
     click_on 'Active'
+
+    assert post.children.count > 1, 'Answer buttons are only shown for posts with more than one answer'
 
     assert_current_path post_url(post, sort: 'active')
   end

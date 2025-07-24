@@ -18,6 +18,9 @@ $(() => {
       return;
     }
 
+    /**
+     * @type {QPixelPopupCallback}
+     */
     const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('post-type-id');

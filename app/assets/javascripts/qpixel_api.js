@@ -21,6 +21,7 @@ let popped_modals_ct = 0;
  * @typedef {{
  *  id: number,
  *  username: string,
+ *  is_standard: boolean,
  *  is_moderator: boolean,
  *  is_admin: boolean,
  *  is_global_moderator: boolean,
@@ -31,22 +32,12 @@ let popped_modals_ct = 0;
  */
 
 window.QPixel = {
-  /**
-   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
-   * making AJAX POST requests.
-   * @returns {string}
-   */
   csrfToken: () => {
     const token = $('meta[name="csrf-token"]').attr('content');
     QPixel.csrfToken = () => token;
     return token;
   },
 
-  /**
-   * Create a notification popup - not an inbox notification.
-   * @param type the type to apply to the popup - warning, danger, etc.
-   * @param message the message to show
-   */
   createNotification: function (type, message) {
     // Some messages include a date stamp, `append_date` governs that.
     let append_date = false;
@@ -57,7 +48,7 @@ window.QPixel = {
          * over and over again is going to create multiple error modals in the same exact place. While this happens this
          * way, an user closing the error modal will not have an immediate visual action feedback if two or more error
          * modals have been printed. A date is stamped in order to cope with that. Could be anything. Probably a cycle
-         * of different emoji characters would be cuter while having the purpose met. But if so make sure character in
+         * of different emoji characters would be cuter while having the purpose met. But if so, make sure character in
          * step `i` is actually different than character in step `i + 1`. And then you could print an emoji just every
          * time a modal is popped up, not just from the second one; removing `message_with_date`, using only `message`,
          * and removing `append_date` and the different situations guarded by it. */
@@ -92,11 +83,6 @@ window.QPixel = {
     popped_modals_ct += 1;
   },
 
-  /**
-   * Get the absolute offset of an element.
-   * @param el the element for which to find the offset.
-   * @returns {{top: number, left: number, bottom: number, right: number}}
-   */
   offset: function (el) {
     const topLeft = $(el).offset();
     return {
@@ -107,14 +93,6 @@ window.QPixel = {
     };
   },
 
-  /**
-   * Add a button to the Markdown editor.
-   * @param $buttonHtml the HTML content that the button should show - just text, if you like, or
-   *                    something more complex if you want to.
-   * @param shortName a short name for the action that will be used as the title and aria-label attributes.
-   * @param callback a function that will be passed as the click event callback - should take one
-   *                 parameter, which is the event object.
-   */
   addEditorButton: function ($buttonHtml, shortName, callback) {
     const html = `<a href="javascript:void(0)" class="button is-muted is-outlined" title="${shortName}"
                      aria-label="${shortName}"></a>`;
@@ -136,27 +114,10 @@ window.QPixel = {
     insertButton();
   },
 
-  /**
-   * Add a validator that will be called before creating a post.
-   * callback should take one parameter, the post text, and should return an array in
-   * the following format:
-   *
-   * [
-   *   true | false,  // is the post valid for this check?
-   *   [
-   *     { type: 'warning', message: 'warning message - will not block posting' },
-   *     { type: 'error', message: 'error message - will block posting' }
-   *   ]
-   * ]
-   */
   addPrePostValidation: function (callback) {
     validators.push(callback);
   },
 
-  /**
-   * Internal. Called just before a post is sent to the server to validate that it passes
-   * all custom checks.
-   */
   validatePost: function (postText) {
     const results = validators.map((x) => x(postText));
     const valid = results.every((x) => x[0]);
@@ -168,11 +129,6 @@ window.QPixel = {
     }
   },
 
-  /**
-   * Replace the selected text in an input field with a provided replacement.
-   * @param $field the field in which to replace text
-   * @param text the text with which to replace the selection
-   */
   replaceSelection: ($field, text) => {
     const prev = $field.val()?.toString();
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
@@ -194,10 +150,6 @@ window.QPixel = {
    */
   _user: null,
 
-  /**
-   * FIFO-style fetch wrapper for /users/me requests
-   * @returns {Promise<Response>}
-   */
   _fetchUser () {
     if (QPixel._pendingUserResponse) {
       return QPixel._pendingUserResponse;
@@ -215,10 +167,6 @@ window.QPixel = {
     return myselfPromise;
   },
 
-  /**
-   * Get the user object for the current user.
-   * @returns {Promise<User>} a JSON object containing user details
-   */
   user: async () => {
     if (QPixel._user != null || document.body.dataset.userId === 'none') {
       return QPixel._user;
@@ -241,11 +189,6 @@ window.QPixel = {
 
   _preferences: null,
 
-  /**
-   * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
-   * localStorage, or Redis via AJAX.
-   * @returns {Promise<UserPreferences>} a JSON object containing user preferences
-   */
   _getPreferences: async () => {
     // Early return for the most frequent case (local variable already contains the preferences)
     if (QPixel._preferences != null) {
@@ -266,12 +209,6 @@ window.QPixel = {
     return QPixel._preferences;
   },
 
-  /**
-   * Get a single user preference by name.
-   * @param name the name of the requested preference
-   * @param community is the requested preference community-local (true), or network-wide (false)?
-   * @returns {Promise<string>} the value of the requested preference
-   */
   preference: async (name, community = false) => {
     const user = await QPixel.user();
 
@@ -294,25 +231,13 @@ window.QPixel = {
     return value;
   },
 
-  /**
-   * Set a user preference by name to the value provided.
-   * @param name the name of the preference to set
-   * @param value the value to set to - must respond to toString() for localStorage and Redis
-   * @param community is this preference community-local (true), or network-wide (false)?
-   * @returns {Promise<void>}
-   */
   setPreference: async (name, value, community = false) => {
-    const resp = await fetch('/users/me/preferences', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name, value, community})
+    const resp = await QPixel.fetchJSON('/users/me/preferences', { name, value, community }, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
+
     if (data.status !== 'success') {
       console.error(`Preference persist failed (${name})`);
       console.error(resp);
@@ -322,9 +247,6 @@ window.QPixel = {
     }
   },
 
-  /**
-   * @returns {Promise<Record<string, Filter>>}
-   */
   filters: async () => {
     if (this._filters == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
@@ -343,11 +265,6 @@ window.QPixel = {
     return this._filters;
   },
 
-  /**
-   * Fetches default user filter for a given category
-   * @param categoryId id of the category to fetch
-   * @returns {Promise<string>}
-   */
   defaultFilter: async (categoryId) => {
     const user = await QPixel.user();
 
@@ -367,29 +284,17 @@ window.QPixel = {
   },
 
   setFilterAsDefault: async (categoryId, name) => {
-    await fetch(`/categories/${categoryId}/filters/default`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name})
+    await QPixel.fetchJSON(`/categories/${categoryId}/filters/default`, { name }, {
+      headers: { 'Accept': 'application/json' }
     });
   },
 
   setFilter: async (name, filter, category, isDefault) => {
-    const resp = await fetch('/users/me/filters', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(Object.assign(filter, {name, category, is_default: isDefault}))
-    });
+    const resp = await QPixel.fetchJSON('/users/me/filters',
+      Object.assign(filter, {name, category, is_default: isDefault}), {
+        headers: { 'Accept': 'application/json' }
+      });
+    
     const data = await resp.json();
     if (data.status !== 'success') {
       console.error(`Filter persist failed (${name})`);
@@ -402,17 +307,12 @@ window.QPixel = {
   },
 
   deleteFilter: async (name, system = false) => {
-    const resp = await fetch('/users/me/filters', {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({name, system})
+    const resp = await QPixel.fetchJSON('/users/me/filters', { name, system }, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
+
     if (data.status !== 'success') {
       console.error(`Filter deletion failed (${name})`);
       console.error(resp);
@@ -423,10 +323,6 @@ window.QPixel = {
     }
   },
 
-  /**
-   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
-   * @returns string the localStorage key
-   */
   _preferencesLocalStorageKey: () => {
     const id = document.body.dataset.userId;
     const key = `qpixel.user_${id}_preferences`;
@@ -434,10 +330,6 @@ window.QPixel = {
     return key;
   },
 
-  /**
-   * Call _fetchPreferences but only the first time to prevent redundant HTTP requests
-   * @returns {Promise<void>}
-   */
   _cachedFetchPreferences: async () => {
     // No 'await' because we want the promise not its value
     const cachedPromise = QPixel._fetchPreferences();
@@ -450,10 +342,6 @@ window.QPixel = {
     await cachedPromise;
   },
 
-  /**
-   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
-   * @returns {Promise<void>}
-   */
   _fetchPreferences: async () => {
     const resp = await fetch('/users/me/preferences', {
       credentials: 'include',
@@ -465,22 +353,12 @@ window.QPixel = {
     QPixel._updatePreferencesLocally(data);
   },
 
-  /**
-   * Set local variable _preferences and localStorage to new preferences data
-   * @param data an object, containing the new preferences data
-   */
   _updatePreferencesLocally: (data) => {
     QPixel._preferences = data;
     const key = QPixel._preferencesLocalStorageKey();
     localStorage[key] = JSON.stringify(QPixel._preferences);
   },
 
-  /**
-   * Get the word in a string that the given position is in, and the position within that word.
-   * @param splat an array, containing the string already split by however you define a "word"
-   * @param posIdx the index to search for
-   * @returns {[string, number]} the word the given position is in, and the position within that word
-   */
   currentCaretSequence: (splat, posIdx) => {
     let searchIdx = 0;
     let splatIdx = 0;
@@ -493,5 +371,116 @@ window.QPixel = {
       splatIdx += 1;
     } while (searchIdx < posIdx);
     return [currentSequence, posInSeq];
+  },
+
+  fetchJSON: async (uri, data, options) => {
+    const defaultHeaders = {
+      'X-CSRF-Token': QPixel.csrfToken(),
+      'Content-Type': 'application/json',
+    };
+
+    const { headers = {}, ...otherOptions } = options ?? {};
+
+    /** @type {RequestInit} */
+    const requestInit = {
+      method: 'POST',
+      headers: {
+        ...defaultHeaders,
+        ...headers,
+      },
+      credentials: 'include',
+      body: otherOptions.method === 'GET' ? void 0 : JSON.stringify(data),
+      ...otherOptions,
+    };
+
+    return fetch(uri, requestInit);
+  },
+
+  getJSON: async (uri, options = {}) => {
+    return QPixel.fetchJSON(uri, {}, {
+      ...options,
+      method: 'GET',
+    });
+  },
+
+  getComment: async (id) => {
+    const resp = await fetch(`/comments/${id}`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  getThreadContent: async (id, options) => {
+    const inline = options?.inline ?? true;
+    const showDeleted = options?.showDeleted ?? false;
+
+    const url = new URL(`/comments/thread/${id}/content`, window.location.origin);
+    url.searchParams.append('inline', `${inline}`);
+    url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
+  },
+
+  getThreadsListContent: async (id) => {
+    const url = new URL(`/comments/post/${id}`, window.location.origin);
+
+    const resp = await fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
+    });
+
+    const content = await resp.text();
+
+    return content;
+  },
+
+  handleJSONResponse: (data, onSuccess) => {
+    if (data.status === 'success') {
+      onSuccess(data)
+    }
+    else {
+      QPixel.createNotification('danger', data.message);
+    }
+  },
+
+  deleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'DELETE'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  undeleteComment: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+      method: 'PATCH'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  lockThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/restrict`, {
+      type: 'lock'
+    });
+
+    const data = await resp.json();
+
+    return data;
   }
 };

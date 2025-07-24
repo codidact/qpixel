@@ -57,3 +57,9 @@ on_answer:
   reply_count: 0
   post: answer_one
   community: sample
+
+new_user_on_own_post:
+  title: new user on own post
+  reply_count: 0
+  post: new_user_question
+  community: sample
