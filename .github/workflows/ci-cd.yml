@@ -11,6 +11,12 @@ on:
 env:
   RAILS_ENV: test
 
+permissions:
+  actions: write
+  contents: read
+  issues: read
+  pull-requests: read
+
 jobs:
   erb_lint:
     name: ERB checking
