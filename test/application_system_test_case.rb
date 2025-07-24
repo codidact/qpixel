@@ -97,4 +97,16 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
             'but could not select it from options without creating a new tag.'
     end
   end
+
+  def create_post(button_label, body, title, tags)
+    click_button(button_label)
+    fill_in("Body", with: body)
+    fill_in("Summarize your post with a title:", with: title)
+
+    tags.each do |tag|
+      post_form_select_tag(tag)
+    end
+
+    click_button("Save Post in ")
+  end
 end
