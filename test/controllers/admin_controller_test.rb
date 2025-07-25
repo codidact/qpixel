@@ -157,4 +157,12 @@ class AdminControllerTest < ActionController::TestCase
       assert_not_nil flash[:success]
     end
   end
+
+  test 'audit log should work with filter params' do
+    sign_in users(:admin)
+    get :audit_log, params: { log_type: 'admin_audit', event_type: 'setting_update', from: '2025-04-13',
+                              to: '2025-04-13' }
+    assert_response(:success)
+    assert_not_nil assigns(:logs)
+  end
 end
