@@ -5,7 +5,6 @@ class CIFailuresTest < ApplicationSystemTestCase
     assert true
   end
 
-
   test 'Anyone can view question' do
     post = posts(:question_one)
     visit post_url(post)
