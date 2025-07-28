@@ -1,5 +1,3 @@
-# Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
-# application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
 class User < ApplicationRecord
   include ::UsernameValidations
   include ::UserRateLimits
@@ -14,6 +12,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :lockable, :omniauthable, :saml_authenticatable
 
+  has_many :apps, class_name: 'MicroAuth::App', dependent: :destroy
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
@@ -38,10 +37,10 @@ class User < ApplicationRecord
 
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
   validate :email_domain_not_blocklisted
-  validate :is_not_blocklisted
+  validate :not_blocklisted?
   validate :email_not_bad_pattern
 
-  delegate :trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -49,6 +48,12 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
+
+  # Safely gets the user's trust level even if they don't have a community user
+  # @return [Integer] user's trust level
+  def trust_level
+    community_user&.trust_level || 0
   end
 
   # Is the user a new user?
@@ -66,8 +71,7 @@ class User < ApplicationRecord
 
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
-  # rubocop:disable Naming/PredicateName
-  def has_post_privilege?(name, post)
+  def post_privilege?(name, post)
     post.user == self || privilege?(name)
   end
 
@@ -148,6 +152,14 @@ class User < ApplicationRecord
     can_comment_on?(thread.post) && !thread.read_only?
   end
 
+  # Can the user see a given category at all?
+  # @param category [Category] category to check
+  # @return [Boolean] check result
+  def can_see_category?(category)
+    category_trust_level = category.min_view_trust_level || -1
+    trust_level >= category_trust_level
+  end
+
   # Is the user allowed to see deleted posts?
   # @return [Boolean] check result
   def can_see_deleted_posts?
@@ -168,7 +180,7 @@ class User < ApplicationRecord
   def can_update?(post, post_type)
     return false unless can_post_in?(post.category)
 
-    has_post_privilege?('edit_posts', post) || at_least_moderator? || \
+    post_privilege?('edit_posts', post) || at_least_moderator? ||
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
@@ -353,8 +365,8 @@ class User < ApplicationRecord
     end
   end
 
-  def is_not_blocklisted
-    return unless saved_changes.include? 'email'
+  def not_blocklisted?
+    return true unless saved_changes.include? 'email'
 
     email_domain = email.split('@')[-1]
     is_mail_blocked = BlockedItem.emails.where(value: email)
@@ -445,7 +457,7 @@ class User < ApplicationRecord
     }.each do |key, prefs|
       saved = RequestContext.redis.hgetall(key)
       valid_prefs = prefs.keys
-      deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
+      deprecated = saved.except(*valid_prefs).map { |k, _v| k }
       unless deprecated.empty?
         RequestContext.redis.hdel key, *deprecated
       end
@@ -456,7 +468,7 @@ class User < ApplicationRecord
     preferences[community ? :community : :global][name]
   end
 
-  def has_active_flags?(post)
+  def active_flags_on?(post)
     !post.flags.where(user: self, status: nil).empty?
   end
 
@@ -491,6 +503,4 @@ class User < ApplicationRecord
   def votes_by_post_type
     votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
   end
-
-  # rubocop:enable Naming/PredicateName
 end

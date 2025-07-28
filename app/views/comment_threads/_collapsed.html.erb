@@ -21,6 +21,6 @@
   <% elsif thread.locked? %>
     <i class="fas fa-lock fa-fw" title="Locked thread" aria-label="Locked thread"></i>
   <% end %>
-  <%= link_to thread.title, comment_thread_path(thread), class: 'js--comment-link', data: { thread: thread.id }, role: 'button' %>
+  <%= link_to render_pings_text(thread.title), comment_thread_path(thread), class: 'js--comment-link', data: { thread: thread.id }, role: 'button' %>
   (<%= pluralize(thread.reply_count, 'comment') %>)
 </div>

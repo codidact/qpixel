@@ -1,33 +1,26 @@
 module SearchHelper
-  def check_posts_permissions
-    (current_user&.at_least_moderator? ? Post : Post.undeleted)
-      .qa_only.list_includes
-  end
-
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
-  # Generates initial post list using {Post#qa_only}, including deleted posts for mods and admins. Takes search string
-  # from <tt>params[:search]</tt>, applies any qualifiers, and searches post bodies for the remaining term(s).
+  # Search uses MySQL FTS in boolean mode which is what provides advanced search syntax (excluding qualifiers)
+  # see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
   #
-  # Search uses MySQL fulltext search in boolean mode which is what provides advanced search syntax (excluding
-  # qualifiers) - see {MySQL manual 14.9.2}[https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html].
-  #
-  # @return [ActiveRecord::Relation<Post>]
-  def search_posts
-    posts = check_posts_permissions
-
-    qualifiers = params_to_qualifiers
+  # @param user [User] user for search context
+  # @param params [ActionController::Parameters] search parameters
+  # @return [[ActiveRecord::Relation<Post>, Array<Hash{Symbol => Object}>]]
+  def search_posts(user, params)
+    posts = Post.accessible_to(user)
+    qualifiers = params_to_qualifiers(params)
     search_string = params[:search]
 
     # Filter based on search string qualifiers
     if search_string.present?
       search_data = parse_search(search_string)
-      qualifiers += parse_qualifier_strings search_data[:qualifiers]
+      qualifiers += parse_qualifier_strings(search_data[:qualifiers])
       search_string = search_data[:search]
     end
 
-    posts = qualifiers_to_sql(qualifiers, posts)
+    posts = qualifiers_to_sql(qualifiers, posts, user)
     posts = posts.paginate(page: params[:page], per_page: 25)
 
     posts = if search_string.present?
@@ -79,8 +72,9 @@ module SearchHelper
 
   ##
   # Retrieves parameters from +params+, validates their values, and adds them to a qualifiers hash.
+  # @param params [ActionController::Parameters] params to convert to qualifiers
   # @return [Array<Hash{Symbol => Object}>]
-  def params_to_qualifiers
+  def params_to_qualifiers(params)
     valid_value = {
       date: /^[\d.]+(?:s|m|h|d|w|mo|y)?$/,
       status: /any|open|closed/,
@@ -131,7 +125,7 @@ module SearchHelper
     qualifiers.each do |q|
       search = search.gsub(q, '')
     end
-    search = search.gsub(/\\:/, ':').strip
+    search = search.gsub('\\:', ':').strip
     { qualifiers: qualifiers, search: search }
   end
 
@@ -222,10 +216,9 @@ module SearchHelper
   # @param qualifiers [Array<Hash{Symbol => Object}>] A qualifiers hash, as returned by other methods in this module.
   # @param query [ActiveRecord::Relation] An ActiveRecord query to which to add conditions based on the qualifiers.
   # @return [ActiveRecord::Relation]
-  def qualifiers_to_sql(qualifiers, query)
-    trust_level = current_user&.trust_level || 0
-    allowed_categories = Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
-    query = query.where(category_id: allowed_categories)
+  def qualifiers_to_sql(qualifiers, query, user)
+    categories = Category.accessible_to(user)
+    query = query.where(category_id: categories)
 
     qualifiers.each do |qualifier| # rubocop:disable Metrics/BlockLength
       case qualifier[:param]

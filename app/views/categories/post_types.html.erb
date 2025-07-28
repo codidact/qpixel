@@ -1,6 +1,12 @@
-<h1>What kind of post?</h1>
+<% header_title = @post_types.any? ? 'What kind of post?' : 'No allowed post types'
+   header_subtitle = @post_types.any? \
+    ? 'This category has more than one type of post available. Pick a post type to get started.'
+    : 'This category does not have any post types available.' 
+%>
+
+<h1><%= header_title %></h1>
 <p class="has-font-size-larger has-color-tertiary-500">
-  This category has more than one type of post available. Pick a post type to get started.
+  <%= header_subtitle %>
 </p>
 
 <% @post_types.each do |pt| %>

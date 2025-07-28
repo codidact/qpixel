@@ -34,3 +34,6 @@ en:
         Start new comment thread
       reply_to_thread: >
         Reply to this thread
+    warnings:
+      unrelated_user_not_pinged: >
+        This user was not notified because they have not participated in this thread.

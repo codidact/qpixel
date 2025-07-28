@@ -1,8 +1,10 @@
 require 'test_helper'
+require_relative 'concerns/users/users_abilities_test'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
+  include UsersAbilitiesTest
 
   test 'should get index' do
     get :index
@@ -457,8 +459,8 @@ class UsersControllerTest < ActionController::TestCase
                             when Post
                               item.deleted == false
                             when Comment
-                              item.comment_thread.deleted == false && \
-                              item.deleted == false && \
+                              item.comment_thread.deleted == false &&
+                              item.deleted == false &&
                               item.post.deleted == false
                             when PostHistory
                               item.post_history_type == edit_type

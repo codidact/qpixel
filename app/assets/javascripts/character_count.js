@@ -58,7 +58,8 @@ $(() => {
   $(document).on('keyup change paste', '[data-character-count]', (ev) => {
     const $tgt = $(ev.target);
     const $counter = $($tgt.attr('data-character-count'));
-    const $button = $counter.parents('form').find('input[type="submit"],.js-suggested-edit-approve');
+    const $form = $counter.parents('form');
+    const $button = $form.find('input[type="submit"],.js-suggested-edit-approve');
     const $count = $counter.find('.js-character-count__count');
     const $icon = $counter.find('.js-character-count__icon');
 
@@ -76,17 +77,22 @@ $(() => {
     if (gtnMax || ltnMin) {
       setCounterState($counter, 'error');
       setCounterIcon($icon, 'fa-times');
-      setSubmitButtonDisabledState($button, 'disabled');
       setInputValidationState($tgt, 'invalid');
     } else if (gteThreshold) {
       setCounterState($counter, 'warning');
       setCounterIcon($icon, 'fa-exclamation-circle');
-      setSubmitButtonDisabledState($button, 'enabled');
     } else {
       setCounterState($counter, 'default');
       setCounterIcon($icon, 'fa-check');
-      setSubmitButtonDisabledState($button, 'enabled');
       setInputValidationState($tgt, 'valid');
+    }
+
+    const submittable = $form[0]?.checkValidity() ?? false;
+
+    if (!submittable || gtnMax || ltnMin) {
+      setSubmitButtonDisabledState($button, 'disabled');
+    } else {
+      setSubmitButtonDisabledState($button, 'enabled');
     }
 
     $count.text(text);

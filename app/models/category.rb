@@ -11,9 +11,20 @@ class Category < ApplicationRecord
   belongs_to :license
   belongs_to :default_filter, class_name: 'Filter', optional: true
 
-  serialize :display_post_types, Array
+  serialize :display_post_types, coder: YAML, type: Array
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
+
+  # Can anyone view the category (even if not logged in)?
+  # @return [Boolean] check result
+  def public?
+    trust_level = min_view_trust_level || -1
+    trust_level <= 0
+  end
+
+  def top_level_post_types
+    post_types.where(is_top_level: true)
+  end
 
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
@@ -29,6 +40,18 @@ class Category < ApplicationRecord
 
   def update_activity(last_activity)
     RequestContext.redis.set("#{community_id}/#{id}/last_activity", last_activity)
+  end
+
+  # Gets categories appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<category>]
+  def self.accessible_to(user)
+    if user&.at_least_moderator?
+      return Category.all
+    end
+
+    trust_level = user&.trust_level || 0
+    Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
   end
 
   def self.by_lowercase_name(name)

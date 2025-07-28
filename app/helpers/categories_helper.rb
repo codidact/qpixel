@@ -17,7 +17,7 @@ module CategoriesHelper
       (defined?(@post) && !@post&.category.nil?) ||
       (defined?(@question) && !@question&.category.nil?) ||
       (defined?(@article) && !@article&.category.nil?) ||
-      (defined?(@edit) && !@edit&.post&.category&.nil?)
+      (defined?(@edit) && !@edit&.post&.category.nil?)
   end
 
   ##

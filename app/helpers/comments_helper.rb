@@ -1,5 +1,19 @@
 # Helpers related to comments.
 module CommentsHelper
+  # Generates a comment thread title from its body
+  # @param body [String] coment thread body
+  # @return [String] generated title
+  def generate_thread_title(body)
+    body = strip_markdown(body)
+    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+
+    if body.length > 100
+      "#{body[0..100]}..."
+    else
+      body
+    end
+  end
+
   ##
   # Get a link to the specified comment, accounting for deleted comments.
   # @param comment [Comment]
@@ -13,24 +27,52 @@ module CommentsHelper
     end
   end
 
+  # Gets a link to a given comment's user
+  # @param comment [Comment] comment to link the user for
+  # @return [String] comment user link
+  def comment_user_link(comment)
+    user_link(comment.user, { host: comment.community.host })
+  end
+
+  # Gets a list of pinged users for a given content
+  # @param content [String] content to get pinged users from
+  # @return [Hash{String => User}] list of pinged users
+  def pinged_users(content)
+    user_ids = content.scan(/@#(\d+)/).map { |g| g[0].to_i }
+    User.where(id: user_ids).to_a.to_h { |u| [u.id, u] }
+  end
+
   ##
-  # Process a comment and convert ping-strings (i.e. @#1234) into links.
-  # @param comment [String] The text of the comment to process.
-  # @param pingable [Array<Integer>, nil] A list of user IDs that should be pingable in this comment. Any user IDs not
-  #   present in the list will be displayed as 'unpingable'.
+  # Converts all ping-strings (i.e. @#1234) into links.
+  # @param content [String] content to convert ping-strings for
+  # @param pingable [Array<Integer>, nil] A list of user IDs. Any user ID not present will be displayed as 'unpingable'.
   # @return [ActiveSupport::SafeBuffer]
-  def render_pings(comment, pingable: nil)
-    comment.gsub(/@#\d+/) do |id|
-      u = User.where(id: id[2..-1].to_i).first
-      if u.nil?
-        id
+  def render_pings(content, pingable: nil)
+    users = pinged_users(content)
+
+    content.gsub(/@#(\d+)/) do |ping|
+      user = users[Regexp.last_match(1).to_i]
+      if user.nil?
+        ping
       else
-        was_pung = pingable.present? && pingable.include?(u.id)
-        classes = "ping #{u.id == current_user&.id ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
-        user_link u, class: classes, dir: 'ltr',
-                  title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
+        was_pung = pingable.present? && pingable.include?(user.id)
+        classes = "ping #{'me' if user.same_as?(current_user)} #{'unpingable' unless was_pung}"
+        user_link user, class: classes, dir: 'ltr',
+                  title: was_pung ? '' : I18n.t('comments.warnings.unrelated_user_not_pinged')
       end
     end.html_safe
+  end
+
+  # Converts all ping-strings (i.e. @#1234) in content into usernames for use in text-only contexts
+  # @param content [String] content to convert ping-strings for
+  # @return [String] processed content
+  def render_pings_text(content)
+    users = pinged_users(content)
+
+    content.gsub(/@#(\d+)/) do |ping|
+      user = users[Regexp.last_match(1).to_i]
+      user.nil? ? ping : "@#{rtl_safe_username(user)}"
+    end
   end
 
   ##
@@ -105,34 +147,6 @@ module CommentsHelper
   def rate_limited_error_msg(user, post)
     comments_count = user.recent_comments_count(post)
     I18n.t('comments.errors.rate_limited', count: comments_count)
-  end
-
-  ##
-  # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
-  # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
-  # @param thread [CommentThread]
-  # @return [Array<Integer>]
-  def get_pingable(thread)
-    post = thread.post
-
-    # post author +
-    # answer authors +
-    # last 500 history event users +
-    # last 500 comment authors +
-    # all thread followers
-    query = <<~END_SQL
-      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{thread.id || '-1'}
-    END_SQL
-
-    ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 
   ##

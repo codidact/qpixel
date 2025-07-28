@@ -36,7 +36,7 @@ module ApplicationHelper
   # @param privilege [String] The +internal_id+ of the privilege to query.
   # @return [Boolean]
   def check_your_post_privilege(post, privilege)
-    !current_user.nil? && current_user&.has_post_privilege?(privilege, post)
+    !current_user.nil? && current_user&.post_privilege?(privilege, post)
   end
 
   ##
@@ -102,8 +102,6 @@ module ApplicationHelper
     end
   end
 
-  # rubocop:disable Layout/LineLength because obviously rubocop has a problem with documentation
-
   ##
   # Converts a number to short-form humanized display, i.e. 100,000 = 100k. Parameters as for
   # {ActiveSupport::NumberHelper#number_to_human}[https://www.rubydoc.info/gems/activesupport/ActiveSupport/NumberHelper#number_to_human-instance_method]
@@ -113,8 +111,6 @@ module ApplicationHelper
              format: '%n%u' }.merge(opts)
     ActiveSupport::NumberHelper.number_to_human(*args, **opts)
   end
-
-  # rubocop:enable Layout/LineLength
 
   ##
   # Render a markdown string to HTML with consistent options.
@@ -163,6 +159,10 @@ module ApplicationHelper
   # @param params [Hash{Symbol => #to_s}] additional URL params
   # @return [String]
   def generic_share_link(post, **params)
+    unless params.key?(:host)
+      params.store(:host, post.community.host)
+    end
+
     if second_level_post_types.include?(post.post_type_id)
       answer_post_url({
         id: post.parent_id,

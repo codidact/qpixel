@@ -32,7 +32,8 @@ class FlagsControllerTest < ActionController::TestCase
 
   test 'should add status to flag' do
     sign_in users(:moderator)
-    post :resolve, params: { id: flags(:one).id, result: 'ABCDEF', message: 'ABCDEF GHIJKL MNOPQR STUVWX YZ' }
+
+    try_resolve_flag(flags(:one), result: 'Helpful', message: 'Please send us more flags')
 
     assert_not_nil assigns(:flag)
     assert_not_nil assigns(:flag).status
@@ -61,25 +62,25 @@ class FlagsControllerTest < ActionController::TestCase
 
   test 'should require authentication to resolve flag' do
     sign_out :user
-    post :resolve, params: { id: flags(:one).id }
+    try_resolve_flag(flags(:one))
     assert_response(:found)
   end
 
   test 'should require moderator status to resolve flag' do
     sign_in users(:standard_user)
-    post :resolve, params: { id: flags(:one).id }
+    try_resolve_flag(flags(:one))
     assert_response(:not_found)
   end
 
   test 'should not allow non-moderator users to resolve flags on themselves' do
     sign_in users(:deleter)
-    post :resolve, params: { id: flags(:on_deleter).id }
+    try_resolve_flag(flags(:on_deleter))
     assert_response(:not_found)
   end
 
   test 'should not allow non-moderator users to resolve confidential flags' do
     sign_in users(:deleter)
-    post :resolve, params: { id: flags(:confidential_on_deleter).id }
+    try_resolve_flag(flags(:confidential_on_deleter))
     assert_response(:not_found)
   end
 
@@ -115,5 +116,11 @@ class FlagsControllerTest < ActionController::TestCase
     sign_in mod_user
     get :history, params: { id: std_user.id }
     assert_response(:success)
+  end
+
+  private
+
+  def try_resolve_flag(flag, result: nil, message: nil)
+    post :resolve, params: { id: flag.id, result: result, message: message }
   end
 end

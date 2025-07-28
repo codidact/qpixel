@@ -10,7 +10,7 @@
 
 <% max_shown_comments = 5 %>
 <% comment_id ||= defined?(comment_id) ? comment_id : nil %>
-<% pingable = get_pingable(thread) %>
+<% pingable = thread.pingable %>
 <% shown_comments_count = [max_shown_comments, thread.reply_count].min %>
 
 <%
@@ -51,7 +51,7 @@
       <% elsif thread.locked? %>
         <i class="fas fa-lock fa-fw" title="Locked. This thread has been locked and cannot be modified."></i>
       <% end %>
-      <span class="js-thread-title"><%= thread.title %></span>
+      <span class="js-thread-title"><%= render_pings_text(thread.title) %></span>
     </div>
     <% skipped_deleted = 0 %>
     <% comments = thread.comments %>

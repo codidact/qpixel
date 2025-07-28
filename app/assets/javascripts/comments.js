@@ -313,7 +313,8 @@ $(() => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post');
-    const $reply = $(`#reply-to-thread-form-${postId}`);
+    const threadId = $tgt.attr('data-thread');
+    const $reply = $(`#reply-to-thread-form-${postId}-${threadId}`);
 
     if ($reply.is(':hidden')) {
       $reply.show();
