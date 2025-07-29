@@ -10,6 +10,10 @@
 %>
 
 <%
+  # TODO: make configurable
+  min_chars = 15
+  max_chars = 1000
+
   can_comment = user.can_reply_to?(thread)
   is_rate_limited, rate_limit_message = comment_rate_limited?(user, post, create_audit_log: false)
   text ||= defined?(text) && text.present? ? text : t('comments.labels.reply_to_thread')
@@ -28,7 +32,7 @@
 
 <div class="reply-to-thread-wrapper">
   <%= link_to 'javascript:void(0)', class: 'button is-outlined is-small js-reply-to-thread-link',
-                                    data: { post: post.id },
+                                    data: { post: post.id, thread: thread.id },
                                     disabled: !can_comment,
                                     role: 'button',
                                     title: is_exempt ? '' : title do %>
@@ -40,16 +44,20 @@
 </div>
 
 <% if can_comment %>
-  <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form', id: "reply-to-thread-form-#{post.id}" do %>
+  <%= form_tag create_comment_path(thread.id), class: 'reply-to-thread-form',
+                                               id: "reply-to-thread-form-#{post.id}-#{thread.id}" do %>
     <%= hidden_field_tag :post_id, post.id %>
     <%= hidden_field_tag :inline, inline %>
     <%= label_tag :content, 'Your message', class: 'form-element' %>
     <%= text_area_tag :content, '',
                       class: 'form-element js-comment-field',
+                      minlength: min_chars,
+                      maxlength: max_chars,
+                      required: true,
                       data: { thread: thread.id,
                               post: thread.post_id,
-                              character_count: ".js-character-count-#{post.id}" } %>
-    <%= render 'shared/char_count', type: post.id, min: 15, max: 1000 %>
-    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled: true %>
+                              character_count: ".js-character-count-thread-reply-#{post.id}-#{thread.id}" } %>
+    <%= render 'shared/char_count', type: "thread-reply-#{post.id}-#{thread.id}", min: min_chars, max: max_chars %>
+    <%= submit_tag 'Add reply', class: 'button is-muted is-filled', disabled:true %>
   <% end %>
 <% end %>
