@@ -77,7 +77,8 @@
     </div>
   </div>
   <div class="comment--body" dir="ltr">
-    <%= render_pings(raw(sanitize(render_comment_helpers(render_markdown(comment.content)), scrubber: CommentScrubber.new)),
-                     pingable: pingable) %>
+    <% rendered = render_comment_helpers(render_markdown(comment.content)) %>
+    <% sanitized = sanitize(rendered, scrubber: CommentScrubber.new) %>
+    <%= render_pings(raw(sanitized), pingable: pingable, host: comment.community.host) %>
   </div>
 </div>
