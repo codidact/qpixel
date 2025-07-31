@@ -202,9 +202,9 @@
 	<% end %>
 
 	<div class="post--body">
-	  <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
+	  <% effective_post = sanitize(post.body, scrubber: scrubber) %>
 	  <% if post.spam_flag_pending? && !user_signed_in? %>
-	    <%= sanitize(effective_post, attributes: %w()) %>
+	    <%= sanitize(effective_post, attributes: %w[]) %>
 	  <% else %>
             <%= effective_post %>
 	  <% end %>
@@ -404,7 +404,7 @@
                       <label class="form-element has-margin-0" for="flag-reason-<%= reason.id %>_<%= post.id  %>">
                         <%= reason.name %>
                         <div class="form-caption">
-                          <%= raw render_markdown(reason.description.gsub('$SiteName', SiteSetting['SiteName'])) %>
+                          <%= render_markdown(reason.description.gsub('$SiteName', SiteSetting['SiteName'])) %>
                         </div>
                         <% if reason.name == "needs author's attention" %>
                           <div class="form-caption">
@@ -493,7 +493,8 @@
                       <label class="form-element" for="close-reason-<%= reason.id %>">
                         <%= reason.name %>
                         <div class="form-caption">
-                          <%= raw render_markdown(reason.description.gsub('$SiteName', SiteSetting['SiteName'])) %>
+                          <% hydrated = reason.description.gsub('$SiteName', SiteSetting['SiteName']) %>
+                          <%= sanitize(render_markdown(hydrated), scrubber: scrubber) %>
                         </div>
                       </label>
                       <% if reason.requires_other_post %>
@@ -525,7 +526,7 @@
                     data-toggle="#toc-toggle"
                     data-toggle-property="class"
                     data-toggle-value="is-active">Table of Contents</button>
-            <% sorted_answers = post.children.sort_by { |answer| answer.score }.reverse! %>
+            <% sorted_answers = post.children.sort_by(&:score).reverse! %>
             <% sorted_answers.each do |answer| %>
               <% next if answer.deleted? && !at_least_moderator? %>
               <%= render 'posts/toc_entry', answer: answer %>
@@ -548,8 +549,11 @@
         <div class="post--comments has-padding-4">
           <% comment_threads = post.comment_threads.initially_visible.order(updated_at: :desc) %>
           <% public_count = comment_threads.count %>
-          <% available_count = current_user&.post_privilege?('flag_curate', post) ?
-                                 post.comment_threads.count : post.comment_threads.publicly_available.count %>
+          <% available_count = if current_user&.post_privilege?('flag_curate', post)
+                                 post.comment_threads.count
+                               else
+                                 post.comment_threads.publicly_available.count 
+                               end %>
           <div class="post--comments-header">
           <h4 class="has-margin-0">
             <%= pluralize(public_count, 'comment thread') %>
