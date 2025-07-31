@@ -38,7 +38,7 @@ Editing the `./docker/env` file will change environment variables only in the ru
 
 ### Custom build config
 
-Our Docker setup supports custom build configurations for the uwsgi contianer via the `CLIENT_DOCKERFILE` environment variable (see [compose-env](/docker/compose-env)). The default is `docker/Dockerfile`, which points to a preconfigured [production-like setup](/docker/Dockerfile). For developers who need more control over their setup, we also provide a [configuration](/docker/Dockerfile.dev) that is tailored for local development.
+Our Docker setup supports custom build configurations for the uwsgi container via the `CLIENT_DOCKERFILE` environment variable (see [compose-env](/docker/compose-env)). The default is `docker/Dockerfile`, which points to a preconfigured [production-like setup](/docker/Dockerfile). For developers who need more control over their setup, we also provide a [configuration](/docker/Dockerfile.dev) that is tailored for local development.
 
 To use a custom build config, change the `CLIENT_DOCKERFILE` variable in the .env file that is automatically created by [local-setup.sh](/docker/local-setup.sh) in the project root.
 
