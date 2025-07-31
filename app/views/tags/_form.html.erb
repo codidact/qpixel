@@ -19,7 +19,7 @@
     <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
     <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
     <%
-      # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+      # Find the most recent of post-create, post-update, and draft-saved, and use the value corresponding to that.
       tag_name = [
         [@tag.created_at || Date.new(2000, 1, 1), @tag.name],
         [@tag.updated_at || Date.new(2000, 1, 1), @tag.name],
@@ -47,7 +47,10 @@
       <%= f.fields_for :tag_synonyms do |tsf| %>
         <div class="grid tag-synonym" data-id="<%= i+=1 %>" style="<%= 'display: none;' if tsf.object&.name.blank? %>">
           <div class="grid--cell is-11">
-            <%= tsf.text_field :name, class: 'form-element tag-synonym-name', readonly: tsf.object&.name.present?, disabled: tsf.object&.name.blank? %>
+            <%= tsf.text_field :name,
+                               class: 'form-element tag-synonym-name',
+                               readonly: tsf.object&.name.present?,
+                               disabled: tsf.object&.name.blank? %>
           </div>
           <div class="grid--cell is-1">
             <button type="button" class="button is-outlined remove-tag-synonym has-float-right">X</button>
@@ -67,7 +70,7 @@
     <%= f.select :parent_id, options_for_select(@tag.parent.present? ? [[@tag.parent.name, @tag.parent_id]] : [],
                                                 selected: @tag.parent.present? ? @tag.parent_id : nil),
                  { include_blank: true }, class: "form-element js-tag-select",
-                 data: { tag_set: @category.tag_set_id, create: false, use_ids: true, placeholder: "None" } %>
+                 data: { tag_set: @category.tag_set_id, create: false, use_ids: true, placeholder: 'None' } %>
   </div>
 
   <div class="form-group">
@@ -95,7 +98,11 @@
                               rows: 3,
                               data: { character_count: '.js-character-count-tag-excerpt' }
     %>
-    <%= render 'shared/char_count', type: 'tag-excerpt', cur: excerpt&.length || @tag.excerpt&.length, min: 0, max: 600 %>
+    <%= render 'shared/char_count',
+               type: 'tag-excerpt',
+               cur: excerpt&.length || @tag.excerpt&.length,
+               min: 0,
+               max: 600 %>
   </div>
 
   <%= render 'shared/body_field', f: f, min_length: 0, max_length: 30_000, cur_length: @tag.wiki_markdown&.length, 

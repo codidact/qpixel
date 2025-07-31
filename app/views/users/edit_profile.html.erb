@@ -28,18 +28,21 @@
          src="<%= avatar_url(current_user, 64) %>"
          height="64"
          width="64" />
-    <%= f.label :avatar, class: "form-element" %>
+    <%= f.label :avatar, class: 'form-element' %>
     <div class="form-caption">
       An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
     </div>
-    <%= f.file_field :avatar, class: "form-element" %>
+    <%= f.file_field :avatar, class: 'form-element' %>
   </div>
   <div class="has-clear-clear"></div>
 
   <div class="form-group has-padding-2">
-    <%= f.label :username, class: "form-element" %>
+    <%= f.label :username, class: 'form-element' %>
     <div class="form-caption">What other people call you.</div>
-    <%= f.text_field :username, class: 'form-element', autocomplete: 'off', data: { character_count: '.js-character-count-user-name' } %>
+    <%= f.text_field :username,
+                     class: 'form-element',
+                     autocomplete: 'off',
+                     data: { character_count: '.js-character-count-user-name' } %>
     <%= render 'shared/char_count', type: 'user-name', cur: current_user.username&.length, min: 3, max: 50 %>
   </div>
 
@@ -52,7 +55,7 @@
   <div class="post-preview"></div>
 
   <div>
-    <p>Extra fields -- your web site, GitHub profile, social-media usernames, whatever you want. Only values that begin with "http" are rendered as links.</p>
+    <p>Extra fields &mdash; your web site, GitHub profile, social-media usernames, whatever you want. Only values that begin with "http" are rendered as links.</p>
     <div class="grid">
       <%= f.fields_for :user_websites do |w| %>
         <div class="grid grid--cell is-12 is-12-sm">
