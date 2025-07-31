@@ -1,6 +1,6 @@
-<% content_for :title, "Close Reasons" %>
+<% content_for :title, 'Close Reasons' %>
 
-<h1>Add <%= (params[:global] == "1") ? "global" : "" %> close reason</h1>
+<h1>Add <%= params[:global] == '1' ? 'global' : '' %> close reason</h1>
 
 <% if @close_reason.errors.any? %>
   <div class="notice is-danger">

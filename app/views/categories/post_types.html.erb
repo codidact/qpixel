@@ -1,7 +1,9 @@
 <% header_title = @post_types.any? ? 'What kind of post?' : 'No allowed post types'
-   header_subtitle = @post_types.any? \
-    ? 'This category has more than one type of post available. Pick a post type to get started.'
-    : 'This category does not have any post types available.' 
+   header_subtitle = if @post_types.any?
+                       'This category has more than one type of post available. Pick a post type to get started.'
+                     else
+                       'This category does not have any post types available.'
+                     end 
 %>
 
 <h1><%= header_title %></h1>

@@ -11,10 +11,10 @@
 <%= raw(sanitize(render_markdown(SiteSetting['RestrictedAccessFrontPageText']), scrubber: scrubber)) %>
 
 <%- if sso_sign_in_enabled? %>
-  <%= link_to "SSO Sign in", new_saml_user_session_path, class: 'button is-extremely-large is-filled' %><br />
+  <%= link_to 'SSO Sign in', new_saml_user_session_path, class: 'button is-extremely-large is-filled' %><br />
 <% end %>
 
 <%- if devise_sign_in_enabled? %>
-  <%= link_to "Sign in", new_user_session_path, class: 'button is-extremely-large is-muted is-outlined' %><br />
-  <%= link_to "Sign up", new_user_registration_path, class: 'button is-extremely-large is-muted is-filled' %><br />
+  <%= link_to 'Sign in', new_user_session_path, class: 'button is-extremely-large is-muted is-outlined' %><br />
+  <%= link_to 'Sign up', new_user_registration_path, class: 'button is-extremely-large is-muted is-filled' %><br />
 <% end %>

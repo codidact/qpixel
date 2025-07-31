@@ -16,4 +16,4 @@
 <%= link_to tag.name,
             tag_url(id: post.category_id, tag_id: tag.id, host: post.community.host),
             class: "badge is-tag #{required} #{topic} #{mod_only}",
-            title: tag.excerpt.present? ? tag.excerpt : "(no description yet)" %>
+            title: tag.excerpt.present? ? tag.excerpt : '(no description yet)' %>
