@@ -13,7 +13,7 @@
     Variables:
       post         : the Post instance to display
     ? float_notice : whether to display the float notice
-%>
+"%>
 
 <% float_notice ||= false %>
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
@@ -46,8 +46,10 @@
     <% sort_type = params[:sort] == 'active' ? 'activity' : 'score' %>
     <div class="notice is-info has-font-size-caption">
       <p>
-        You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its <%= sort_type %>.
-        You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent, sort: params[:sort]), class: 'is-teal' %></strong>.
+        You are accessing this answer with a direct link, so it's shown above all others regardless of its <%= sort_type %>.
+        You can <strong><%= link_to 'return to the normal view',
+                                    generic_share_link(post.parent, sort: params[:sort]),
+                                    class: 'is-teal' %></strong>.
       </p>
     </div>
   <% end %>
@@ -130,13 +132,15 @@
             <p>
               <%= post.close_reason.description.gsub('$SiteName', SiteSetting['SiteName']) %>
               <% if post.close_reason.requires_other_post %>
-                See: <%= link_to post.duplicate_post.title, post_path(post.duplicate_post), class: 'has-font-size-larger' %>
+                See: <%= link_to post.duplicate_post.title,
+                                 post_path(post.duplicate_post),
+                                 class: 'has-font-size-larger' %>
               <% end %>
             </p>
           <% end %>
           <p>
             This question was closed; new answers can no longer be added.
-            Users with the reopen privilege may vote to reopen this question if it has been improved or closed incorrectly.
+            Users with the reopen ability may vote to reopen this question if it has been improved or closed incorrectly.
           </p>
         </div>
       <% end %>
@@ -149,16 +153,12 @@
           </p>
           <hr>
           <% if post.deleted_by.id == post.user_id %>
-            <p>
-              The author of this post decided to delete it. It can only be seen by users with the Curate privilege.
-            </p>
+            <p>The author of this post decided to delete it. It can only be seen by users with the Curate ability.</p>
           <% else %>
-            <p>
-              This post was deleted and can only be seen by users with the Curate privilege.
-            </p>
+            <p>This post was deleted and can only be seen by users with the Curate ability.</p>
           <% end %>
 
-          <p>Users with the Curate privilege may vote to restore this post if it has been deleted incorrectly.</p>
+          <p>Users with the Curate ability may vote to restore this post if it has been deleted incorrectly.</p>
         </div>
       <% end %>
 
