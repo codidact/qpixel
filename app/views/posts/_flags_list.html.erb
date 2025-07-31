@@ -1,0 +1,33 @@
+<%#
+   "Renders list of flags for a given post
+
+    Variables:
+      post : post to render the list for
+      user : user accessing the flag list
+%>
+
+<div class="post--action-dialog js-flags">
+  <div class="widget">
+    <div class="widget--header">Flags on this post</div>
+    <% post.flags.where(handled_by_id: nil).each do |flag| %>
+      <% next if !user.at_least_moderator? && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
+      <% next if !user.at_least_moderator? && (user.id == flag.user.id) %>
+      <div class="widget--body">
+        <div>
+          <p>
+            <strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash;
+            <%= user_link flag.user %>
+          </p>
+          <input class="form-element flag-resolve-comment has-float-left"
+                         style="max-width: 300px;"
+                         placeholder="Optional comment for flagger">
+          <div class="has-float-right has-padding-1">
+            <a href="#" class="flag-resolve button" data-result='helpful' data-flag-id="<%= flag.id %>">Helpful</a>
+            <a href="#" class="flag-resolve button" data-result='declined' data-flag-id="<%= flag.id %>">Decline</a>
+          </div>
+          <div class="has-clear-clear"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
