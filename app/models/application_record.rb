@@ -2,12 +2,12 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   def self.fuzzy_search(term, **cols)
-    sanitized = sanitize_for_search term, **cols
+    sanitized = sanitize_for_search(term, **cols)
     select(Arel.sql("`#{table_name}`.*, #{sanitized} AS search_score"))
   end
 
   def self.match_search(term, **cols)
-    sanitized = sanitize_for_search term, **cols
+    sanitized = sanitize_for_search(term, **cols)
     select(Arel.sql("`#{table_name}`.*, #{sanitized} AS search_score")).where(sanitized)
   end
 
