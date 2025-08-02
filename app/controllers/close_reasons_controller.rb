@@ -32,7 +32,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    @close_reason = CloseReason.new
+    @close_reason = CloseReason.new(community: params[:global] == '1' ? nil : @community)
   end
 
   def create
