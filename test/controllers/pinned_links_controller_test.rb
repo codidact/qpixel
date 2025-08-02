@@ -61,6 +61,13 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_equal 'updated label', assigns(:link).label
   end
 
+  test 'update should correctly handle invlid pinned links' do
+    sign_in users(:moderator)
+    try_update_pinned_link(pinned_links(:active_with_label), link: nil)
+    assert_response(:bad_request)
+    assert assigns(:link)&.errors&.any?
+  end
+
   private
 
   def try_create_pinned_link(**opts)
