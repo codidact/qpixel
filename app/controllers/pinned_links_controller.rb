@@ -27,14 +27,22 @@ class PinnedLinksController < ApplicationController
   end
 
   def create
-    @link = PinnedLink.create pinned_link_params
+    @link = PinnedLink.create(pinned_link_params)
 
-    attr = @link.attributes_print
-    AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                             comment: "<<PinnedLink #{attr}>>")
+    if @link.valid?
+      attr = @link.attributes_print
 
-    flash[:success] = 'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
-    redirect_to pinned_links_path
+      AuditLog.moderator_audit(event_type: 'pinned_link_create',
+                               related: @link,
+                               user: current_user,
+                               comment: "<<PinnedLink #{attr}>>")
+
+      flash[:success] =
+        'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
+      redirect_to pinned_links_path
+    else
+      render 'pinned_links/new'
+    end
   end
 
   def edit; end
