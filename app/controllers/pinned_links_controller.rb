@@ -27,9 +27,9 @@ class PinnedLinksController < ApplicationController
   end
 
   def create
-    @link = PinnedLink.create(pinned_link_params)
+    @link = PinnedLink.new(pinned_link_params)
 
-    if @link.valid?
+    if @link.save
       attr = @link.attributes_print
 
       AuditLog.moderator_audit(event_type: 'pinned_link_create',
