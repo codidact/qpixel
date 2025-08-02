@@ -4,7 +4,7 @@ class CloseReasonsController < ApplicationController
   before_action :verify_admin_for_global_reasons, only: [:edit, :update]
 
   def index
-    @close_reasons = if current_user.is_global_admin && params[:global] == '1'
+    @close_reasons = if current_user.global_admin? && params[:global] == '1'
                        CloseReason.unscoped.where(community_id: nil)
                      else
                        CloseReason.unscoped.where(community_id: @community.id)
@@ -28,7 +28,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    if !current_user.is_global_admin && params[:global] == '1'
+    if !current_user.global_admin? && params[:global] == '1'
       not_found!
       return
     end
@@ -37,7 +37,7 @@ class CloseReasonsController < ApplicationController
   end
 
   def create
-    if !current_user.is_global_admin && params[:global] == '1'
+    if !current_user.global_admin? && params[:global] == '1'
       not_found!
       return
     end
