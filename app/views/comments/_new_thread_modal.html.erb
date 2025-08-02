@@ -39,7 +39,11 @@
         You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will
         be shown.
       </span>
-      <%= text_field_tag :title, '', class: 'form-element', data: { character_count: ".js-character-count-thread-title" } %>
+      <%= text_field_tag :title, '',
+                         class: 'form-element js-thread-title',
+                         data: { post: post.id,
+                                 thread: '-1',
+                                 character_count: ".js-character-count-thread-title" } %>
       <%= render 'shared/char_count', type: 'thread-title' %>
 
       <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
