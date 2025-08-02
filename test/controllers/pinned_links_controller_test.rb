@@ -43,6 +43,13 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_not_nil assigns(:link)
   end
 
+  test 'create should correctly handle invalid pinned links' do
+    sign_in users(:moderator)
+    try_create_pinned_link
+    assert_response(:bad_request)
+    assert assigns(:link)&.errors&.any?
+  end
+
   test 'update should correctly update pinned links' do
     sign_in users(:moderator)
 

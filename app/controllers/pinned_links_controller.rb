@@ -41,7 +41,7 @@ class PinnedLinksController < ApplicationController
         'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
       redirect_to pinned_links_path
     else
-      render 'pinned_links/new'
+      render 'pinned_links/new', status: :bad_request
     end
   end
 
