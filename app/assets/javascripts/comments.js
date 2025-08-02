@@ -236,7 +236,7 @@ $(() => {
    * @type {Record<`${number}-${number}`, Record<string, number>>}
    */
   const pingable = {};
-  $(document).on('keyup', '.js-comment-field, .js-thread-title', pingable_popup);
+  $(document).on('keyup', '.js-comment-field, .js-thread-title-field', pingable_popup);
 
   /**
    * @type {QPixelPingablePopupCallback}
