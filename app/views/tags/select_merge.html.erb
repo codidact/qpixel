@@ -18,7 +18,8 @@
 <%= form_tag merge_tag_path(id: @category.id, tag_id: @tag.id) do %>
   <div class="form-group">
     <%= select_tag :merge_with_id, options_for_select([]),
-                   include_blank: true, class: "form-element js-tag-select",
+                   include_blank: true,
+                   class: 'form-element js-tag-select',
                    data: { tag_set: @category.tag_set_id, use_ids: true } %>
   </div>
 

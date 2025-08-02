@@ -105,6 +105,13 @@ GEM
     base64 (0.3.0)
     bcrypt (3.1.20)
     benchmark (0.4.1)
+    better_html (2.1.1)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bigdecimal (3.2.2)
     bindex (0.8.1)
     builder (3.3.0)
@@ -157,6 +164,13 @@ GEM
     e2mmap (0.1.0)
     erb (4.0.4)
       cgi (>= 0.3.3)
+    erb_lint (0.9.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop (>= 1)
+      smart_properties
     erubi (1.13.1)
     execjs (2.10.0)
     fastimage (2.4.0)
@@ -405,6 +419,7 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
+    smart_properties (1.17.0)
     spring (4.3.0)
     sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
@@ -483,6 +498,7 @@ DEPENDENCIES
   devise_saml_authenticatable (~> 1.9)
   diffy (~> 3.4)
   e2mmap (~> 0.1)
+  erb_lint (~> 0.9.0)
   fastimage (~> 2.2)
   flamegraph (~> 0.9)
   groupdate (~> 6.1)

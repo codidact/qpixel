@@ -7,9 +7,9 @@
   </div>
   <div class="toc--full">
     <% sanitised = strip_markdown(answer.body_markdown) %>
-    <% max_length = SiteSetting["TableOfContentsExcerptLength"] %>
+    <% max_length = SiteSetting['TableOfContentsExcerptLength'] %>
       <p>
-        <%= sanitised[ 0 ... max_length ] %>
+        <%= sanitised[0...max_length] %>
         <% if sanitised.length > max_length %>
             &hellip;
         <% end %>

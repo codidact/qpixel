@@ -1,11 +1,11 @@
-<% content_for :title, "Edit Setting" %>
+<% content_for :title, 'Edit Setting' %>
 
 <h3>Edit Setting: <%= @setting.name %></h3>
 <p>Current value: <%= @setting.value %></p>
 <%= form_for @setting, url: { controller: :site_settings, action: :update } do |f| %>
   <% if @setting.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@setting.errors.count, "error") %> prevented this setting from being saved:</h2>
+      <h2><%= pluralize(@setting.errors.count, 'error') %> prevented this setting from being saved:</h2>
       <ul>
         <% @setting.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -15,9 +15,9 @@
   <% end %>
   <div class="field">
     <%= f.label :value %>
-    <%= f.text_field :value, class: "form-control" %>
+    <%= f.text_field :value, class: 'form-control' %>
   </div>
   <div class="field">
-    <%= f.submit "Update", class: "btn btn-info" %>
+    <%= f.submit 'Update', class: 'btn btn-info' %>
   </div>
 <% end %>

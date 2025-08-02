@@ -26,7 +26,7 @@
   <% @flags.first(10).each do |f| %>
     <p>
       <strong><%= f.post_flag_type&.name || 'other' %></strong>
-      flag: <%= f.reason.present? ? "\"#{f.reason}\"" : "" %>
+      flag: <%= f.reason.present? ? "\"#{f.reason}\"" : '' %>
       <% status_colors = { helpful: 'is-green', declined: 'is-red', pending: 'is-muted' } %>
       <span class="badge is-tag is-small <%= status_colors[(f.status || 'pending').to_sym] %> is-filled">
         <%= f.status || 'pending' %>

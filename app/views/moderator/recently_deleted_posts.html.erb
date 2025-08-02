@@ -1,4 +1,4 @@
-<% content_for :title, "Recently Deleted Posts" %>
+<% content_for :title, 'Recently Deleted Posts' %>
 
 <% if current_user.at_least_moderator? %>
   <%= link_to moderator_path, class: 'has-font-size-small' do %>

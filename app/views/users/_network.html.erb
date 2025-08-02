@@ -8,7 +8,7 @@
   <% @communities.each do |c| %>
     <% if @user.profile_on?(c) %>
     <tr>
-      <td><%= user_link @user, { host: c.host}, anchortext: c.name %>
+      <td><%= user_link @user, { host: c.host }, anchortext: c.name %>
         <% if @user.moderator_on?(c) %>
           (moderator)
         <% end %>

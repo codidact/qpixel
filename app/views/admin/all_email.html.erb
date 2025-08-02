@@ -12,7 +12,7 @@
 <%= form_with url: send_all_email_path do |f| %>
   <div class="form-group">
     <%= f.label :subject, t('g.subject').capitalize, class: 'form-element' %>
-    <%= f.text_field :subject,  class: 'form-element', required: true %>
+    <%= f.text_field :subject, class: 'form-element', required: true %>
   </div>
 
   <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('g.body').capitalize, post: nil %>

@@ -18,7 +18,7 @@
         <span class="form-caption">Select a primary color for this site. Will be used as default for all categories.</span>
         <%= select_tag :primary_color, options_for_select(['turquoise', 'green', 'blue', 'darkblue', 'purple', 'gray', 'bluegray', 'yellow', 'orange', 'pink', 'red'],
                                                           selected: SiteSetting['SiteCategoryHeaderDefaultColor']),
-                      class: 'form-element' %>
+                       class: 'form-element' %>
       </div>
 
       <div class="form-group">
@@ -44,14 +44,14 @@
         <%= label_tag :mathjax, 'Enable MathJax', class: 'form-element' %>
         <span class="form-caption">MathJax is a library for rendering mathematic formulas. This will incur a small penalty in page loading time.</span>
         <%= select_tag :mathjax, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['MathJaxEnabled']),
-                      class: 'form-element' %>
+                       class: 'form-element' %>
       </div>
 
       <div class="form-group">
         <%= label_tag :syntax_highlighting, 'Enable Syntax Highlighting', class: 'form-element' %>
         <span class="form-caption">We support highlighting of code blocks using highlight.js. This will incur a small penalty in page loading time.</span>
         <%= select_tag :syntax_highlighting, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['SyntaxHighlightingEnabled']),
-                      class: 'form-element' %>
+                       class: 'form-element' %>
       </div>
 
     </div>
@@ -83,7 +83,7 @@
         <%= label_tag :content_transfer, 'Has content transfer?', class: 'form-element' %>
         <span class="form-caption">Whether this site has transferred content from an other (ex. SE) site. Will allow users to claim their content in the profile.</span>
         <%= select_tag :content_transfer, options_for_select([['yes', true], ['no', false]], selected: SiteSetting['AllowContentTransfer']),
-                      class: 'form-element' %>
+                       class: 'form-element' %>
       </div>
       
     </div>
