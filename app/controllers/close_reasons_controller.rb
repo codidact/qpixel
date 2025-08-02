@@ -1,5 +1,6 @@
 class CloseReasonsController < ApplicationController
   before_action :verify_moderator
+  before_action :check_create_access, only: [:new, :create]
   before_action :set_close_reason, only: [:edit, :update]
   before_action :verify_admin_for_global_reasons, only: [:edit, :update]
 
@@ -17,6 +18,7 @@ class CloseReasonsController < ApplicationController
     before = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
     @close_reason.update close_reason_params
     after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+
     AuditLog.moderator_audit(event_type: 'close_reason_update', related: @close_reason, user: current_user,
                              comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
 
@@ -28,25 +30,16 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    if !current_user.global_admin? && params[:global] == '1'
-      not_found!
-      return
-    end
-
     @close_reason = CloseReason.new
   end
 
   def create
-    if !current_user.global_admin? && params[:global] == '1'
-      not_found!
-      return
-    end
-
     @close_reason = CloseReason.new(name: params[:close_reason][:name],
                                     description: params[:close_reason][:description],
                                     requires_other_post: params[:close_reason][:requires_other_post],
                                     active: params[:close_reason][:active],
                                     community: params[:global] == '1' ? nil : @community)
+
     if @close_reason.save
       attr = @close_reason.attributes_print
       AuditLog.moderator_audit(event_type: 'close_reason_create', related: @close_reason, user: current_user,
@@ -69,6 +62,10 @@ class CloseReasonsController < ApplicationController
 
   def set_close_reason
     @close_reason = CloseReason.unscoped.find(params[:id])
+  end
+
+  def check_create_access
+    not_found! unless current_user&.global_admin? || params[:global] != '1'
   end
 
   def verify_admin_for_global_reasons
