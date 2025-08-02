@@ -16,10 +16,12 @@ class CloseReasonsController < ApplicationController
 
   def update
     before = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
-    @close_reason.update close_reason_params
+    @close_reason.update(close_reason_params)
     after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
 
-    AuditLog.moderator_audit(event_type: 'close_reason_update', related: @close_reason, user: current_user,
+    AuditLog.moderator_audit(event_type: 'close_reason_update',
+                             related: @close_reason,
+                             user: current_user,
                              comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
 
     if @close_reason.community.nil?
@@ -42,8 +44,11 @@ class CloseReasonsController < ApplicationController
 
     if @close_reason.save
       attr = @close_reason.attributes_print
-      AuditLog.moderator_audit(event_type: 'close_reason_create', related: @close_reason, user: current_user,
+      AuditLog.moderator_audit(event_type: 'close_reason_create',
+                               related: @close_reason,
+                               user: current_user,
                                comment: "<<CloseReason #{attr}>>")
+
       if @close_reason.community.nil?
         redirect_to close_reasons_path(global: 1)
       else
