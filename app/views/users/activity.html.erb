@@ -7,20 +7,28 @@
 <h1>Activity for <%= user_link @user %></h1>
 
 <div class="button-list is-gutterless h-m-v-4">
-  <a class="button is-muted is-outlined" href="?" role="button">
-    Show all events
+  <a class="button is-muted is-outlined <%= 'is-active' unless params[:filter].present? %>"
+     href="<%= user_activity_path %>"
+     role="button">
+    All events
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts" role="button">
+  <a class="button is-muted is-outlined <%= 'is-active' if params[:filter] == 'posts' %>"
+     href="<%= user_activity_path(filter: :posts) %>"
+     role="button">
     Posts
     <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span>
     <% end %>
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments" role="button">
+  <a class="button is-muted is-outlined <%= 'is-active' if params[:filter] == 'comments' %>"
+     href="<%= user_activity_path(filter: :comments) %>"
+     role="button">
     Comments
     <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span>
     <% end %>
   </a>
-  <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits" role="button">
+  <a class="button is-muted is-outlined <%= 'is-active' if params[:filter] == 'edits' %>"
+     href="<%= user_activity_path(filter: :edits) %>"
+     role="button">
     Edits
     <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span>
     <% end %>
