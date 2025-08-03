@@ -359,6 +359,10 @@ span.spoiler {
   overflow-wrap: anywhere;
 }
 
+.wrap-word {
+  overflow-wrap: break-word;
+}
+
 .nowrap {
   white-space: nowrap;
 }
