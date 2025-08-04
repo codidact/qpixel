@@ -1,15 +1,16 @@
 <%#
-  Post create/edit form covering all post types.
-  Variables:
-    post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
-    submit_path   : the URL to submit the form to (must accept POST requests)
-    post_type     : a PostType instance describing the requested post type
-    category      : a Category instance, required if the post type has a category, indicating which category to post in
-    parent        : a Post instance containing the parent for this post (required if the post type has a parent)
-    inline_parent : optional, default  true: display an inline copy of the parent? (if present)
-    type_summary  : optional, default  true: display a summary of the requested post type?
-    edit_comment  : optional, default false: include a field for an edit comment?
-%>
+   "Post create/edit form covering all post types.
+
+    Variables:
+      post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
+      submit_path   : the URL to submit the form to (must accept POST requests)
+      post_type     : a PostType instance describing the requested post type
+      category      : a Category instance, required if the post type has a category, indicating which category to post in
+      parent        : a Post instance containing the parent for this post (required if the post type has a parent)
+      inline_parent : optional, default  true: display an inline copy of the parent? (if present)
+      type_summary  : optional, default  true: display a summary of the requested post type?
+      edit_comment  : optional, default false: include a field for an edit comment?
+"%>
 
 <%
   # defaults
@@ -86,7 +87,7 @@
       <%= f.label :title, t('posts.post_title_label'), class: 'form-element' %>
       <%= f.text_field :title,
                         **({ class: 'form-element post_title' }).merge(value),
-                        data: { character_count: ".js-character-count-post-title" }
+                        data: { character_count: '.js-character-count-post-title' }
       %>
       <div class="clearfix">
         <%= render 'shared/char_count', type: 'post-title',
@@ -131,7 +132,7 @@
                                   selected: tags || post.tags_cache),
                    {},
                    multiple: true,
-                   class: "form-element js-tag-select",
+                   class: 'form-element js-tag-select',
                    data: { tag_set: category.tag_set_id } %>
     </div>
   <% end %>
@@ -170,7 +171,7 @@
       <% saved_at_key = "saved_post_at.#{current_user&.id}.#{request.path}" %>
       <% saved_at = DateTime.parse(RequestContext.redis.get(saved_at_key) || '') rescue Date.new(2000, 1, 1) %>
       <%
-        # Find the most recent between post-create, post-update, and draft-saved, and use the value corresponding to that.
+        # Find the most recent of post-create, post-update, and draft-saved, and use the value corresponding to that.
         license = [
           [post.created_at || Date.new(2000, 1, 1), post.license_id],
           [post.updated_at || Date.new(2000, 1, 1), post.license_id],

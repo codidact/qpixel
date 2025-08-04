@@ -19,7 +19,7 @@ $(() => {
 });
 </script>
 
-<header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
+<header class="header is-small has-margin-0<%= ' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
   <div class="container header--container">
     <div class="header--brand">
       <% if mobile_logo_path.present? %>
@@ -108,7 +108,10 @@ $(() => {
         </div>
       <% end %>
       <% unless @community.is_fake %>
-        <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
+        <a class="header--item is-mobile-menu is-complex"
+           aria-label="Menu"
+           href="#"
+           data-header-slide="#js-mobile-menu">
             <span class="header--menu-bars">
               <span></span>
               <span></span>
@@ -123,9 +126,17 @@ $(() => {
 <div class="header-slide" id="communities-slide">
   <% if user_signed_in? %>
     <% if devise_sign_in_enabled? %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
+      <%= link_to 'Sign Out',
+                  destroy_user_session_path,
+                  method: :delete,
+                  class: 'button is-muted has-float-right',
+                  role: 'button' %>
     <% else %>
-      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
+      <%= link_to 'Sign Out',
+                  destroy_saml_user_session_path,
+                  method: :delete,
+                  class: 'button is-muted has-float-right',
+                  role: 'button' %>
     <% end %>
   <% end %>
   <h3 class="h-m-t-1">Communities</h3>

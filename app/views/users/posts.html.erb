@@ -15,14 +15,14 @@
 
   <div class="button-list is-gutterless has-margin-2">
     <%= link_to 'Activity', request.params.merge(sort: 'activity'), 
-                            class: 'button is-muted is-outlined ' + (active_search?('last_activity') ? 'is-active' : ''),
-                            role: 'button', 'aria-label': 'Sort by activity' %>
+                class: "button is-muted is-outlined #{'is-active' if active_search?('last_activity')}",
+                role: 'button', 'aria-label': 'Sort by activity' %>
     <%= link_to 'Age', request.params.merge(sort: 'age'), 
-                       class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : ''),
-                       role: 'button', 'aria-label': 'Sort by age' %>
+                class: "button is-muted is-outlined #{'is-active' if active_search?('created_at')}",
+                role: 'button', 'aria-label': 'Sort by age' %>
     <%= link_to 'Score', request.params.merge(sort: 'score'), 
-                         class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : ''),
-                         role: 'button', 'aria-label': 'Sort by score' %>
+                class: "button is-muted is-outlined #{'is-active' if active_search?('score')}",
+                role: 'button', 'aria-label': 'Sort by score' %>
   </div>
 </div>
 
