@@ -30,7 +30,7 @@ class CloseReasonsController < ApplicationController
         redirect_to close_reasons_path
       end
     else
-      render :edit
+      render :edit, status: :bad_request
     end
   end
 
@@ -58,7 +58,7 @@ class CloseReasonsController < ApplicationController
         redirect_to close_reasons_path
       end
     else
-      render :new
+      render :new, status: :bad_request
     end
   end
 
