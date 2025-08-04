@@ -1,10 +1,11 @@
 class CloseReasonsController < ApplicationController
   before_action :verify_moderator
+  before_action :check_create_access, only: [:new, :create]
   before_action :set_close_reason, only: [:edit, :update]
   before_action :verify_admin_for_global_reasons, only: [:edit, :update]
 
   def index
-    @close_reasons = if current_user.is_global_admin && params[:global] == '1'
+    @close_reasons = if current_user.global_admin? && params[:global] == '1'
                        CloseReason.unscoped.where(community_id: nil)
                      else
                        CloseReason.unscoped.where(community_id: @community.id)
@@ -34,29 +35,23 @@ class CloseReasonsController < ApplicationController
   end
 
   def new
-    if !current_user.is_global_admin && params[:global] == '1'
-      not_found!
-      return
-    end
-
-    @close_reason = CloseReason.new
+    @close_reason = CloseReason.new(community: params[:global] == '1' ? nil : @community)
   end
 
   def create
-    if !current_user.is_global_admin && params[:global] == '1'
-      not_found!
-      return
-    end
-
     @close_reason = CloseReason.new(name: params[:close_reason][:name],
                                     description: params[:close_reason][:description],
                                     requires_other_post: params[:close_reason][:requires_other_post],
                                     active: params[:close_reason][:active],
                                     community: params[:global] == '1' ? nil : @community)
+
     if @close_reason.save
       attr = @close_reason.attributes_print
-      AuditLog.moderator_audit(event_type: 'close_reason_create', related: @close_reason, user: current_user,
+      AuditLog.moderator_audit(event_type: 'close_reason_create',
+                               related: @close_reason,
+                               user: current_user,
                                comment: "<<CloseReason #{attr}>>")
+
       if @close_reason.community.nil?
         redirect_to close_reasons_path(global: 1)
       else
@@ -75,6 +70,10 @@ class CloseReasonsController < ApplicationController
 
   def set_close_reason
     @close_reason = CloseReason.unscoped.find(params[:id])
+  end
+
+  def check_create_access
+    not_found! unless current_user&.global_admin? || params[:global] != '1'
   end
 
   def verify_admin_for_global_reasons
