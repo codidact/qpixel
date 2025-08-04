@@ -15,15 +15,21 @@ class CloseReasonsController < ApplicationController
 
   def update
     before = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
-    @close_reason.update close_reason_params
-    after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
-    AuditLog.moderator_audit(event_type: 'close_reason_update', related: @close_reason, user: current_user,
-                             comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
+    if @close_reason.update(close_reason_params)
+      after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
 
-    if @close_reason.community.nil?
-      redirect_to close_reasons_path(global: 1)
+      AuditLog.moderator_audit(event_type: 'close_reason_update',
+                               related: @close_reason,
+                               user: current_user,
+                               comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
+
+      if @close_reason.community.nil?
+        redirect_to close_reasons_path(global: 1)
+      else
+        redirect_to close_reasons_path
+      end
     else
-      redirect_to close_reasons_path
+      render :edit
     end
   end
 
