@@ -16,7 +16,10 @@
     </div>
     <div class="modal--body">
       <%= label_tag :title, 'Title', class: 'form-element' %>
-      <%= text_field_tag :title, thread.title, class: 'form-element' %>
+      <%= text_field_tag :title,
+                         thread.title,
+                         class: 'form-element js-thread-title-field',
+                         data: { post: thread.post.id, thread: thread.id } %>
     </div>
     <div class="modal--footer">
       <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
