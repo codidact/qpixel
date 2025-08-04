@@ -85,7 +85,7 @@ module QPixel
         raise TypeError, "Can't cache more than one type of object via write_collection"
       end
 
-      data = [types[0], ...value.map(&:id)]
+      data = [types[0].to_s, ...value.map(&:id)]
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       @underlying.write(namespaced, data, **opts)
     end
@@ -99,6 +99,7 @@ module QPixel
     def read_collection(name, **opts)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       data = @underlying.read(namespaced, **opts)
+      return nil if data.nil?
       type = data.slice!(0)
       type.constantize.where(id: data)
     end
