@@ -1,3 +1,11 @@
+<%#
+    Instance variables:
+      @close_reason : close reason to edit
+
+    Variables:
+      submit_url : route URL to submit the form to
+%>
+
 <%= form_for @close_reason, url: submit_url do |f| %>
   <div class="form-group">
     <%= f.label :name, "Name", class: "form-element" %>
