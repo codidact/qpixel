@@ -16,18 +16,21 @@ class CloseReasonsController < ApplicationController
 
   def update
     before = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
-    @close_reason.update(close_reason_params)
-    after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
+    if @close_reason.update(close_reason_params)
+      after = @close_reason.attributes.map { |k, v| "#{k}: #{v}" }.join(' ')
 
-    AuditLog.moderator_audit(event_type: 'close_reason_update',
-                             related: @close_reason,
-                             user: current_user,
-                             comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
+      AuditLog.moderator_audit(event_type: 'close_reason_update',
+                               related: @close_reason,
+                               user: current_user,
+                               comment: "from <<CloseReason #{before}>>\nto <<CloseReason #{after}>>")
 
-    if @close_reason.community.nil?
-      redirect_to close_reasons_path(global: 1)
+      if @close_reason.community.nil?
+        redirect_to close_reasons_path(global: 1)
+      else
+        redirect_to close_reasons_path
+      end
     else
-      redirect_to close_reasons_path
+      render :edit, status: :bad_request
     end
   end
 
@@ -36,14 +39,12 @@ class CloseReasonsController < ApplicationController
   end
 
   def create
-    @close_reason = CloseReason.new(name: params[:close_reason][:name],
-                                    description: params[:close_reason][:description],
-                                    requires_other_post: params[:close_reason][:requires_other_post],
-                                    active: params[:close_reason][:active],
-                                    community: params[:global] == '1' ? nil : @community)
+    community_params = { community: params[:global] == '1' ? nil : @community }
+    @close_reason = CloseReason.new(close_reason_params.merge(community_params))
 
     if @close_reason.save
       attr = @close_reason.attributes_print
+
       AuditLog.moderator_audit(event_type: 'close_reason_create',
                                related: @close_reason,
                                user: current_user,
@@ -55,7 +56,7 @@ class CloseReasonsController < ApplicationController
         redirect_to close_reasons_path
       end
     else
-      render :new
+      render :new, status: :bad_request
     end
   end
 
