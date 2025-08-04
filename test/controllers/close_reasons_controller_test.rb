@@ -35,12 +35,13 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
   test 'should create close reason' do
     sign_in users(:global_admin)
-    post :create, params: { close_reason: { name: 'test', description: 'test', requires_other_post: true,
-                                            active: true } }
-    assert_response(:found)
-    assert_redirected_to close_reasons_path
-    assert_not_nil assigns(:close_reason)
-    assert_not_nil assigns(:close_reason).id
+
+    [false, true].each do |global|
+      try_create_close_reason(global: global, name: global ? 'all communities' : 'per-community')
+      assert_response(:found)
+      assert_redirected_to close_reasons_path(global: global ? '1' : nil)
+      assert_not_nil assigns(:close_reason)&.id
+    end
   end
 
   test 'should get edit' do
@@ -65,5 +66,17 @@ class CloseReasonsControllerTest < ActionController::TestCase
     assert_redirected_to close_reasons_path
     assert_not_nil assigns(:close_reason)
     assert_equal false, assigns(:close_reason).active
+  end
+
+  private
+
+  def try_create_close_reason(**opts)
+    global = opts.delete(:global) || false
+
+    post :create, params: { close_reason: { name: 'test',
+                                            description: 'test',
+                                            requires_other_post: true,
+                                            active: true }.merge(opts),
+                            global: global ? '1' : '0' }
   end
 end
