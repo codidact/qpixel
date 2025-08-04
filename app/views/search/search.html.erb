@@ -12,13 +12,21 @@
      <%= 'post'.pluralize(post_count) %>
     </span>
     <div class="button-list is-gutterless has-margin-2">
-      <%= link_to 'Relevance', request.params.merge(sort: 'relevance'), class: "button is-outlined is-muted #{params[:sort] == 'relevance' || params[:sort].nil? ? 'is-active' : ''}",
+      <%= link_to 'Relevance',
+                  request.params.merge(sort: 'relevance'),
+                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'relevance' || params[:sort].nil?}",
                   role: 'button', 'aria-label': 'Sort by relevance' %>
-      <%= link_to 'Activity', request.params.merge(sort: 'activity'), class: "button is-outlined is-muted #{params[:sort] == 'activity' ? 'is-active' : ''}",
+      <%= link_to 'Activity',
+                  request.params.merge(sort: 'activity'),
+                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'activity'}",
                   role: 'button', 'aria-label': 'Sort by activity' %>
-      <%= link_to 'Age', request.params.merge(sort: 'age'), class: "button is-outlined is-muted #{params[:sort] == 'age' ? 'is-active' : ''}",
+      <%= link_to 'Age',
+                  request.params.merge(sort: 'age'),
+                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'age'}",
                   role: 'button', 'aria-label': 'Sort by age' %>
-      <%= link_to 'Score', request.params.merge(sort: 'score'), class: "button is-outlined is-muted #{params[:sort] == 'score' ? 'is-active' : ''}",
+      <%= link_to 'Score',
+                  request.params.merge(sort: 'score'),
+                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'score'}",
                   role: 'button', 'aria-label': 'Sort by score' %>
     </div>
   </div>
@@ -26,7 +34,9 @@
   <div class="has-clear-clear">&nbsp;</div>
 
   <% if @posts.size == 0 %>
-    <p class="has-color-tertiary"><em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em></p>
+    <p class="has-color-tertiary">
+      <em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em>
+    </p>
   <% end %>
 
   <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
