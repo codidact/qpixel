@@ -3,8 +3,6 @@ require 'test_helper'
 class CloseReasonsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  PARAM_LESS_ACTIONS = [:index, :new].freeze
-
   test 'should get index' do
     sign_in users(:admin)
     get :index
@@ -14,7 +12,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
   test 'should deny anonymous users access' do
     sign_out :user
-    PARAM_LESS_ACTIONS.each do |path|
+    [:index, :new].each do |path|
       get path
       assert_response(:not_found)
     end
@@ -22,7 +20,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
   test 'should deny standard users access' do
     sign_in users(:standard_user)
-    PARAM_LESS_ACTIONS.each do |path|
+    [:index, :new].each do |path|
       get path
       assert_response(:not_found)
     end
