@@ -2,51 +2,56 @@
 
 <h1>Search</h1>
 
-<%= render 'widget' %>
+<%= form_tag search_path, method: :get, role: 'search' do %>
+  <%= render 'search/widget' %>
 
-<% unless @posts.nil? %>
-  <% post_count = @posts.count %>
-  <div class="has-color-tertiary-500 flex-row jc-sb ai-c">
-    <span  title="<%= post_count %> posts">
-     <%= short_number_to_human post_count, precision: 1, significant: false %>
-     <%= 'post'.pluralize(post_count) %>
-    </span>
-    <div class="button-list is-gutterless has-margin-2">
-      <%= link_to 'Relevance',
-                  request.params.merge(sort: 'relevance'),
-                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'relevance' || params[:sort].nil?}",
-                  role: 'button', 'aria-label': 'Sort by relevance' %>
-      <%= link_to 'Activity',
-                  request.params.merge(sort: 'activity'),
-                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'activity'}",
-                  role: 'button', 'aria-label': 'Sort by activity' %>
-      <%= link_to 'Age',
-                  request.params.merge(sort: 'age'),
-                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'age'}",
-                  role: 'button', 'aria-label': 'Sort by age' %>
-      <%= link_to 'Score',
-                  request.params.merge(sort: 'score'),
-                  class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'score'}",
-                  role: 'button', 'aria-label': 'Sort by score' %>
+  <% unless @posts.nil? %>
+    <% post_count = @posts.count %>
+    <div class="search-sorting has-color-tertiary-500">
+      <span  title="<%= post_count %> posts">
+        <%= short_number_to_human post_count, precision: 1, significant: false %>
+        <%= 'post'.pluralize(post_count) %>
+      </span>
+      <div class="search-sorting-types button-list is-gutterless">
+        <%= link_to 'Relevance',
+                    request.params.merge(sort: 'relevance'),
+                    class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'relevance' || params[:sort].nil?}",
+                    role: 'button', 'aria-label': 'Sort by relevance' %>
+        <%= link_to 'Activity',
+                    request.params.merge(sort: 'activity'),
+                    class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'activity'}",
+                    role: 'button', 'aria-label': 'Sort by activity' %>
+        <%= link_to 'Age',
+                    request.params.merge(sort: 'age'),
+                    class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'age'}",
+                    role: 'button', 'aria-label': 'Sort by age' %>
+        <%= link_to 'Score',
+                    request.params.merge(sort: 'score'),
+                    class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'score'}",
+                    role: 'button', 'aria-label': 'Sort by score' %>
+      </div>
     </div>
-  </div>
 
-  <div class="has-clear-clear">&nbsp;</div>
+    <details class="search-filters">
+      <summary>Filters</summary>
+      <%= render 'search/filters' %>
+    </details>
 
-  <% if @posts.size == 0 %>
-    <p class="has-color-tertiary">
-      <em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em>
-    </p>
-  <% end %>
+    <div class="has-clear-clear">&nbsp;</div>
 
-  <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
-    <% @posts.each do |post| %>
-      <% next if post.nil? %>
-      <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
+    <% if @posts.size == 0 %>
+      <p class="has-color-tertiary">
+        <em>No results for <strong><%= params[:search] %></strong>. Try using a different search term.</em>
+      </p>
     <% end %>
-  </div>
-<% end %>
 
-<% unless @posts.nil? %>
-  <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+    <div class="item-list has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-050">
+      <% @posts.each do |post| %>
+        <% next if post.nil? %>
+        <%= render 'posts/type_agnostic', post: post, show_type_tag: true, show_category_tag: true %>
+      <% end %>
+    </div>
+
+    <%= will_paginate @posts, renderer: BootstrapPagination::Rails %>
+  <% end %>
 <% end %>
