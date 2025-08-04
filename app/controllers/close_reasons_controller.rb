@@ -39,14 +39,12 @@ class CloseReasonsController < ApplicationController
   end
 
   def create
-    @close_reason = CloseReason.new(name: params[:close_reason][:name],
-                                    description: params[:close_reason][:description],
-                                    requires_other_post: params[:close_reason][:requires_other_post],
-                                    active: params[:close_reason][:active],
-                                    community: params[:global] == '1' ? nil : @community)
+    community_params = { community: params[:global] == '1' ? nil : @community }
+    @close_reason = CloseReason.new(close_reason_params.merge(community_params))
 
     if @close_reason.save
       attr = @close_reason.attributes_print
+
       AuditLog.moderator_audit(event_type: 'close_reason_create',
                                related: @close_reason,
                                user: current_user,
