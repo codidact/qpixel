@@ -3,5 +3,7 @@ class CloseReason < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  validates :name, presence: true, uniqueness: { scope: [:community_id], case_sensitive: false }
+  validates :name, length: { maximum: 255 },
+                   presence: true,
+                   uniqueness: { scope: [:community_id], case_sensitive: false }
 end
