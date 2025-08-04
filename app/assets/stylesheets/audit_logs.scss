@@ -1,10 +1,12 @@
 @import 'variables';
 
 .audit-log-filters {
-  .select2-container {
+  .form-group-horizontal .actions, .select2-container {
     height: 37px;
     margin: 4px 0px;
+  }
 
+  .select2-container {
     .selection {
       .select2-selection {
         border-color: $muted-graphic;
@@ -15,6 +17,15 @@
       .select2-selection__arrow {
         top: 50%;
         translate: 0 -50%;
+      }
+    }
+  }
+
+  .form-group-horizontal {
+    .actions {
+      .button {
+        height: 100%;
+        margin: 0;
       }
     }
   }

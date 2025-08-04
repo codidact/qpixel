@@ -89,12 +89,19 @@ class PostTypesControllerTest < ActionController::TestCase
 
   test 'can update post type' do
     sign_in users(:global_admin)
-    data = { name: 'Test Type', description: 'words', icon_name: 'heart',
-      has_answers: true, has_license: true, has_category: true,
-      answer_type_id: Answer.post_type_id, has_reactions: false,
-      has_only_specific_reactions: true }
-    patch :update, params: { post_type: data,
-                             id: post_types(:question).id }
+
+    data = { name: 'Test Type',
+             description: 'words',
+             icon_name: 'heart',
+             has_answers: true,
+             has_license: true,
+             has_category: true,
+             answer_type_id: Answer.post_type_id,
+             has_reactions: false,
+             has_only_specific_reactions: true }
+
+    try_update_post_type(post_types(:question), **data)
+
     assert_response(:found)
     assert_redirected_to post_types_path
 
@@ -106,17 +113,27 @@ class PostTypesControllerTest < ActionController::TestCase
   end
 
   test 'update requires auth' do
-    patch :update, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                          has_answers: 'true', has_license: 'true', has_category: 'true' },
-                             id: post_types(:question).id }
+    try_update_post_type(post_types(:question))
     assert_redirected_to_sign_in
   end
 
   test 'update requires global admin' do
     sign_in users(:admin)
-    patch :update, params: { post_type: { name: 'Test Type', description: 'words', icon_name: 'heart',
-                                          has_answers: 'true', has_license: 'true', has_category: 'true' },
-                             id: post_types(:question).id }
+    try_update_post_type(post_types(:question))
     assert_response(:not_found)
+  end
+
+  private
+
+  # @param post_type [PostType] post type to update
+  # @param opts
+  def try_update_post_type(post_type, **opts)
+    patch :update, params: { post_type: { name: 'Test Type',
+                                          description: 'words',
+                                          icon_name: 'heart',
+                                          has_answers: 'true',
+                                          has_license: 'true',
+                                          has_category: 'true' }.merge(opts),
+                             id: post_type.id }
   end
 end

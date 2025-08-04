@@ -27,27 +27,42 @@ class PinnedLinksController < ApplicationController
   end
 
   def create
-    @link = PinnedLink.create pinned_link_params
+    @link = PinnedLink.new(pinned_link_params)
 
-    attr = @link.attributes_print
-    AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                             comment: "<<PinnedLink #{attr}>>")
+    if @link.save
+      attr = @link.attributes_print
 
-    flash[:success] = 'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
-    redirect_to pinned_links_path
+      AuditLog.moderator_audit(event_type: 'pinned_link_create',
+                               related: @link,
+                               user: current_user,
+                               comment: "<<PinnedLink #{attr}>>")
+
+      flash[:success] =
+        'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
+      redirect_to pinned_links_path
+    else
+      render 'pinned_links/new', status: :bad_request
+    end
   end
 
   def edit; end
 
   def update
     before = @link.attributes_print
-    @link.update pinned_link_params
-    after = @link.attributes_print
-    AuditLog.moderator_audit(event_type: 'pinned_link_update', related: @link, user: current_user,
-                             comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
 
-    flash[:success] = 'The pinned link has been updated. Due to caching, it may take some time until it is shown.'
-    redirect_to pinned_links_path
+    if @link.update(pinned_link_params)
+      after = @link.attributes_print
+
+      AuditLog.moderator_audit(event_type: 'pinned_link_update',
+                               related: @link,
+                               user: current_user,
+                               comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
+
+      flash[:success] = 'The pinned link has been updated. Due to caching, it may take some time until it is shown.'
+      redirect_to pinned_links_path
+    else
+      render 'pinned_links/edit', status: :bad_request
+    end
   end
 
   private
