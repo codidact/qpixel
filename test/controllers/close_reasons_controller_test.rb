@@ -33,7 +33,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:close_reason)
   end
 
-  test 'should create close reason' do
+  test 'should correctly create close reasons' do
     sign_in users(:global_admin)
 
     [false, true].each do |global|
@@ -42,6 +42,12 @@ class CloseReasonsControllerTest < ActionController::TestCase
       assert_redirected_to close_reasons_path(global: global ? '1' : nil)
       assert_not_nil assigns(:close_reason)&.id
     end
+  end
+
+  test 'should not create invalid close reasons' do
+    sign_in users(:global_admin)
+    try_create_close_reason(name: '')
+    assert_response(:bad_request)
   end
 
   test 'should get edit' do
@@ -59,13 +65,19 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
   test 'should update close reason' do
     sign_in users(:global_admin)
-    patch :update, params: { id: close_reasons(:duplicate).id, close_reason: { name: 'test', description: 'test',
-                                                                               requires_other_post: true,
-                                                                               active: false } }
+
+    try_update_close_reason(close_reasons(:duplicate), active: false)
+
     assert_response(:found)
     assert_redirected_to close_reasons_path
     assert_not_nil assigns(:close_reason)
     assert_equal false, assigns(:close_reason).active
+  end
+
+  test 'should not update close reasons to invalid states' do
+    sign_in users(:global_admin)
+    try_update_close_reason(close_reasons(:duplicate), name: '')
+    assert_response(:bad_request)
   end
 
   private
@@ -78,5 +90,10 @@ class CloseReasonsControllerTest < ActionController::TestCase
                                             requires_other_post: true,
                                             active: true }.merge(opts),
                             global: global ? '1' : '0' }
+  end
+
+  def try_update_close_reason(reason, **opts)
+    patch :update, params: { id: reason.id,
+                             close_reason: opts }
   end
 end
