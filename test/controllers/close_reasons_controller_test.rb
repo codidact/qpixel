@@ -38,6 +38,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
     [false, true].each do |global|
       try_create_close_reason(global: global, name: global ? 'all communities' : 'per-community')
+
       assert_response(:found)
       assert_redirected_to close_reasons_path(global: global ? '1' : nil)
       assert_not_nil assigns(:close_reason)&.id
@@ -63,15 +64,21 @@ class CloseReasonsControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
-  test 'should update close reason' do
+  test 'should correctly update close reasons' do
     sign_in users(:global_admin)
 
-    try_update_close_reason(close_reasons(:duplicate), active: false)
+    close_reasons.each do |reason|
+      try_update_close_reason(reason, active: false, name: "#{reason.name} updated")
 
-    assert_response(:found)
-    assert_redirected_to close_reasons_path
-    assert_not_nil assigns(:close_reason)
-    assert_equal false, assigns(:close_reason).active
+      assert_response(:found)
+      assert_redirected_to close_reasons_path(global: reason.global? ? '1' : nil)
+
+      @close_reason = assigns(:close_reason)
+
+      assert_not_nil @close_reason
+      assert_equal false, @close_reason.active
+      assert_equal "#{reason.name} updated", @close_reason.name
+    end
   end
 
   test 'should not update close reasons to invalid states' do
