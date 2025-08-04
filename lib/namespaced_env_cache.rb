@@ -111,15 +111,14 @@ module QPixel
     # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     # @yieldreturn [ActiveRecord::Relation]
     def fetch_collection(name, **opts, &block)
-      namespaced = construct_ns_key(name, include_community: include_community(opts))
-      if @underlying.exist?(namespaced)
-        read_collection(namespaced, **opts)
+      if exist?(name, include_community: include_community(opts))
+        read_collection(name, **opts)
       else
         unless block_given?
           raise ArgumentError, "Can't fetch collection without a block given"
         end
         data = block.call
-        write_collection(namespaced, data, **opts)
+        write_collection(name, data, **opts)
         data
       end
     end
