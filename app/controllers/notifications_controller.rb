@@ -1,5 +1,7 @@
 # Provides web and API actions relating to user notifications.
 class NotificationsController < ApplicationController
+  include CommentsHelper
+
   before_action :authenticate_user!, only: [:index]
 
   def index
@@ -7,7 +9,11 @@ class NotificationsController < ApplicationController
                                  .order(Arel.sql('is_read ASC, created_at DESC'))
     respond_to do |format|
       format.html { render :index, layout: 'without_sidebar' }
-      format.json { render json: @notifications, methods: :community_name }
+      format.json do
+        render json: (@notifications.to_a.map do |notif|
+          notif.as_json.merge(content: helpers.render_pings_text(notif.content))
+        end), methods: :community_name
+      end
     end
   end
 

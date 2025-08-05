@@ -1,4 +1,7 @@
 $(() => {
+  /**
+   * @param {QPixelNotification} notification 
+   */
   const makeNotification = (notification) => {
     const template = `<div class="js-notification widget h-m-0 h-m-b-2 ${notification.is_read ? 'read' : 'is-teal'}">
         <div class="widget--body h-p-2">
