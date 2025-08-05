@@ -3,9 +3,6 @@
   name = @subscription.name.presence || params[:name]
   qualifier = @subscription.qualifier.presence || params[:qualifier]
   type = @subscription.type.presence || params[:type]
-
-  type_opts = Subscription.types_accessible_to(current_user)
-                          .map { |type| [phrase_for(type).capitalize, type] }
 %>
 
 <h1>New Subscription</h1>
@@ -22,7 +19,7 @@
     <%= f.label :type, class: "form-element" %>
     <div class="form-caption">What is the subscription's type?</div>
     <%= f.select :type,
-                 options_for_select(type_opts, selected: type),
+                 options_for_select(type_choice_for(current_user), selected: type),
                  { include_blank: true },
                  class: 'form-element' %>
   </div>
