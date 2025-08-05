@@ -1,5 +1,16 @@
 @import 'variables';
 
+img {
+  &.header--item-image {
+    &.user-avatar {
+      align-items: center;
+      display: flex;
+      font-size: 0.75em;
+      overflow: hidden;
+    }
+  }
+}
+
 .user-list {
   display: grid;
   gap: 1em;
