@@ -1,10 +1,3 @@
-<%
-  frequency = @subscription.frequency || params[:frequency]&.to_i
-  name = @subscription.name.presence || params[:name]
-  qualifier = @subscription.qualifier.presence || params[:qualifier]
-  type = @subscription.type.presence || params[:type]
-%>
-
 <h1>New Subscription</h1>
 <p>Fine-tune your subscription below, then click Subscribe to confirm it.</p>
 
@@ -19,7 +12,7 @@
     <%= f.label :type, class: "form-element" %>
     <div class="form-caption">What is the subscription's type?</div>
     <%= f.select :type,
-                 options_for_select(type_choice_for(current_user), selected: type),
+                 options_for_select(type_choice_for(current_user), selected: @subscription.type),
                  { include_blank: true },
                  class: 'form-element' %>
   </div>
@@ -28,19 +21,20 @@
     <%= f.label :qualifier, class: "form-element" %>
     <div class="form-caption">Should be an id for user subscriptions or name for tag & category subscriptions.
       Leave the field blank otherwise.</div>
-    <%= f.text_field :qualifier, class: 'form-element', value: qualifier %>
+    <%= f.text_field :qualifier, class: 'form-element', value: @subscription.qualifier %>
   </div>
 
   <div class="form-group">
     <%= f.label :name, class: "form-element" %>
     <div class="form-caption">Give your subscription a name that you'll recognise.</div>
-    <%= f.text_field :name, class: 'form-element', value: name %>
+    <%= f.text_field :name, class: 'form-element', value: @subscription.name %>
   </div>
 
   <div class="form-group">
     <%= f.label :frequency, class: "form-element" %>
     <div class="form-caption">How often do you want to be sent these emails?</div>
-    <%= f.select :frequency, options_for_select(frequency_choice, selected: frequency),
+    <%= f.select :frequency,
+                 options_for_select(frequency_choice, selected: @subscription.frequency),
                  { include_blank: true }, class: 'form-element' %>
   </div>
 

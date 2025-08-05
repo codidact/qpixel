@@ -3,7 +3,7 @@ class SubscriptionsController < ApplicationController
   before_action :stop_the_awful_troll
 
   def new
-    @subscription = Subscription.new
+    @subscription = Subscription.new(new_sub_params)
   end
 
   def create
@@ -55,6 +55,10 @@ class SubscriptionsController < ApplicationController
   end
 
   private
+
+  def new_sub_params
+    params.permit(:type, :qualifier, :frequency, :name)
+  end
 
   def sub_params
     params.require(:subscription).permit(:type, :qualifier, :frequency, :name)
