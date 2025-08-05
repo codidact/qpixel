@@ -63,13 +63,16 @@ class SubscriptionsController < ApplicationController
     when 'all'
       'all new questions'
     when 'tag'
-      "new questions in the tag '#{Tag.find_by(name: qualifier || params[:qualifier])&.name}'"
+      tag = Tag.find_by(name: qualifier || params[:qualifier])&.name
+      "new questions in the tag#{" '#{tag}'" if tag.present?}"
     when 'user'
-      "new questions by the user '#{User.find_by(id: qualifier || params[:qualifier])&.username}'"
+      user = User.find_by(id: qualifier || params[:qualifier])&.username
+      "new questions by the user#{" '#{user}'" if user.present?}"
     when 'interesting'
       'new questions classed as interesting'
     when 'category'
-      "new questions in the category '#{Category.find_by(id: qualifier || params[:qualifier])&.name}'"
+      category = Category.find_by(id: qualifier || params[:qualifier])&.name
+      "new questions in the category#{" '#{category}'" if category.present?}"
     when 'moderators'
       'announcements and newsletters for moderators'
     else
