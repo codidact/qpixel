@@ -1,10 +1,8 @@
 class SubscriptionsController < ApplicationController
   before_action :authenticate_user!
   before_action :stop_the_awful_troll
-  helper_method :phrase_for
 
   def new
-    @phrasing = phrase_for params[:type]
     @subscription = Subscription.new
   end
 
@@ -53,30 +51,6 @@ class SubscriptionsController < ApplicationController
       render json: { status: 'failed',
                      message: 'You do not have permission to remove this subscription.' },
              status: :forbidden
-    end
-  end
-
-  protected
-
-  def phrase_for(type, qualifier = nil)
-    case type
-    when 'all'
-      'all new questions'
-    when 'tag'
-      tag = Tag.find_by(name: qualifier || params[:qualifier])&.name
-      "new questions in the tag#{" '#{tag}'" if tag.present?}"
-    when 'user'
-      user = User.find_by(id: qualifier || params[:qualifier])&.username
-      "new questions by the user#{" '#{user}'" if user.present?}"
-    when 'interesting'
-      'new questions classed as interesting'
-    when 'category'
-      category = Category.find_by(id: qualifier || params[:qualifier])&.name
-      "new questions in the category#{" '#{category}'" if category.present?}"
-    when 'moderators'
-      'announcements and newsletters for moderators'
-    else
-      'nothing, apparently. How did you get here, again?'
     end
   end
 
