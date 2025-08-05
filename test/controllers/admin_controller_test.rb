@@ -165,4 +165,35 @@ class AdminControllerTest < ActionController::TestCase
     assert_response(:success)
     assert_not_nil assigns(:logs)
   end
+
+  test 'hellban should correctly block the user' do
+    sign_in users(:global_admin)
+
+    user = users(:standard_user)
+    try_hellban_user(user)
+    user.reload
+
+    assert_response(:found)
+    assert BlockedItem.where(item_type: 'email', value: user.email).any?
+  end
+
+  test 'impersonate should bypass reason in dev env' do
+    sign_in users(:developer)
+
+    Rails.env.stub(:development?, true) do
+      try_impersonate_user(users(:standard_user))
+      assert_response(:found)
+      assert_redirected_to root_path
+    end
+  end
+
+  private
+
+  def try_hellban_user(user)
+    post :hellban, params: { id: user.id }
+  end
+
+  def try_impersonate_user(user)
+    get :impersonate, params: { id: user.id }
+  end
 end

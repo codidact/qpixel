@@ -65,6 +65,18 @@ interface QPixelKeyboard {
   updateSelected: () => void;
 }
 
+type QPixelNotification = {
+  community_id: number,
+  community_name: string,
+  content: string,
+  created_at: string,
+  id: number,
+  is_read: boolean,
+  link: string,
+  updated_at: string,
+  user_id: number
+}
+
 type NotificationType = "warning" | "success" | "danger";
 
 type QPixelPopupCallback = (ev: JQuery.ClickEvent, popup: QPixelPopup) => void

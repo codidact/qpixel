@@ -61,6 +61,13 @@ sample_global_admin:
   is_moderator: false
   reputation: 1
 
+sample_developer:
+  user: developer
+  community: sample
+  is_admin: true
+  is_moderator: false
+  reputation: 1
+
 sample_staff:
   user: staff
   community: sample
