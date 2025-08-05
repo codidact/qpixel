@@ -322,7 +322,7 @@ $(() => {
         }
       }
       else {
-        console.error('Failed to delete draft.');
+        QPixel.createNotification('danger', `Failed to delete post draft. (${resp.status})`);
       }
     }
 
