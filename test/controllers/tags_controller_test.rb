@@ -187,7 +187,7 @@ class TagsControllerTest < ActionController::TestCase
       tag: tag
     }
 
-    assert_response(:success)
+    assert_response(:bad_request)
     assert_valid_json_response
 
     res_body = JSON.parse(response.body)
