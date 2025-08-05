@@ -114,10 +114,6 @@ $(() => {
     $postField.val($postField.val()?.toString().replace(placeholder, ''));
   });
 
-  $('.js-category-select').select2({
-    tags: true
-  });
-
   /**
    * @typedef {{
    *  body: string
