@@ -44,7 +44,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { subscription: { type: 'tag', qualifier: 'nope', name: 'test', frequency: 7 } }
 
-    assert_response(:found)
+    assert_response(:bad_request)
     assert_not_nil assigns(:subscription)
     assert assigns(:subscription).errors.any?, '@subscription failed to save without errors'
   end
