@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+  /**
+   * Clears subscription qualifier field value
+   * @returns {void}
+   */
   const clearQualifier = () => {
     const qualifierField = document.querySelector('.js-subscription-qualifier-field');
 
@@ -7,10 +11,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  /**
+   * Sets subscription qualifier section visibility
+   * @param {boolean} visible visibility state
+   * @returns {void}
+   */
+  const setQualifierVisibility = (visible) => {
+    document.querySelector('.js-subscription-qualifier-field')
+            .closest('.form-group')
+            ?.classList.toggle('hide', visible);
+  };
+
+  /**
+   * Is a given subscription type qualifiable?
+   * @param {string} type subscription type
+   * @returns {boolean}
+   */
+  const isQualifiable = (type) => {
+    return ['category', 'tag', 'user'].includes(type);
+  };
+
+  /**
+   * Is a given element a subscription type select?
+   * @param {Element} element
+   * @returns {element is HTMLSelectElement}
+   */
+  const isTypeSelect = (element) => {
+    return element.matches('.js-subscription-type-select');
+  };
+
   document.querySelectorAll('.js-subscription-type-select, .js-subscription-frequency-select').forEach((el) => {
     $(el).select2().on('change', ($event) => {
-      if ($event.target.matches('.js-subscription-type-select')) {
+      if (isTypeSelect($event.target)) {
         clearQualifier();
+        setQualifierVisibility(!isQualifiable($event.target.value));
       }
     });
   });
