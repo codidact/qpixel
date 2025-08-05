@@ -14,7 +14,7 @@ class SubscriptionsController < ApplicationController
       flash[:success] = 'Your subscription was saved successfully.'
       redirect_to params[:return_to].presence || root_path
     else
-      render :error, status: :internal_server_error
+      render :new, status: :bad_request
     end
   end
 

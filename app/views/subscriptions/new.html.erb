@@ -1,7 +1,16 @@
-<h1>New Questions Subscription</h1>
+<%
+  frequency = @subscription.frequency || params[:frequency]&.to_i
+  name = @subscription.name.presence || params[:name]
+  qualifier = @subscription.qualifier.presence || params[:qualifier]
+  type = @subscription.type.presence || params[:type]
+  phrasing = phrase_for(type)
+  frequency_opts = [['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]
+%>
+
+<h1>New Subscription</h1>
 <p>
-  You're subscribing via email to <strong><%= @phrasing %></strong>. Fine-tune your subscription below, then click Subscribe
-  to confirm it.
+  You're subscribing via email to <strong><%= phrasing %></strong>.
+  Fine-tune your subscription below, then click Subscribe to confirm it.
 </p>
 
 <% if @subscription.errors.any? %>
@@ -24,19 +33,19 @@
 <%= form_for @subscription, url: create_subscription_path do |f| %>
   <%= hidden_field_tag 'return_to', params[:return_to] %>
 
-  <%= f.hidden_field :type, value: params[:type] %>
-  <%= f.hidden_field :qualifier, value: params[:qualifier] %>
+  <%= f.hidden_field :type, value: type %>
+  <%= f.hidden_field :qualifier, value: qualifier %>
 
   <div class="form-group">
     <%= f.label :name, class: "form-element" %>
     <div class="form-caption">Give your subscription a name that you'll recognise.</div>
-    <%= f.text_field :name, class: 'form-element' %>
+    <%= f.text_field :name, class: 'form-element', value: name %>
   </div>
 
   <div class="form-group">
     <%= f.label :frequency, class: "form-element" %>
     <div class="form-caption">How often do you want to be sent these emails?</div>
-    <%= f.select :frequency, options_for_select([['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]),
+    <%= f.select :frequency, options_for_select(frequency_opts, selected: frequency),
                  { include_blank: true }, class: 'form-element' %>
   </div>
 

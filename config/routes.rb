@@ -253,7 +253,7 @@ Rails.application.routes.draw do
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
   end
 
-  get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
+  get    'subscriptions/new',              to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
   get    'subscriptions',                  to: 'subscriptions#index', as: :subscriptions
   post   'subscriptions/:id/enable',       to: 'subscriptions#enable', as: :enable_subscription

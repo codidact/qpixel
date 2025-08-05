@@ -44,10 +44,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { subscription: { type: 'tag', qualifier: 'nope', name: 'test', frequency: 7 } }
 
-    assert_response(:internal_server_error)
+    assert_response(:found)
     assert_not_nil assigns(:subscription)
-    assert assigns(:subscription).errors.any?,
-           '@subscription instance variable has no errors attached but failed to save'
+    assert assigns(:subscription).errors.any?, '@subscription failed to save without errors'
   end
 
   test 'should prevent users updating subscriptions belonging to others' do
