@@ -11,6 +11,9 @@ class Subscription < ApplicationRecord
 
   validate :qualifier_presence
 
+  # Gets a list of subscription types available to a given user
+  # @param user [User] user to check type access for
+  # @return [Array<String>] list of available types
   def self.types_accessible_to(user)
     base_types = ['all', 'tag', 'user', 'interesting', 'category']
     user.at_least_moderator? ? base_types << 'moderators' : base_types
