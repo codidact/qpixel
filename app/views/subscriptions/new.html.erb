@@ -17,7 +17,7 @@
                  class: 'form-element js-subscription-type-select' %>
   </div>
 
-  <div class="form-group">
+  <div class="form-group<%= ' hide' unless @subscription.qualified? %>">
     <%= f.label :qualifier, class: "form-element" %>
     <div class="form-caption">Should be an id for user subscriptions or name for tag & category subscriptions.
       Leave the field blank otherwise.</div>

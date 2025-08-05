@@ -1,12 +1,16 @@
 class Subscription < ApplicationRecord
-  self.inheritance_column = 'sti_type'
-
   include CommunityRelated
   include Timestamped
 
+  self.inheritance_column = 'sti_type'
+
+  BASE_TYPES = ['all', 'tag', 'user', 'interesting', 'category'].freeze
+  MOD_ONLY_TYPES = ['moderators'].freeze
+  QUALIFIED_TYPES = ['category', 'tag', 'user'].freeze
+
   belongs_to :user
 
-  validates :type, presence: true, inclusion: ['all', 'tag', 'user', 'interesting', 'category', 'moderators']
+  validates :type, presence: true, inclusion: BASE_TYPES + MOD_ONLY_TYPES
   validates :frequency, numericality: { minimum: 1, maximum: 90 }
 
   validate :qualifier_presence
@@ -15,8 +19,7 @@ class Subscription < ApplicationRecord
   # @param user [User] user to check type access for
   # @return [Array<String>] list of available types
   def self.types_accessible_to(user)
-    base_types = ['all', 'tag', 'user', 'interesting', 'category']
-    user.at_least_moderator? ? base_types << 'moderators' : base_types
+    user.at_least_moderator? ? BASE_TYPES + MOD_ONLY_TYPES : BASE_TYPES
   end
 
   def questions
@@ -44,10 +47,17 @@ class Subscription < ApplicationRecord
     end&.order(created_at: :desc)&.limit(25)
   end
 
+  # Is the subscription's type qualified (bound to an entity)?
+  # @param type [String] type to check
+  # @return [Boolean] check result
+  def qualified?
+    QUALIFIED_TYPES.include?(type)
+  end
+
   private
 
   def qualifier_presence
-    return unless ['tag', 'user', 'category'].include? type
+    return unless qualified?
 
     if type == 'tag' && (qualifier.blank? || Tag.find_by(name: qualifier).nil?)
       errors.add(:qualifier, 'must provide a valid tag name for tag subscriptions')

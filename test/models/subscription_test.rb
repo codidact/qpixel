@@ -59,6 +59,12 @@ class SubscriptionTest < ActiveSupport::TestCase
     end
   end
 
+  test 'qualified? should correctly determine if a subscription should have a qualifier' do
+    subscriptions.each do |sub|
+      assert_equal sub.qualified?, Subscription::QUALIFIED_TYPES.include?(sub.type)
+    end
+  end
+
   private
 
   def assert_questions_valid(questions)
