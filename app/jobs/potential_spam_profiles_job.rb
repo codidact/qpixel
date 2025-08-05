@@ -6,7 +6,7 @@ class PotentialSpamProfilesJob < ApplicationJob
     user_ids = ActiveRecord::Base.connection.execute(sql).to_a.flatten
     users = User.where(id: user_ids)
 
-    ability_ids = Ability.where(internal_id: 'unrestricted').map(&:id)
+    ability_ids = Ability.unscoped.where(internal_id: 'unrestricted').map(&:id)
 
     users.each do |user|
       cu_ids = user.community_users.map(&:id)
