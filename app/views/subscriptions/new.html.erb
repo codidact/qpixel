@@ -3,15 +3,19 @@
   name = @subscription.name.presence || params[:name]
   qualifier = @subscription.qualifier.presence || params[:qualifier]
   type = @subscription.type.presence || params[:type]
-  phrasing = phrase_for(type)
   frequency_opts = [['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]
+
+  base_type_opts = ['all', 'tag', 'user', 'interesting', 'category']
+
+  if at_least_moderator?
+    base_type_opts << 'moderators'
+  end
+
+  type_opts = base_type_opts.map { |type| [phrase_for(type).capitalize, type] }
 %>
 
 <h1>New Subscription</h1>
-<p>
-  You're subscribing via email to <strong><%= phrasing %></strong>.
-  Fine-tune your subscription below, then click Subscribe to confirm it.
-</p>
+<p>Fine-tune your subscription below, then click Subscribe to confirm it.</p>
 
 <% if @subscription.errors.any? %>
   <div class="notice is-danger">
@@ -33,8 +37,21 @@
 <%= form_for @subscription, url: create_subscription_path do |f| %>
   <%= hidden_field_tag 'return_to', params[:return_to] %>
 
-  <%= f.hidden_field :type, value: type %>
-  <%= f.hidden_field :qualifier, value: qualifier %>
+  <div class="form-group">
+    <%= f.label :type, class: "form-element" %>
+    <div class="form-caption">What is the subscription's type?</div>
+    <%= f.select :type,
+                 options_for_select(type_opts, selected: type),
+                 { include_blank: true },
+                 class: 'form-element' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :qualifier, class: "form-element" %>
+    <div class="form-caption">Should be an id for user subscriptions or name for tag & category subscriptions.
+      Leave the field blank otherwise.</div>
+    <%= f.text_field :qualifier, class: 'form-element', value: qualifier %>
+  </div>
 
   <div class="form-group">
     <%= f.label :name, class: "form-element" %>
