@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre&display=swap');
 
-.post--body > *:not(div), .post-list--title, .post--title, .post-preview {
+.post--body > *:not(div),
+.post-list--title,
+.post-list--content,
+.post--title,
+.post-preview {
     font-family: 'Frank Ruhl Libre', serif;
 }

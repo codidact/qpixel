@@ -38,7 +38,9 @@
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
-  <script defer>hljs.highlightAll();</script>
+  <script defer>
+    hljs.highlightAll();
+  </script>
 <% end %>
 
 <% if SiteSetting['MathJaxEnabled'] %>
