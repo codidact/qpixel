@@ -3,7 +3,6 @@
   name = @subscription.name.presence || params[:name]
   qualifier = @subscription.qualifier.presence || params[:qualifier]
   type = @subscription.type.presence || params[:type]
-  frequency_opts = [['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]
 
   type_opts = Subscription.types_accessible_to(current_user)
                           .map { |type| [phrase_for(type).capitalize, type] }
@@ -44,7 +43,7 @@
   <div class="form-group">
     <%= f.label :frequency, class: "form-element" %>
     <div class="form-caption">How often do you want to be sent these emails?</div>
-    <%= f.select :frequency, options_for_select(frequency_opts, selected: frequency),
+    <%= f.select :frequency, options_for_select(frequency_choice, selected: frequency),
                  { include_blank: true }, class: 'form-element' %>
   </div>
 
