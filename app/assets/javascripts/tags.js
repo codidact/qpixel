@@ -202,7 +202,7 @@ $(() => {
         location.reload();
       }
       else {
-        console.error('Failed to rename tag, somehow');
+        QPixel.createNotification('danger', `Failed to rename the tag. (${resp.status})`);
       }
     }
   });
