@@ -141,7 +141,7 @@ class TagsController < ApplicationController
       end
     end
 
-    render json: { success: status, tag: @tag }, status: :bad_request
+    render json: { success: status, tag: @tag }, status: status ? :ok : :bad_request
   end
 
   def select_merge; end
