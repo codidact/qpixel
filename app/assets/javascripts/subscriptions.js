@@ -1,4 +1,8 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.js-subscription-type-select, .js-subscription-frequency-select').forEach((el) => {
+    $(el).select2();
+  });
+
   $('.js-enable-subscription').on('change', async (evt) => {
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
