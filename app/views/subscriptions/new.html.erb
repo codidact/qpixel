@@ -5,13 +5,8 @@
   type = @subscription.type.presence || params[:type]
   frequency_opts = [['Every day', 1], ['Every week', 7], ['Every month', 30], ['Every quarter', 90]]
 
-  base_type_opts = ['all', 'tag', 'user', 'interesting', 'category']
-
-  if at_least_moderator?
-    base_type_opts << 'moderators'
-  end
-
-  type_opts = base_type_opts.map { |type| [phrase_for(type).capitalize, type] }
+  type_opts = Subscription.types_accessible_to(current_user)
+                          .map { |type| [phrase_for(type).capitalize, type] }
 %>
 
 <h1>New Subscription</h1>

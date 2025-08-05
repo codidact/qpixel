@@ -11,6 +11,11 @@ class Subscription < ApplicationRecord
 
   validate :qualifier_presence
 
+  def self.types_accessible_to(user)
+    base_types = ['all', 'tag', 'user', 'interesting', 'category']
+    user.at_least_moderator? ? base_types << 'moderators' : base_types
+  end
+
   def questions
     case type
     when 'all'
