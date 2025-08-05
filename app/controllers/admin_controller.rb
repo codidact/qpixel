@@ -4,6 +4,7 @@ class AdminController < ApplicationController
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
                                              :setup_save, :hellban, :all_email, :send_all_email]
   before_action :verify_developer, only: [:change_users, :impersonate]
+  before_action :set_user, only: [:change_users, :hellban, :impersonate]
 
   def index; end
 
@@ -182,20 +183,19 @@ class AdminController < ApplicationController
   end
 
   def hellban
-    @user = User.find params[:id]
     @user.block("user manually blocked by admin ##{current_user.id}")
     flash[:success] = t 'admin.user_fed_stat'
     redirect_back fallback_location: admin_path
   end
 
   def impersonate
-    @user = User.find params[:id]
+    if Rails.env.development?
+      change_users
+    end
   end
 
   def change_users
-    @user = User.find params[:id]
-
-    unless params[:comment].present?
+    unless params[:comment].present? || Rails.env.development?
       flash[:danger] = 'Please explain why you are impersonating this user.'
       render :impersonate
       return
@@ -245,5 +245,11 @@ class AdminController < ApplicationController
       flash[:danger] = helpers.i18ns('admin.errors.email_query_not_found')
     end
     render :email_query
+  end
+
+  private
+
+  def set_user
+    @user = User.find(params[:id])
   end
 end
