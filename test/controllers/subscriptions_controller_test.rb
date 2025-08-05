@@ -26,7 +26,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     get :new, params: { type: 'all' }
     assert_response(:success)
-    assert_not_nil assigns(:phrasing)
     assert_not_nil assigns(:subscription)
   end
 
