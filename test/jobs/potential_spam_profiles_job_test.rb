@@ -1,7 +1,10 @@
 require 'test_helper'
 
 class PotentialSpamProfilesJobTest < ActiveJob::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test 'should run job successfully' do
+    perform_enqueued_jobs do
+      PotentialSpamProfilesJob.perform_later
+    end
+    assert_performed_jobs 1
+  end
 end
