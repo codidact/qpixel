@@ -18,20 +18,7 @@
 <p>Fine-tune your subscription below, then click Subscribe to confirm it.</p>
 
 <% if @subscription.errors.any? %>
-  <div class="notice is-danger">
-    <p>
-      There was a problem saving your subscription:
-
-      <ul>
-        <% @subscription.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </p>
-
-    <p>If you came here from a link and have filled in the details below, this may be a bug. Please let us know on
-      <%= link_to 'Meta', 'https://meta.codidact.com/' %>.</p>
-  </div>
+  <%= render 'subscriptions/error', subscription: @subscription %>
 <% end %>
 
 <%= form_for @subscription, url: create_subscription_path do |f| %>
