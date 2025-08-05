@@ -101,7 +101,12 @@ module QPixel
       data = @underlying.read(namespaced, **opts)
       return nil if data.nil?
       type = data.slice!(0)
-      type.constantize.where(id: data)
+      begin
+        type.constantize.where(id: data)
+      rescue NameError
+        delete(name)
+        nil
+      end
     end
 
     ##
@@ -111,15 +116,18 @@ module QPixel
     # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     # @yieldreturn [ActiveRecord::Relation]
     def fetch_collection(name, **opts, &block)
-      if exist?(name, include_community: include_community(opts))
-        read_collection(name, **opts)
-      else
+      existing = if exist?(name, include_community: include_community(opts))
+                   read_collection(name, **opts)
+                 end
+      if existing.nil?
         unless block_given?
           raise ArgumentError, "Can't fetch collection without a block given"
         end
         data = block.call
         write_collection(name, data, **opts)
         data
+      else
+        existing
       end
     end
 
