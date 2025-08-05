@@ -1,5 +1,5 @@
 <%#
-    Full post view, containing all details and interactions.
+   "Full post view, containing all details and interactions.
 
     Instance variables:
     ? @category  : Category the post belongs to, if any
@@ -13,7 +13,7 @@
     Variables:
       post         : the Post instance to display
     ? float_notice : whether to display the float notice
-%>
+"%>
 
 <% float_notice ||= false %>
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
@@ -259,7 +259,9 @@
                 <% end %>
               <% elsif current_user.present? %>
                 <% if post.pending_suggested_edit? %>
-                  <span class="tools--item">suggested edit pending...</span>
+                      <%= link_to 'suggested edit pending...',
+                                   suggested_edit_url(post.pending_suggested_edit.id),
+                                   class: "tools--item" %>
                 <% elsif post_type.is_freely_editable %>
                   <%= render 'posts/edit_link', post: post %>
                 <% else %>
