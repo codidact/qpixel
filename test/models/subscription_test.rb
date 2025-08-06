@@ -65,6 +65,16 @@ class SubscriptionTest < ActiveSupport::TestCase
     end
   end
 
+  test 'prediactes for each type should correctly determine if the subscription is of type' do
+    Subscription::TYPES.each do |type|
+      other_types = Subscription::TYPES.reject { |t| t == type }
+      subscription = Subscription.new(type: type)
+
+      assert subscription.send("#{type}?")
+      assert(other_types.none? { |t| subscription.send("#{t}?") })
+    end
+  end
+
   private
 
   def assert_questions_valid(questions)

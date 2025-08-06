@@ -6,11 +6,12 @@ class Subscription < ApplicationRecord
 
   BASE_TYPES = ['all', 'tag', 'user', 'interesting', 'category'].freeze
   MOD_ONLY_TYPES = ['moderators'].freeze
+  TYPES = (BASE_TYPES + MOD_ONLY_TYPES).freeze
   QUALIFIED_TYPES = ['category', 'tag', 'user'].freeze
 
   belongs_to :user
 
-  validates :type, presence: true, inclusion: BASE_TYPES + MOD_ONLY_TYPES
+  validates :type, presence: true, inclusion: TYPES
   validates :frequency, numericality: { minimum: 1, maximum: 90 }
 
   validate :qualifier_presence
@@ -19,7 +20,7 @@ class Subscription < ApplicationRecord
   # @param user [User] user to check type access for
   # @return [Array<String>] list of available types
   def self.types_accessible_to(user)
-    user.at_least_moderator? ? BASE_TYPES + MOD_ONLY_TYPES : BASE_TYPES
+    user.at_least_moderator? ? TYPES : BASE_TYPES
   end
 
   def questions
@@ -52,6 +53,13 @@ class Subscription < ApplicationRecord
   # @return [Boolean] check result
   def qualified?
     QUALIFIED_TYPES.include?(type)
+  end
+
+  # Predicates for each of the available type (f.e., user?)
+  TYPES.each do |type_name|
+    define_method "#{type_name}?" do
+      type == type_name
+    end
   end
 
   private
