@@ -1,4 +1,79 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
+  /**
+   * Extracts qualifier type from the field's dataset
+   * @returns {string | null}
+   */
+  const getQualifierType = () => {
+    const field = document.querySelector('.js-sub-type-select');
+    return field instanceof HTMLSelectElement ? field.value : null;
+  };
+
+  /**
+   * Is a given subscription type qualifiable?
+   * @param {string} type subscription type
+   * @returns {boolean}
+   */
+  const isQualifiable = (type) => {
+    return ['category', 'tag', 'user'].includes(type);
+  };
+
+  /**
+   * Synchronizes qualifier field with the given type
+   * @param {string} type subscription type
+   * @param {boolean} [clear] whether to clear qualifier value
+   */
+  const syncQualifier = (type, clear = true) => {
+    const field = document.querySelector('.js-sub-qualifier-select');
+    const label = document.querySelector('.js-sub-qualifier-label');
+
+    if (field instanceof HTMLElement) {
+      if (clear) {
+        $(field).val(null).trigger('change');
+      }
+
+      field.closest('.form-group')?.classList.toggle('hide', !isQualifiable(type));
+    }
+
+    if (label instanceof HTMLElement) {
+      label.textContent = type.slice(0, 1).toUpperCase() + type.slice(1).toLowerCase();
+    }
+  };
+
+  /**
+   * Is a given element a subscription type select?
+   * @param {Element} element
+   * @returns {element is HTMLSelectElement}
+   */
+  const isTypeSelect = (element) => {
+    return element.matches('.js-sub-type-select');
+  };
+
+  document.querySelectorAll('.js-sub-type-select, .js-sub-frequency-select').forEach((el) => {
+    $(el).select2().on('change', ($event) => {
+      if (isTypeSelect($event.target)) {
+        syncQualifier($event.target.value);
+      }
+    });
+
+    if (isTypeSelect(el)) {
+      syncQualifier(el.value, false);
+    }
+  });
+
+  $('.js-sub-qualifier-select').select2({
+    ajax: {
+      url: () => {
+        const type = getQualifierType();
+        return `/subscriptions/qualifiers?type=${type}`
+      },
+      headers: { 'Accept': 'application/json' },
+      delay: 100,
+      processResults: (results) => {
+        return { results }
+      },
+    }
+  });
+
   $('.js-enable-subscription').on('change', async (evt) => {
     const $tgt = $(evt.target);
     const $sub = $tgt.parents('details');
