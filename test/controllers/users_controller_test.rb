@@ -7,9 +7,18 @@ class UsersControllerTest < ActionController::TestCase
   include UsersAbilitiesTest
 
   test 'should get index' do
-    get :index
-    assert_not_nil assigns(:users)
-    assert_response(:success)
+    [:html, :json].each do |format|
+      get :index, params: { format: format }
+
+      assert_response(:success)
+
+      case format
+      when :html
+        assert_not_nil(assigns(:users))
+      when :json
+        assert_valid_json_response
+      end
+    end
   end
 
   test 'should not include users not in current community' do
