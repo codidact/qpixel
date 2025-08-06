@@ -1,0 +1,24 @@
+<%#
+   "Subscription qualifier field partial
+
+    Variables:
+      form         : form to render the field for
+      subscription : Subscription to render qualifier field for
+"%>
+
+<div class="form-group<%= ' hide' unless subscription.qualified? %>">
+  <%= form.label :qualifier,
+                 subscription.type&.capitalize || 'Qualifier',
+                 class: "form-element js-sub-qualifier-label" %>
+  <div class="form-caption">
+    Which <%= subscription.type || 'entity' %> to subscribe to?
+    Required for <%= subscription.type || 'qualified' %> subscriptions.
+  </div>
+  <%= form.select :qualifier,
+                  options_for_select([[subscription.qualifier_name, subscription.qualifier]],
+                                     selected: subscription.qualifier),
+                  {},
+                  class: "form-element js-sub-qualifier-select",
+                  data: { create: 'false', placeholder: '', use_ids: subscription.user? },
+                  multiple: false %>
+</div>
