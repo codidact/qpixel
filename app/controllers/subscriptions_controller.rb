@@ -20,6 +20,34 @@ class SubscriptionsController < ApplicationController
     @subscriptions = current_user.subscriptions
   end
 
+  def qualifiers
+    per_page = 20
+
+    @items = case params[:type]
+             when 'category'
+               Category.accessible_to(current_user)
+                       .order(sequence: :asc, id: :asc)
+             when 'tag'
+               Tag.order(name: :asc)
+             when 'user'
+               User.accessible_to(current_user)
+                   .joins(:community_user)
+                   .undeleted
+                   .where.not(community_users: { deleted: true })
+                   .order(username: :asc)
+             end
+
+    @items = params[:q].present? ? @items&.search(params[:q]) : @items
+    @items = @items&.paginate(page: params[:page], per_page: per_page).to_a
+
+    items = @items.map do |item|
+      { id: item.is_a?(Tag) ? item.name : item.id,
+        text: item.is_a?(User) ? item.username : item.name }
+    end
+
+    render json: items
+  end
+
   def enable
     @subscription = Subscription.find params[:id]
     if current_user.admin? || current_user.id == @subscription.user_id
