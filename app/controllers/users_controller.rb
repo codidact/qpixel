@@ -29,6 +29,13 @@ class UsersController < ApplicationController
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @users
+      end
+    end
   end
 
   def show
