@@ -20,13 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Synchronizes qualifier field with the given type
    * @param {string} type subscription type
+   * @param {boolean} [clear] whether to clear qualifier value
    */
-  const syncQualifier = (type) => {
+  const syncQualifier = (type, clear = true) => {
     const field = document.querySelector('.js-sub-qualifier-select');
     const label = document.querySelector('.js-sub-qualifier-label');
 
     if (field instanceof HTMLElement) {
-      $(field).val(null).trigger('change');
+      if (clear) {
+        $(field).val(null).trigger('change');
+      }
+
       field.closest('.form-group')?.classList.toggle('hide', !isQualifiable(type));
     }
 
@@ -50,6 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
         syncQualifier($event.target.value);
       }
     });
+
+    if (isTypeSelect(el)) {
+      syncQualifier(el.value, false);
+    }
   });
 
   $('.js-sub-qualifier-select').select2({

@@ -6,7 +6,7 @@
       subscription : Subscription to render qualifier field for
 "%>
 
-<div class="form-group<%= ' hide' unless subscription.qualified? %>">
+<div class="form-group hide">
   <%= form.label :qualifier,
                  subscription.type&.capitalize || 'Qualifier',
                  class: "form-element js-sub-qualifier-label" %>
@@ -21,3 +21,14 @@
                   data: { create: 'false', placeholder: '', use_ids: subscription.user? },
                   multiple: false %>
 </div>
+
+<noscript>
+  <div class="form-group">
+    <%= form.label :qualifier, 'Qualifier', class: "form-element" %>
+    <div class="form-caption">
+      Must be a valid user id, category id, or tag <strong>name</strong> for user, category,
+      or tag subscriptions respectively, or <strong>blank</strong> otherwise.
+    </div>
+    <%= form.text_field :qualifier, class: 'form-element' %>
+  </div>
+</noscript>
