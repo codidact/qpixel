@@ -35,7 +35,7 @@
                 <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
                 <span class="form-caption">Choose a category to move this post to.</span>
                 <%= select_tag :target_id, options_for_select([]), include_blank: true,
-                               class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
+                               class: 'form-element js-category-select', id: "target_id_#{post.id}" %>
               </div>
 
               <%= submit_tag 'Move', class: 'button is-filled' %>

@@ -1,11 +1,9 @@
 class SubscriptionsController < ApplicationController
   before_action :authenticate_user!
   before_action :stop_the_awful_troll
-  helper_method :phrase_for
 
   def new
-    @phrasing = phrase_for params[:type]
-    @subscription = Subscription.new
+    @subscription = Subscription.new(new_sub_params)
   end
 
   def create
@@ -14,12 +12,39 @@ class SubscriptionsController < ApplicationController
       flash[:success] = 'Your subscription was saved successfully.'
       redirect_to params[:return_to].presence || root_path
     else
-      render :error, status: :internal_server_error
+      render :new, status: :bad_request
     end
   end
 
   def index
     @subscriptions = current_user.subscriptions
+  end
+
+  def qualifiers
+    per_page = 20
+
+    @items = case params[:type]
+             when 'category'
+               Category.accessible_to(current_user)
+                       .order(sequence: :asc, id: :asc)
+             when 'tag'
+               Tag.order(name: :asc)
+             when 'user'
+               User.accessible_to(current_user)
+                   .joins(:community_user)
+                   .undeleted
+                   .where.not(community_users: { deleted: true })
+                   .order(username: :asc)
+             end
+
+    @items = params[:q].present? ? @items&.search(params[:q]) : @items
+    @items = @items&.paginate(page: params[:page], per_page: per_page).to_a
+
+    @items = @items.map do |item|
+      { id: item.is_a?(Tag) ? item.name : item.id, text: item.name }
+    end
+
+    render json: @items
   end
 
   def enable
@@ -56,28 +81,11 @@ class SubscriptionsController < ApplicationController
     end
   end
 
-  protected
-
-  def phrase_for(type, qualifier = nil)
-    case type
-    when 'all'
-      'all new questions'
-    when 'tag'
-      "new questions in the tag '#{Tag.find_by(name: qualifier || params[:qualifier])&.name}'"
-    when 'user'
-      "new questions by the user '#{User.find_by(id: qualifier || params[:qualifier])&.username}'"
-    when 'interesting'
-      'new questions classed as interesting'
-    when 'category'
-      "new questions in the category '#{Category.find_by(id: qualifier || params[:qualifier])&.name}'"
-    when 'moderators'
-      'announcements and newsletters for moderators'
-    else
-      'nothing, apparently. How did you get here, again?'
-    end
-  end
-
   private
+
+  def new_sub_params
+    params.permit(:type, :qualifier, :frequency, :name)
+  end
 
   def sub_params
     params.require(:subscription).permit(:type, :qualifier, :frequency, :name)

@@ -29,6 +29,13 @@ class UsersController < ApplicationController
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @users
+      end
+    end
   end
 
   def show
@@ -682,11 +689,9 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if current_user&.at_least_moderator?
-      User.all
-    else
-      User.undeleted
-    end.joins(:community_user).includes(:community_user, :avatar_attachment)
+    User.accessible_to(current_user)
+        .joins(:community_user)
+        .includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted

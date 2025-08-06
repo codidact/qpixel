@@ -114,10 +114,6 @@ $(() => {
     $postField.val($postField.val()?.toString().replace(placeholder, ''));
   });
 
-  $('.js-category-select').select2({
-    tags: true
-  });
-
   /**
    * @typedef {{
    *  body: string
@@ -322,7 +318,7 @@ $(() => {
         }
       }
       else {
-        console.error('Failed to delete draft.');
+        QPixel.createNotification('danger', `Failed to delete post draft. (${resp.status})`);
       }
     }
 
