@@ -16,7 +16,7 @@ module SubscriptionsHelper
   def phrase_for(type)
     phrase_map = {
       all: 'all new questions',
-      tag: 'new questions in the tag',
+      tag: 'new questions with the tag',
       user: 'new questions by the user',
       interesting: 'new questions classed as interesting',
       category: 'new questions in the category',
