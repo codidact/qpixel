@@ -109,4 +109,30 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
   end
+
+  test 'qualifiers should correctly return available items based on type' do
+    sign_in users(:admin)
+
+    Subscription::TYPES.each do |type|
+      try_subscription_qualifiers(type)
+
+      assert_response(:success)
+      assert_valid_json_response
+
+      items = JSON.parse(response.body)
+
+      if Subscription::QUALIFIED_TYPES.include?(type)
+        assert_not items.empty?
+        assert(items.all? { |i| i['id'].present? && i['text'].present? })
+      else
+        assert items.empty?
+      end
+    end
+  end
+
+  private
+
+  def try_subscription_qualifiers(type, search: nil)
+    get :qualifiers, params: { type: type, q: search }
+  end
 end
