@@ -67,4 +67,8 @@ class Category < ApplicationRecord
     end
     categories[id]
   end
+
+  def self.search(term)
+    where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
 end
