@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const setQualifierVisibility = (visible) => {
     document.querySelector('.js-subscription-qualifier-field')
-            .closest('.form-group')
+            ?.closest('.form-group')
             ?.classList.toggle('hide', visible);
   };
 
