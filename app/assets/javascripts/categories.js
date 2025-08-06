@@ -43,7 +43,7 @@ $(() => {
     $topic.val(union).trigger('change');
   });
 
-  $('.js-category-change-select').each((_i, el) => {
+  $('.js-category-select').each((_i, el) => {
     const $tgt = $(el);
     $tgt.select2({
       ajax: {
