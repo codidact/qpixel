@@ -98,3 +98,10 @@ sample_enabled_2fa:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_spammer:
+  user: spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

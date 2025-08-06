@@ -72,3 +72,7 @@ e2_ep_susp:
   is_suspended: true
   suspension_end: ~
   suspension_message: go away
+
+e_sp:
+  community_user: sample_spammer
+  ability: unrestricted
