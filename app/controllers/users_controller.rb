@@ -689,11 +689,9 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if current_user&.at_least_moderator?
-      User.all
-    else
-      User.undeleted
-    end.joins(:community_user).includes(:community_user, :avatar_attachment)
+    User.accessible_to(current_user)
+        .joins(:community_user)
+        .includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted
