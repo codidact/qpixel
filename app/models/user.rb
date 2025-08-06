@@ -42,6 +42,13 @@ class User < ApplicationRecord
 
   delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
+  # Gets users appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<User>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? User.all : User.undeleted)
+  end
+
   def self.list_includes
     includes(:posts, :avatar_attachment)
   end
