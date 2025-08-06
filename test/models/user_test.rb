@@ -205,7 +205,8 @@ class UserTest < ActiveSupport::TestCase
     communities.each do |community|
       CommunityUser.unscoped.undeleted.where(community_id: community.id).each do |cu|
         unless cu.user.deleted
-          assert_equal cu.user.ability_on?(community.id, everyone.internal_id), true
+          assert cu.user.ability_on?(community.id, everyone.internal_id),
+                 "Expected user '#{cu.user.username}' to have the 'everyone' ability"
         end
       end
     end
