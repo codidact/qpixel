@@ -23,10 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const syncQualifier = (type) => {
     const field = document.querySelector('.js-sub-qualifier-select');
+    const label = document.querySelector('.js-sub-qualifier-label');
 
     if (field instanceof HTMLElement) {
       $(field).val(null).trigger('change');
       field.closest('.form-group')?.classList.toggle('hide', !isQualifiable(type));
+    }
+
+    if (label instanceof HTMLElement) {
+      label.textContent = type.slice(0, 1).toUpperCase() + type.slice(1).toLowerCase();
     }
   };
 

@@ -11,8 +11,7 @@
                  subscription.type&.capitalize || 'Qualifier',
                  class: "form-element js-sub-qualifier-label" %>
   <div class="form-caption">
-    Which <%= subscription.type || 'entity' %> to subscribe to?
-    Required for <%= subscription.type || 'qualified' %> subscriptions.
+    Choosing one is required for this subscription type.
   </div>
   <%= form.select :qualifier,
                   options_for_select([[subscription.qualifier_name, subscription.qualifier]],
