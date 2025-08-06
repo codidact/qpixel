@@ -67,10 +67,7 @@ class Subscription < ApplicationRecord
   # Gets name of the entity bound to the subscription through qualifier, if any
   # @return [String]
   def qualifier_name
-    entity = qualifier_entity
-    return qualifier unless entity.present?
-
-    user? ? entity.username : entity.name
+    qualifier_entity&.name || qualifier
   end
 
   # Predicates for each of the available type (f.e., user?)

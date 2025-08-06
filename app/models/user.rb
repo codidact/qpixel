@@ -42,6 +42,8 @@ class User < ApplicationRecord
 
   delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
 
+  alias_attribute :name, :username
+
   # Gets users appropriately scoped for a given user
   # @param user [User] user to check
   # @return [ActiveRecord::Relation<User>]

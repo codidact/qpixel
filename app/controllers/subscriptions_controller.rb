@@ -40,12 +40,11 @@ class SubscriptionsController < ApplicationController
     @items = params[:q].present? ? @items&.search(params[:q]) : @items
     @items = @items&.paginate(page: params[:page], per_page: per_page).to_a
 
-    items = @items.map do |item|
-      { id: item.is_a?(Tag) ? item.name : item.id,
-        text: item.is_a?(User) ? item.username : item.name }
+    @items = @items.map do |item|
+      { id: item.is_a?(Tag) ? item.name : item.id, text: item.name }
     end
 
-    render json: items
+    render json: @items
   end
 
   def enable
