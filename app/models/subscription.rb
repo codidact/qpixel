@@ -55,6 +55,24 @@ class Subscription < ApplicationRecord
     QUALIFIED_TYPES.include?(type)
   end
 
+  # Gets entity bound to the subscription through qualifier, if any
+  # @return [Category, Tag, User, nil]
+  def qualifier_entity
+    if qualified? && qualifier.present?
+      model = type.singularize.classify.constantize
+      tag? ? model.find_by(name: qualifier) : model.find(qualifier)
+    end
+  end
+
+  # Gets name of the entity bound to the subscription through qualifier, if any
+  # @return [String]
+  def qualifier_name
+    entity = qualifier_entity
+    return qualifier unless entity.present?
+
+    user? ? entity.username : entity.name
+  end
+
   # Predicates for each of the available type (f.e., user?)
   TYPES.each do |type_name|
     define_method "#{type_name}?" do
