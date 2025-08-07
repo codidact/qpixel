@@ -19,7 +19,6 @@ module Maintenance
     def initial_revision_before_decided(edit)
       PostHistory.of_type('initial_revision')
                  .where(post: edit.post)
-                 .where(created_at: edit.post.created_at..edit.decided_at)
                  .order(created_at: :desc)
                  .first
     end
@@ -42,18 +41,18 @@ module Maintenance
 
       return unless last_revision.present?
 
-      begin
-        status = edit.update({ before_body: render_markdown(last_revision.after_state),
-                               before_body_markdown: last_revision.after_state,
-                               before_tags: last_revision.after_tags.dup,
-                               before_tags_cache: last_revision.after_tags.map(&:name),
-                               before_title: last_revision.after_title })
+      status = edit.update({ before_body: if last_revision.after_state.present?
+                                            render_markdown(last_revision.after_state)
+                                          else
+                                            edit.before_body
+                                          end,
+                             before_body_markdown: last_revision.after_state,
+                             before_tags: last_revision.after_tags.dup,
+                             before_tags_cache: last_revision.after_tags.map(&:name),
+                             before_title: last_revision.after_title })
 
-        unless status
-          Rails.logger.warn("Failed to fix edit ##{edit.id}")
-        end
-      rescue StandardError => e
-        Rails.logger.warn(e)
+      unless status
+        Rails.logger.warn("Failed to fix edit ##{edit.id}")
       end
     end
   end
