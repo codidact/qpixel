@@ -112,4 +112,46 @@ module SearchQualifierHelper
 
     { param: :net_votes, operator: operator.presence || '=', value: val.to_i }
   end
+
+  # Parses a qualifier value string, including operator, as a numeric value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10"+
+  # @return [Array(String, String)] A 2-tuple containing operator and value.
+  # @api private
+  def numeric_value_sql(value)
+    operator = ''
+    while ['<', '>', '='].include? value[0]
+      operator += value[0]
+      value = value[1..-1]
+    end
+
+    # whatever's left after stripping operator is the number
+    # validated by regex in qualifiers_to_sql
+    [operator, value]
+  end
+
+  # Parses a qualifier value string, including operator, as a date value.
+  # @param value [String] The value part of the qualifier, i.e. +">=10d"+
+  # @return [Array(String, String, String)] A 3-tuple containing operator, value, and timeframe.
+  # @api private
+  def date_value_sql(value)
+    operator = ''
+
+    while ['<', '>', '='].include? value[0]
+      operator += value[0]
+      value = value[1..-1]
+    end
+
+    # working with dates: <1y ('less than one year ago') is SQL: > 1y ago
+    operator = { '<' => '>', '>' => '<', '<=' => '>=', '>=' => '<=' }[operator] || ''
+
+    val = ''
+    while value[0] =~ /[[:digit:]]/
+      val += value[0]
+      value = value[1..-1]
+    end
+
+    timeframe = { s: 'SECOND', m: 'MINUTE', h: 'HOUR', d: 'DAY', w: 'WEEK', mo: 'MONTH', y: 'YEAR' }[value.to_sym]
+
+    [operator, val, timeframe || 'MONTH']
+  end
 end

@@ -50,4 +50,42 @@ class SearchQualifierHelperTest < ActionView::TestCase
       assert_not matches_status?(value)
     end
   end
+
+  test 'numeric_value_sql should return correct operator and value' do
+    expected = {
+      '12345' => ['', '12345'],
+      '<12345' => ['<', '12345'],
+      '>=12345' => ['>=', '12345']
+    }
+    expected.each do |input, expect|
+      assert_equal expect, numeric_value_sql(input)
+    end
+  end
+
+  test 'date_value_sql should return correct operator, value, and timeframe' do
+    expected = {
+      '1' => ['', '1', 'MONTH'],
+      '1y' => ['', '1', 'YEAR'],
+      '<1y' => ['>', '1', 'YEAR'],
+      '>=2w' => ['<=', '2', 'WEEK']
+    }
+    expected.each do |input, expect|
+      assert_equal expect, date_value_sql(input)
+    end
+  end
+
+  test 'parse_answers_qualifier should correclty parse answers:' do
+    [
+      ['0', '=', 0],
+      ['>2', '>', 2],
+      ['<=5', '<=', 5]
+    ].each do |entry|
+      value, expected_op, expected_val = entry
+
+      parsed = parse_answers_qualifier(value)
+      assert_equal :answers, parsed[:param]
+      assert_equal expected_op, parsed[:operator]
+      assert_equal expected_val, parsed[:value]
+    end
+  end
 end
