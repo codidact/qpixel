@@ -17,3 +17,6 @@ Style/MethodCallWithArgsParentheses:
   AllowedMethods: ['get', 'post', 'put', 'delete', 'puts', 'patch']
   AllowedPatterns: ['assert$', 'assert_equal', 'raise', '^click_', '^fill_', 'visit', 'within']
   IncludedMacros: ['assert_response']
+
+Style/MultilineBlockChain:
+  Enabled: false

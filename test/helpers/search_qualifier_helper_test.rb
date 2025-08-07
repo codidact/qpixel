@@ -90,17 +90,64 @@ class SearchQualifierHelperTest < ActionView::TestCase
   end
 
   test 'parse_category_qualifier should correctly parse category:' do
+    ['=', '>', '<', '<='].each do |operator|
+      categories.map do |cat|
+        [operator == '=' ? cat.id.to_s : "#{operator}#{cat.id}", operator, cat.id]
+      end.each do |entry|
+        value, expected_op, expected_val = entry
+
+        parsed = parse_category_qualifier(value)
+        assert_equal :category, parsed[:param]
+        assert_equal expected_op, parsed[:operator]
+        assert_equal expected_val, parsed[:category_id]
+      end
+    end
+  end
+
+  test 'parse_post_type_qualifier should correctly parse post_type:' do
+    ['=', '>', '<', '<='].each do |operator|
+      post_types.map do |type|
+        [operator == '=' ? type.id.to_s : "#{operator}#{type.id}", operator, type.id]
+      end.each do |entry|
+        value, expected_op, expected_val = entry
+
+        parsed = parse_post_type_qualifier(value)
+        assert_equal :post_type, parsed[:param]
+        assert_equal expected_op, parsed[:operator]
+        assert_equal expected_val, parsed[:post_type_id]
+      end
+    end
+  end
+
+  test 'parse_downvotes_qualifier should correctly parse downvotes:' do
     [
-      ['10', '=', 10],
-      ['>2', '>', 2],
-      ['<=5', '<=', 5]
+      ['42', '=', 42],
+      ['>5', '>', 5],
+      ['<=1', '<=', 1],
+      ['<3', '<', 3]
     ].each do |entry|
       value, expected_op, expected_val = entry
 
-      parsed = parse_category_qualifier(value)
-      assert_equal :category, parsed[:param]
+      parsed = parse_downvotes_qualifier(value)
+      assert_equal :downvotes, parsed[:param]
       assert_equal expected_op, parsed[:operator]
-      assert_equal expected_val, parsed[:category_id]
+      assert_equal expected_val, parsed[:value]
+    end
+  end
+
+  test 'parse_upvotes_qualifier should correctly parse upvotes:' do
+    [
+      ['42', '=', 42],
+      ['>5', '>', 5],
+      ['<=1', '<=', 1],
+      ['<3', '<', 3]
+    ].each do |entry|
+      value, expected_op, expected_val = entry
+
+      parsed = parse_upvotes_qualifier(value)
+      assert_equal :upvotes, parsed[:param]
+      assert_equal expected_op, parsed[:operator]
+      assert_equal expected_val, parsed[:value]
     end
   end
 
