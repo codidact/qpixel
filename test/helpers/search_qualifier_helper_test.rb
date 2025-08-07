@@ -91,30 +91,26 @@ class SearchQualifierHelperTest < ActionView::TestCase
 
   test 'parse_category_qualifier should correctly parse category:' do
     ['=', '>', '<', '<='].each do |operator|
-      categories.map do |cat|
-        [operator == '=' ? cat.id.to_s : "#{operator}#{cat.id}", operator, cat.id]
-      end.each do |entry|
-        value, expected_op, expected_val = entry
+      categories.each do |cat|
+        value = operator == '=' ? cat.id.to_s : "#{operator}#{cat.id}"
 
         parsed = parse_category_qualifier(value)
         assert_equal :category, parsed[:param]
-        assert_equal expected_op, parsed[:operator]
-        assert_equal expected_val, parsed[:category_id]
+        assert_equal operator, parsed[:operator]
+        assert_equal cat.id, parsed[:category_id]
       end
     end
   end
 
   test 'parse_post_type_qualifier should correctly parse post_type:' do
     ['=', '>', '<', '<='].each do |operator|
-      post_types.map do |type|
-        [operator == '=' ? type.id.to_s : "#{operator}#{type.id}", operator, type.id]
-      end.each do |entry|
-        value, expected_op, expected_val = entry
+      post_types.each do |type|
+        value = operator == '=' ? type.id.to_s : "#{operator}#{type.id}"
 
         parsed = parse_post_type_qualifier(value)
         assert_equal :post_type, parsed[:param]
-        assert_equal expected_op, parsed[:operator]
-        assert_equal expected_val, parsed[:post_type_id]
+        assert_equal operator, parsed[:operator]
+        assert_equal type.id, parsed[:post_type_id]
       end
     end
   end
@@ -184,6 +180,19 @@ class SearchQualifierHelperTest < ActionView::TestCase
       parsed = parse_user_qualifier(user.id.to_s)
       assert_equal :user, parsed[:param]
       assert_equal user.id, parsed[:user_id]
+    end
+  end
+
+  test 'parse_votes_qualifier should correctly parse votes:' do
+    ['=', '>', '<', '<='].each do |operator|
+      ['42', '0'].each do |votes|
+        value = "#{operator}#{votes}"
+
+        parsed = parse_votes_qualifier(value)
+        assert_equal :net_votes, parsed[:param]
+        assert_equal operator, parsed[:operator]
+        assert_equal votes.to_i, parsed[:value]
+      end
     end
   end
 end
