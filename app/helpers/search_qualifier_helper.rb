@@ -94,15 +94,15 @@ module SearchQualifierHelper
   end
 
   def parse_user_qualifier(value)
-    return unless matches_id?(value) || value == 'me'
+    return unless matches_int?(value) || value == 'me'
 
     operator, val = if value == 'me'
-                      ['=', current_user&.id&.to_i]
+                      ['=', current_user&.id]
                     else
                       numeric_value_sql(value)
                     end
 
-    { param: :user, operator: operator.presence || '=', user_id: val }
+    { param: :user, operator: operator.presence || '=', user_id: val.to_i }
   end
 
   def parse_votes_qualifier(value)

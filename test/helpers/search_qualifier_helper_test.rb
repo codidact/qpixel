@@ -168,4 +168,22 @@ class SearchQualifierHelperTest < ActionView::TestCase
       assert_equal tag.id, parsed_tag.id
     end
   end
+
+  test 'parse_exclude_tag_qualifier should correctly parse -tag:' do
+    tags.each do |tag|
+      parsed = parse_exclude_tag_qualifier(tag.name)
+      assert_equal :exclude_tag, parsed[:param]
+
+      parsed_tag = parsed[:tag_id].first
+      assert_equal tag.id, parsed_tag.id
+    end
+  end
+
+  test 'parse_user_qualifier should correctly parse user:' do
+    users.each do |user|
+      parsed = parse_user_qualifier(user.id.to_s)
+      assert_equal :user, parsed[:param]
+      assert_equal user.id, parsed[:user_id]
+    end
+  end
 end
