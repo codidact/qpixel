@@ -1,4 +1,6 @@
 module SearchHelper
+  include SearchQualifierHelper
+
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
@@ -129,86 +131,46 @@ module SearchHelper
     { qualifiers: qualifiers, search: search }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-
   ##
   # Parses a full qualifier string into an array of qualifier objects.
   # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
-    valid_value = {
-      date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
-      status: /any|open|closed/,
-      numeric: /^[<>=]{0,2}[\d.]+$/
-    }
-
-    qualifiers.map do |qualifier| # rubocop:disable Metrics/BlockLength
+    qualifiers.map do |qualifier|
       splat = qualifier.split ':'
       parameter = splat[0]
       value = splat[1]
 
-      case parameter
-      when 'score'
-        next unless value.match?(valid_value[:numeric])
+      parsed = case parameter
+               when 'score'
+                 parse_score_qualifier(value)
+               when 'created'
+                 parse_created_qualifier(value)
+               when 'user'
+                 parse_user_qualifier(value)
+               when 'upvotes'
+                 parse_upvotes_qualifier(value)
+               when 'downvotes'
+                 parse_downvotes_qualifier(value)
+               when 'votes'
+                 parse_votes_qualifier(value)
+               when 'tag'
+                 parse_include_tag_qualifier(value)
+               when '-tag'
+                 parse_exclude_tag_qualifier(value)
+               when 'category'
+                 parse_category_qualifier(value)
+               when 'post_type'
+                 parse_post_type_qualifier(value)
+               when 'answers'
+                 parse_answers_qualifier(value)
+               when 'status'
+                 parse_status_qualifier(value)
+               end
 
-        operator, val = numeric_value_sql value
-        { param: :score, operator: operator.presence || '=', value: val.to_f }
-      when 'created'
-        next unless value.match?(valid_value[:date])
-
-        operator, val, timeframe = date_value_sql value
-        { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
-      when 'user'
-        operator, val = if value.match?(valid_value[:numeric])
-                          numeric_value_sql value
-                        elsif value == 'me'
-                          ['=', current_user&.id&.to_i]
-                        else
-                          next
-                        end
-
-        { param: :user, operator: operator.presence || '=', user_id: val }
-      when 'upvotes'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :upvotes, operator: operator.presence || '=', value: val.to_i }
-      when 'downvotes'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :downvotes, operator: operator.presence || '=', value: val.to_i }
-      when 'votes'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :net_votes, operator: operator.presence || '=', value: val.to_i }
-      when 'tag'
-        { param: :include_tag, tag_id: Tag.where(name: value).select(:id) }
-      when '-tag'
-        { param: :exclude_tag, tag_id: Tag.where(name: value).select(:id) }
-      when 'category'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :category, operator: operator.presence || '=', category_id: val.to_i }
-      when 'post_type'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :post_type, operator: operator.presence || '=', post_type_id: val.to_i }
-      when 'answers'
-        next unless value.match?(valid_value[:numeric])
-
-        operator, val = numeric_value_sql value
-        { param: :answers, operator: operator.presence || '=', value: val.to_i }
-      when 'status'
-        next unless value.match?(valid_value[:status])
-
-        { param: :status, value: value }
-      end
+      parsed
     end.compact
-    # Consider partitioning and telling the user which filters were invalid
+    # Consider telling the user which filters were invalid
   end
 
   ##
@@ -265,50 +227,5 @@ module SearchHelper
     end
 
     query
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  ##
-  # Parses a qualifier value string, including operator, as a numeric value.
-  # @param value [String] The value part of the qualifier, i.e. +">=10"+
-  # @return [Array(String, String)] A 2-tuple containing operator and value.
-  # @api private
-  def numeric_value_sql(value)
-    operator = ''
-    while ['<', '>', '='].include? value[0]
-      operator += value[0]
-      value = value[1..-1]
-    end
-
-    # whatever's left after stripping operator is the number
-    # validated by regex in qualifiers_to_sql
-    [operator, value]
-  end
-
-  ##
-  # Parses a qualifier value string, including operator, as a date value.
-  # @param value [String] The value part of the qualifier, i.e. +">=10d"+
-  # @return [Array(String, String, String)] A 3-tuple containing operator, value, and timeframe.
-  # @api private
-  def date_value_sql(value)
-    operator = ''
-
-    while ['<', '>', '='].include? value[0]
-      operator += value[0]
-      value = value[1..-1]
-    end
-
-    # working with dates: <1y ('less than one year ago') is SQL: > 1y ago
-    operator = { '<' => '>', '>' => '<', '<=' => '>=', '>=' => '<=' }[operator] || ''
-
-    val = ''
-    while value[0] =~ /[[:digit:]]/
-      val += value[0]
-      value = value[1..-1]
-    end
-
-    timeframe = { s: 'SECOND', m: 'MINUTE', h: 'HOUR', d: 'DAY', w: 'WEEK', mo: 'MONTH', y: 'YEAR' }[value.to_sym]
-
-    [operator, val, timeframe || 'MONTH']
   end
 end
