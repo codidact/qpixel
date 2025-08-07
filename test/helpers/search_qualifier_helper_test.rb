@@ -74,7 +74,7 @@ class SearchQualifierHelperTest < ActionView::TestCase
     end
   end
 
-  test 'parse_answers_qualifier should correclty parse answers:' do
+  test 'parse_answers_qualifier should correctly parse answers:' do
     [
       ['0', '=', 0],
       ['>2', '>', 2],
