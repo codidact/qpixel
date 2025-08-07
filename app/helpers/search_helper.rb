@@ -131,20 +131,35 @@ module SearchHelper
 
   # rubocop:disable Metrics/CyclomaticComplexity
 
+  def matches_date?(value)
+    value.match?(/^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/)
+  end
+
+  def matches_id?(value)
+    value.match?(/^[<>=]{0,2}\d+$/)
+  end
+
+  def matches_int?(value)
+    value.match?(/^[<>=]{0,2}-?\d+$/)
+  end
+
+  def matches_numeric?(value)
+    value.match?(/^[<>=]{0,2}[\d.]+$/)
+  end
+
+  def matches_positive_int?(value)
+    value.match?(/^[<>=]{0,2}\d+$/)
+  end
+
+  def matches_status?(value)
+    value.match?(/any|open|closed/)
+  end
+
   ##
   # Parses a full qualifier string into an array of qualifier objects.
   # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
-    valid_value = {
-      date: /^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/,
-      status: /any|open|closed/,
-      numeric: /^[<>=]{0,2}[\d.]+$/,
-      integer: /^[<>=]{0,2}-?\d+$/,
-      positive_int: /^[<>=]{0,2}\d+$/,
-      id: /^[<>=]{0,2}\d+$/
-    }
-
     qualifiers.map do |qualifier| # rubocop:disable Metrics/BlockLength
       splat = qualifier.split ':'
       parameter = splat[0]
@@ -152,17 +167,17 @@ module SearchHelper
 
       case parameter
       when 'score'
-        next unless value.match?(valid_value[:numeric])
+        next unless matches_numeric?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :score, operator: operator.presence || '=', value: val.to_f }
       when 'created'
-        next unless value.match?(valid_value[:date])
+        next unless matches_date?(value)
 
-        operator, val, timeframe = date_value_sql value
+        operator, val, timeframe = date_value_sql(value)
         { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
       when 'user'
-        operator, val = if value.match?(valid_value[:id])
+        operator, val = if matches_id?(value)
                           numeric_value_sql value
                         elsif value == 'me'
                           ['=', current_user&.id&.to_i]
@@ -172,41 +187,41 @@ module SearchHelper
 
         { param: :user, operator: operator.presence || '=', user_id: val }
       when 'upvotes'
-        next unless value.match?(valid_value[:positive_int])
+        next unless matches_positive_int?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :upvotes, operator: operator.presence || '=', value: val.to_i }
       when 'downvotes'
-        next unless value.match?(valid_value[:positive_int])
+        next unless matches_positive_int?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :downvotes, operator: operator.presence || '=', value: val.to_i }
       when 'votes'
-        next unless value.match?(valid_value[:integer])
+        next unless matches_int?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :net_votes, operator: operator.presence || '=', value: val.to_i }
       when 'tag'
         { param: :include_tag, tag_id: Tag.where(name: value).select(:id) }
       when '-tag'
         { param: :exclude_tag, tag_id: Tag.where(name: value).select(:id) }
       when 'category'
-        next unless value.match?(valid_value[:id])
+        next unless matches_id?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :category, operator: operator.presence || '=', category_id: val.to_i }
       when 'post_type'
-        next unless value.match?(valid_value[:id])
+        next unless matches_id?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :post_type, operator: operator.presence || '=', post_type_id: val.to_i }
       when 'answers'
-        next unless value.match?(valid_value[:positive_int])
+        next unless matches_positive_int?(value)
 
-        operator, val = numeric_value_sql value
+        operator, val = numeric_value_sql(value)
         { param: :answers, operator: operator.presence || '=', value: val.to_i }
       when 'status'
-        next unless value.match?(valid_value[:status])
+        next unless matches_status?(value)
 
         { param: :status, value: value }
       end
