@@ -109,36 +109,36 @@ class SuggestedEditControllerTest < ActionController::TestCase
   test 'approving edit should change status and apply it' do
     sign_in users(:editor)
 
-    suggested_edit = suggested_edits(:accepted_suggested_edit)
-    suggested_edit.update(active: true, accepted: false)
-
-    post :approve, params: { id: suggested_edit.id }
-    suggested_edit.reload
+    post :approve, params: { id: suggested_edits(:pending_suggested_edit).id }
 
     assert_response(:success)
-    assert_not_nil assigns(:edit)
 
-    assert_equal suggested_edit.active, false
-    assert_equal suggested_edit.accepted, true
-    assert_equal suggested_edit.body_markdown, suggested_edit.post.body_markdown
-    assert_equal suggested_edit.tags_cache, suggested_edit.post.tags_cache
-    assert_equal suggested_edit.title, suggested_edit.post.title
+    @edit = assigns(:edit)
+
+    assert_not_nil @edit
+    assert_equal @edit.active, false
+    assert_equal @edit.accepted, true
+    assert_equal @edit.body_markdown, @edit.post.body_markdown
+    assert_equal @edit.tags_cache, @edit.post.tags_cache
+    assert_equal @edit.title, @edit.post.title
   end
 
   test 'rejecting edit should change status' do
     sign_in users(:editor)
 
-    suggested_edit = suggested_edits(:rejected_suggested_edit)
-    suggested_edit.update(active: true, accepted: false)
-
-    post :reject, params: { id: suggested_edit.id, rejection_comment: 'WHY NOT?' }
-    suggested_edit.reload
+    post :reject, params: { id: suggested_edits(:pending_suggested_edit).id,
+                            rejection_comment: 'WHY NOT?' }
 
     assert_response(:success)
-    assert_not_nil assigns(:edit)
 
-    assert_equal suggested_edit.active, false
-    assert_equal suggested_edit.accepted, false
-    assert_equal suggested_edit.rejected_comment, 'WHY NOT?'
+    @edit = assigns(:edit)
+
+    assert_not_nil @edit
+    assert_equal @edit.active, false
+    assert_equal @edit.accepted, false
+    assert_equal @edit.before_body_markdown, @edit.post.body_markdown
+    assert_equal @edit.before_tags_cache, @edit.post.tags_cache
+    assert_equal @edit.before_title, @edit.post.title
+    assert_equal @edit.rejected_comment, 'WHY NOT?'
   end
 end

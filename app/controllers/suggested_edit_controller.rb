@@ -42,11 +42,7 @@ class SuggestedEditController < ApplicationController
              before_tags: @post.tags.to_a,
              after_tags: @edit.tags }
 
-    before = { before_body: @post.body,
-               before_body_markdown: @post.body_markdown,
-               before_tags_cache: @post.tags_cache.dup,
-               before_tags: @post.tags.to_a,
-               before_title: @post.title }
+    before = before_attributes(@post)
 
     @post.transaction do
       post_update_status = @post.update(applied_details)
@@ -99,10 +95,15 @@ class SuggestedEditController < ApplicationController
       return
     end
 
-    now = DateTime.now
+    before = before_attributes(@post)
 
-    if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
-                    decided_by: current_user, updated_at: now)
+    if @edit.update(before.merge(active: false,
+                                 accepted: false,
+                                 rejected_comment: params[:rejection_comment],
+                                 decided_at: DateTime.now,
+                                 decided_by: current_user,
+                                 updated_at: DateTime.now))
+
       flash[:success] = 'Edit rejected successfully.'
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
       render json: {
@@ -110,10 +111,8 @@ class SuggestedEditController < ApplicationController
         redirect_url: helpers.generic_share_link(@post)
       }
     else
-      render json: {
-               status: 'error',
-               message: 'Cannot reject this suggested edit... Strange.'
-             },
+      render json: { status: 'error',
+                     message: 'Cannot reject this suggested edit... Strange.' },
              status: :internal_server_error
     end
   end
@@ -135,5 +134,13 @@ class SuggestedEditController < ApplicationController
       last_edited_at: DateTime.now,
       last_edited_by: @edit.user
     }.compact
+  end
+
+  def before_attributes(post)
+    { before_body: post.body,
+      before_body_markdown: post.body_markdown,
+      before_tags_cache: post.tags_cache.dup,
+      before_tags: post.tags.to_a,
+      before_title: post.title }
   end
 end
