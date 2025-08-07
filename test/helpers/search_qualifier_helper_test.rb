@@ -88,4 +88,37 @@ class SearchQualifierHelperTest < ActionView::TestCase
       assert_equal expected_val, parsed[:value]
     end
   end
+
+  test 'parse_category_qualifier should correctly parse category:' do
+    [
+      ['10', '=', 10],
+      ['>2', '>', 2],
+      ['<=5', '<=', 5]
+    ].each do |entry|
+      value, expected_op, expected_val = entry
+
+      parsed = parse_category_qualifier(value)
+      assert_equal :category, parsed[:param]
+      assert_equal expected_op, parsed[:operator]
+      assert_equal expected_val, parsed[:category_id]
+    end
+  end
+
+  test 'parse_status_qualifier should correctly parse status:' do
+    ['any', 'closed', 'open'].each do |value|
+      parsed = parse_status_qualifier(value)
+      assert_equal :status, parsed[:param]
+      assert_equal value, parsed[:value]
+    end
+  end
+
+  test 'parse_include_tag_qualifier should correctly parse tag:' do
+    tags.each do |tag|
+      parsed = parse_include_tag_qualifier(tag.name)
+      assert_equal :include_tag, parsed[:param]
+
+      parsed_tag = parsed[:tag_id].first
+      assert_equal tag.id, parsed_tag.id
+    end
+  end
 end
