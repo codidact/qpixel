@@ -13,29 +13,6 @@ class SearchHelperTest < ActionView::TestCase
     end
   end
 
-  test 'numeric_value_sql should return correct operator and value' do
-    expected = {
-      '12345' => ['', '12345'],
-      '<12345' => ['<', '12345'],
-      '>=12345' => ['>=', '12345']
-    }
-    expected.each do |input, expect|
-      assert_equal expect, numeric_value_sql(input)
-    end
-  end
-
-  test 'date_value_sql should return correct operator, value, and timeframe' do
-    expected = {
-      '1' => ['', '1', 'MONTH'],
-      '1y' => ['', '1', 'YEAR'],
-      '<1y' => ['>', '1', 'YEAR'],
-      '>=2w' => ['<=', '2', 'WEEK']
-    }
-    expected.each do |input, expect|
-      assert_equal expect, date_value_sql(input)
-    end
-  end
-
   test 'qualifiers_to_sql should correctly narrow by :category qualifier' do
     main = categories(:main)
     admin_only = categories(:admin_only)

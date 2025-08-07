@@ -97,7 +97,7 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should correclty create comments in threads' do
+  test 'should correctly create comments in threads' do
     sign_in users(:editor)
     before_author_notifs = users(:standard_user).notifications.count
     before_follow_notifs = users(:deleter).notifications.count
