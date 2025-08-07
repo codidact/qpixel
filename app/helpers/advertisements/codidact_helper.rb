@@ -5,6 +5,7 @@ module Advertisements::CodidactHelper
 
   # rubocop:disable Metrics/BlockLength
   def codidact_ad
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch 'network/codidact_ad', expires_in: 60.minutes, include_community: false do
       ad = Image.new(600, 500)
       ad.background_color = 'white'

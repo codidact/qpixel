@@ -72,6 +72,65 @@ module QPixel
       end
     end
 
+    ##
+    # Cache an ActiveRecord collection. Supports only a basic collection of one type of object. Column selections or
+    # joins etc. will NOT be respected when the collection is read back out.
+    # @param name [String] cache key name
+    # @param value [ActiveRecord::Relation] collection to cache
+    # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
+    # @option opts [Boolean] :include_community whether to include the community ID in the cache key
+    def write_collection(name, value, **opts)
+      types = value.map(&:class).uniq
+      if types.size > 1
+        raise TypeError, "Can't cache more than one type of object via write_collection"
+      end
+
+      data = [types[0].to_s, *value.map(&:id)]
+      namespaced = construct_ns_key(name, include_community: include_community(opts))
+      @underlying.write(namespaced, data, **opts)
+    end
+
+    ##
+    # Read an ActiveRecord collection from cache. Returns a basic collection of the records that were cached, with
+    # no selects or joins applied.
+    # @param name [String] cache key name
+    # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
+    # @options opts [Boolean] :include_community whether to include the community ID in the cache key
+    def read_collection(name, **opts)
+      namespaced = construct_ns_key(name, include_community: include_community(opts))
+      data = @underlying.read(namespaced, **opts)
+      return nil if data.nil?
+      type = data.slice!(0)
+      begin
+        type.constantize.where(id: data)
+      rescue NameError
+        delete(name)
+        nil
+      end
+    end
+
+    ##
+    # Fetch an ActiveRecord collection from cache if it is present, otherwise cache the value returned by +block+.
+    # @param name [String] cache key name
+    # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
+    # @option opts [Boolean] :include_community whether to include the community ID in the cache key
+    # @yieldreturn [ActiveRecord::Relation]
+    def fetch_collection(name, **opts, &block)
+      existing = if exist?(name, include_community: include_community(opts))
+                   read_collection(name, **opts)
+                 end
+      if existing.nil?
+        unless block_given?
+          raise ArgumentError, "Can't fetch collection without a block given"
+        end
+        data = block.call
+        write_collection(name, data, **opts)
+        data
+      else
+        existing
+      end
+    end
+
     # We have to statically report that we support cache versioning even though this depends on the underlying class.
     # However, this is not really a problem since all cache stores provided by activesupport support the feature and
     # we only use the redis cache (by activesupport) for QPixel.

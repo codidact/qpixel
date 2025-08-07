@@ -56,11 +56,12 @@ class Category < ApplicationRecord
 
   def self.by_lowercase_name(name)
     categories = Rails.cache.fetch 'categories/by_lowercase_name' do
-      Category.all.to_h { |c| [c.name.downcase, c] }
+      Category.all.to_h { |c| [c.name.downcase, c.id] }
     end
-    categories[name]
+    Category.find_by(id: categories[name])
   end
 
+  # @todo: Do we need this method?
   def self.by_id(id)
     categories = Rails.cache.fetch 'categories/by_id' do
       Category.all.to_h { |c| [c.id, c] }

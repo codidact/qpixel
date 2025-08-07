@@ -205,9 +205,10 @@ class ApplicationController < ActionController::Base
     RequestContext.clear!
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
-    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
-      Community.unscoped.find_by(host: host_name)
-    end
+    @community = Rails.cache.fetch_collection("#{host_name}/community", expires_in: 1.hour) do
+      Community.unscoped.where(host: host_name)
+    end.first
+    RequestContext.community = @community
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
                       "(#{RequestContext.community&.name})"
@@ -230,7 +231,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch_collection('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
@@ -247,7 +248,7 @@ class ApplicationController < ActionController::Base
     # I.e., if pinned_post_ids contains null, the selection will never return records
     pinned_post_ids = @pinned_links.map(&:post_id).compact
 
-    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch_collection('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.not_locked.where(closed: false)
             .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
@@ -261,7 +262,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch('header_categories') do
+    @header_categories = Rails.cache.fetch_collection('header_categories') do
       Category.all.order(sequence: :asc, id: :asc)
     end
   end
