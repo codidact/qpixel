@@ -15,7 +15,7 @@ module SearchQualifierHelper
     value.match?(/^[<>=]{0,2}[\d.]+$/)
   end
 
-  def matches_positive_int?(value)
+  def matches_non_negative_int?(value)
     value.match?(/^[<>=]{0,2}\d+$/)
   end
 
@@ -24,7 +24,7 @@ module SearchQualifierHelper
   end
 
   def parse_answers_qualifier(value)
-    return unless matches_positive_int?(value)
+    return unless matches_non_negative_int?(value)
 
     operator, val = numeric_value_sql(value)
 
@@ -48,7 +48,7 @@ module SearchQualifierHelper
   end
 
   def parse_downvotes_qualifier(value)
-    return unless matches_positive_int?(value)
+    return unless matches_non_negative_int?(value)
 
     operator, val = numeric_value_sql(value)
 
@@ -86,7 +86,7 @@ module SearchQualifierHelper
   end
 
   def parse_upvotes_qualifier(value)
-    return unless matches_positive_int?(value)
+    return unless matches_non_negative_int?(value)
 
     operator, val = numeric_value_sql(value)
 
