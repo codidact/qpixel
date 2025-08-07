@@ -36,7 +36,7 @@ class SearchQualifierHelperTest < ActionView::TestCase
       assert matches_non_negative_int?(value)
     end
 
-    ['name', '-tag', '3.14'].each do |value|
+    ['name', '-tag', '3.14', '-273'].each do |value|
       assert_not matches_non_negative_int?(value)
     end
   end
