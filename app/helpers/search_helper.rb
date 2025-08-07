@@ -129,8 +129,6 @@ module SearchHelper
     { qualifiers: qualifiers, search: search }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-
   def matches_date?(value)
     value.match?(/^[<>=]{0,2}[\d.]+(?:s|m|h|d|w|mo|y)?$/)
   end
@@ -155,78 +153,136 @@ module SearchHelper
     value.match?(/any|open|closed/)
   end
 
+  def parse_answers_qualifier(value)
+    return unless matches_positive_int?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :answers, operator: operator.presence || '=', value: val.to_i }
+  end
+
+  def parse_category_qualifier(value)
+    return unless matches_id?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :category, operator: operator.presence || '=', category_id: val.to_i }
+  end
+
+  def parse_created_qualifier(value)
+    return unless matches_date?(value)
+
+    operator, val, timeframe = date_value_sql(value)
+
+    { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
+  end
+
+  def parse_downvotes_qualifier(value)
+    return unless matches_positive_int?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :downvotes, operator: operator.presence || '=', value: val.to_i }
+  end
+
+  def parse_exclude_tag_qualifier(value)
+    { param: :exclude_tag, tag_id: Tag.where(name: value).select(:id) }
+  end
+
+  def parse_post_type_qualifier(value)
+    return unless matches_id?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :post_type, operator: operator.presence || '=', post_type_id: val.to_i }
+  end
+
+  def parse_score_qualifier(value)
+    return unless matches_numeric?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :score, operator: operator.presence || '=', value: val.to_f }
+  end
+
+  def parse_status_qualifier(value)
+    return unless matches_status?(value)
+
+    { param: :status, value: value }
+  end
+
+  def parse_include_tag_qualifier(value)
+    { param: :include_tag, tag_id: Tag.where(name: value).select(:id) }
+  end
+
+  def parse_upvotes_qualifier(value)
+    return unless matches_positive_int?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :upvotes, operator: operator.presence || '=', value: val.to_i }
+  end
+
+  def parse_user_qualifier(value)
+    return unless matches_id?(value) || value == 'me'
+
+    operator, val = if value == 'me'
+                      ['=', current_user&.id&.to_i]
+                    else
+                      numeric_value_sql(value)
+                    end
+
+    { param: :user, operator: operator.presence || '=', user_id: val }
+  end
+
+  def parse_votes_qualifier(value)
+    return unless matches_int?(value)
+
+    operator, val = numeric_value_sql(value)
+
+    { param: :net_votes, operator: operator.presence || '=', value: val.to_i }
+  end
+
   ##
   # Parses a full qualifier string into an array of qualifier objects.
   # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
-    qualifiers.map do |qualifier| # rubocop:disable Metrics/BlockLength
+    qualifiers.map do |qualifier|
       splat = qualifier.split ':'
       parameter = splat[0]
       value = splat[1]
 
-      case parameter
-      when 'score'
-        next unless matches_numeric?(value)
+      parsed = case parameter
+               when 'score'
+                 parse_score_qualifier(value)
+               when 'created'
+                 parse_created_qualifier(value)
+               when 'user'
+                 parse_user_qualifier(value)
+               when 'upvotes'
+                 parse_upvotes_qualifier(value)
+               when 'downvotes'
+                 parse_downvotes_qualifier(value)
+               when 'votes'
+                 parse_votes_qualifier(value)
+               when 'tag'
+                 parse_include_tag_qualifier(value)
+               when '-tag'
+                 parse_exclude_tag_qualifier(value)
+               when 'category'
+                 parse_category_qualifier(value)
+               when 'post_type'
+                 parse_post_type_qualifier(value)
+               when 'answers'
+                 parse_answers_qualifier(value)
+               when 'status'
+                 parse_status_qualifier(value)
+               end
 
-        operator, val = numeric_value_sql(value)
-        { param: :score, operator: operator.presence || '=', value: val.to_f }
-      when 'created'
-        next unless matches_date?(value)
-
-        operator, val, timeframe = date_value_sql(value)
-        { param: :created, operator: operator.presence || '=', timeframe: timeframe, value: val.to_i }
-      when 'user'
-        operator, val = if matches_id?(value)
-                          numeric_value_sql value
-                        elsif value == 'me'
-                          ['=', current_user&.id&.to_i]
-                        else
-                          next
-                        end
-
-        { param: :user, operator: operator.presence || '=', user_id: val }
-      when 'upvotes'
-        next unless matches_positive_int?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :upvotes, operator: operator.presence || '=', value: val.to_i }
-      when 'downvotes'
-        next unless matches_positive_int?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :downvotes, operator: operator.presence || '=', value: val.to_i }
-      when 'votes'
-        next unless matches_int?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :net_votes, operator: operator.presence || '=', value: val.to_i }
-      when 'tag'
-        { param: :include_tag, tag_id: Tag.where(name: value).select(:id) }
-      when '-tag'
-        { param: :exclude_tag, tag_id: Tag.where(name: value).select(:id) }
-      when 'category'
-        next unless matches_id?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :category, operator: operator.presence || '=', category_id: val.to_i }
-      when 'post_type'
-        next unless matches_id?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :post_type, operator: operator.presence || '=', post_type_id: val.to_i }
-      when 'answers'
-        next unless matches_positive_int?(value)
-
-        operator, val = numeric_value_sql(value)
-        { param: :answers, operator: operator.presence || '=', value: val.to_i }
-      when 'status'
-        next unless matches_status?(value)
-
-        { param: :status, value: value }
-      end
+      parsed
     end.compact
-    # Consider partitioning and telling the user which filters were invalid
+    # Consider telling the user which filters were invalid
   end
 
   ##
@@ -284,7 +340,6 @@ module SearchHelper
 
     query
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   ##
   # Parses a qualifier value string, including operator, as a numeric value.
