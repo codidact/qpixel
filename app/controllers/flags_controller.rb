@@ -25,14 +25,18 @@ class FlagsController < ApplicationController
 
     if type&.name == "needs author's attention"
       create_as_feedback_comment Post.find(params[:post_id]), current_user, params[:reason]
-      render json: { status: 'success' }, status: :created
+      render json: { status: 'success',
+                     message: '<strong>Thanks!</strong> Your flag was added as a comment for the author to review.' },
+             status: :created
       return
     end
 
     @flag = Flag.new(post_flag_type: type, reason: params[:reason], post_id: params[:post_id],
                      post_type: params[:post_type], user: current_user)
     if @flag.save
-      render json: { status: 'success' }, status: :created
+      render json: { status: 'success',
+                     message: '<strong>Thanks!</strong> We will review your flag.' },
+             status: :created
     else
       render json: { status: 'failed', message: 'Flag failed to save.' }, status: :bad_request
     end

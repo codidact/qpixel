@@ -42,18 +42,11 @@ $(() => {
       $(`#flag-comment-${postId}`).removeClass('is-active');
     };
 
-    const responseType = isCommentFlag ? null : activeRadio.data('response-type');
-
     try {
       const response = await QPixel.flag(data);
 
-      QPixel.handleJSONResponse(response, () => {
-        // TODO: messages must to be provided by the server (I18n and all that)
-        const messages = {
-          comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
-        };
-        const defaultMessage = `<strong>Thanks!</strong> We will review your flag.`;
-        QPixel.createNotification('success', messages[responseType] || defaultMessage);
+      QPixel.handleJSONResponse(response, (data) => {
+        QPixel.createNotification('success', data.message);
         $(`#flag-post-${postId}`).val('');
       }, closeFlagModal);
     } catch(e) {
