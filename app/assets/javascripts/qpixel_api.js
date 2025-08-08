@@ -217,10 +217,10 @@ window.QPixel = {
     }
 
     let prefs = await QPixel._getPreferences();
-    let value = community ? prefs.community[name] : prefs.global[name];
+    let value = community ? prefs?.community[name] : prefs?.global[name];
 
     // Note that null is a valid value for a preference, but undefined means we haven't fetched it.
-    if (typeof (value) !== 'undefined') {
+    if (typeof value !== 'undefined') {
       return value;
     }
     // If we haven't fetched a preference, that probably means it's new - run a full re-fetch.
