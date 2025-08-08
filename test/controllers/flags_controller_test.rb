@@ -40,6 +40,23 @@ class FlagsControllerTest < ActionController::TestCase
     assert_equal I18n.t('flags.errors.create_generic'), JSON.parse(response.body)['message']
   end
 
+  test 'should fail to create flags for rate-limited users' do
+    {
+      RL_NewUserFlags: users(:basic_user),
+      RL_Flags: users(:standard_user)
+    }.each_pair do |setting, user|
+      sign_in(user)
+
+      SiteSetting[setting] = 0
+
+      try_create_flag(posts(:question_one), reason: 'testing flag rate limits')
+
+      assert_response(:forbidden)
+      assert_equal 'failed', JSON.parse(response.body)['status']
+      assert_equal I18n.t('flags.errors.rate_limited', count: 0), JSON.parse(response.body)['message']
+    end
+  end
+
   test 'should retrieve flag queue' do
     sign_in users(:moderator)
     get :queue
