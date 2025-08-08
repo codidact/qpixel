@@ -1,0 +1,7 @@
+en:
+  flags:
+    errors:
+      rate_limited: >
+        Thank you. Flags from people like you help us keep this site clean.
+        However, you have reached your daily flag limit of %{count} flags.
+        Please come back tomorrow to continue flagging.
