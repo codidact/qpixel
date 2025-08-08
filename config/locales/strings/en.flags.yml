@@ -1,7 +1,14 @@
 en:
   flags:
     errors:
+      create_generic: >
+        Failed to raise the flag.
       rate_limited: >
         Thank you. Flags from people like you help us keep this site clean.
         However, you have reached your daily flag limit of %{count} flags.
         Please come back tomorrow to continue flagging.
+    success:
+      create_generic: >
+        <strong>Thanks!</strong> We will review your flag.
+      create_author_attention: >
+        <strong>Thanks!</strong> Your flag was added as a comment for the author to review.
