@@ -1,5 +1,5 @@
 $(() => {
-  $(document).on('click', '.flag-link', (ev) => {
+  $(document).on('click', '.flag-link', async (ev) => {
     ev.preventDefault();
     const self = $(ev.target);
     const isCommentFlag = self.hasClass('js-comment-flag');
@@ -21,6 +21,10 @@ $(() => {
     }
 
     const postId = self.data('post-id');
+
+    /**
+     * @type {QPixelFlagData}
+     */
     const data = {
       'flag_type': (reason !== -1) ? reason : null,
       'post_id': postId,
@@ -29,47 +33,33 @@ $(() => {
     };
 
     if (requiresDetails && data['reason'].length < 1) {
-      QPixel.createNotification('danger',
-                                'Details are required for this flag type - please enter a message.');
+      QPixel.createNotification('danger', 'Details are required for this flag type - please enter a message.');
       return;
     }
 
+    const closeFlagModal = () => {
+      self.parents('.js-flag-box').removeClass('is-active');
+      $(`#flag-comment-${postId}`).removeClass('is-active');
+    };
+
     const responseType = isCommentFlag ? null : activeRadio.data('response-type');
 
-    $.ajax({
-      'type': 'POST',
-      'url': '/flags/new',
-      'data': data,
-      // TODO: review
-      // 'target': self
-    })
-      .done((response) => {
-        if(response.status !== 'success') {
-          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + response.message);
-        }
-        else {
-          const messages = {
-            comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
-          };
-          const defaultMessage = `<strong>Thanks!</strong> We will review your flag.`;
-          QPixel.createNotification('success', messages[responseType] || defaultMessage);
-          $(`#flag-post-${postId}`).val('');
-        }
-        self.parents('.js-flag-box').removeClass('is-active');
-        $(`#flag-comment-${postId}`).removeClass('is-active');
+    try {
+      const response = await QPixel.flag(data);
 
-      })
-      .fail((jqXHR, _textStatus, _errorThrown) => {
-        let message = jqXHR.status;
-        try {
-          message = JSON.parse(jqXHR.responseText)['message'];
-        }
-        finally {
-          QPixel.createNotification('danger', '<strong>Failed:</strong> ' + message);
-        }
-        self.parents('.js-flag-box').removeClass('is-active');
-        $(`#flag-comment-${postId}`).removeClass('is-active');
-      });
+      QPixel.handleJSONResponse(response, () => {
+        // TODO: messages must to be provided by the server (I18n and all that)
+        const messages = {
+          comment: `<strong>Thanks!</strong> Your flag has been added as a comment for the author to review.`
+        };
+        const defaultMessage = `<strong>Thanks!</strong> We will review your flag.`;
+        QPixel.createNotification('success', messages[responseType] || defaultMessage);
+        $(`#flag-post-${postId}`).val('');
+      }, closeFlagModal);
+    } catch(e) {
+      console.warn(`[flags/new] API error:`, e);
+      QPixel.createNotification('danger', 'Failed to flag.');
+    }
   });
 
   $('.js-start-escalate').on('click', (ev) => {
