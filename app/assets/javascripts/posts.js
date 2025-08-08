@@ -48,6 +48,23 @@ $(() => {
     $uploadForm.trigger('submit')
   });
 
+  new MutationObserver((records) => {
+    for (const record of records) {
+      if (record.target instanceof HTMLElement &&
+          record.target.id === 'markdown-image-upload' &&
+          record.target.classList.contains('is-active')) {
+        const fileInput = record.target.querySelector('input[type="file"]');
+        
+        if (fileInput instanceof HTMLInputElement) {
+          fileInput.focus();
+        }
+      }
+    }
+  }).observe(document, {
+    attributeFilter: ['class'],
+    subtree: true,
+  });
+
   $uploadForm.on('submit', async (evt) => {
     evt.preventDefault();
 
