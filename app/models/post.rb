@@ -75,7 +75,7 @@ class Post < ApplicationRecord
   # @param term [String] the search term
   # @return [ActiveRecord::Relation<Post>]
   def self.search(term)
-    match_search term, posts: :body_markdown
+    match_search term, posts: [:body_markdown, :title]
   end
 
   def self.by_slug(slug, user)
