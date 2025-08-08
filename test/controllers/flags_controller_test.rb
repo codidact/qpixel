@@ -5,22 +5,56 @@ class FlagsControllerTest < ActionController::TestCase
 
   test 'should create new post flag' do
     sign_in users(:standard_user)
-    post :new, params: { reason: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', post_id: posts(:answer_two).id, post_type: 'Post' }
 
-    assert_not_nil assigns(:flag)
-    assert_not_nil assigns(:flag).post
-    assert_equal 'success', JSON.parse(response.body)['status']
+    try_create_flag(posts(:answer_two), reason: 'testing post flags')
+
     assert_response(:created)
+
+    @flag = assigns(:flag)
+    assert_not_nil @flag
+    assert_not_nil @flag.post
+    assert_equal 'success', JSON.parse(response.body)['status']
+    assert_equal I18n.t('flags.success.create_generic'), JSON.parse(response.body)['message']
   end
 
   test 'should create new comment flag' do
     sign_in users(:standard_user)
-    post :new, params: { reason: 'ABCDEF GHIJKL MNOPQR STUVWX YZ', post_id: comments(:one).id, post_type: 'Comment' }
 
-    assert_not_nil assigns(:flag)
-    assert_not_nil assigns(:flag).post
-    assert_equal 'success', JSON.parse(response.body)['status']
+    try_create_flag(comments(:one), reason: 'testing comment flags')
+
     assert_response(:created)
+
+    @flag = assigns(:flag)
+    assert_not_nil @flag
+    assert_not_nil @flag.post
+    assert_equal 'success', JSON.parse(response.body)['status']
+  end
+
+  test 'should fail to create invalid flags' do
+    sign_in users(:standard_user)
+
+    try_create_flag(posts(:question_one), reason: 'a' * 1001)
+
+    assert_response(:bad_request)
+    assert_equal 'failed', JSON.parse(response.body)['status']
+    assert_equal I18n.t('flags.errors.create_generic'), JSON.parse(response.body)['message']
+  end
+
+  test 'should fail to create flags for rate-limited users' do
+    {
+      RL_NewUserFlags: users(:basic_user),
+      RL_Flags: users(:standard_user)
+    }.each_pair do |setting, user|
+      sign_in(user)
+
+      SiteSetting[setting] = 0
+
+      try_create_flag(posts(:question_one), reason: 'testing flag rate limits')
+
+      assert_response(:forbidden)
+      assert_equal 'failed', JSON.parse(response.body)['status']
+      assert_equal I18n.t('flags.errors.rate_limited', count: 0), JSON.parse(response.body)['message']
+    end
   end
 
   test 'should retrieve flag queue' do
@@ -119,6 +153,11 @@ class FlagsControllerTest < ActionController::TestCase
   end
 
   private
+
+  def try_create_flag(target, **opts)
+    post :new, params: { post_id: target.id,
+                         post_type: target.is_a?(Post) ? 'Post' : 'Comment' }.merge(opts)
+  end
 
   def try_resolve_flag(flag, result: nil, message: nil)
     post :resolve, params: { id: flag.id, result: result, message: message }

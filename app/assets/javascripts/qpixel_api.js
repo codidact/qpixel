@@ -443,13 +443,25 @@ window.QPixel = {
     return content;
   },
 
-  handleJSONResponse: (data, onSuccess) => {
+  handleJSONResponse: (data, onSuccess, onFinally) => {
     if (data.status === 'success') {
-      onSuccess(data)
+      onSuccess(data);
     }
     else {
       QPixel.createNotification('danger', data.message);
     }
+
+    onFinally?.(data);
+  },
+
+  flag: async (flag) => {
+    const resp = await QPixel.fetchJSON(`/flags/new`, { ...flag }, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
   },
 
   deleteComment: async (id) => {

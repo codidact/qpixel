@@ -21,9 +21,18 @@ class Flag < ApplicationRecord
 
   scope :escalated, -> { where(escalated: true) }
 
+  validate :maximum_reason_length
+
   # Checks if the flag is confidential as per its type
   # @return [Boolean] check result
   def confidential?
     post_flag_type&.confidential || false
+  end
+
+  def maximum_reason_length
+    max_len = SiteSetting['MaxFlagReasonLength'] || 1000
+    if reason.length > [max_len, 1000].min
+      errors.add(:reason, "can't be more than #{max_len} characters")
+    end
   end
 end

@@ -14,4 +14,20 @@ class FlagTest < ActiveSupport::TestCase
     assert_equal normal.confidential?, false
     assert_equal secret.confidential?, true
   end
+
+  test 'flags should be correctly validated' do
+    SiteSetting['MaxFlagReasonLength'] = 500
+
+    common_attributes = {
+      post: posts(:question_one),
+      user: users(:standard_user)
+    }
+
+    too_long = Flag.new(reason: 'a' * 1000, **common_attributes)
+    assert_not too_long.valid?
+    assert too_long.errors[:reason].any?
+
+    valid = Flag.new(reason: 'my reasons are my own', **common_attributes)
+    assert valid.valid?
+  end
 end
