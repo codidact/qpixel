@@ -36,7 +36,7 @@ class FlagsController < ApplicationController
     if @flag.save
       render json: { status: 'success' }, status: :created
     else
-      render json: { status: 'failed', message: 'Flag failed to save.' }, status: :internal_server_error
+      render json: { status: 'failed', message: 'Flag failed to save.' }, status: :bad_request
     end
   end
 
