@@ -162,9 +162,9 @@ interface QPixel {
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * {@link localStorage}, or Redis via AJAX.
-   * @returns JSON object containing user preferences
+   * @returns user preferences or `null` on failure
    */
-  _getPreferences?: () => Promise<UserPreferences>;
+  _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
    * Get the key to use for storing user preferences in localStorage, to avoid conflating users
