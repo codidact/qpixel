@@ -70,6 +70,7 @@
     
   
   <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= link_to 'Cancel', users_me_path, class: 'button is-muted is-outlined', role: 'button' %>
 <% end %>
 
 <% if SiteSetting['AllowContentTransfer'] && current_user.se_acct_id.nil? %>
