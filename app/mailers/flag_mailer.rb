@@ -1,5 +1,5 @@
 class FlagMailer < ApplicationMailer
-  helper :application, :post_types, :users, :tags, :comments
+  helper :application, :post_types, :users, :tags, :posts, :comments
 
   def flag_escalated
     @flag = params[:flag]

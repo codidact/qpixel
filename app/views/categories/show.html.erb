@@ -11,7 +11,7 @@
 <% end %>
 
 <% post_count = @posts.count %>
-<div class="has-color-tertiary-500 category-meta">
+<div class="has-color-tertiary-500 category-meta border-bottom-none">
   <span class=category-meta--start>
     <span title="<%= post_count %> posts">
       <%= short_number_to_human post_count, precision: 1, significant: false %>
@@ -19,7 +19,7 @@
     </span>
     <%= render 'shared/rss_link', url: category_feed_path(@category, format: 'rss') %>
     <span class="has-margin-4">
-      <% if current_user&.is_admin %>
+      <% if current_user&.admin? %>
         <%= link_to 'Edit Category', edit_category_path(@category) %>
       <% end %>
     </span>
@@ -47,7 +47,7 @@
   </div>
 </div>
 
-<details>
+<details class="category-filters">
   <summary>Filters (<%= @filtered ? @active_filter[:name].empty? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
   <% if @active_filter[:default] == :user %>
     <div class="notice is-info">

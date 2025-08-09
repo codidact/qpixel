@@ -24,6 +24,12 @@ class TagsController < ApplicationController
 
   def category
     @tag_set = @category.tag_set
+
+    if @tag_set.nil?
+      not_found!
+      return
+    end
+
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
@@ -31,23 +37,23 @@ class TagsController < ApplicationController
             elsif params[:no_excerpt].present?
               @tag_set.tags.where(excerpt: ['', nil])
             else
-              @tag_set&.tags
+              @tag_set.tags
             end
 
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
-    @tags = @tags&.left_joins(:posts)
-                 &.group(Arel.sql("#{table}.id"))
-                 &.select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
-                 &.paginate(per_page: 96, page: params[:page])
+    @tags = @tags.left_joins(:posts)
+                 .group(Arel.sql("#{table}.id"))
+                 .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
+                 .paginate(per_page: 96, page: params[:page])
 
     @tags = if params[:hierarchical].present?
-              @tags&.order(:path)
+              @tags.order(:path)
             else
-              @tags&.order(Arel.sql('COUNT(posts.id) DESC'))
+              @tags.order(Arel.sql('COUNT(posts.id) DESC'))
             end
 
-    @count = @tags&.length || 0
+    @count = @tags.length || 0
   end
 
   def show
@@ -118,8 +124,24 @@ class TagsController < ApplicationController
   end
 
   def rename
-    status = @tag.update(name: params[:name])
-    render json: { success: status, tag: @tag }
+    status = false
+
+    @tag.transaction do
+      old_tag_name = @tag.name
+
+      status = @tag.update(name: params[:name])
+
+      if status
+        AuditLog.moderator_audit(event_type: 'tag_rename',
+                                 related: @tag,
+                                 user: current_user,
+                                 comment: "#{old_tag_name} renamed to #{params[:name]}")
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    render json: { success: status, tag: @tag }, status: status ? :ok : :bad_request
   end
 
   def select_merge; end
@@ -226,8 +248,7 @@ class TagsController < ApplicationController
 
   def verify_tag_editor
     unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
-      current_user.is_moderator ||
-      current_user.is_admin)
+      current_user.at_least_moderator?)
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found

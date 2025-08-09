@@ -2,11 +2,12 @@ class SuggestedEdit < ApplicationRecord
   include PostRelated
   include PostValidations
   include EditsValidations
+  include Timestamped
 
   belongs_to :user
 
-  serialize :tags_cache, Array
-  serialize :before_tags_cache, Array
+  serialize :tags_cache, coder: YAML, type: Array
+  serialize :before_tags_cache, coder: YAML, type: Array
 
   belongs_to :decided_by, class_name: 'User', optional: true
   has_and_belongs_to_many :tags
@@ -16,6 +17,10 @@ class SuggestedEdit < ApplicationRecord
   has_one :category, through: :post
 
   after_save :clear_pending_cache, if: proc { saved_change_to_attribute?(:active) }
+
+  scope :approved, -> { where(active: false, accepted: true) }
+  scope :by, ->(user) { where(user: user) }
+  scope :rejected, -> { where(active: false, accepted: false) }
 
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"

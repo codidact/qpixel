@@ -51,7 +51,7 @@ $(() => {
       <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
-          <% if current_user.is_moderator %>
+          <% if current_user.at_least_moderator? %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, 
                 class: 'header--item',
                 title: 'Open moderator dashboard' do %>
@@ -84,7 +84,9 @@ $(() => {
         </a>
         <%= link_to user_path(current_user), class: 'header--item is-complex is-visible-on-mobile',
                                              title: 'Manage profile' do %>
-          <img alt="user avatar" src="<%= avatar_url(current_user, 40) %>" class="header--item-image avatar-40">&nbsp;&nbsp;
+          <img alt="user avatar"
+               src="<%= avatar_url(current_user, 40) %>"
+               class="header--item-image user-avatar avatar-40">&nbsp;&nbsp;
           <span class="<%= SiteSetting['SiteHeaderIsDark'] ? 'has-color-white' : 'has-color-tertiary-600' %>"><%= current_user.reputation %></span>
         <% end %>
       <% end %>
@@ -213,7 +215,7 @@ $(() => {
     <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
 
     <% if user_signed_in? %>
-      <% if current_user.is_admin || current_user.is_moderator %>
+      <% if current_user.at_least_moderator? %>
         <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
           Mod
           <% if @open_flags > 0 %>
@@ -282,9 +284,16 @@ $(() => {
             <% end %>
           <% end %>
           <div class="category-header--nav-separator"></div>
-          <%= link_to category_post_types_path(current_cat.id),
-                      class: 'category-header--nav-item is-button' do %>
-            <%= current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+          <% if current_cat&.top_level_post_types.any? || admin? %>
+            <%= link_to category_post_types_path(current_cat.id),
+                        class: "category-header--nav-item is-button" do %>
+              <%= button_text %>
+            <% end %>
+          <% else %>
+            <%= button_tag button_text, class: "button is-muted is-outlined",
+                                        disabled: true,
+                                        title: "The category doesn't have any allowed post types" %>
           <% end %>
         </div>
       </div>

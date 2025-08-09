@@ -1,14 +1,15 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include Lockable
   include PostValidations
+  include SoftDeletable
+  include Timestamped
 
   belongs_to :user, optional: true
   belongs_to :post_type
   belongs_to :parent, class_name: 'Post', optional: true
   belongs_to :closed_by, class_name: 'User', optional: true
-  belongs_to :deleted_by, class_name: 'User', optional: true
   belongs_to :last_activity_by, class_name: 'User', optional: true
-  belongs_to :locked_by, class_name: 'User', optional: true
   belongs_to :last_edited_by, class_name: 'User', optional: true
   belongs_to :category, optional: true
   belongs_to :license, optional: true
@@ -22,12 +23,13 @@ class Post < ApplicationRecord
   has_many :flags, as: :post, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
-  has_many :reactions
+  has_many :reactions, dependent: :destroy
+  has_many :inbound_duplicates, class_name: 'Post', foreign_key: 'duplicate_post_id', dependent: :nullify
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
   counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
 
-  serialize :tags_cache, Array
+  serialize :tags_cache, coder: YAML, type: Array
 
   validates :body, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
@@ -40,13 +42,19 @@ class Post < ApplicationRecord
 
   # Other validations (shared with suggested edits) are in concerns/PostValidations
 
-  scope :undeleted, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
+  scope :bad, -> { where('score < 0.5') }
+  scope :by, ->(user) { where(user: user) }
+  scope :good, -> { where('score > 0.5') }
+  scope :in, ->(category) { where(category: category) }
+  scope :on, ->(community) { where(community: community) }
+  scope :problematic, -> { where('score < 0.25 OR deleted=1') }
+  scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, lambda {
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
                                    user: :avatar_attachment)
                         }
+  scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
 
   before_validation :update_tag_associations, if: -> { post_type&.has_tags }
   after_create :create_initial_revision
@@ -56,6 +64,13 @@ class Post < ApplicationRecord
   after_save :break_description_cache
   after_save :update_category_activity, if: -> { post_type.has_category && !destroyed? }
   after_save :recalc_score
+
+  # Gets posts appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<Post>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? Post : Post.undeleted).qa_only.list_includes
+  end
 
   # @param term [String] the search term
   # @return [ActiveRecord::Relation<Post>]
@@ -73,7 +88,7 @@ class Post < ApplicationRecord
       return nil
     end
 
-    if post&.help_category == '$Moderator' && !user&.is_moderator
+    if post&.help_category == '$Moderator' && !user&.at_least_moderator?
       return nil
     end
 
@@ -189,17 +204,10 @@ class Post < ApplicationRecord
     clear_attribute_changes([:score])
   end
 
-  # This method will update the locked status of this post if locked_until is in the past.
-  # @return [Boolean] whether this post is locked
-  def locked?
-    return true if locked && locked_until.nil? # permanent lock
-    return true if locked && !locked_until.past?
-
-    if locked
-      update(locked: false, locked_by: nil, locked_at: nil, locked_until: nil)
-    end
-
-    false
+  # Checks whether the post allows users to comment on it
+  # @return [Boolean] check result
+  def comments_allowed?
+    !locked? && !deleted && !comments_disabled
   end
 
   # The test here is for flags that are pending (no status). A spam flag
@@ -210,15 +218,17 @@ class Post < ApplicationRecord
     flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
 
-  # @param user [User, Nil]
-  # @return [Boolean] whether the given user can view this post
+  # Checks whether a given user can access the post at all
+  # @param user [User, Nil] user to check access for
+  # @return [Boolean] access check result
   def can_access?(user)
-    (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
+    (!deleted? || user&.post_privilege?('flag_curate', self)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
         category.min_view_trust_level <= (user&.trust_level || 0))
   end
 
-  # @return [Hash] a hash with as key the reaction type and value the amount of reactions for that type
+  # Maps reaction types to number of reactions of that type
+  # @return [Hash{ReactionType => Integer}]
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }
@@ -351,13 +361,13 @@ class Post < ApplicationRecord
   def moderator_tags
     mod_tags = category&.moderator_tags&.map(&:name)
     return unless mod_tags.present? && !mod_tags.empty?
-    return if RequestContext.user&.is_moderator
+    return if RequestContext.user&.at_least_moderator?
 
     sc = changes
     return unless sc.include? 'tags_cache'
 
     if (sc['tags_cache'][0] || []) & mod_tags != (sc['tags_cache'][1] || []) & mod_tags
-      errors.add(:base, "You don't have permission to change moderator-only tags.")
+      errors.add(:mod_tags, "You don't have permission to change moderator-only tags.")
     end
   end
 

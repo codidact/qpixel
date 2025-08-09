@@ -6,6 +6,14 @@ Layout/LineLength:
 
 Metrics/BlockLength:
   CountAsOne: ['array']
+  AllowedMethods:
+    - included
 
 Metrics/ClassLength:
   Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowedMethods: ['get', 'post', 'put', 'delete', 'puts', 'patch']
+  AllowedPatterns: ['assert$', 'assert_equal', 'raise', '^click_', '^fill_', 'visit', 'within']
+  IncludedMacros: ['assert_response']

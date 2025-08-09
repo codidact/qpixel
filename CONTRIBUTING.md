@@ -43,6 +43,10 @@ When developing, please bear the following in mind:
   concern. Content should adhere to WCAG wherever possible. This extends to your code as well - write code that is
   accessible and clear for developers who come after you, including comments where necessary.
 
+Detailed style guidance for each language is available [here](CODE-STANDARDS.md).
+
+Developer documentation for the QPixel internal API is available [here](https://docs.dev.codidact.org/).
+
 If you're in doubt about how to approach or design something, leave a comment on the issue so that we can discuss your
 proposed changes - we'd rather have a discussion first than have to reject hard work you've already done.
 

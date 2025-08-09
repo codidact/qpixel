@@ -17,7 +17,7 @@ module CategoriesHelper
       (defined?(@post) && !@post&.category.nil?) ||
       (defined?(@question) && !@question&.category.nil?) ||
       (defined?(@article) && !@article&.category.nil?) ||
-      (defined?(@edit) && !@edit&.post&.category&.nil?)
+      (defined?(@edit) && !@edit&.post&.category.nil?)
   end
 
   ##
@@ -43,7 +43,7 @@ module CategoriesHelper
   # @return [Boolean]
   def pending_suggestions?
     Rails.cache.fetch "pending_suggestions/#{current_category.id}" do
-      SuggestedEdit.where(post: Post.undeleted.where(category: current_category), active: true).any?
+      SuggestedEdit.where(post: Post.undeleted.in(current_category), active: true).any?
     end
   end
 end

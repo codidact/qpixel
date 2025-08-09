@@ -9,8 +9,16 @@
   communities; consider using activity logs on user profiles instead.
 </p>
 
+<%
+  thread_pingables = @comments.map(&:comment_thread).to_set.to_h do |thread|
+    [thread, thread.pingable]
+  end
+%>
+
 <% @comments.each do |comment| %>
-  <%= render 'comments/comment', comment: comment, with_post_link: true %>
+  <%= render 'comments/comment', comment: comment,
+                                 pingable: thread_pingables[comment.comment_thread],
+                                 with_post_link: true %>
 <% end %>
 
 <div class="has-padding-top-4">

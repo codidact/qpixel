@@ -10,7 +10,7 @@ class FlagsController < ApplicationController
              PostFlagType.find params[:flag_type]
            end
 
-    recent_flags = Flag.where(created_at: 24.hours.ago..DateTime.now, user: current_user).count
+    recent_flags = Flag.by(current_user).recent.count
     max_flags_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Flags' : 'RL_NewUserFlags']
 
     if recent_flags >= max_flags_per_day
@@ -42,8 +42,8 @@ class FlagsController < ApplicationController
 
   def history
     @user = helpers.user_with_me params[:id]
-    unless @user == current_user || (current_user.is_admin || current_user.is_moderator)
-      not_found
+    unless @user == current_user || current_user.at_least_moderator?
+      not_found!
       return
     end
     @flags = @user.flags.includes(:post).order(id: :desc).paginate(page: params[:page], per_page: 50)
@@ -55,7 +55,7 @@ class FlagsController < ApplicationController
   end
 
   def handled
-    @flags = Flag.handled.includes(:post, :user, :handled_by).order(created_at: :desc)
+    @flags = Flag.handled.includes(:post, :user, :handled_by).newest_first
                  .paginate(page: params[:page], per_page: 50)
   end
 
@@ -86,13 +86,16 @@ class FlagsController < ApplicationController
 
   def flag_verify
     @flag = Flag.find params[:id]
+
     return false if current_user.nil?
 
     type = @flag.post_flag_type
-    unless current_user.is_moderator
-      return not_found unless current_user.privilege? 'flag_curate'
-      return not_found if type.nil? || type.confidential
-      return not_found if current_user.id == @flag.user.id
+
+    unless current_user.at_least_moderator?
+      return not_found! unless current_user.privilege? 'flag_curate'
+      return not_found! if type.nil? || type.confidential
+
+      not_found! if current_user.same_as?(@flag.user)
     end
   end
 

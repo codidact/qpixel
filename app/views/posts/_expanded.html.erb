@@ -1,9 +1,19 @@
 <%#
-  Full post view, containing all details and interactions.
-  Variables:
-    post : the Post instance to display
-    float_notice : whether to display the float notice
-%>
+   "Full post view, containing all details and interactions.
+
+    Instance variables:
+    ? @category  : Category the post belongs to, if any
+    ? @post_type : PostType of the post
+
+    Parameters:
+    ? params[:comment_id] : Comment ID to show even if it would be hidden otherwise 
+    ? params[:thread_id]  : CommentThread ID to render expanded view for
+    ? params[:sort]       : sorting type for the post's children
+
+    Variables:
+      post         : the Post instance to display
+    ? float_notice : whether to display the float notice
+"%>
 
 <% float_notice ||= false %>
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
@@ -14,7 +24,7 @@
 
 <div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>" data-post-id="<%= post.id %>" id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>" data-ckb-list-item data-ckb-item-type="post" data-ckb-post-id="<%= post.id %>">
   <% if is_top_level %>
-    <h1 class="post--title has-border-top-width-4 has-border-top-style-solid has-border-color-<%= post.meta? ? 'tertiary' : 'primary' %>-400 has-padding-2">
+    <h1 class="post--title has-margin-top-0 has-padding-2">
       <% title = post.title +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
@@ -30,7 +40,7 @@
     <div class="notice is-info has-font-size-caption">
       <p>
         You are accessing this answer with a direct link, so it's being shown above all other answers regardless of its <%= sort_type %>.
-        You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent), class: 'is-teal' %></strong>.
+        You can <strong><%= link_to 'return to the normal view', generic_share_link(post.parent, sort: params[:sort]), class: 'is-teal' %></strong>.
       </p>
     </div>
   <% end %>
@@ -157,7 +167,7 @@
 	</div>
 	<% end %>
       <% if post_type.is_public_editable && post.pending_suggested_edit? %>
-        <% if check_your_post_privilege(post, 'edit_posts') %>
+        <% if current_user&.can_update?(post, post_type) %>
           <div class="notice h-p-2">
             <p class="h-m-0">
               <i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i>
@@ -240,27 +250,20 @@
               <i class="fa fa-history"></i>
               History
             <% end %>
-            <% if (post_type.is_public_editable && !post.locked?) || current_user&.is_moderator || post.user == current_user %>
-              <% if check_your_post_privilege(post, 'edit_posts') %>
+            <% if (post_type.is_public_editable && !post.locked?) || current_user&.at_least_moderator? || post.user == current_user %>
+              <% if current_user&.can_update?(post, post_type) %>
                 <% if post.pending_suggested_edit? %>
-                  <%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
-                    <i class="fa fa-spell-check"></i>
-                    Review suggested edit
-                  <% end %>
+                  <%= render 'posts/review_edit_link', post: post %>
                 <% else %>
-                  <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Edit this post' do %>
-                    <i class="fa fa-pencil-alt"></i>
-                    Edit
-                  <% end %>
+                  <%= render 'posts/edit_link', post: post %>
                 <% end %>
-              <% elsif !current_user.nil? %>
+              <% elsif current_user.present? %>
                 <% if post.pending_suggested_edit? %>
-                  <span class="tools--item">suggested edit pending...</span>
-		<% elsif post_type.is_freely_editable %>
-                  <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Edit this post' do %>
-                    <i class="fa fa-pencil-alt"></i>
-                    Edit
-		  <% end %>
+                      <%= link_to 'suggested edit pending...',
+                                   suggested_edit_url(post.pending_suggested_edit.id),
+                                   class: "tools--item" %>
+                <% elsif post_type.is_freely_editable %>
+                  <%= render 'posts/edit_link', post: post %>
                 <% else %>
                   <%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Suggest edit to this post' do %>
                     <i class="fa fa-pencil-alt"></i>
@@ -314,13 +317,13 @@
                 <i class="fa fa-wrench"></i>
                 Tools
               </a>
-              <% flags_count = if current_user&.is_moderator
+              <% flags_count = if current_user&.at_least_moderator?
                                  post.flags
                                else
                                  post.flags.not_confidential
                                end.where(handled_by_id: nil).count %>
 
-              <% own_flags_count = if current_user&.is_moderator
+              <% own_flags_count = if current_user&.at_least_moderator?
                                      0
                                    else
                                      post.flags.not_confidential.where(user: current_user, handled_by_id: nil).count
@@ -339,7 +342,7 @@
         <div class="post--action-dialog js-flag-box">
           <div class="widget">
             <div class="widget--header">Why does this post require attention from curators or moderators?</div>
-            <% if current_user&.has_active_flags?(post) %>
+            <% if current_user&.active_flags_on?(post) %>
               <div class="widget--body">
                 <div class="notice is-warning">
                   You already have active flags on this post:
@@ -475,8 +478,8 @@
             <div class="widget">
               <div class="widget--header">Flags on this post</div>
               <% post.flags.where(handled_by_id: nil).each do |flag| %>
-                <% next if !current_user.is_moderator && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
-                <% next if !current_user.is_moderator && (current_user.id == flag.user.id) %>
+                <% next if !current_user.at_least_moderator? && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
+                <% next if !current_user.at_least_moderator? && (current_user.id == flag.user.id) %>
                 <div class="widget--body">
                   <div>
                   <p>
@@ -501,7 +504,7 @@
             <button class="toc--header" data-toggle="#toc-toggle" data-toggle-property="class" data-toggle-value="is-active">Table of Contents</button>
             <% sorted_answers = post.children.sort_by { |answer| answer.score }.reverse! %>
             <% sorted_answers.each do |answer| %>
-              <% next if answer.deleted? && !moderator? %>
+              <% next if answer.deleted? && !at_least_moderator? %>
               <%= render 'posts/toc_entry', answer: answer %>
             <% end %>
           </div>
@@ -522,7 +525,7 @@
         <div class="post--comments has-padding-4">
           <% comment_threads = post.comment_threads.initially_visible.order(updated_at: :desc) %>
           <% public_count = comment_threads.count %>
-          <% available_count = current_user&.has_post_privilege?('flag_curate', post) ?
+          <% available_count = current_user&.post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>
           <div class="post--comments-header">
           <h4 class="has-margin-0">
@@ -549,7 +552,9 @@
           <% end %>
           </div>
           <div class="post--comments-container" role="list">
-            <%= render 'comments/post', comment_threads: comment_threads.first(5) %>
+            <%= render 'comments/threads_list', comment_threads: comment_threads.first(5),
+                                                comment_id: params[:comment_id],
+                                                thread_id: params[:thread_id] %>
           </div>
           <div class="post--comments-links has-margin-top-1">
             <% if available_count > [comment_threads.count, 5].min %>
@@ -558,23 +563,7 @@
               </a>
             <% end %>
             <% if user_signed_in? %>
-              <% if post.locked? && !moderator? && !admin? %>
-                <p class="has-color-tertiary-500">Comments are disabled on locked posts.</p>
-              <% elsif post.deleted %>
-                <p class="has-color-tertiary-500">Comments are disabled on deleted posts.</p>
-              <% elsif post.comments_disabled && !moderator? && !admin? %>
-                <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post.</p>
-              <% else %>
-                <% if post.locked? %>
-                  <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments are disabled on locked posts, but as a moderator you are exempt from that block.</p>
-                <% elsif post.comments_disabled %>
-                  <p class="has-color-red-500"><i class="fa fa-lock"></i> Comments have been disabled on this post, but as a moderator you are exempt from that block.</p>
-                <% end %>
-              <% end %>
-                <a class="button is-outlined is-small js-new-thread-link" data-post="<%= post.id %>" role="button">
-                  <i class="fas fa-fw fa-plus"></i> Start new comment thread
-                </a>
-                <%= render 'comments/new_thread_modal', post: post %>
+              <%= render 'comments/new_thread', post: post, user: current_user %>
             <% end %>
           </div>
         </div>
@@ -583,7 +572,7 @@
   </div>
 </div>
 
-<% if moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
+<% if at_least_moderator? || current_user&.post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
 

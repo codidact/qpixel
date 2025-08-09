@@ -7,8 +7,8 @@ module UsersHelper
   #   be set in HTML.
   # @return [String]
   def avatar_url(user, size = 16)
-    if deleted_user?(user)
-      user_auto_avatar_url(letter: 'X', color: '#E73737FF', size: size, format: :png)
+    if deleted_user?(user) || user.nil?
+      specific_auto_avatar_url(letter: 'X', color: '#E73737FF', size: size, format: :png)
     elsif user&.avatar&.attached?
       uploaded_url(user.avatar.blob.key)
     else
@@ -31,7 +31,7 @@ module UsersHelper
   # @return [Boolean]
   def can_change_category(user, target)
     user.privilege?('flag_curate') &&
-      (user.is_moderator || user.is_admin || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
+      (user.at_least_moderator? || target.min_trust_level.nil? || target.min_trust_level <= user.trust_level)
   end
 
   ##
@@ -89,9 +89,9 @@ module UsersHelper
   ##
   # Is the specified user deleted, either globally or on the current community?
   # @param user [User]
-  # @return [Boolean, nil] True/false, or +nil+ if the user is +nil+.
+  # @return [Boolean] check result - true if the user is +nil+.
   def deleted_user?(user)
-    return nil if user.nil?
+    return true if user.nil?
 
     user.deleted? || user.community_user&.deleted?
   end
@@ -113,7 +113,7 @@ module UsersHelper
   def user_link(user, url_opts = {}, **link_opts)
     anchortext = link_opts[:anchortext]
     link_opts_reduced = { dir: 'ltr' }.merge(link_opts).except(:anchortext)
-    if deleted_user?(user) || user.nil?
+    if user.nil? || (deleted_user?(user) && standard?)
       link_to 'deleted user', '#', link_opts_reduced
     elsif !anchortext.nil?
       link_to anchortext, user_url(user, **url_opts), { dir: 'ltr' }.merge(link_opts)
@@ -139,7 +139,7 @@ module UsersHelper
   ##
   # Returns a user corresponding to the ID provided, with the caveat that if +user_id+ is 'me' and there is a user
   # signed in, the signed in user will be returned. Use for /users/me links.
-  # @param [String] user_id The user ID to find, from +params+
+  # @param user_id [String] id of the user to find, from +params+
   # @return [User] The User object
   def user_with_me(user_id)
     if user_id == 'me' && user_signed_in?
@@ -147,5 +147,21 @@ module UsersHelper
     else
       User.find(user_id)
     end
+  end
+
+  # Extracts posts count for a given post type
+  # @param user_posts [Hash{Integer => Integer}] post counts by post type
+  # @param type [PostType] post type to extract count for
+  # @return [Integer] posts count
+  def posts_for(user_posts, type)
+    user_posts[type.post_type_id] || 0
+  end
+
+  # Extracts votes count for a given post type
+  # @param user_votes [Hash{Integer => Integer}] vote counts by post type
+  # @param type [PostType] post type to extract count for
+  # @return [Integer] votes count
+  def votes_for(user_votes, type)
+    user_votes[type.post_type_id] || 0
   end
 end

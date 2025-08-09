@@ -7,3 +7,19 @@ sanitize:
   name: AskingGuidance
   value: "<script>alert('omg xss');</script>"
   value_type: string
+
+int:
+  name: SettingWithIntegerValue
+  value: 42
+  value_type: integer
+
+text:
+  name: SettingWithTextValue
+  value: "<p>a paragraph of text</p>"
+  value_type: text
+
+rl_new_user_comments:
+  community: sample
+  name: RL_NewUserComments
+  value: 1
+  value_type: integer

@@ -29,13 +29,13 @@ high_trust:
 
 admin_only:
   community: sample
-  name: High Trust
-  short_wiki: High Trust
+  name: Admin Only
+  short_wiki: Admin Only
   display_post_types:
     - <%= Question.post_type_id %>
   tag_set: main
-  min_trust_level: 6
-  min_view_trust_level: 6
+  min_trust_level: 5
+  min_view_trust_level: 5
   license: cc_by_sa
 
 articles_only:
@@ -46,3 +46,12 @@ articles_only:
     - <%= Article.post_type_id %>
   tag_set: main
   license: cc_by_sa
+
+moderator_tags:
+  community: sample
+  name: Moderator Tags
+  short_wiki: Category with a couple of moderator tags
+  tag_set: main
+  license: cc_by_sa
+  moderator_tags:
+    - feature-request

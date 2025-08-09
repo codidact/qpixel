@@ -1,5 +1,16 @@
 @import 'variables';
 
+img {
+  &.header--item-image {
+    &.user-avatar {
+      align-items: center;
+      display: flex;
+      font-size: 0.75em;
+      overflow: hidden;
+    }
+  }
+}
+
 .user-list {
   display: grid;
   gap: 1em;
@@ -100,6 +111,10 @@
 .user-card {
   display: flex;
 
+  &.deleted-content {
+    padding: 0.5rem;
+  }
+
   .user-card--avatar {
     align-self: flex-start;
     padding: 0 0.5rem;
@@ -113,11 +128,6 @@
       padding: 8px;
       display: inline-block;
     }
-  }
-
-  &.deleted-content .user-card--content {
-    display: flex;
-    align-items: center;
   }
 
   .user-card--content {

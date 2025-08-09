@@ -1,0 +1,29 @@
+<%#
+  Helper for rendering comment thread rename action modal
+
+  Variables:
+    thread : Comment thread to create the modal for
+%>
+
+<div class="modal is-with-backdrop is-small js--rename-thread-<%= thread.id %>">
+  <%= form_tag rename_comment_thread_path(thread.id), class: 'modal--container' do %>
+    <div class="modal--header">
+      <button type="button"
+              class="button is-close-button modal--header-button"
+              data-modal=".js--rename-thread-<%= thread.id %>">&times;
+      </button>
+      Rename...
+    </div>
+    <div class="modal--body">
+      <%= label_tag :title, 'Title', class: 'form-element' %>
+      <%= text_field_tag :title,
+                         thread.title,
+                         class: 'form-element js-thread-title-field',
+                         data: { post: thread.post.id, thread: thread.id } %>
+    </div>
+    <div class="modal--footer">
+      <%= submit_tag 'Update thread', class: 'button is-muted is-filled' %>
+      <button type="button" class="button is-muted" data-modal=".js--rename-thread-<%= thread.id %>">Cancel</button>
+    </div>
+  <% end %>
+</div>

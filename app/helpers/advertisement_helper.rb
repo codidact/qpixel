@@ -55,7 +55,7 @@ module AdvertisementHelper
     return false if char.nil?
     raise ArgumentError, 'More than one character provided' if char.length > 1
 
-    char.ord >= RTL_BLOCK_START && char.ord <= RTL_BLOCK_END
+    char.ord.between?(RTL_BLOCK_START, RTL_BLOCK_END)
   end
 
   ##

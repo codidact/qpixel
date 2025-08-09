@@ -7,6 +7,10 @@ class PostHistory < ApplicationRecord
   has_many :post_history_tags
   has_many :tags, through: :post_history_tags
 
+  scope :by, ->(user) { where(user: user) }
+  scope :of_type, ->(name) { joins(:post_history_type).where(post_history_types: { name: name }) }
+  scope :on_undeleted, -> { joins(:post).where(posts: { deleted: false }) }
+
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })
   end
@@ -15,15 +19,16 @@ class PostHistory < ApplicationRecord
     tags.where(post_history_tags: { relationship: 'after' })
   end
 
-  # @param user [User]
-  # @return [Boolean] whether the given user is allowed to see the details of this history item
+  # Checks whether a given user is allowed to see post history item details
+  # @param user [User] user to check for
+  # @return [Boolean] check result
   def allowed_to_see_details?(user)
-    !hidden || user&.is_admin || user_id == user&.id || post.user_id == user&.id
+    !hidden || user&.admin? || user_id == user&.id || post.user_id == user&.id
   end
 
   # Hides all previous history
-  # @param post [Post]
-  # @param user [User]
+  # @param post [Post] post to redact history for
+  # @param user [User] user that is redacting the history
   def self.redact(post, user)
     where(post: post).update_all(hidden: true)
     history_hidden(post, user, after: post.body_markdown,

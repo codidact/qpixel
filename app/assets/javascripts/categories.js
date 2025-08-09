@@ -1,41 +1,41 @@
 $(() => {
-  $('.js-category-tag-set-select').on('change', ev => {
+  $('.js-category-tag-set-select').on('change', (ev) => {
     const $tgt = $(ev.target);
-    const tagSetId = $tgt.val();
+    const tagSetId = $tgt.val()?.toString();
     const formGroups = $('.js-category-tags-group');
     if (tagSetId) {
-      formGroups.each((i, el) => {
+      formGroups.each((_i, el) => {
         const $el = $(el);
         const $caption = $el.find('.js-tags-group-caption');
         $caption.find('[data-state="absent"]').hide();
         $caption.find('[data-state="present"]').show();
 
-        $el.find('.js-tag-select').attr('data-tag-set', tagSetId).attr('disabled', false);
+        $el.find('.js-tag-select').attr('data-tag-set', tagSetId).attr('disabled', null);
       });
     }
     else {
-      formGroups.each((i, el) => {
+      formGroups.each((_i, el) => {
         const $el = $(el);
         const $caption = $el.find('.js-tags-group-caption');
         $caption.find('[data-state="absent"]').show();
         $caption.find('[data-state="present"]').hide();
 
-        $el.find('.js-tag-select').attr('data-tag-set', null).attr('disabled', true);
+        $el.find('.js-tag-select').attr('data-tag-set', null).attr('disabled', 'true');
       });
     }
   });
 
-  $('.js-add-required-topic').on('click', ev => {
+  $('.js-add-required-topic').on('click', (_ev) => {
     const $required = $('.js-required-tags');
     const $topic = $('.js-topic-tags');
-    const union = ($required.val() || []).concat($topic.val() || []);
+    const union = /** @type {string[]} */($required.val() || []).concat(/** @type {string[]} */ ($topic.val() || []));
 
     const options = $topic.find('option').toArray();
-    const optionIds = options.map(x => $(x).attr('value'));
-    const missing = union.filter(x => !optionIds.includes(x));
-    const missingOptions = $required.find('option').toArray().filter(x => missing.includes($(x).attr('value')));
+    const optionIds = options.map((x) => $(x).attr('value'));
+    const missing = union.filter((x) => !optionIds.includes(x));
+    const missingOptions = $required.find('option').toArray().filter((x) => missing.includes($(x).attr('value')));
 
-    missingOptions.forEach(opt => {
+    missingOptions.forEach((opt) => {
       const $append = $(opt).clone();
       $append.removeAttr('data-select2-id');
       $topic.append($append);
@@ -43,42 +43,36 @@ $(() => {
     $topic.val(union).trigger('change');
   });
 
-  $('.js-category-change-select').each((i, el) => {
+  $('.js-category-select').each((_i, el) => {
     const $tgt = $(el);
     $tgt.select2({
       ajax: {
         url: '/categories',
         headers: { 'Accept': 'application/json' },
         delay: 100,
-        processResults: data => ({results: data.map(c => ({id: c.id, text: c.name}))}),
+        processResults: (data) => ({results: data.map((c) => ({id: c.id, text: c.name}))}),
       }
     });
   });
 
-  $('.js-change-category').on('ajax:success', ev => {
+  $('.js-change-category').on('ajax:success', (_ev) => {
     location.reload();
-  }).on('ajax:error', (ev, xhr) => {
+  }).on('ajax:error', (_ev, xhr) => {
     const data = xhr.responseJSON;
     QPixel.createNotification('danger', `Failed (${xhr.status}): ${data.errors.join(', ')}`);
   });
 
-  $(document).on('click', '.js-update-cpt', async ev => {
+  $(document).on('click', '.js-update-cpt', async (ev) => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
     const categoryId = $tgt.attr('data-category');
-    const postTypeId = parseInt($widget.find('.js-cpt-post-type').val(), 10) || null;
-    const upvoteRep = parseInt($widget.find('.js-cpt-upvote-rep').val(), 10) || 0;
-    const downvoteRep = parseInt($widget.find('.js-cpt-downvote-rep').val(), 10) || 0;
+    const postTypeId = parseInt($widget.find('.js-cpt-post-type').val()?.toString(), 10) || null;
+    const upvoteRep = parseInt($widget.find('.js-cpt-upvote-rep').val()?.toString(), 10) || 0;
+    const downvoteRep = parseInt($widget.find('.js-cpt-downvote-rep').val()?.toString(), 10) || 0;
 
-    const resp = await fetch(`/categories/${categoryId}/edit/post-types`, {
-      method: 'POST',
-      credentials: 'include',
-      body: JSON.stringify({ post_type: postTypeId, upvote_rep: upvoteRep, downvote_rep: downvoteRep }),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      }
-    });
+    const resp = await QPixel.fetchJSON(`/categories/${categoryId}/edit/post-types`,
+      { post_type: postTypeId, upvote_rep: upvoteRep, downvote_rep: downvoteRep });
+
     const data = await resp.json();
     const status = resp.status;
 
@@ -94,22 +88,20 @@ $(() => {
     }
   });
 
-  $(document).on('click', '.js-delete-cpt', async ev => {
-    const $tgt = $(ev.target);
-    const categoryId = $tgt.attr('data-category');
-    const postTypeId = $tgt.attr('data-post-type');
+  $(document).on('click', '.js-delete-cpt', async (ev) => {
+    const tgt = ev.target;
+    const categoryId = tgt.dataset.category;
+    const postTypeId = tgt.dataset.postType;
 
-    await fetch(`/categories/${categoryId}/edit/post-types`, {
-      method: 'DELETE',
-      credentials: 'include',
-      body: JSON.stringify({ post_type: postTypeId }),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': QPixel.csrfToken()
-      }
+    const resp = await QPixel.fetchJSON(`/categories/${categoryId}/edit/post-types`, { post_type: postTypeId }, {
+      method: 'DELETE'
     });
-    $tgt.parents('.widget').fadeOut(200, function () {
-      $(this).remove();
-    });
+
+    if (resp.status === 200) {
+      QPixel.DOM.fadeOut(tgt.closest('.widget'), 200);
+    }
+    else {
+      QPixel.createNotification('danger', `Unexpected status: ${resp.status}. Tell a developer.`);
+    }
   });
 });

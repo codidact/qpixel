@@ -1,7 +1,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<% desc = "#{SiteSetting['SiteName']} on Codidact - open, community-run Q&A knowledge sharing" %>
+<% desc = "#{SiteSetting['SiteName']} on #{t('platform.network_name')} - open, community-run Q&A knowledge sharing" %>
 <meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
 
 <% page_title = (Rails.env.development? ? '[DEV] ' : '') +
@@ -38,7 +38,9 @@
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
-  <script defer>hljs.highlightAll();</script>
+  <script defer>
+    hljs.highlightAll();
+  </script>
 <% end %>
 
 <% if SiteSetting['MathJaxEnabled'] %>

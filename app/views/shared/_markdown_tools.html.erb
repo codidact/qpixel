@@ -40,6 +40,15 @@
   </div>
 
   <div class="button-list is-gutterless">
+    <%= md_button action: 'bullet', label: 'Bullet list', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-list-ul"></i>
+    <% end %>
+    <%= md_button action: 'numbered', label: 'Numbered list', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-list-ol"></i>
+    <% end %>
+  </div>
+
+  <div class="button-list is-gutterless">
     <%= md_button label: 'Link', class: 'is-icon-only', data_modal: '#markdown-link-insert' do %>
       <i class="fas fa-fw fa-link"></i>
     <% end %>
@@ -49,30 +58,24 @@
     <%= md_button label: 'Insert image', class: 'is-icon-only', data_modal: '#markdown-image-upload' do %>
       <i class="fas fa-fw fa-images"></i>
     <% end %>
+    <%= md_button action: 'table', label: 'Insert table', class: 'is-icon-only' do %>
+      <i class="fas fa-fw fa-table"></i>
+    <% end %>
   </div>
 
   <div class="button-list is-gutterless">
     <a href="javascript:void(0)" class="button is-outlined is-muted is-icon-only" data-drop="#markdown-tools"
-       data-drop-self-class-toggle="is-active" aria-label="Tools" title="Tools" role="button">
+       data-drop-self-class-toggle="is-active" aria-label="Tools" title="Tools: headings, lines" role="button">
       <i class="fas fa-tools"></i>
     </a>
 
     <div class="droppanel" id="markdown-tools">
       <div class="droppanel--menu has-font-size-base">
-        <%= md_list_item action: 'bullet', label: 'Bullet list' do %>
-          <i class="fas fa-fw fa-list-ul"></i> Bullet list
-        <% end %>
-        <%= md_list_item action: 'numbered', label: 'Numbered list' do %>
-          <i class="fas fa-fw fa-list-ol"></i> Numbered list
-        <% end %>
         <%= md_list_item action: 'heading', label: 'Heading' do %>
           <i class="fas fa-fw fa-heading"></i> Heading
         <% end %>
         <%= md_list_item action: 'hr', label: 'Horizontal line' do %>
           <i class="fas fa-fw fa-level-down-alt"></i> Horizontal line
-        <% end %>
-        <%= md_list_item action: 'table', label: 'Table' do %>
-          <i class="fas fa-fw fa-table"></i> Table
         <% end %>
       </div>
     </div>

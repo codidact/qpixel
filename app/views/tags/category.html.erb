@@ -10,7 +10,7 @@
 
 <% unless @tags == nil %>
 
-<% if current_user&.is_moderator || check_your_privilege('edit_tags') %>
+<% if current_user&.at_least_moderator? || check_your_privilege('edit_tags') %>
 <%= link_to 'New', new_tag_path(id: @category.id), class: 'button is-muted is-outlined', 'aria-label': 'Create new tag' %>
 <% end %>
 

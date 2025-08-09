@@ -1,5 +1,8 @@
 $(() => {
-  const makeNotification = notification => {
+  /**
+   * @param {QPixelNotification} notification 
+   */
+  const makeNotification = (notification) => {
     const template = `<div class="js-notification widget h-m-0 h-m-b-2 ${notification.is_read ? 'read' : 'is-teal'}">
         <div class="widget--body h-p-2">
             <div class="h-c-tertiary-600 h-fs-caption">
@@ -18,7 +21,7 @@ $(() => {
     return template;
   };
 
-  const changeInboxCount = change => {
+  const changeInboxCount = (change) => {
     const counter = $('.inbox-count');
     let count;
     if (counter.length !== 0) {
@@ -42,7 +45,7 @@ $(() => {
     }
   };
 
-  $('.inbox-toggle').on('click', async evt => {
+  $('.inbox-toggle').on('click', async (evt) => {
     evt.preventDefault();
     const $inbox = $('.inbox');
     if($inbox.hasClass("is-active")) {
@@ -50,33 +53,32 @@ $(() => {
         credentials: 'include',
         headers: { 'Accept': 'application/json' }
       });
+
       const data = await resp.json();
       const $inboxContainer = $inbox.find(".inbox--container");
       $inboxContainer.html('');
   
-      const unread = data.filter(n => !n.is_read);
-      const read = data.filter(n => n.is_read);
+      const unread = data.filter((n) => !n.is_read);
+      const read = data.filter((n) => n.is_read);
   
-      unread.forEach(notification => {
+      unread.forEach((notification) => {
         const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
   
       $inboxContainer.append(`<div role="separator" class="header-slide--separator"></div>`);
-      read.forEach(notification => {
+      read.forEach((notification) => {
         const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
     }
   });
 
-  $('.js-read-all-notifs').on('click', async ev => {
+  $('.js-read-all-notifs').on('click', async (ev) => {
     ev.preventDefault();
 
-    await fetch(`/notifications/read_all`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+    await QPixel.fetchJSON('/notifications/read_all', {}, {
+      headers: { 'Accept': 'application/json' }
     });
 
     $('.inbox-count').remove();
@@ -86,29 +88,29 @@ $(() => {
     $('.js-notification-toggle').html(`<i class="fas fa-envelope"></i> mark unread`);
   });
 
-  $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async evt => {
+  $(document).on('click', '.inbox a:not(.no-unread):not(.read):not(.js-notification-toggle)', async (evt) => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
-    const resp = await fetch(`/notifications/${id}/read`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+
+    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
     changeInboxCount(-1);
   });
 
-  $(document).on('click', '.js-notification-toggle', async ev => {
+  $(document).on('click', '.js-notification-toggle', async (ev) => {
     ev.stopPropagation();
 
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const id = $tgt.attr('data-notif-id');
-    const resp = await fetch(`/notifications/${id}/read`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Accept': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() }
+
+    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
+      headers: { 'Accept': 'application/json' }
     });
+
     const data = await resp.json();
     if (data.status !== 'success') {
       console.error('Failed to toggle notification read state. Wat?');
@@ -121,7 +123,7 @@ $(() => {
     changeInboxCount(change);
   });
 
-  $(document).on('click', '.notification-link', async ev => {
+  $(document).on('click', '.notification-link', async (ev) => {
     $(ev.target).parents('.inbox').removeClass('is-active');
   });
 });
