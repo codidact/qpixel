@@ -151,6 +151,33 @@ $(() => {
   };
 
   /**
+   * @typedef {{ removeNotice?: boolean }} DeleteDraftOptions
+   * 
+   * Attempts to remove a post draft
+   * @param {DeleteDraftOptions} [options]
+   * @returns {Promise<boolean>}
+   */
+  const deleteDraft = async (options = {}) => {
+   const res = await fetch('/posts/delete-draft', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'X-CSRF-Token': QPixel.csrfToken(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ path: location.pathname })
+    });
+
+    const success = res.status === 200;
+
+    if (success && options.removeNotice) {
+      $('.js-draft-notice').remove()
+    }
+
+    return success;
+  }
+
+  /**
    * Extracts draft info from a given target
    * @param {EventTarget} target post input field or "save draft" button
    * @returns {{ draft: PostDraft, field: any }}
@@ -189,6 +216,12 @@ $(() => {
 
     return { draft, field: $bodyField };
   };
+
+  $('.js-delete-draft').on('click', async () => {
+    await deleteDraft({
+      removeNotice: true
+    });
+  });
 
   $('.js-save-draft').on('click', async (ev) => {
     const { draft, field } = parseDraft(ev.target);
@@ -309,8 +342,9 @@ $(() => {
 
     // Draft handling
     if (!draftDeleted) {
-      const resp = await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
-      if (resp.status === 200) {
+      const status = await deleteDraft();
+
+      if (status) {
         $tgt.attr('data-draft-deleted', 'true');
 
         if (isValidated) {
@@ -318,7 +352,7 @@ $(() => {
         }
       }
       else {
-        QPixel.createNotification('danger', `Failed to delete post draft. (${resp.status})`);
+        QPixel.createNotification('danger', `Failed to delete post draft. (${status})`);
       }
     }
 
@@ -367,7 +401,7 @@ $(() => {
   });
 
   $('.js-draft-loaded').each((_i, e) => {
-    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption js-draft-notice">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You had edited this before but haven't saved it. We loaded the edits for you.
     </div>`);
@@ -454,7 +488,7 @@ $(() => {
       return;
     }
 
-    await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
+    await deleteDraft();
 
     location.href = $btn.attr('href');
   });
