@@ -13,10 +13,10 @@ module UploadsHelper
     content_types.map { |mime| MIME::Types[mime].first.preferred_extension }
   end
 
-  # Is a given file a valid image by content type?
+  # Is a given file a valid upload by content type?
   # @param io [File] file to check
   # @return [Boolean]
-  def valid_image?(io)
+  def valid_upload?(io)
     content_types = Rails.application.config.active_storage.web_image_content_types
     content_types.include?(io.content_type)
   end

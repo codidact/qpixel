@@ -509,7 +509,7 @@ class PostsController < ApplicationController
   end
 
   def upload
-    unless helpers.valid_image?(params[:file])
+    unless helpers.valid_upload?(params[:file])
       render json: { error: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
              status: :bad_request
       return
