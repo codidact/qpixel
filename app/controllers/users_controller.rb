@@ -398,7 +398,7 @@ class UsersController < ApplicationController
     @user = current_user
 
     if params[:user][:avatar].present?
-      if helpers.valid_image?(params[:user][:avatar])
+      if helpers.valid_upload?(params[:user][:avatar])
         @user.avatar.attach(params[:user][:avatar])
       else
         @user.errors.add(:avatar, 'must be a valid image')

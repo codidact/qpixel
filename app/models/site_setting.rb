@@ -9,6 +9,8 @@ class SiteSetting < ApplicationRecord
   scope :global, -> { for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
+  serialize :options, coder: YAML, type: Array
+
   def self.[](name, community: nil)
     key = "SiteSettings/#{community.present? ? community.id : RequestContext.community_id}/#{name}"
     cached = Rails.cache.fetch key, include_community: false do
@@ -48,20 +50,26 @@ class SiteSetting < ApplicationRecord
     community_id.nil?
   end
 
+  # Is the setting array-valued?
+  # @return [Boolean] check result
+  def array?
+    value_type.downcase == 'array'
+  end
+
   # Is the setting boolean-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def boolean?
     value_type.downcase == 'boolean'
   end
 
   # Is the setting floating point number-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def float?
     value_type.downcase == 'float'
   end
 
   # Is the setting integer-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def integer?
     value_type.downcase == 'integer'
   end
@@ -116,35 +124,5 @@ class SiteSetting < ApplicationRecord
         end
       ]
     end
-  end
-end
-
-class SettingConverter
-  def initialize(value)
-    @value = value
-  end
-
-  def as_string
-    @value&.to_s
-  end
-
-  def as_text
-    @value&.to_s
-  end
-
-  def as_integer
-    @value&.to_i
-  end
-
-  def as_float
-    @value&.to_f
-  end
-
-  def as_boolean
-    ActiveModel::Type::Boolean.new.cast(@value)
-  end
-
-  def as_json
-    JSON.parse(@value)
   end
 end

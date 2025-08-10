@@ -756,3 +756,16 @@
   description: >
     This setting only has an effect when RestrictedAccess is enabled.
     Whether the policy pages are publicly accessible (Terms of Service, Privacy Policy, etc.).
+
+- name: AllowedUploadTypes
+  value: image/png image/jpeg image/gif image/webp
+  options:
+    - image/png
+    - image/jpeg
+    - image/gif
+    - image/webp
+  value_type: array
+  category: SiteDetails
+  community_id: ~
+  description: >
+    File types that users will be able to upload.

@@ -509,12 +509,12 @@ class PostsController < ApplicationController
   end
 
   def upload
-    content_types = Rails.application.config.active_storage.web_image_content_types
-    extensions = content_types.map { |ct| ct.gsub('image/', '') }
-    unless helpers.valid_image?(params[:file])
-      render json: { error: "Images must be one of #{extensions.join(', ')}" }, status: :bad_request
+    unless helpers.valid_upload?(params[:file])
+      render json: { error: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
+             status: :bad_request
       return
     end
+
     @blob = ActiveStorage::Blob.create_and_upload!(io: params[:file], filename: params[:file].original_filename,
                                                    content_type: params[:file].content_type)
     render json: { link: uploaded_url(@blob.key) }
