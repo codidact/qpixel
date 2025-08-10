@@ -35,10 +35,10 @@ class AdvertisementController < ApplicationController
 
   def specific_category
     @category = Category.unscoped.find(params[:id])
-    @post = Rails.cache.fetch "ca_random_category_post/#{params[:id]}",
-                              expires_in: 5.minutes do
-      select_random_post(@category, days: params[:days]&.to_i, score: params[:score]&.to_f)
-    end
+    @post = Rails.cache.fetch_collection "ca_random_category_post/#{params[:id]}",
+                                         expires_in: 5.minutes do
+      random_post_collection(@category, days: params[:days]&.to_i, score: params[:score]&.to_f)
+    end.sample
 
     if @post.nil?
       not_found!
@@ -53,9 +53,9 @@ class AdvertisementController < ApplicationController
   end
 
   def random_question
-    @post = Rails.cache.fetch 'ca_random_hot_post', expires_in: 5.minutes do
-      select_random_post
-    end
+    @post = Rails.cache.fetch_collection 'ca_random_hot_post', expires_in: 5.minutes do
+      random_post_collection
+    end.sample
     if @post.nil?
       return community
     end
@@ -95,7 +95,7 @@ class AdvertisementController < ApplicationController
   # @param score [Float] the minimum post score to consider
   # @param count [Integer] a maximum number of posts to query for; the final post will be randomly selected from this
   # @return [Post]
-  def select_random_post(category = nil, days: nil, score: nil, count: nil)
+  def random_post_collection(category = nil, days: nil, score: nil, count: nil)
     if category.nil?
       category = Category.where(use_for_advertisement: true)
     end
@@ -106,7 +106,7 @@ class AdvertisementController < ApplicationController
         .where(posts: { last_activity: days.days.ago..DateTime.now })
         .where(posts: { category: category })
         .where('posts.score > ?', score.nil? ? SiteSetting['HotPostsScoreThreshold'] : score)
-        .order('posts.score DESC').limit(count.nil? ? SiteSetting['HotQuestionsCount'] : count).all.sample
+        .order('posts.score DESC').limit(count.nil? ? SiteSetting['HotQuestionsCount'] : count).all
   end
 
   def send_resp(data)
