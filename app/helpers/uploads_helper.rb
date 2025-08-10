@@ -14,6 +14,8 @@ module UploadsHelper
     Rails.application.config.active_storage.web_image_content_types
   end
 
+  # Gets a list of file extensions allowed to be uploaded
+  # @return [Array<String>]
   def allowed_upload_extensions
     allowed_upload_mime_types.map { |mime| MIME::Types[mime].first.preferred_extension }
   end
