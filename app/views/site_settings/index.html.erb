@@ -1,4 +1,4 @@
-<% content_for :title, "Site Settings" %>
+<% content_for :title, 'Site Settings' %>
 
 <h1><%= current_page?(global_settings_path) ? 'Global' : '' %> Site Settings</h1>
 <p>
@@ -26,7 +26,8 @@
               <h4><%= setting.name %></h4>
               <div class="form-caption"><%= setting.description %></div>
             </td>
-            <td class="site-setting--value js-setting-value<%= setting.text? ? '' : ' nowrap' %>" data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
+            <td class="site-setting--value js-setting-value<%= setting.text? ? '' : ' nowrap' %>"
+                data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
                 data-community-id="<%= current_page?(global_settings_path) ? nil : RequestContext.community_id %>">
               <%= setting.typed %>
             </td>
