@@ -129,6 +129,13 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFlagData = {
+  flag_type: number | null
+  post_id: string
+  post_type: 'Comment' | 'Post'
+  reason?: string
+}
+
 interface GetThreadContentOptions {
   inline?: boolean,
   showDeleted?: boolean
@@ -162,9 +169,9 @@ interface QPixel {
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * {@link localStorage}, or Redis via AJAX.
-   * @returns JSON object containing user preferences
+   * @returns user preferences or `null` on failure
    */
-  _getPreferences?: () => Promise<UserPreferences>;
+  _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
    * Get the key to use for storing user preferences in localStorage, to avoid conflating users
@@ -315,8 +322,11 @@ interface QPixel {
    * Processes JSON responses from QPixel API
    * @param data 
    * @param onSuccess callback to call for successful requests
+   * @param onFinally callback to call for all requests
    */
-  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T, onSuccess: (data: T) => void) => void
+  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
+                                                      onSuccess: (data: T) => void,
+                                                      onFinally?: (data: T) => void) => void
 
   /**
    * Attempts to delete a comment
@@ -337,7 +347,14 @@ interface QPixel {
    * @param id id of the comment thread to lock
    * @returns result of the operation
    */
-  lockThread?: (id: string) => Promise<QPixelResponseJSON>;
+  lockThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to raise a flag
+   * @param flag new flag data
+   * @returns result of the operation
+   */
+  flag?: (flag: QPixelFlagData) => Promise<QPixelResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;

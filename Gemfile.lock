@@ -493,6 +493,7 @@ DEPENDENCIES
   listen (~> 3.7)
   maintenance_tasks (~> 2.2)
   memory_profiler (~> 1.0)
+  mime-types (~> 3.7)
   minitest (~> 5.16.0)
   minitest-ci (~> 3.4.0)
   msgpack (~> 1.8)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_10_133540) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -589,6 +589,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.text "description"
     t.string "category"
     t.bigint "community_id"
+    t.string "options"
     t.index ["category"], name: "index_site_settings_on_category"
     t.index ["community_id"], name: "index_site_settings_on_community_id"
     t.index ["name"], name: "index_site_settings_on_name"
