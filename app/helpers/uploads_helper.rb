@@ -11,7 +11,8 @@ module UploadsHelper
   # Gets a list of MIME types allowed to be uploaded
   # @return [Array<String>]
   def allowed_upload_mime_types
-    Rails.application.config.active_storage.web_image_content_types
+    fallback_types = Rails.application.config.active_storage.web_image_content_types
+    SiteSetting['AllowedUploadTypes'].presence || fallback_types
   end
 
   # Gets a list of file extensions allowed to be uploaded
