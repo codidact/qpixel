@@ -48,20 +48,26 @@ class SiteSetting < ApplicationRecord
     community_id.nil?
   end
 
+  # Is the setting array-valued?
+  # @return [Boolean] check result
+  def array?
+    value_type.downcase == 'array'
+  end
+
   # Is the setting boolean-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def boolean?
     value_type.downcase == 'boolean'
   end
 
   # Is the setting floating point number-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def float?
     value_type.downcase == 'float'
   end
 
   # Is the setting integer-valued?
-  # @return [Boolena] check result
+  # @return [Boolean] check result
   def integer?
     value_type.downcase == 'integer'
   end
@@ -122,6 +128,10 @@ end
 class SettingConverter
   def initialize(value)
     @value = value
+  end
+
+  def as_array
+    @value&.split
   end
 
   def as_string
