@@ -9,6 +9,8 @@ class SiteSetting < ApplicationRecord
   scope :global, -> { for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
+  serialize :options, coder: YAML, type: Array
+
   def self.[](name, community: nil)
     key = "SiteSettings/#{community.present? ? community.id : RequestContext.community_id}/#{name}"
     cached = Rails.cache.fetch key, include_community: false do

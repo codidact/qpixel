@@ -40,11 +40,11 @@ $(() => {
                                               .get(0);
 
     if (valueType === 'array' && field instanceof HTMLSelectElement) {
-      for (const opt of value) {
+      for (const opt of data.options ?? []) {
         const option = document.createElement('option');
         option.textContent = opt;
         option.value = opt;
-        option.selected = true;
+        option.selected = value.includes(opt);
         field.add(option);
       }
     }
