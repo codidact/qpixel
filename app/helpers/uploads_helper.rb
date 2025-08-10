@@ -8,16 +8,20 @@ module UploadsHelper
     "https://s3.amazonaws.com/#{bucket}/#{blob.is_a?(String) ? blob : blob.key}"
   end
 
+  # Gets a list of MIME types allowed to be uploaded
+  # @return [Array<String>]
+  def allowed_upload_mime_types
+    Rails.application.config.active_storage.web_image_content_types
+  end
+
   def allowed_upload_extensions
-    content_types = Rails.application.config.active_storage.web_image_content_types
-    content_types.map { |mime| MIME::Types[mime].first.preferred_extension }
+    allowed_upload_mime_types.map { |mime| MIME::Types[mime].first.preferred_extension }
   end
 
   # Is a given file a valid upload by content type?
   # @param io [File] file to check
   # @return [Boolean]
   def valid_upload?(io)
-    content_types = Rails.application.config.active_storage.web_image_content_types
-    content_types.include?(io.content_type)
+    allowed_upload_mime_types.include?(io.content_type)
   end
 end
