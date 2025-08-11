@@ -18,4 +18,9 @@ class CategoryTest < ActiveSupport::TestCase
       assert cat.name.include?('Trust')
     end
   end
+
+  test 'public? should correctly determine category visibility' do
+    assert categories(:main).public?
+    assert_not categories(:admin_only).public?
+  end
 end
