@@ -113,6 +113,7 @@ jobs:
         with:
           directory: coverage
           fail_ci_if_error: true
+          fetch-depth: 2
           report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
 
