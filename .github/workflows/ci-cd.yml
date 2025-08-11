@@ -12,11 +12,11 @@ env:
   RAILS_ENV: test
   RUBY_VERSION: 3.2
 
-permissions:
-  actions: write
-  contents: read
-  issues: read
-  pull-requests: read
+# permissions:
+#   actions: write
+#   contents: read
+#   issues: read
+#   pull-requests: read
 
 jobs:
   rubocop:
@@ -108,7 +108,6 @@ jobs:
           name: screenshots-${{ matrix.ruby_version }}
           path: tmp/screenshots
           if-no-files-found: ignore
-      - run: cat coverage/coverage.json
       - uses: codecov/codecov-action@v5
         if: ${{ matrix.ruby_version == env.RUBY_VERSION && matrix.test_type == 'test' && github.actor != 'dependabot[bot]' }}
         with:
