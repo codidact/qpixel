@@ -44,7 +44,7 @@ class Category < ApplicationRecord
 
   # Gets categories appropriately scoped for a given user
   # @param user [User] user to check
-  # @return [ActiveRecord::Relation<category>]
+  # @return [ActiveRecord::Relation<Category>]
   def self.accessible_to(user)
     if user&.at_least_moderator?
       return Category.all
