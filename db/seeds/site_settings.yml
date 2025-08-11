@@ -158,6 +158,13 @@
     The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
     may introduce validation issues with content imported from SE.
 
+- name: MaxThreadTitleLength
+  value: 250
+  value_type: integer
+  category: SiteDetails
+  description: >
+    The maximum characters a comment thread title may contain. Defaults to 255.
+
 - name: MaxTitleLength
   value: 150
   value_type: integer

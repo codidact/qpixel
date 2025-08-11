@@ -11,6 +11,9 @@ class CommentThread < ApplicationRecord
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
+  validate :maximum_title_length
+  validates :title, presence: true
+
   after_create :create_follower
 
   def self.post_followed?(post, user)
@@ -51,6 +54,13 @@ class CommentThread < ApplicationRecord
     END_SQL
 
     ActiveRecord::Base.connection.execute(query).to_a.flatten
+  end
+
+  def maximum_title_length
+    max_len = SiteSetting['MaxThreadTitleLength'] || 255
+    if title.length > [max_len, 255].min
+      errors.add(:title, "can't be more than #{max_len} characters")
+    end
   end
 
   private
