@@ -108,6 +108,7 @@ jobs:
           name: screenshots-${{ matrix.ruby_version }}
           path: tmp/screenshots
           if-no-files-found: ignore
+      - run: cat coverage/coverage.json
       - uses: codecov/codecov-action@v5
         if: ${{ matrix.ruby_version == env.RUBY_VERSION && matrix.test_type == 'test' && github.actor != 'dependabot[bot]' }}
         with:
@@ -115,7 +116,6 @@ jobs:
           fail_ci_if_error: true
           report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
 
   deploy:
     name: Dev server deployment
