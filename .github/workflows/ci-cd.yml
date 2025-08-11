@@ -12,11 +12,11 @@ env:
   RAILS_ENV: test
   RUBY_VERSION: 3.2
 
-# permissions:
-#   actions: write
-#   contents: read
-#   issues: read
-#   pull-requests: read
+permissions:
+  actions: write
+  contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   rubocop:
