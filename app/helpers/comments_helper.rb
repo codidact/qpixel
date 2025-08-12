@@ -184,6 +184,12 @@ module CommentsHelper
 
     [true, message]
   end
+
+  # Get the maximum comment thread title length for the current community, with a maximum of 255.
+  # @return [Integer]
+  def maximum_thread_title_length
+    [SiteSetting['MaxThreadTitleLength'] || 255, 255].min
+  end
 end
 
 # HTML sanitizer for use with comments.
