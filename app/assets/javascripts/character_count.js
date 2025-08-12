@@ -62,8 +62,18 @@ $(() => {
     const $button = $form.find('input[type="submit"],.js-suggested-edit-approve');
     const $count = $counter.find('.js-character-count__count');
     const $icon = $counter.find('.js-character-count__icon');
+    const $info = $counter.find('.js-character-count__info');
+    const omitMarkdown = $tgt.data('markdown') === 'strip';
 
-    const count = $tgt.val().length;
+    const fullCount = $tgt.val().length;
+    const count = omitMarkdown ?
+                    QPixel.MD.stripMarkdown($tgt.val(), { removeQuotes: true }).length :
+                    fullCount;
+
+    $info.toggleClass('hide', fullCount === count)
+         .attr('title', 'Markdown will be stripped away and does not count towards the limit');
+    $icon.toggleClass('hide', fullCount !== count);
+
     const max = parseInt($counter.attr('data-max'), 10);
     const min = parseInt($counter.attr('data-min'), 10);
     const threshold = parseFloat($counter.attr('data-threshold'));
