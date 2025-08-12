@@ -65,9 +65,9 @@ $(() => {
     const $info = $counter.find('.js-character-count__info');
     const omitMarkdown = $tgt.data('markdown') === 'strip';
 
-    const fullCount = $tgt.val().length;
+    const fullCount = $tgt.val().trim().length;
     const count = omitMarkdown ?
-                    QPixel.MD.stripMarkdown($tgt.val(), { removeQuotes: true }).length :
+                    QPixel.MD.stripMarkdown($tgt.val().trim(), { removeQuotes: true }).length :
                     fullCount;
 
     $info.toggleClass('hide', fullCount === count)
