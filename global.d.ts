@@ -37,13 +37,19 @@ interface QPixelDOM {
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
 }
 
+interface StripMarkdownOptions {
+  /**
+   * Whether to strip away the leading quote ("> content"), if any
+   * @default false
+   */
+  removeLeadingQuote?: boolean
+}
+
 interface QPixelMD {
   /**
-   * See [strip_markdown](./app/helpers/application_helper.rb) application helper
+   * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
-  stripMarkdown(content: string, options?: {
-    removeQuotes?: boolean
-  }): string;
+  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
 }
 
 type QPixelKeyboardState =

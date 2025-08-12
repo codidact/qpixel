@@ -67,7 +67,7 @@ $(() => {
 
     const fullCount = $tgt.val().trim().length;
     const count = omitMarkdown ?
-                    QPixel.MD.stripMarkdown($tgt.val().trim(), { removeQuotes: true }).length :
+                    QPixel.MD.stripMarkdown($tgt.val().trim(), { removeLeadingQuote: true }).length :
                     fullCount;
 
     $info.toggleClass('hide', fullCount === count)

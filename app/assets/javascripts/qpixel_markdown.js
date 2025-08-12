@@ -7,7 +7,7 @@ QPixel.MD = {
       .replace(/[*_~]+/g, '')
       .replace(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/g, '$1');
     
-    if (options.removeQuotes) {
+    if (options.removeLeadingQuote ?? false) {
       return stripped.replace(/^>.+?$/g, '');
     }
 
