@@ -208,7 +208,13 @@ class CommentsController < ApplicationController
       return
     end
 
-    @comment_thread.update title: params[:title]
+    title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+    status = @comment_thread.update(title: title)
+
+    unless status
+      flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
+    end
+
     redirect_to comment_thread_path(@comment_thread.id)
   end
 

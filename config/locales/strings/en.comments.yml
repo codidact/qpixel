@@ -29,6 +29,8 @@ en:
         Something went wrong when trying to delete the comment.
       undelete_comment_server_error: >
         Something went wrong when trying to undelete the comment.
+      rename_thread_generic: >
+        Failed to rename the thread.
     labels:
       create_new_thread: >
         Start new comment thread
