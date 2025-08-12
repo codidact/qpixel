@@ -4,8 +4,7 @@ module CommentsHelper
   # @param body [String] coment thread body
   # @return [String] generated title
   def generate_thread_title(body)
-    body = strip_markdown(body)
-    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+    body = strip_markdown(body, strip_leading_quote: true)
 
     if body.length > 100
       "#{body[0..100]}..."
