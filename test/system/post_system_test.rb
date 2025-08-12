@@ -134,7 +134,7 @@ class PostSystemTest < ApplicationSystemTestCase
   end
 
   test 'Anyone can view questions in the list' do
-    post=posts(:question_one)
+    post = posts(:question_one)
     visit post_url(post)
 
     # Check that the post is displayed somewhere on the page
