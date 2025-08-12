@@ -24,10 +24,16 @@ class CommentThread < ApplicationRecord
     locked? || archived? || deleted?
   end
 
+  # Is a given user a follower of the thread?
+  # @param user [User] user to check
+  # @return [Boolean] check result
   def followed_by?(user)
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  # Does a given user have access to the thread?
+  # @param user [User] user to check access for
+  # @return [Boolean] check result
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
