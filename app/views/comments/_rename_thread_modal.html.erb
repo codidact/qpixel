@@ -26,6 +26,7 @@
       <%= render 'shared/char_count',
                  type: "thread-title-#{thread.id}",
                  cur: thread.title.length,
+                 min: 1,
                  max: maximum_thread_title_length %>
     </div>
     <div class="modal--footer">

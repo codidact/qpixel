@@ -45,7 +45,10 @@
                                  thread: '-1',
                                  character_count: '.js-character-count-thread-title',
                                  markdown: 'strip' } %>
-      <%= render 'shared/char_count', type: 'thread-title' %>
+      <%= render 'shared/char_count',
+                 type: 'thread-title',
+                 min: 1,
+                 max: maximum_thread_title_length %>
 
       <%= submit_tag 'Create thread',
                      class: 'button is-filled',
