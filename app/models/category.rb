@@ -27,6 +27,12 @@ class Category < ApplicationRecord
             'pink',
             'red'].freeze
 
+  # Is the category set as the homepage?
+  # @return [Boolean] check result
+  def homepage?
+    is_homepage == true
+  end
+
   # Can anyone view the category (even if not logged in)?
   # @return [Boolean] check result
   def public?

@@ -21,6 +21,12 @@ class CategoriesController < ApplicationController
 
   def homepage
     @category = Category.where(is_homepage: true).first
+
+    unless @category.present?
+      redirect_to categories_path
+      return
+    end
+
     update_last_visit(@category)
     set_list_posts
     render :show
@@ -199,6 +205,9 @@ class CategoriesController < ApplicationController
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
+  # Updates last visit cache for a given category
+  # @param category [Category] category to update
+  # @return [Boolean] whether the cache entry is deleted
   def update_last_visit(category)
     return if current_user.blank?
 
