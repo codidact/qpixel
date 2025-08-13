@@ -58,36 +58,38 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.useful_err_msg
     [
       'The inverted database guide has found an insurmountable problem. Please poke it with a ' \
-        'paperclip before anyone finds out.',
+      'paperclip before anyone finds out.',
       'The integral output port has found a problem. Please take it back to the shop and take ' \
-        'the rest of the day off.',
+      'the rest of the day off.',
       'Congratulations. You have reached the end of the internet.',
       'The Spanish Inquisition raised an unexpected error. Cannot continue without comfy-chair-interrogation.',
       'The server halted in an after-you loop.',
       'A five-level precedence operation shifted too long and cannot be recovered without data loss. ' \
-        'Please re-enable the encryption protocol.',
+      'Please re-enable the encryption protocol.',
       'The server\'s headache has not improved in the last 24 hours. It needs to be rebooted.',
       'The primary LIFO data recipient is currently on a holiday and will not be back before next Thursday.',
       'The operator is currently trying to solve their Rubik\'s cube. We will come back to you when the ' \
-        'second layer is completed.',
+      'second layer is completed.',
       'The encryption protocol offered by the client predates the invention of irregular logarithmic ' \
-        'functions.',
+      'functions.',
       'The data in the secondary (backup) user registry is corrupted and needs to be re-filled with ' \
-        'random data again.',
+      'random data again.',
       'This community has reached a critical mass and collapsed into a black hole. Currently trying to ' \
-        'recover using Hawking radiation.',
+      'recover using Hawking radiation.',
       'Operations are on pause while we attempt to recapture the codidactyl. Please hold.',
       'The data center is on fire. Please hold while we activate fire suppression systems.',
       'The reciprocal controller flag is set incorrectly. Please stand on your head and rickroll yourself to fix this.',
       'The quantum cache has become uncertain. Please observe it again after making a cup of tea.',
       'The recursive handshake timed out while waiting for itself to finish. Try waving at yourself in a mirror ' \
-        'until it responds.',
-      'The left-handed API key doesn\'t fit this right-handed endpoint. Please rotate it 180 degrees while humming the API theme song.',
+      'until it responds.',
+      'The left-handed API key doesn\'t fit this right-handed endpoint. Please rotate it 180 degrees while humming ' \
+      'the API theme song.',
       'Your session was garbage-collected for leaving crumbs in the cookie jar. Kindly sweep the cookies into a ' \
-        'jar-shaped folder.',
+      'jar-shaped folder.',
       'Your request fell through a race condition and finished second. Present it with a silver medal and try again.',
       'The DNS insists today it stands for \'Did Not Start\'. Please send it motivational cat posters.',
       'The OAuth token is shy. Whisper your scopes softly and offer it a comfort blanket.',
@@ -153,6 +155,7 @@ class ApplicationRecord < ActiveRecord::Base
       'The API versioning strategy is writing its memoir. Offer an editor.'
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 module UserSortable
