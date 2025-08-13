@@ -15,6 +15,12 @@ class Category < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
+  # Is the category set as the homepage?
+  # @return [Boolean] check result
+  def homepage?
+    is_homepage == true
+  end
+
   # Can anyone view the category (even if not logged in)?
   # @return [Boolean] check result
   def public?
