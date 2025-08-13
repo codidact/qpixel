@@ -176,7 +176,7 @@ $(() => {
     const tagId = $tgt.attr('data-tag-id');
     const tagName = $tgt.attr('data-tag-name');
     const $select = $tgt.parents('.form-group').find('select');
-    const existing = $select.find(`option[value=${tagId}]`);
+    const existing = $select.find(`option[value='${tagName}']`);
     if (existing.length > 0) {
       $select.val([useIds ? tagId : tagName, ...($select.val() || [])]).trigger('change');
     }
