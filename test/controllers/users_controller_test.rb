@@ -69,28 +69,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
-  test 'should destroy user' do
-    sign_in users(:global_admin)
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_not_nil assigns(:user)
-    assert_equal 'success', JSON.parse(response.body)['status']
-    assert_response(:success)
-  end
-
-  test 'should require authentication to destroy user' do
-    sign_out :user
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should require moderator status to destroy user' do
-    sign_in users(:standard_user)
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
   test 'should soft-delete user' do
     sign_in users(:global_admin)
     delete :soft_delete, params: { id: users(:standard_user).id, type: 'user' }

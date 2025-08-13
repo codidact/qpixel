@@ -15,6 +15,24 @@ class Category < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
+  COLORS = ['turquoise',
+            'green',
+            'blue',
+            'darkblue',
+            'purple',
+            'gray',
+            'bluegray',
+            'yellow',
+            'orange',
+            'pink',
+            'red'].freeze
+
+  # Is the category set as the homepage?
+  # @return [Boolean] check result
+  def homepage?
+    is_homepage == true
+  end
+
   # Can anyone view the category (even if not logged in)?
   # @return [Boolean] check result
   def public?
@@ -44,7 +62,7 @@ class Category < ApplicationRecord
 
   # Gets categories appropriately scoped for a given user
   # @param user [User] user to check
-  # @return [ActiveRecord::Relation<category>]
+  # @return [ActiveRecord::Relation<Category>]
   def self.accessible_to(user)
     if user&.at_least_moderator?
       return Category.all

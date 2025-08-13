@@ -26,7 +26,7 @@ class CommentsController < ApplicationController
 
     body = params[:body]
 
-    @comment_thread = CommentThread.new(title: title, post: @post)
+    @comment_thread = CommentThread.new(title: helpers.strip_markdown(title, strip_leading_quote: true), post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     pings = check_for_pings(@comment_thread, body)
@@ -208,7 +208,13 @@ class CommentsController < ApplicationController
       return
     end
 
-    @comment_thread.update title: params[:title]
+    title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+    status = @comment_thread.update(title: title)
+
+    unless status
+      flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
+    end
+
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
