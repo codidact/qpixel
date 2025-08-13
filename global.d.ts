@@ -365,6 +365,15 @@ interface QPixel {
   lockThread?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to rename a tag
+   * @param categoryId id of the category to rename the tag in
+   * @param tagId id of the tag to rename
+   * @param name new tag name
+   * @returns result of the operation
+   */
+  renameTag?: (categoryId: string, tagId: string, name: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to raise a flag
    * @param flag new flag data
    * @returns result of the operation

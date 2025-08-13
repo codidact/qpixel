@@ -494,5 +494,15 @@ window.QPixel = {
     const data = await resp.json();
 
     return data;
+  },
+
+  renameTag: async (categoryId, tagId, name) => {
+    const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name }, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
   }
 };

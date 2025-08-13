@@ -141,7 +141,14 @@ class TagsController < ApplicationController
       end
     end
 
-    render json: { success: status, tag: @tag }, status: status ? :ok : :bad_request
+    if status
+      render json: { status: 'success', tag: @tag }
+    else
+      render json: { status: 'failed',
+                     message: 'Failed to rename the tag.',
+                     tag: @tag },
+             status: :bad_request
+    end
   end
 
   def select_merge; end

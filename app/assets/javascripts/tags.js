@@ -193,17 +193,15 @@ $(() => {
     const tagName = $tgt.attr('data-name');
 
     const renameTo = prompt(`Rename tag ${tagName} to:`);
-    if (!!renameTo) {
-      const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name: renameTo });
-  
-      const data = await resp.json();
 
-      if (data.success) {
-        location.reload();
-      }
-      else {
-        QPixel.createNotification('danger', `Failed to rename the tag. (${resp.status})`);
-      }
+    if (!renameTo) {
+      return;
     }
+
+    const data = await QPixel.renameTag(categoryId, tagId, renameTo);
+
+    QPixel.handleJSONResponse(data, () => {
+      location.reload();
+    });
   });
 });
