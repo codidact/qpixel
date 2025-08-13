@@ -15,6 +15,18 @@ class Category < ApplicationRecord
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
+  COLORS = ['turquoise',
+            'green',
+            'blue',
+            'darkblue',
+            'purple',
+            'gray',
+            'bluegray',
+            'yellow',
+            'orange',
+            'pink',
+            'red'].freeze
+
   # Is the category set as the homepage?
   # @return [Boolean] check result
   def homepage?
