@@ -207,7 +207,7 @@ class TagsControllerTest < ActionController::TestCase
     res_body = JSON.parse(response.body)
 
     assert_equal 'failed', res_body['status']
-    assert_no_nil res_body['message']
+    assert_equal I18n.t('tags.errors.rename_generic'), res_body['message']
     tag.reload
     assert_equal tag.name, old_tag_name
   end
