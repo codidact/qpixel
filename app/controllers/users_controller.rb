@@ -310,39 +310,6 @@ class UsersController < ApplicationController
     @abilities = Ability.all
   end
 
-  def destroy
-    if @user.votes.count > 100
-      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    if @user.at_least_moderator?
-      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    before = @user.attributes_print
-    @user.block('user destroyed')
-
-    if @user.destroy
-      Post.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                         deleted: true, deleted_at: DateTime.now,
-                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
-      Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                            deleted: true)
-      Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      SuggestedEdit.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
-      render json: { status: 'success' }
-    else
-      render json: { status: 'failed',
-                     message: 'Failed to destroy user; ask a dev.' },
-             status: :internal_server_error
-    end
-  end
-
   def soft_delete
     if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
