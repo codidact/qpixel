@@ -12,7 +12,7 @@ class CommentThread < ApplicationRecord
   scope :archived, -> { where(archived: true) }
 
   validate :maximum_title_length
-  validates :title, presence: true
+  validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
 
   after_create :create_follower
 
