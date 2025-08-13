@@ -20,7 +20,10 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def attributes_print(join: ', ')
-    attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(join)
+    attributes.map do |k, v|
+      val = v.inspect.length > 100 ? "#{v.inspect[0, 100]}..." : v.inspect
+      "#{k}: #{val}"
+    end.join(join)
   end
 
   def self.sanitize_for_search(term, **cols)
