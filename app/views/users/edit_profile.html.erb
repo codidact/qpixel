@@ -22,7 +22,12 @@
 
 <%= form_for current_user, url: update_user_profile_path do |f| %>
   <div class="form-group has-padding-2">
-    <img alt="user avatar" class="has-float-right has-margin-2 avatar-64" title="Current avatar" src="<%= avatar_url(current_user, 64) %>" height="64" width="64" />
+    <img alt="user avatar"
+         class="has-float-right has-margin-2 avatar-64"
+         title="Current avatar"
+         src="<%= avatar_url(current_user, 64) %>"
+         height="64"
+         width="64" />
     <%= f.label :avatar, class: "form-element" %>
     <div class="form-caption">
       An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
@@ -34,12 +39,20 @@
   <div class="form-group has-padding-2">
     <%= f.label :username, class: "form-element" %>
     <div class="form-caption">What other people call you.</div>
-    <%= f.text_field :username, class: 'form-element', autocomplete: 'off', data: { character_count: '.js-character-count-user-name' } %>
+    <%= f.text_field :username,
+                     class: 'form-element',
+                     autocomplete: 'off',
+                     data: { character_count: '.js-character-count-user-name' } %>
     <%= render 'shared/char_count', type: 'user-name', cur: current_user.username&.length, min: 3, max: 50 %>
   </div>
 
-  <%= render 'shared/body_field', f: f, field_name: :profile_markdown, field_label: 'Profile', post: current_user,
-            cur_length: current_user.profile_markdown&.length, min_length: 0 %>
+  <%= render 'shared/body_field',
+             f: f,
+             field_name: :profile_markdown,
+             field_label: 'Profile',
+             post: current_user,
+             cur_length: current_user.profile_markdown&.length,
+             min_length: 0 %>
 
   <% unless current_user.community_user.privilege?('unrestricted') %>
     <p>Note: Links are not shown publicly until you have earned the Participate Everywhere ability.</p>
@@ -47,15 +60,22 @@
   <div class="post-preview"></div>
 
   <div>
-    <p>Extra fields -- your web site, GitHub profile, social-media usernames, whatever you want. Only values that begin with "http" are rendered as links.</p>
+    <p>Extra fields -- your web site, GitHub profile, social-media usernames, whatever you want.<br/>
+    Only values that begin with "http" are rendered as links.</p>
     <div class="grid">
       <%= f.fields_for :user_websites do |w| %>
       <div class="grid grid--cell is-12 is-12-sm">
         <div class="grid grid--cell is-3 is-3-sm">
-          <div class="grid--cell is-12"><%= w.text_field :label, class: 'form-element', autocomplete: 'off', placeholder: 'label' %></div>
+          <div class="grid--cell is-12"><%= w.text_field :label,
+                                                         class: 'form-element',
+                                                         autocomplete: 'off',
+                                                         placeholder: 'label' %></div>
         </div>
         <div class="grid grid--cell is-6 is-9-sm">
-          <div class="grid--cell is-12"><%= w.text_field :url, class: 'form-element', autocomplete: 'off', placeholder: 'https://...' %></div>
+          <div class="grid--cell is-12"><%= w.text_field :url,
+                                                         class: 'form-element',
+                                                         autocomplete: 'off',
+                                                         placeholder: 'https://...' %></div>
         </div>
       </div>
       <% end %>
@@ -70,7 +90,11 @@
     
   
   <%= f.submit 'Save', class: 'button is-filled' %>
-  <%= link_to 'Cancel', users_me_path, class: 'button is-muted is-outlined', role: 'button' %>
+  <%= link_to 'Cancel',
+              users_me_path,
+              class: 'button is-muted is-outlined js-cancel-edit',
+              data: { question_body: t('posts.unsaved_changes_confirmation') },
+              role: 'button' %>
 <% end %>
 
 <% if SiteSetting['AllowContentTransfer'] && current_user.se_acct_id.nil? %>

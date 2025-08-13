@@ -132,9 +132,25 @@ $(() => {
   });
 
   /**
+   * Temporarily displays the draft's status with a given message
+   * @param {JQuery<Element>} $field draftable field
+   * @param {string} message draft status message
+   */
+  const flashDraftStatus = ($field, message) => {
+    const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+
+    $statusEl.text(message);
+    $statusEl.removeClass('transparent');
+
+    setTimeout(() => {
+      $statusEl.addClass('transparent');
+    }, 1500);
+  };
+
+  /**
    * Attempts to save a post draft
    * @param {QPixelDraft} draft post draft
-   * @param {JQuery<Element>} $field body input element
+   * @param {JQuery<Element>} $field draftable field
    * @param {boolean} [manual] whether manual draft saving is enabled
    * @returns {Promise<void>}
    */
@@ -148,45 +164,46 @@ $(() => {
     const data = await QPixel.saveDraft(draft);
 
     QPixel.handleJSONResponse(data, () => {
-      const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
-
-      $statusEl.removeClass('transparent');
-
-      setTimeout(() => {
-        $statusEl.addClass('transparent');
-      }, 1500);
+      flashDraftStatus($field, 'draft saved');
     });
   };
 
   /**
-   * @typedef {{
-   *  removeNotice?: boolean
-   * }} DeleteDraftOptions
-   * 
    * Attempts to remove a post draft
-   * @param {DeleteDraftOptions} [options]
+   * @param {JQuery<Element>} $field draftable field
    * @returns {Promise<boolean>}
    */
-  const deleteDraft = async (options = {}) => {
+  const deleteDraft = async ($field) => {
     const data = await QPixel.deleteDraft();
 
     return QPixel.handleJSONResponse(data, () => {
-      if (options.removeNotice) {
-        $('.js-draft-notice').remove();
-      }
+      flashDraftStatus($field, 'draft deleted');
     });
   }
 
   /**
+   * 
+   * @param {EventTarget} target post field or one of the draft buttons
+   * @returns {{
+   *  $form: JQuery<HTMLFormElement>,
+   *  $field: JQuery<HTMLElement>
+   * }}
+   */
+  const getDraftElements = (target) => {
+    const $tgt = $(target);
+    const $form = $tgt.parents('form');
+    const $field = $form.find('.js-post-field');
+    return { $form, $field };
+  };
+
+  /**
    * Extracts draft info from a given target
-   * @param {EventTarget} target post input field or "save draft" button
+   * @param {EventTarget} target post field or one of the draft buttons
    * @returns {{ draft: QPixelDraft, field: any }}
    */
   const parseDraft = (target) => {
-    const $tgt = $(target);
-    const $form = $tgt.parents('form');
+    const { $field: $bodyField, $form } = getDraftElements(target);
 
-    const $bodyField = $form.find('.js-post-field');
     const $licenseField = $form.find('.js-license-select');
     const $excerptField = $form.find('.js-tag-excerpt');
     
@@ -217,10 +234,9 @@ $(() => {
     return { draft, field: $bodyField };
   };
 
-  $('.js-delete-draft').on('click', async () => {
-    await deleteDraft({
-      removeNotice: true
-    });
+  $('.js-delete-draft').on('click', async (ev) => {
+    const { $field } = getDraftElements(ev.target);
+    await deleteDraft($field);
   });
 
   $('.js-save-draft').on('click', async (ev) => {
@@ -330,7 +346,7 @@ $(() => {
 
   $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
-    const field = $tgt.find('.post-field');
+    const $field = $tgt.find('.js-post-field');
 
     const draftDeleted = $tgt.attr('data-draft-deleted') === 'true';
     const isValidated = $tgt.attr('data-validated') === 'true';
@@ -338,11 +354,12 @@ $(() => {
     if (draftDeleted && isValidated) {
       return;
     }
+
     ev.preventDefault();
 
     // Draft handling
     if (!draftDeleted) {
-      const status = await deleteDraft();
+      const status = await deleteDraft($field);
 
       if (status) {
         $tgt.attr('data-draft-deleted', 'true');
@@ -359,7 +376,7 @@ $(() => {
 
     // Validation
     if (!isValidated) {
-      const text = $(field).val()?.toString();
+      const text = $field.val()?.toString();
       const validated = QPixel.validatePost(text);
       if (validated[0] === true) {
         $tgt.attr('data-validated', 'true');
@@ -488,7 +505,9 @@ $(() => {
       return;
     }
 
-    await deleteDraft();
+    const { $field } = getDraftElements(ev.target);
+
+    await deleteDraft($field);
 
     location.href = $btn.attr('href');
   });
