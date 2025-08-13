@@ -159,7 +159,7 @@
     may introduce validation issues with content imported from SE.
 
 - name: MaxThreadTitleLength
-  value: 250
+  value: 255
   value_type: integer
   category: SiteDetails
   description: >
