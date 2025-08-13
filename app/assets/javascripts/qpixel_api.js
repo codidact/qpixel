@@ -494,5 +494,16 @@ window.QPixel = {
     const data = await resp.json();
 
     return data;
-  }
+  },
+
+  saveDraft: async (draft) => {
+    const resp = await QPixel.fetchJSON('/posts/save-draft', {
+      ...draft,
+      path: location.pathname
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
 };

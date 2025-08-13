@@ -132,31 +132,22 @@ $(() => {
   });
 
   /**
-   * @typedef {{
-   *  body: string
-   *  comment?: string
-   *  excerpt?: string
-   *  license?: string
-   *  tag_name?: string
-   *  tags?: string[]
-   *  title?: string
-   * }} PostDraft
-   * 
    * Attempts to save a post draft
-   * @param {PostDraft} draft post draft
+   * @param {QPixelDraft} draft post draft
    * @param {JQuery<Element>} $field body input element
    * @param {boolean} [manual] whether manual draft saving is enabled
    * @returns {Promise<void>}
    */
   const saveDraft = async (draft, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
+
     if (autosavePref !== 'on' && !manual) {
       return;
     }
 
-    const resp = await QPixel.fetchJSON('/posts/save-draft', { ...draft, path: location.pathname });
+    const data = await QPixel.saveDraft(draft);
 
-    if (resp.status === 200) {
+    QPixel.handleJSONResponse(data, () => {
       const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
 
       $statusEl.removeClass('transparent');
@@ -164,7 +155,7 @@ $(() => {
       setTimeout(() => {
         $statusEl.addClass('transparent');
       }, 1500);
-    }
+    });
   };
 
   /**
@@ -197,7 +188,7 @@ $(() => {
   /**
    * Extracts draft info from a given target
    * @param {EventTarget} target post input field or "save draft" button
-   * @returns {{ draft: PostDraft, field: any }}
+   * @returns {{ draft: QPixelDraft, field: any }}
    */
   const parseDraft = (target) => {
     const $tgt = $(target);
@@ -220,7 +211,7 @@ $(() => {
     const titleText = $titleField.val()?.toString();
     const tagName = $tagNameField.val()?.toString();
 
-    /** @type {PostDraft} */
+    /** @type {QPixelDraft} */
     const draft = {
       body: bodyText,
       comment: commentText,

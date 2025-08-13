@@ -144,6 +144,16 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelDraft = {
+  body: string
+  comment?: string
+  excerpt?: string
+  license?: string
+  tag_name?: string
+  tags?: string[]
+  title?: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -349,6 +359,13 @@ interface QPixel {
    * @returns result of the operation
    */
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to save a post draft
+   * @param draft draft to save
+   * @returns result of the operation
+   */
+  saveDraft?: (draft: QPixelDraft) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to undelete a comment
