@@ -11,6 +11,9 @@ class CommentThread < ApplicationRecord
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
+  validate :maximum_title_length
+  validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
+
   after_create :create_follower
 
   def self.post_followed?(post, user)
@@ -21,10 +24,16 @@ class CommentThread < ApplicationRecord
     locked? || archived? || deleted?
   end
 
+  # Is a given user a follower of the thread?
+  # @param user [User] user to check
+  # @return [Boolean] check result
   def followed_by?(user)
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  # Does a given user have access to the thread?
+  # @param user [User] user to check access for
+  # @return [Boolean] check result
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
@@ -51,6 +60,13 @@ class CommentThread < ApplicationRecord
     END_SQL
 
     ActiveRecord::Base.connection.execute(query).to_a.flatten
+  end
+
+  def maximum_title_length
+    max_len = SiteSetting['MaxThreadTitleLength'] || 255
+    if title.length > [max_len, 255].min
+      errors.add(:title, "can't be more than #{max_len} characters")
+    end
   end
 
   private

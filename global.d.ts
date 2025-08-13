@@ -37,6 +37,21 @@ interface QPixelDOM {
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
 }
 
+interface StripMarkdownOptions {
+  /**
+   * Whether to strip away the leading quote ("> content"), if any
+   * @default false
+   */
+  removeLeadingQuote?: boolean
+}
+
+interface QPixelMD {
+  /**
+   * See [strip_markdown](app/helpers/application_helper.rb) application helper
+   */
+  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+}
+
 type QPixelKeyboardState =
   | "home"
   | "goto"
@@ -358,6 +373,9 @@ interface QPixel {
 
   // qpixel_dom
   DOM?: QPixelDOM;
+  // qpixel Markdown
+  MD?: QPixelMD;
+  // qpixel popups
   Popup?: typeof QPixelPopup;
   // Stripe integration, TODO: types
   stripe?: any;

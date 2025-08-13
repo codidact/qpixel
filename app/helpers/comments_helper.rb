@@ -4,8 +4,7 @@ module CommentsHelper
   # @param body [String] coment thread body
   # @return [String] generated title
   def generate_thread_title(body)
-    body = strip_markdown(body)
-    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+    body = strip_markdown(body, strip_leading_quote: true)
 
     if body.length > 100
       "#{body[0..100]}..."
@@ -183,6 +182,12 @@ module CommentsHelper
     end
 
     [true, message]
+  end
+
+  # Get the maximum comment thread title length for the current community, with a maximum of 255.
+  # @return [Integer]
+  def maximum_thread_title_length
+    [SiteSetting['MaxThreadTitleLength'] || 255, 255].min
   end
 end
 
