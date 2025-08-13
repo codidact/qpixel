@@ -182,7 +182,7 @@ $(() => {
   }
 
   /**
-   * 
+   * Helper for getting draft-related elements from a given event target
    * @param {EventTarget} target post field or one of the draft buttons
    * @returns {{
    *  $form: JQuery<HTMLFormElement>,
@@ -199,7 +199,10 @@ $(() => {
   /**
    * Extracts draft info from a given target
    * @param {EventTarget} target post field or one of the draft buttons
-   * @returns {{ draft: QPixelDraft, field: any }}
+   * @returns {{
+   *  draft: QPixelDraft,
+   *  $field: JQuery<HTMLElement>
+   * }}
    */
   const parseDraft = (target) => {
     const { $field: $bodyField, $form } = getDraftElements(target);
@@ -231,7 +234,7 @@ $(() => {
       title: titleText,
     };
 
-    return { draft, field: $bodyField };
+    return { draft, $field: $bodyField };
   };
 
   $('.js-delete-draft').on('click', async (ev) => {
@@ -240,8 +243,8 @@ $(() => {
   });
 
   $('.js-save-draft').on('click', async (ev) => {
-    const { draft, field } = parseDraft(ev.target);
-    await saveDraft(draft, field, true);
+    const { draft, $field } = parseDraft(ev.target);
+    await saveDraft(draft, $field, true);
   });
 
   let featureTimeout = null;
@@ -262,8 +265,8 @@ $(() => {
   $(draftFieldsSelectors.join(', ')).on('keyup change', (ev) => {
     clearTimeout(draftTimeout);
     draftTimeout = setTimeout(() => {
-      const { draft, field } = parseDraft(ev.target);
-      saveDraft(draft, field);
+      const { draft, $field } = parseDraft(ev.target);
+      saveDraft(draft, $field);
     }, 1000);
   });
 
