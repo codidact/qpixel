@@ -26,7 +26,7 @@ class CommentsController < ApplicationController
 
     body = params[:body]
 
-    @comment_thread = CommentThread.new(title: title, post: @post)
+    @comment_thread = CommentThread.new(title: helpers.strip_markdown(title, strip_leading_quote: true), post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     pings = check_for_pings(@comment_thread, body)
