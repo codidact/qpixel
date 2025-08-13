@@ -159,30 +159,22 @@ $(() => {
   };
 
   /**
-   * @typedef {{ removeNotice?: boolean }} DeleteDraftOptions
+   * @typedef {{
+   *  removeNotice?: boolean
+   * }} DeleteDraftOptions
    * 
    * Attempts to remove a post draft
    * @param {DeleteDraftOptions} [options]
    * @returns {Promise<boolean>}
    */
   const deleteDraft = async (options = {}) => {
-   const res = await fetch('/posts/delete-draft', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-CSRF-Token': QPixel.csrfToken(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ path: location.pathname })
+    const data = await QPixel.deleteDraft();
+
+    return QPixel.handleJSONResponse(data, () => {
+      if (options.removeNotice) {
+        $('.js-draft-notice').remove();
+      }
     });
-
-    const success = res.status === 200;
-
-    if (success && options.removeNotice) {
-      $('.js-draft-notice').remove()
-    }
-
-    return success;
   }
 
   /**

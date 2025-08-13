@@ -444,7 +444,9 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
-    if (data.status === 'success') {
+    const is_success = data.status === 'success';
+
+    if (is_success) {
       onSuccess(data);
     }
     else {
@@ -452,6 +454,8 @@ window.QPixel = {
     }
 
     onFinally?.(data);
+
+    return is_success;
   },
 
   flag: async (flag) => {
@@ -468,6 +472,18 @@ window.QPixel = {
     const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
       headers: { 'Accept': 'application/json' },
       method: 'DELETE'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  deleteDraft: async () => {
+    const resp = await QPixel.fetchJSON(`/posts/delete-draft`, {
+      path: location.pathname
+    }, {
+      headers: { 'Accept': 'application/json' }
     });
 
     const data = await resp.json();

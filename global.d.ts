@@ -345,13 +345,13 @@ interface QPixel {
 
   /**
    * Processes JSON responses from QPixel API
-   * @param data 
+   * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
                                                       onSuccess: (data: T) => void,
-                                                      onFinally?: (data: T) => void) => void
+                                                      onFinally?: (data: T) => void) => boolean
 
   /**
    * Attempts to delete a comment
@@ -359,6 +359,12 @@ interface QPixel {
    * @returns result of the operation
    */
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to delete a given post draft
+   * @returns result of the operation
+   */
+  deleteDraft?: () => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to save a post draft
