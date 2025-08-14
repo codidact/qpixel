@@ -85,7 +85,7 @@ module QPixel
         raise TypeError, "Can't cache more than one type of object via write_collection"
       end
 
-      data = normalize_collection(value)
+      data = NamespacedEnvCache.normalize_collection(value)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       @underlying.write(namespaced, data, **opts)
     end
@@ -102,7 +102,7 @@ module QPixel
       return nil if data.nil?
 
       if data.is_a?(ActiveRecord::Relation)
-        data = normalize_collection(data)
+        data = NamespacedEnvCache.normalize_collection(data)
       end
 
       type = data.slice!(0)
@@ -136,6 +136,13 @@ module QPixel
       end
     end
 
+    # Normalizes a given ActiveRecord collection for use with the cache
+    # @param value [ActiveRecord::Relation] collection to normalize
+    # @return [Array(String, *Integer)]
+    def self.normalize_collection(value)
+      [value[0].class.to_s, *value.map(&:id)]
+    end
+
     # We have to statically report that we support cache versioning even though this depends on the underlying class.
     # However, this is not really a problem since all cache stores provided by activesupport support the feature and
     # we only use the redis cache (by activesupport) for QPixel.
@@ -149,13 +156,6 @@ module QPixel
       key = expanded_key(key)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
-    end
-
-    # Normalizes a given ActiveRecord collection for use with the cache
-    # @param value [ActiveRecord::Relation] collection to normalize
-    # @return [Array(String, *Integer)]
-    def normalize_collection(value)
-      [value[0].class.to_s, *value.map(&:id)]
     end
   end
 end

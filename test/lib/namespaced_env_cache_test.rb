@@ -48,6 +48,13 @@ class NamespacedEnvCacheTest < ActiveSupport::TestCase
     end
   end
 
+  test 'normalize_collection should correctly prepare collections for caching' do
+    collection = Post.where(user: users(:standard_user))
+    normalized = QPixel::NamespacedEnvCache.normalize_collection(collection)
+    assert_equal Post.name, normalized.shift
+    assert(collection.to_a.all? { |post| normalized.include?(post.id) })
+  end
+
   private
 
   def new_cache_store
