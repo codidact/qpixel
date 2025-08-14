@@ -138,7 +138,7 @@ module QPixel
 
     # Normalizes a given ActiveRecord collection for use with the cache
     # @param value [ActiveRecord::Relation] collection to normalize
-    # @return [Array(String, *Integer)]
+    # @return [[String, Integer, Integer, ...]]
     def self.normalize_collection(value)
       [value[0].class.to_s, *value.map(&:id)]
     end
