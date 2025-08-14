@@ -725,6 +725,9 @@ class PostsController < ApplicationController
     check_if_locked(@post)
   end
 
+  # Attempts to actually delete a post draft
+  # @param path [String] draft path to delete
+  # @return [Boolean] status of the operation
   def do_draft_delete(path)
     keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
       pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
