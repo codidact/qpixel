@@ -36,7 +36,7 @@ module ApplicationHelper
   # @param privilege [String] The +internal_id+ of the privilege to query.
   # @return [Boolean]
   def check_your_post_privilege(post, privilege)
-    !current_user.nil? && current_user&.has_post_privilege?(privilege, post)
+    !current_user.nil? && current_user&.post_privilege?(privilege, post)
   end
 
   ##
@@ -102,8 +102,6 @@ module ApplicationHelper
     end
   end
 
-  # rubocop:disable Layout/LineLength because obviously rubocop has a problem with documentation
-
   ##
   # Converts a number to short-form humanized display, i.e. 100,000 = 100k. Parameters as for
   # {ActiveSupport::NumberHelper#number_to_human}[https://www.rubydoc.info/gems/activesupport/ActiveSupport/NumberHelper#number_to_human-instance_method]
@@ -113,8 +111,6 @@ module ApplicationHelper
              format: '%n%u' }.merge(opts)
     ActiveSupport::NumberHelper.number_to_human(*args, **opts)
   end
-
-  # rubocop:enable Layout/LineLength
 
   ##
   # Render a markdown string to HTML with consistent options.
@@ -131,8 +127,9 @@ module ApplicationHelper
   # This isn't a perfect way to strip out Markdown, so it should only be used for non-critical things like
   # page descriptions - things that will later be supplemented by the full formatted content.
   # @param markdown [String] The Markdown string to strip.
+  # @param strip_leading_quote [Boolean] whether to remove the leading blockquote if present
   # @return [String] The plain-text equivalent.
-  def strip_markdown(markdown)
+  def strip_markdown(markdown, strip_leading_quote: false)
     # Remove block-level formatting: headers, hr, references, images, HTML tags
     markdown = markdown.gsub(/(?:^#+ +|^-{3,}|^\[[^\]]+\]: ?.+$|^!\[[^\]]+\](?:\([^)]+\)|\[[^\]]+\])$|<[^>]+>)/, '')
 
@@ -140,7 +137,10 @@ module ApplicationHelper
     markdown = markdown.gsub(/[*_~]+/, '')
 
     # Remove links and inline images but replace them with their text/alt text.
-    markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+    markdown = markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+
+    # Optionally remove the leading blockquote
+    strip_leading_quote ? markdown.gsub(/^>.+?$/, '') : markdown
   end
 
   ##

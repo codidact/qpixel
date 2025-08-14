@@ -29,6 +29,13 @@ class UsersController < ApplicationController
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @users
+      end
+    end
   end
 
   def show
@@ -244,10 +251,10 @@ class UsersController < ApplicationController
             when 'edits'
               SuggestedEdit.by(@user) + PostHistory.by(@user).of_type('post_edited').on_undeleted
             else
-              Post.undeleted.by(@user) + \
+              Post.undeleted.by(@user) +
               Comment.by(@user).joins(:comment_thread, :post).undeleted.where(comment_threads: { deleted: false },
-                                                                              posts: { deleted: false }) + \
-              SuggestedEdit.by(@user).all + \
+                                                                              posts: { deleted: false }) +
+              SuggestedEdit.by(@user).all +
               PostHistory.by(@user).on_undeleted.all
             end
 
@@ -272,7 +279,7 @@ class UsersController < ApplicationController
     @interesting_edits = SuggestedEdit.by(@user).rejected.count
     @interesting_posts = Post.by(@user).problematic.count
 
-    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received +
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
@@ -287,12 +294,12 @@ class UsersController < ApplicationController
               when 'warnings'
                 ModWarning.to(@user).all
               when 'interesting'
-                Comment.by(@user).deleted.all + Flag.by(@user).declined.all + \
-                  SuggestedEdit.by(@user).rejected.all + \
+                Comment.by(@user).deleted.all + Flag.by(@user).declined.all +
+                  SuggestedEdit.by(@user).rejected.all +
                   Post.by(@user).problematic.all
               else
-                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all + \
-                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all + \
+                Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all +
+                  SuggestedEdit.by(@user).all + PostHistory.by(@user).all +
                   ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
 
@@ -301,39 +308,6 @@ class UsersController < ApplicationController
 
   def mod_privileges
     @abilities = Ability.all
-  end
-
-  def destroy
-    if @user.votes.count > 100
-      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    if @user.at_least_moderator?
-      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    before = @user.attributes_print
-    @user.block('user destroyed')
-
-    if @user.destroy
-      Post.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                         deleted: true, deleted_at: DateTime.now,
-                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
-      Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                            deleted: true)
-      Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      SuggestedEdit.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
-      render json: { status: 'success' }
-    else
-      render json: { status: 'failed',
-                     message: 'Failed to destroy user; ask a dev.' },
-             status: :internal_server_error
-    end
   end
 
   def soft_delete
@@ -391,7 +365,7 @@ class UsersController < ApplicationController
     @user = current_user
 
     if params[:user][:avatar].present?
-      if helpers.valid_image?(params[:user][:avatar])
+      if helpers.valid_upload?(params[:user][:avatar])
         @user.avatar.attach(params[:user][:avatar])
       else
         @user.errors.add(:avatar, 'must be a valid image')
@@ -442,7 +416,7 @@ class UsersController < ApplicationController
     key = params[:role].underscore.to_sym
     attrib = role_map[key]
     permission = permission_map[key]
-    return not_found unless current_user.send(permission)
+    return not_found! unless current_user.send(permission)
 
     case key
     when :mod
@@ -475,7 +449,7 @@ class UsersController < ApplicationController
 
   def mod_privilege_action
     ability = Ability.find_by internal_id: params[:ability]
-    return not_found if ability.internal_id == 'mod'
+    return not_found! if ability.internal_id == 'mod'
 
     ua = @user.community_user.privilege(ability.internal_id)
 
@@ -492,7 +466,7 @@ class UsersController < ApplicationController
       end
 
     when 'suspend'
-      return not_found if ua.nil?
+      return not_found! if ua.nil?
 
       duration = params[:duration]&.to_i
       duration = duration <= 0 ? nil : duration.days.from_now
@@ -505,7 +479,7 @@ class UsersController < ApplicationController
                            comment: "#{ability.internal_id} ability suspended\n\n#{message}")
 
     when 'delete'
-      return not_found if ua.nil?
+      return not_found! if ua.nil?
 
       ua.destroy
       AuditLog.admin_audit(event_type: 'ability_remove', related: @user, user: current_user,
@@ -514,7 +488,7 @@ class UsersController < ApplicationController
       AuditLog.user_history(event_type: 'deleted_ability', related: nil, user: @user,
                             comment: ability.internal_id)
     else
-      return not_found
+      return not_found!
     end
     render json: { status: 'success' }
   end
@@ -582,7 +556,7 @@ class UsersController < ApplicationController
     else
       flash[:danger] = "That login link isn't valid. Codes expire after 5 minutes - if it's been longer than that, " \
                        'get a new code and try again.'
-      not_found
+      not_found!
     end
   end
 
@@ -615,10 +589,10 @@ class UsersController < ApplicationController
                    .select('count(*) as vote_count')
                    .select('date(votes.created_at) as date_of')
 
-    @votes = @votes.order(date_of: :desc, post_id: :desc).all \
+    @votes = @votes.order(date_of: :desc, post_id: :desc).all
                    .group_by(&:date_of).map do |k, vl|
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
-                   end \
+                   end
                    .paginate(page: params[:page], per_page: 15)
 
     render layout: 'without_sidebar'
@@ -678,15 +652,13 @@ class UsersController < ApplicationController
                 params[:id]
               end
     @user = user_scope.find_by(id: user_id)
-    not_found if @user.nil?
+    not_found! if @user.nil?
   end
 
   def user_scope
-    if current_user&.at_least_moderator?
-      User.all
-    else
-      User.undeleted
-    end.joins(:community_user).includes(:community_user, :avatar_attachment)
+    User.accessible_to(current_user)
+        .joins(:community_user)
+        .includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted

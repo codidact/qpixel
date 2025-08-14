@@ -61,6 +61,20 @@ sample_global_admin:
   is_moderator: false
   reputation: 1
 
+sample_developer:
+  user: developer
+  community: sample
+  is_admin: true
+  is_moderator: false
+  reputation: 1
+
+sample_staff:
+  user: staff
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
 sample_deleted_account:
   user: deleted_account
   community: sample
@@ -77,6 +91,20 @@ sample_deleted_profile:
   deleted: true
   deleted_at: 2020-01-02T00:00:00.000000Z
   deleted_by: global_admin
+
+sample_enabled_2fa:
+  user: enabled_2fa
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_spammer:
+  user: spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
 
 sample_filters_user:
   user: filters_user

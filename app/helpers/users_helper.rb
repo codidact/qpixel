@@ -89,9 +89,9 @@ module UsersHelper
   ##
   # Is the specified user deleted, either globally or on the current community?
   # @param user [User]
-  # @return [Boolean, nil] True/false, or +nil+ if the user is +nil+.
+  # @return [Boolean] check result - true if the user is +nil+.
   def deleted_user?(user)
-    return nil if user.nil?
+    return true if user.nil?
 
     user.deleted? || user.community_user&.deleted?
   end

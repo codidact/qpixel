@@ -16,6 +16,12 @@ class ReactionsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'add should fail if post is not accessible to user' do
+    sign_in users(:standard_user)
+    post :add, params: { reaction_id: reaction_types(:wfm).id, comment: nil, post_id: posts(:high_trust) }
+    assert_response(:not_found)
+  end
+
   test 'add should fail if no reaction id given' do
     sign_in users(:standard_user)
     assert_raise ActiveRecord::RecordNotFound do

@@ -1,5 +1,5 @@
 <%#
-    Full post view, containing all details and interactions.
+   "Full post view, containing all details and interactions.
 
     Instance variables:
     ? @category  : Category the post belongs to, if any
@@ -13,7 +13,7 @@
     Variables:
       post         : the Post instance to display
     ? float_notice : whether to display the float notice
-%>
+"%>
 
 <% float_notice ||= false %>
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
@@ -259,7 +259,9 @@
                 <% end %>
               <% elsif current_user.present? %>
                 <% if post.pending_suggested_edit? %>
-                  <span class="tools--item">suggested edit pending...</span>
+                      <%= link_to 'suggested edit pending...',
+                                   suggested_edit_url(post.pending_suggested_edit.id),
+                                   class: "tools--item" %>
                 <% elsif post_type.is_freely_editable %>
                   <%= render 'posts/edit_link', post: post %>
                 <% else %>
@@ -340,7 +342,7 @@
         <div class="post--action-dialog js-flag-box">
           <div class="widget">
             <div class="widget--header">Why does this post require attention from curators or moderators?</div>
-            <% if current_user&.has_active_flags?(post) %>
+            <% if current_user&.active_flags_on?(post) %>
               <div class="widget--body">
                 <div class="notice is-warning">
                   You already have active flags on this post:
@@ -523,7 +525,7 @@
         <div class="post--comments has-padding-4">
           <% comment_threads = post.comment_threads.initially_visible.order(updated_at: :desc) %>
           <% public_count = comment_threads.count %>
-          <% available_count = current_user&.has_post_privilege?('flag_curate', post) ?
+          <% available_count = current_user&.post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>
           <div class="post--comments-header">
           <h4 class="has-margin-0">
@@ -570,7 +572,7 @@
   </div>
 </div>
 
-<% if at_least_moderator? || current_user&.has_post_privilege?('flag_curate', post) %>
+<% if at_least_moderator? || current_user&.post_privilege?('flag_curate', post) %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
 

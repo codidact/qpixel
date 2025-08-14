@@ -66,7 +66,14 @@
   <p class="has-color-red has-font-size-caption">
     Moderators and admins cannot be self-deleted. Contact support if you wish to delete your account.
   </p>
-<% else %>
+<% elsif current_user.enabled_2fa %>
+  <%= link_to 'javascript:void(8)', class: 'button is-outlined is-danger', disabled: true do %>  
+    Delete my account &raquo;
+  <% end %>
+  <p class="has-color-red has-font-size-caption">
+    Your account uses two-factor authentication (2FA). In order to delete your account, you must first disable 2FA.
+  </p>
+  <% else %>
   <%= link_to delete_account_path, class: 'button is-outlined is-danger' do %>
     Delete my account &raquo;
   <% end %>

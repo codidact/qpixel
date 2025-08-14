@@ -21,7 +21,7 @@ class PostTypesController < ApplicationController
   end
 
   def create
-    @type = PostType.new post_type_params
+    @type = PostType.new(post_type_params)
     if @type.save
       clear_cache!
       redirect_to post_types_path
@@ -55,8 +55,6 @@ class PostTypesController < ApplicationController
   end
 
   def clear_cache!
-    # FIXME: this is likely not clearing cache for rep changes
-    Rails.cache.delete 'network/post_types/rep_changes'
     PostType.clear_ids_cache
     current_community = RequestContext.community
     Community.all.each do |c|

@@ -90,10 +90,11 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   test 'should prevent self-deletion if the user is at least a moderator' do
     locale_string_map = {
       moderator: 'users.errors.no_mod_self_delete',
-      admin: 'users.errors.no_admin_self_delete'
+      admin: 'users.errors.no_admin_self_delete',
+      enabled_2fa: 'users.errors.no_2fa_self_delete'
     }
 
-    [:moderator, :admin].each do |name|
+    [:moderator, :admin, :enabled_2fa].each do |name|
       sign_in users(name)
       session[:sudo] = DateTime.now.iso8601
 

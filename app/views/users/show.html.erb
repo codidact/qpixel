@@ -162,7 +162,7 @@
         <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
       <% if current_user&.id == @user.id || current_user&.at_least_moderator? %>
-        <tr><td colspan="3">User since <%= @user.created_at %></td></tr>
+        <tr><td colspan="3">User since <%= @user.community_user.created_at %></td></tr>
       <% end %>
     </table>
   

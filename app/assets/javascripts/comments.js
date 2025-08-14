@@ -236,7 +236,7 @@ $(() => {
    * @type {Record<`${number}-${number}`, Record<string, number>>}
    */
   const pingable = {};
-  $(document).on('keyup', '.js-comment-field', pingable_popup);
+  $(document).on('keyup', '.js-comment-field, .js-thread-title-field', pingable_popup);
 
   /**
    * @type {QPixelPingablePopupCallback}
@@ -267,10 +267,12 @@ $(() => {
       $tgt.focus();
     };
 
-    // If the word the caret is currently in starts with an @, and has at least 3 characters after that, assume it's
-    // an attempt to ping another user with a username, and kick off suggestions -- unless it starts with @#, in which
-    // case it's likely an already-selected ping.
-    if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && currentWord.length >= 4) {
+    // at least 1 character has to be present to trigger autocomplete (2 is because pings start with @)
+    const hasReachedAutocompleteThreshold = currentWord.length >= 2;
+
+    // If the word the caret is currently in starts with an @, and is reached the autocomplete threshold, assume it's
+    // a ping attempt and kick off suggestions (unless it starts with @#, meaning it's likely an already-selected ping)
+    if (currentWord.startsWith('@') && !currentWord.startsWith('@#') && hasReachedAutocompleteThreshold) {
       const threadId = $tgt.data('thread');
       const postId = $tgt.data('post');
 
@@ -313,7 +315,8 @@ $(() => {
     ev.preventDefault();
     const $tgt = $(ev.target);
     const postId = $tgt.attr('data-post');
-    const $reply = $(`#reply-to-thread-form-${postId}`);
+    const threadId = $tgt.attr('data-thread');
+    const $reply = $(`#reply-to-thread-form-${postId}-${threadId}`);
 
     if ($reply.is(':hidden')) {
       $reply.show();

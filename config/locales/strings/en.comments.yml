@@ -29,8 +29,15 @@ en:
         Something went wrong when trying to delete the comment.
       undelete_comment_server_error: >
         Something went wrong when trying to undelete the comment.
+      rename_thread_generic: >
+        Failed to rename the thread.
+      title_presence: >
+        can't be empty after Markdown is removed.
     labels:
       create_new_thread: >
         Start new comment thread
       reply_to_thread: >
         Reply to this thread
+    warnings:
+      unrelated_user_not_pinged: >
+        This user was not notified because they have not participated in this thread.

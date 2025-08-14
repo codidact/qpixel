@@ -11,10 +11,42 @@ class Category < ApplicationRecord
   belongs_to :license
   belongs_to :default_filter, class_name: 'Filter', optional: true
 
-  serialize :display_post_types, Array
+  serialize :display_post_types, coder: YAML, type: Array
 
   validates :name, uniqueness: { scope: [:community_id], case_sensitive: false }
 
+  COLORS = ['turquoise',
+            'green',
+            'blue',
+            'darkblue',
+            'purple',
+            'gray',
+            'bluegray',
+            'yellow',
+            'orange',
+            'pink',
+            'red'].freeze
+
+  # Is the category set as the homepage?
+  # @return [Boolean] check result
+  def homepage?
+    is_homepage == true
+  end
+
+  # Can anyone view the category (even if not logged in)?
+  # @return [Boolean] check result
+  def public?
+    trust_level = min_view_trust_level || -1
+    trust_level <= 0
+  end
+
+  def top_level_post_types
+    post_types.where(is_top_level: true)
+  end
+
+  # Are there new posts for a given user since their last visit?
+  # @param user [User] user to check
+  # @return [Boolean] check result
   def new_posts_for?(user)
     key = "#{community_id}/#{user.id}/#{id}/last_visit"
     Rails.cache.fetch key, expires_in: 5.minutes do
@@ -31,17 +63,40 @@ class Category < ApplicationRecord
     RequestContext.redis.set("#{community_id}/#{id}/last_activity", last_activity)
   end
 
-  def self.by_lowercase_name(name)
-    categories = Rails.cache.fetch 'categories/by_lowercase_name' do
-      Category.all.to_h { |c| [c.name.downcase, c] }
+  # Gets categories appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<Category>]
+  def self.accessible_to(user)
+    if user&.at_least_moderator?
+      return Category.all
     end
-    categories[name]
+
+    trust_level = user&.trust_level || 0
+    Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
   end
 
+  # Gets category matching a given name
+  # @param name [String] name of the category
+  # @return [Category, nil]
+  def self.by_lowercase_name(name)
+    categories = Rails.cache.fetch 'categories/by_lowercase_name' do
+      Category.all.to_h { |c| [c.name.downcase, c.id] }
+    end
+    Category.find_by(id: categories[name])
+  end
+
+  # @todo: Do we need this method?
   def self.by_id(id)
     categories = Rails.cache.fetch 'categories/by_id' do
       Category.all.to_h { |c| [c.id, c] }
     end
     categories[id]
+  end
+
+  # Gets a collection of categories matching a given search term
+  # @param term [String] search term
+  # @return [ActiveRecord::Relation<Category>]
+  def self.search(term)
+    where('name LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 end

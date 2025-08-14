@@ -99,7 +99,6 @@ Rails.application.routes.draw do
     get    'flags',                        to: 'flags#queue', as: :flag_queue
     get    'flags/handled',                to: 'flags#handled', as: :handled_flags
     get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
-    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
     get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
     post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
     post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
@@ -254,9 +253,10 @@ Rails.application.routes.draw do
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
   end
 
-  get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
+  get    'subscriptions/new',              to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
   get    'subscriptions',                  to: 'subscriptions#index', as: :subscriptions
+  get    'subscriptions/qualifiers',       to: 'subscriptions#qualifiers', as: :subscription_qualifiers
   post   'subscriptions/:id/enable',       to: 'subscriptions#enable', as: :enable_subscription
   delete 'subscriptions/:id',              to: 'subscriptions#destroy', as: :destroy_subscription
 

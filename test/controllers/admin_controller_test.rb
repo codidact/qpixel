@@ -3,7 +3,7 @@ require 'test_helper'
 class AdminControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log, :email_query].freeze
+  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log, :email_query, :admin_email, :all_email].freeze
 
   test 'should get index' do
     sign_in users(:admin)
@@ -131,5 +131,69 @@ class AdminControllerTest < ActionController::TestCase
     post :do_email_query, params: { email: 'spock@vulcan.ufp' }
     assert_response(:success)
     assert_equal flash[:danger], I18n.t('admin.errors.email_query_not_found')
+  end
+
+  test 'send email methods should require auth' do
+    [:send_admin_email, :send_all_email].each do |action|
+      post action, params: { subject: 'test', body_markdown: 'test' }
+      assert_response(:not_found)
+    end
+  end
+
+  test 'send email methods should require global admin' do
+    [:send_admin_email, :send_all_email].each do |action|
+      sign_in users(:admin)
+      post action, params: { subject: 'test', body_markdown: 'test' }
+      assert_response(:not_found)
+    end
+  end
+
+  test 'send email methods should work for global admins' do
+    [:send_admin_email, :send_all_email].each do |action|
+      sign_in users(:global_admin)
+      post action, params: { subject: 'test', body_markdown: 'test' }
+      assert_response(:found)
+      assert_redirected_to admin_path
+      assert_not_nil flash[:success]
+    end
+  end
+
+  test 'audit log should work with filter params' do
+    sign_in users(:admin)
+    get :audit_log, params: { log_type: 'admin_audit', event_type: 'setting_update', from: '2025-04-13',
+                              to: '2025-04-13' }
+    assert_response(:success)
+    assert_not_nil assigns(:logs)
+  end
+
+  test 'hellban should correctly block the user' do
+    sign_in users(:global_admin)
+
+    user = users(:standard_user)
+    try_hellban_user(user)
+    user.reload
+
+    assert_response(:found)
+    assert BlockedItem.where(item_type: 'email', value: user.email).any?
+  end
+
+  test 'impersonate should bypass reason in dev env' do
+    sign_in users(:developer)
+
+    Rails.env.stub(:development?, true) do
+      try_impersonate_user(users(:standard_user))
+      assert_response(:found)
+      assert_redirected_to root_path
+    end
+  end
+
+  private
+
+  def try_hellban_user(user)
+    post :hellban, params: { id: user.id }
+  end
+
+  def try_impersonate_user(user)
+    get :impersonate, params: { id: user.id }
   end
 end

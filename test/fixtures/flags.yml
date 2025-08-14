@@ -14,6 +14,7 @@ declined:
 on_deleter:
   reason: For science!
   post: deleted (Post)
+  post_flag_type: not_confidential
   user: deleter
   community: sample
 

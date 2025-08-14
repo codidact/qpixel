@@ -23,12 +23,13 @@ class Post < ApplicationRecord
   has_many :flags, as: :post, dependent: :destroy
   has_many :children, class_name: 'Post', foreign_key: 'parent_id', dependent: :destroy
   has_many :suggested_edits, dependent: :destroy
-  has_many :reactions
+  has_many :reactions, dependent: :destroy
+  has_many :inbound_duplicates, class_name: 'Post', foreign_key: 'duplicate_post_id', dependent: :nullify
 
   counter_culture :parent, column_name: proc { |model| model.deleted? ? nil : 'answer_count' }
   counter_culture [:user, :community_user], column_name: proc { |model| model.deleted? ? nil : 'post_count' }
 
-  serialize :tags_cache, Array
+  serialize :tags_cache, coder: YAML, type: Array
 
   validates :body, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
@@ -53,6 +54,7 @@ class Post < ApplicationRecord
                           includes(:user, :tags, :post_type, :category, :last_activity_by,
                                    user: :avatar_attachment)
                         }
+  scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
 
   before_validation :update_tag_associations, if: -> { post_type&.has_tags }
   after_create :create_initial_revision
@@ -62,6 +64,13 @@ class Post < ApplicationRecord
   after_save :break_description_cache
   after_save :update_category_activity, if: -> { post_type.has_category && !destroyed? }
   after_save :recalc_score
+
+  # Gets posts appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<Post>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? Post : Post.undeleted).qa_only.list_includes
+  end
 
   # @param term [String] the search term
   # @return [ActiveRecord::Relation<Post>]
@@ -213,7 +222,7 @@ class Post < ApplicationRecord
   # @param user [User, Nil] user to check access for
   # @return [Boolean] access check result
   def can_access?(user)
-    (!deleted? || user&.has_post_privilege?('flag_curate', self)) &&
+    (!deleted? || user&.post_privilege?('flag_curate', self)) &&
       (!category.present? || !category.min_view_trust_level.present? ||
         category.min_view_trust_level <= (user&.trust_level || 0))
   end

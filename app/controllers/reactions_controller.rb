@@ -88,7 +88,7 @@ class ReactionsController < ApplicationController
   def set_post
     @post = Post.find(params[:post_id])
     unless @post.can_access?(current_user)
-      not_found
+      not_found!
     end
   end
 

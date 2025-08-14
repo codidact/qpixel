@@ -57,7 +57,7 @@ module UserMerge
     private
 
     def copy_abilities(_target_user, cu_ids)
-      cu_ids.each do |_cid, ids|
+      cu_ids.each_value do |ids|
         target_abilities = UserAbility.where(community_user_id: ids[:target])
         copy_abilities = UserAbility.where(community_user_id: ids[:source])
                                     .where.not(ability_id: target_abilities.map(&:ability_id).uniq)
@@ -87,7 +87,7 @@ module UserMerge
     end
 
     def copy_warnings(_target_user, cu_ids)
-      cu_ids.each do |_cid, ids|
+      cu_ids.each_value do |ids|
         ModWarning.where(community_user_id: ids[:source]).update_all(community_user_id: ids[:target])
       end
     end

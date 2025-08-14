@@ -1,13 +1,24 @@
 require 'test_helper'
+require_relative 'concerns/users/users_abilities_test'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
+  include UsersAbilitiesTest
 
   test 'should get index' do
-    get :index
-    assert_not_nil assigns(:users)
-    assert_response(:success)
+    [:html, :json].each do |format|
+      get :index, params: { format: format }
+
+      assert_response(:success)
+
+      case format
+      when :html
+        assert_not_nil(assigns(:users))
+      when :json
+        assert_valid_json_response
+      end
+    end
   end
 
   test 'should not include users not in current community' do
@@ -54,28 +65,6 @@ class UsersControllerTest < ActionController::TestCase
   test 'should require moderator status to access mod tools' do
     sign_in users(:standard_user)
     get :mod, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should destroy user' do
-    sign_in users(:global_admin)
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_not_nil assigns(:user)
-    assert_equal 'success', JSON.parse(response.body)['status']
-    assert_response(:success)
-  end
-
-  test 'should require authentication to destroy user' do
-    sign_out :user
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should require moderator status to destroy user' do
-    sign_in users(:standard_user)
-    delete :destroy, params: { id: users(:standard_user).id }
     assert_nil assigns(:user)
     assert_response(:not_found)
   end
@@ -457,8 +446,8 @@ class UsersControllerTest < ActionController::TestCase
                             when Post
                               item.deleted == false
                             when Comment
-                              item.comment_thread.deleted == false && \
-                              item.deleted == false && \
+                              item.comment_thread.deleted == false &&
+                              item.deleted == false &&
                               item.post.deleted == false
                             when PostHistory
                               item.post_history_type == edit_type

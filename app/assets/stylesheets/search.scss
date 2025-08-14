@@ -1,0 +1,16 @@
+@import 'variables';
+
+.search-filters:not([open]) {
+  border-top: 1px solid $muted-graphic;
+}
+
+.search-sorting {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  .search-sorting-types {
+    margin: 0.5em;
+    margin-right: 0;
+  }
+}

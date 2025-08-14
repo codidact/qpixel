@@ -14,10 +14,12 @@ Rails.application.configure do
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  config.action_controller.perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING']) || false
 
   # Enable server timing
   config.server_timing = true
+
+  config.log_level = ENV['LOG_LEVEL'] || :info
 
   # Set the cache store to the redis that was configured in the database.yml
   processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
@@ -84,6 +86,8 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { 
     host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
+
+  config.active_job.queue_adapter = :inline
 
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true

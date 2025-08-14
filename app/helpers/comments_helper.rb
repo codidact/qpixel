@@ -4,8 +4,7 @@ module CommentsHelper
   # @param body [String] coment thread body
   # @return [String] generated title
   def generate_thread_title(body)
-    body = strip_markdown(body)
-    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+    body = strip_markdown(body, strip_leading_quote: true)
 
     if body.length > 100
       "#{body[0..100]}..."
@@ -47,7 +46,7 @@ module CommentsHelper
   # @param content [String] content to convert ping-strings for
   # @param pingable [Array<Integer>, nil] A list of user IDs. Any user ID not present will be displayed as 'unpingable'.
   # @return [ActiveSupport::SafeBuffer]
-  def render_pings(content, pingable: nil)
+  def render_pings(content, pingable: nil, host: nil)
     users = pinged_users(content)
 
     content.gsub(/@#(\d+)/) do |ping|
@@ -56,9 +55,11 @@ module CommentsHelper
         ping
       else
         was_pung = pingable.present? && pingable.include?(user.id)
-        classes = "ping #{user.same_as?(current_user) ? 'me' : ''} #{was_pung ? '' : 'unpingable'}"
-        user_link user, class: classes, dir: 'ltr',
-                  title: was_pung ? '' : 'This user was not notified because they have not participated in this thread.'
+        classes = "ping #{'me' if user.same_as?(current_user)} #{'unpingable' unless was_pung}"
+        user_link(user, { host: host },
+                  class: classes,
+                  dir: 'ltr',
+                  title: was_pung ? '' : I18n.t('comments.warnings.unrelated_user_not_pinged'))
       end
     end.html_safe
   end
@@ -150,34 +151,6 @@ module CommentsHelper
   end
 
   ##
-  # Get a list of user IDs who should be pingable in a specified comment thread. This combines the post author, answer
-  # authors, recent history event authors, recent comment authors on the post (in any thread), and all thread followers.
-  # @param thread [CommentThread]
-  # @return [Array<Integer>]
-  def get_pingable(thread)
-    post = thread.post
-
-    # post author +
-    # answer authors +
-    # last 500 history event users +
-    # last 500 comment authors +
-    # all thread followers
-    query = <<~END_SQL
-      SELECT posts.user_id FROM posts WHERE posts.id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT posts.user_id FROM posts WHERE posts.parent_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT ph.user_id FROM post_histories ph WHERE ph.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT comments.user_id FROM comments WHERE comments.post_id = #{post.id}
-      UNION DISTINCT
-      SELECT DISTINCT tf.user_id FROM thread_followers tf WHERE tf.comment_thread_id = #{thread.id || '-1'}
-    END_SQL
-
-    ActiveRecord::Base.connection.execute(query).to_a.flatten
-  end
-
-  ##
   # Is the specified user comment rate limited for the specified post?
   # @param user [User] The user to check.
   # @param post [Post] The post on which the user proposes to comment.
@@ -209,6 +182,12 @@ module CommentsHelper
     end
 
     [true, message]
+  end
+
+  # Get the maximum comment thread title length for the current community, with a maximum of 255.
+  # @return [Integer]
+  def maximum_thread_title_length
+    [SiteSetting['MaxThreadTitleLength'] || 255, 255].min
   end
 end
 

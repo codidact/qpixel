@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class CommentsHelperTest < ActionView::TestCase
+  include ApplicationHelper
+  include UsersHelper
   include Devise::Test::ControllerHelpers
 
   test '[help center] and [help] substitution' do
@@ -40,7 +42,7 @@ class CommentsHelperTest < ActionView::TestCase
     expected = {
       'you can go to [category:main]' => "you can go to <a href=\"#{category_url(categories(:main).id)}\">Main</a>",
       'or [category:Meta]' => "or <a href=\"#{category_url(categories(:meta).id)}\">Meta</a>",
-      "maybe even to [category##{categories(:high_trust).id}]" => \
+      "maybe even to [category##{categories(:high_trust).id}]" =>
         "maybe even to <a href=\"#{category_url(categories(:high_trust).id)}\">High Trust</a>",
       'but not to [category:blah]' => 'but not to [category:blah]'
     }
@@ -107,5 +109,21 @@ class CommentsHelperTest < ActionView::TestCase
       assert_equal false, rate_limited
       assert_nil limit_message
     end
+  end
+
+  test 'render_pings should correctly render comment pings' do
+    std = users(:standard_user)
+    mod = users(:moderator)
+
+    sign_in std
+
+    host = RequestContext.community.host
+
+    rendered = render_pings("this is not correct, @##{std.id}. @##{mod.id}'s answer is better. @#123, thoughs?",
+                            host: host)
+
+    assert Regexp.new("http:\\/\\/#{Regexp.escape(host)}\\/users\\/#{std.id}").match?(rendered)
+    assert Regexp.new("http:\\/\\/#{Regexp.escape(host)}\\/users\\/#{mod.id}").match?(rendered)
+    assert(/@#123/.match?(rendered))
   end
 end

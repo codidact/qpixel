@@ -26,14 +26,21 @@ class CommentsController < ApplicationController
 
     body = params[:body]
 
-    @comment_thread = CommentThread.new(title: title, post: @post)
+    @comment_thread = CommentThread.new(title: helpers.strip_markdown(title, strip_leading_quote: true), post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
-    pings = check_for_pings @comment_thread, body
+    pings = check_for_pings(@comment_thread, body)
 
     success = ActiveRecord::Base.transaction do
-      @comment_thread.save!
-      @comment.save!
+      thread_success = @comment_thread.save
+      comment_success = @comment.save
+      full_success = thread_success && comment_success
+
+      unless full_success
+        raise ActiveRecord::Rollback
+      end
+
+      full_success
     end
 
     if success
@@ -46,7 +53,7 @@ class CommentsController < ApplicationController
         ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
       end
 
-      apply_pings pings
+      apply_pings(pings)
     else
       flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
                                                            + @comment.errors.full_messages).join(', ')}"
@@ -56,7 +63,7 @@ class CommentsController < ApplicationController
 
   def create
     body = params[:content]
-    pings = check_for_pings @comment_thread, body
+    pings = check_for_pings(@comment_thread, body)
 
     @comment = Comment.new(post: @post, content: body, user: current_user,
                            comment_thread: @comment_thread, has_reference: false)
@@ -64,7 +71,7 @@ class CommentsController < ApplicationController
     status = @comment.save
 
     if status
-      apply_pings pings
+      apply_pings(pings)
       @comment_thread.thread_follower.each do |follower|
         next if follower.user_id == current_user.id
         next if pings.include? follower.user_id
@@ -95,17 +102,18 @@ class CommentsController < ApplicationController
     @post = @comment.post
     @comment_thread = @comment.comment_thread
     before = @comment.content
-    before_pings = check_for_pings @comment_thread, before
+    before_pings = check_for_pings(@comment_thread, before)
     if @comment.update comment_params
       unless current_user.id == @comment.user_id
         audit('comment_update', @comment, "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
-      after_pings = check_for_pings @comment_thread, @comment.content
+      after_pings = check_for_pings(@comment_thread, @comment.content)
       apply_pings(after_pings - before_pings - @comment_thread.thread_follower.to_a)
 
       render json: { status: 'success',
-                     comment: render_to_string(partial: 'comments/comment', locals: { comment: @comment }) }
+                     comment: render_to_string(partial: 'comments/comment',
+                                               locals: { comment: @comment, pingable: after_pings }) }
     else
       render json: { status: 'failed',
                      message: "Comment failed to save (#{@comment.errors.full_messages.join(', ')})" },
@@ -180,7 +188,7 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found unless current_user&.at_least_moderator?
+    return not_found! unless current_user&.at_least_moderator?
 
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
@@ -197,7 +205,13 @@ class CommentsController < ApplicationController
       return
     end
 
-    @comment_thread.update title: params[:title]
+    title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+    status = @comment_thread.update(title: title)
+
+    unless status
+      flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
+    end
+
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
@@ -216,7 +230,7 @@ class CommentsController < ApplicationController
     when 'follow'
       ThreadFollower.create comment_thread: @comment_thread, user: current_user
     else
-      return not_found
+      return not_found!
     end
 
     render json: { status: 'success' }
@@ -237,7 +251,7 @@ class CommentsController < ApplicationController
     when 'follow'
       ThreadFollower.where(comment_thread: @comment_thread, user: current_user).destroy_all
     else
-      return not_found
+      return not_found!
     end
 
     render json: { status: 'success' }
@@ -245,7 +259,7 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if current_user&.at_least_moderator? || current_user&.has_post_privilege?('flag_curate', @post)
+    @comment_threads = if current_user&.at_least_moderator? || current_user&.post_privilege?('flag_curate', @post)
                          CommentThread
                        else
                          CommentThread.undeleted
@@ -270,8 +284,7 @@ class CommentsController < ApplicationController
 
   def pingable
     thread = params[:id] == '-1' ? CommentThread.new(post_id: params[:post]) : CommentThread.find(params[:id])
-    ids = helpers.get_pingable(thread)
-    users = User.where(id: ids)
+    users = User.where(id: thread.pingable)
     render json: users.to_h { |u| [u.username, u.id] }
   end
 
@@ -305,12 +318,12 @@ class CommentsController < ApplicationController
         end
       end
     elsif !@post.can_access?(current_user)
-      not_found
+      not_found!
     end
   end
 
   def check_thread_access
-    not_found unless @comment_thread.can_access?(current_user)
+    not_found! unless @comment_thread.can_access?(current_user)
   end
 
   def check_privilege
@@ -343,22 +356,22 @@ class CommentsController < ApplicationController
   def check_restrict_access
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_lock?(@comment_thread)
+      not_found! unless current_user.can_lock?(@comment_thread)
     when 'archive'
-      return not_found unless current_user.can_archive?(@comment_thread)
+      not_found! unless current_user.can_archive?(@comment_thread)
     when 'delete'
-      return not_found unless current_user.can_delete?(@comment_thread)
+      not_found! unless current_user.can_delete?(@comment_thread)
     end
   end
 
   def check_unrestrict_access
     case params[:type]
     when 'lock'
-      return not_found unless current_user.can_unlock?(@comment_thread)
+      not_found! unless current_user.can_unlock?(@comment_thread)
     when 'archive'
-      return not_found unless current_user.can_unarchive?(@comment_thread)
+      not_found! unless current_user.can_unarchive?(@comment_thread)
     when 'delete'
-      return not_found unless current_user.can_undelete?(@comment_thread)
+      not_found! unless current_user.can_undelete?(@comment_thread)
     end
   end
 
@@ -370,12 +383,16 @@ class CommentsController < ApplicationController
     check_if_locked(Post.find(params[:post_id]))
   end
 
+  # @param thread [CommentThread] thread to extract pings for
+  # @param content [String] content to extract pings from
+  # @return [Array<Integer>] list of pinged user ids
   def check_for_pings(thread, content)
-    pingable = helpers.get_pingable(thread)
+    pingable = thread.pingable
     matches = content.scan(/@#(\d+)/)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
+  # @param pings [Array<Integer>] list of pinged user ids
   def apply_pings(pings)
     pings.each do |p|
       user = User.where(id: p).first

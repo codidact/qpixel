@@ -37,6 +37,21 @@ interface QPixelDOM {
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
 }
 
+interface StripMarkdownOptions {
+  /**
+   * Whether to strip away the leading quote ("> content"), if any
+   * @default false
+   */
+  removeLeadingQuote?: boolean
+}
+
+interface QPixelMD {
+  /**
+   * See [strip_markdown](app/helpers/application_helper.rb) application helper
+   */
+  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+}
+
 type QPixelKeyboardState =
   | "home"
   | "goto"
@@ -63,6 +78,18 @@ interface QPixelKeyboard {
   dialog: (message: string) => void;
   dialogClose: () => void;
   updateSelected: () => void;
+}
+
+type QPixelNotification = {
+  community_id: number,
+  community_name: string,
+  content: string,
+  created_at: string,
+  id: number,
+  is_read: boolean,
+  link: string,
+  updated_at: string,
+  user_id: number
 }
 
 type NotificationType = "warning" | "success" | "danger";
@@ -117,6 +144,13 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFlagData = {
+  flag_type: number | null
+  post_id: string
+  post_type: 'Comment' | 'Post'
+  reason?: string
+}
+
 interface GetThreadContentOptions {
   inline?: boolean,
   showDeleted?: boolean
@@ -150,9 +184,9 @@ interface QPixel {
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
    * {@link localStorage}, or Redis via AJAX.
-   * @returns JSON object containing user preferences
+   * @returns user preferences or `null` on failure
    */
-  _getPreferences?: () => Promise<UserPreferences>;
+  _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
    * Get the key to use for storing user preferences in localStorage, to avoid conflating users
@@ -303,8 +337,11 @@ interface QPixel {
    * Processes JSON responses from QPixel API
    * @param data 
    * @param onSuccess callback to call for successful requests
+   * @param onFinally callback to call for all requests
    */
-  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T, onSuccess: (data: T) => void) => void
+  handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
+                                                      onSuccess: (data: T) => void,
+                                                      onFinally?: (data: T) => void) => void
 
   /**
    * Attempts to delete a comment
@@ -325,10 +362,29 @@ interface QPixel {
    * @param id id of the comment thread to lock
    * @returns result of the operation
    */
-  lockThread?: (id: string) => Promise<QPixelResponseJSON>;
+  lockThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to rename a tag
+   * @param categoryId id of the category to rename the tag in
+   * @param tagId id of the tag to rename
+   * @param name new tag name
+   * @returns result of the operation
+   */
+  renameTag?: (categoryId: string, tagId: string, name: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to raise a flag
+   * @param flag new flag data
+   * @returns result of the operation
+   */
+  flag?: (flag: QPixelFlagData) => Promise<QPixelResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;
+  // qpixel Markdown
+  MD?: QPixelMD;
+  // qpixel popups
   Popup?: typeof QPixelPopup;
   // Stripe integration, TODO: types
   stripe?: any;

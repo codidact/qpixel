@@ -34,7 +34,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'has_post_privilege should grant all to OP' do
-    assert_equal true, users(:standard_user).has_post_privilege?('flag_curate', posts(:question_one))
+    assert_equal true, users(:standard_user).post_privilege?('flag_curate', posts(:question_one))
   end
 
   test 'website_domain should strip out everything but domain' do
@@ -205,7 +205,8 @@ class UserTest < ActiveSupport::TestCase
     communities.each do |community|
       CommunityUser.unscoped.undeleted.where(community_id: community.id).each do |cu|
         unless cu.user.deleted
-          assert_equal cu.user.ability_on?(community.id, everyone.internal_id), true
+          assert cu.user.ability_on?(community.id, everyone.internal_id),
+                 "Expected user '#{cu.user.username}' to have the 'everyone' ability"
         end
       end
     end
@@ -288,5 +289,16 @@ class UserTest < ActiveSupport::TestCase
 
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
+  end
+
+  test 'not_blocklisted? should correctly determine if the user is blocklisted' do
+    std = users(:standard_user)
+
+    std.skip_reconfirmation!
+    std.update(email: blocked_items(:email).value)
+    std.valid?
+
+    assert_equal false, std.changed?
+    assert std.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
   end
 end

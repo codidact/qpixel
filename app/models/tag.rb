@@ -33,7 +33,7 @@ class Tag < ApplicationRecord
          .order(Arel.sql(sanitize_sql_array(['sortname LIKE ? DESC, sortname', "#{sanitize_sql_like(stripped)}%"])))
 
     # Select from the union of the above queries, select only the tag columns such that we can distinct them
-    from(Arel.sql("(#{q1.to_sql} UNION #{q2.to_sql}) tags"))
+    from(Arel.sql("((#{q1.to_sql}) UNION (#{q2.to_sql})) tags"))
       .select(Tag.column_names.map { |c| "tags.#{c}" })
       .distinct
   end

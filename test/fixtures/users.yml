@@ -149,6 +149,21 @@ enabled_2fa:
   two_factor_token: WT65ANYXBB2SBR7III7IVWNJDS4PQF2T
   backup_2fa_code: M8lENyehyCvo9F9MbyTl1aOL
 
+spammer:
+  email: spammer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  profile: > 
+    Find the best spam on the network <a href="https://example.com">here</a>!
+    The yummiest spam you've ever tasted.
+  profile_markdown: >
+    Find the best spam on the network [here](https://example.com)!
+    The yummiest spam you've ever tasted.
+  sign_in_count: 1
+  username: BestSpamOnTheNet
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 filters_user:
   email: filters@qpixel-test.net
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'

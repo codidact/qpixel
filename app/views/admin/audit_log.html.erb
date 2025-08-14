@@ -1,7 +1,38 @@
 <h1><%= t 'admin.tools.audit_log' %></h1>
 
+<div>
+  <h3>Filters</h3>
+  <%= form_tag audit_log_path, method: :get, class: 'form-inline audit-log-filters' do %>
+    <div class="form-group-horizontal">
+      <div class="form-group">
+        <%= label_tag :log_type, 'Log category', class: 'form-element' %>
+        <%= select_tag :log_type, options_for_select(@log_types.map { |lt| [lt, lt] }, selected: params[:log_type]),
+                       include_blank: true, class: 'form-element js-log-type-select' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :event_type, 'Event', class: 'form-element' %>
+        <%= select_tag :event_type, options_for_select(@event_types.map { |et| [et, et] },
+                                                       selected: params[:event_type]),
+                       include_blank: true, class: 'form-element js-event-type-select' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :from, 'From date', class: 'form-element' %>
+        <%= date_field_tag :from, params[:from], class: 'form-element' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :to, 'To date', class: 'form-element' %>
+        <%= date_field_tag :to, params[:to], class: 'form-element' %>
+      </div>
+      <div class="actions">
+        <%= submit_tag 'Filter', class: 'button is-filled' %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
 <div class="category-meta">
   <h3><%= pluralize(@logs.count, t('g.log')) %></h3>
+
   <div class="button-list is-gutterless">
     <% classes = 'button is-outlined is-muted' %>
     <%= link_to t('g.age'), request.params.merge(sort: 'age'),

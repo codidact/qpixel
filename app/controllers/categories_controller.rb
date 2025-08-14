@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.all.order(sequence: :asc, id: :asc)
+    @categories = Category.accessible_to(current_user).all.order(sequence: :asc, id: :asc)
     respond_to do |format|
       format.html
       format.json do
@@ -21,6 +21,12 @@ class CategoriesController < ApplicationController
 
   def homepage
     @category = Category.where(is_homepage: true).first
+
+    unless @category.present?
+      redirect_to categories_path
+      return
+    end
+
     update_last_visit(@category)
     set_list_posts
     render :show
@@ -127,9 +133,11 @@ class CategoriesController < ApplicationController
   end
 
   def post_types
-    @post_types = @category.post_types.where(is_top_level: true)
-    if @post_types.count == 1
+    @post_types = @category.top_level_post_types
+    if @post_types.one?
       redirect_to new_category_post_path(post_type: @post_types.first, category: @category)
+    elsif @post_types.empty? && current_user&.admin?
+      redirect_to edit_category_post_types_path(@category, no_return: '1')
     end
   end
 
@@ -150,9 +158,7 @@ class CategoriesController < ApplicationController
   end
 
   def verify_view_access
-    unless (current_user&.trust_level || 0) >= (@category.min_view_trust_level || -1)
-      not_found
-    end
+    not_found! unless @category.public? || current_user&.can_see_category?(@category)
   end
 
   def set_list_posts
@@ -163,7 +169,7 @@ class CategoriesController < ApplicationController
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
                       .includes(:post_type, :tags).list_includes
-    filter_qualifiers = helpers.params_to_qualifiers
+    filter_qualifiers = helpers.params_to_qualifiers(params)
     @active_filter = helpers.active_filter
 
     if filter_qualifiers.blank? && @active_filter[:name].blank?
@@ -194,11 +200,14 @@ class CategoriesController < ApplicationController
       end
     end
 
-    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts)
+    @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts, current_user)
     @filtered = filter_qualifiers.any?
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
+  # Updates last visit cache for a given category
+  # @param category [Category] category to update
+  # @return [Boolean] whether the cache entry is deleted
   def update_last_visit(category)
     return if current_user.blank?
 

@@ -1,16 +1,29 @@
 .codidactyl {
-    width: 80px;
-    padding: 2rem;
-    margin-top: 1rem;
+  width: 80px;
+  padding: 2rem;
+  margin-top: 1rem;
 }
-.codidactyl + .is-flexible { width: 0; }
+
+.codidactyl + .is-flexible {
+  width: 0;
+}
 
 .codidactyl-sticky {
-    position: sticky;
-    top: 0.5rem;
-    padding: 1rem;
+  position: sticky;
+  top: 0.5rem;
+  padding: 1rem;
 }
 
 .codidactyl-small {
-    max-height: 1em;
+  max-height: 1em;
+}
+
+@media (max-width: 768px) {
+  .tour-editor-wrapper {
+    order: 2;
+  }
+
+  .tour-hints-wrapper {
+    order: 1;
+  }
 }

@@ -24,6 +24,12 @@ class TagsController < ApplicationController
 
   def category
     @tag_set = @category.tag_set
+
+    if @tag_set.nil?
+      not_found!
+      return
+    end
+
     @tags = if params[:q].present?
               @tag_set.tags.search(params[:q])
             elsif params[:hierarchical].present?
@@ -31,23 +37,23 @@ class TagsController < ApplicationController
             elsif params[:no_excerpt].present?
               @tag_set.tags.where(excerpt: ['', nil])
             else
-              @tag_set&.tags
+              @tag_set.tags
             end
 
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
-    @tags = @tags&.left_joins(:posts)
-                 &.group(Arel.sql("#{table}.id"))
-                 &.select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
-                 &.paginate(per_page: 96, page: params[:page])
+    @tags = @tags.left_joins(:posts)
+                 .group(Arel.sql("#{table}.id"))
+                 .select(Arel.sql("#{table}.*, COUNT(DISTINCT IF(posts.deleted = 0, posts.id, NULL)) AS post_count"))
+                 .paginate(per_page: 96, page: params[:page])
 
     @tags = if params[:hierarchical].present?
-              @tags&.order(:path)
+              @tags.order(:path)
             else
-              @tags&.order(Arel.sql('COUNT(posts.id) DESC'))
+              @tags.order(Arel.sql('COUNT(posts.id) DESC'))
             end
 
-    @count = @tags&.length || 0
+    @count = @tags.length || 0
   end
 
   def show
@@ -135,7 +141,14 @@ class TagsController < ApplicationController
       end
     end
 
-    render json: { success: status, tag: @tag }
+    if status
+      render json: { status: 'success', tag: @tag }
+    else
+      render json: { status: 'failed',
+                     message: I18n.t('tags.errors.rename_generic'),
+                     tag: @tag },
+             status: :bad_request
+    end
   end
 
   def select_merge; end
