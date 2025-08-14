@@ -135,6 +135,7 @@ $(() => {
    * Temporarily displays the draft's status with a given message
    * @param {JQuery<Element>} $field draftable field
    * @param {string} message draft status message
+   * @returns {void}
    */
   const flashDraftStatus = ($field, message) => {
     const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
@@ -145,6 +146,14 @@ $(() => {
     setTimeout(() => {
       $statusEl.addClass('transparent');
     }, 1500);
+  };
+
+  /**
+   * Removes the "draft loaded" notice from the page
+   * @returns {void}
+   */
+  const removeDraftLoadedNotice = () => {
+    document.querySelector('.js-draft-notice')?.remove();
   };
 
   /**
@@ -178,6 +187,7 @@ $(() => {
 
     return QPixel.handleJSONResponse(data, () => {
       flashDraftStatus($field, 'draft deleted');
+      removeDraftLoadedNotice();
     });
   }
 
