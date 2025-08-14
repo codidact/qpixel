@@ -176,7 +176,7 @@ $(() => {
     const tagId = $tgt.attr('data-tag-id');
     const tagName = $tgt.attr('data-tag-name');
     const $select = $tgt.parents('.form-group').find('select');
-    const existing = $select.find(`option[value=${tagId}]`);
+    const existing = $select.find(`option[value='${tagName}']`);
     if (existing.length > 0) {
       $select.val([useIds ? tagId : tagName, ...($select.val() || [])]).trigger('change');
     }
@@ -193,17 +193,15 @@ $(() => {
     const tagName = $tgt.attr('data-name');
 
     const renameTo = prompt(`Rename tag ${tagName} to:`);
-    if (!!renameTo) {
-      const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name: renameTo });
-  
-      const data = await resp.json();
 
-      if (data.success) {
-        location.reload();
-      }
-      else {
-        QPixel.createNotification('danger', `Failed to rename the tag. (${resp.status})`);
-      }
+    if (!renameTo) {
+      return;
     }
+
+    const data = await QPixel.renameTag(categoryId, tagId, renameTo);
+
+    QPixel.handleJSONResponse(data, () => {
+      location.reload();
+    });
   });
 });

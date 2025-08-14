@@ -1,0 +1,5 @@
+en:
+  tags:
+    errors:
+      rename_generic: >
+        Failed to rename the tag.
