@@ -133,6 +133,21 @@ class PostSystemTest < ApplicationSystemTestCase
     end
   end
 
+  test 'Anyone can view questions in the list' do
+    post = posts(:question_one)
+    visit post_url(post)
+
+    # Check that the post is displayed somewhere on the page
+    assert_text post.title
+    assert_text post.body
+
+    # Navigate to the question list for this category
+    click_on 'Posts'
+
+    # Check that there is at least one question listed
+    assert_no_text '0 posts'
+  end
+
   test 'Anyone can sort answers' do
     post = posts(:question_one)
     visit post_url(post)
