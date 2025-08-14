@@ -85,7 +85,7 @@ module QPixel
         raise TypeError, "Can't cache more than one type of object via write_collection"
       end
 
-      data = [types[0].to_s, *value.map(&:id)]
+      data = normalize_collection(value)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       @underlying.write(namespaced, data, **opts)
     end
@@ -100,6 +100,11 @@ module QPixel
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       data = @underlying.read(namespaced, **opts)
       return nil if data.nil?
+
+      if data.is_a?(ActiveRecord::Relation)
+        data = normalize_collection(data)
+      end
+
       type = data.slice!(0)
       begin
         type.constantize.where(id: data)
@@ -144,6 +149,13 @@ module QPixel
       key = expanded_key(key)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
+    end
+
+    # Normalizes a given ActiveRecord collection for use with the cache
+    # @param value [ActiveRecord::Relation] collection to normalize
+    # @return [Array(String, *Integer)]
+    def normalize_collection(value)
+      [value[0].class.to_s, *value.map(&:id)]
     end
   end
 end
