@@ -7,7 +7,8 @@
       QPixel.stripe = new Stripe('<%= StripeHelpers.public_key %>');
     </script>
   </head>
-  <body class="<%= Rails.env.development? ? 'development' : '' %>">
+  <body class="<%= Rails.env.development? ? 'development' : '' %>"
+        data-user-id="<%= user_signed_in? ? current_user.id : 'none' %>">
     <%= render 'layouts/header' %>
 
     <main class="container">
