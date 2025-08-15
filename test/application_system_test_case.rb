@@ -97,3 +97,4 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
             'but could not select it from options without creating a new tag.'
     end
   end
+end
