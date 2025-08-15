@@ -198,6 +198,7 @@ class UsersController < ApplicationController
                      preferences: current_user.preferences }
     else
       render json: { status: 'failed',
+                     message: 'Failed to save the preference',
                      errors: ['Both name and value parameters are required'] },
              status: 400
     end
