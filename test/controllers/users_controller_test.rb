@@ -529,6 +529,21 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'set_preference should correctly handle invalid preferences' do
+    sign_in users(:standard_user)
+
+    [nil, communities(:sample)].each do |community|
+      post :set_preference, params: { community: community, format: :json }
+
+      assert_response(:bad_request)
+      assert_valid_json_response
+
+      parsed_body = JSON.parse(response.body)
+      assert_equal 'failed', parsed_body['status']
+      assert_not_nil parsed_body['message']
+    end
+  end
+
   private
 
   def create_other_user

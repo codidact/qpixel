@@ -200,7 +200,7 @@ class UsersController < ApplicationController
       render json: { status: 'failed',
                      message: 'Failed to save the preference',
                      errors: ['Both name and value parameters are required'] },
-             status: 400
+             status: :bad_request
     end
   end
 
