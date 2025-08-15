@@ -234,6 +234,10 @@ class Post < ApplicationRecord
              .to_h { |_k, v| [v.first.reaction_type, v] }
   end
 
+  # Are new threads on this post followed by this user?
+  # @param post [Post] post to check
+  # @param user [User] user to check
+  # @return [Boolean] check result
   def followed_by?(user)
     ThreadFollower.where(post: self, user: user).any?
   end
