@@ -507,6 +507,43 @@ class UsersControllerTest < ActionController::TestCase
     assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
   end
 
+  test 'set_preference should correclty save valid preferences' do
+    sign_in users(:standard_user)
+
+    pref_key = 'default_license'
+    license = licenses(:cc_by_sa)
+
+    [nil, communities(:sample)].each do |community|
+      try_save_preference(pref_key, license, community: community)
+
+      assert_response(:success)
+      assert_valid_json_response
+
+      parsed_body = JSON.parse(response.body)
+      assert_equal 'success', parsed_body['status']
+      assert_not_nil parsed_body['preferences']
+
+      comm_key = community.present? ? 'community' : 'global'
+      assert_not_nil parsed_body['preferences'][comm_key]
+      assert_equal license.id.to_s, parsed_body['preferences'][comm_key][pref_key]
+    end
+  end
+
+  test 'set_preference should correctly handle invalid preferences' do
+    sign_in users(:standard_user)
+
+    [nil, communities(:sample)].each do |community|
+      post :set_preference, params: { community: community, format: :json }
+
+      assert_response(:bad_request)
+      assert_valid_json_response
+
+      parsed_body = JSON.parse(response.body)
+      assert_equal 'failed', parsed_body['status']
+      assert_not_nil parsed_body['message']
+    end
+  end
+
   private
 
   def create_other_user
@@ -515,5 +552,14 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_save_preference(name, value, community: nil)
+    post :set_preference, params: {
+      community: community,
+      name: name,
+      value: value,
+      format: :json
+    }
   end
 end
