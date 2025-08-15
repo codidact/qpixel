@@ -43,10 +43,10 @@
                          class: 'form-element js-thread-title-field',
                          data: { post: post.id,
                                  thread: '-1',
-                                 character_count: '.js-character-count-thread-title',
+                                 character_count: ".js-character-count-thread-title-#{post.id}",
                                  markdown: 'strip' } %>
       <%= render 'shared/char_count',
-                 type: 'thread-title',
+                 type: "thread-title-#{post.id}",
                  min: 1,
                  max: maximum_thread_title_length %>
 
