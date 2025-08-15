@@ -52,6 +52,19 @@ interface QPixelMD {
   stripMarkdown(content: string, options?: StripMarkdownOptions): string;
 }
 
+interface QPixelStorageMigration {
+  name: string
+  up: () => Promise<void>
+  down?: () => Promise<void>
+}
+
+interface QPixelStorage {
+  readonly latestMigration: string | null
+  migrations: QPixelStorageMigration[]
+  addMigration: (migration: QPixelStorageMigration) => QPixelStorage
+  runMigrations:() => Promise<void>
+}
+
 type QPixelKeyboardState =
   | "home"
   | "goto"
@@ -386,6 +399,8 @@ interface QPixel {
   MD?: QPixelMD;
   // qpixel popups
   Popup?: typeof QPixelPopup;
+  // qpixel storage management
+  Storage?: QPixelStorage;
   // Stripe integration, TODO: types
   stripe?: any;
 }
