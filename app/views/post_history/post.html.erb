@@ -70,3 +70,7 @@
     <% end %>
   </details>
 <% end %>
+
+<div class="has-padding-top-4">
+  <%= will_paginate @history, renderer: BootstrapPagination::Rails %>
+</div>
