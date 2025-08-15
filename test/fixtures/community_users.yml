@@ -105,10 +105,3 @@ sample_spammer:
   is_admin: false
   is_moderator: false
   reputation: 1
-
-sample_filters_user:
-  user: filters_user
-  community: sample
-  is_admin: false
-  is_moderator: false
-  reputation: 50
