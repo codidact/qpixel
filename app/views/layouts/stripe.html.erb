@@ -14,14 +14,7 @@
   <div class="grid">
     <div class="grid--cell is-12">
       <div class="has-padding-4">
-        <% {notice: :info, alert: :danger, danger: :danger, success: :success, info: :info, warning: :warning}.each do |mt, cc| %>
-          <% if flash[mt].present? %>
-            <div class="notice is-<%= cc.to_s %>">
-              <%= flash[mt] %>
-            </div>
-          <% end %>
-        <% end %>
-
+        <%= render 'shared/notices' %>
 
         <% if @first_visit_notice %>
           <% notice = SiteSetting['FirstVisitGuidance'] %>
