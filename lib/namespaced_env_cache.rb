@@ -85,7 +85,7 @@ module QPixel
         raise TypeError, "Can't cache more than one type of object via write_collection"
       end
 
-      data = [types[0].to_s, *value.map(&:id)]
+      data = NamespacedEnvCache.normalize_collection(value)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       @underlying.write(namespaced, data, **opts)
     end
@@ -100,6 +100,11 @@ module QPixel
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       data = @underlying.read(namespaced, **opts)
       return nil if data.nil?
+
+      if data.is_a?(ActiveRecord::Relation)
+        data = NamespacedEnvCache.normalize_collection(data)
+      end
+
       type = data.slice!(0)
       begin
         type.constantize.where(id: data)
@@ -129,6 +134,13 @@ module QPixel
       else
         existing
       end
+    end
+
+    # Normalizes a given ActiveRecord collection for use with the cache
+    # @param value [ActiveRecord::Relation] collection to normalize
+    # @return [[String, Integer, Integer, ...]]
+    def self.normalize_collection(value)
+      [value[0].class.to_s, *value.map(&:id)]
     end
 
     # We have to statically report that we support cache versioning even though this depends on the underlying class.
