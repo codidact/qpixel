@@ -2,6 +2,9 @@ require 'test_helper'
 require 'comments_test_helpers'
 
 class CommentsControllerTest < ActionController::TestCase
+  include Devise::Test::ControllerHelpers
+  include CommentsControllerTestHelpers
+
   test 'post follower can unfollow post' do
     user = users(:standard_user)
     sign_in user
