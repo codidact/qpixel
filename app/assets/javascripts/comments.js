@@ -339,4 +339,35 @@ $(() => {
       $tgt.find('.js-text').text('copy link');
     }, 1000);
   });
+
+  QPixel.DOM.addSelectorListener('click', '.js-follow-comments', async (ev) => {
+    ev.preventDefault();
+
+    const { target } = ev;
+
+    if (!QPixel.DOM.isHTMLElement(target)) {
+      return;
+    }
+
+    const { postId, action } = target.dataset;
+
+    if (!postId || !action) {
+      return;
+    }
+
+    const data = await QPixel.followComments(postId);
+
+    QPixel.handleJSONResponse(data, () => {
+      const isFollowing = action === 'follow';
+
+      target.dataset.action = isFollowing ? 'unfollow' : 'follow';
+
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-fw', isFollowing ? 'fa-bell-slash' : 'fa-bell');
+
+      const text = document.createTextNode(` ${ isFollowing ? 'Unfollow' : 'Follow' } new`);
+
+      target.replaceChildren(icon, text);
+    });
+  });
 });
