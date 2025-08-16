@@ -376,6 +376,13 @@ interface QPixel {
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to start following comments on a given post
+   * @param postId id of the post to follow comments on
+   * @returns result of the operation
+   */
+  followComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to undelete a comment
    * @param id id of the comment to undelete
    * @returns result of the operation
