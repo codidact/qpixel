@@ -238,13 +238,9 @@ window.QPixel = {
 
     const data = await resp.json();
 
-    if (data.status !== 'success') {
-      console.error(`Preference persist failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       QPixel._updatePreferencesLocally(data.preferences);
-    }
+    });
   },
 
   filters: async () => {

@@ -1,15 +1,16 @@
 <%#
-  Post create/edit form covering all post types.
-  Variables:
-    post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
-    submit_path   : the URL to submit the form to (must accept POST requests)
-    post_type     : a PostType instance describing the requested post type
-    category      : a Category instance, required if the post type has a category, indicating which category to post in
-    parent        : a Post instance containing the parent for this post (required if the post type has a parent)
-    inline_parent : optional, default  true: display an inline copy of the parent? (if present)
-    type_summary  : optional, default  true: display a summary of the requested post type?
-    edit_comment  : optional, default false: include a field for an edit comment?
-%>
+   "Post create/edit form covering all post types.
+
+    Variables:
+      post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
+      submit_path   : the URL to submit the form to (must accept POST requests)
+      post_type     : a PostType instance describing the requested post type
+      category      : a Category instance, required if the post type has a category, indicating which category to post in
+      parent        : a Post instance containing the parent for this post (required if the post type has a parent)
+      inline_parent : optional, default  true: display an inline copy of the parent? (if present)
+      type_summary  : optional, default  true: display a summary of the requested post type?
+      edit_comment  : optional, default false: include a field for an edit comment?
+"%>
 
 <%
   # defaults
@@ -54,8 +55,14 @@
     </p>
   <% end %>
 
-  <%= render 'shared/body_field', f: f, field_name: :body_markdown, field_label: t('posts.body_label'), post: post,
-            cur_length: post.body_markdown&.length, min_length: min_body_length(category), max_length: max_body_length(category) %>
+  <%= render 'shared/body_field',
+             f: f,
+             field_name: :body_markdown,
+             field_label: t('posts.body_label'),
+             post: post,
+             cur_length: post.body_markdown&.length,
+             min_length: min_body_length(category),
+             max_length: max_body_length(category) %>
 
   <div class="rejected-elements notice is-warning hide">
     <h3>Unsupported HTML detected</h3>
@@ -144,7 +151,9 @@
         <% category_default = category.license %>
         <% user_default = user_preference('default_license', community: true) %>
         <% if site_default.present? %>
-          community default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= site_default.id %>">
+          community default: <a href="javascript:void(0)"
+                                class="js-license-autofill"
+                                data-license-id="<%= site_default.id %>">
             <%= site_default.name %>
           </a>
         <% end %>
@@ -152,7 +161,9 @@
           &middot;
         <% end %>
         <% if category_default.present? %>
-          category default: <a href="javascript:void(0)" class="js-license-autofill" data-license-id="<%= category_default.id %>">
+          category default: <a href="javascript:void(0)"
+                               class="js-license-autofill"
+                               data-license-id="<%= category_default.id %>">
             <%= category_default.name %>
           </a>
         <% end %>

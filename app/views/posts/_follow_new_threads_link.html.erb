@@ -6,7 +6,7 @@
       user : User to check the following status for
 "%>
 
-<% if CommentThread.post_followed?(post, user) %>
+<% if post.followed_by?(user) %>
   <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
                           class: "button is-muted is-outlined is-small js-follow-comments",
                           data: { post_id: post.id, action: 'unfollow' },
