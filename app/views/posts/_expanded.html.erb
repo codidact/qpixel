@@ -543,7 +543,7 @@
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <% if user_signed_in? %>
-            <%= render 'posts/follow_new_threads_link', post: post, user: current_user %>
+            <%= render 'posts/follow_comments_link', post: post, user: current_user %>
           <% end %>
           </div>
           <div class="post--comments-container" role="list">
