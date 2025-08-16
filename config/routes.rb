@@ -244,6 +244,7 @@ Rails.application.routes.draw do
     get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
+    post   'post/:post_id/unfollow',       to: 'comments#post_unfollow', as: :unfollow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
     get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
