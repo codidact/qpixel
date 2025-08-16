@@ -276,7 +276,9 @@ class CommentsController < ApplicationController
 
   def post_follow
     @post = Post.find(params[:post_id])
-    ThreadFollower.create(post: @post, user: current_user)
+    if ThreadFollower.where(post: @post, user: current_user).count == 0
+      ThreadFollower.create(post: @post, user: current_user)
+    end
     redirect_to post_path(@post)
   end
 
