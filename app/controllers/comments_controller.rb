@@ -4,7 +4,7 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
 
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_post, only: [:create_thread]
+  before_action :set_post, only: [:create_thread, :post_follow, :post_unfollow]
   before_action :set_thread,
                 only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
                        :thread_followers]
@@ -274,7 +274,6 @@ class CommentsController < ApplicationController
   end
 
   def post_follow
-    @post = Post.find(params[:post_id])
     if ThreadFollower.where(post: @post, user: current_user).none?
       ThreadFollower.create(post: @post, user: current_user)
     end
@@ -286,7 +285,6 @@ class CommentsController < ApplicationController
   end
 
   def post_unfollow
-    @post = Post.find(params[:post_id])
     ThreadFollower.where(post: @post, user: current_user).destroy_all
 
     respond_to do |format|
@@ -308,7 +306,7 @@ class CommentsController < ApplicationController
   end
 
   def set_comment
-    @comment = Comment.unscoped.find params[:id]
+    @comment = Comment.unscoped.find(params[:id])
   end
 
   def set_post

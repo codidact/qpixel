@@ -366,7 +366,7 @@ $(() => {
 
       const icon = document.createElement('i');
       icon.classList.add('fas', 'fa-fw', shouldFollow ? 'fa-bell-slash' : 'fa-bell');
-      const text = document.createTextNode(` ${ shouldFollow ? 'Unfollow' : 'Follow' } new`);
+      const text = document.createTextNode(` ${shouldFollow ? 'Unfollow' : 'Follow'} new`);
       target.replaceChildren(icon, text);
 
       const form = target.closest('form');
