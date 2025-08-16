@@ -263,11 +263,9 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if current_user&.at_least_moderator? || current_user&.post_privilege?('flag_curate', @post)
-                         CommentThread
-                       else
-                         CommentThread.undeleted
-                       end.where(post: @post).order(deleted: :asc, archived: :asc, reply_count: :desc)
+    @comment_threads = CommentThread.accessible_to(current_user, @post)
+                                    .where(post: @post)
+                                    .order(deleted: :asc, archived: :asc, reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
