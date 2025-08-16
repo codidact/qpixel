@@ -423,3 +423,4 @@ class CommentsController < ApplicationController
                              user: current_user)
   end
 end
+# rubocop:disable Metrics/ClassLength
