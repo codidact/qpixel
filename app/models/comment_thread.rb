@@ -16,14 +16,6 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
-  # Are there any threads on a given post that a given user follows?
-  # @param post [Post] post to check
-  # @param user [User] user to check
-  # @return [Boolean] check result
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
-  end
-
   # Is the thread read-only (can't be edited)?
   # @return [Boolean] check result
   def read_only?
