@@ -5,3 +5,7 @@ deleter_normal:
 standard_author_normal:
   user: standard_user
   comment_thread: normal
+
+standard_author_question_one:
+  user: standard_user
+  post: question_one

@@ -318,7 +318,7 @@ class ApplicationController < ActionController::Base
                    path.start_with?('/assets/') ||
                    path.end_with?('.css') || path.end_with?('.js')
 
-    # Make available to controller that the we should not leak posts in the sidebar
+    # Used by derived controllers to avoid leaking featured posts to the sidebar
     @prevent_sidebar = true
 
     # Allow /help (help center), /help/* and /policy/* depending on settings

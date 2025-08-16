@@ -16,10 +16,8 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
-  end
-
+  # Is the thread read-only (can't be edited)?
+  # @return [Boolean] check result
   def read_only?
     locked? || archived? || deleted?
   end
