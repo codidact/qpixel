@@ -276,12 +276,17 @@ class CommentsController < ApplicationController
 
   def post_follow
     @post = Post.find(params[:post_id])
+
     if @post.followed_by?(current_user)
       ThreadFollower.where(post: @post, user: current_user).destroy_all
     else
       ThreadFollower.create(post: @post, user: current_user)
     end
-    redirect_to post_path(@post)
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
   end
 
   def pingable
