@@ -355,19 +355,25 @@ $(() => {
       return;
     }
 
-    const data = await QPixel.followComments(postId);
+    const shouldFollow = action === 'follow';
+
+    const data = shouldFollow ?
+                  await QPixel.followComments(postId) :
+                  await QPixel.unfollowComments(postId);
 
     QPixel.handleJSONResponse(data, () => {
-      const isFollowing = action === 'follow';
-
-      target.dataset.action = isFollowing ? 'unfollow' : 'follow';
+      target.dataset.action = shouldFollow ? 'unfollow' : 'follow';
 
       const icon = document.createElement('i');
-      icon.classList.add('fas', 'fa-fw', isFollowing ? 'fa-bell-slash' : 'fa-bell');
-
-      const text = document.createTextNode(` ${ isFollowing ? 'Unfollow' : 'Follow' } new`);
-
+      icon.classList.add('fas', 'fa-fw', shouldFollow ? 'fa-bell-slash' : 'fa-bell');
+      const text = document.createTextNode(` ${ shouldFollow ? 'Unfollow' : 'Follow' } new`);
       target.replaceChildren(icon, text);
+
+      const form = target.closest('form');
+
+      if (form) {
+        form.action = `/comments/post/${postId}/${shouldFollow ? 'unfollow' : 'follow'}`;
+      }
     });
   });
 });
