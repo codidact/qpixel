@@ -34,4 +34,19 @@ class CommentsControllerTest < ActionController::TestCase
     # Assert user follows post
     assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
   end
+
+  test 'follower cannot duplicate the following of a post' do
+    user = users(:standard_user)
+    sign_in user
+    question = posts(:question_one)
+
+    # Assert user follows post
+    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
+
+    try_post_follow(question)
+    assert_response(:found)
+
+    # Assert user still only follows post once
+    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
+  end
 end

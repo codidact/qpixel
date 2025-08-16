@@ -80,7 +80,7 @@ module CommentsControllerTestHelpers
   # Attempts to unfollow new threads on a given post
   # @param post [Post] post to unfollow
   def try_post_unfollow(test_post)
-    post :post_follow, params: { post_id: test_post.id }
+    post :post_unfollow, params: { post_id: test_post.id }
   end
 
   # Attempts to lock a given comment thread
