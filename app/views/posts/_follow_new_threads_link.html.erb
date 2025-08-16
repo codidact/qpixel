@@ -1,0 +1,27 @@
+<%#
+   "Helper for rendering the follow/unfollow new threads buttons
+
+    Variables:
+      post : Post to create the link for
+      user : User to check the following status for
+"%>
+
+<% if CommentThread.post_followed?(post, user) %>
+  <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                          class: "button is-muted is-outlined is-small js-follow-comments",
+                          data: { post_id: post.id, action: 'unfollow' },
+                          title: 'Don\'t follow new comment threads on this post',
+                          role: 'button',
+                          'aria-label': 'Unfollow new comment threads on this post' do %>
+    <i class="fas fa-fw fa-bell-slash"></i> Unfollow new
+  <% end %>
+<% else %>
+  <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+                          class: "button is-muted is-outlined is-small js-follow-comments",
+                          data: { post_id: post.id, action: 'follow' },
+                          title: 'Follow all new comment threads on this post',
+                          role: 'button',
+                          'aria-label': 'Follow all new comment threads on this post' do %>
+    <i class="fas fa-fw fa-bell"></i> Follow new
+  <% end %>
+<% end %>
