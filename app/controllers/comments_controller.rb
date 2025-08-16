@@ -288,7 +288,11 @@ class CommentsController < ApplicationController
   def post_unfollow
     @post = Post.find(params[:post_id])
     ThreadFollower.where(post: @post, user: current_user).destroy_all
-    redirect_to post_path(@post)
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
   end
 
   def pingable
