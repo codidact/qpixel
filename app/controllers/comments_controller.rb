@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
@@ -423,4 +424,4 @@ class CommentsController < ApplicationController
                              user: current_user)
   end
 end
-# rubocop:disable Metrics/ClassLength
+# rubocop:enable Metrics/ClassLength
