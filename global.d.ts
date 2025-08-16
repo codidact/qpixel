@@ -390,6 +390,13 @@ interface QPixel {
   undeleteComment?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to stop following comments on a given post
+   * @param postId id of the post to stop following comments on
+   * @returns result of the operation
+   */
+  unfollowComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to lock a comment thread
    * @param id id of the comment thread to lock
    * @returns result of the operation
