@@ -18,7 +18,8 @@ QPixel.Storage = {
     for (const migration of pending) {
       try {
         await migration.up();
-      } catch (e) {
+      }
+      catch (e) {
         console.warn(`[qpixel/storage] migration ${migration.name} error`, e);
         break;
       }
