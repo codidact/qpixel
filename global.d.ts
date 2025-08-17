@@ -77,7 +77,7 @@ interface QPixelMD {
   stripMarkdown(content: string, options?: StripMarkdownOptions): string;
 }
 
-interface QPixelStorageMigration {
+interface QPixelMigration {
   name: string
   up: () => Promise<void>
   down?: () => Promise<void>
@@ -85,8 +85,8 @@ interface QPixelStorageMigration {
 
 interface QPixelStorage {
   readonly latestMigration: string | null
-  migrations: QPixelStorageMigration[]
-  addMigration: (migration: QPixelStorageMigration) => QPixelStorage
+  migrations: QPixelMigration[]
+  addMigration: (migration: QPixelMigration) => QPixelStorage
   runMigrations:() => Promise<void>
 }
 

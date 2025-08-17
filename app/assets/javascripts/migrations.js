@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   /**
    * Non-idempotent fix (it's just a data error) for how user preferences are stored
-   * @type {QPixelStorageMigration}
+   * @type {QPixelMigration}
    */
   const fixUserPreferences = {
     name: "fix-user-preferences",
