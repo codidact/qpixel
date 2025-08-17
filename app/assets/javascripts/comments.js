@@ -339,4 +339,41 @@ $(() => {
       $tgt.find('.js-text').text('copy link');
     }, 1000);
   });
+
+  QPixel.DOM.addSelectorListener('click', '.js-follow-comments', async (ev) => {
+    ev.preventDefault();
+
+    const { target } = ev;
+
+    if (!QPixel.DOM.isHTMLElement(target)) {
+      return;
+    }
+
+    const { postId, action } = target.dataset;
+
+    if (!postId || !action) {
+      return;
+    }
+
+    const shouldFollow = action === 'follow';
+
+    const data = shouldFollow ?
+                  await QPixel.followComments(postId) :
+                  await QPixel.unfollowComments(postId);
+
+    QPixel.handleJSONResponse(data, () => {
+      target.dataset.action = shouldFollow ? 'unfollow' : 'follow';
+
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-fw', shouldFollow ? 'fa-bell-slash' : 'fa-bell');
+      const text = document.createTextNode(` ${shouldFollow ? 'Unfollow' : 'Follow'} new`);
+      target.replaceChildren(icon, text);
+
+      const form = target.closest('form');
+
+      if (form) {
+        form.action = `/comments/post/${postId}/${shouldFollow ? 'unfollow' : 'follow'}`;
+      }
+    });
+  });
 });

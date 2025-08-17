@@ -238,13 +238,9 @@ window.QPixel = {
 
     const data = await resp.json();
 
-    if (data.status !== 'success') {
-      console.error(`Preference persist failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       QPixel._updatePreferencesLocally(data.preferences);
-    }
+    });
   },
 
   filters: async () => {
@@ -475,10 +471,30 @@ window.QPixel = {
     return data;
   },
 
+  followComments: async (postId) => {
+    const resp = await QPixel.fetchJSON(`/comments/post/${postId}/follow`, {}, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
   undeleteComment: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
       headers: { 'Accept': 'application/json' },
       method: 'PATCH'
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  unfollowComments: async (postId) => {
+    const resp = await QPixel.fetchJSON(`/comments/post/${postId}/unfollow`, {}, {
+      headers: { 'Accept': 'application/json' }
     });
 
     const data = await resp.json();
