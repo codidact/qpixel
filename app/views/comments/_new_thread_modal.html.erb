@@ -47,7 +47,6 @@
                                  markdown: 'strip' } %>
       <%= render 'shared/char_count',
                  type: "thread-title-#{post.id}",
-                 min: 1,
                  max: maximum_thread_title_length %>
 
       <%= submit_tag 'Create thread',
