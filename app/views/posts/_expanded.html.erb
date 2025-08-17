@@ -6,7 +6,7 @@
     ? @post_type : PostType of the post
 
     Parameters:
-    ? params[:comment_id] : Comment ID to show even if it would be hidden otherwise 
+    ? params[:comment_id] : Comment ID to show even if it would be hidden otherwise
     ? params[:thread_id]  : CommentThread ID to render expanded view for
     ? params[:sort]       : sorting type for the post's children
 
@@ -243,8 +243,8 @@
           <div class="tools">
             <%= render "shared/copy_link", classes: ["tools--item"],
                                            desc: "Copy a permanent link to this post",
-                                           id: post.id, 
-                                           md: generic_share_link_md(post), 
+                                           id: post.id,
+                                           md: generic_share_link_md(post),
                                            raw: generic_share_link(post) %>
             <%= link_to post_history_path(post), class: 'tools--item', 'aria-label': 'View history of this post' do %>
               <i class="fa fa-history"></i>
@@ -532,8 +532,8 @@
             <%= pluralize(public_count, 'comment thread') %>
           </h4>
           <% if user_signed_in? %>
-            <% if CommentThread.post_followed?(post, current_user) %>
-              <%= link_to follow_post_comments_path(post_id: post.id), method: :post,
+            <% if post.followed_by?(current_user) %>
+              <%= link_to unfollow_post_comments_path(post_id: post.id), method: :post,
                           class: "button is-muted is-outlined is-small",
                           title: 'Don\'t follow new comment threads on this post',
                           role: 'button',

@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
@@ -276,11 +277,15 @@ class CommentsController < ApplicationController
 
   def post_follow
     @post = Post.find(params[:post_id])
-    if CommentThread.post_followed?(@post, current_user)
-      ThreadFollower.where(post: @post, user: current_user).destroy_all
-    else
+    if ThreadFollower.where(post: @post, user: current_user).none?
       ThreadFollower.create(post: @post, user: current_user)
     end
+    redirect_to post_path(@post)
+  end
+
+  def post_unfollow
+    @post = Post.find(params[:post_id])
+    ThreadFollower.where(post: @post, user: current_user).destroy_all
     redirect_to post_path(@post)
   end
 
@@ -419,3 +424,4 @@ class CommentsController < ApplicationController
                              user: current_user)
   end
 end
+# rubocop:enable Metrics/ClassLength
