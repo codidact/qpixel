@@ -26,12 +26,3 @@ QPixel.Storage = {
     }
   },
 };
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await QPixel.Storage.addMigration({
-    name: "fix-user-preferences",
-    async up() {
-      localStorage.removeItem("qpixel.user_undefined_preferences");
-    },
-  }).runMigrations();
-});
