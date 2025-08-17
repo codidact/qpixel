@@ -4,7 +4,7 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
 
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_post, only: [:create_thread]
+  before_action :set_post, only: [:create_thread, :post_follow, :post_unfollow]
   before_action :set_thread,
                 only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
                        :thread_followers]
@@ -264,11 +264,9 @@ class CommentsController < ApplicationController
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if current_user&.at_least_moderator? || current_user&.post_privilege?('flag_curate', @post)
-                         CommentThread
-                       else
-                         CommentThread.undeleted
-                       end.where(post: @post).order(deleted: :asc, archived: :asc, reply_count: :desc)
+    @comment_threads = CommentThread.accessible_to(current_user, @post)
+                                    .where(post: @post)
+                                    .order(deleted: :asc, archived: :asc, reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
@@ -276,17 +274,23 @@ class CommentsController < ApplicationController
   end
 
   def post_follow
-    @post = Post.find(params[:post_id])
     if ThreadFollower.where(post: @post, user: current_user).none?
       ThreadFollower.create(post: @post, user: current_user)
     end
-    redirect_to post_path(@post)
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
   end
 
   def post_unfollow
-    @post = Post.find(params[:post_id])
     ThreadFollower.where(post: @post, user: current_user).destroy_all
-    redirect_to post_path(@post)
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
   end
 
   def pingable
@@ -302,7 +306,7 @@ class CommentsController < ApplicationController
   end
 
   def set_comment
-    @comment = Comment.unscoped.find params[:id]
+    @comment = Comment.unscoped.find(params[:id])
   end
 
   def set_post
