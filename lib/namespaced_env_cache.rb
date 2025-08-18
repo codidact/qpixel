@@ -97,7 +97,10 @@ module QPixel
       data = @underlying.read(namespaced, **opts)
       return nil if data.nil?
 
-      data = NamespacedEnvCache.normalize_collection(data)
+      if data.is_a?(ActiveRecord::Relation)
+        data = NamespacedEnvCache.normalize_collection(data)
+      end
+
       type = data.slice!(0)
       begin
         type.constantize.where(id: data)
@@ -129,14 +132,10 @@ module QPixel
     end
 
     # Normalizes a given ActiveRecord collection for use with the cache
-    # @param value [ActiveRecord::Relation, [String, Integer, Integer, ...]] collection to normalize
+    # @param value [ActiveRecord::Relation] collection to normalize
     # @return [[String, Integer, Integer, ...]]
     def self.normalize_collection(value)
-      if value.is_a?(ActiveRecord::Relation)
-        [value[0].class.to_s, *value.map(&:id)]
-      else
-        value
-      end
+      [value[0].class.to_s, *value.map(&:id)]
     end
 
     # We have to statically report that we support cache versioning even though this depends on the underlying class.
