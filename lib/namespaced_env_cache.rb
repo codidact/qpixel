@@ -80,10 +80,7 @@ module QPixel
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
     # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     def write_collection(name, value, **opts)
-      types = value.map(&:class).uniq
-      if types.size > 1
-        raise TypeError, "Can't cache more than one type of object via write_collection"
-      end
+      check_collection(value)
 
       data = NamespacedEnvCache.normalize_collection(value)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
@@ -151,6 +148,15 @@ module QPixel
     end
 
     private
+
+    # Raises an error if a given collection is not cacheable
+    # @param collection [ActiveRecord::Relation] collection to check
+    def check_collection(collection)
+      types = collection.map(&:class).uniq
+      if types.size > 1
+        raise TypeError, "Can't cache more than one type of object via write_collection"
+      end
+    end
 
     def construct_ns_key(key, include_community: true)
       key = expanded_key(key)
