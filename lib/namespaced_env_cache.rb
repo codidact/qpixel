@@ -72,7 +72,6 @@ module QPixel
       end
     end
 
-    ##
     # Cache an ActiveRecord collection. Supports only a basic collection of one type of object. Column selections or
     # joins etc. will NOT be respected when the collection is read back out.
     # @param name [String] cache key name
@@ -87,12 +86,12 @@ module QPixel
       @underlying.write(namespaced, data, **opts)
     end
 
-    ##
     # Read an ActiveRecord collection from cache. Returns a basic collection of the records that were cached, with
     # no selects or joins applied.
     # @param name [String] cache key name
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
     # @options opts [Boolean] :include_community whether to include the community ID in the cache key
+    # @return [ActiveRecord::Relation, nil]
     def read_collection(name, **opts)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       data = @underlying.read(namespaced, **opts)
@@ -108,7 +107,6 @@ module QPixel
       end
     end
 
-    ##
     # Fetch an ActiveRecord collection from cache if it is present, otherwise cache the value returned by +block+.
     # @param name [String] cache key name
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
