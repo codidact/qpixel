@@ -1,0 +1,12 @@
+<% { notice: :info,
+     alert: :danger,
+     danger: :danger,
+     success: :success,
+     info: :info,
+     warning: :warning }.each do |type, content| %>
+  <% if flash[type].present? %>
+    <div class="notice is-<%= content.to_s %>">
+      <%= flash[type] %>
+    </div>
+  <% end %>
+<% end %>
