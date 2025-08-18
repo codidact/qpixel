@@ -229,7 +229,7 @@ interface QPixel {
   _cachedFetchPreferences?: () => Promise<void>;
 
   /**
-   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
+   * Update local variable _preferences and storage with an AJAX call for the user preferences
    */
   _fetchPreferences?: () => Promise<void>;
 
@@ -240,19 +240,19 @@ interface QPixel {
 
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
-   * {@link localStorage}, or Redis via AJAX.
+   * {@link QPixelStorage}, or Redis via AJAX.
    * @returns user preferences or `null` on failure
    */
   _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
-   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
-   * @returns string the localStorage key
+   * Get the key to use for storing user preferences in storage, to avoid conflating users
+   * @returns string the storage key
    */
   _preferencesLocalStorageKey?: () => string;
 
   /**
-   * Set local variable _preferences and localStorage to new preferences data
+   * Set local variable _preferences and storage to new preferences data
    * @param data an object, containing the new preferences data
    */
   _updatePreferencesLocally?: (data: UserPreferences) => void;
@@ -338,7 +338,7 @@ interface QPixel {
   /**
    * Set a user preference by name to the value provided.
    * @param name the name of the preference to set
-   * @param value the value to set to - must respond to toString() for {@link localStorage} and Redis
+   * @param value the value to set to - must respond to toString() for {@link QPixelStorage} and Redis
    * @param community is this preference community-local (true), or network-wide (false)?
    */
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;

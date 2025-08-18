@@ -194,17 +194,15 @@ window.QPixel = {
     if (QPixel._preferences != null) {
       return QPixel._preferences;
     }
-    // Early return the preferences from localStorage unless null or undefined
+
+    // Early return the preferences from storage unless null or undefined
     const key = QPixel._preferencesLocalStorageKey();
-    const localStoragePreferences = (key in localStorage)
-      ? JSON.parse(localStorage[key])
-      : null;
-    if (localStoragePreferences != null) {
-      QPixel._preferences = localStoragePreferences;
-      return QPixel._preferences;
+    const storedPreferences = QPixel.Storage?.get(key, { parse: true });
+    if (storedPreferences) {
+      return (QPixel._preferences = /** @type {UserPreferences} */(storedPreferences));
     }
-    // Preferences are still null (or undefined) after loading from localStorage, so we're probably on a site we
-    // haven't loaded them for yet. Load from Redis via AJAX.
+
+    // If preferences are absent in storage, load them via AJAX
     await QPixel._cachedFetchPreferences();
     return QPixel._preferences;
   },
@@ -322,7 +320,7 @@ window.QPixel = {
 
   _preferencesLocalStorageKey: () => {
     const id = document.body.dataset.userId;
-    const key = `qpixel.user_${id}_preferences`;
+    const key = `user_${id}_preferences`;
     QPixel._preferencesLocalStorageKey = () => key;
     return key;
   },
@@ -353,7 +351,7 @@ window.QPixel = {
   _updatePreferencesLocally: (data) => {
     QPixel._preferences = data;
     const key = QPixel._preferencesLocalStorageKey();
-    localStorage[key] = JSON.stringify(QPixel._preferences);
+    QPixel.Storage?.set(key, QPixel._preferences);
   },
 
   currentCaretSequence: (splat, posIdx) => {
