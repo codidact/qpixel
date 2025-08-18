@@ -95,6 +95,8 @@ interface QPixelStorage {
    * @param options optional configuration
    */
   get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: true }): object | null;
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: false }): string | null;
+  get(key: string): string | null;
   get(key: string, options?: QPixelStorageGetOptions): unknown;
   /**
    * Removes a value from storage by a given key
