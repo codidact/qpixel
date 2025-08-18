@@ -14,8 +14,6 @@ class CommentThread < ApplicationRecord
   validate :maximum_title_length
   validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
 
-  after_create :create_follower
-
   # Gets threads appropriately scoped for a given user & post
   # @param user [User, nil] user to check
   # @para post [Post] post to check
@@ -76,17 +74,6 @@ class CommentThread < ApplicationRecord
     max_len = SiteSetting['MaxThreadTitleLength'] || 255
     if title.length > [max_len, 255].min
       errors.add(:title, "can't be more than #{max_len} characters")
-    end
-  end
-
-  private
-
-  # Comment author and post author are automatically followed to the thread. Question author is NOT
-  # automatically followed on new answer comment threads. Comment author follower creation is done
-  # on the Comment model.
-  def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
-      ThreadFollower.create comment_thread: self, user: post.user
     end
   end
 end
