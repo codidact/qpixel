@@ -5,9 +5,26 @@ class NotificationsControllerTest < ActionController::TestCase
 
   test 'should get index as JSON' do
     sign_in users(:standard_user)
-    get :index, params: { format: :json }
-    assert_not_nil assigns(:notifications)
-    assert_response(:success)
+
+    [:json, :html].each do |format|
+      try_index(format: format)
+
+      assert_response(:success)
+
+      if format == :html
+        @notifications = assigns(:notifications)
+        assert_not_nil @notifications
+      else
+        assert_valid_json_response
+        notifications = JSON.parse(response.body)
+
+        notifications.each do |notification|
+          assert notification['content'].present?
+          assert notification['community_name'].present?
+        end
+
+      end
+    end
   end
 
   test 'should mark notification as read' do
@@ -40,5 +57,11 @@ class NotificationsControllerTest < ActionController::TestCase
     sign_out :user
     get :index, params: { format: :json }
     assert_response(:unauthorized) # Devise seems to respond 401 for JSON requests.
+  end
+
+  private
+
+  def try_index(format: :json)
+    get :index, params: { format: format }
   end
 end

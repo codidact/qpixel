@@ -11,8 +11,9 @@ class NotificationsController < ApplicationController
       format.html { render :index, layout: 'without_sidebar' }
       format.json do
         render json: (@notifications.to_a.map do |notif|
-          notif.as_json.merge(content: helpers.render_pings_text(notif.content))
-        end), methods: :community_name
+          notif.as_json.merge(content: helpers.render_pings_text(notif.content),
+                              community_name: notif.community_name)
+        end)
       end
     end
   end
