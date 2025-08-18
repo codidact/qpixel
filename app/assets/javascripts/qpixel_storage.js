@@ -2,17 +2,29 @@ window.QPixel ||= {};
 
 (() => {
   class QPixelStorageMigrationSource {
-    #storageKey = 'qpixel.latest_storage_migration';
-
     /** @type {QPixelStorageMigration[]} */
     #migrations = [];
 
+    /** @type {QPixelStorage} */
+    #storage;
+
+    /**
+     * @param {QPixelStorage} storage
+     */
+    constructor(storage) {
+      this.#storage = storage;
+    }
+
+    get #latestKey() {
+      return `${this.#storage.prefix}.latest_storage_migration`;
+    }
+
     get latest() {
-      return localStorage.getItem(this.#storageKey);
+      return localStorage.getItem(this.#latestKey);
     }
 
     set latest(name) {
-      localStorage.setItem(this.#storageKey, name);
+      localStorage.setItem(this.#latestKey, name);
     }
 
     /**
@@ -31,7 +43,7 @@ window.QPixel ||= {};
 
       for (const migration of pending) {
         try {
-          await migration.up();
+          await migration.up(this.#storage);
           this.latest = migration.name;
         } catch (e) {
           console.warn(`[qpixel/storage] migration ${migration.name} error`, e);
@@ -42,8 +54,21 @@ window.QPixel ||= {};
   }
 
   class QPixelStorage {
-    migrations = new QPixelStorageMigrationSource();
+    /** @type {string} */
+    #prefix;
+    
+    /**
+     * @param {string} prefix storage prefix to avoid collisions
+     */
+    constructor(prefix) {
+      this.#prefix = prefix;
+      this.migrations = new QPixelStorageMigrationSource(this);
+    }
+
+    get prefix() {
+      return this.#prefix;
+    }
   }
 
-  QPixel.Storage ||= new QPixelStorage();
+  QPixel.Storage ||= new QPixelStorage('qpixel');
 })();

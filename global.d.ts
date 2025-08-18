@@ -79,8 +79,8 @@ interface QPixelMD {
 
 interface QPixelStorageMigration {
   name: string
-  up: () => Promise<void>
-  down?: () => Promise<void>
+  up: (storage: QPixelStorage) => Promise<void>
+  down?: (storage: QPixelStorage) => Promise<void>
 }
 
 interface QPixelStorageMigrationSource {
