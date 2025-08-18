@@ -62,7 +62,7 @@ window.QPixel ||= {};
   class Storage {
     /** @type {string} */
     #prefix;
-    
+
     /**
      * @param {string} prefix storage prefix to avoid collisions
      */
@@ -74,7 +74,7 @@ window.QPixel ||= {};
     get prefix() {
       return this.#prefix;
     }
-    
+
     /**
      * @param {string} key unprefixed storage key
      */
@@ -82,7 +82,17 @@ window.QPixel ||= {};
       localStorage.removeItem(`${this.#prefix}.${key}`);
       return this;
     }
+
+    /**
+     * @param {string} key unprefixed storage key
+     * @param {unknown} value value to save
+     */
+    set(key, value) {
+      const serialized = typeof value === "string" ? value : JSON.stringify(value);
+      localStorage.setItem(`${this.#prefix}.${key}`, serialized);
+      return this;
+    }
   }
 
-  QPixel.Storage ||= new Storage('qpixel');
+  QPixel.Storage ||= new Storage("qpixel");
 })();

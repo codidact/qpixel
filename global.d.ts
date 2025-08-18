@@ -109,8 +109,15 @@ interface QPixelStorage {
   readonly prefix: string
   /**
    * Removes a value from storage by a given key
+   * @param key key to remove a value by
    */
   remove(key: string): this
+  /**
+   * Saves a given value to storage under a given key
+   * @param key key to save the value under
+   * @param value value to save (objects will be serialized)
+   */
+  set(key: string, value: unknown): this
 }
 
 type QPixelKeyboardState =
