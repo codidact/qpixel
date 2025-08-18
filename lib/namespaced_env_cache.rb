@@ -80,10 +80,8 @@ module QPixel
     # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     def write_collection(name, value, **opts)
       check_collection(value)
-
       data = NamespacedEnvCache.normalize_collection(value)
-      namespaced = construct_ns_key(name, include_community: include_community(opts))
-      @underlying.write(namespaced, data, **opts)
+      write_collection_data(name, data, **opts)
     end
 
     # Read an ActiveRecord collection from cache. Returns a basic collection of the records that were cached, with
@@ -148,11 +146,11 @@ module QPixel
     private
 
     # Raises an error if a given collection is not cacheable
-    # @param collection [ActiveRecord::Relation] collection to check
-    def check_collection(collection)
-      types = collection.map(&:class).uniq
+    # @param value [ActiveRecord::Relation] collection to check
+    def check_collection(value)
+      types = value.map(&:class).uniq
       if types.size > 1
-        raise TypeError, "Can't cache more than one type of object via write_collection"
+        raise TypeError, "Can't cache more than one type of object"
       end
     end
 
@@ -160,6 +158,15 @@ module QPixel
       key = expanded_key(key)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
+    end
+
+    # Writes normalized collection data to the underlying cache
+    # @param name [String] cache key name
+    # @param data [[String, Integer, Integer, ...]] normalized collection data
+    # @param opts [Hash] options hash - see #write_collection
+    def write_collection_data(name, data, **opts)
+      namespaced = construct_ns_key(name, include_community: include_community(opts))
+      @underlying.write(namespaced, data, **opts)
     end
   end
 end
