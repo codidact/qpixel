@@ -72,7 +72,6 @@ module QPixel
       end
     end
 
-    ##
     # Cache an ActiveRecord collection. Supports only a basic collection of one type of object. Column selections or
     # joins etc. will NOT be respected when the collection is read back out.
     # @param name [String] cache key name
@@ -80,26 +79,27 @@ module QPixel
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
     # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     def write_collection(name, value, **opts)
-      types = value.map(&:class).uniq
-      if types.size > 1
-        raise TypeError, "Can't cache more than one type of object via write_collection"
-      end
-
-      data = [types[0].to_s, *value.map(&:id)]
-      namespaced = construct_ns_key(name, include_community: include_community(opts))
-      @underlying.write(namespaced, data, **opts)
+      check_collection(value)
+      data = NamespacedEnvCache.normalize_collection(value)
+      write_collection_data(name, data, **opts)
     end
 
-    ##
     # Read an ActiveRecord collection from cache. Returns a basic collection of the records that were cached, with
     # no selects or joins applied.
     # @param name [String] cache key name
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
     # @options opts [Boolean] :include_community whether to include the community ID in the cache key
+    # @return [ActiveRecord::Relation, nil]
     def read_collection(name, **opts)
       namespaced = construct_ns_key(name, include_community: include_community(opts))
       data = @underlying.read(namespaced, **opts)
       return nil if data.nil?
+
+      if data.is_a?(ActiveRecord::Relation)
+        data = NamespacedEnvCache.normalize_collection(data)
+        write_collection_data(name, data, **opts)
+      end
+
       type = data.slice!(0)
       begin
         type.constantize.where(id: data)
@@ -109,7 +109,6 @@ module QPixel
       end
     end
 
-    ##
     # Fetch an ActiveRecord collection from cache if it is present, otherwise cache the value returned by +block+.
     # @param name [String] cache key name
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
@@ -131,6 +130,13 @@ module QPixel
       end
     end
 
+    # Normalizes a given ActiveRecord collection for use with the cache
+    # @param value [ActiveRecord::Relation] collection to normalize
+    # @return [[String, Integer, Integer, ...]]
+    def self.normalize_collection(value)
+      [value[0].class.to_s, *value.map(&:id)]
+    end
+
     # We have to statically report that we support cache versioning even though this depends on the underlying class.
     # However, this is not really a problem since all cache stores provided by activesupport support the feature and
     # we only use the redis cache (by activesupport) for QPixel.
@@ -140,10 +146,28 @@ module QPixel
 
     private
 
+    # Raises an error if a given collection is not cacheable
+    # @param value [ActiveRecord::Relation] collection to check
+    def check_collection(value)
+      types = value.map(&:class).uniq
+      if types.size > 1
+        raise TypeError, "Can't cache more than one type of object"
+      end
+    end
+
     def construct_ns_key(key, include_community: true)
       key = expanded_key(key)
       c_id = RequestContext.community_id if include_community
       "#{Rails.env}://#{[c_id, key].compact.join('/')}"
+    end
+
+    # Writes normalized collection data to the underlying cache
+    # @param name [String] cache key name
+    # @param data [[String, Integer, Integer, ...]] normalized collection data
+    # @param opts [Hash] options hash - see #write_collection
+    def write_collection_data(name, data, **opts)
+      namespaced = construct_ns_key(name, include_community: include_community(opts))
+      @underlying.write(namespaced, data, **opts)
     end
   end
 end
