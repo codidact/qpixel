@@ -245,8 +245,7 @@ window.QPixel = {
 
   filters: async () => {
     if (this._filters == null) {
-      // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
-      // loaded them for yet. Load via AJAX.
+      // If they're still absent after loading from storage, load from the API.
       const resp = await fetch('/users/me/filters', {
         credentials: 'include',
         headers: {
@@ -254,7 +253,8 @@ window.QPixel = {
         }
       });
       const data = await resp.json();
-      localStorage['qpixel.user_filters'] = JSON.stringify(data);
+
+      QPixel.Storage?.set('user_filters', data);
       this._filters = data;
     }
 
