@@ -304,7 +304,8 @@ window.QPixel = {
 
   deleteFilter: async (name, system = false) => {
     const resp = await QPixel.fetchJSON('/users/me/filters', { name, system }, {
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' },
+      method: 'DELETE'
     });
 
     const data = await resp.json();
@@ -315,7 +316,7 @@ window.QPixel = {
     }
     else {
       this._filters = data.filters;
-      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+      QPixel.Storage?.set('user_filters', this._filters);
     }
   },
 
