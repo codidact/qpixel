@@ -1,14 +1,14 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Non-idempotent fix (it's just a data error) for how user preferences are stored
-   * @type {QPixelMigration}
+   * @type {QPixelStorageMigration}
    */
   const fixUserPreferences = {
-    name: "fix-user-preferences",
+    name: 'fix-user-preferences',
     async up() {
-      localStorage.removeItem("qpixel.user_undefined_preferences");
+      localStorage.removeItem('qpixel.user_undefined_preferences');
     },
   };
 
-  await QPixel.Storage?.addMigration(fixUserPreferences)?.runMigrations();
+  await QPixel.Storage?.migrations?.add(fixUserPreferences)?.migrate();
 });

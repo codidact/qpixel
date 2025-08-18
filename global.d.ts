@@ -77,17 +77,30 @@ interface QPixelMD {
   stripMarkdown(content: string, options?: StripMarkdownOptions): string;
 }
 
-interface QPixelMigration {
+interface QPixelStorageMigration {
   name: string
   up: () => Promise<void>
   down?: () => Promise<void>
 }
 
+interface QPixelStorageMigrationSource {
+  /**
+   * Latest applied migration, if any
+   */
+  latest: string | null
+  /**
+   * Registers a given storage migration
+   * @param migration migration to register
+   */
+  add(migration: QPixelStorageMigration): this
+  /**
+   * Applies all migrations after the latest one applied
+   */
+  migrate(): Promise<void>
+}
+
 interface QPixelStorage {
-  readonly latestMigration: string | null
-  migrations: QPixelMigration[]
-  addMigration: (migration: QPixelMigration) => QPixelStorage
-  runMigrations:() => Promise<void>
+  migrations: QPixelStorageMigrationSource
 }
 
 type QPixelKeyboardState =

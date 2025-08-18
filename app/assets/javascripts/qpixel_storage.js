@@ -1,28 +1,49 @@
-window.QPixel = window.QPixel || {};
+window.QPixel ||= {};
 
-QPixel.Storage = {
-  get latestMigration() {
-    return localStorage.getItem("qpixel.latest_storage_migration");
-  },
-  migrations: [],
-  addMigration(migration) {
-    this.migrations.push(migration);
-    return this;
-  },
-  async runMigrations() {
-    const { latestMigration, migrations } = this;
+(() => {
+  class QPixelStorageMigrationSource {
+    #storageKey = 'qpixel.latest_storage_migration';
 
-    const latestIndex = migrations.findIndex((m) => m.name === latestMigration);
-    const pending = migrations.slice(latestIndex + 1);
+    /** @type {QPixelStorageMigration[]} */
+    #migrations = [];
 
-    for (const migration of pending) {
-      try {
-        await migration.up();
-      }
-      catch (e) {
-        console.warn(`[qpixel/storage] migration ${migration.name} error`, e);
-        break;
+    get latest() {
+      return localStorage.getItem(this.#storageKey);
+    }
+
+    set latest(name) {
+      localStorage.setItem(this.#storageKey, name);
+    }
+
+    /**
+     * @param {QPixelStorageMigration} migration
+     */
+    add(migration) {
+      this.#migrations.push(migration);
+      return this;
+    }
+
+    async migrate() {
+      const { latest } = this;
+
+      const latestIndex = this.#migrations.findIndex((m) => m.name === latest);
+      const pending = this.#migrations.slice(latestIndex + 1);
+
+      for (const migration of pending) {
+        try {
+          await migration.up();
+          this.latest = migration.name;
+        } catch (e) {
+          console.warn(`[qpixel/storage] migration ${migration.name} error`, e);
+          break;
+        }
       }
     }
-  },
-};
+  }
+
+  class QPixelStorage {
+    migrations = new QPixelStorageMigrationSource();
+  }
+
+  QPixel.Storage ||= new QPixelStorage();
+})();
