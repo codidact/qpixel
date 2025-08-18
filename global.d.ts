@@ -77,36 +77,25 @@ interface QPixelMD {
   stripMarkdown(content: string, options?: StripMarkdownOptions): string;
 }
 
-interface QPixelStorageMigration {
-  name: string
-  up: (storage: QPixelStorage) => Promise<void>
-  down?: (storage: QPixelStorage) => Promise<void>
-}
-
-interface QPixelStorageMigrationSource {
+interface QPixelStorageGetOptions {
   /**
-   * Latest applied migration, if any
+   * Whether the value is supposed to be parsed after retrieval
    */
-  latest: string | null
-  /**
-   * Registers a given storage migration
-   */
-  add(migration: QPixelStorageMigration): this
-  /**
-   * Applies all migrations after the latest one applied
-   */
-  migrate(): Promise<void>
+  parse?: boolean
 }
 
 interface QPixelStorage {
   /**
-   * Storage migrations mananger
-   */
-  migrations: QPixelStorageMigrationSource
-  /**
    * Storage prefix to avoid collisions
    */
   readonly prefix: string
+  /**
+   * Gets a value from storage by a given key
+   * @param key key to get a value by
+   * @param options optional configuration
+   */
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: true }): object | null;
+  get(key: string, options?: QPixelStorageGetOptions): unknown;
   /**
    * Removes a value from storage by a given key
    * @param key key to remove a value by
