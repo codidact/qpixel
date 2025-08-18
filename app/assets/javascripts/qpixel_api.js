@@ -298,7 +298,7 @@ window.QPixel = {
     }
     else {
       this._filters = data.filters;
-      localStorage['qpixel.user_filters'] = JSON.stringify(this._filters);
+      QPixel.Storage?.set('user_filters', this._filters);
     }
   },
 
