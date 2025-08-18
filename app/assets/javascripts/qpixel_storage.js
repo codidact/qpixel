@@ -1,7 +1,10 @@
 window.QPixel ||= {};
 
 (() => {
-  class QPixelStorageMigrationSource {
+  /**
+   * @implements {QPixelStorageMigrationSource}
+   */
+  class StorageMigrationSource {
     /** @type {QPixelStorageMigration[]} */
     #migrations = [];
 
@@ -53,7 +56,10 @@ window.QPixel ||= {};
     }
   }
 
-  class QPixelStorage {
+  /**
+   * @implements {QPixelStorage}
+   */
+  class Storage {
     /** @type {string} */
     #prefix;
     
@@ -62,13 +68,21 @@ window.QPixel ||= {};
      */
     constructor(prefix) {
       this.#prefix = prefix;
-      this.migrations = new QPixelStorageMigrationSource(this);
+      this.migrations = new StorageMigrationSource(this);
     }
 
     get prefix() {
       return this.#prefix;
     }
+    
+    /**
+     * @param {string} key unprefixed storage key
+     */
+    remove(key) {
+      localStorage.removeItem(`${this.#prefix}.${key}`);
+      return this;
+    }
   }
 
-  QPixel.Storage ||= new QPixelStorage('qpixel');
+  QPixel.Storage ||= new Storage('qpixel');
 })();

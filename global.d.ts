@@ -90,7 +90,6 @@ interface QPixelStorageMigrationSource {
   latest: string | null
   /**
    * Registers a given storage migration
-   * @param migration migration to register
    */
   add(migration: QPixelStorageMigration): this
   /**
@@ -100,7 +99,18 @@ interface QPixelStorageMigrationSource {
 }
 
 interface QPixelStorage {
+  /**
+   * Storage migrations mananger
+   */
   migrations: QPixelStorageMigrationSource
+  /**
+   * Storage prefix to avoid collisions
+   */
+  readonly prefix: string
+  /**
+   * Removes a value from storage by a given key
+   */
+  remove(key: string): this
 }
 
 type QPixelKeyboardState =

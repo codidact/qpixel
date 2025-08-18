@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   const fixUserPreferences = {
     name: 'fix-user-preferences',
-    async up() {
-      localStorage.removeItem('qpixel.user_undefined_preferences');
+    async up(storage) {
+      storage.remove('user_undefined_preferences');
     },
   };
 
