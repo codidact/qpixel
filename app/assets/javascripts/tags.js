@@ -1,27 +1,9 @@
 /**
  * @typedef {{
- *  name: string
- * }} RemoteTagSynonym
- * 
- * @typedef {{
- *  id: number
- *  community_id: number
- *  parent_id: number | null
- *  tag_set_id: number
- *  excerpt: string
- *  name: string
- *  tag_synonyms: RemoteTagSynonym[]
- *  wiki: string | null
- *  wiki_markdown: string
- *  created_at: string
- *  updated_at: string
- * }} RemoteTag
- * 
- * @typedef {{
  *  id: number | string
  *  text: string
  *  desc: string
- *  synonyms?: string | RemoteTagSynonym[]
+ *  synonyms?: string | QPixelTagSynonym[]
  * }} ProcessedTag
  */
 
@@ -87,7 +69,7 @@ $(() => {
         headers: { 'Accept': 'application/json' },
         delay: 100,
         /**
-         * @param {RemoteTag[]} data
+         * @param {QPixelTag[]} data
          * @returns {Select2.ProcessedResult<ProcessedTag>}
          */
         processResults: (data) => {
@@ -120,8 +102,8 @@ $(() => {
 
   /**
    * @param {JQuery} $search
-   * @param {RemoteTagSynonym[]} synonyms
-   * @returns {string | RemoteTagSynonym[]}
+   * @param {QPixelTagSynonym[]} synonyms
+   * @returns {string | QPixelTagSynonym[]}
    */
   function processSynonyms($search, synonyms) {
     if (!synonyms) return synonyms;

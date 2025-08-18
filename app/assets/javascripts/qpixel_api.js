@@ -6,31 +6,6 @@ const validators = [];
 /** Counts notifications popped up at any time. */
 let popped_modals_ct = 0;
 
-/**
- * @typedef {{
- *  min_score: number | null,
- *  max_score: number | null,
- *  min_answers: number | null,
- *  max_answers: number | null,
- *  include_tags: [string, number][],
- *  exclude_tags: [string, number][],
- *  status: 'any' | 'closed' | 'open',
- *  system: boolean,
- * }} Filter
- *
- * @typedef {{
- *  id: number,
- *  username: string,
- *  is_standard: boolean,
- *  is_moderator: boolean,
- *  is_admin: boolean,
- *  is_global_moderator: boolean,
- *  is_global_admin: boolean,
- *  trust_level: number,
- *  se_acct_id: string | null,
- * }} User
- */
-
 window.QPixel = {
   csrfToken: () => {
     const token = $('meta[name="csrf-token"]').attr('content');
@@ -135,7 +110,7 @@ window.QPixel = {
   },
 
   /**
-   * @type {Filter[]|null}
+   * @type {QPixelFlag[]|null}
    */
   _filters: null,
 
@@ -146,7 +121,7 @@ window.QPixel = {
   _pendingUserResponse: null,
 
   /**
-   * @type {User|null}
+   * @type {QPixelUser|null}
    */
   _user: null,
 

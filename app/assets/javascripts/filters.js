@@ -122,7 +122,7 @@ $(() => {
     async function saveFilter() {
       if (!$form[0].reportValidity()) { return; }
 
-      const filter = /** @type {Filter} */({});
+      const filter = /** @type {QPixelFlag} */({});
 
       for (const el of $formFilters) {
         filter[el.dataset.name] = $(el).val();

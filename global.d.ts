@@ -201,6 +201,53 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFlag = {
+  exclude_tags: [string, number][]
+  include_tags: [string, number][]
+  max_answers: number | null
+  max_score: number | null
+  min_answers: number | null
+  min_score: number | null
+  status: 'any' | 'closed' | 'open'
+  system: boolean
+}
+
+type QPixelSuggestedEditActionResult = {
+  message?: string
+  redirect_url?: string
+  status: 'success' | 'error'
+}
+
+type QPixelTag = {
+  community_id: number
+  created_at: string
+  excerpt: string
+  id: number
+  name: string
+  parent_id: number | null
+  tag_set_id: number
+  tag_synonyms: QPixelTagSynonym[]
+  updated_at: string
+  wiki: string | null
+  wiki_markdown: string
+}
+
+type QPixelTagSynonym = {
+  name: string
+}
+
+type QPixelUser = {
+  id: number
+  is_standard: boolean
+  is_moderator: boolean
+  is_admin: boolean
+  is_global_moderator: boolean
+  is_global_admin: boolean
+  se_acct_id: string | null
+  trust_level: number
+  username: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -215,11 +262,11 @@ interface GetThreadContentOptions {
 
 interface QPixel {
   // private properties
-  _filters?: Filter[] | null;
+  _filters?: QPixelFlag[] | null;
   _pendingUserResponse?: Promise<Response> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
-  _user?: User | null;
+  _user?: QPixelUser | null;
 
   // private methods
 
@@ -309,7 +356,7 @@ interface QPixel {
    */
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
-  filters?: () => Promise<Record<string, Filter>>;
+  filters?: () => Promise<Record<string, QPixelFlag>>;
 
   /**
    * Get the absolute offset of an element.
@@ -332,7 +379,7 @@ interface QPixel {
    * @param text the text with which to replace the selection
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-  setFilter?: (name: string, filter: Filter, category: string, isDefault: boolean) => Promise<void>;
+  setFilter?: (name: string, filter: QPixelFlag, category: string, isDefault: boolean) => Promise<void>;
   setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
 
   /**
@@ -347,7 +394,7 @@ interface QPixel {
    * Get the user object for the current user.
    * @returns JSON object containing user details
    */
-  user?: () => Promise<User>;
+  user?: () => Promise<QPixelUser>;
 
   /**
    * Internal. Called just before a post is sent to the server to validate that it passes
