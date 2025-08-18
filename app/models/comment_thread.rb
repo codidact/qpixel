@@ -16,6 +16,18 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
+  # Gets threads appropriately scoped for a given user & post
+  # @param user [User, nil] user to check
+  # @para post [Post] post to check
+  # @return [ActiveRecord::Relation<CommentThread>]
+  def self.accessible_to(user, post)
+    if user&.at_least_moderator? || user&.post_privilege?('flag_curate', post)
+      CommentThread
+    else
+      CommentThread.undeleted
+    end
+  end
+
   # Is the thread read-only (can't be edited)?
   # @return [Boolean] check result
   def read_only?
