@@ -97,6 +97,7 @@ module QPixel
 
       if data.is_a?(ActiveRecord::Relation)
         data = NamespacedEnvCache.normalize_collection(data)
+        write_collection_data(name, data, **opts)
       end
 
       type = data.slice!(0)
