@@ -118,6 +118,16 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
+  test 'should make post author a thread follower of the post' do
+    user = users(:standard_user)
+    sign_in user
+    try_create_post
+    assert_response(:found)
+
+    # Assert user follows post
+    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
+  end
+
   private
 
   # Attempts to create a post
