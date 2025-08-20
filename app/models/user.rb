@@ -117,6 +117,13 @@ class User < ApplicationRecord
     post.comments_allowed? && !comment_rate_limited?(post)
   end
 
+  # Can the user close a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_close?(post)
+    privilege?('flag_close') || post.user&.same_as?(self)
+  end
+
   # Can the user delete a given target?
   # @param target [ApplicationRecord] record to delete
   # @return [Boolean] check result
