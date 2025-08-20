@@ -122,6 +122,7 @@ class User < ApplicationRecord
   # @return [Boolean] check result
   def can_close?(post)
     return false unless post.closeable?
+    return false if post.locked?
 
     privilege?('flag_close') || post.user&.same_as?(self)
   end
