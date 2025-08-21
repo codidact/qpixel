@@ -22,6 +22,25 @@ class EmailValidationsTest < ActiveSupport::TestCase
     end
   end
 
+  test 'blocklisted_email_domains should correctly list blocklisted email domains' do
+    bad_domains = ['example.com', 'localhost']
+
+    Tempfile.create('tmp', '') do |f|
+      bad_domains.each { |d| f.write("#{d}\n") }
+      f.flush
+
+      @klass.stub(:blocklisted_email_domains_path, f.path) do
+        blocklisted = @klass.blocklisted_email_domains
+
+        assert_equal bad_domains.length, blocklisted.length
+
+        bad_domains.each do |domain|
+          assert blocklisted.include?(domain)
+        end
+      end
+    end
+  end
+
   test 'email_domain_not_blocklisted should correctly determine if the domain is blocklisted' do
     instance = @klass.new('user@bad_domain.com')
 
