@@ -25,7 +25,7 @@ class EmailValidationsTest < ActiveSupport::TestCase
   test 'email_domain_not_blocklisted should correctly determine if the domain is blocklisted' do
     instance = @klass.new('user@bad_domain.com')
 
-    instance.stub(:blocklisted_email_domains, ['bad_domain.com']) do
+    @klass.stub(:blocklisted_email_domains, ['bad_domain.com']) do
       assert_not instance.valid?
       assert instance.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
       assert AuditLog.of_type('user_email_domain_blocked').exists?
@@ -44,7 +44,7 @@ class EmailValidationsTest < ActiveSupport::TestCase
   test 'email_not_bad_pattern should correctly determine if the email contains bad patterns' do
     instance = @klass.new('bad_email@example.com')
 
-    instance.stub(:bad_email_patterns, ['bad_email']) do
+    @klass.stub(:bad_email_patterns, ['bad_email']) do
       assert_not instance.valid?
       assert instance.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
       assert @klass.new('user@example.com').valid?

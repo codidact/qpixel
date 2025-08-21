@@ -7,29 +7,31 @@ module EmailValidations
     validate :email_not_bad_pattern
   end
 
-  # Gets a list of blocklisted email domains
-  # @returns [Array<String>] list of domains
-  def blocklisted_email_domains
-    domains_file_path = Rails.root.join('../.qpixel-domain-blocklist.txt')
-    return [] unless File.exist?(domains_file_path)
+  class_methods do
+    # Gets a list of blocklisted email domains
+    # @returns [Array<String>] list of domains
+    def blocklisted_email_domains
+      domains_file_path = Rails.root.join('../.qpixel-domain-blocklist.txt')
+      return [] unless File.exist?(domains_file_path)
 
-    File.read(domains_file_path).split("\n")
-  end
+      File.read(domains_file_path).split("\n")
+    end
 
-  # Gets a list of bad email patterns
-  # @return [Array<String>] list of patterns
-  def bad_email_patterns
-    patterns_file_path = Rails.root.join('../.qpixel-email-patterns.txt')
-    return [] unless File.exist?(patterns_file_path)
+    # Gets a list of bad email patterns
+    # @return [Array<String>] list of patterns
+    def bad_email_patterns
+      patterns_file_path = Rails.root.join('../.qpixel-email-patterns.txt')
+      return [] unless File.exist?(patterns_file_path)
 
-    File.read(patterns_file_path).split("\n")
+      File.read(patterns_file_path).split("\n")
+    end
   end
 
   def email_domain_not_blocklisted
     return unless saved_changes.include?('email')
 
     email_domain = email.split('@')[-1]
-    matched = blocklisted_email_domains.select { |x| email_domain == x }
+    matched = self.class.blocklisted_email_domains.select { |x| email_domain == x }
     if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
       matched_domains = matched.map { |d| "equals: #{d}" }
@@ -60,7 +62,7 @@ module EmailValidations
   def email_not_bad_pattern
     return unless changes.include?('email')
 
-    matched = bad_email_patterns.select { |p| email.match? Regexp.new(p) }
+    matched = self.class.bad_email_patterns.select { |p| email.match? Regexp.new(p) }
     if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
       matched_patterns = matched.map { |p| "matched: #{p}" }
