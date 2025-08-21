@@ -8,7 +8,7 @@
 <div class="post--action-dialog js-close-box">
   <div class="widget">
     <div class="widget--header">Why should this post be closed?</div>
-    <% CloseReason.active.each do |reason| %>
+    <% CloseReason.active.each_with_index do |reason, idx| %>
       <div class="widget--body">
         <div class="grid">
           <div class="grid--cell">
@@ -17,6 +17,7 @@
                    name="close-reason"
                    value="<%= reason.id %>"
                    id="close-reason-<%= reason.id %>"
+                   <%= 'checked' if idx.zero? %>
                    data-rop="<%= reason.requires_other_post %>">
           </div>
           <div class="grid--cell is-flexible">
