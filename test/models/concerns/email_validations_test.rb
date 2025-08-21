@@ -25,7 +25,7 @@ class EmailValidationsTest < ActiveSupport::TestCase
   test 'blocklisted_email_domains should correctly list blocklisted email domains' do
     bad_domains = ['example.com', 'localhost']
 
-    Tempfile.create('tmp', '') do |f|
+    Tempfile.create('tmp', Rails.root.join('tmp')) do |f|
       bad_domains.each { |d| f.write("#{d}\n") }
       f.flush
 
