@@ -317,7 +317,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <% if check_your_privilege('flag_curate') %>
+            <% if current_user&.can_handle_flags? %>
               <a href="javascript:void(0)"
                  data-modal="#mod-tools-<%= post.id %>"
                  class="tools--item"
@@ -326,12 +326,12 @@
                 <i class="fa fa-wrench"></i>
                 Tools
               </a>
-              <% flags_count = Flag.accessible_to(current_user, post).where(handled_by_id: nil).count %>
+              <% flags_count = Flag.accessible_to(current_user, post).unhandled.count %>
 
               <% own_flags_count = if current_user&.at_least_moderator?
                                      0
                                    else
-                                     post.flags.not_confidential.where(user: current_user, handled_by_id: nil).count
+                                     post.flags.not_confidential.where(user: current_user).unhandled.count
                                    end %>
 
               <% if flags_count > 0 %>
@@ -350,11 +350,11 @@
           <%= render 'posts/close_modal', post: post %>
         <% end %>
 
-        <% if current_user&.privilege?('flag_curate') %>
+        <% if current_user&.can_handle_flags? %>
           <div class="post--action-dialog js-flags">
             <div class="widget">
               <div class="widget--header">Flags on this post</div>
-              <% post.flags.where(handled_by_id: nil).each do |flag| %>
+              <% post.flags.unhandled.each do |flag| %>
                 <% next if !current_user.at_least_moderator? && (flag.post_flag_type.nil? || flag.post_flag_type.confidential) %>
                 <% next if !current_user.at_least_moderator? && (current_user.id == flag.user.id) %>
                 <div class="widget--body">
