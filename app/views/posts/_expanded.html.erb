@@ -326,11 +326,7 @@
                 <i class="fa fa-wrench"></i>
                 Tools
               </a>
-              <% flags_count = if current_user&.at_least_moderator?
-                                 post.flags
-                               else
-                                 post.flags.not_confidential
-                               end.where(handled_by_id: nil).count %>
+              <% flags_count = Flag.accessible_to(current_user, post).where(handled_by_id: nil).count %>
 
               <% own_flags_count = if current_user&.at_least_moderator?
                                      0
