@@ -30,4 +30,18 @@ class FlagTest < ActiveSupport::TestCase
     valid = Flag.new(reason: 'my reasons are my own', **common_attributes)
     assert valid.valid?
   end
+
+  test 'accessible_to should correctly scope flags' do
+    std = users(:standard_user)
+    del = users(:deleter)
+    mod = users(:moderator)
+
+    [std, del, mod].each do |user|
+      flags = Flag.accessible_to(user, posts(:question_one))
+      assert_equal user.same_as?(std), flags.none?
+    end
+
+    assert Flag.accessible_to(mod, posts(:deleted)).any?(&:confidential?)
+    assert_not Flag.accessible_to(del, posts(:deleted)).any?(&:confidential?)
+  end
 end

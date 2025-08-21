@@ -55,6 +55,22 @@ $(() => {
     }
   });
 
+  QPixel.DOM?.watchClass('.js-flag-box.is-active', (target) => {
+    const reasonInput = target.querySelector('input[name="flag-reason"]');
+
+    if (QPixel.DOM?.isHTMLElement(reasonInput)) {
+      reasonInput.focus();
+    }
+  });
+
+  QPixel.DOM?.watchClass('[id^="flag-comment"].is-active', (target) => {
+    const reasonInput = target.querySelector('.js-comment-flag-reason');
+
+    if (QPixel.DOM?.isHTMLElement(reasonInput)) {
+      reasonInput.focus();
+    }
+  });
+
   $('.js-start-escalate').on('click', (ev) => {
     const $modal = $('.js-escalation-modal');
     const $tgt = $(ev.target);

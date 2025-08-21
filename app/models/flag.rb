@@ -23,6 +23,20 @@ class Flag < ApplicationRecord
 
   validate :maximum_reason_length
 
+  # Gets flags appropriately scoped for a given user & post
+  # @param user [User, nil] user to check
+  # @param post [Post] post to check
+  # @return [ActiveRecord::Relation<Flag>]
+  def self.accessible_to(user, post)
+    if user&.at_least_moderator?
+      post.flags
+    elsif user&.can_handle_flags?
+      post.flags.not_confidential
+    else
+      post.flags.none
+    end
+  end
+
   # Checks if the flag is confidential as per its type
   # @return [Boolean] check result
   def confidential?
