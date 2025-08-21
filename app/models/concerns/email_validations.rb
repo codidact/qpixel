@@ -26,7 +26,7 @@ module EmailValidations
   end
 
   def email_domain_not_blocklisted
-    return unless saved_changes.include? 'email'
+    return unless saved_changes.include?('email')
 
     email_domain = email.split('@')[-1]
     matched = blocklisted_email_domains.select { |x| email_domain == x }
@@ -39,7 +39,7 @@ module EmailValidations
   end
 
   def email_not_blocklisted
-    return true unless saved_changes.include? 'email'
+    return unless saved_changes.include?('email')
 
     email_domain = email.split('@')[-1]
     is_mail_blocked = BlockedItem.emails.where(value: email)
@@ -58,7 +58,7 @@ module EmailValidations
   end
 
   def email_not_bad_pattern
-    return unless changes.include? 'email'
+    return unless changes.include?('email')
 
     matched = bad_email_patterns.select { |p| email.match? Regexp.new(p) }
     if matched.any?

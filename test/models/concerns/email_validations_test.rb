@@ -28,6 +28,7 @@ class EmailValidationsTest < ActiveSupport::TestCase
     instance.stub(:blocklisted_email_domains, ['bad_domain.com']) do
       assert_not instance.valid?
       assert instance.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
+      assert AuditLog.of_type('user_email_domain_blocked').exists?
       assert @klass.new('user@example.com')
     end
   end
