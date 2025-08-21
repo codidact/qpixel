@@ -309,7 +309,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, local_result.size
   end
 
-  test 'not_blocklisted? should correctly determine if the user is blocklisted' do
+  test 'email_not_blocklisted should correctly determine if the user is blocklisted' do
     std = users(:standard_user)
 
     std.skip_reconfirmation!
