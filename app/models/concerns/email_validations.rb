@@ -8,22 +8,28 @@ module EmailValidations
   end
 
   class_methods do
+    def bad_email_patterns_path
+      Rails.root.join('../.qpixel-email-patterns.txt')
+    end
+
+    def blocklisted_email_domains_path
+      Rails.root.join('../.qpixel-domain-blocklist.txt')
+    end
+
     # Gets a list of blocklisted email domains
     # @returns [Array<String>] list of domains
     def blocklisted_email_domains
-      domains_file_path = Rails.root.join('../.qpixel-domain-blocklist.txt')
-      return [] unless File.exist?(domains_file_path)
+      return [] unless File.exist?(blocklisted_email_domains_path)
 
-      File.read(domains_file_path).split("\n")
+      File.read(blocklisted_email_domains_path).split("\n")
     end
 
     # Gets a list of bad email patterns
     # @return [Array<String>] list of patterns
     def bad_email_patterns
-      patterns_file_path = Rails.root.join('../.qpixel-email-patterns.txt')
-      return [] unless File.exist?(patterns_file_path)
+      return [] unless File.exist?(bad_email_patterns_path)
 
-      File.read(patterns_file_path).split("\n")
+      File.read(bad_email_patterns_path).split("\n")
     end
   end
 
