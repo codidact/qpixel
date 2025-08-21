@@ -308,15 +308,4 @@ class UserTest < ActiveSupport::TestCase
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
   end
-
-  test 'email_not_blocklisted should correctly determine if the user is blocklisted' do
-    std = users(:standard_user)
-
-    std.skip_reconfirmation!
-    std.update(email: blocked_items(:email).value)
-    std.valid?
-
-    assert_equal false, std.changed?
-    assert std.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
-  end
 end

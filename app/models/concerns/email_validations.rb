@@ -7,13 +7,29 @@ module EmailValidations
     validate :email_not_bad_pattern
   end
 
+  # Gets a list of blocklisted email domains
+  # @returns [Array<String>] list of domains
+  def blocklisted_email_domains
+    domains_file_path = Rails.root.join('../.qpixel-domain-blocklist.txt')
+    return [] unless File.exist?(domains_file_path)
+
+    File.read(domains_file_path).split("\n")
+  end
+
+  # Gets a list of bad email patterns
+  # @return [Array<String>] list of patterns
+  def bad_email_patterns
+    patterns_file_path = Rails.root.join('../.qpixel-email-patterns.txt')
+    return [] unless File.exist?(patterns_file_path)
+
+    File.read(patterns_file_path).split("\n")
+  end
+
   def email_domain_not_blocklisted
-    return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
     return unless saved_changes.include? 'email'
 
-    blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
     email_domain = email.split('@')[-1]
-    matched = blocklist.select { |x| email_domain == x }
+    matched = blocklisted_email_domains.select { |x| email_domain == x }
     if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
       matched_domains = matched.map { |d| "equals: #{d}" }
@@ -42,11 +58,9 @@ module EmailValidations
   end
 
   def email_not_bad_pattern
-    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
     return unless changes.include? 'email'
 
-    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
-    matched = patterns.select { |p| email.match? Regexp.new(p) }
+    matched = bad_email_patterns.select { |p| email.match? Regexp.new(p) }
     if matched.any?
       errors.add(:base, ApplicationRecord.useful_err_msg.sample)
       matched_patterns = matched.map { |p| "matched: #{p}" }
