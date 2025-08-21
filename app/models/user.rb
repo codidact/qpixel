@@ -134,6 +134,12 @@ class User < ApplicationRecord
     privilege?('flag_curate') && !target.deleted?
   end
 
+  # Can the user handle flags?
+  # @return [Boolean] check result
+  def can_handle_flags?
+    privilege?('flag_curate') || false
+  end
+
   # Can the user undelete a given target?
   # @param target [ApplicationRecord] record to undelete
   # @return [Boolean] check result
