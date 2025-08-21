@@ -278,18 +278,21 @@
                 Flag
               </a>
             <% end %>
-            <% unless post.locked? || !post_type.is_closeable %>
-              <% if check_your_privilege('flag_close') || (post.user_id === current_user&.id)%>
-                <% if !post.closed %>
-                  <a href="#" class="close-dialog-link tools--item" role="button" aria-label="Close this post">
-                    <i class="fa fa-lock"></i>
-                    Close
-                  </a>
-                <% elsif post.closed %>
-                  <%= link_to reopen_post_path(post), method: :post, class: 'reopen-question tools--item', role: 'button', 'aria-label': 'Reopen this post' do %>
-                    <i class="fa fa-unlock"></i>
-                    Reopen
-                  <% end %>
+            <% if current_user&.can_close?(post) %>
+              <% if !post.closed %>
+                <a href="#"
+                   class="close-dialog-link tools--item"
+                   role="button"
+                   aria-label="Close this post">
+                  <i class="fa fa-lock"></i>
+                  Close
+                </a>
+              <% else %>
+                <%= link_to reopen_post_path(post), method: :post,
+                                                    class: 'reopen-question tools--item',
+                                                    role: 'button', 'aria-label': 'Reopen this post' do %>
+                  <i class="fa fa-unlock"></i>
+                  Reopen
                 <% end %>
               <% end %>
             <% end %>
@@ -347,41 +350,8 @@
 
         <%= render 'posts/flag_modal', post: post, user: current_user %>
 
-        <% if post_type.is_closeable %>
-          <div class="post--action-dialog js-close-box">
-            <div class="widget">
-              <div class="widget--header">Why should this post be closed?</div>
-              <% CloseReason.active.each do |reason| %>
-                <div class="widget--body">
-                  <div class="grid">
-                    <div class="grid--cell">
-                      <input class="form-radio-element" type="radio" name="close-reason" value="<%= reason.id %>"
-                             id="close-reason-<%= reason.id %>" data-rop="<%= reason.requires_other_post %>">
-                    </div>
-                    <div class="grid--cell is-flexible">
-                      <label class="form-element" for="close-reason-<%= reason.id %>">
-                        <%= reason.name %>
-                        <div class="form-caption">
-                          <%= raw render_markdown(reason.description.gsub "$SiteName", SiteSetting['SiteName']) %>
-                        </div>
-                      </label>
-                      <% if reason.requires_other_post %>
-                        <input required class="form-element has-margin-top-8 js-close-other-post"
-                               id="close-reason-other-post-<%= reason.id %>"
-                               placeholder="Please enter the URL or ID of the other post in this community."
-                               name="close-reason-other-post" />
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-              <div class="widget--footer">
-                <button class="js-close-question button is-filled is-muted" data-post-id="<%= post.id %>">
-                  Close this post
-                </button>
-              </div>
-            </div>
-          </div>
+        <% if current_user&.can_close?(post) %>
+          <%= render 'posts/close_modal', post: post %>
         <% end %>
 
         <% if current_user&.privilege?('flag_curate') %>
