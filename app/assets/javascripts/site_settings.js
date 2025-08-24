@@ -27,8 +27,8 @@ $(() => {
     const valueType = $tgt.data('type');
     const communityId = $tgt.data('community-id');
 
-    const resp = await fetch(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
-      credentials: 'include'
+    const resp = await QPixel.getJSON(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
+      headers: { 'Accept': 'application/json' }
     });
 
     const data = await resp.json();
