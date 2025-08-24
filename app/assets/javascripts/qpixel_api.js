@@ -372,6 +372,8 @@ window.QPixel = {
   fetchJSON: async (uri, data, options) => {
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
+      // this is necessary for request.xhr?
+      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',
     };
 
