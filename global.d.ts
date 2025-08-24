@@ -181,6 +181,26 @@ interface GetThreadContentOptions {
   showDeleted?: boolean
 }
 
+type QPixelPostType = {
+  id: number
+  name: string
+  description: string | null
+  has_answers: boolean
+  has_votes: boolean
+  has_tags: boolean
+  has_parent: boolean
+  has_category: boolean
+  has_license: boolean
+  is_public_editable: boolean
+  is_closeable: boolean
+  is_top_level: boolean
+  is_freely_editable: boolean
+  icon_name: string | null
+  has_reactions: boolean
+  answer_type_id: number | null
+  has_only_specific_reactions: boolean
+ }
+
 interface QPixel {
   // private properties
   _filters?: Filter[] | null;
