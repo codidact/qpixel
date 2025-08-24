@@ -45,12 +45,11 @@ $(() => {
     }
   };
 
-  $('.inbox-toggle').on('click', async (evt) => {
-    evt.preventDefault();
+  $('.inbox-toggle').on('click', async (ev) => {
+    ev.preventDefault();
     const $inbox = $('.inbox');
     if($inbox.hasClass("is-active")) {
-      const resp = await fetch(`/users/me/notifications`, {
-        credentials: 'include',
+      const resp = await QPixel.getJSON(`/users/me/notifications`, {
         headers: { 'Accept': 'application/json' }
       });
 
