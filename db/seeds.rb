@@ -92,8 +92,6 @@ sorted.each do |f, type|
       end
 
       if type == Post && ENV['UPDATE_POSTS'] == 'true'
-        puts "Running full Posts update..."
-
         seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
 
         system_usr = User.find(-1)

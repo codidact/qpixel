@@ -35,6 +35,22 @@
 <%= javascript_include_tag 'application' %>
 <script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@latest/js/co-design.js" defer></script>
 
+<script type="application/javascript">
+  window.QPixel ||= {};
+
+  Object.defineProperty(QPixel, 'ALLOWED_POST_ATTRS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_ATTRS %>),
+    writable: false,
+  });
+
+  Object.defineProperty(QPixel, 'ALLOWED_POST_TAGS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_TAGS %>),
+    writable: false,
+  });
+</script>
+
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
