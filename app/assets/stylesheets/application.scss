@@ -286,3 +286,24 @@ mjx-container {
     overflow-x: auto;
     overflow-y: hidden;
 }
+
+kbd {
+  border: {
+    color: $muted-graphic;
+    radius: 0.25em;
+    style: solid;
+    width: 1px;
+  };
+  font-family: $font-stack-code;
+  font-size: map-get($font-sizes, 'sm');
+  margin: {
+    left: 0.15em;
+    right: 0.15em;
+  };
+  padding: {
+    top: 0.15em;
+    bottom: 0.15em;
+    left: 0.5em;
+    right: 0.5em;
+  };
+}
