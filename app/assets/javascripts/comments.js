@@ -189,7 +189,10 @@ $(() => {
     const resp = await fetch(`/comments/thread/${threadId}/followers`, {
       method: 'GET',
       credentials: 'include',
-      headers: { 'Accept': 'text/html' }
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     });
 
     const data = await resp.text();
@@ -277,7 +280,10 @@ $(() => {
       const postId = $tgt.data('post');
 
       if (!pingable[`${threadId}-${postId}`] || Object.keys(pingable[`${threadId}-${postId}`]).length === 0) {
-        const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
+        const resp = await QPixel.getJSON(`/comments/thread/${threadId}/pingable?post=${postId}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+
         pingable[`${threadId}-${postId}`] = await resp.json();
       }
 
