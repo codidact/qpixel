@@ -158,7 +158,8 @@ window.QPixel = {
     const myselfPromise = fetch('/users/me', {
       credentials: 'include',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       }
     });
 
@@ -250,7 +251,8 @@ window.QPixel = {
       const resp = await fetch('/users/me/filters', {
         credentials: 'include',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         }
       });
       const data = await resp.json();
@@ -271,7 +273,8 @@ window.QPixel = {
     const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
       credentials: 'include',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       }
     });
 
@@ -342,7 +345,8 @@ window.QPixel = {
     const resp = await fetch('/users/me/preferences', {
       credentials: 'include',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       }
     });
     const data = await resp.json();
@@ -402,8 +406,7 @@ window.QPixel = {
   },
 
   getComment: async (id) => {
-    const resp = await fetch(`/comments/${id}`, {
-      credentials: 'include',
+    const resp = await QPixel.getJSON(`/comments/${id}`, {
       headers: { 'Accept': 'application/json' }
     });
 
@@ -421,7 +424,10 @@ window.QPixel = {
     url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
 
     const resp = await fetch(url.toString(), {
-      headers: { 'Accept': 'text/html' }
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     });
 
     const content = await resp.text();
@@ -433,7 +439,10 @@ window.QPixel = {
     const url = new URL(`/comments/post/${id}`, window.location.origin);
 
     const resp = await fetch(url.toString(), {
-      headers: { 'Accept': 'text/html' }
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     });
 
     const content = await resp.text();
