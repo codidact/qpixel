@@ -458,3 +458,12 @@ interface Window {
   markdownit?: (...args: any[]) => any;
   markdownitFootnote?: (...args: any[]) => any;
 }
+
+/**
+ * List of HTML tags allowed in posts, supplied by the server
+ */
+declare var QPIXEL_ALLOWED_POST_TAGS: readonly string[]
+/**
+ * List of attributes allowed on HTML tags in posts, supplied by the server
+ */
+declare var QPIXEL_ALLOWED_POST_ATTRS: readonly string[]
