@@ -263,8 +263,8 @@ $(() => {
         const converter = window.converter;
         const unsafe_html = converter.render(text);
         const html = DOMPurify.sanitize(unsafe_html, {
-          ALLOWED_TAGS: QPIXEL_ALLOWED_POST_TAGS,
-          ALLOWED_ATTR: QPIXEL_ALLOWED_POST_ATTRS
+          ALLOWED_TAGS: QPixel.ALLOWED_POST_TAGS,
+          ALLOWED_ATTR: QPixel.ALLOWED_POST_ATTRS
         });
 
         const removedElements = [...new Set(DOMPurify.removed

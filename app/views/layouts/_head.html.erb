@@ -36,13 +36,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@latest/js/co-design.js" defer></script>
 
 <script type="application/javascript">
-  Object.defineProperty(window, 'QPIXEL_ALLOWED_POST_ATTRS', {
+  window.QPixel ||= {};
+
+  Object.defineProperty(QPixel, 'ALLOWED_POST_ATTRS', {
     configurable: false,
     value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_ATTRS %>),
     writable: false,
   });
 
-  Object.defineProperty(window, 'QPIXEL_ALLOWED_POST_TAGS', {
+  Object.defineProperty(QPixel, 'ALLOWED_POST_TAGS', {
     configurable: false,
     value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_TAGS %>),
     writable: false,
