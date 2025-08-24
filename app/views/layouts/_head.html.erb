@@ -36,8 +36,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@codidact/co-design@latest/js/co-design.js" defer></script>
 
 <script type="application/javascript">
-  window.QPIXEL_ALLOWED_POST_ATTRS = Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_ATTRS %>);
-  window.QPIXEL_ALLOWED_POST_TAGS = Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_TAGS %>);
+  Object.defineProperty(window, 'QPIXEL_ALLOWED_POST_ATTRS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_ATTRS %>),
+    writable: false,
+  });
+
+  Object.defineProperty(window, 'QPIXEL_ALLOWED_POST_TAGS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_TAGS %>),
+    writable: false,
+  });
 </script>
 
 <% if SiteSetting['SyntaxHighlightingEnabled'] %>
