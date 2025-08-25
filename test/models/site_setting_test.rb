@@ -54,11 +54,18 @@ class SiteSettingTest < ActiveSupport::TestCase
     assert_equal SiteSetting.where(name: 'test').first, setting1
   end
 
-  test 'text? should correctly check if the setting accepts long text values' do
-    text_setting = site_settings(:text)
-    int_setting = site_settings(:int)
+  test 'type predicates should correctly check the setting\'s value type' do
+    [:array, :boolean, :float, :integer, :string, :text].each do |method|
+      site_settings.each do |setting|
+        assert_equal setting.value_type == method.to_s, setting.send("#{method}?")
+      end
+    end
+  end
 
-    assert_equal text_setting.text?, true
-    assert_equal int_setting.text?, false
+  test 'numeric? should correctly check if the setting\'s value is numeric' do
+    assert site_settings(:int).numeric?
+    assert site_settings(:float).numeric?
+    assert_not site_settings(:string).numeric?
+    assert_not site_settings(:text).numeric?
   end
 end
