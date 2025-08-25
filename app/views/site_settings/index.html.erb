@@ -27,7 +27,7 @@
               <div class="form-caption"><%= setting.description %></div>
             </td>
             <% nowrap = setting.boolean? || setting.numeric? %>
-            <td class="site-setting--value js-setting-value<%= ' nowrap' if nowrap %>"
+            <td class="site-setting--value js-setting-value<%= nowrap ? ' nowrap' : ' wrap-word' %>"
                 data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
                 data-community-id="<%= current_page?(global_settings_path) ? nil : RequestContext.community_id %>">
               <%= setting.typed %>
