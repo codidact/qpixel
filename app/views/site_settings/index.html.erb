@@ -1,6 +1,6 @@
 <% content_for :title, 'Site Settings' %>
 
-<h1><%= current_page?(global_settings_path) ? 'Global' : '' %> Site Settings</h1>
+<h1><%= 'Global' if current_page?(global_settings_path)%> Site Settings</h1>
 <p>
   The settings on this page control various aspects of the display or operation of the site. Change these
   rarely and with care. Bear in mind that setting changes will generally not be retroactive - so if you change
@@ -26,7 +26,7 @@
               <h4><%= setting.name %></h4>
               <div class="form-caption"><%= setting.description %></div>
             </td>
-            <td class="site-setting--value js-setting-value<%= setting.text? ? '' : ' nowrap' %>"
+            <td class="site-setting--value js-setting-value<%= ' nowrap' if setting.text? %>"
                 data-type="<%= setting.value_type %>" data-name="<%= setting.name %>"
                 data-community-id="<%= current_page?(global_settings_path) ? nil : RequestContext.community_id %>">
               <%= setting.typed %>
