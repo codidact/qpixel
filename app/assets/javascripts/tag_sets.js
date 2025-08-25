@@ -3,11 +3,9 @@ $(() => {
     const $tgt = $(ev.target);
     const tagSetId = $tgt.data('set-id');
 
-    const response = await fetch(`/admin/tag-sets/${tagSetId}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.getJSON(`/admin/tag-sets/${tagSetId}`);
 
-    const data = await response.json();
+    const data = await resp.json();
 
     const name = data.name;
     const $form = `<input type="text" class="js-edit-set-name form-element" value="${name}" />

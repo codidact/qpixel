@@ -158,7 +158,8 @@ window.QPixel = {
     const myselfPromise = fetch('/users/me', {
       credentials: 'include',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       }
     });
 
@@ -247,12 +248,7 @@ window.QPixel = {
     if (this._filters == null) {
       // If they're still null (or undefined) after loading from localStorage, we're probably on a site we haven't
       // loaded them for yet. Load via AJAX.
-      const resp = await fetch('/users/me/filters', {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
+      const resp = await QPixel.getJSON('/users/me/filters');
       const data = await resp.json();
       localStorage['qpixel.user_filters'] = JSON.stringify(data);
       this._filters = data;
@@ -267,13 +263,8 @@ window.QPixel = {
     if (!user) {
       return '';
     }
-
-    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
+    
+    const resp = await QPixel.getJSON(`/users/me/filters/default?category=${categoryId}`);
 
     const data = await resp.json();
     return data.name;
@@ -339,12 +330,7 @@ window.QPixel = {
   },
 
   _fetchPreferences: async () => {
-    const resp = await fetch('/users/me/preferences', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
+    const resp = await QPixel.getJSON('/users/me/preferences');
     const data = await resp.json();
     QPixel._updatePreferencesLocally(data);
   },
@@ -372,6 +358,8 @@ window.QPixel = {
   fetchJSON: async (uri, data, options) => {
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
+      // this is necessary for request.xhr?
+      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',
     };
 
@@ -393,17 +381,20 @@ window.QPixel = {
   },
 
   getJSON: async (uri, options = {}) => {
+    const { headers = {} } = options ?? {};
+
     return QPixel.fetchJSON(uri, {}, {
       ...options,
+      headers: {
+        'Accept': 'application/json',
+        ...headers,
+      },
       method: 'GET',
     });
   },
 
   getComment: async (id) => {
-    const resp = await fetch(`/comments/${id}`, {
-      credentials: 'include',
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.getJSON(`/comments/${id}`);
 
     const data = await resp.json();
 
@@ -419,7 +410,10 @@ window.QPixel = {
     url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
 
     const resp = await fetch(url.toString(), {
-      headers: { 'Accept': 'text/html' }
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     });
 
     const content = await resp.text();
@@ -431,7 +425,10 @@ window.QPixel = {
     const url = new URL(`/comments/post/${id}`, window.location.origin);
 
     const resp = await fetch(url.toString(), {
-      headers: { 'Accept': 'text/html' }
+      headers: {
+        'Accept': 'text/html',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
     });
 
     const content = await resp.text();
