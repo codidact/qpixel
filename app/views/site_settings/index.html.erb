@@ -12,7 +12,7 @@
 <% @settings.each do |category, settings| %>
   <details>
     <summary><%= category&.underscore&.humanize || 'Uncategorized' %></summary>
-    <table class="table is-full-width">
+    <table class="table fixed is-full-width">
       <tbody>
         <% settings.each do |setting| %>
           <tr>
