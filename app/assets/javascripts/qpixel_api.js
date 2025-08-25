@@ -263,14 +263,8 @@ window.QPixel = {
     if (!user) {
       return '';
     }
-
-    const resp = await fetch(`/users/me/filters/default?category=${categoryId}`, {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+    
+    const resp = await QPixel.getJSON(`/users/me/filters/default?category=${categoryId}`);
 
     const data = await resp.json();
     return data.name;
