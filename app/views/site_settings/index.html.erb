@@ -22,7 +22,8 @@
               <% else %>
                 <span class="badge is-tag">site</span>
               <% end %>
-              <span class="badge is-tag nowrap"><%= setting.value_type %></span>
+              <span class="badge is-tag overflow-ellipsis"
+                    title="<%= setting.value_type %>"><%= setting.value_type %></span>
               <h4 class="nowrap"><%= setting.name %></h4>
               <div class="form-caption"><%= setting.description %></div>
             </td>
