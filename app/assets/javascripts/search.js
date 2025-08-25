@@ -33,9 +33,7 @@ $(() => {
     };
 
     if (!postTypes) {
-      const resp = await QPixel.getJSON(`/posts/types`, {
-        headers: { 'Accept': 'application/json' }
-      });
+      const resp = await QPixel.getJSON(`/posts/types`);
 
       postTypes = await resp.json();
     }

@@ -3,9 +3,7 @@ $(() => {
     const $tgt = $(ev.target);
     const tagSetId = $tgt.data('set-id');
 
-    const resp = await QPixel.getJSON(`/admin/tag-sets/${tagSetId}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.getJSON(`/admin/tag-sets/${tagSetId}`);
 
     const data = await resp.json();
 

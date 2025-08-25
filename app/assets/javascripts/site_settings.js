@@ -27,9 +27,7 @@ $(() => {
     const valueType = $tgt.data('type');
     const communityId = $tgt.data('community-id');
 
-    const resp = await QPixel.getJSON(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.getJSON(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`);
 
     const data = await resp.json();
     const value = data.typed;

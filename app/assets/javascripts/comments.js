@@ -280,9 +280,7 @@ $(() => {
       const postId = $tgt.data('post');
 
       if (!pingable[`${threadId}-${postId}`] || Object.keys(pingable[`${threadId}-${postId}`]).length === 0) {
-        const resp = await QPixel.getJSON(`/comments/thread/${threadId}/pingable?post=${postId}`, {
-          headers: { 'Accept': 'application/json' }
-        });
+        const resp = await QPixel.getJSON(`/comments/thread/${threadId}/pingable?post=${postId}`);
 
         pingable[`${threadId}-${postId}`] = await resp.json();
       }

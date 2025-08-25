@@ -399,16 +399,20 @@ window.QPixel = {
   },
 
   getJSON: async (uri, options = {}) => {
+    const { headers = {} } = options ?? {};
+
     return QPixel.fetchJSON(uri, {}, {
       ...options,
+      headers: {
+        'Accept': 'application/json',
+        ...headers,
+      },
       method: 'GET',
     });
   },
 
   getComment: async (id) => {
-    const resp = await QPixel.getJSON(`/comments/${id}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.getJSON(`/comments/${id}`);
 
     const data = await resp.json();
 
