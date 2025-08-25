@@ -342,13 +342,7 @@ window.QPixel = {
   },
 
   _fetchPreferences: async () => {
-    const resp = await fetch('/users/me/preferences', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+    const resp = await QPixel.getJSON('/users/me/preferences');
     const data = await resp.json();
     QPixel._updatePreferencesLocally(data);
   },
