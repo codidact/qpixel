@@ -12,18 +12,20 @@
 <% @settings.each do |category, settings| %>
   <details>
     <summary><%= category&.underscore&.humanize || 'Uncategorized' %></summary>
-    <table class="table fixed is-full-width">
+    <table class="table site-settings-table">
       <tbody>
         <% settings.each do |setting| %>
           <tr>
             <td>
-              <% if setting.global? %>
-                <span class="badge is-tag is-master-tag">global</span>
-              <% else %>
-                <span class="badge is-tag">site</span>
-              <% end %>
-              <span class="badge is-tag overflow-ellipsis"
-                    title="<%= setting.value_type %>"><%= setting.value_type %></span>
+              <p class="site-setting--tags">
+                <% if setting.global? %>
+                  <span class="badge is-tag is-master-tag">global</span>
+                <% else %>
+                  <span class="badge is-tag">site</span>
+                <% end %>
+                <span class="badge is-tag overflow-ellipsis"
+                      title="<%= setting.value_type %>"><%= setting.value_type %></span>
+              </p>
               <h4 class="overflow-ellipsis"
                   title="<%= setting.name %>"><%= setting.name %></h4>
               <div class="form-caption"><%= setting.description %></div>
