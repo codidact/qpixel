@@ -261,7 +261,7 @@ class ApplicationController < ActionController::Base
     end
 
     # eager loading revived collections' used relation to prevent N+1 queries
-    @pinned_links = @pinned_links.includes(post: [:community])
+    @pinned_links = @pinned_links.list_includes
     @hot_questions = @hot_questions.list_includes
   end
 
