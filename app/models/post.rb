@@ -51,7 +51,7 @@ class Post < ApplicationRecord
   scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, lambda {
-                          includes(:user, :tags, :post_type, :category, :last_activity_by,
+                          includes(:user, :tags, :post_type, :category, :community, :last_activity_by,
                                    user: :avatar_attachment)
                         }
   scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
