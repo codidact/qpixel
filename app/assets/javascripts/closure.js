@@ -44,4 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       QPixel.createNotification('danger', `<strong>Failed:</strong> ${req.status}`);
     }
   });
+
+  QPixel.DOM?.watchClass('.js-close-box.is-active', (target) => {
+    const reasonInput = target.querySelector('input[name="close-reason"]');
+
+    if (QPixel.DOM?.isHTMLElement(reasonInput)) {
+      reasonInput.focus();
+    }
+  });
 });

@@ -182,6 +182,11 @@ class Post < ApplicationRecord
     post_type_id == Article.post_type_id
   end
 
+  # @return [Boolean] whether the post can be closed
+  def closeable?
+    post_type.is_closeable
+  end
+
   # @return [Boolean] whether there is a suggested edit pending for this post
   def pending_suggested_edit?
     SuggestedEdit.where(post_id: id, active: true).any?

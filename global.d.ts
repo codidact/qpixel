@@ -23,6 +23,8 @@ interface DelegatedListener {
   callback: EventListener;
 }
 
+type ClassWatcherCallback = (element: HTMLElement) => void;
+
 interface QPixelDOM {
   // private properties
   _delegatedListeners?: DelegatedListener[];
@@ -60,6 +62,12 @@ interface QPixelDOM {
    * @param visible Whether or not the elements should be visible.
    */
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
+  /**
+   * Registers a callback to run on class list change
+   * @param selector CSS selector to watch for
+   * @param callback callback to call on match
+   */
+  watchClass?: (selector: string, callback: ClassWatcherCallback) => void;
 }
 
 interface StripMarkdownOptions {

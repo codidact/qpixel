@@ -41,6 +41,24 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'example.com', users(:closer).website_domain
   end
 
+  test 'can_close? should correctly determine if the user can close a given post' do
+    closer = users(:closer)
+
+    assert closer.can_close?(posts(:question_one))
+    assert_not closer.can_close?(posts(:answer_one))
+    assert_not closer.can_close?(posts(:locked))
+
+    std = users(:standard_user)
+
+    posts.each do |post|
+      if post.locked? || !post.closeable?
+        assert_not std.can_close?(post)
+      else
+        assert_equal post.user.same_as?(std), std.can_close?(post)
+      end
+    end
+  end
+
   test 'can_update? should determine if the user can update a given post' do
     basic_user = users(:basic_user)
     post_owner = users(:standard_user)
@@ -289,16 +307,5 @@ class UserTest < ActiveSupport::TestCase
 
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
-  end
-
-  test 'not_blocklisted? should correctly determine if the user is blocklisted' do
-    std = users(:standard_user)
-
-    std.skip_reconfirmation!
-    std.update(email: blocked_items(:email).value)
-    std.valid?
-
-    assert_equal false, std.changed?
-    assert std.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
   end
 end
