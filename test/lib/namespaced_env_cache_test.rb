@@ -17,6 +17,16 @@ class NamespacedEnvCacheTest < ActiveSupport::TestCase
     end
   end
 
+  test 'read_collection should not break on cached ActiveRecord::Relation objects' do
+    @cache.write('test_posts_cache', Post.where(user: users(:standard_user)))
+
+    data = assert_nothing_raised do
+      @cache.fetch_collection('test_posts_cache')
+    end
+
+    assert_not_nil data
+  end
+
   test 'fetch_collection' do
     data = assert_nothing_raised do
       @cache.fetch_collection('test_posts_cache') do
@@ -30,9 +40,11 @@ class NamespacedEnvCacheTest < ActiveSupport::TestCase
     @cache.fetch_collection('test_posts_cache') do
       Post.where(user: users(:standard_user))
     end
+
     data = assert_nothing_raised do
       @cache.fetch_collection('test_posts_cache')
     end
+
     assert_not_nil data
   end
 
@@ -46,6 +58,14 @@ class NamespacedEnvCacheTest < ActiveSupport::TestCase
     assert_raises TypeError do
       @cache.write_collection('test_posts_cache', [Post.last, User.last])
     end
+  end
+
+  test 'normalize_collection should correctly prepare collections for caching' do
+    collection = Post.where(user: users(:standard_user))
+    normalized = QPixel::NamespacedEnvCache.normalize_collection(collection)
+
+    assert_equal Post.name, normalized.shift
+    assert(collection.to_a.all? { |post| normalized.include?(post.id) })
   end
 
   private

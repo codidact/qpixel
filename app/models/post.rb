@@ -51,7 +51,8 @@ class Post < ApplicationRecord
   scope :parent_by, ->(user) { includes(:parent).where(parents_posts: { user_id: user.id }) }
   scope :qa_only, -> { where(post_type_id: [Question.post_type_id, Answer.post_type_id, Article.post_type_id]) }
   scope :list_includes, lambda {
-                          includes(:user, :tags, :post_type, :category, :last_activity_by,
+                          includes(:user, :tags, :post_type, :category, :community, :last_activity_by,
+                                   category: [:moderator_tags, :required_tags, :topic_tags],
                                    user: :avatar_attachment)
                         }
   scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
@@ -232,6 +233,14 @@ class Post < ApplicationRecord
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }
+  end
+
+  # Are new threads on this post followed by a given user?
+  # @param post [Post] post to check
+  # @param user [User] user to check
+  # @return [Boolean] check result
+  def followed_by?(user)
+    ThreadFollower.where(post: self, user: user).any?
   end
 
   private

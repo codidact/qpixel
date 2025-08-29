@@ -71,6 +71,18 @@ module CommentsControllerTestHelpers
     post :thread_unrestrict, params: { id: thread.id, type: 'follow' }
   end
 
+  # Attempts to follow new threads on a given post
+  # @param post [Post] post to follow
+  def try_post_follow(test_post)
+    post :post_follow, params: { post_id: test_post.id }
+  end
+
+  # Attempts to unfollow new threads on a given post
+  # @param post [Post] post to unfollow
+  def try_post_unfollow(test_post)
+    post :post_unfollow, params: { post_id: test_post.id }
+  end
+
   # Attempts to lock a given comment thread
   # @param thread [CommentThread] thread to lock
   # @param duration [Integer] lock duration, in days

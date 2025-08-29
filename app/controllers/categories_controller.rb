@@ -167,8 +167,10 @@ class CategoriesController < ApplicationController
                               SiteSetting['LotteryAgeDeprecationSpeed']],
                     native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
-    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .includes(:post_type, :tags).list_includes
+    @posts = @category.posts
+                      .undeleted
+                      .where(post_type_id: @category.display_post_types)
+                      .list_includes
     filter_qualifiers = helpers.params_to_qualifiers(params)
     @active_filter = helpers.active_filter
 

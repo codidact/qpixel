@@ -16,12 +16,16 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
-  # Are there any threads on a given post that a given user follows?
-  # @param post [Post] post to check
-  # @param user [User] user to check
-  # @return [Boolean] check result
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
+  # Gets threads appropriately scoped for a given user & post
+  # @param user [User, nil] user to check
+  # @para post [Post] post to check
+  # @return [ActiveRecord::Relation<CommentThread>]
+  def self.accessible_to(user, post)
+    if user&.at_least_moderator? || user&.post_privilege?('flag_curate', post)
+      CommentThread
+    else
+      CommentThread.undeleted
+    end
   end
 
   # Is the thread read-only (can't be edited)?

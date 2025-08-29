@@ -20,20 +20,45 @@ interface UserPreferences {
 interface DelegatedListener {
   event: string;
   selector: string;
-  callback: (ev: Event) => void;
+  callback: EventListener;
 }
-
-type EventCallback = (event: Event) => void;
 
 interface QPixelDOM {
   // private properties
   _delegatedListeners?: DelegatedListener[];
   _eventListeners?: Record<string, (ev: Event) => void>;
 
-  // public methods
-  addDelegatedListener?: (event: string, selector: string, callback: EventCallback) => void;
-  addSelectorListener?: (event: string, selector: string, callback: EventCallback) => void;
+  /**
+   * Adds a delegated event listener. Use when an event listener is required that will fire for elements added to the
+   * DOM dynamically after the delegated listener is added.
+   * @param event An event name to listen for.
+   * @param selector A CSS selector representing elements on which to apply the listener.
+   * @param callback A callback function to pass to the event listener.
+   */
+  addDelegatedListener?: (event: string, selector: string, callback: EventListener) => void;
+  /**
+   * Adds an event listener to _all_ elements that currently match a selector.
+   * @param event An event name to listen for.
+   * @param selector A CSS selector representing elements on which to apply the listener.
+   * @param callback A callback function to pass to the event listener.
+   */
+  addSelectorListener?: (event: string, selector: string, callback: EventListener) => void;
+  /**
+   * Smoothly fade an element out of view, then remove it.
+   * @param element The element to fade out.
+   * @param duration A duration for the effect in milliseconds.
+   */
   fadeOut?: (element: HTMLElement, duration: number) => void;
+  /**
+   * Is a given event target an HTMLElement?
+   * @param target event target to check
+   */
+  isHTMLElement?: (target: EventTarget) => target is HTMLElement;
+  /**
+   * Sets visibility of an element or array of elements. Uses display: none so should work with screen readers.
+   * @param elements An element or array of elements to set visibility for.
+   * @param visible Whether or not the elements should be visible.
+   */
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
 }
 
@@ -361,6 +386,13 @@ interface QPixel {
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to start following comments on a given post
+   * @param postId id of the post to follow comments on
+   * @returns result of the operation
+   */
+  followComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to delete a given post draft
    * @returns result of the operation
    */
@@ -379,6 +411,13 @@ interface QPixel {
    * @returns result of the operation
    */
   undeleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to stop following comments on a given post
+   * @param postId id of the post to stop following comments on
+   * @returns result of the operation
+   */
+  unfollowComments?: (postId: string) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to lock a comment thread
