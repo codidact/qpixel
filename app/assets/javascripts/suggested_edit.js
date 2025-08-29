@@ -1,11 +1,3 @@
-/**
- * @typedef {{
- *  message?: string
- *  redirect_url?: string
- *  status: 'success' | 'error'
- * }} SuggestedEditActionResult
- */
-
 $(() => {
   $('[data-suggested-edit-approve]').on('click', async (ev) => {
     ev.preventDefault();
@@ -15,7 +7,7 @@ $(() => {
 
     const resp = await QPixel.fetchJSON(`/posts/suggested-edit/${editId}/approve`, { comment });
 
-    /** @type {SuggestedEditActionResult} */
+    /** @type {QPixelSuggestedEditActionResult} */
     const data = await resp.json();
 
     if (data.status !== 'success') {
@@ -40,7 +32,7 @@ $(() => {
 
     const resp = await QPixel.fetchJSON(`/posts/suggested-edit/${editId}/reject`, { rejection_comment: comment });
 
-    /** @type {SuggestedEditActionResult} */
+    /** @type {QPixelSuggestedEditActionResult} */
     const data = await resp.json();
 
     if (data.status !== 'success') {
@@ -50,4 +42,4 @@ $(() => {
       location.href = data.redirect_url;
     }
   });
-});  
+});
