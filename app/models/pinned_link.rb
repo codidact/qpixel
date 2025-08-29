@@ -2,6 +2,10 @@ class PinnedLink < ApplicationRecord
   include MaybeCommunityRelated
   belongs_to :post, optional: true
 
+  scope :list_includes, lambda {
+    includes(:post, post: [:community])
+  }
+
   validate :check_post_or_url
 
   # Is the link time-constrained?
