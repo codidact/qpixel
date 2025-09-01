@@ -1,9 +1,3 @@
-// IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/helpers/posts_helper.rb
-const ALLOWED_TAGS = ['a', 'p', 'span', 'b', 'i', 'em', 'strong', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'blockquote', 'img', 'strike', 'del', 'code', 'pre', 'br', 'ul', 'ol', 'li', 'sup', 'sub', 'section', 'details',
-  'summary', 'ins', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 's'];
-const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 'alt', 'rowspan', 'colspan', 'lang',
-  'start', 'dir'];
 // this is a list of constructors to ignore even if they are removed by sanitizer (mostly comments & body)
 const IGNORE_UNSUPPORTED = [Comment, HTMLBodyElement];
 
@@ -260,8 +254,8 @@ $(() => {
         const converter = window.converter;
         const unsafe_html = converter.render(text);
         const html = DOMPurify.sanitize(unsafe_html, {
-          ALLOWED_TAGS,
-          ALLOWED_ATTR
+          ALLOWED_TAGS: QPixel.ALLOWED_POST_TAGS,
+          ALLOWED_ATTR: QPixel.ALLOWED_POST_ATTRS
         });
 
         const removedElements = [...new Set(DOMPurify.removed

@@ -1,6 +1,3 @@
-<%# is_question = post.post_type_id == Question.post_type_id %>
-<%# is_article = post.post_type_id == Article.post_type_id %>
-<%# is_meta = (is_question && post.meta?) || (!is_question && post.parent&.meta?) %>
 <% @show_type_tag = !!defined?(show_type_tag) ? show_type_tag : false %>
 <% @show_category_tag = !!defined?(show_category_tag) ? show_category_tag : false %>
 <% @last_activity = !!defined?(last_activity) ? last_activity : true %>
