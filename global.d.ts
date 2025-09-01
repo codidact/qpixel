@@ -263,6 +263,17 @@ interface GetThreadContentOptions {
 }
 
 interface QPixel {
+  // constants
+
+  /**
+   * List of HTML tags allowed in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_TAGS?: readonly string[]
+  /**
+   * List of attributes allowed on HTML tags in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_ATTRS?: readonly string[]
+
   // private properties
   _filters?: QPixelFlag[] | null;
   _pendingUserResponse?: Promise<Response> | null;
