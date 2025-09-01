@@ -208,6 +208,13 @@ class ModeratorControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should get spammy_users' do
+    sign_in users(:moderator)
+    get :spammy_users
+    assert_response(:success)
+    assert_not_nil assigns(:users)
+  end
+
   test 'handle_spammy_users should delete spammy users' do
     sign_in users(:moderator)
     spammer = users(:spammer)
