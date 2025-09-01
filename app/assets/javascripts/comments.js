@@ -188,9 +188,7 @@ $(() => {
     const threadId = $tgt.data('thread');
     const $modal = $($tgt.data('modal'));
 
-    const resp = await fetch(`/comments/thread/${threadId}/followers`, {
-      method: 'GET',
-      credentials: 'include',
+    const resp = await QPixel.fetch(`/comments/thread/${threadId}/followers`, {
       headers: { 'Accept': 'text/html' }
     });
 
@@ -279,7 +277,8 @@ $(() => {
       const postId = $tgt.data('post');
 
       if (!pingable[`${threadId}-${postId}`] || Object.keys(pingable[`${threadId}-${postId}`]).length === 0) {
-        const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
+        const resp = await QPixel.getJSON(`/comments/thread/${threadId}/pingable?post=${postId}`);
+
         pingable[`${threadId}-${postId}`] = await resp.json();
       }
 
