@@ -11,7 +11,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'should require authentication to access pages' do
     sign_out :user
-    [:index, :recently_deleted_posts].each do |path|
+    [:index, :recently_deleted_posts, :spammy_users].each do |path|
       get path
       assert_response(:not_found)
     end
@@ -19,7 +19,7 @@ class ModeratorControllerTest < ActionController::TestCase
 
   test 'should require moderator status to access pages' do
     sign_in users(:standard_user)
-    [:index, :recently_deleted_posts].each do |path|
+    [:index, :recently_deleted_posts, :spammy_users].each do |path|
       get path
       assert_response(:not_found)
     end
@@ -206,5 +206,15 @@ class ModeratorControllerTest < ActionController::TestCase
       votes = votes_received.select { |v| v.vote_type == type }
       assert_equal count, votes.length
     end
+  end
+
+  test 'handle_spammy_users should delete spammy users' do
+    sign_in users(:moderator)
+    spammer = users(:spammer)
+    post :handle_spammy_users, params: { spam_ids: [spammer.id.to_s] }
+    spammer.reload
+    assert_response(:found)
+    assert_redirected_to mod_spammers_path
+    assert_equal true, spammer.deleted
   end
 end
