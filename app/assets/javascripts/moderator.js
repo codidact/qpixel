@@ -38,4 +38,13 @@ $(() => {
       QPixel.createNotification('danger', `<strong>Failed:</strong> Unexpected status (${req.status})`);
     }
   });
+
+  QPixel.DOM.addSelectorListener('click', '.js-bulk-check', async (ev) => {
+    const tgt = ev.target;
+    const action = tgt.dataset.check;
+    const checkboxes = document.querySelectorAll('.js-spammer-form input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = action === 'all';
+    });
+  });
 });

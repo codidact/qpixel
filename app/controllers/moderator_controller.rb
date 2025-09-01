@@ -84,7 +84,8 @@ class ModeratorController < ApplicationController
       user.block('Profile spam', length: 10.years, automatic: false)
       user.do_soft_delete(current_user)
     end
-    render json: { status: 'success', message: "#{spam.size} users blocked and deleted." }
+    flash[:success] = "#{spam.size} users blocked and deleted."
+    redirect_to mod_spammers_path
   end
 
   private

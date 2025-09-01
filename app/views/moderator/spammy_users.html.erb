@@ -11,7 +11,7 @@
   <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
 </div>
 
-<%= form_tag mod_handle_spammers_path, method: :post do %>
+<%= form_tag mod_handle_spammers_path, method: :post, class: 'js-spammer-form' do %>
   <% @users.each do |user| %>
     <div class="widget">
       <div class="widget--body">
