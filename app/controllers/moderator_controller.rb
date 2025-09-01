@@ -71,6 +71,21 @@ class ModeratorController < ApplicationController
     )
   end
 
+  def spammy_users
+    script = File.read(Rails.root.join('db/scripts/potential_spam_profiles.sql'))
+    user_ids = ApplicationRecord.connection.execute(script).to_a.flatten
+    @users = User.where(id: user_ids)
+  end
+
+  def handle_spammy_users
+    spam = User.where(id: params[:spam_ids])
+    spam.each do |user|
+      user.block('Profile spam', length: 10.years, automatic: false)
+      user.do_soft_delete(current_user)
+    end
+    render json: { status: 'success', message: "#{spam.size} users blocked and deleted." }
+  end
+
   private
 
   def set_post

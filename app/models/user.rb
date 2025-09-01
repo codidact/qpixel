@@ -424,7 +424,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason, length: 180.days)
+  def block(reason, length: 180.days, automatic: true)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -433,10 +433,10 @@ class User < ApplicationRecord
     end
 
     BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
-                       automatic: true, reason: "#{reason}: #" + id.to_s)
+                       automatic: automatic, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
-                         automatic: true, reason: "#{reason}: #" + id.to_s)
+                         automatic: automatic, reason: "#{reason}: #" + id.to_s)
     end
   end
 
