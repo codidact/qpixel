@@ -40,10 +40,10 @@ $(() => {
   });
 
   QPixel.DOM.addSelectorListener('click', '.js-bulk-check', async (ev) => {
-    const tgt = ev.target;
+    const tgt = /** @type {HTMLElement} */(ev.target);
     const action = tgt.dataset.check;
     const checkboxes = document.querySelectorAll('.js-spammer-form input[type="checkbox"]');
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach((/** @type {HTMLInputElement} */checkbox) => {
       checkbox.checked = action === 'all';
     });
   });
