@@ -44,46 +44,23 @@ class SiteSetting < ApplicationRecord
       SiteSetting.where(name: name).any?
   end
 
-  # Checks whether the setting is a global site setting
-  # @return [Boolean]
+  # Is the setting global?
+  # @return [Boolean] check result
   def global?
     community_id.nil?
   end
 
-  # Is the setting array-valued?
-  # @return [Boolean] check result
-  def array?
-    value_type.downcase == 'array'
+  # Defines predicates for each value type
+  [:array, :boolean, :float, :integer, :string, :text].each do |method|
+    define_method "#{method}?" do
+      value_type.downcase.to_sym == method
+    end
   end
 
-  # Is the setting boolean-valued?
+  # Is the setting numeric-valued?
   # @return [Boolean] check result
-  def boolean?
-    value_type.downcase == 'boolean'
-  end
-
-  # Is the setting floating point number-valued?
-  # @return [Boolean] check result
-  def float?
-    value_type.downcase == 'float'
-  end
-
-  # Is the setting integer-valued?
-  # @return [Boolean] check result
-  def integer?
-    value_type.downcase == 'integer'
-  end
-
-  # Is the setting string-valued (plain text)?
-  # @return [Boolean] check result
-  def string?
-    value_type.downcase == 'string'
-  end
-
-  # Is the setting text-valued (HTML-aware text)?
-  # @return [Boolean] check result
-  def text?
-    value_type.downcase == 'text'
+  def numeric?
+    float? || integer?
   end
 
   def typed
