@@ -1,46 +1,75 @@
-window.QPixel = window.QPixel || {};
+window.QPixel ||= {};
 
-QPixel.DOM = {
-  _delegatedListeners: [],
-  _eventListeners: {},
+(() => {
+  /** @type {Record<string, ClassWatcherCallback[]>} */
+  const classWatchers = {};
 
-  addDelegatedListener: (event, selector, callback) => {
-    if (!QPixel.DOM._eventListeners[event]) {
-      const listener = (ev) => {
-        QPixel.DOM._delegatedListeners.filter((x) => x.event === event).forEach((listener) => {
-          if (ev.target.matches(listener.selector)) {
-            listener.callback(ev);
+  new MutationObserver((records) => {
+    const watchers = Object.entries(classWatchers);
+
+    for (const { target } of records) {
+      for (const [selector, callbacks] of watchers) {
+        if (QPixel.DOM?.isHTMLElement(target) && target.matches(selector)) {
+          for(const callback of callbacks) {
+            callback(target);
           }
-        });
-      };
-      document.addEventListener(event, listener);
-      QPixel.DOM._eventListeners[event] = listener;
+        }
+      }
     }
-    QPixel.DOM._delegatedListeners.push({ event, selector, callback });
-  },
+  }).observe(document, {
+    attributeFilter: ['class'],
+    subtree: true,
+  });
 
-  addSelectorListener: (event, selector, callback) => {
-    document.querySelectorAll(selector).forEach((el) => {
-      el.addEventListener(event, callback);
-    });
-  },
+  QPixel.DOM ||= {
+    _delegatedListeners: [],
+    _eventListeners: {},
 
-  fadeOut: (element, duration) => {
-    element.style.transition = `${duration}ms`;
-    element.style.opacity = '0';
-    setTimeout(() => {
-      element.remove();
-    }, duration);
-  },
+    addDelegatedListener: (event, selector, callback) => {
+      if (!QPixel.DOM._eventListeners[event]) {
+        const listener = (ev) => {
+          QPixel.DOM._delegatedListeners
+            .filter((x) => x.event === event)
+            .forEach((listener) => {
+              if (ev.target.matches(listener.selector)) {
+                listener.callback(ev);
+              }
+            });
+        };
+        document.addEventListener(event, listener);
+        QPixel.DOM._eventListeners[event] = listener;
+      }
+      QPixel.DOM._delegatedListeners.push({ event, selector, callback });
+    },
 
-  isHTMLElement: (node) => {
-    return node instanceof HTMLElement;
-  },
+    addSelectorListener: (event, selector, callback) => {
+      document.querySelectorAll(selector).forEach((el) => {
+        el.addEventListener(event, callback);
+      });
+    },
 
-  setVisible: (elements, visible) => {
-    if (!Array.isArray(elements)) {
-      elements = [elements];
+    fadeOut: (element, duration) => {
+      element.style.transition = `${duration}ms`;
+      element.style.opacity = '0';
+      setTimeout(() => {
+        element.remove();
+      }, duration);
+    },
+
+    isHTMLElement: (node) => {
+      return node instanceof HTMLElement;
+    },
+
+    setVisible: (elements, visible) => {
+      if (!Array.isArray(elements)) {
+        elements = [elements];
+      }
+      elements.forEach((el) => (el.style.display = visible ? '' : 'none'));
+    },
+
+    watchClass: (selector, callback) => {
+      const callbacks = (classWatchers[selector] ||= []);
+      callbacks.push(callback);
     }
-    elements.forEach((el) => el.style.display = visible ? '' : 'none');
-  }
-};
+  };
+})();

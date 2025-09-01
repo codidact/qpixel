@@ -77,12 +77,16 @@ module PostsHelper
   end
 
   class PostScrubber < Rails::Html::PermitScrubber
+    ALLOWED_ATTRS = %w[id class href title src height width alt rowspan colspan lang start dir].freeze
+
+    ALLOWED_TAGS = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img
+                      strike del code pre br ul ol li sup sub kbd
+                      section details summary ins table thead tbody tr th td s].freeze
+
     def initialize
       super
-      # IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/assets/javascripts/posts.js
-      self.tags = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li sup sub
-                     section details summary ins table thead tbody tr th td s]
-      self.attributes = %w[id class href title src height width alt rowspan colspan lang start dir]
+      self.tags = ALLOWED_TAGS
+      self.attributes = ALLOWED_ATTRS
     end
 
     def skip_node?(node)
