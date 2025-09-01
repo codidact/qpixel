@@ -361,6 +361,7 @@ window.QPixel = {
       ...options,
       headers: {
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         ...headers,
       },
       method: 'GET',
