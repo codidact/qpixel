@@ -73,8 +73,9 @@ class ModeratorController < ApplicationController
 
   def spammy_users
     script = File.read(Rails.root.join('db/scripts/potential_spam_profiles.sql'))
+    script = script.gsub('$HOURS', '5208') # 31 days
     user_ids = ApplicationRecord.connection.execute(script).to_a.flatten
-    @users = User.where(id: user_ids)
+    @users = User.where(id: user_ids).limit(20)
   end
 
   def handle_spammy_users

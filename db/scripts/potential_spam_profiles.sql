@@ -8,11 +8,11 @@ left join votes v on v.user_id = u.id
 left join flags f on f.user_id = u.id
 where u.profile_markdown is not null
   and u.profile like '%href="%'
-  and u.created_at >= date_sub(current_timestamp, interval 25 hour)
+  and u.created_at >= date_sub(current_timestamp, interval 5048 hour)
   and u.deleted = false
   and u.email not like '%localhost'
 group by u.id
-having sum(cu.reputation) = 1
+having max(cu.reputation) = 1
    and count(distinct p.id) = 0
    and count(distinct cm.id) = 0
    and count(distinct v.id) = 0

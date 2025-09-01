@@ -1,0 +1,31 @@
+<% content_for :title, 'Moderate Spam Profiles' %>
+
+<h1>Spam Profiles</h1>
+<p>
+  These are user accounts which have been automatically identified as potential spam based on the account's
+  characteristics. Review the list and place a tick against those that are spam, then click Handle to block and delete.
+</p>
+
+<div class="button-list is-gutterless">
+  <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="all">Tick all</button>
+  <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
+</div>
+
+<%= form_tag mod_handle_spammers_path, method: :post do %>
+  <% @users.each do |user| %>
+    <div class="widget">
+      <div class="widget--body">
+        <%= render 'users/common_card', user: user %>
+        <pre><%= user.profile_markdown.first(1000) %></pre>
+      </div>
+      <div class="widget--footer check-group-horizontal check-group__right">
+        <%= label_tag "spammer_#{user.id}", 'Spammer?', class: 'form-element' %>
+        <%= check_box_tag "spam_ids[]", user.id, id: "spammer_#{user.id}", class: 'checkbox__large' %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <button type="submit" class="button is-filled is-danger">Handle</button>
+  </div>
+<% end %>
