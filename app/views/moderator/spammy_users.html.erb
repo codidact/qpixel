@@ -25,7 +25,12 @@
     </div>
   <% end %>
 
+  <% if @users.empty? %>
+    <p class="has-font-size-display has-text-align-center"><i class="fas fa-virus-slash"></i></p>
+    <p class="has-text-align-center">Yay! No spammers here.</p>
+  <% end %>
+
   <div class="actions">
-    <button type="submit" class="button is-filled is-danger">Handle</button>
+    <button type="submit" class="button is-filled is-danger" <%= 'disabled' if @users.empty? %>>Handle</button>
   </div>
 <% end %>
