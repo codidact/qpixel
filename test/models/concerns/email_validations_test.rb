@@ -41,6 +41,25 @@ class EmailValidationsTest < ActiveSupport::TestCase
     end
   end
 
+  test 'bad_email_patterns should correctly list bad email patterns' do
+    bad_patterns = ['^(.*\.)?example\.com$']
+
+    Tempfile.create('tmp', Rails.root.join('tmp')) do |f|
+      bad_patterns.each { |p| f.write("#{p}\n") }
+      f.flush
+
+      @klass.stub(:bad_email_patterns_path, f.path) do
+        patterns = @klass.bad_email_patterns
+
+        assert_equal bad_patterns.length, patterns.length
+
+        bad_patterns.each do |pattern|
+          assert patterns.include?(pattern)
+        end
+      end
+    end
+  end
+
   test 'email_domain_not_blocklisted should correctly determine if the domain is blocklisted' do
     instance = @klass.new('user@bad_domain.com')
 
