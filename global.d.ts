@@ -444,6 +444,13 @@ interface QPixel {
   validatePost?: (postText: string) => [boolean, PostValidatorMessage[]];
 
   /**
+   * Wrapper around {@link fetch} to ensure credentials, CSRF token, and X-Requested-With are always sent
+   * @param uri target URI of the request
+   * @param options options to pass to {@link fetch}
+   */
+  fetch?: (uri: string | URL, options?: RequestInit) => Promise<Response>
+
+  /**
    * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
    * @param uri The URI to which to send the request.
    * @param data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
@@ -455,7 +462,6 @@ interface QPixel {
   /**
    * @param uri The URI to which to send the request.
    * @param options An optional {@link RequestInit} to override the defaults provided by {@link fetchJSON}
-   * @returns 
    */
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 

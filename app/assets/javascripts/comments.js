@@ -188,13 +188,8 @@ $(() => {
     const threadId = $tgt.data('thread');
     const $modal = $($tgt.data('modal'));
 
-    const resp = await fetch(`/comments/thread/${threadId}/followers`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Accept': 'text/html',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+    const resp = await QPixel.fetch(`/comments/thread/${threadId}/followers`, {
+      headers: { 'Accept': 'text/html' }
     });
 
     const data = await resp.text();

@@ -130,12 +130,8 @@ window.QPixel = {
       return QPixel._pendingUserResponse;
     }
 
-    const myselfPromise = fetch('/users/me', {
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+    const myselfPromise = QPixel.fetch('/users/me', {
+      headers: { 'Accept': 'application/json' }
     });
 
     QPixel._pendingUserResponse = myselfPromise;
@@ -329,29 +325,38 @@ window.QPixel = {
     return [currentSequence, posInSeq];
   },
 
-  fetchJSON: async (uri, data, options) => {
+  fetch: async (uri, init) => {
     const defaultHeaders = {
       'X-CSRF-Token': QPixel.csrfToken(),
-      // this is necessary for request.xhr?
+      // X-Requested-With is necessary for request.xhr? to work
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',
     };
 
-    const { headers = {}, ...otherOptions } = options ?? {};
+    const { headers = {}, ...restInit } = init ?? {};
 
+        /** @type {RequestInit} */
+        const requestInit = {
+          headers: {
+            ...defaultHeaders,
+            ...headers,
+          },
+          credentials: 'include',
+          ...restInit,
+        };
+
+    return fetch(uri, requestInit);
+  },
+
+  fetchJSON: async (uri, data, options = {}) => {
     /** @type {RequestInit} */
     const requestInit = {
       method: 'POST',
-      headers: {
-        ...defaultHeaders,
-        ...headers,
-      },
-      credentials: 'include',
-      body: otherOptions.method === 'GET' ? void 0 : JSON.stringify(data),
-      ...otherOptions,
+      body: options.method === 'GET' ? void 0 : JSON.stringify(data),
+      ...options,
     };
 
-    return fetch(uri, requestInit);
+    return QPixel.fetch(uri, requestInit);
   },
 
   getJSON: async (uri, options = {}) => {
@@ -384,11 +389,8 @@ window.QPixel = {
     url.searchParams.append('inline', `${inline}`);
     url.searchParams.append('show_deleted_comments', `${showDeleted ? 1 : 0}`);
 
-    const resp = await fetch(url.toString(), {
-      headers: {
-        'Accept': 'text/html',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+    const resp = await QPixel.fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
     });
 
     const content = await resp.text();
@@ -399,11 +401,8 @@ window.QPixel = {
   getThreadsListContent: async (id) => {
     const url = new URL(`/comments/post/${id}`, window.location.origin);
 
-    const resp = await fetch(url.toString(), {
-      headers: {
-        'Accept': 'text/html',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+    const resp = await QPixel.fetch(url.toString(), {
+      headers: { 'Accept': 'text/html' }
     });
 
     const content = await resp.text();
