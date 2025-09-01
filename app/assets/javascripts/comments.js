@@ -179,6 +179,8 @@ $(() => {
     });
   });
 
+  QPixel.DOM?.watchClass('.js-thread-actions.is-active', (target) => target.querySelector('a')?.focus());
+
   $(document).on('click', '.js--show-followers', async (evt) => {
     evt.preventDefault();
 

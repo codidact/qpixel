@@ -122,4 +122,12 @@ class PostTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'closeable? should correctly determine if the post can be closed' do
+    post_types.each do |post_type|
+      Post.where(post_type: post_type).each do |post|
+        assert_equal post.closeable?, post_type.is_closeable
+      end
+    end
+  end
 end

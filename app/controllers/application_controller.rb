@@ -259,6 +259,10 @@ class ApplicationController < ActionController::Base
             .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
       end
     end
+
+    # eager loading revived collections' used relation to prevent N+1 queries
+    @pinned_links = @pinned_links.list_includes
+    @hot_questions = @hot_questions.list_includes
   end
 
   def pull_categories

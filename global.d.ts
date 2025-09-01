@@ -23,6 +23,8 @@ interface DelegatedListener {
   callback: EventListener;
 }
 
+type ClassWatcherCallback = (element: HTMLElement) => void;
+
 interface QPixelDOM {
   // private properties
   _delegatedListeners?: DelegatedListener[];
@@ -60,6 +62,12 @@ interface QPixelDOM {
    * @param visible Whether or not the elements should be visible.
    */
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
+  /**
+   * Registers a callback to run on class list change
+   * @param selector CSS selector to watch for
+   * @param callback callback to call on match
+   */
+  watchClass?: (selector: string, callback: ClassWatcherCallback) => void;
 }
 
 interface StripMarkdownOptions {
@@ -75,6 +83,40 @@ interface QPixelMD {
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
   stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+}
+
+interface QPixelStorageGetOptions {
+  /**
+   * Whether the value is supposed to be parsed after retrieval
+   */
+  parse?: boolean
+}
+
+interface QPixelStorage {
+  /**
+   * Storage prefix to avoid collisions
+   */
+  readonly prefix: string
+  /**
+   * Gets a value from storage by a given key
+   * @param key key to get a value by
+   * @param options optional configuration
+   */
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: true }): object | null;
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: false }): string | null;
+  get(key: string): string | null;
+  get(key: string, options?: QPixelStorageGetOptions): unknown;
+  /**
+   * Removes a value from storage by a given key
+   * @param key key to remove a value by
+   */
+  remove(key: string): this
+  /**
+   * Saves a given value to storage under a given key
+   * @param key key to save the value under
+   * @param value value to save (objects will be serialized)
+   */
+  set(key: string, value: unknown): this
 }
 
 type QPixelKeyboardState =
@@ -169,6 +211,53 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFlag = {
+  exclude_tags: [string, number][]
+  include_tags: [string, number][]
+  max_answers: number | null
+  max_score: number | null
+  min_answers: number | null
+  min_score: number | null
+  status: 'any' | 'closed' | 'open'
+  system: boolean
+}
+
+type QPixelSuggestedEditActionResult = {
+  message?: string
+  redirect_url?: string
+  status: 'success' | 'error'
+}
+
+type QPixelTag = {
+  community_id: number
+  created_at: string
+  excerpt: string
+  id: number
+  name: string
+  parent_id: number | null
+  tag_set_id: number
+  tag_synonyms: QPixelTagSynonym[]
+  updated_at: string
+  wiki: string | null
+  wiki_markdown: string
+}
+
+type QPixelTagSynonym = {
+  name: string
+}
+
+type QPixelUser = {
+  id: number
+  is_standard: boolean
+  is_moderator: boolean
+  is_admin: boolean
+  is_global_moderator: boolean
+  is_global_admin: boolean
+  se_acct_id: string | null
+  trust_level: number
+  username: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -202,12 +291,23 @@ type QPixelPostType = {
  }
 
 interface QPixel {
+  // constants
+
+  /**
+   * List of HTML tags allowed in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_TAGS?: readonly string[]
+  /**
+   * List of attributes allowed on HTML tags in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_ATTRS?: readonly string[]
+
   // private properties
-  _filters?: Filter[] | null;
+  _filters?: QPixelFlag[] | null;
   _pendingUserResponse?: Promise<Response> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
-  _user?: User | null;
+  _user?: QPixelUser | null;
 
   // private methods
 
@@ -217,7 +317,7 @@ interface QPixel {
   _cachedFetchPreferences?: () => Promise<void>;
 
   /**
-   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
+   * Update local variable _preferences and storage with an AJAX call for the user preferences
    */
   _fetchPreferences?: () => Promise<void>;
 
@@ -228,19 +328,19 @@ interface QPixel {
 
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
-   * {@link localStorage}, or Redis via AJAX.
+   * {@link QPixelStorage}, or Redis via AJAX.
    * @returns user preferences or `null` on failure
    */
   _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
-   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
-   * @returns string the localStorage key
+   * Get the key to use for storing user preferences in storage, to avoid conflating users
+   * @returns string the storage key
    */
   _preferencesLocalStorageKey?: () => string;
 
   /**
-   * Set local variable _preferences and localStorage to new preferences data
+   * Set local variable _preferences and storage to new preferences data
    * @param data an object, containing the new preferences data
    */
   _updatePreferencesLocally?: (data: UserPreferences) => void;
@@ -297,7 +397,7 @@ interface QPixel {
    */
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
-  filters?: () => Promise<Record<string, Filter>>;
+  filters?: () => Promise<Record<string, QPixelFlag>>;
 
   /**
    * Get the absolute offset of an element.
@@ -320,13 +420,13 @@ interface QPixel {
    * @param text the text with which to replace the selection
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-  setFilter?: (name: string, filter: Filter, category: string, isDefault: boolean) => Promise<void>;
+  setFilter?: (name: string, filter: QPixelFlag, category: string, isDefault: boolean) => Promise<void>;
   setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
 
   /**
    * Set a user preference by name to the value provided.
    * @param name the name of the preference to set
-   * @param value the value to set to - must respond to toString() for {@link localStorage} and Redis
+   * @param value the value to set to - must respond to toString() for {@link QPixelStorage} and Redis
    * @param community is this preference community-local (true), or network-wide (false)?
    */
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;
@@ -335,7 +435,7 @@ interface QPixel {
    * Get the user object for the current user.
    * @returns JSON object containing user details
    */
-  user?: () => Promise<User>;
+  user?: () => Promise<QPixelUser>;
 
   /**
    * Internal. Called just before a post is sent to the server to validate that it passes
@@ -445,6 +545,8 @@ interface QPixel {
   MD?: QPixelMD;
   // qpixel popups
   Popup?: typeof QPixelPopup;
+  // qpixel storage management
+  Storage?: QPixelStorage;
   // Stripe integration, TODO: types
   stripe?: any;
 }
