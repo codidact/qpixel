@@ -7,6 +7,7 @@ main:
     - <%= Article.post_type_id %>
   tag_set: main
   license: cc_by_sa
+  sequence: 1
 
 meta:
   community: sample
@@ -16,6 +17,7 @@ meta:
     - <%= Question.post_type_id %>
   tag_set: meta
   license: cc_by_sa
+  sequence: 2
 
 high_trust:
   community: sample
@@ -26,6 +28,7 @@ high_trust:
   tag_set: main
   min_trust_level: 3
   license: cc_by_sa
+  sequence: 3
 
 admin_only:
   community: sample
@@ -37,6 +40,7 @@ admin_only:
   min_trust_level: 5
   min_view_trust_level: 5
   license: cc_by_sa
+  sequence: 99
 
 articles_only:
   community: sample
