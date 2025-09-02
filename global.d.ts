@@ -258,6 +258,16 @@ type QPixelUser = {
   username: string
 }
 
+type QPixelDraft = {
+  body: string
+  comment?: string
+  excerpt?: string
+  license?: string
+  tag_name?: string
+  tags?: string[]
+  title?: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -269,6 +279,26 @@ interface GetThreadContentOptions {
   inline?: boolean,
   showDeleted?: boolean
 }
+
+type QPixelPostType = {
+  id: number
+  name: string
+  description: string | null
+  has_answers: boolean
+  has_votes: boolean
+  has_tags: boolean
+  has_parent: boolean
+  has_category: boolean
+  has_license: boolean
+  is_public_editable: boolean
+  is_closeable: boolean
+  is_top_level: boolean
+  is_freely_editable: boolean
+  icon_name: string | null
+  has_reactions: boolean
+  answer_type_id: number | null
+  has_only_specific_reactions: boolean
+ }
 
 interface QPixel {
   // constants
@@ -424,6 +454,13 @@ interface QPixel {
   validatePost?: (postText: string) => [boolean, PostValidatorMessage[]];
 
   /**
+   * Wrapper around {@link fetch} to ensure credentials, CSRF token, and X-Requested-With are always sent
+   * @param uri target URI of the request
+   * @param options options to pass to {@link fetch}
+   */
+  fetch?: (uri: string | URL, options?: RequestInit) => Promise<Response>
+
+  /**
    * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
    * @param uri The URI to which to send the request.
    * @param data An object containing data to send as the request body. Must be acceptable by JSON.stringify.
@@ -435,7 +472,6 @@ interface QPixel {
   /**
    * @param uri The URI to which to send the request.
    * @param options An optional {@link RequestInit} to override the defaults provided by {@link fetchJSON}
-   * @returns 
    */
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
@@ -460,13 +496,13 @@ interface QPixel {
 
   /**
    * Processes JSON responses from QPixel API
-   * @param data 
+   * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
                                                       onSuccess: (data: T) => void,
-                                                      onFinally?: (data: T) => void) => void
+                                                      onFinally?: (data: T) => void) => boolean
 
   /**
    * Attempts to delete a comment
@@ -481,6 +517,19 @@ interface QPixel {
    * @returns result of the operation
    */
   followComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to delete a given post draft
+   * @returns result of the operation
+   */
+  deleteDraft?: () => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to save a post draft
+   * @param draft draft to save
+   * @returns result of the operation
+   */
+  saveDraft?: (draft: QPixelDraft) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to undelete a comment
