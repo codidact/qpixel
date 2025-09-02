@@ -414,7 +414,7 @@ window.QPixel = {
     const is_success = data.status === 'success';
 
     if (is_success) {
-      onSuccess(data);
+      onSuccess(/** @type {Extract<typeof data, { status: 'success' }>} */(data));
     }
     else {
       QPixel.createNotification('danger', data.message);
@@ -503,6 +503,14 @@ window.QPixel = {
     const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name }, {
       headers: { 'Accept': 'application/json' }
     });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  retractVote: async (id) => {
+    const resp = await QPixel.fetchJSON(`/votes/${id}`, {}, { method: 'DELETE' });
 
     const data = await resp.json();
 

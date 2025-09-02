@@ -190,11 +190,28 @@ declare class QPixelPopup {
   updatePosition: () => void;
 }
 
-type QPixelResponseJSON = {
-  status: 'success' | 'failed',
-  message?: string,
+type QPixelBaseResponseJSON = {
+  status: 'success' | 'failed'
+  message?: string
+}
+
+type QPixelSuccessResponseJSON = QPixelBaseResponseJSON & {
+  status: 'success'
+}
+
+type QPixelFailedResponseJSON = QPixelBaseResponseJSON & {
   errors?: string[]
 }
+
+type QPixelResponseJSON<
+  Success extends QPixelSuccessResponseJSON = QPixelSuccessResponseJSON
+> = Success | QPixelFailedResponseJSON
+
+type QPixelRetractVoteResponseJSON = QPixelResponseJSON<QPixelSuccessResponseJSON & {
+  score: number
+  downvotes: number
+  upvotes: number
+}>
 
 type QPixelComment = {
   id: number
@@ -501,7 +518,7 @@ interface QPixel {
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
-                                                      onSuccess: (data: T) => void,
+                                                      onSuccess: (data: Extract<T , { status: 'success' }>) => void,
                                                       onFinally?: (data: T) => void) => boolean
 
   /**
@@ -560,6 +577,13 @@ interface QPixel {
    * @returns result of the operation
    */
   renameTag?: (categoryId: string, tagId: string, name: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to retract a vote
+   * @param id id of the vote to retract
+   * @returns result of the operation
+   */
+  retractVote?: (id: string) => Promise<QPixelRetractVoteResponseJSON>
 
   /**
    * Attempts to raise a flag
