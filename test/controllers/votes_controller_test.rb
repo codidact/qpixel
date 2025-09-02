@@ -64,9 +64,7 @@ class VotesControllerTest < ActionController::TestCase
 
     delete :destroy, params: { id: votes(:one).id }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should prevent users removing others votes' do
