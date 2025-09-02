@@ -136,6 +136,15 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_json_success
+    assert_response(:success)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal 'success', parsed['status']
+    end
+  end
+
   def assert_json_response_message(expected)
     assert_equal expected, JSON.parse(response.body)['message']
   end
