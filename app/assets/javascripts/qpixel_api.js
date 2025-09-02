@@ -239,12 +239,6 @@ window.QPixel = {
     return data.name;
   },
 
-  setFilterAsDefault: async (categoryId, name) => {
-    await QPixel.fetchJSON(`/categories/${categoryId}/filters/default`, { name }, {
-      headers: { 'Accept': 'application/json' }
-    });
-  },
-
   setFilter: async (name, filter, category, isDefault) => {
     const resp = await QPixel.fetchJSON('/users/me/filters',
       Object.assign(filter, {name, category, is_default: isDefault}), {

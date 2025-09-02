@@ -461,7 +461,6 @@ interface QPixel {
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
   setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
-  setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
 
   /**
    * Set a user preference by name to the value provided.
