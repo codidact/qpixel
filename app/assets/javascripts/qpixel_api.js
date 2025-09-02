@@ -266,16 +266,13 @@ window.QPixel = {
       method: 'DELETE'
     });
 
-    const data = await resp.json();
+    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to delete filter');
 
-    if (data.status !== 'success') {
-      console.error(`Filter deletion failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       this._filters = data.filters;
       QPixel.Storage?.set('user_filters', this._filters);
-    }
+    });
   },
 
   _preferencesLocalStorageKey: () => {
