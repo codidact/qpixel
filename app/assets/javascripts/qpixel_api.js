@@ -206,7 +206,8 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
+    /** @type {QPixelResponseJSON<{ preferences: UserPreferences }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to save preference');
 
     QPixel.handleJSONResponse(data, (data) => {
       QPixel._updatePreferencesLocally(data.preferences);
