@@ -13,22 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (voted) {
       const voteId = $tgt.attr('data-vote-id');
 
-      const resp = await QPixel.fetchJSON(`/votes/${voteId}`, {}, { method: 'DELETE' });
+      const data = await QPixel.retractVote(voteId);
 
-      const data = await resp.json();
-
-      if (data.status === 'OK') {
+      QPixel.handleJSONResponse(data, (data) => {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
         $container.attr("title", `Score: ${data.score}`);
         $tgt.removeClass('is-active')
             .removeAttr('data-vote-id');
-      }
-      else {
-        console.error('Vote delete failed');
-        console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`);
-      }
+      });
     }
     else {
       const resp = await QPixel.fetchJSON('/votes/new', {
