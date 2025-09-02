@@ -258,6 +258,16 @@ type QPixelUser = {
   username: string
 }
 
+type QPixelDraft = {
+  body: string
+  comment?: string
+  excerpt?: string
+  license?: string
+  tag_name?: string
+  tags?: string[]
+  title?: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -486,13 +496,13 @@ interface QPixel {
 
   /**
    * Processes JSON responses from QPixel API
-   * @param data 
+   * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
                                                       onSuccess: (data: T) => void,
-                                                      onFinally?: (data: T) => void) => void
+                                                      onFinally?: (data: T) => void) => boolean
 
   /**
    * Attempts to delete a comment
@@ -507,6 +517,19 @@ interface QPixel {
    * @returns result of the operation
    */
   followComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to delete a given post draft
+   * @returns result of the operation
+   */
+  deleteDraft?: () => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to save a post draft
+   * @param draft draft to save
+   * @returns result of the operation
+   */
+  saveDraft?: (draft: QPixelDraft) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to undelete a comment

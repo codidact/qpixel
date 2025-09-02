@@ -411,7 +411,9 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
-    if (data.status === 'success') {
+    const is_success = data.status === 'success';
+
+    if (is_success) {
       onSuccess(data);
     }
     else {
@@ -419,6 +421,8 @@ window.QPixel = {
     }
 
     onFinally?.(data);
+
+    return is_success;
   },
 
   flag: async (flag) => {
@@ -444,6 +448,18 @@ window.QPixel = {
 
   followComments: async (postId) => {
     const resp = await QPixel.fetchJSON(`/comments/post/${postId}/follow`, {}, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  deleteDraft: async () => {
+    const resp = await QPixel.fetchJSON(`/posts/delete-draft`, {
+      path: location.pathname
+    }, {
       headers: { 'Accept': 'application/json' }
     });
 
@@ -491,5 +507,16 @@ window.QPixel = {
     const data = await resp.json();
 
     return data;
-  }
+  },
+
+  saveDraft: async (draft) => {
+    const resp = await QPixel.fetchJSON('/posts/save-draft', {
+      ...draft,
+      path: location.pathname
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
 };

@@ -117,51 +117,91 @@ $(() => {
   });
 
   /**
-   * @typedef {{
-   *  body: string
-   *  comment?: string
-   *  excerpt?: string
-   *  license?: string
-   *  tag_name?: string
-   *  tags?: string[]
-   *  title?: string
-   * }} PostDraft
-   * 
+   * Temporarily displays the draft's status with a given message
+   * @param {JQuery<Element>} $field draftable field
+   * @param {string} message draft status message
+   * @returns {void}
+   */
+  const flashDraftStatus = ($field, message) => {
+    const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+
+    $statusEl.text(message);
+    $statusEl.removeClass('transparent');
+
+    setTimeout(() => {
+      $statusEl.addClass('transparent');
+    }, 1500);
+  };
+
+  /**
+   * Removes the "draft loaded" notice from the page
+   * @returns {void}
+   */
+  const removeDraftLoadedNotice = () => {
+    document.querySelector('.js-draft-notice')?.remove();
+  };
+
+  /**
    * Attempts to save a post draft
-   * @param {PostDraft} draft post draft
-   * @param {JQuery<Element>} $field body input element
+   * @param {QPixelDraft} draft post draft
+   * @param {JQuery<Element>} $field draftable field
    * @param {boolean} [manual] whether manual draft saving is enabled
    * @returns {Promise<void>}
    */
   const saveDraft = async (draft, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
+
     if (autosavePref !== 'on' && !manual) {
       return;
     }
 
-    const resp = await QPixel.fetchJSON('/posts/save-draft', { ...draft, path: location.pathname });
+    const data = await QPixel.saveDraft(draft);
 
-    if (resp.status === 200) {
-      const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+    QPixel.handleJSONResponse(data, () => {
+      flashDraftStatus($field, 'draft saved');
+    });
+  };
 
-      $statusEl.removeClass('transparent');
+  /**
+   * Attempts to remove a post draft
+   * @param {JQuery<Element>} $field draftable field
+   * @returns {Promise<boolean>}
+   */
+  const deleteDraft = async ($field) => {
+    const data = await QPixel.deleteDraft();
 
-      setTimeout(() => {
-        $statusEl.addClass('transparent');
-      }, 1500);
-    }
+    return QPixel.handleJSONResponse(data, () => {
+      flashDraftStatus($field, 'draft deleted');
+      removeDraftLoadedNotice();
+    });
+  }
+
+  /**
+   * Helper for getting draft-related elements from a given event target
+   * @param {EventTarget} target post field or one of the draft buttons
+   * @returns {{
+   *  $form: JQuery<HTMLFormElement>,
+   *  $field: JQuery<HTMLElement>
+   * }}
+   */
+  const getDraftElements = (target) => {
+    const $tgt = $(target);
+    const $form = $tgt.parents('form');
+    const $field = $form.find('.js-post-field');
+    return { $form, $field };
   };
 
   /**
    * Extracts draft info from a given target
-   * @param {EventTarget} target post input field or "save draft" button
-   * @returns {{ draft: PostDraft, field: any }}
+   * @param {EventTarget} target post field or one of the draft buttons
+   * @returns {{
+   *  draft: QPixelDraft,
+   *  $field: JQuery<HTMLElement>
+   * }}
    */
   const parseDraft = (target) => {
-    const $tgt = $(target);
-    const $form = $tgt.parents('form');
+    const { $field: $bodyField, $form } = getDraftElements(target);
 
-    const $bodyField = $form.find('.js-post-field');
     const $licenseField = $form.find('.js-license-select');
     const $excerptField = $form.find('.js-tag-excerpt');
     
@@ -178,7 +218,7 @@ $(() => {
     const titleText = $titleField.val()?.toString();
     const tagName = $tagNameField.val()?.toString();
 
-    /** @type {PostDraft} */
+    /** @type {QPixelDraft} */
     const draft = {
       body: bodyText,
       comment: commentText,
@@ -189,12 +229,17 @@ $(() => {
       title: titleText,
     };
 
-    return { draft, field: $bodyField };
+    return { draft, $field: $bodyField };
   };
 
+  $('.js-delete-draft').on('click', async (ev) => {
+    const { $field } = getDraftElements(ev.target);
+    await deleteDraft($field);
+  });
+
   $('.js-save-draft').on('click', async (ev) => {
-    const { draft, field } = parseDraft(ev.target);
-    await saveDraft(draft, field, true);
+    const { draft, $field } = parseDraft(ev.target);
+    await saveDraft(draft, $field, true);
   });
 
   let featureTimeout = null;
@@ -215,8 +260,8 @@ $(() => {
   $(draftFieldsSelectors.join(', ')).on('keyup change', (ev) => {
     clearTimeout(draftTimeout);
     draftTimeout = setTimeout(() => {
-      const { draft, field } = parseDraft(ev.target);
-      saveDraft(draft, field);
+      const { draft, $field } = parseDraft(ev.target);
+      saveDraft(draft, $field);
     }, 1000);
   });
 
@@ -299,7 +344,7 @@ $(() => {
 
   $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
-    const field = $tgt.find('.post-field');
+    const $field = $tgt.find('.js-post-field');
 
     const draftDeleted = $tgt.attr('data-draft-deleted') === 'true';
     const isValidated = $tgt.attr('data-validated') === 'true';
@@ -307,12 +352,14 @@ $(() => {
     if (draftDeleted && isValidated) {
       return;
     }
+
     ev.preventDefault();
 
     // Draft handling
     if (!draftDeleted) {
-      const resp = await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
-      if (resp.status === 200) {
+      const status = await deleteDraft($field);
+
+      if (status) {
         $tgt.attr('data-draft-deleted', 'true');
 
         if (isValidated) {
@@ -320,14 +367,14 @@ $(() => {
         }
       }
       else {
-        QPixel.createNotification('danger', `Failed to delete post draft. (${resp.status})`);
+        QPixel.createNotification('danger', `Failed to delete post draft. (${status})`);
       }
     }
 
 
     // Validation
     if (!isValidated) {
-      const text = $(field).val()?.toString();
+      const text = $field.val()?.toString();
       const validated = QPixel.validatePost(text);
       if (validated[0] === true) {
         $tgt.attr('data-validated', 'true');
@@ -369,7 +416,7 @@ $(() => {
   });
 
   $('.js-draft-loaded').each((_i, e) => {
-    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption js-draft-notice">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You had edited this before but haven't saved it. We loaded the edits for you.
     </div>`);
@@ -456,7 +503,9 @@ $(() => {
       return;
     }
 
-    await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
+    const { $field } = getDraftElements(ev.target);
+
+    await deleteDraft($field);
 
     location.href = $btn.attr('href');
   });
