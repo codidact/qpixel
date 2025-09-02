@@ -256,9 +256,9 @@ class ApplicationController < ActionController::Base
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
             .where.not(id: pinned_post_ids)
-            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
+            .limit(SiteSetting['HotQuestionsCount'])
       end
-    end
+    end.order('score DESC')
 
     # eager loading revived collections' used relation to prevent N+1 queries
     @pinned_links = @pinned_links.list_includes
@@ -267,8 +267,8 @@ class ApplicationController < ActionController::Base
 
   def pull_categories
     @header_categories = Rails.cache.fetch_collection('header_categories') do
-      Category.all.order(sequence: :asc, id: :asc)
-    end
+      Category.all
+    end.order(sequence: :asc, id: :asc)
   end
 
   def check_if_warning_or_suspension_pending

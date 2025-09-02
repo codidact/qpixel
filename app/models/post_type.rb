@@ -15,8 +15,8 @@ class PostType < ApplicationRecord
         ReactionType.active.where(post_type: self)
       else
         ReactionType.active.where(post_type: self).or(ReactionType.active.where(post_type: nil))
-      end.order(position: :asc).all
-    end
+      end
+    end.order(position: :asc)
   end
 
   # @return [Boolean] whether the post type is a system type
