@@ -1,4 +1,4 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   $(document).on('click', '.vote-button', async (evt) => {
     const $tgt = $(evt.target).is('button') ? $(evt.target) : $(evt.target).parents('button');
     const $post = $tgt.parents('.post');
