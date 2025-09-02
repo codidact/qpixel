@@ -6,9 +6,16 @@
   characteristics. Review the list and place a tick against those that are spam, then click Handle to block and delete.
 </p>
 
-<div class="button-list is-gutterless">
-  <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="all">Tick all</button>
-  <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
+<div class="flex-row space-between">
+  <div class="button-list is-gutterless">
+    <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="all">Tick all</button>
+    <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
+  </div>
+  <div class="button-list is-gutterless">
+    <%= link_to '24 hours', query_url(period: 'day'), class: 'button is-muted is-outlined' %>
+    <%= link_to '7 days', query_url(period: 'week'), class: 'button is-muted is-outlined' %>
+    <%= link_to '30 days', query_url(period: 'month'), class: 'button is-muted is-outlined' %>
+  </div>
 </div>
 
 <%= form_tag mod_handle_spammers_path, method: :post, class: 'js-spammer-form' do %>
