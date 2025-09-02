@@ -110,7 +110,7 @@ window.QPixel = {
   },
 
   /**
-   * @type {QPixelFlag[]|null}
+   * @type {QPixelFilter[]|null}
    */
   _filters: null,
 
@@ -250,16 +250,14 @@ window.QPixel = {
       Object.assign(filter, {name, category, is_default: isDefault}), {
         headers: { 'Accept': 'application/json' }
       });
+
+    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to save filter');
     
-    const data = await resp.json();
-    if (data.status !== 'success') {
-      console.error(`Filter persist failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       this._filters = data.filters;
       QPixel.Storage?.set('user_filters', this._filters);
-    }
+    });
   },
 
   deleteFilter: async (name, system = false) => {

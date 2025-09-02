@@ -241,7 +241,7 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
-type QPixelFlag = {
+type QPixelFilter = {
   exclude_tags: [string, number][]
   include_tags: [string, number][]
   max_answers: number | null
@@ -343,7 +343,7 @@ interface QPixel {
   readonly ALLOWED_POST_ATTRS?: readonly string[]
 
   // private properties
-  _filters?: QPixelFlag[] | null;
+  _filters?: QPixelFilter[] | null;
   _pendingUserResponse?: Promise<Response> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
@@ -437,7 +437,7 @@ interface QPixel {
    */
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
-  filters?: () => Promise<Record<string, QPixelFlag>>;
+  filters?: () => Promise<Record<string, QPixelFilter>>;
 
   /**
    * Get the absolute offset of an element.
@@ -460,7 +460,7 @@ interface QPixel {
    * @param text the text with which to replace the selection
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-  setFilter?: (name: string, filter: QPixelFlag, category: string, isDefault: boolean) => Promise<void>;
+  setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
   setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
 
   /**
