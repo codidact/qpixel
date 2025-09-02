@@ -525,6 +525,13 @@ interface QPixel {
   getThreadsListContent?: (id: string) => Promise<string>
 
   /**
+   * Safely parses a JSON response from QPixel API
+   * @param response API response to parse
+   * @param errorMessage error to set on failure to parse
+   */
+  parseJSONResponse?: <T extends QPixelResponseJSON>(response: Response, errorMessage: string) => Promise<T>
+
+  /**
    * Processes JSON responses from QPixel API
    * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests

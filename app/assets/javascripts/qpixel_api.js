@@ -410,6 +410,24 @@ window.QPixel = {
     return content;
   },
 
+  parseJSONResponse: async (response, errorMessage) => {
+    try {
+      const data = await response.json();
+
+      return data;
+    }
+    catch (error) {
+      if (response.ok) {
+        console.error(error);
+      }
+
+      return {
+        status: 'failed',
+        message: errorMessage
+      };
+    }
+  },
+
   handleJSONResponse: (data, onSuccess, onFinally) => {
     const is_modified = data.status === 'modified';
     const is_success = data.status === 'success';
@@ -431,9 +449,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to flag');
   },
 
   vote: async (postId, voteType) => {
@@ -442,9 +458,7 @@ window.QPixel = {
       vote_type: voteType
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to vote');
   },
 
   deleteComment: async (id) => {
@@ -453,9 +467,7 @@ window.QPixel = {
       method: 'DELETE'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to delete comment');
   },
 
   followComments: async (postId) => {
@@ -463,9 +475,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to follow post comments');
   },
 
   deleteDraft: async () => {
@@ -475,9 +485,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to delete post draft');
   },
 
   undeleteComment: async (id) => {
@@ -486,9 +494,7 @@ window.QPixel = {
       method: 'PATCH'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to undelete comment');
   },
 
   unfollowComments: async (postId) => {
@@ -496,9 +502,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to unfollow post comments');
   },
 
   lockThread: async (id) => {
@@ -506,9 +510,7 @@ window.QPixel = {
       type: 'lock'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to lock thread');
   },
 
   renameTag: async (categoryId, tagId, name) => {
@@ -516,17 +518,13 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to rename tag');
   },
 
   retractVote: async (id) => {
     const resp = await QPixel.fetchJSON(`/votes/${id}`, {}, { method: 'DELETE' });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to retract vote');
   },
 
   saveDraft: async (draft) => {
@@ -535,8 +533,6 @@ window.QPixel = {
       path: location.pathname
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to save draft');
   },
 };
