@@ -18,6 +18,9 @@ class Tag < ApplicationRecord
   validate :synonym_unique
   validates :name, uniqueness: { scope: [:tag_set_id], case_sensitive: false }
 
+  # Fuzzy-searches tags by name, excerpt, and synonym name
+  # @param term [String] search term
+  # @return [ActiveRecord::Relation<Tag>]
   def self.search(term)
     value = "%#{sanitize_sql_like(term.strip)}%"
 
