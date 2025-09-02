@@ -411,10 +411,11 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
+    const is_modified = data.status === 'modified';
     const is_success = data.status === 'success';
 
-    if (is_success) {
-      onSuccess(/** @type {Extract<typeof data, { status: 'success' }>} */(data));
+    if (is_modified || is_success) {
+      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
     }
     else {
       QPixel.createNotification('danger', data.message);
@@ -428,6 +429,17 @@ window.QPixel = {
   flag: async (flag) => {
     const resp = await QPixel.fetchJSON(`/flags/new`, { ...flag }, {
       headers: { 'Accept': 'application/json' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
+  vote: async (postId, voteType) => {
+    const resp = await QPixel.fetchJSON('/votes/new', {
+      post_id: postId,
+      vote_type: voteType
     });
 
     const data = await resp.json();

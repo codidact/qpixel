@@ -190,13 +190,19 @@ declare class QPixelPopup {
   updatePosition: () => void;
 }
 
+type QPixelSuccessResponseStatusJSON = 'success' | 'modified'
+
+type QPixelFailedResponseStatusJSON = 'failed'
+
+type QPixelResponseStatusJSON = QPixelSuccessResponseStatusJSON | QPixelFailedResponseStatusJSON
+
 type QPixelBaseResponseJSON = {
-  status: 'success' | 'failed'
+  status: QPixelResponseStatusJSON
   message?: string
 }
 
 type QPixelSuccessResponseJSON = QPixelBaseResponseJSON & {
-  status: 'success'
+  status: QPixelSuccessResponseStatusJSON
 }
 
 type QPixelFailedResponseJSON = QPixelBaseResponseJSON & {
@@ -204,10 +210,17 @@ type QPixelFailedResponseJSON = QPixelBaseResponseJSON & {
 }
 
 type QPixelResponseJSON<
-  Success extends QPixelSuccessResponseJSON = QPixelSuccessResponseJSON
-> = Success | QPixelFailedResponseJSON
+  Success extends object = object
+> = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
 
-type QPixelRetractVoteResponseJSON = QPixelResponseJSON<QPixelSuccessResponseJSON & {
+type QPixelVoteResponseJSON = QPixelResponseJSON<{
+  vote_id: number
+  upvotes: number
+  downvotes: number
+  score: number
+}>
+
+type QPixelRetractVoteResponseJSON = QPixelResponseJSON<{
   score: number
   downvotes: number
   upvotes: number
@@ -518,7 +531,7 @@ interface QPixel {
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
-                                                      onSuccess: (data: Extract<T , { status: 'success' }>) => void,
+                                                      onSuccess: (data: Extract<T, QPixelSuccessResponseJSON>) => void,
                                                       onFinally?: (data: T) => void) => boolean
 
   /**
@@ -591,6 +604,14 @@ interface QPixel {
    * @returns result of the operation
    */
   flag?: (flag: QPixelFlagData) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to vote on a given post
+   * @param postId id of the post to vote on
+   * @param voteType type of the vote
+   * @returns result of the operation
+   */
+  vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;
