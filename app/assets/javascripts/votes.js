@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const $up = $container.find('.js-upvote-count');
     const $down = $container.find('.js-downvote-count');
+    const postId = $post.data('post-id');
     const voteType = $tgt.data('vote-type');
     const voted = $tgt.hasClass('is-active');
 
@@ -24,14 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     else {
-      const resp = await QPixel.fetchJSON('/votes/new', {
-        post_id: $post.data('post-id'),
-        vote_type: voteType
-      });
+      const data = await QPixel.vote(postId, voteType);
 
-      const data = await resp.json();
-
-      if (data.status === 'modified' || data.status === 'OK') {
+      QPixel.handleJSONResponse(data, (data) => {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
         $container.attr("title", `Score: ${data.score}`);
@@ -43,12 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
           $oppositeVote.removeClass('is-active')
                        .removeAttr('data-vote-id');
         }
-      }
-      else {
-        console.error('Vote create failed');
-        console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`);
-      }
+      });
     }
   });
 });
