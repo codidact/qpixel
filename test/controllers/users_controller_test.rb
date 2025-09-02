@@ -507,6 +507,15 @@ class UsersControllerTest < ActionController::TestCase
     assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
   end
 
+  test 'set_filter should correctly save valid filters' do
+    sign_in users(:standard_user)
+
+    [false, true].each do |is_default|
+      try_save_filter(is_default: is_default)
+      assert_json_success
+    end
+  end
+
   test 'set_preference should correclty save valid preferences' do
     sign_in users(:standard_user)
 
@@ -552,6 +561,11 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_save_filter(**opts)
+    filter = { name: 'test filter' }.merge(opts)
+    post :set_filter, params: filter.merge({ format: :json })
   end
 
   def try_save_preference(name, value, community: nil)
