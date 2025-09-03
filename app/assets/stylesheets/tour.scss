@@ -19,7 +19,9 @@
 }
 
 @media (max-width: 768px) {
-  .tour-editor-wrapper {
+
+  .tour-editor-wrapper,
+  .tour-post-wrapper {
     order: 2;
   }
 
