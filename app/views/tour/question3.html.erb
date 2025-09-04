@@ -304,16 +304,7 @@
 
       <%= render 'tour/hints/q3_step2' %>
       <%= render 'tour/hints/q3_step3' %>
-
-      <%= render(layout: 'hint_widget', locals: { classes: "step-4 hide" }) do %>
-        <% content_for :body, flush: true do %>
-          <p>Thanks.</p>
-          <p>Let's wait for other answers, which might produce different solutions.</p>
-        <% end %>
-        <% content_for :footer, flush: true do %>
-          <button class="button js-tour-skip-wait" data-timeout="bad-answer">Skip the wait</button>
-        <% end %>
-      <% end %>
+      <%= render 'tour/hints/q3_step4' %>
 
       <%= render(layout: 'hint_widget', locals: { classes: "step-5 hide" }) do %>
         <% content_for :body, flush: true do %>
