@@ -44,6 +44,15 @@ $(() => {
         }, 8000);
     }
 
+    $(document).on('click', '.js-tour-scroll-to-post', (ev) => {
+        /** @type {string} */
+        const selector = $(ev.target).data('selector');
+
+        if (selector) {
+          document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
     $("[data-step-from][data-step-to]").click((e) => {
         const $this = $(e.target);
         $($this.attr("data-step-from")).toggleClass("hide");
