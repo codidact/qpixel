@@ -39,11 +39,11 @@ const tour = {
         
         window.setTimeout(() => {
             $(".js-answer-counter").text("1 answer");
-            $(".js-bad-answer").addClass("deleted-content");
+            $(".js-bad-answer > .post--container").addClass("deleted-content");
         }, 4000);
 
         window.setTimeout(() => {
-            $(".js-bad-answer").addClass("hide");
+            $(".js-bad-answer > .post--container").addClass("hide");
         }, 6000);
     }
 }
