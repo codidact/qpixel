@@ -61,8 +61,8 @@ $(() => {
                 break;
             case 'first-answer':
                 $('.js-good-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
-                $('.step-2').toggleClass('hide');
-                $('.step-3').toggleClass('hide');
+                $('.step-2').addClass('hide');
+                $('.step-3').removeClass('hide');
                 break;
         }
     });
