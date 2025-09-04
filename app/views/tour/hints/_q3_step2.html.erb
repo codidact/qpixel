@@ -1,0 +1,11 @@
+<%= render(layout: 'tour/hint_widget', locals: { classes: "step-2 hide" }) do %>
+  <% content_for :body, flush: true do %>
+    <p>Ooh. Nice. There is an answer to your question.</p>
+    <p>Read through it and consider whether it helps you solve your problem.
+      Try out the solution if it's practical.</p>
+  <% end %>
+  <% content_for :footer, flush: true do %>
+    <button class="button js-tour-scroll-to-post" data-post="first-answer">Go to answer</button>
+    <button class="button is-filled" data-step-from=".step-2" data-step-to=".step-3">Next</button>
+  <% end %>
+<% end %>
