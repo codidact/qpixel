@@ -293,15 +293,7 @@
   </div>
   <div class="grid--cell is-4-lg is-12-md is-12-sm tour-hints-wrapper">
     <div class="codidactyl-hints codidactyl-sticky">
-      <%= render(layout: 'hint_widget', locals: { classes: "step-1" }) do %>
-        <% content_for :body, flush: true do %>
-          <p>This is your post. We are currently waiting for other people to see and answer it.</p>
-        <% end %>
-        <% content_for :footer, flush: true do %>
-          <button class="button js-tour-skip-wait" data-timeout="first-answer">Skip the wait</button>
-        <% end %>
-      <% end %>
-
+      <%= render 'tour/hints/q3_step1' %>
       <%= render 'tour/hints/q3_step2' %>
       <%= render 'tour/hints/q3_step3' %>
       <%= render 'tour/hints/q3_step4' %>
