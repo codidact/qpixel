@@ -2,7 +2,7 @@ const tour = {
     badAnswerTimeout: null,
     firstAnswerTimeout: null,
 
-    firstAnswer: function (scrollIntoView = false) {
+    firstAnswer: function () {
         $(".js-good-answer").removeClass("hide");
         $(".js-answer-counter").text("1 answer");
         $(".step-1").addClass("hide");
@@ -20,11 +20,15 @@ const tour = {
             tour.badAnswerTimeout = null;
         }, 4000);
     },
-    secondAnswer: function () {
+    secondAnswer: function (scrollIntoView = false) {
         $(".js-bad-answer").removeClass("hide");
         $(".js-answer-counter").text("2 answers");
         $(".step-4").addClass("hide");
         $(".step-5").removeClass("hide");
+
+        if (scrollIntoView) {
+            $(".js-bad-answer").get(0)?.scrollIntoView({ behavior: 'smooth' });
+        }
     },
     secondAnswerFlag: function () {
         $(".step-5").addClass("hide");
@@ -74,7 +78,7 @@ $(() => {
             case 'bad-answer':
                 clearTimeout(tour.badAnswerTimeout);
                 tour.badAnswerTimeout = null;
-                tour.secondAnswer();
+                tour.secondAnswer(true);
                 break;
             case 'first-answer':
                 clearTimeout(tour.firstAnswerTimeout);
