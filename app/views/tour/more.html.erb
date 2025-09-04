@@ -30,8 +30,8 @@
         <% @header_categories.each do |cat| %>
           <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
           <tr>
-              <td class="h-fw-bold"><%= cat.name %></td>
-              <td><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
+              <td class="h-fw-bold wrap-word"><%= cat.name %></td>
+              <td class="wrap-word"><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
           </tr>
         <% end %>
         </table>
