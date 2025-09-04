@@ -1,0 +1,11 @@
+<%= render(layout: 'tour/hint_widget', locals: { classes: "step-5 hide" }) do %>
+  <% content_for :body, flush: true do %>
+    <p>Oh. A second answer.</p>
+    <p>Unfortunately, it doesn't seem to be nice. It isn't helpful to the question and quite snarky.</p>
+    <p>We expect users to stay civil and to follow our minimal <a href="/policy/code-of-conduct">code of conduct</a>.</p>
+    <p>This answer should therefore be deleted. <em>Flag</em> it, so that one of our moderators can see and handle it.</p>
+  <% end %>
+  <% content_for :footer, flush: true do %>
+    <button class="button js-tour-scroll-to-post" data-post="bad-answer">Go to answer</button>
+  <% end %>
+<% end %>
