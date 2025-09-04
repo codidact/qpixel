@@ -60,9 +60,9 @@ $(() => {
                 $('.js-bad-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
                 break;
             case 'first-answer':
-                $('.js-good-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
-                $('.step-2').addClass('hide');
                 $('.step-3').removeClass('hide');
+                $('.step-2').addClass('hide');
+                $('.js-good-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
                 break;
         }
     });
