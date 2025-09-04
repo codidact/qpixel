@@ -28,8 +28,9 @@ const tour = {
     secondAnswerFlag: function () {
         $(".step-5").addClass("hide");
         $(".step-6").removeClass("hide");
-        $(".tour-flag-success").removeClass("hide");
         $(".js-flag-box").addClass("hide");
+
+        QPixel.createNotification('success', "Thanks for your report. We'll look into it.");
         
         window.setTimeout(() => {
             $(".js-answer-counter").text("1 answer");
