@@ -363,20 +363,18 @@
         <% end %>
       <% end %>
 
-      <div class="widget step-6 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
+      <%= render(layout: 'hint_widget', locals: { classes: "step-6 hide" }) do %>
+        <% content_for :body, flush: true do %>
           <p>Thanks for flagging it.</p>
           <p>A moderator will look at it and will likely remove the answer.</p>
-          <p>Flagging is important to help maintain the site. If you see something rude, flag it. Inappropriate content will get deleted, but somebody has to know about it first -- so flag to let moderators know. If you see anything else that doesn't look quite right, flag it and let us know about it.</p>
-        </div>
-        <div class="widget--footer">
+          <p>Flagging is important to help maintain the site. If you see something rude, flag it.
+            Inappropriate content will be deleted, but we have to know about it &mdash; flag to let moderators know.
+            If you see anything else that doesn't look quite right, flag it and let us know about it.</p>
+        <% end %>
+        <% content_for :footer, flush: true do %>
           <a href="/tour/more" class="button is-filled">Find out more</a>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>
