@@ -1,5 +1,6 @@
 const tour = {
     badAnswerTimeout: null,
+    firstAnswerTimeout: null,
 
     firstAnswer: function () {
         $(".js-good-answer").removeClass("hide");
@@ -43,7 +44,7 @@ const tour = {
 
 $(() => {
     if ($(".js-tour-trigger-qa-page").length) {
-        window.setTimeout(() => {
+        tour.firstAnswerTimeout = window.setTimeout(() => {
             tour.firstAnswer();
         }, 8000);
     }
@@ -64,6 +65,9 @@ $(() => {
             case 'bad-answer':
                 clearTimeout(tour.badAnswerTimeout);
                 tour.secondAnswer();
+            case 'first-answer':
+                clearTimeout(tour.firstAnswerTimeout);
+                tour.firstAnswer();
         }
     });
 
