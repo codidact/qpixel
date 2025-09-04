@@ -48,7 +48,7 @@ const tour = {
     }
 }
 
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
     if ($(".js-tour-trigger-qa-page").length) {
         tour.firstAnswerTimeout = window.setTimeout(() => {
             tour.firstAnswer();
