@@ -2,7 +2,7 @@ const tour = {
     badAnswerTimeout: null,
     firstAnswerTimeout: null,
 
-    firstAnswer: function () {
+    firstAnswer: function (scrollIntoView = false) {
         $(".js-good-answer").removeClass("hide");
         $(".js-answer-counter").text("1 answer");
         $(".step-1").addClass("hide");
@@ -84,9 +84,12 @@ $(() => {
         }
     });
 
-    $("[data-step-from][data-step-to]").click((e) => {
+    $("[data-step-from][data-step-to]").on('click', (e) => {
         const $this = $(e.target);
-        $($this.attr("data-step-from")).toggleClass("hide");
-        $($this.attr("data-step-to")).toggleClass("hide");
+        const $from = $($this.attr("data-step-from"));
+        const $to = $($this.attr("data-step-to"));
+        $from.toggleClass("hide");
+        $to.toggleClass("hide");
+        $to.get(0)?.scrollIntoView({ behavior: 'smooth' });
     });
 });
