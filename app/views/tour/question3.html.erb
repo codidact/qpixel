@@ -85,22 +85,21 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a class="tools--item" href="#">
-                <i class="fa fa-pencil-alt"></i>
-                Edit
-              </a> <a href="#" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a class="tools--item" href="#">
+                  <i class="fa fa-pencil-alt"></i>
+                  Edit
+                </a> <a href="#" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
 
@@ -170,19 +169,18 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a href="#" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a href="#" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
 
@@ -245,22 +243,20 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a href="#!" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a href="#!" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
-
 
             <div class="post--action-dialog js-flag-box">
               <div class="widget">
@@ -314,19 +310,16 @@
         </div>
       </div>
 
-      <div class="widget step-2 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
+      <%= render(layout: 'hint_widget', locals: { classes: "step-2 hide" }) do %>
+        <% content_for :body do %>
           <p>Ooh. Nice. There is an answer to your question.</p>
-          <p>Read through it and consider whether it helps you solve your problem. Try out the solution if it's practical.</p>
-        </div>
-        <div class="widget--footer">
+          <p>Read through it and consider whether it helps you solve your problem.
+            Try out the solution if it's practical.</p>
+        <% end %>
+        <% content_for :footer do %>
           <button class="button is-filled" data-step-from=".step-2" data-step-to=".step-3">Next</button>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
 
       <div class="widget step-3 hide">
         <div class="widget--header">
@@ -338,8 +331,8 @@
           <p>To show other users reading this answer, that you found it helpful (and also as a way to say "thanks" to the answerer), you can <em>upvote</em> it.</p>
           <p>Voting also helps good content be more visible. Good answers are promoted to the top, while bad ones sink to the bottom. Please help curate the community by voting responsibly.</p>
           <p>Do so by clicking the <svg class="h-c-tertiary-400" width="2em" height="1.33em" viewbox="0 0 100 50">
-            <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-          </svg> icon next to the post. After you vote, the tour will continue.</p>
+              <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+            </svg> icon next to the post. After you vote, the tour will continue.</p>
         </div>
         <div class="widget--footer">
           <button class="button"  data-step-from=".step-2" data-step-to=".step-3">Back</button>
