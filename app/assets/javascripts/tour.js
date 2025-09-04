@@ -17,6 +17,7 @@ const tour = {
 
         tour.badAnswerTimeout = window.setTimeout(() => {
             tour.secondAnswer();
+            tour.badAnswerTimeout = null;
         }, 4000);
     },
     secondAnswer: function () {
@@ -47,6 +48,7 @@ $(() => {
     if ($(".js-tour-trigger-qa-page").length) {
         tour.firstAnswerTimeout = window.setTimeout(() => {
             tour.firstAnswer();
+            tour.firstAnswerTimeout = null;
         }, 8000);
     }
 
@@ -71,10 +73,12 @@ $(() => {
         switch (timeout) {
             case 'bad-answer':
                 clearTimeout(tour.badAnswerTimeout);
+                tour.badAnswerTimeout = null;
                 tour.secondAnswer();
                 break;
             case 'first-answer':
                 clearTimeout(tour.firstAnswerTimeout);
+                tour.firstAnswerTimeout = null;
                 tour.firstAnswer();
                 break;
         }
