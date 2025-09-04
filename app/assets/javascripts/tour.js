@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('[data-step-from][data-step-to]').on('click', (e) => {
-    const $this = $(e.target);
-    const $from = $($this.attr('data-step-from'));
-    const $to = $($this.attr('data-step-to'));
+    const $tgt = $(e.target);
+    const $from = $($tgt.data('step-from'));
+    const $to = $($tgt.data('step-to'));
     $from.toggleClass('hide');
     $to.toggleClass('hide');
     $to.get(0)?.scrollIntoView({ behavior: 'smooth' });
