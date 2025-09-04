@@ -50,11 +50,17 @@ $(() => {
     }
 
     $(document).on('click', '.js-tour-scroll-to-post', (ev) => {
-        /** @type {string} */
-        const selector = $(ev.target).data('selector');
+        const post = $(ev.target).data('post');
 
-        if (selector) {
-          document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
+        switch (post) {
+            case 'bad-answer':
+                $('.js-bad-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
+                break;
+            case 'first-answer':
+                $('.js-good-answer').get(0)?.scrollIntoView({ behavior: 'smooth' });
+                $('.step-2').toggleClass('hide');
+                $('.step-3').toggleClass('hide');
+                break;
         }
     });
 
@@ -65,9 +71,11 @@ $(() => {
             case 'bad-answer':
                 clearTimeout(tour.badAnswerTimeout);
                 tour.secondAnswer();
+                break;
             case 'first-answer':
                 clearTimeout(tour.firstAnswerTimeout);
                 tour.firstAnswer();
+                break;
         }
     });
 
