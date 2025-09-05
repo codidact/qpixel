@@ -110,7 +110,7 @@ window.QPixel = {
   },
 
   /**
-   * @type {QPixelFlag[]|null}
+   * @type {QPixelFilter[]|null}
    */
   _filters: null,
 
@@ -206,7 +206,8 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
+    /** @type {QPixelResponseJSON<{ preferences: UserPreferences }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to save preference');
 
     QPixel.handleJSONResponse(data, (data) => {
       QPixel._updatePreferencesLocally(data.preferences);
@@ -239,27 +240,19 @@ window.QPixel = {
     return data.name;
   },
 
-  setFilterAsDefault: async (categoryId, name) => {
-    await QPixel.fetchJSON(`/categories/${categoryId}/filters/default`, { name }, {
-      headers: { 'Accept': 'application/json' }
-    });
-  },
-
   setFilter: async (name, filter, category, isDefault) => {
     const resp = await QPixel.fetchJSON('/users/me/filters',
       Object.assign(filter, {name, category, is_default: isDefault}), {
         headers: { 'Accept': 'application/json' }
       });
+
+    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to save filter');
     
-    const data = await resp.json();
-    if (data.status !== 'success') {
-      console.error(`Filter persist failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       this._filters = data.filters;
       QPixel.Storage?.set('user_filters', this._filters);
-    }
+    });
   },
 
   deleteFilter: async (name, system = false) => {
@@ -268,16 +261,13 @@ window.QPixel = {
       method: 'DELETE'
     });
 
-    const data = await resp.json();
+    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    const data = await QPixel.parseJSONResponse(resp, 'Failed to delete filter');
 
-    if (data.status !== 'success') {
-      console.error(`Filter deletion failed (${name})`);
-      console.error(resp);
-    }
-    else {
+    QPixel.handleJSONResponse(data, (data) => {
       this._filters = data.filters;
       QPixel.Storage?.set('user_filters', this._filters);
-    }
+    });
   },
 
   _preferencesLocalStorageKey: () => {
@@ -410,11 +400,30 @@ window.QPixel = {
     return content;
   },
 
+  parseJSONResponse: async (response, errorMessage) => {
+    try {
+      const data = await response.json();
+
+      return data;
+    }
+    catch (error) {
+      if (response.ok) {
+        console.error(error);
+      }
+
+      return {
+        status: 'failed',
+        message: errorMessage
+      };
+    }
+  },
+
   handleJSONResponse: (data, onSuccess, onFinally) => {
+    const is_modified = data.status === 'modified';
     const is_success = data.status === 'success';
 
-    if (is_success) {
-      onSuccess(data);
+    if (is_modified || is_success) {
+      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
     }
     else {
       QPixel.createNotification('danger', data.message);
@@ -430,9 +439,16 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
+    return QPixel.parseJSONResponse(resp, 'Failed to flag');
+  },
 
-    return data;
+  vote: async (postId, voteType) => {
+    const resp = await QPixel.fetchJSON('/votes/new', {
+      post_id: postId,
+      vote_type: voteType
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to vote');
   },
 
   deleteComment: async (id) => {
@@ -441,9 +457,7 @@ window.QPixel = {
       method: 'DELETE'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to delete comment');
   },
 
   followComments: async (postId) => {
@@ -451,9 +465,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to follow post comments');
   },
 
   deleteDraft: async () => {
@@ -463,9 +475,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to delete post draft');
   },
 
   undeleteComment: async (id) => {
@@ -474,9 +484,7 @@ window.QPixel = {
       method: 'PATCH'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to undelete comment');
   },
 
   unfollowComments: async (postId) => {
@@ -484,9 +492,7 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to unfollow post comments');
   },
 
   lockThread: async (id) => {
@@ -494,9 +500,7 @@ window.QPixel = {
       type: 'lock'
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to lock thread');
   },
 
   renameTag: async (categoryId, tagId, name) => {
@@ -504,9 +508,13 @@ window.QPixel = {
       headers: { 'Accept': 'application/json' }
     });
 
-    const data = await resp.json();
+    return QPixel.parseJSONResponse(resp, 'Failed to rename tag');
+  },
 
-    return data;
+  retractVote: async (id) => {
+    const resp = await QPixel.fetchJSON(`/votes/${id}`, {}, { method: 'DELETE' });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to retract vote');
   },
 
   saveDraft: async (draft) => {
@@ -515,8 +523,6 @@ window.QPixel = {
       path: location.pathname
     });
 
-    const data = await resp.json();
-
-    return data;
+    return QPixel.parseJSONResponse(resp, 'Failed to save draft');
   },
 };

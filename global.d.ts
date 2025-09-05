@@ -190,11 +190,41 @@ declare class QPixelPopup {
   updatePosition: () => void;
 }
 
-type QPixelResponseJSON = {
-  status: 'success' | 'failed',
-  message?: string,
+type QPixelSuccessResponseStatusJSON = 'success' | 'modified'
+
+type QPixelFailedResponseStatusJSON = 'failed'
+
+type QPixelResponseStatusJSON = QPixelSuccessResponseStatusJSON | QPixelFailedResponseStatusJSON
+
+type QPixelBaseResponseJSON = {
+  status: QPixelResponseStatusJSON
+  message?: string
+}
+
+type QPixelSuccessResponseJSON = QPixelBaseResponseJSON & {
+  status: QPixelSuccessResponseStatusJSON
+}
+
+type QPixelFailedResponseJSON = QPixelBaseResponseJSON & {
   errors?: string[]
 }
+
+type QPixelResponseJSON<
+  Success extends object = object
+> = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
+
+type QPixelVoteResponseJSON = QPixelResponseJSON<{
+  vote_id: number
+  upvotes: number
+  downvotes: number
+  score: number
+}>
+
+type QPixelRetractVoteResponseJSON = QPixelResponseJSON<{
+  score: number
+  downvotes: number
+  upvotes: number
+}>
 
 type QPixelComment = {
   id: number
@@ -211,7 +241,7 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
-type QPixelFlag = {
+type QPixelFilter = {
   exclude_tags: [string, number][]
   include_tags: [string, number][]
   max_answers: number | null
@@ -313,7 +343,7 @@ interface QPixel {
   readonly ALLOWED_POST_ATTRS?: readonly string[]
 
   // private properties
-  _filters?: QPixelFlag[] | null;
+  _filters?: QPixelFilter[] | null;
   _pendingUserResponse?: Promise<Response> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
@@ -407,7 +437,7 @@ interface QPixel {
    */
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
-  filters?: () => Promise<Record<string, QPixelFlag>>;
+  filters?: () => Promise<Record<string, QPixelFilter>>;
 
   /**
    * Get the absolute offset of an element.
@@ -430,8 +460,7 @@ interface QPixel {
    * @param text the text with which to replace the selection
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-  setFilter?: (name: string, filter: QPixelFlag, category: string, isDefault: boolean) => Promise<void>;
-  setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
+  setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
 
   /**
    * Set a user preference by name to the value provided.
@@ -495,13 +524,20 @@ interface QPixel {
   getThreadsListContent?: (id: string) => Promise<string>
 
   /**
+   * Safely parses a JSON response from QPixel API
+   * @param response API response to parse
+   * @param errorMessage error to set on failure to parse
+   */
+  parseJSONResponse?: <T extends QPixelResponseJSON>(response: Response, errorMessage: string) => Promise<T>
+
+  /**
    * Processes JSON responses from QPixel API
    * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
-                                                      onSuccess: (data: T) => void,
+                                                      onSuccess: (data: Extract<T, QPixelSuccessResponseJSON>) => void,
                                                       onFinally?: (data: T) => void) => boolean
 
   /**
@@ -562,11 +598,26 @@ interface QPixel {
   renameTag?: (categoryId: string, tagId: string, name: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to retract a vote
+   * @param id id of the vote to retract
+   * @returns result of the operation
+   */
+  retractVote?: (id: string) => Promise<QPixelRetractVoteResponseJSON>
+
+  /**
    * Attempts to raise a flag
    * @param flag new flag data
    * @returns result of the operation
    */
   flag?: (flag: QPixelFlagData) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to vote on a given post
+   * @param postId id of the post to vote on
+   * @param voteType type of the vote
+   * @returns result of the operation
+   */
+  vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;

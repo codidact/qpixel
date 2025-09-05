@@ -21,6 +21,9 @@ $(() => {
     return template;
   };
 
+  /**
+   * @param {number} change 
+   */
   const changeInboxCount = (change) => {
     const counter = $('.inbox-count');
     let count;
