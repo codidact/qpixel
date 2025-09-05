@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_10_133540) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_05_231140) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -175,6 +175,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_10_133540) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
+    t.datetime "locked_at", precision: nil
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
