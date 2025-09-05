@@ -1,12 +1,14 @@
 <%#
-  Helper for rendering comment thread lock action modal
+   "Helper for rendering comment thread lock action modal
 
-  Variables:
-    thread : Comment thread to create the modal for
-%>
+    Variables:
+      thread : Comment thread to create the modal for
+"%>
 
 <div class="modal is-with-backdrop is-small js--lock-thread-<%= thread.id %>">
-  <%= form_tag restrict_comment_thread_path(thread.id), class: 'modal--container' do %>
+  <%= form_tag restrict_comment_thread_path(thread.id),
+               class: 'modal--container',
+               data: { thread: thread.id } do %>
     <%= hidden_field_tag :type, 'lock' %>
     <div class="modal--header">
       <button type="button"

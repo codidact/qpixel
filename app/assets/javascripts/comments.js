@@ -197,7 +197,7 @@ $(() => {
     $modal.find('.js-follower-display').html(data);
   });
 
-  $(document).on('click', '[class*=js--lock-thread] form', async (evt) => {
+  $(document).on('submit', '[class*=js--lock-thread] form', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
