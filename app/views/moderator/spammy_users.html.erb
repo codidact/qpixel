@@ -12,9 +12,15 @@
     <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
   </div>
   <div class="button-list is-gutterless">
-    <%= link_to '24 hours', query_url(period: 'day'), class: 'button is-muted is-outlined' %>
-    <%= link_to '7 days', query_url(period: 'week'), class: 'button is-muted is-outlined' %>
-    <%= link_to '30 days', query_url(period: 'month'), class: 'button is-muted is-outlined' %>
+    <%= link_to '24 hours',
+                query_url(period: 'day'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period] == 'day'}" %>
+    <%= link_to '7 days',
+                query_url(period: 'week'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period] == 'week'}" %>
+    <%= link_to '30 days',
+                query_url(period: 'month'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period].blank? || params[:period] == 'month'}" %>
   </div>
 </div>
 
