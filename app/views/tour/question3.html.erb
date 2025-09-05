@@ -18,7 +18,7 @@
 <hr>
 
 <div class="grid">
-  <div class="grid--cell is-8">
+  <div class="grid--cell is-8-lg is-12-md is-12-sm tour-post-wrapper">
     <div class="post">
       <h1
         class="post--title has-margin-top-0 has-padding-2">
@@ -85,22 +85,21 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a class="tools--item" href="#">
-                <i class="fa fa-pencil-alt"></i>
-                Edit
-              </a> <a href="#" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a class="tools--item" href="#">
+                  <i class="fa fa-pencil-alt"></i>
+                  Edit
+                </a> <a href="#" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
 
@@ -124,6 +123,11 @@
     <h2 class="js-answer-counter">0 answers</h2>
 
     <div class="post hide js-good-answer" id="good-answer">
+      <div class="codidactyl-hints tour-narrow-only">
+        <%= render 'tour/hints/q3_step3' %>
+        <%= render 'tour/hints/q3_step4' %>
+      </div>
+
       <div class="post--container grid is-nowrap">
         <div>
           <div class="post--votes has-text-align-center" title="0.5">
@@ -170,19 +174,18 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a href="#" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a href="#" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
 
@@ -202,7 +205,13 @@
         </div>
       </div>
     </div>
+
     <div class="post hide js-bad-answer" id="bad-answer">
+      <div class="codidactyl-hints tour-narrow-only">
+        <%= render 'tour/hints/q3_step5' %>
+        <%= render 'tour/hints/q3_step6' %>
+      </div>
+
       <div class="post--container grid is-nowrap">
         <div>
           <div class="post--votes has-text-align-center" title="0.5">
@@ -245,22 +254,20 @@
             </div>
             <div class="has-clear-clear"></div>
 
-
             <div class="post--actions">
               <div class="tools">
                 <a class="tools--item" href="#">
                   <i class="fa fa-link"></i>
                   Permalink
                 </a> <a class="tools--item" href="#">
-                <i class="fa fa-history"></i>
-                History
-              </a> <a href="#!" class="flag-dialog-link tools--item">
-                <i class="fa fa-flag"></i>
-                Flag
-              </a>
+                  <i class="fa fa-history"></i>
+                  History
+                </a> <a href="#!" class="flag-dialog-link tools--item">
+                  <i class="fa fa-flag"></i>
+                  Flag
+                </a>
               </div>
             </div>
-
 
             <div class="post--action-dialog js-flag-box">
               <div class="widget">
@@ -275,13 +282,6 @@
                     Flag for moderator attention
                   </button>
                 </div>
-              </div>
-            </div>
-
-            <div class="tour-flag-success hide">
-              <div class="notice is-success">
-                <button class="button is-close-button" data-dismiss=".tour-flag-success" data-dismiss-soft>&times;</button>
-                <p>Thanks for your report. We'll look into it.</p>
               </div>
             </div>
 
@@ -302,87 +302,15 @@
       </div>
     </div>
   </div>
-  <div class="grid--cell is-4">
+  <div class="grid--cell is-4-lg is-12-md is-12-sm tour-hints-wrapper">
     <div class="codidactyl-hints codidactyl-sticky">
-      <div class="widget step-1">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>This is your post. We are currently waiting for other people to see and answer it.</p>
-        </div>
-      </div>
-
-      <div class="widget step-2 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>Ooh. Nice. There is an answer to your question.</p>
-          <p>Read through it and consider whether it helps you solve your problem. Try out the solution if it's practical.</p>
-        </div>
-        <div class="widget--footer">
-          <button class="button is-filled" data-step-from=".step-2" data-step-to=".step-3">Next</button>
-        </div>
-      </div>
-
-      <div class="widget step-3 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>This answer looks helpful.</p>
-          <p>To show other users reading this answer, that you found it helpful (and also as a way to say "thanks" to the answerer), you can <em>upvote</em> it.</p>
-          <p>Voting also helps good content be more visible. Good answers are promoted to the top, while bad ones sink to the bottom. Please help curate the community by voting responsibly.</p>
-          <p>Do so by clicking the <svg class="h-c-tertiary-400" width="2em" height="1.33em" viewbox="0 0 100 50">
-            <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-          </svg> icon next to the post. After you vote, the tour will continue.</p>
-        </div>
-        <div class="widget--footer">
-          <button class="button"  data-step-from=".step-2" data-step-to=".step-3">Back</button>
-        </div>
-      </div>
-
-      <div class="widget step-4 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>Thanks.</p>
-          <p>Let's wait for other answers, which might produce different solutions.</p>
-        </div>
-      </div>
-
-      <div class="widget step-5 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>Oh. A second answer.</p>
-          <p>Unfortunately, it doesn't seem to be nice. It isn't helpful to the question and quite snarky.</p>
-          <p>We expect users to stay civil and to follow our minimal <a href="/policy/code-of-conduct">code of conduct</a>.</p>
-          <p>This answer should therefore be deleted. <em>Flag</em> it, so that one of our moderators can see and handle it.</p>
-        </div>
-      </div>
-
-      <div class="widget step-6 hide">
-        <div class="widget--header">
-          <img src="/assets/codidactyl.png" alt="" class="codidactyl-small">
-          Codidactyl's Hints
-        </div>
-        <div class="widget--body">
-          <p>Thanks for flagging it.</p>
-          <p>A moderator will look at it and will likely remove the answer.</p>
-          <p>Flagging is important to help maintain the site. If you see something rude, flag it. Inappropriate content will get deleted, but somebody has to know about it first -- so flag to let moderators know. If you see anything else that doesn't look quite right, flag it and let us know about it.</p>
-        </div>
-        <div class="widget--footer">
-          <a href="/tour/more" class="button is-filled">Find out more</a>
-        </div>
+      <%= render 'tour/hints/q3_step1' %>
+      <%= render 'tour/hints/q3_step2' %>
+      <div class="tour-wide-only">
+        <%= render 'tour/hints/q3_step3' %>
+        <%= render 'tour/hints/q3_step4' %>
+        <%= render 'tour/hints/q3_step5' %>
+        <%= render 'tour/hints/q3_step6' %>
       </div>
     </div>
   </div>
