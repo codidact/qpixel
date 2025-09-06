@@ -41,6 +41,6 @@ helpful_flag_scorer:
   reason: For abilities!
   post: question_one (Post)
   post_flag_type: not_confidential
-  user: partial_flag_scorer
+  user: flag_scorer
   community: sample
   status: helpful

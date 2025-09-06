@@ -15,15 +15,15 @@ d_eo:
   ability: everyone
 
 pe_eo:
-  community_user: sample_partial_edit_scorer
+  community_user: sample_edit_scorer
   ability: everyone
 
 pf_eo:
-  community_user: sample_partial_flag_scorer
+  community_user: sample_flag_scorer
   ability: everyone
 
 pp_eo:
-  community_user: sample_partial_post_scorer
+  community_user: sample_post_scorer
   ability: everyone
 
 stu_ur:
@@ -43,15 +43,15 @@ d_ur:
   ability: unrestricted
 
 pe_ur:
-  community_user: sample_partial_edit_scorer
+  community_user: sample_edit_scorer
   ability: unrestricted
 
 pf_ur:
-  community_user: sample_partial_flag_scorer
+  community_user: sample_flag_scorer
   ability: unrestricted
 
 pp_ur:
-  community_user: sample_partial_post_scorer
+  community_user: sample_post_scorer
   ability: unrestricted
 
 c_fc:

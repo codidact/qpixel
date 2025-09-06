@@ -106,22 +106,22 @@ sample_spammer:
   is_moderator: false
   reputation: 1
 
-sample_partial_edit_scorer:
-  user: partial_edit_scorer
+sample_edit_scorer:
+  user: edit_scorer
   community: sample
   is_admin: false
   is_moderator: false
   reputation: 1
 
-sample_partial_flag_scorer:
-  user: partial_flag_scorer
+sample_flag_scorer:
+  user: flag_scorer
   community: sample
   is_admin: false
   is_moderator: false
   reputation: 1
 
-sample_partial_post_scorer:
-  user: partial_post_scorer
+sample_post_scorer:
+  user: post_scorer
   community: sample
   is_admin: false
   is_moderator: false

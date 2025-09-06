@@ -491,7 +491,7 @@ post_scorer_question:
   tags:
     - post
   score: 0.7
-  user: partial_post_scorer
+  user: post_scorer
   community: sample
   category: main
   license: cc_by_sa

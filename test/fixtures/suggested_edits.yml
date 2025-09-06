@@ -75,7 +75,7 @@ pending_high_trust:
 
 approved_edit_scorer:
   post: question_one
-  user: partial_edit_scorer
+  user: edit_scorer
   community: sample
   body: this is used to get consistent edit score for tests
   body_markdown: <p>this is used to get consistent edit score for tests</p>
