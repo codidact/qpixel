@@ -8,6 +8,18 @@ class Ability < ApplicationRecord
     post_score_threshold.nil? && edit_score_threshold.nil? && flag_score_threshold.nil?
   end
 
+  # Gets the edit score percent for a given user
+  # @param user [User, nil] user to get the percent for
+  # @return [Integer] edit score percent
+  def edit_score_percent_for(user)
+    return 0 if edit_score_threshold.nil? || user.nil?
+
+    linear_score = linearize_progress(user.community_user.edit_score)
+    linear_threshold = linearize_progress(edit_score_threshold)
+
+    (linear_score / linear_threshold * 100).to_i
+  end
+
   # Gets the post score percent for a given user
   # @param user [User, nil] user to get the percent for
   # @return [Integer] post score percent

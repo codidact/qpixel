@@ -74,7 +74,7 @@
           <% end %>
 
           <% unless @ability.edit_score_threshold.nil? %>
-            <% edit_score_percent = (linearize_progress(@user.community_user.edit_score) / linearize_progress(@ability.edit_score_threshold) * 100).to_i %>
+            <% edit_score_percent = @ability.edit_score_percent_for(@user) %>
 
             <p><strong>Edit score threshold</strong></p>
             <% if edit_score_percent < 100 %>
