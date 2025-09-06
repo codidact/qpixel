@@ -8,18 +8,32 @@
   width: 0;
 }
 
+.codidactyl-hints {
+  padding: 1rem;
+}
+
 .codidactyl-sticky {
   position: sticky;
   top: 0.5rem;
-  padding: 1rem;
 }
 
 .codidactyl-small {
   max-height: 1em;
 }
 
+@media (min-width: 769px) {
+  .tour-narrow-only {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
-  .tour-editor-wrapper {
+  .tour-wide-only {
+    display: none;
+  }
+
+  .tour-editor-wrapper,
+  .tour-post-wrapper {
     order: 2;
   }
 
