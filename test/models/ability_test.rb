@@ -1,7 +1,23 @@
 require 'test_helper'
 
 class AbilityTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test 'score_percent_for methods should return 0 for missing users' do
+    [:edit, :flag, :post].each do |type|
+      abilities.each do |ability|
+        assert_equal 0, ability.send("#{type}_score_percent_for", nil)
+      end
+    end
+  end
+
+  test 'score_percent_for methods should return 0 for unrelated abilities' do
+    std = users(:standard_user)
+
+    [:edit, :flag, :post].each do |type|
+      abilities.each do |ability|
+        next unless ability.send("#{type}_score_threshold").nil?
+
+        assert_equal 0, ability.send("#{type}_score_percent_for", std)
+      end
+    end
+  end
 end
