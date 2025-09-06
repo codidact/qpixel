@@ -13,6 +13,7 @@ class Ability < ApplicationRecord
   # @return [Integer] edit score percent
   def edit_score_percent_for(user)
     return 0 if edit_score_threshold.nil? || user.nil?
+    return 100 if edit_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.edit_score)
     linear_threshold = linearize_progress(edit_score_threshold)
@@ -25,6 +26,7 @@ class Ability < ApplicationRecord
   # @return [Integer] flag score percent
   def flag_score_percent_for(user)
     return 0 if flag_score_threshold.nil? || user.nil?
+    return 100 if flag_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.flag_score)
     linear_threshold = linearize_progress(flag_score_threshold)
@@ -37,6 +39,7 @@ class Ability < ApplicationRecord
   # @return [Integer] post score percent
   def post_score_percent_for(user)
     return 0 if post_score_threshold.nil? || user.nil?
+    return 100 if post_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.post_score)
     linear_threshold = linearize_progress(post_score_threshold)
