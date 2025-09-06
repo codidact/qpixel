@@ -14,6 +14,14 @@ d_eo:
   community_user: sample_deleter
   ability: everyone
 
+pe_eo:
+  community_user: sample_partial_edit_scorer
+  ability: everyone
+
+pf_eo:
+  community_user: sample_partial_flag_scorer
+  ability: everyone
+
 stu_ur:
   community_user: sample_standard_user
   ability: unrestricted
