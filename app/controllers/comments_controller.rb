@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/ClassLength
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
@@ -16,7 +15,7 @@ class CommentsController < ApplicationController
   before_action :check_restrict_access, only: [:thread_restrict]
   before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
-  before_action :check_if_target_post_locked, only: [:create, :post_follow]
+  before_action :check_if_target_post_locked, only: [:create, :create_thread]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
 
   def create_thread
@@ -46,12 +45,9 @@ class CommentsController < ApplicationController
 
     if success
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
-      unless @comment.post.user == current_user
-        @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
-      end
 
       ThreadFollower.where(post: @post).each do |tf|
-        unless tf.user == current_user || tf.user == @comment.post.user
+        unless tf.user == current_user
           tf.user.create_notification(notification, helpers.comment_link(@comment))
         end
         ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
@@ -253,8 +249,7 @@ class CommentsController < ApplicationController
       end
       @comment_thread.update(deleted: false, deleted_by: nil)
     when 'follow'
-      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf&.destroy
+      ThreadFollower.where(comment_thread: @comment_thread, user: current_user).destroy_all
     else
       return not_found!
     end
@@ -428,4 +423,3 @@ class CommentsController < ApplicationController
                              user: current_user)
   end
 end
-# rubocop:enable Metrics/ClassLength
