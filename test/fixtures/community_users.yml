@@ -119,3 +119,10 @@ sample_partial_flag_scorer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_partial_post_scorer:
+  user: partial_post_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

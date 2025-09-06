@@ -22,6 +22,10 @@ pf_eo:
   community_user: sample_partial_flag_scorer
   ability: everyone
 
+pp_eo:
+  community_user: sample_partial_post_scorer
+  ability: everyone
+
 stu_ur:
   community_user: sample_standard_user
   ability: unrestricted
@@ -44,6 +48,10 @@ pe_ur:
 
 pf_ur:
   community_user: sample_partial_flag_scorer
+  ability: unrestricted
+
+pp_ur:
+  community_user: sample_partial_post_scorer
   ability: unrestricted
 
 c_fc:

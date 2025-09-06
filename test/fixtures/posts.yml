@@ -480,3 +480,18 @@ question_without_votes:
   community: sample
   category: main
   license: cc_by_sa
+
+post_scorer_question:
+  post_type: question
+  title: This is a question for testing post scores
+  body: This post MUST be positively scored to count towards the score
+  body_markdown: <p>This post MUST be positively scored to count towards the score</p>
+  tags_cache:
+    - post
+  tags:
+    - post
+  score: 0.7
+  user: partial_post_scorer
+  community: sample
+  category: main
+  license: cc_by_sa
