@@ -32,4 +32,11 @@ class AbilityTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'edit_score_percent_for should correctly calculate percent for a given user' do
+    user = users(:partial_edit_scorer)
+    ability = abilities(:edit_posts)
+
+    assert_equal 2, ability.edit_score_percent_for(user)
+  end
 end

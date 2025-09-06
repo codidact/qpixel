@@ -105,3 +105,10 @@ sample_spammer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_partial_edit_scorer:
+  user: partial_edit_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

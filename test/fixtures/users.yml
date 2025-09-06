@@ -163,3 +163,10 @@ spammer:
   is_global_admin: false
   is_global_moderator: false
   confirmed_at: 2020-01-01T00:00:00.000000Z
+
+partial_edit_scorer:
+  email: partial-editor@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: partial_editor
+  confirmed_at: 2020-01-01T00:00:00.000000Z
