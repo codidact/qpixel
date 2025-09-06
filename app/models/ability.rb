@@ -1,10 +1,23 @@
 class Ability < ApplicationRecord
   include CommunityRelated
+  include AbilitiesHelper
 
   validates :internal_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   def manual?
     post_score_threshold.nil? && edit_score_threshold.nil? && flag_score_threshold.nil?
+  end
+
+  # Gets the post score percent for a given user
+  # @param user [User, nil] user to get the percent for
+  # @return [Integer] post score percent
+  def post_score_percent_for(user)
+    return 0 if post_score_threshold.nil? || user.nil?
+
+    linear_score = linearize_progress(user.community_user.post_score)
+    linear_threshold = linearize_progress(post_score_threshold)
+
+    (linear_score / linear_threshold * 100).to_i
   end
 
   def self.on_user(user)
