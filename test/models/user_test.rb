@@ -217,7 +217,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'ability_on? should return true for every undeleted user with profile on a community' do
+  test "ability_on? should correctly check the 'everyone' ability" do
     everyone = abilities(:everyone)
 
     communities.each do |community|
@@ -230,19 +230,26 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'ability_on? should correctly check for unrestricted ability' do
+  test "ability_on? should correctly check the 'unrestricted' ability" do
+    ability = abilities(:unrestricted)
     community = communities(:sample)
     basic = users(:basic_user)
     system = users(:system)
 
-    unrestricted = abilities(:unrestricted)
+    restricted_users = [basic, system]
 
-    [basic, system].each do |user|
-      assert_equal user.ability_on?(community.id, unrestricted.internal_id), false
+    restricted_users.each do |user|
+      assert_not user.ability_on?(community.id, ability.internal_id),
+                 "Expected user '#{user.name}' not to have the ability"
     end
 
-    CommunityUser.unscoped.undeleted.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
-      assert_equal cu.user.ability_on?(community.id, unrestricted.internal_id), !cu.user.deleted
+    users.each do |user|
+      next unless user.profile_on?(community.id) && !user.community_user.deleted?
+      next if restricted_users.any? { |u| u.same_as?(user) }
+
+      assert_equal user.ability_on?(community.id, ability.internal_id),
+                   !user.deleted?,
+                   "Expected user '#{user.name}' #{'not ' if user.deleted?}to have the ability"
     end
   end
 
