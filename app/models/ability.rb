@@ -20,6 +20,18 @@ class Ability < ApplicationRecord
     (linear_score / linear_threshold * 100).to_i
   end
 
+  # Gets the flag score percent for a given user
+  # @param user [User, nil] user to get the percent for
+  # @return [Integer] flag score percent
+  def flag_score_percent_for(user)
+    return 0 if flag_score_threshold.nil? || user.nil?
+
+    linear_score = linearize_progress(user.community_user.flag_score)
+    linear_threshold = linearize_progress(flag_score_threshold)
+
+    (linear_score / linear_threshold * 100).to_i
+  end
+
   # Gets the post score percent for a given user
   # @param user [User, nil] user to get the percent for
   # @return [Integer] post score percent

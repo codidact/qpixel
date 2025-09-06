@@ -93,7 +93,7 @@
           <% end %>
 
           <% unless @ability.flag_score_threshold.nil? %>
-            <% flag_score_percent = (linearize_progress(@user.community_user.flag_score) / linearize_progress(@ability.flag_score_threshold) * 100).to_i %>
+            <% flag_score_percent = @ability.flag_score_percent_for(@user) %>
 
             <p><strong>Flag score threshold</strong></p>
             <% if flag_score_percent < 100 %>
