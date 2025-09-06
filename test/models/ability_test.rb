@@ -39,4 +39,11 @@ class AbilityTest < ActiveSupport::TestCase
 
     assert_equal 2, ability.edit_score_percent_for(user)
   end
+
+  test 'flag_score_percent_for should correctly calculate percent for a given user' do
+    user = users(:partial_flag_scorer)
+    ability = abilities(:flag_curate)
+
+    assert_equal 6, ability.flag_score_percent_for(user)
+  end
 end

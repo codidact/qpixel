@@ -112,3 +112,10 @@ sample_partial_edit_scorer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_partial_flag_scorer:
+  user: partial_flag_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

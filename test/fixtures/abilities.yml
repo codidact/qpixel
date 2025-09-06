@@ -48,7 +48,7 @@ flag_curate:
   internal_id: flag_curate
   community: sample
   edit_score_threshold: ~
-  flag_score_threshold: 0.99
+  flag_score_threshold: 0.9
   post_score_threshold: 0.9
 
 mod:
