@@ -219,14 +219,28 @@ class CommentsController < ApplicationController
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
+  def lock_thread
+    lu = nil
+    unless params[:duration].blank?
+      lu = params[:duration].to_i.days.from_now
+    end
+
+    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu, title: 'a' * 258)
+
+    if status
+      render json: { status: 'success',
+                     thread: @comment_thread }
+    else
+      render json: { status: 'failed',
+                     message: @comment_thread.errors.full_messages.join(', ') },
+             status: :bad_request
+    end
+  end
+
   def thread_restrict
     case params[:type]
     when 'lock'
-      lu = nil
-      unless params[:duration].blank?
-        lu = params[:duration].to_i.days.from_now
-      end
-      @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
+      return lock_thread
     when 'archive'
       @comment_thread.update(archived: true, archived_by: current_user)
     when 'delete'
