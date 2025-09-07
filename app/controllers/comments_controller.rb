@@ -225,7 +225,7 @@ class CommentsController < ApplicationController
       lu = params[:duration].to_i.days.from_now
     end
 
-    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu, title: 'a' * 258)
+    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
 
     if status
       render json: { status: 'success',
