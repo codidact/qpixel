@@ -226,32 +226,37 @@ class CommentsController < ApplicationController
     end
 
     status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
+    restrict_thread_response(@comment_thread, status)
+  end
 
-    if status
-      render json: { status: 'success',
-                     thread: @comment_thread }
-    else
-      render json: { status: 'failed',
-                     message: @comment_thread.errors.full_messages.join(', ') },
-             status: :bad_request
-    end
+  def archive_thread
+    status = @comment_thread.update(archived: true, archived_by: current_user)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def delete_thread
+    status = @comment_thread.update(deleted: true, deleted_by: current_user)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def follow_thread
+    status = ThreadFollower.create(comment_thread: @comment_thread, user: current_user)
+    restrict_thread_response(@comment_thread, status)
   end
 
   def thread_restrict
     case params[:type]
     when 'lock'
-      return lock_thread
+      lock_thread
     when 'archive'
-      @comment_thread.update(archived: true, archived_by: current_user)
+      archive_thread
     when 'delete'
-      @comment_thread.update(deleted: true, deleted_by: current_user)
+      delete_thread
     when 'follow'
-      ThreadFollower.create comment_thread: @comment_thread, user: current_user
+      follow_thread
     else
-      return not_found!
+      not_found!
     end
-
-    render json: { status: 'success' }
   end
 
   def thread_unrestrict
@@ -415,6 +420,18 @@ class CommentsController < ApplicationController
     pingable = thread.pingable
     matches = content.scan(/@#(\d+)/)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
+  end
+
+  # @param thread [CommentThread] thread to get response for
+  # @param status [Boolean] status of the restrict operation
+  def restrict_thread_response(thread, status)
+    if status
+      render json: { status: 'success', thread: thread }
+    else
+      render json: { status: 'failed',
+                     message: thread.errors.full_messages.join(', ') },
+             status: :bad_request
+    end
   end
 
   # @param pings [Array<Integer>] list of pinged user ids
