@@ -219,16 +219,6 @@ class CommentsController < ApplicationController
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
-  def lock_thread
-    lu = nil
-    unless params[:duration].blank?
-      lu = params[:duration].to_i.days.from_now
-    end
-
-    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
-    restrict_thread_response(@comment_thread, status)
-  end
-
   def archive_thread
     status = @comment_thread.update(archived: true, archived_by: current_user)
     restrict_thread_response(@comment_thread, status)
@@ -244,7 +234,42 @@ class CommentsController < ApplicationController
     restrict_thread_response(@comment_thread, status)
   end
 
+  def lock_thread
+    lu = nil
+    unless params[:duration].blank?
+      lu = params[:duration].to_i.days.from_now
+    end
+
+    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unarchive_thread
+    status = @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def undelete_thread
+    if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
+      render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
+      return
+    end
+    status = @comment_thread.update(deleted: false, deleted_by: nil)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unfollow_thread
+    status = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)&.destroy
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unlock_thread
+    status = @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
+    restrict_thread_response(@comment_thread, status)
+  end
+
   def thread_restrict
+    # TODO: remove this wrapper action entirely (callbacks need to be moved, routes assigned, etc)
     case params[:type]
     when 'lock'
       lock_thread
@@ -260,25 +285,19 @@ class CommentsController < ApplicationController
   end
 
   def thread_unrestrict
+    # TODO: remove this wrapper action entirely (callbacks need to be moved, routes assigned, etc)
     case params[:type]
     when 'lock'
-      @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
+      unlock_thread
     when 'archive'
-      @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
+      unarchive_thread
     when 'delete'
-      if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
-        render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
-        return
-      end
-      @comment_thread.update(deleted: false, deleted_by: nil)
+      undelete_thread
     when 'follow'
-      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf&.destroy
+      unfollow_thread
     else
-      return not_found!
+      not_found!
     end
-
-    render json: { status: 'success' }
   end
 
   def post
