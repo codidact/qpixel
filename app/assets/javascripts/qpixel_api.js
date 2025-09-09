@@ -467,6 +467,14 @@ window.QPixel = {
     return QPixel.parseJSONResponse(resp, 'Failed to delete thread');
   },
 
+  followThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/follow`, {}, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to follow thread');
+  },
+
   lockThread: async (id, duration) => {
     const resp = await QPixel.fetchJSON(`/comments/thread/${id}/lock`, {
       duration,

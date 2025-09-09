@@ -225,6 +225,20 @@ $(() => {
     });
   });
 
+  $(document).on('click', '.js-follow-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data("thread");
+
+    const data = await QPixel.followThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+      openThread(wrapper, threadID);
+    });
+  });
+
   $(document).on('click', '.js-lock-thread', async (ev) => {
     ev.preventDefault();
 
