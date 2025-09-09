@@ -1,0 +1,13 @@
+<%#
+   "Renders locked state notice for a given post
+
+    Variables:
+      post : Post to render notice for
+"%>
+
+<div class="notice has-margin-2">
+  <p>
+    <strong>Locked</strong> by <%= user_link(post.locked_by) %>
+    on <%= post.locked_at.strftime('%b %e, %Y at %H:%M') %>.
+  </p>
+</div>

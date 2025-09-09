@@ -98,7 +98,7 @@
     <div class="post--content has-padding-2">
       <%= render('reactions/list', post: post) if post.reactions.any? %>
 
-      <% if post.closeable? && post.closed? %>
+      <% if post.closed? %>
         <%= render('posts/closed_notice', post: post, user: current_user) %>
       <% end %>
 
@@ -107,13 +107,8 @@
       <% end %>
 
       <% if post.locked? %>
-        <div class="notice has-margin-2">
-          <p>
-            <strong>Locked</strong> by <%= link_to post.locked_by.username, user_path(post.locked_by) %>
-            on <%= post.locked_at.strftime('%b %e, %Y at %H:%M') %>.
-          </p>
-        </div>
-	<% end %>
+        <%= render('posts/locked_notice', post: post) %>
+      <% end %>
 
 	<% if post.spam_flag_pending? && user_signed_in? %>
 	<div class="notice has-margin-2">
