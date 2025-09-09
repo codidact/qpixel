@@ -114,26 +114,9 @@
         <%= render('posts/flagged_notice', post: post, user: current_user) %>
       <% end %>
 
-      <% if post_type.is_public_editable && post.pending_suggested_edit? %>
-        <% if current_user&.can_update?(post, post_type) %>
-          <div class="notice h-p-2">
-            <p class="h-m-0">
-              <i class="fa fa-pencil-alt h-m-l-2 h-c-red-600"></i>
-              There is a <strong>pending suggested edit</strong> on this post.
-              <a href="<%= suggested_edit_url(post.pending_suggested_edit.id) %>"
-                 class="button is-outlined is-muted is-small"
-                 role="button"
-                 aria-label="Review changes of suggested edit">Review changes</a></p>
-          </div>
-        <% elsif post.pending_suggested_edit.user&.id == current_user&.id %>
-          <div class="notice h-p-2">
-            <p class="h-m-0">
-              <i class="fa fa-pencil-alt h-m-l-2 h-c-tertiary-600"></i>
-              Your suggested edit on this post is <strong>
-              <%= link_to 'pending review', suggested_edit_url(post.pending_suggested_edit.id) %></strong>.</p>
-          </div>
-        <% end %>
-	<% end %>
+      <% if post.pending_suggested_edit? %>
+        <%= render('posts/suggested_edit_notice', post: post, user: current_user) %>
+      <% end %>
 
 	<div class="post--body">
 	  <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
