@@ -87,9 +87,6 @@
           <%= effective_post %>
         <% end %>
 
-        <% been_edited = post.last_edited_by_id != nil %>
-        <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
-
         <% if post_type.has_tags %>
           <div class="post--tags has-padding-2">
             <% required_ids = post.category&.required_tag_ids %>
