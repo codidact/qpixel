@@ -5,15 +5,23 @@ class CommentsController < ApplicationController
 
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
   before_action :set_post, only: [:create_thread, :post_follow, :post_unfollow]
-  before_action :set_thread,
-                only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
-                       :thread_followers]
-
+  before_action :set_thread, only: [:create,
+                                    :thread,
+                                    :thread_content,
+                                    :thread_rename,
+                                    :archive_thread,
+                                    :delete_thread,
+                                    :follow_thread,
+                                    :lock_thread,
+                                    :thread_unrestrict,
+                                    :thread_followers]
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_create_access, only: [:create_thread, :create]
   before_action :check_reply_access, only: [:create]
-  before_action :check_restrict_access, only: [:thread_restrict]
+  before_action :check_archive_thread_access, only: [:archive_thread]
+  before_action :check_delete_thread_access, only: [:delete_thread]
+  before_action :check_lock_thread_access, only: [:lock_thread]
   before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
@@ -268,22 +276,6 @@ class CommentsController < ApplicationController
     restrict_thread_response(@comment_thread, status)
   end
 
-  def thread_restrict
-    # TODO: remove this wrapper action entirely (callbacks need to be moved, routes assigned, etc)
-    case params[:type]
-    when 'lock'
-      lock_thread
-    when 'archive'
-      archive_thread
-    when 'delete'
-      delete_thread
-    when 'follow'
-      follow_thread
-    else
-      not_found!
-    end
-  end
-
   def thread_unrestrict
     # TODO: remove this wrapper action entirely (callbacks need to be moved, routes assigned, etc)
     case params[:type]
@@ -402,18 +394,20 @@ class CommentsController < ApplicationController
     end
   end
 
-  def check_restrict_access
-    case params[:type]
-    when 'lock'
-      not_found! unless current_user.can_lock?(@comment_thread)
-    when 'archive'
-      not_found! unless current_user.can_archive?(@comment_thread)
-    when 'delete'
-      not_found! unless current_user.can_delete?(@comment_thread)
-    end
+  def check_archive_thread_access
+    not_found! unless current_user.can_archive?(@comment_thread)
+  end
+
+  def check_delete_thread_access
+    not_found! unless current_user.can_delete?(@comment_thread)
+  end
+
+  def check_lock_thread_access
+    not_found! unless current_user.can_lock?(@comment_thread)
   end
 
   def check_unrestrict_access
+    # TODO: split into individual checks once unrestrict_thread is split
     case params[:type]
     when 'lock'
       not_found! unless current_user.can_unlock?(@comment_thread)

@@ -197,28 +197,64 @@ $(() => {
     $modal.find('.js-follower-display').html(data);
   });
 
-  $(document).on('submit', '[class*=js--lock-thread] form', async (evt) => {
-    evt.preventDefault();
+  $(document).on('click', '.js-archive-thread', async (ev) => {
+    ev.preventDefault();
 
-    const $tgt = $(evt.target);
+    const $tgt = $(ev.target);
     const threadID = $tgt.data("thread");
 
-    const data = await QPixel.lockThread(threadID);
+    const data = await QPixel.archiveThread(threadID);
 
     QPixel.handleJSONResponse(data, () => {
-      window.location.reload();
+      const wrapper = getCommentThreadWrapper($tgt);
+      openThread(wrapper, threadID);
     });
   });
 
-  $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
+  $(document).on('click', '.js-delete-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data("thread");
+
+    const data = await QPixel.deleteThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+      openThread(wrapper, threadID);
+    });
+  });
+
+  $(document).on('click', '.js-lock-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data("thread");
+    const form = $tgt.closest(`form[data-thread=${threadID}]`).get(0);
+
+    if (form instanceof HTMLFormElement) {
+      const { value: duration } = form.elements['duration'] ?? {};
+
+      const data = await QPixel.lockThread(threadID, duration ? Math.round(+duration) : void 0);
+
+      QPixel.handleJSONResponse(data, () => {
+        const wrapper = getCommentThreadWrapper($tgt);
+        openThread(wrapper, threadID);
+      });
+    } else {
+      QPixel.createNotification('danger', 'Failed to find thread to lock');
+    }
+  });
+
+  // TODO: split into individual handlers once unrestrict_thread is split
+  $(document).on('click', '.js--unrestrict-thread', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
     const threadID = $tgt.data("thread");
     const action = $tgt.data("action");
-    const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
 
-    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/${route}`, { type: action });
+    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/unrestrict`, { type: action });
 
     const data = await resp.json();
 

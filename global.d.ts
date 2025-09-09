@@ -541,11 +541,25 @@ interface QPixel {
                                                       onFinally?: (data: T) => void) => boolean
 
   /**
+   * Attempts to archive a comment thread
+   * @param id id of the thread to archive
+   * @returns result of the operation
+   */
+  archiveThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to delete a comment
    * @param id id of the comment to delete
    * @returns result of the operation
    */
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to delete a comment thread
+   * @param id id of the thread to delete
+   * @returns result of the operation
+   */
+  deleteThread?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to start following comments on a given post
@@ -584,9 +598,10 @@ interface QPixel {
   /**
    * Attempts to lock a comment thread
    * @param id id of the comment thread to lock
+   * @param duration how long should the thread be locked for, in days
    * @returns result of the operation
    */
-  lockThread?: (id: string) => Promise<QPixelResponseJSON>
+  lockThread?: (id: string, duration?: number) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to rename a tag
