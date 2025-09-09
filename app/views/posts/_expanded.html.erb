@@ -120,13 +120,13 @@
         <%= render('posts/notices/suggested_edit', post: post, user: current_user) %>
       <% end %>
 
-	<div class="post--body">
-	  <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
-	  <% if post.spam_flag_pending? && !user_signed_in? %>
-	    <%= sanitize(effective_post, attributes: %w()) %>
-	  <% else %>
-            <%= effective_post %>
-	  <% end %>
+      <div class="post--body">
+        <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
+        <% if post.spam_flag_pending? && !user_signed_in? %>
+          <%= sanitize(effective_post, attributes: %w()) %>
+        <% else %>
+          <%= effective_post %>
+        <% end %>
 
         <% been_edited = post.last_edited_by_id != nil %>
         <% if been_edited then last_edited_by_self = post.user_id == post.last_edited_by_id end %>
