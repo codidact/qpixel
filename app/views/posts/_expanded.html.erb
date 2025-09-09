@@ -116,6 +116,7 @@
             <% end %>
             by <%= user_link post.closed_by %>
             on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+          </p>
           <% unless post.close_reason.nil? %>
             <p>
               <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
