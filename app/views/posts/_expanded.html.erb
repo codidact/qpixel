@@ -103,23 +103,7 @@
       <% end %>
 
       <% if post.deleted? %>
-        <div class="notice has-margin-2">
-          <p class="has-font-weight-normal">
-            <strong>Deleted</strong> by <%= user_link post.deleted_by %>
-            on <%= post.deleted_at.strftime('%b %e, %Y at %H:%M') %>
-          </p>
-          <hr>
-          <% if post.deleted_by_owner? %>
-            <p>
-              The author of this post decided to delete it. It can only be seen by users with the Curate ability.
-            </p>
-          <% else %>
-            <p>
-              This post was deleted and can only be seen by users with the Curate ability.
-            </p>
-          <% end %>
-          <p>Users with the Curate ability may vote to restore this post if it has been deleted incorrectly.</p>
-        </div>
+        <%= render('posts/deleted_notice', post: post) %>
       <% end %>
 
       <% if post.locked? %>
