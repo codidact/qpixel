@@ -19,17 +19,13 @@ $(() => {
     return $tgt.closest('.js-comment-thread-wrapper')[0] ?? null;
   };
 
-  $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
-    if (evt.ctrlKey) { return; }
-
-    evt.preventDefault();
-
-    const $tgt = $(evt.target);
-    const $threadId = $tgt.data('thread');
-    const wrapper = getCommentThreadWrapper($tgt);
-
-    openThread(wrapper, $threadId);
-  });
+  /**
+   * @param {HTMLElement} wrapper
+   * @returns {boolean}
+   */
+  const isInlineCommentThread = (wrapper) => {
+    return !!wrapper.querySelector('[data-inline=true]');
+  };
 
   /**
    * @param {HTMLElement} wrapper
@@ -45,8 +41,24 @@ $(() => {
     window.hljs && hljs.highlightAll();
   }
 
+  $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
+    if (evt.ctrlKey) {
+      return; // TODO: do we need this early exit?
+    }
+
+    evt.preventDefault();
+
+    const $tgt = $(evt.target);
+    const $threadId = $tgt.data('thread');
+    const wrapper = getCommentThreadWrapper($tgt);
+
+    openThread(wrapper, $threadId);
+  });
+
   $(document).on('click', '.js-show-deleted-comments', (ev) => {
-    if (ev.ctrlKey) { return; } // do we really need it?
+    if (ev.ctrlKey) {
+      return;
+    } // do we really need it?
 
     ev.preventDefault();
 
@@ -80,7 +92,9 @@ $(() => {
     }
 
     if (isDeleted) {
-      $container.append(`<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`);
+      $container.append(
+        `<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`
+      );
       $container.addClass('is-deleted');
     }
 
@@ -171,8 +185,7 @@ $(() => {
       if (isDelete) {
         $comment.addClass('deleted-content');
         $tgt.removeClass('js-comment-delete').addClass('js-comment-undelete').val('undelete');
-      }
-      else {
+      } else {
         $comment.removeClass('deleted-content');
         $tgt.removeClass('js-comment-undelete').addClass('js-comment-delete').val('delete');
       }
@@ -189,7 +202,7 @@ $(() => {
     const $modal = $($tgt.data('modal'));
 
     const resp = await QPixel.fetch(`/comments/thread/${threadId}/followers`, {
-      headers: { 'Accept': 'text/html' }
+      headers: { Accept: 'text/html' }
     });
 
     const data = await resp.text();
@@ -201,13 +214,14 @@ $(() => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
-    const threadID = $tgt.data("thread");
+    const threadID = $tgt.data('thread');
 
     const data = await QPixel.archiveThread(threadID);
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      openThread(wrapper, threadID);
+      const inline = isInlineCommentThread(wrapper);
+      openThread(wrapper, threadID, { inline });
     });
   });
 
@@ -215,13 +229,14 @@ $(() => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
-    const threadID = $tgt.data("thread");
+    const threadID = $tgt.data('thread');
 
     const data = await QPixel.deleteThread(threadID);
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      openThread(wrapper, threadID);
+      const inline = isInlineCommentThread(wrapper);
+      openThread(wrapper, threadID, { inline });
     });
   });
 
@@ -229,13 +244,14 @@ $(() => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
-    const threadID = $tgt.data("thread");
+    const threadID = $tgt.data('thread');
 
     const data = await QPixel.followThread(threadID);
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      openThread(wrapper, threadID);
+      const inline = isInlineCommentThread(wrapper);
+      openThread(wrapper, threadID, { inline });
     });
   });
 
@@ -243,7 +259,7 @@ $(() => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
-    const threadID = $tgt.data("thread");
+    const threadID = $tgt.data('thread');
     const form = $tgt.closest(`form[data-thread=${threadID}]`).get(0);
 
     if (form instanceof HTMLFormElement) {
@@ -253,7 +269,8 @@ $(() => {
 
       QPixel.handleJSONResponse(data, () => {
         const wrapper = getCommentThreadWrapper($tgt);
-        openThread(wrapper, threadID);
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
       });
     } else {
       QPixel.createNotification('danger', 'Failed to find thread to lock');
@@ -265,8 +282,8 @@ $(() => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
-    const threadID = $tgt.data("thread");
-    const action = $tgt.data("action");
+    const threadID = $tgt.data('thread');
+    const action = $tgt.data('action');
 
     const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/unrestrict`, { type: action });
 
@@ -311,7 +328,7 @@ $(() => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
-      $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
+      $tgt[0].selectionEnd = caretPos - posInWord + currentWord.length;
       QPixel.replaceSelection($tgt, `@#${id}`);
       popup.destroy();
       $tgt.focus();
@@ -332,17 +349,20 @@ $(() => {
         pingable[`${threadId}-${postId}`] = await resp.json();
       }
 
-      const items = Object.entries(pingable[`${threadId}-${postId}`]).filter((e) => {
-        return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
-      }).map((e) => {
-        const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
-        const id = e[1];
-        return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
-          .attr('data-user-id', id);
-      });
+      const items = Object.entries(pingable[`${threadId}-${postId}`])
+        .filter((e) => {
+          return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
+        })
+        .map((e) => {
+          const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
+          const id = e[1];
+          return itemTemplate
+            .clone()
+            .html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
+            .attr('data-user-id', id);
+        });
       QPixel.Popup.getPopup(items, $tgt[0], callback);
-    }
-    else {
+    } else {
       QPixel.Popup.destroyAll();
     }
   }
@@ -356,8 +376,7 @@ $(() => {
     if ($thread.is(':hidden')) {
       $thread.show();
       $thread.find('.js-comment-field').trigger('focus');
-    }
-    else {
+    } else {
       $thread.hide();
     }
   });
@@ -372,8 +391,7 @@ $(() => {
     if ($reply.is(':hidden')) {
       $reply.show();
       $reply.find('.js-comment-field').trigger('focus');
-    }
-    else {
+    } else {
       $reply.hide();
     }
   });
@@ -408,9 +426,7 @@ $(() => {
 
     const shouldFollow = action === 'follow';
 
-    const data = shouldFollow ?
-                  await QPixel.followComments(postId) :
-                  await QPixel.unfollowComments(postId);
+    const data = shouldFollow ? await QPixel.followComments(postId) : await QPixel.unfollowComments(postId);
 
     QPixel.handleJSONResponse(data, () => {
       target.dataset.action = shouldFollow ? 'unfollow' : 'follow';
