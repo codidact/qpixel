@@ -96,7 +96,7 @@
     <% end %>
 
     <div class="post--content has-padding-2">
-      <%= render('reactions/list', post: post) if post.reactions %>
+      <%= render('reactions/list', post: post) if post.reactions.any? %>
 
       <% if post_type.is_closeable && post.closed %>
         <% if current_user == post.user %>
