@@ -110,15 +110,10 @@
         <%= render('posts/locked_notice', post: post) %>
       <% end %>
 
-	<% if post.spam_flag_pending? && user_signed_in? %>
-	<div class="notice has-margin-2">
-	  <% if post.user == current_user %>
-	  <p>Your post has been flagged by members of our community. Please review our <a href="/help/spam">guidelines for promotional content</a>.</p>
-	  <% else %>
-	  <p><strong>Possible spam:</strong> this post has pending flags for spam.  Be careful when following links.</p>
-	  <% end %>
-	</div>
-	<% end %>
+      <% if post.spam_flag_pending? && user_signed_in? %>
+        <%= render('posts/flagged_notice', post: post, user: current_user) %>
+      <% end %>
+
       <% if post_type.is_public_editable && post.pending_suggested_edit? %>
         <% if current_user&.can_update?(post, post_type) %>
           <div class="notice h-p-2">
