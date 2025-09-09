@@ -246,6 +246,24 @@ class Post < ApplicationRecord
              .to_h { |_k, v| [v.first.reaction_type, v] }
   end
 
+  # Gets a list of related posts scoped for a given user
+  # @param user [User, nil] user to check access for
+  # @return [ActiveRecord::Relation<Post>]
+  def related_posts_for(user)
+    if user&.can_see_deleted_posts?
+      inbound_duplicates
+    else
+      inbound_duplicates.undeleted
+    end
+  end
+
+  # Checks if the post has related posts (scoped for a given user)
+  # @param user [User, nil] user to check access for
+  # @return [Boolean] check result
+  def related_posts_for?(user)
+    related_posts_for(user).any?
+  end
+
   # Are new threads on this post followed by a given user?
   # @param post [Post] post to check
   # @param user [User] user to check
