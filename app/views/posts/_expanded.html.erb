@@ -101,23 +101,23 @@
       <% end %>
 
       <% if post.closed? %>
-        <%= render('posts/closed_notice', post: post, user: current_user) %>
+        <%= render('posts/notices/closed', post: post, user: current_user) %>
       <% end %>
 
       <% if post.deleted? %>
-        <%= render('posts/deleted_notice', post: post) %>
+        <%= render('posts/notices/deleted', post: post) %>
       <% end %>
 
       <% if post.locked? %>
-        <%= render('posts/locked_notice', post: post) %>
+        <%= render('posts/notices/locked', post: post) %>
       <% end %>
 
       <% if post.spam_flag_pending? && user_signed_in? %>
-        <%= render('posts/flagged_notice', post: post, user: current_user) %>
+        <%= render('posts/notices/flagged', post: post, user: current_user) %>
       <% end %>
 
       <% if post.pending_suggested_edit? %>
-        <%= render('posts/suggested_edit_notice', post: post, user: current_user) %>
+        <%= render('posts/notices/suggested_edit', post: post, user: current_user) %>
       <% end %>
 
 	<div class="post--body">
