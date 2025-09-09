@@ -130,4 +130,10 @@ class PostTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'deleted_by_owner? should correctly determine if the post is deleted by its owner' do
+    posts.reject(&:deleted).each do |post|
+      assert_not post.deleted_by_owner?
+    end
+  end
 end

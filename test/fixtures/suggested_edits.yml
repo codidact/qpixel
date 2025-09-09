@@ -72,3 +72,16 @@ pending_high_trust:
   comment: High trust only
   active: true
   accepted: false
+
+approved_edit_scorer:
+  post: question_one
+  user: edit_scorer
+  community: sample
+  body: this is used to get consistent edit score for tests
+  body_markdown: <p>this is used to get consistent edit score for tests</p>
+  comment: working towards the Edit Posts ability
+  active: false
+  accepted: true
+  decided_at: 2000-01-01T00:00:00.000000Z
+  decided_by: editor
+  title: approved suggested edit by the user used for edit score tests

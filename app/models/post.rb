@@ -187,6 +187,12 @@ class Post < ApplicationRecord
     post_type.is_closeable
   end
 
+  # Is the post deleted by the owner?
+  # @return [Boolean] check result
+  def deleted_by_owner?
+    deleted_by&.same_as?(user)
+  end
+
   # @return [Boolean] whether there is a suggested edit pending for this post
   def pending_suggested_edit?
     SuggestedEdit.where(post_id: id, active: true).any?

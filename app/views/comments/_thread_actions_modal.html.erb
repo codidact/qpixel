@@ -17,7 +17,7 @@
       </a>
     <% end %>
 
-    <% unless thread.archived || thread.deleted %>
+    <% unless thread.archived || thread.deleted? %>
       <% if thread.locked? %>
         <a href="javascript:void(0)" class="js--unrestrict-thread"
                                      data-action="lock"
@@ -35,7 +35,7 @@
       <% end %>
     <% end %>
       
-    <% unless thread.locked? || thread.deleted %>
+    <% unless thread.locked? || thread.deleted? %>
       <% if thread.archived %>
         <a href="javascript:void(0)" class="js--unrestrict-thread" 
                                      data-action="archive"
@@ -45,8 +45,7 @@
           <i class="fas fa-archive fa-fw"></i> restore
         </a>
       <% else %>
-        <a href="javascript:void(0)" class="js--restrict-thread"
-                                     data-action="archive"
+        <a href="javascript:void(0)" class="js-archive-thread"
                                      data-thread="<%= thread.id %>"
                                      role="button"
                                      aria-label="Archive thread">
@@ -55,7 +54,7 @@
       <% end %>
     <% end %>
 
-    <% unless thread.locked? || thread.archived %>
+    <% unless thread.locked? || thread.archived? %>
       <% if thread.deleted %>
         <a href="javascript:void(0)" class="js--unrestrict-thread"
                                      data-action="delete"
@@ -65,8 +64,7 @@
           <i class="fas fa-trash fa-fw"></i> undelete
         </a>
       <% else %>
-        <a href="javascript:void(0)" class="js--restrict-thread"
-                                     data-action="delete"
+        <a href="javascript:void(0)" class="js-delete-thread"
                                      data-thread="<%= thread.id %>"
                                      role="button"
                                      aria-label="Delete thread">

@@ -1,12 +1,14 @@
 <%#
-  Helper for rendering comment thread lock action modal
+   "Helper for rendering comment thread lock action modal
 
-  Variables:
-    thread : Comment thread to create the modal for
-%>
+    Variables:
+      thread : Comment thread to create the modal for
+"%>
 
 <div class="modal is-with-backdrop is-small js--lock-thread-<%= thread.id %>">
-  <%= form_tag restrict_comment_thread_path(thread.id), class: 'modal--container' do %>
+  <%= form_tag lock_comment_thread_path(thread.id),
+               class: 'modal--container',
+               data: { thread: thread.id } do %>
     <%= hidden_field_tag :type, 'lock' %>
     <div class="modal--header">
       <button type="button"
@@ -23,7 +25,7 @@
       <%= number_field_tag :duration, nil, class: 'form-element' %>
     </div>
     <div class="modal--footer">
-      <%= submit_tag 'Lock thread', class: 'button is-muted is-filled',
+      <%= submit_tag 'Lock thread', class: 'button is-muted is-filled js-lock-thread',
                                     data: { thread: thread.id } %>
       <button type="button" class="button is-muted" data-modal=".js--lock-thread-<%= thread.id %>">Cancel</button>
     </div>
