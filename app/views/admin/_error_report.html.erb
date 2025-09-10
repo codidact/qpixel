@@ -26,5 +26,8 @@
     <span class="raw-markdown"><%= report.uuid %></span>
   </p>
 
-  <pre class="error-trace raw-markdown"><%= report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
+  <% backtrace_lines = report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s } %>
+  <% if backtrace_lines.any? %>
+    <pre class="error-trace raw-markdown"><%= backtrace_lines.join("\n") %></pre>
+  <% end %>
 </details>
