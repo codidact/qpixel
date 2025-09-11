@@ -75,7 +75,7 @@
         <%= render('posts/notices/flagged', post: post, user: current_user) %>
       <% end %>
 
-      <% if post.pending_suggested_edit? %>
+      <% if post.pending_suggested_edit? && user_signed_in? %>
         <%= render('posts/notices/suggested_edit', post: post, user: current_user) %>
       <% end %>
 
