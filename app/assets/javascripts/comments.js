@@ -42,7 +42,7 @@ $(() => {
   }
 
   $(document).on('click', '.post--comments-thread.is-inline a', async (ev) => {
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey || ev.metaKey) {
       return;
     }
 
@@ -56,7 +56,7 @@ $(() => {
   });
 
   $(document).on('click', '.js-show-deleted-comments', (ev) => {
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey || ev.metaKey) {
       return;
     }
 

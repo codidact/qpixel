@@ -124,7 +124,7 @@ $(() => {
   });
 
   $(document).on('click', '.notification-link', async (ev) => {
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey || ev.metaKey) {
       return;
     }
 
