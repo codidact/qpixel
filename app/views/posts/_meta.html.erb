@@ -1,0 +1,34 @@
+<%#
+   "Renders meta information for a given post
+
+    Variables:
+      post : Post to render meta for
+"%>
+
+<div class="post--meta flex-row jc-sb">
+  <div class="post-meta--post">
+    <div title="<%= post.created_at.iso8601 %>">
+      posted <%= time_ago_in_words(post.created_at) %> ago
+    </div>
+
+    <% if post.license.present? %>
+      <div>
+        <i class="fas fa-balance-scale" title="license" aria-label="license"></i>
+        <%= link_to post.license.name, post.license.url %>
+      </div>
+    <% end %>
+
+    <% if post.last_edited_by.present? %>
+      <div title="<%= post.last_edited_at.iso8601 %>">
+        <i class="fa fa-pencil-alt" title="last edited" aria-label="last edited"></i>
+        <%= time_ago_in_words(post.last_edited_at, locale: :en_abbrev) %> ago
+        <% unless post.user&.same_as?(post.last_edited_by) %>
+          by <%= user_link(post.last_edited_by) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="post-meta--user">
+    <%= render 'users/post_usercard', post: post %>
+  </div>
+</div>

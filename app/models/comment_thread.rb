@@ -49,6 +49,12 @@ class CommentThread < ApplicationRecord
       post.can_access?(user)
   end
 
+  # Gets last activity date and time on the thread
+  # @return [DateTime] last activity date and time
+  def last_activity_at
+    [created_at, locked_at, updated_at].compact.max
+  end
+
   # Gets a list of user IDs who should be pingable in the thread.
   # @return [Array<Integer>]
   def pingable

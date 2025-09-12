@@ -187,6 +187,12 @@ class Post < ApplicationRecord
     post_type.is_closeable
   end
 
+  # Is the post deleted by the owner?
+  # @return [Boolean] check result
+  def deleted_by_owner?
+    deleted_by&.same_as?(user)
+  end
+
   # @return [Boolean] whether there is a suggested edit pending for this post
   def pending_suggested_edit?
     SuggestedEdit.where(post_id: id, active: true).any?
@@ -238,6 +244,24 @@ class Post < ApplicationRecord
   def reaction_list
     reactions.includes(:reaction_type).group_by(&:reaction_type_id)
              .to_h { |_k, v| [v.first.reaction_type, v] }
+  end
+
+  # Gets a list of related posts scoped for a given user
+  # @param user [User, nil] user to check access for
+  # @return [ActiveRecord::Relation<Post>]
+  def related_posts_for(user)
+    if user&.can_see_deleted_posts?
+      inbound_duplicates
+    else
+      inbound_duplicates.undeleted
+    end
+  end
+
+  # Checks if the post has related posts (scoped for a given user)
+  # @param user [User, nil] user to check access for
+  # @return [Boolean] check result
+  def related_posts_for?(user)
+    related_posts_for(user).any?
   end
 
   # Are new threads on this post followed by a given user?

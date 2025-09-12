@@ -241,7 +241,12 @@ Rails.application.routes.draw do
     get    'thread/:id/pingable',          to: 'comments#pingable', as: :thread_pingable
     post   'thread/:id/new',               to: 'comments#create', as: :create_comment
     post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
-    post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
+
+    post   'thread/:id/archive',           to: 'comments#archive_thread', as: :archive_comment_thread
+    post   'thread/:id/delete',            to: 'comments#delete_thread', as: :delete_comment_thread
+    post   'thread/:id/follow',            to: 'comments#follow_thread', as: :follow_comment_thread
+    post   'thread/:id/lock',              to: 'comments#lock_thread', as: :lock_comment_thread
+
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
     get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments

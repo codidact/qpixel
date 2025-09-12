@@ -105,3 +105,24 @@ sample_spammer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_edit_scorer:
+  user: edit_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_flag_scorer:
+  user: flag_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_post_scorer:
+  user: post_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1

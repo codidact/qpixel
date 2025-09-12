@@ -131,7 +131,10 @@ window.QPixel = {
     }
 
     const myselfPromise = QPixel.fetch('/users/me', {
-      headers: { 'Accept': 'application/json' }
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+      }
     });
 
     QPixel._pendingUserResponse = myselfPromise;
@@ -451,6 +454,38 @@ window.QPixel = {
     return QPixel.parseJSONResponse(resp, 'Failed to vote');
   },
 
+  archiveThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/archive`, {}, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to archive thread');
+  },
+
+  deleteThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/delete`, {}, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to delete thread');
+  },
+
+  followThread: async (id) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/follow`, {}, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to follow thread');
+  },
+
+  lockThread: async (id, duration) => {
+    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/lock`, {
+      duration,
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to lock thread');
+  },
+
   deleteComment: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/${id}/delete`, {}, {
       headers: { 'Accept': 'application/json' },
@@ -493,14 +528,6 @@ window.QPixel = {
     });
 
     return QPixel.parseJSONResponse(resp, 'Failed to unfollow post comments');
-  },
-
-  lockThread: async (id) => {
-    const resp = await QPixel.fetchJSON(`/comments/thread/${id}/restrict`, {
-      type: 'lock'
-    });
-
-    return QPixel.parseJSONResponse(resp, 'Failed to lock thread');
   },
 
   renameTag: async (categoryId, tagId, name) => {
