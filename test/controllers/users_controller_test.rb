@@ -553,6 +553,18 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'default_filter should correctly respond to missing category' do
+    sign_in users(:standard_user)
+    try_default_filter(nil)
+    assert_response(:bad_request)
+  end
+
+  test 'default_filter should correctly get default category filters' do
+    sign_in users(:standard_user)
+    try_default_filter(categories(:main))
+    assert_json_success
+  end
+
   private
 
   def create_other_user
@@ -561,6 +573,13 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_default_filter(category)
+    get :default_filter, params: {
+      category: category&.id,
+      format: :json
+    }
   end
 
   def try_save_filter(**opts)
