@@ -1,4 +1,4 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   $('.js-filter-select').toArray().forEach(async (el) => {
     const $select = $(el);
     const $form = $select.closest('form');
