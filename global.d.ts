@@ -52,6 +52,11 @@ interface QPixelDOM {
    */
   fadeOut?: (element: HTMLElement, duration: number) => void;
   /**
+   * Checks common modifier states on a given keyboard event
+   * @param event 
+   */
+  getModifierState: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
+  /**
    * Is a given event target an HTMLElement?
    * @param target event target to check
    */

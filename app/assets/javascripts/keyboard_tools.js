@@ -84,22 +84,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   /**
-   * Checks common modifier states on a given keyboard event
-   * @param {JQuery.KeyboardEventBase} e
-   * @returns {boolean}
-   */
-  const getModifierState = (e) => {
-    return !!e.altKey || !!e.ctrlKey || !!e.metaKey || !!e.shiftKey;
-  };
-
-  /**
    * Handles the "home" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
   function homeMenu(e) {
     const isHelp = e.key === '?';
 
-    if (!isHelp && getModifierState(e)) {
+    if (!isHelp && QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -194,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function gotoMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -247,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function categoryMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -266,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function categoryTagsMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -284,7 +275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function categorySuggestedEditsMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -302,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function toolsMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
@@ -344,7 +335,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @param {JQuery.KeyboardEventBase} e
    */
   function voteMenu(e) {
-    if (getModifierState(e)) {
+    if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
 
