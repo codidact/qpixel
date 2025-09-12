@@ -177,7 +177,7 @@ class UsersController < ApplicationController
   end
 
   def default_filter
-    if user_signed_in? && params[:category]
+    if user_signed_in? && params[:category].present?
       default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
       render json: { status: 'success', success: true, name: default_filter&.name }
     else
