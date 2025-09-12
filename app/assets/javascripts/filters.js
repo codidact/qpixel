@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (filterValue?.constructor == Array) {
             elValue = elValue ?? [];
             return filterValue.length != elValue.length || filterValue.some((v, i) => v[1] != elValue[i]);
-          } else {
+          }
+          else {
             return filterValue ? filterValue != elValue : elValue;
           }
         });
@@ -78,12 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
           data: Object.keys(filters).map((filterName) => {
             return {
               id: filterName,
-              text: filterName
+              text: filterName,
             };
           }),
           tags: true,
           templateResult: template,
-          templateSelection: template
+          templateSelection: template,
         });
 
         $select.on(
@@ -109,12 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     $el.append(new Option(val[0], val[1].toString(), false, true));
                   }
                   $el.trigger('change');
-                } else {
+                }
+                else {
                   $el.val(/** @type {string} */ (value)).trigger('change');
                 }
               }
             }
-          )
+          ),
         );
         computeEnables();
       }
