@@ -49,9 +49,9 @@
     <% end %>
 
     <%# Related Posts widget %>
-    <% if defined?(@post) && @post.inbound_duplicates.any? %>
+    <% if defined?(@post) && @post.related_posts_for?(current_user) %>
       <% collapse_related = user_preference('collapse_related_posts') == 'true' %>
-      <% cache [@post, @post.inbound_duplicates] do %>
+      <% cache [@post, @post.related_posts_for(current_user)] do %>
         <div class="widget has-margin-4 is-green" data-collapsed="<%= user_preference('collapse_related_posts') %>">
           <div class="widget--header">
             Related Posts
@@ -60,7 +60,7 @@
               <i class="fas <%= collapse_related ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
             </button>
           </div>
-          <% @post.inbound_duplicates.each do |dp| %>
+          <% @post.related_posts_for(current_user).each do |dp| %>
             <div class="widget--body <%= 'hidden' if collapse_related %>">
               <% unless dp.category.nil? %>
                 <%= dp.category.name %>

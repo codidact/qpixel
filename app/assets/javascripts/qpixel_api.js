@@ -131,7 +131,10 @@ window.QPixel = {
     }
 
     const myselfPromise = QPixel.fetch('/users/me', {
-      headers: { 'Accept': 'application/json' }
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+      }
     });
 
     QPixel._pendingUserResponse = myselfPromise;
