@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const $saveButton = $form.find('.filter-save');
       const $isDefaultCheckbox = $form.find('.filter-is-default');
       const categoryId = $isDefaultCheckbox.val()?.toString();
-      let defaultFilter = await QPixel.defaultFilter(categoryId);
+      let defaultFilter = categoryId ? await QPixel.defaultFilter(categoryId) : null;
       const $deleteButton = $form.find('.filter-delete');
 
       // Enables/Disables Save & Delete buttons programatically
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       async function initializeSelect() {
-        defaultFilter = await QPixel.defaultFilter(categoryId);
+        defaultFilter = categoryId ? await QPixel.defaultFilter(categoryId) : null;
         $isDefaultCheckbox.prop('checked', defaultFilter === $select.val());
         const filters = await QPixel.filters();
 
@@ -139,7 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         await QPixel.setFilter($select.val()?.toString(), filter, categoryId, $isDefaultCheckbox.prop('checked'));
-        defaultFilter = await QPixel.defaultFilter(categoryId);
+
+        defaultFilter = categoryId ? await QPixel.defaultFilter(categoryId) : null;
 
         // Reinitialize to get new options
         await initializeSelect();
