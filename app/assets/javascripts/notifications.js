@@ -124,6 +124,10 @@ $(() => {
   });
 
   $(document).on('click', '.notification-link', async (ev) => {
+    if (ev.ctrlKey) {
+      return;
+    }
+
     $(ev.target).parents('.inbox').removeClass('is-active');
   });
 });
