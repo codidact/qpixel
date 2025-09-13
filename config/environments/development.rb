@@ -13,8 +13,10 @@ Rails.application.configure do
   config.eager_load = false
 
   # Show full error reports and disable caching.
+  perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING'])
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING']) || false
+  config.action_controller.perform_caching = perform_caching || false
+  Rack::MiniProfiler.config.disable_caching = !perform_caching
 
   # Enable server timing
   config.server_timing = true
