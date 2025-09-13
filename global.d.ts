@@ -505,10 +505,15 @@ interface QPixel {
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   /**
-   * Attempts get a JSON reprentation of a comment
+   * Attempts to get a JSON reprentation of a comment
    * @param id id of the comment to get
    */
   getComment?: (id: string) => Promise<QPixelComment>
+
+  /**
+   * Attempts to get a list of notifications for the current user
+   */
+  getNotifications?: () => Promise<QPixelNotification[]>
 
   /**
    * Attempts to dynamically load thread content

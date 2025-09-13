@@ -52,9 +52,8 @@ $(() => {
     ev.preventDefault();
     const $inbox = $('.inbox');
     if($inbox.hasClass("is-active")) {
-      const resp = await QPixel.getJSON(`/users/me/notifications`);
+      const data = await QPixel.getNotifications();
 
-      const data = await resp.json();
       const $inboxContainer = $inbox.find(".inbox--container");
       $inboxContainer.html('');
   
