@@ -52,7 +52,8 @@ class CommentThread < ApplicationRecord
   # Gets last activity date and time on the thread
   # @return [DateTime] last activity date and time
   def last_activity_at
-    [created_at, locked_at, updated_at].compact.max
+    last_comment_activity_at = comments.map(&:last_activity_at).max
+    [created_at, locked_at, updated_at, last_comment_activity_at].compact.max
   end
 
   # Gets a list of user IDs who should be pingable in the thread.

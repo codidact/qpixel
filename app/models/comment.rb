@@ -19,6 +19,12 @@ class Comment < ApplicationRecord
 
   validate :content_length
 
+  # Gets last activity date and time on the comment
+  # @return [DateTime] last activity date and time
+  def last_activity_at
+    [created_at, updated_at].compact.max
+  end
+
   def root
     # If parent_question is nil, the comment is already on a question, so we can just return post.
     parent_question || post
