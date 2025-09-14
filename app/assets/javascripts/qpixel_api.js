@@ -374,6 +374,16 @@ window.QPixel = {
     return data;
   },
 
+  getNotifications: async () => {
+    const resp = await QPixel.getJSON(`/users/me/notifications`, {
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+
+    const data = await resp.json();
+
+    return data;
+  },
+
   getThreadContent: async (id, options) => {
     const inline = options?.inline ?? true;
     const showDeleted = options?.showDeleted ?? false;
