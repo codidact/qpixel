@@ -47,10 +47,9 @@ module UsersHelper
     end
   end
 
-  ##
-  # Get the default filter for the specified user and category.
-  # @param user_id [Integer]
-  # @param category_id [Category]
+  # Get the default filter for a given user and category +id+.
+  # @param user_id [Integer] +id+ of the user to get default filter for
+  # @param category_id [Integer] +id+ of the category to get default filter for
   # @return [Filter, nil]
   def default_filter(user_id, category_id)
     CategoryFilterDefault.find_by(user_id: user_id, category_id: category_id)&.filter
