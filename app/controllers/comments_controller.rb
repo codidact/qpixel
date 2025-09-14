@@ -194,11 +194,12 @@ class CommentsController < ApplicationController
   end
 
   def thread_content
-    fresh_when last_modified: @comment_thread.last_activity_at.utc, etag: @comment_thread
-
-    render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
-                                                          show_deleted: params[:show_deleted_comments] == '1',
-                                                          thread: @comment_thread }
+    if stale?(last_modified: @comment_thread.last_activity_at.utc)
+      render partial: 'comment_threads/expanded',
+             locals: { inline: params[:inline] == 'true',
+                       show_deleted: params[:show_deleted_comments] == '1',
+                       thread: @comment_thread }
+    end
   end
 
   def thread_followers
