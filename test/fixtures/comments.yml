@@ -4,6 +4,8 @@ one:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: normal
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 two:
   user: standard_user
@@ -11,6 +13,8 @@ two:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: normal_two
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 deleted:
   user: standard_user
@@ -19,6 +23,8 @@ deleted:
   deleted: true
   community: sample
   comment_thread: normal
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 deleted_thread:
   user: standard_user
@@ -26,6 +32,8 @@ deleted_thread:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: deleted
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 locked_thread:
   user: standard_user
@@ -33,6 +41,8 @@ locked_thread:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: locked
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 archived_thread:
   user: standard_user
@@ -40,6 +50,8 @@ archived_thread:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: archived
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 on_answer:
   user: standard_user
@@ -47,6 +59,8 @@ on_answer:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: on_answer
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
 
 new_user_on_own_post:
   user: basic_user
@@ -54,3 +68,5 @@ new_user_on_own_post:
   content: ABCDEF GHIJKL MNOPQR
   community: sample
   comment_thread: new_user_on_own_post
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z
