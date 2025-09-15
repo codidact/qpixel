@@ -3,6 +3,7 @@ class PotentialSpamProfilesJob < ApplicationJob
 
   def perform
     sql = File.read(Rails.root.join('db/scripts/potential_spam_profiles.sql'))
+    sql = sql.gsub('$HOURS', '25')
     user_ids = ActiveRecord::Base.connection.execute(sql).to_a.flatten
     users = User.where(id: user_ids)
 

@@ -58,3 +58,27 @@ select.form-element {
     min-height: (1.2em * $i) + 1.2em;
   }
 }
+
+.check-group-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  label {
+    padding: 0;
+    margin: 0;
+  }
+
+  input[type="checkbox"] {
+    padding: 0;
+    margin: 0 0 0 0.5em;
+  }
+}
+
+.check-group__right {
+  justify-content: flex-end;
+}
+
+.checkbox__large {
+  zoom: 1.5;
+}
