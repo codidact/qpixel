@@ -334,12 +334,17 @@ window.QPixel = {
   },
 
   fetchJSON: async (uri, data, options = {}) => {
+    const { headers = {}, ...restOptions } = options
+
     /** @type {RequestInit} */
     const requestInit = {
       method: 'POST',
       body: options.method === 'GET' ? void 0 : JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' },
-      ...options,
+      headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+      },
+      ...restOptions,
     };
 
     return QPixel.fetch(uri, requestInit);
