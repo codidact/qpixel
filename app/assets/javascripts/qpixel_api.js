@@ -457,6 +457,15 @@ window.QPixel = {
     return QPixel.parseJSONResponse(resp, 'Failed to vote');
   },
 
+  upload: async (url, form) => {
+    const resp = await QPixel.fetch(url, {
+      method: 'POST',
+      body: new FormData(form)
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to upload');
+  },
+
   archiveThread: async (id) => {
     const resp = await QPixel.fetchJSON(`/comments/thread/${id}/archive`, {}, {
       headers: { 'Accept': 'application/json' },

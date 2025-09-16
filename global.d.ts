@@ -213,6 +213,10 @@ type QPixelResponseJSON<
   Success extends object = object
 > = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
 
+type QPixelUploadResponseJSON = QPixelResponseJSON<{
+  link: string
+}>
+
 type QPixelVoteResponseJSON = QPixelResponseJSON<{
   vote_id: number
   upvotes: number
@@ -639,6 +643,12 @@ interface QPixel {
    * @returns result of the operation
    */
   vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
+
+  /**
+   * @param url upload endpoint URL (differs between routes)
+   * @param form upload form to get the file from
+   */
+  upload?: (url: string, form: HTMLFormElement) => Promise<QPixelUploadResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;

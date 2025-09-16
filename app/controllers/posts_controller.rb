@@ -510,14 +510,16 @@ class PostsController < ApplicationController
 
   def upload
     unless helpers.valid_upload?(params[:file])
-      render json: { error: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
+      render json: { status: 'failed',
+                     message: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
              status: :bad_request
       return
     end
 
     @blob = ActiveStorage::Blob.create_and_upload!(io: params[:file], filename: params[:file].original_filename,
                                                    content_type: params[:file].content_type)
-    render json: { link: uploaded_url(@blob.key) }
+    render json: { status: 'success',
+                   link: uploaded_url(@blob.key) }
   end
 
   def help_center

@@ -57,6 +57,7 @@ $(() => {
 
     const $fileInput = $tgt.find('input[type="file"]');
     const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
+    const form = /** @type {HTMLFormElement} */ ($tgt[0]);
 
     // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
@@ -80,40 +81,23 @@ $(() => {
       $tgt.find('.js-max-size').removeClass('has-color-red-700');
     }
 
-    const resp = await fetch($tgt.attr('action'), {
-      method: $tgt.attr('method'),
-      body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
+    const data = await QPixel.upload($tgt.attr('action'), form);
+
+    QPixel.handleJSONResponse(data, (data) => {
+      form.reset();
+  
+      const $postField = $('.js-post-field');
+      const postText = $postField.val()?.toString();
+      $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
+      $tgt.parents('.modal').removeClass('is-active');
+  
+      $postFields.trigger('change');
+    }, (data) => {
+      if (data.status === 'failed') {
+        const $postField = $('.js-post-field');
+        $postField.val($postField.val()?.toString().replace(placeholder, ''));
+      }
     });
-
-    const data = await resp.json();
-
-    if (resp.status === 200) {
-      $tgt.trigger('ajax:success', data);
-    }
-    else {
-      $tgt.trigger('ajax:failure', data);
-    }
-  });
-
-  $uploadForm.on('ajax:success', async (evt, data) => {
-    const $tgt = $(evt.target);
-    /** @type {HTMLFormElement} */ ($tgt[0]).reset();
-
-    const $postField = $('.js-post-field');
-    const postText = $postField.val()?.toString();
-    $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
-    $tgt.parents('.modal').removeClass('is-active');
-
-    $postFields.trigger('change')
-  });
-
-  $uploadForm.on('ajax:failure', async (evt, data) => {
-    const $tgt = $(evt.target);
-    const $postField = $('.js-post-field');
-    const error = data['error'];
-    QPixel.createNotification('danger', error);
-    $tgt.parents('.modal').removeClass('is-active');
-    $postField.val($postField.val()?.toString().replace(placeholder, ''));
   });
 
   /**
