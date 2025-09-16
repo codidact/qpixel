@@ -7,12 +7,6 @@ const validators = [];
 let popped_modals_ct = 0;
 
 window.QPixel = {
-  csrfToken: () => {
-    const token = $('meta[name="csrf-token"]').attr('content');
-    QPixel.csrfToken = () => token;
-    return token;
-  },
-
   createNotification: function (type, message) {
     // Some messages include a date stamp, `append_date` governs that.
     let append_date = false;
@@ -320,7 +314,6 @@ window.QPixel = {
 
   fetch: async (uri, init) => {
     const defaultHeaders = {
-      'X-CSRF-Token': QPixel.csrfToken(),
       // X-Requested-With is necessary for request.xhr? to work
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',

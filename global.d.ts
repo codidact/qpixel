@@ -412,12 +412,6 @@ interface QPixel {
   addPrePostValidation?: (callback: PostValidator) => void;
 
   /**
-   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
-   * making AJAX POST requests.
-   */
-  csrfToken?: () => string;
-
-  /**
    * Create a notification popup - not an inbox notification.
    * @param type the type to apply to the popup - warning, danger, etc.
    * @param message the message to show
