@@ -316,7 +316,6 @@ window.QPixel = {
     const defaultHeaders = {
       // X-Requested-With is necessary for request.xhr? to work
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json',
     };
 
     const { headers = {}, ...restInit } = init ?? {};
@@ -339,6 +338,7 @@ window.QPixel = {
     const requestInit = {
       method: 'POST',
       body: options.method === 'GET' ? void 0 : JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' },
       ...options,
     };
 
