@@ -286,91 +286,97 @@ $(() => {
     }
   });
 
-  $postFields
-    .on(
-      'focus keyup paste change markdown',
-      (() => {
-        let previous = null;
-        return (evt) => {
-          const $tgt = $(evt.target);
-          const text = $(evt.target).val();
-          // Don't bother re-rendering if nothing's changed
-          if (text === previous) {
-            return;
-          }
-          previous = text;
-          if (!window.converter) {
-            window.converter = window.markdownit({
-              html: true,
-              breaks: false,
-              linkify: true,
-            });
-            window.converter.use(window.markdownitFootnote);
-            window.converter.use(window.latexEscape);
-          }
-          window.setTimeout(() => {
-            const converter = window.converter;
-            const unsafe_html = converter.render(text);
-            const html = DOMPurify.sanitize(unsafe_html, {
-              ALLOWED_TAGS: QPixel.ALLOWED_POST_TAGS,
-              ALLOWED_ATTR: QPixel.ALLOWED_POST_ATTRS,
-            });
+  const onPostFieldChange = (() => {
+    /** @type {string | null} */
+    let previous = null;
 
-            const removedElements = [
-              ...new Set(
-                DOMPurify.removed
-                  .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
-                  .map((entry) => entry.element.localName),
-              ),
-            ];
+    /**
+     * @param {JQuery.EventBase} evt
+     */
+    return (evt) => {
+      const $tgt = $(evt.target);
+      const text = $(evt.target).val();
 
-            const removedAttributes = [
-              ...new Set(
-                DOMPurify.removed
-                  .filter((entry) => entry.attribute)
-                  .map((entry) => [
-                    entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
-                    entry.from.localName,
-                  ]),
-              ),
-            ];
+      // Don't bother re-rendering if nothing's changed
+      if (text === previous) {
+        return;
+      }
 
-            $tgt
-              .parents('form')
-              .find('.rejected-elements')
-              .toggleClass('hide', removedElements.length === 0 && removedAttributes.length === 0)
-              .find('ul')
-              .empty()
-              .append(
-                removedElements.map((name) => $(`<li><code>&lt;${name}&gt;</code></li>`)),
-                removedAttributes.map(([attr, elName]) =>
-                  $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`),
-                ),
-              );
+      previous = text;
 
-            $tgt.parents('.form-group').siblings('.post-preview').html(html);
-            $tgt
-              .parents('form')
-              .find('.js-post-html[name="__html"]')
-              .val(html + '<!-- g: js, mdit -->');
-          }, 0);
+      if (!window.converter) {
+        window.converter = window.markdownit({
+          html: true,
+          breaks: false,
+          linkify: true,
+        });
+        window.converter.use(window.markdownitFootnote);
+        window.converter.use(window.latexEscape);
+      }
 
-          if (featureTimeout) {
-            clearTimeout(featureTimeout);
-          }
+      window.setTimeout(() => {
+        const converter = window.converter;
+        const unsafe_html = converter.render(text);
+        const html = DOMPurify.sanitize(unsafe_html, {
+          ALLOWED_TAGS: QPixel.ALLOWED_POST_TAGS,
+          ALLOWED_ATTR: QPixel.ALLOWED_POST_ATTRS,
+        });
 
-          featureTimeout = setTimeout(() => {
-            if (window['MathJax']) {
-              MathJax.typeset();
-            }
-            if (window['hljs']) {
-              hljs.highlightAll();
-            }
-          }, 1000);
-        };
-      })(),
-    )
-    .trigger('markdown');
+        const removedElements = [
+          ...new Set(
+            DOMPurify.removed
+              .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
+              .map((entry) => entry.element.localName),
+          ),
+        ];
+
+        const removedAttributes = [
+          ...new Set(
+            DOMPurify.removed
+              .filter((entry) => entry.attribute)
+              .map((entry) => [
+                entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
+                entry.from.localName,
+              ]),
+          ),
+        ];
+
+        $tgt
+          .parents('form')
+          .find('.rejected-elements')
+          .toggleClass('hide', removedElements.length === 0 && removedAttributes.length === 0)
+          .find('ul')
+          .empty()
+          .append(
+            removedElements.map((name) => $(`<li><code>&lt;${name}&gt;</code></li>`)),
+            removedAttributes.map(([attr, elName]) =>
+              $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`),
+            ),
+          );
+
+        $tgt.parents('.form-group').siblings('.post-preview').html(html);
+        $tgt
+          .parents('form')
+          .find('.js-post-html[name="__html"]')
+          .val(html + '<!-- g: js, mdit -->');
+      }, 0);
+
+      if (featureTimeout) {
+        clearTimeout(featureTimeout);
+      }
+
+      featureTimeout = setTimeout(() => {
+        if (window['MathJax']) {
+          MathJax.typeset();
+        }
+        if (window['hljs']) {
+          hljs.highlightAll();
+        }
+      }, 1000);
+    };
+  })();
+
+  $postFields.on('focus keyup paste change markdown', onPostFieldChange).trigger('markdown');
 
   $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
