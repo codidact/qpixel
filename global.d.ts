@@ -213,6 +213,10 @@ type QPixelResponseJSON<
   Success extends object = object
 > = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
 
+type QPixelUploadResponseJSON = QPixelResponseJSON<{
+  link: string
+}>
+
 type QPixelVoteResponseJSON = QPixelResponseJSON<{
   vote_id: number
   upvotes: number
@@ -410,12 +414,6 @@ interface QPixel {
    * ]
    */
   addPrePostValidation?: (callback: PostValidator) => void;
-
-  /**
-   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
-   * making AJAX POST requests.
-   */
-  csrfToken?: () => string;
 
   /**
    * Create a notification popup - not an inbox notification.
@@ -645,6 +643,12 @@ interface QPixel {
    * @returns result of the operation
    */
   vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
+
+  /**
+   * @param url upload endpoint URL (differs between routes)
+   * @param form upload form to get the file from
+   */
+  upload?: (url: string, form: HTMLFormElement) => Promise<QPixelUploadResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;

@@ -7,12 +7,6 @@ const validators = [];
 let popped_modals_ct = 0;
 
 window.QPixel = {
-  csrfToken: () => {
-    const token = $('meta[name="csrf-token"]').attr('content');
-    QPixel.csrfToken = () => token;
-    return token;
-  },
-
   createNotification: function (type, message) {
     // Some messages include a date stamp, `append_date` governs that.
     let append_date = false;
@@ -320,10 +314,8 @@ window.QPixel = {
 
   fetch: async (uri, init) => {
     const defaultHeaders = {
-      'X-CSRF-Token': QPixel.csrfToken(),
       // X-Requested-With is necessary for request.xhr? to work
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json',
     };
 
     const { headers = {}, ...restInit } = init ?? {};
@@ -342,11 +334,17 @@ window.QPixel = {
   },
 
   fetchJSON: async (uri, data, options = {}) => {
+    const { headers = {}, ...restOptions } = options
+
     /** @type {RequestInit} */
     const requestInit = {
       method: 'POST',
       body: options.method === 'GET' ? void 0 : JSON.stringify(data),
-      ...options,
+      headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+      },
+      ...restOptions,
     };
 
     return QPixel.fetch(uri, requestInit);
@@ -462,6 +460,15 @@ window.QPixel = {
     });
 
     return QPixel.parseJSONResponse(resp, 'Failed to vote');
+  },
+
+  upload: async (url, form) => {
+    const resp = await QPixel.fetch(url, {
+      method: 'POST',
+      body: new FormData(form)
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to upload');
   },
 
   archiveThread: async (id) => {

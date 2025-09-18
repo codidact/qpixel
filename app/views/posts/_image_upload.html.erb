@@ -7,7 +7,6 @@
     </div>
     <div class="modal--body">
       <%= form_tag upload_path, multipart: true, class: 'form-inline upload-form js-upload-form' do %>
-        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
         <div class="form-group">
           <%= label_tag :file, 'Insert an image', class: 'form-element' %>
           <div class="form-caption js-max-size">Max file size <%= SiteSetting['MaxUploadSize'] %>.</div>

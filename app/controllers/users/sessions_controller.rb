@@ -1,7 +1,7 @@
 class Users::SessionsController < Devise::SessionsController
   include Devise::Controllers::Rememberable
 
-  protect_from_forgery except: [:create]
+  protect_from_forgery with: :exception, except: [:create, :destroy], store: :cookie
 
   mattr_accessor :first_factor, default: [], instance_writer: false, instance_reader: false
 
