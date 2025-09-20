@@ -17,8 +17,8 @@
   <%= form_tag admin_error_reports_path, method: :get, class: 'has-margin-bottom-4 primary' do %>
     <div class="form-group-horizontal">
       <div class="form-group">
-        <%= label_tag :uuid, t('admin.error_search_version') %>
-        <%= text_field_tag :uuid, params[:uuid], class: 'form-element', placeholder: '(full SHA)' %>
+        <%= label_tag :version, t('admin.error_search_version') %>
+        <%= text_field_tag :version, params[:version], class: 'form-element', placeholder: '(full SHA)' %>
       </div>
       <div class="actions">
         <div class="button-list">
@@ -29,7 +29,6 @@
     </div>
   <% end %>
 </div>
-
 
 <% @reports.each do |report| %>
   <%= render 'error_report', report: report %>
