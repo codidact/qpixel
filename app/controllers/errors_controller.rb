@@ -20,10 +20,11 @@ class ErrorsController < ApplicationController
     end
 
     if @exception.present? && [422, 500].include?(@status)
+      sha, _date = helpers.current_commit
       @log = ErrorLog.create(community: RequestContext.community, user: current_user, klass: @exception&.class,
                              message: @exception&.message, backtrace: @exception&.backtrace&.join("\n"),
                              request_uri: request.original_url, host: request.raw_host_with_port,
-                             uuid: SecureRandom.uuid, user_agent: request.user_agent)
+                             uuid: SecureRandom.uuid, user_agent: request.user_agent, version: sha)
     end
 
     render views[@status] || 'errors/error', formats: :html, status: @status, layout: 'without_sidebar'
