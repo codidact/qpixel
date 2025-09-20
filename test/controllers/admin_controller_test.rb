@@ -111,6 +111,20 @@ class AdminControllerTest < ActionController::TestCase
     assert_not_nil assigns(:reports)
   end
 
+  test 'should search error reports by version' do
+    sign_in users(:admin)
+    get :error_reports, params: { version: 'abc123' }
+    assert_response(:success)
+    assert_not_nil assigns(:reports)
+  end
+
+  test 'should search error reports from current version' do
+    sign_in users(:admin)
+    get :error_reports, params: { version: 'current' }
+    assert_response(:success)
+    assert_not_nil assigns(:reports)
+  end
+
   test 'should get audit log' do
     sign_in users(:admin)
     get :audit_log
