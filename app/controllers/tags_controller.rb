@@ -73,7 +73,6 @@ class TagsController < ApplicationController
                    .select(:id)
     @posts = Post.where(id: post_ids)
                  .list_includes
-                 .includes(:post_type, :tags)
                  .order(sort_param)
                  .paginate(page: params[:page], per_page: 50)
     respond_to do |format|
