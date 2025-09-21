@@ -53,7 +53,7 @@ class Post < ApplicationRecord
   scope :list_includes, lambda {
                           includes(:user, :tags, :post_type, :category, :community, :last_activity_by,
                                    category: [:moderator_tags, :required_tags, :topic_tags],
-                                   user: :avatar_attachment)
+                                   user: [:avatar_attachment, :community_user])
                         }
   scope :has_duplicates, -> { joins(:inbound_duplicates) } # uses INNER JOIN by default so no where required
 
