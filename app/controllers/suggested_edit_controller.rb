@@ -2,12 +2,21 @@ class SuggestedEditController < ApplicationController
   before_action :set_suggested_edit, only: [:show, :approve, :reject]
 
   def category_index
+    @show_decided = params[:show_decided].present? && params[:show_decided] == '1'
+
+    sort_orders = { asc: :asc, desc: :desc }
+    sort_types = { age: :created_at, decided: :decided_at }
+
+    @default_sort_order = :desc
+    @default_sort_type = @show_decided ? :decided : :age
+    @sort_order = sort_orders[params[:order]&.to_sym] || sort_orders[@default_sort_order]
+    @sort_type = sort_types[params[:sort]&.to_sym] || sort_types[@default_sort_type]
+
     @category = params[:category].present? ? Category.find(params[:category]) : nil
-    @edits = if params[:show_decided].present? && params[:show_decided] == '1'
-               SuggestedEdit.where(post: Post.undeleted.in(@category), active: false).newest_first
-             else
-               SuggestedEdit.where(post: Post.undeleted.in(@category), active: true).oldest_first
-             end
+
+    @edits = SuggestedEdit.where(post: Post.undeleted.in(@category),
+                                 active: !@show_decided)
+                          .order(@sort_type => @sort_order)
   end
 
   def show

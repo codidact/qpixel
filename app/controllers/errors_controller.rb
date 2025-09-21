@@ -1,5 +1,6 @@
-# Provides web actions that represent errors. Rails' standard error pages are static HTML with inline CSS; by using
-# a custom error controller we get all the layouts and CSS.
+# Provides web actions that represent errors. Rails' standard error pages are static HTML with inline CSS;
+# by using a custom error controller we get all the layouts and CSS, as well as error reporting.
+# Note that it requires +consider_all_requests_local+ to be +false+ (see environment config files for details)
 class ErrorsController < ApplicationController
   protect_from_forgery with: :exception, except: [:error], store: :cookie
 
