@@ -24,43 +24,38 @@
   </div>
 <% end %>
 
-<% unless @show_decided %>
-  <details class="has-margin-top-2">
-    <summary>
-      Categories
-    </summary>
-    <table>
+<details class="has-margin-top-2">
+  <summary>
+    Categories
+  </summary>
+  <table>
+    <tr>
+      <th>category</th>
+      <th>pending edits</th>
+    </tr>
+    <% categories.each do |cat| %>
+      <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
+      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
+      <% queue_url = suggested_edits_queue_url(cat, params.permit(:sort, :order, :show_decided)) %>
       <tr>
-        <th>category</th>
-        <th>pending edits</th>
+        <td>
+          <% if cat == current_cat %>
+            <%= cat.name %>
+          <% else %>
+            <%= link_to cat.name, queue_url %>
+          <% end %>
+        </td>
+        <td>
+          <% if cat == current_cat %>
+            <%= sug_edits %>
+          <% else %>
+<%= link_to sug_edits, queue_url %>
+          <% end %>
+        </td>
       </tr>
-      <% categories.each do |cat| %>
-        <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
-        <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: true).count %>
-        <tr>
-          <td>
-            <% if cat == current_cat %>
-              <%= cat.name %>
-            <% else %>
-              <%= link_to suggested_edits_queue_url(cat) do %>
-                <%= cat.name %>
-              <% end %>
-            <% end %>
-          </td>
-          <td>
-            <% if cat == current_cat %>
-              <%= sug_edits %>
-            <% else %>
-              <%= link_to suggested_edits_queue_url(cat) do %>
-                <%= sug_edits %>
-              <% end %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  </details>
-<% end %>
+    <% end %>
+  </table>
+</details>
 
 <% if @edits.any? %>
   <div class="widget">
