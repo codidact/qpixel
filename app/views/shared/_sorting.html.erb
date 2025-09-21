@@ -8,29 +8,26 @@
 "%>
 
 <%
-  # Defaults
   default_order = defined?(default_order) ? default_order : nil
   default_type = defined?(default_type) ? default_type : nil
+  order = params[:order]&.to_sym || default_order
+  reverse_order = order == :asc ? :desc : :asc
 %>
 
-<div class="flex gap-sm">
-  <div class="button-list is-gutterless">
-    <% [:asc, :desc].each do |order| %>
-      <% is_active = params[:order]&.to_sym == order || (params[:order].nil? && default_order == order) %>
-      <%= link_to order.to_s.humanize, request.params.merge(order: order),
-          class: "button is-muted is-outlined #{'is-active' if is_active}",
-          role: 'button',
-          aria: { label: "#{ order.to_s.humanize }ending order" } %>
-    <% end %>
-  </div>
+<div class="button-list is-gutterless">
 
-  <div class="button-list is-gutterless">
-    <% types.each do |type| %>
-      <% is_active = params[:sort] == type || (params[:sort].nil? && default_type.to_s == type) %>
-      <%= link_to type.humanize, request.params.merge(sort: type),
-          class: "button is-muted is-outlined #{'is-active' if is_active}",
-          role: 'button',
-          aria: { label: "Sort by #{type.humanize.downcase}" } %>
+  <% types.each do |type| %>
+    <% is_active = params[:sort] == type || (params[:sort].nil? && default_type.to_s == type) %>
+    <%= link_to request.params.merge(sort: type, order: is_active ? reverse_order : nil),
+                class: "button is-muted is-outlined #{'is-active' if is_active}",
+                role: 'button',
+                title: "Sort by #{type.humanize.downcase}",
+                aria: { label: "Sort by #{type.humanize.downcase}" } do %>
+      <% if is_active %>
+        <i class="has-margin-right-1 fa fa-caret-<%= order == :asc ? 'up' : 'down' %>"></i> <%= type.humanize %>
+      <% else %>
+        <%= type.humanize %>
+      <% end %>
     <% end %>
-  </div>
+  <% end %>
 </div>
