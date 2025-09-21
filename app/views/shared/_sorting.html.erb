@@ -1,0 +1,36 @@
+<%#
+   "Renders a sorting widget
+
+    Variables:
+      types : Array<String> of available sorting types
+    ? default_order : Defualt sorting order, if any
+    ? default_type  : Default sorting type, if any
+"%>
+
+<%
+  # Defaults
+  default_order = defined?(default_order) ? default_order : nil
+  default_type = defined?(default_type) ? default_type : nil
+%>
+
+<div class="flex gap-sm">
+  <div class="button-list is-gutterless">
+    <% [:asc, :desc].each do |order| %>
+      <% is_active = params[:order]&.to_sym == order || (params[:order].nil? && default_order == order) %>
+      <%= link_to order.to_s.humanize, request.params.merge(order: order),
+          class: "button is-muted is-outlined #{'is-active' if is_active}",
+          role: 'button',
+          aria: { label: "#{ order.to_s.humanize }ending order" } %>
+    <% end %>
+  </div>
+
+  <div class="button-list is-gutterless">
+    <% types.each do |type| %>
+      <% is_active = params[:sort] == type || (params[:sort].nil? && default_type.to_s == type) %>
+      <%= link_to type.humanize, request.params.merge(sort: type),
+          class: "button is-muted is-outlined #{'is-active' if is_active}",
+          role: 'button',
+          aria: { label: "Sort by #{type.humanize.downcase}" } %>
+    <% end %>
+  </div>
+</div>
