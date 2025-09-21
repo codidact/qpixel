@@ -66,10 +66,15 @@ class TagsController < ApplicationController
                 @tag.all_children + [@tag.id]
               end
     displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
-    @posts = Post.joins(:tags).where(id: PostsTag.select(:post_id).distinct.where(tag_id: tag_ids))
-                 .undeleted.where(post_type_id: displayed_post_types)
-                 .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
+    post_ids = Post.undeleted
+                   .where(post_type_id: displayed_post_types)
+                   .joins(:posts_tags)
+                   .where(posts_tags: { tag_id: tag_ids })
+                   .select(:id)
+    @posts = Post.where(id: post_ids)
+                 .list_includes
                  .order(sort_param)
+                 .paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.html
       format.rss
