@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = false
 
   # Set this to +true+ unless you want to skip exceptions_app:
-  config.consider_all_requests_local = false
+  config.consider_all_requests_local = ActiveRecord::Type::Boolean.new.cast(ENV['ALL_REQUESTS_LOCAL'] || 'true')
 
   # Controller caching (+false+ by default, can be overridden via the env variable):
   perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING'])
