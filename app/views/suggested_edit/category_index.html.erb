@@ -4,54 +4,58 @@
 <% categories = Category.unscoped.where(community: @community).order(sequence: :asc, id: :asc) %>
 <% current_cat = current_category %>
 
-<div class="button-list is-gutterless">
-  <%= link_to 'Pending', query_url(show_decided: 0),
-              class: "button is-muted is-outlined #{params[:show_decided] != '1' ? 'is-active' : ''}" %>
-  <%= link_to 'Decided', query_url(show_decided: 1),
-              class: "button is-muted is-outlined #{params[:show_decided] == '1' ? 'is-active' : ''}" %>
+<div class="suggested-edits-list-header">
+  <div class="button-list is-gutterless">
+    <%= link_to 'Pending', query_url(show_decided: 0),
+                class: "button is-muted is-outlined #{'is-active' unless @show_decided}" %>
+    <%= link_to 'Decided', query_url(show_decided: 1),
+                class: "button is-muted is-outlined #{'is-active' if @show_decided}" %>
+  </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age decided] %>
 </div>
 
-<% if params[:show_decided] != '1' && !current_user&.privilege?('edit_posts') %>
+<% unless @show_decided || current_user&.privilege?('edit_posts') %>
   <div class="notice is-info has-color-teal-800">
     <i class="fas fa-info-circle"></i> You can't approve or reject suggested edits (except on your own posts) 
     because you haven't yet earned the <%= link_to 'Edit Posts', ability_path('edit_posts') %> ability.
   </div>
 <% end %>
 
-<% if params[:show_decided] != '1' %>
-  <h3>All categories</h3>
+<details class="has-margin-top-2">
+  <summary>
+    Categories
+  </summary>
   <table>
     <tr>
       <th>category</th>
       <th>pending edits</th>
     </tr>
-  <% categories.each do |cat| %>
+    <% categories.each do |cat| %>
       <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
-      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: true).count %>
-    <tr>
-      <td>
-      <% if cat == current_cat %>
-        <%= cat.name %>
-      <% else %>
-        <%= link_to suggested_edits_queue_url(cat) do %>
-        <%= cat.name %>
-	<% end %>
-      <% end %>
-      </td>
-      <td>
-      <% if cat == current_cat %>
-        <%= sug_edits %>
-      <% else %>
-        <%= link_to suggested_edits_queue_url(cat) do %>
-        <%= sug_edits %>
-	<% end %>
-      <% end %>
-      </td>
-    </tr>
+      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
+      <% queue_url = suggested_edits_queue_url(cat, params.permit(:sort, :order, :show_decided)) %>
+      <tr>
+        <td>
+          <% if cat == current_cat %>
+            <%= cat.name %>
+          <% else %>
+            <%= link_to cat.name, queue_url %>
+          <% end %>
+        </td>
+        <td>
+          <% if cat == current_cat %>
+            <%= sug_edits %>
+          <% else %>
+<%= link_to sug_edits, queue_url %>
+          <% end %>
+        </td>
+      </tr>
     <% end %>
   </table>
-<% end %>
-
+</details>
 
 <% if @edits.any? %>
   <div class="widget">
@@ -67,14 +71,15 @@
           ><%= edit.active ? 'Pending' : (edit.approved? ? 'Approved' : 'Rejected' ) %></strong> suggested edit
           by <%= user_link edit.user %>,
           <span title="<%= edit.created_at.iso8601 %>"><%= time_ago_in_words(edit.created_at) %> ago</span>
-	  <% unless edit.active %>
-	  <br/>Decided by <%= user_link edit.decided_by %>,
-          <span title="<%= edit.decided_at.iso8601 %>"><%= time_ago_in_words(edit.decided_at) %> ago</span>
-	  <% end %>
+          <% unless edit.active %>
+            <br/>
+            Decided by <%= user_link edit.decided_by %>,
+            <span title="<%= edit.decided_at.iso8601 %>"><%= time_ago_in_words(edit.decided_at) %> ago</span>
+          <% end %>
         </div>
       </div>
     <% end %>
   </div>
 <% else %>
-<p>There are no suggested edits in this category.</p>
+  <p>There are no suggested edits in this category.</p>
 <% end %>
