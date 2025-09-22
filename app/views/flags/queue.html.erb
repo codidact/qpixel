@@ -8,14 +8,20 @@
   moderator attention; use that to help you determine what needs to be done.</p>
 <p>You can mark a flag helpful even if you take no action. If a post was edited after the flag was raised, for example, the problem might already be fixed.</p>
 
-<div class="button-list is-gutterless">
-  <%= link_to 'Active', flag_queue_path,
+<div class="flags-list-header">
+  <div class="button-list is-gutterless">
+    <%= link_to 'Active', flag_queue_path,
               class: "button is-muted is-outlined #{current_page?(flag_queue_path) ? 'is-active' : ''}" %>
-  <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined' %>
-  <% if admin? %>
-    <%= link_to 'Escalated', escalated_flags_path,
+    <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined' %>
+    <% if admin? %>
+      <%= link_to 'Escalated', escalated_flags_path,
                 class: "button is-muted is-outlined #{current_page?(escalated_flags_path) ? 'is-active' : ''}" %>
-  <% end %>
+    <% end %>
+  </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age] %>
 </div>
 
 <% @flags.each do |flag| %>

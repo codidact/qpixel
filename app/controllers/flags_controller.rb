@@ -4,6 +4,7 @@ class FlagsController < ApplicationController
   before_action :verify_moderator, only: [:queue, :handled, :escalate]
   before_action :verify_admin, only: [:escalated_queue]
   before_action :flag_verify, only: [:resolve]
+  before_action :set_sorting, only: [:escalated_queue, :queue, :handled]
 
   def new
     type = if params[:flag_type].present?
@@ -51,12 +52,26 @@ class FlagsController < ApplicationController
     @statuses = @flags.group(:status).count(:status)
   end
 
+  def escalated_queue
+    @flags = Flag.unhandled
+                 .includes(:post, :user)
+                 .where(escalated: true)
+                 .order(@sort_type => @sort_order)
+                 .paginate(page: params[:page], per_page: 20)
+    render :queue
+  end
+
   def queue
-    @flags = Flag.unhandled.includes(:post, :user).paginate(page: params[:page], per_page: 20)
+    @flags = Flag.unhandled
+                 .includes(:post, :user)
+                 .order(@sort_type => @sort_order)
+                 .paginate(page: params[:page], per_page: 20)
   end
 
   def handled
-    @flags = Flag.handled.includes(:post, :user, :handled_by).newest_first
+    @flags = Flag.handled
+                 .includes(:post, :user, :handled_by)
+                 .order(@sort_type => @sort_order)
                  .paginate(page: params[:page], per_page: 50)
   end
 
@@ -76,11 +91,6 @@ class FlagsController < ApplicationController
                  escalation_comment: params[:comment])
     FlagMailer.with(flag: @flag).flag_escalated.deliver_now
     render json: { status: 'success' }
-  end
-
-  def escalated_queue
-    @flags = Flag.unhandled.includes(:post, :user).where(escalated: true).paginate(page: params[:page], per_page: 20)
-    render :queue
   end
 
   private
@@ -109,5 +119,15 @@ class FlagsController < ApplicationController
                                     comment_thread_path(thread, anchor: "comment-#{comment.id}"))
     end
     comment
+  end
+
+  def set_sorting
+    sort_orders = { asc: :asc, desc: :desc }
+    sort_types = { age: :created_at, handled: :handled_at }
+
+    @default_sort_order = :asc
+    @default_sort_type = :age
+    @sort_order = sort_orders[params[:order]&.to_sym] || sort_orders[@default_sort_order]
+    @sort_type = sort_types[params[:sort]&.to_sym] || sort_types[@default_sort_type]
   end
 end

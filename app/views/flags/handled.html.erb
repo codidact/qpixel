@@ -3,12 +3,18 @@
 <h1>Handled Flags</h1>
 <p>The following list contains flags that have already been handled. You can't change the outcome of these any more.</p>
 
-<div class="button-list is-gutterless">
-  <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined' %>
-  <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined is-active' %>
-  <% if admin? %>
-    <%= link_to 'Escalated', escalated_flags_path, class: 'button is-muted is-outlined' %>
-  <% end %>
+<div class="flags-list-header">
+  <div class="button-list is-gutterless">
+    <%= link_to 'Active', flag_queue_path, class: 'button is-muted is-outlined' %>
+    <%= link_to 'Handled', handled_flags_path, class: 'button is-muted is-outlined is-active' %>
+    <% if admin? %>
+      <%= link_to 'Escalated', escalated_flags_path, class: 'button is-muted is-outlined' %>
+    <% end %>
+  </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age handled] %>
 </div>
 
 <% @flags.each do |flag| %>
