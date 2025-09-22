@@ -28,7 +28,7 @@
     <% if report.version? %>
       <br/>
       <strong>Version:</strong>
-      <%= link_to report.version, request.params.merge(version: report.version) %>
+      <%= link_to report.version, query_url(version: report.version) %>
     <% end %>
   </p>
 

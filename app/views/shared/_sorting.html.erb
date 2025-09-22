@@ -20,7 +20,7 @@
     <% type = option.is_a?(String) ? option : option[:type] %>
     <% title = "Sort by #{option.is_a?(String) ? option.humanize.downcase : option[:title]}" %>
     <% is_active = params[:sort] == type || (params[:sort].nil? && default_type.to_s == type) %>
-    <%= link_to request.params.merge(sort: type, order: is_active ? reverse_order : nil),
+    <%= link_to query_url(sort: type, order: is_active ? reverse_order : nil),
                 class: "button is-muted is-outlined #{'is-active' if is_active}",
                 role: 'button',
                 title: title,
