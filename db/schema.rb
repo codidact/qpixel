@@ -507,7 +507,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_20_103432) do
     t.datetime "locked_at", precision: nil
     t.datetime "locked_until", precision: nil
     t.index ["att_source"], name: "index_posts_on_att_source"
-    t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
+    t.index ["body_markdown", "title"], name: "index_posts_on_body_markdown_and_title", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
