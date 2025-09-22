@@ -1,27 +1,9 @@
 /**
  * @typedef {{
- *  name: string
- * }} RemoteTagSynonym
- * 
- * @typedef {{
- *  id: number
- *  community_id: number
- *  parent_id: number | null
- *  tag_set_id: number
- *  excerpt: string
- *  name: string
- *  tag_synonyms: RemoteTagSynonym[]
- *  wiki: string | null
- *  wiki_markdown: string
- *  created_at: string
- *  updated_at: string
- * }} RemoteTag
- * 
- * @typedef {{
  *  id: number | string
  *  text: string
  *  desc: string
- *  synonyms?: string | RemoteTagSynonym[]
+ *  synonyms?: string | QPixelTagSynonym[]
  * }} ProcessedTag
  */
 
@@ -87,7 +69,7 @@ $(() => {
         headers: { 'Accept': 'application/json' },
         delay: 100,
         /**
-         * @param {RemoteTag[]} data
+         * @param {QPixelTag[]} data
          * @returns {Select2.ProcessedResult<ProcessedTag>}
          */
         processResults: (data) => {
@@ -120,8 +102,8 @@ $(() => {
 
   /**
    * @param {JQuery} $search
-   * @param {RemoteTagSynonym[]} synonyms
-   * @returns {string | RemoteTagSynonym[]}
+   * @param {QPixelTagSynonym[]} synonyms
+   * @returns {string | QPixelTagSynonym[]}
    */
   function processSynonyms($search, synonyms) {
     if (!synonyms) return synonyms;
@@ -176,7 +158,7 @@ $(() => {
     const tagId = $tgt.attr('data-tag-id');
     const tagName = $tgt.attr('data-tag-name');
     const $select = $tgt.parents('.form-group').find('select');
-    const existing = $select.find(`option[value=${tagId}]`);
+    const existing = $select.find(`option[value='${tagName}']`);
     if (existing.length > 0) {
       $select.val([useIds ? tagId : tagName, ...($select.val() || [])]).trigger('change');
     }
@@ -193,17 +175,15 @@ $(() => {
     const tagName = $tgt.attr('data-name');
 
     const renameTo = prompt(`Rename tag ${tagName} to:`);
-    if (!!renameTo) {
-      const resp = await QPixel.fetchJSON(`/categories/${categoryId}/tags/${tagId}/rename`, { name: renameTo });
-  
-      const data = await resp.json();
 
-      if (data.success) {
-        location.reload();
-      }
-      else {
-        console.error('Failed to rename tag, somehow');
-      }
+    if (!renameTo) {
+      return;
     }
+
+    const data = await QPixel.renameTag(categoryId, tagId, renameTo);
+
+    QPixel.handleJSONResponse(data, () => {
+      location.reload();
+    });
   });
 });

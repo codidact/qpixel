@@ -6,7 +6,7 @@ module CommentsControllerTestHelpers
   # Attempts to archive a given comment thread
   # @param thread [CommentThread] thread to archive
   def try_archive_thread(thread)
-    post :thread_restrict, params: { id: thread.id, type: 'archive' }
+    post :archive_thread, params: { id: thread.id }
   end
 
   # Attempts to create a comment thread on a given post
@@ -50,7 +50,7 @@ module CommentsControllerTestHelpers
   # Attempts to delete a given comment thread
   # @param thread [CommentThread] thread to delete
   def try_delete_thread(thread)
-    post :thread_restrict, params: { id: thread.id, type: 'delete' }
+    post :delete_thread, params: { id: thread.id }
   end
 
   # Attempts to undelete a given comment thread
@@ -62,7 +62,7 @@ module CommentsControllerTestHelpers
   # Attempts to follow a given comment thread
   # @param thread [CommentThread] thread to follow
   def try_follow_thread(thread)
-    post :thread_restrict, params: { id: thread.id, type: 'follow' }
+    post :follow_thread, params: { id: thread.id }
   end
 
   # Attempts to unfollow a given comment thread
@@ -71,11 +71,23 @@ module CommentsControllerTestHelpers
     post :thread_unrestrict, params: { id: thread.id, type: 'follow' }
   end
 
+  # Attempts to follow new threads on a given post
+  # @param post [Post] post to follow
+  def try_post_follow(test_post)
+    post :post_follow, params: { post_id: test_post.id }
+  end
+
+  # Attempts to unfollow new threads on a given post
+  # @param post [Post] post to unfollow
+  def try_post_unfollow(test_post)
+    post :post_unfollow, params: { post_id: test_post.id }
+  end
+
   # Attempts to lock a given comment thread
   # @param thread [CommentThread] thread to lock
   # @param duration [Integer] lock duration, in days
   def try_lock_thread(thread, duration: nil)
-    post :thread_restrict, params: { duration: duration, id: thread.id, type: 'lock' }
+    post :lock_thread, params: { duration: duration, id: thread.id }
   end
 
   # Attempts to unlock a given comment thread

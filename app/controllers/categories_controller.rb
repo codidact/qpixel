@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.all.order(sequence: :asc, id: :asc)
+    @categories = Category.accessible_to(current_user).all.order(sequence: :asc, id: :asc)
     respond_to do |format|
       format.html
       format.json do
@@ -21,6 +21,12 @@ class CategoriesController < ApplicationController
 
   def homepage
     @category = Category.where(is_homepage: true).first
+
+    unless @category.present?
+      redirect_to categories_path
+      return
+    end
+
     update_last_visit(@category)
     set_list_posts
     render :show
@@ -161,8 +167,10 @@ class CategoriesController < ApplicationController
                               SiteSetting['LotteryAgeDeprecationSpeed']],
                     native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
-    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .includes(:post_type, :tags).list_includes
+    @posts = @category.posts
+                      .undeleted
+                      .where(post_type_id: @category.display_post_types)
+                      .list_includes
     filter_qualifiers = helpers.params_to_qualifiers(params)
     @active_filter = helpers.active_filter
 
@@ -199,6 +207,9 @@ class CategoriesController < ApplicationController
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
   end
 
+  # Updates last visit cache for a given category
+  # @param category [Category] category to update
+  # @return [Boolean] whether the cache entry is deleted
   def update_last_visit(category)
     return if current_user.blank?
 

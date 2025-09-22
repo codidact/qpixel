@@ -61,6 +61,13 @@ sample_global_admin:
   is_moderator: false
   reputation: 1
 
+sample_developer:
+  user: developer
+  community: sample
+  is_admin: true
+  is_moderator: false
+  reputation: 1
+
 sample_staff:
   user: staff
   community: sample
@@ -87,6 +94,34 @@ sample_deleted_profile:
 
 sample_enabled_2fa:
   user: enabled_2fa
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_spammer:
+  user: spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_edit_scorer:
+  user: edit_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_flag_scorer:
+  user: flag_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_post_scorer:
+  user: post_scorer
   community: sample
   is_admin: false
   is_moderator: false

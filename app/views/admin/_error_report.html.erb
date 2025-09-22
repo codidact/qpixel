@@ -4,7 +4,7 @@
       <strong><%= report.klass %></strong><br/>
       <span class="has-font-size-caption has-color-tertiary-600"><%= t('g.at') %> <%= report.request_uri %></span>
     </span>
-    <span class="has-float-right has-color-tertiary-600">
+    <span class="has-padding-right-2 has-float-right has-color-tertiary-600">
       <%= report.created_at.iso8601 %>
     </span>
   </summary>
@@ -24,7 +24,16 @@
 
     <strong>UUID:</strong>
     <span class="raw-markdown"><%= report.uuid %></span>
+
+    <% if report.version? %>
+      <br/>
+      <strong>Version:</strong>
+      <%= report.version %>
+    <% end %>
   </p>
 
-  <pre class="error-trace raw-markdown"><%= report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s }.join("\n") %></pre>
+  <% backtrace_lines = report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s } %>
+  <% if backtrace_lines.any? %>
+    <pre class="error-trace raw-markdown"><%= backtrace_lines.join("\n") %></pre>
+  <% end %>
 </details>

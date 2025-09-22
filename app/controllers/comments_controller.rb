@@ -1,18 +1,27 @@
+# rubocop:disable Metrics/ClassLength
 # Provides mainly web actions for using and making comments.
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
 
   before_action :set_comment, only: [:update, :destroy, :undelete, :show]
-  before_action :set_post, only: [:create_thread]
-  before_action :set_thread,
-                only: [:create, :thread, :thread_content, :thread_rename, :thread_restrict, :thread_unrestrict,
-                       :thread_followers]
-
+  before_action :set_post, only: [:create_thread, :post_follow, :post_unfollow]
+  before_action :set_thread, only: [:create,
+                                    :thread,
+                                    :thread_content,
+                                    :thread_rename,
+                                    :archive_thread,
+                                    :delete_thread,
+                                    :follow_thread,
+                                    :lock_thread,
+                                    :thread_unrestrict,
+                                    :thread_followers]
   before_action :check_post_access, only: [:create_thread, :create]
   before_action :check_privilege, only: [:update, :destroy, :undelete]
   before_action :check_create_access, only: [:create_thread, :create]
   before_action :check_reply_access, only: [:create]
-  before_action :check_restrict_access, only: [:thread_restrict]
+  before_action :check_archive_thread_access, only: [:archive_thread]
+  before_action :check_delete_thread_access, only: [:delete_thread]
+  before_action :check_lock_thread_access, only: [:lock_thread]
   before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
@@ -26,7 +35,7 @@ class CommentsController < ApplicationController
 
     body = params[:body]
 
-    @comment_thread = CommentThread.new(title: title, post: @post)
+    @comment_thread = CommentThread.new(title: helpers.strip_markdown(title, strip_leading_quote: true), post: @post)
     @comment = Comment.new(post: @post, content: body, user: current_user, comment_thread: @comment_thread)
 
     pings = check_for_pings(@comment_thread, body)
@@ -185,9 +194,12 @@ class CommentsController < ApplicationController
   end
 
   def thread_content
-    render partial: 'comment_threads/expanded', locals: { inline: params[:inline] == 'true',
-                                                          show_deleted: params[:show_deleted_comments] == '1',
-                                                          thread: @comment_thread }
+    if stale?(last_modified: @comment_thread.last_activity_at.utc)
+      render partial: 'comment_threads/expanded',
+             locals: { inline: params[:inline] == 'true',
+                       show_deleted: params[:show_deleted_comments] == '1',
+                       thread: @comment_thread }
+    end
   end
 
   def thread_followers
@@ -208,60 +220,86 @@ class CommentsController < ApplicationController
       return
     end
 
-    @comment_thread.update title: params[:title]
+    title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+    status = @comment_thread.update(title: title)
+
+    unless status
+      flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
+    end
+
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
-  def thread_restrict
-    case params[:type]
-    when 'lock'
-      lu = nil
-      unless params[:duration].blank?
-        lu = params[:duration].to_i.days.from_now
-      end
-      @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
-    when 'archive'
-      @comment_thread.update(archived: true, archived_by: current_user)
-    when 'delete'
-      @comment_thread.update(deleted: true, deleted_by: current_user)
-    when 'follow'
-      ThreadFollower.create comment_thread: @comment_thread, user: current_user
-    else
-      return not_found!
+  def archive_thread
+    status = @comment_thread.update(archived: true, archived_by: current_user)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def delete_thread
+    status = @comment_thread.update(deleted: true, deleted_by: current_user)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def follow_thread
+    status = ThreadFollower.create(comment_thread: @comment_thread, user: current_user)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def lock_thread
+    lu = nil
+    unless params[:duration].blank?
+      lu = params[:duration].to_i.days.from_now
     end
 
-    render json: { status: 'success' }
+    status = @comment_thread.update(locked: true, locked_by: current_user, locked_until: lu)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unarchive_thread
+    status = @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def undelete_thread
+    if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
+      render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
+      return
+    end
+    status = @comment_thread.update(deleted: false, deleted_by: nil)
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unfollow_thread
+    status = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)&.destroy
+    restrict_thread_response(@comment_thread, status)
+  end
+
+  def unlock_thread
+    status = @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
+    restrict_thread_response(@comment_thread, status)
   end
 
   def thread_unrestrict
+    # TODO: remove this wrapper action entirely (callbacks need to be moved, routes assigned, etc)
     case params[:type]
     when 'lock'
-      @comment_thread.update(locked: false, locked_by: nil, locked_until: nil)
+      unlock_thread
     when 'archive'
-      @comment_thread.update(archived: false, archived_by: nil, ever_archived_before: true)
+      unarchive_thread
     when 'delete'
-      if @comment_thread.deleted_by.at_least_moderator? && !current_user.at_least_moderator?
-        render json: { status: 'error', message: I18n.t('comments.errors.mod_only_undelete') }
-        return
-      end
-      @comment_thread.update(deleted: false, deleted_by: nil)
+      undelete_thread
     when 'follow'
-      tf = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)
-      tf&.destroy
+      unfollow_thread
     else
-      return not_found!
+      not_found!
     end
-
-    render json: { status: 'success' }
   end
 
   def post
     @post = Post.find(params[:post_id])
-    @comment_threads = if current_user&.at_least_moderator? || current_user&.post_privilege?('flag_curate', @post)
-                         CommentThread
-                       else
-                         CommentThread.undeleted
-                       end.where(post: @post).order(deleted: :asc, archived: :asc, reply_count: :desc)
+    @comment_threads = CommentThread.accessible_to(current_user, @post)
+                                    .where(post: @post)
+                                    .order(deleted: :asc, archived: :asc, reply_count: :desc)
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }
@@ -269,13 +307,23 @@ class CommentsController < ApplicationController
   end
 
   def post_follow
-    @post = Post.find(params[:post_id])
-    if CommentThread.post_followed?(@post, current_user)
-      ThreadFollower.where(post: @post, user: current_user).destroy_all
-    else
+    if ThreadFollower.where(post: @post, user: current_user).none?
       ThreadFollower.create(post: @post, user: current_user)
     end
-    redirect_to post_path(@post)
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
+  end
+
+  def post_unfollow
+    ThreadFollower.where(post: @post, user: current_user).destroy_all
+
+    respond_to do |format|
+      format.html { redirect_to post_path(@post) }
+      format.json { render json: { status: 'success' } }
+    end
   end
 
   def pingable
@@ -291,7 +339,7 @@ class CommentsController < ApplicationController
   end
 
   def set_comment
-    @comment = Comment.unscoped.find params[:id]
+    @comment = Comment.unscoped.find(params[:id])
   end
 
   def set_post
@@ -349,18 +397,20 @@ class CommentsController < ApplicationController
     end
   end
 
-  def check_restrict_access
-    case params[:type]
-    when 'lock'
-      not_found! unless current_user.can_lock?(@comment_thread)
-    when 'archive'
-      not_found! unless current_user.can_archive?(@comment_thread)
-    when 'delete'
-      not_found! unless current_user.can_delete?(@comment_thread)
-    end
+  def check_archive_thread_access
+    not_found! unless current_user.can_archive?(@comment_thread)
+  end
+
+  def check_delete_thread_access
+    not_found! unless current_user.can_delete?(@comment_thread)
+  end
+
+  def check_lock_thread_access
+    not_found! unless current_user.can_lock?(@comment_thread)
   end
 
   def check_unrestrict_access
+    # TODO: split into individual checks once unrestrict_thread is split
     case params[:type]
     when 'lock'
       not_found! unless current_user.can_unlock?(@comment_thread)
@@ -388,6 +438,18 @@ class CommentsController < ApplicationController
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
+  # @param thread [CommentThread] thread to get response for
+  # @param status [Boolean] status of the restrict operation
+  def restrict_thread_response(thread, status)
+    if status
+      render json: { status: 'success', thread: thread }
+    else
+      render json: { status: 'failed',
+                     message: thread.errors.full_messages.join(', ') },
+             status: :bad_request
+    end
+  end
+
   # @param pings [Array<Integer>] list of pinged user ids
   def apply_pings(pings)
     pings.each do |p|
@@ -413,3 +475,4 @@ class CommentsController < ApplicationController
                              user: current_user)
   end
 end
+# rubocop:enable Metrics/ClassLength

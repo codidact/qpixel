@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_20_103432) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -175,6 +175,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
+    t.datetime "locked_at", precision: nil
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -252,6 +253,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "uuid"
     t.string "user_agent"
+    t.string "version"
     t.index ["community_id"], name: "index_error_logs_on_community_id"
     t.index ["user_id"], name: "index_error_logs_on_user_id"
   end
@@ -589,6 +591,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.text "description"
     t.string "category"
     t.bigint "community_id"
+    t.string "options"
     t.index ["category"], name: "index_site_settings_on_category"
     t.index ["community_id"], name: "index_site_settings_on_community_id"
     t.index ["name"], name: "index_site_settings_on_name"

@@ -176,23 +176,16 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
 
     tag = tags(:base)
-
     new_tag_name = 'renamed'
 
-    post :rename, params: {
-      format: :json,
-      id: categories(:main).id,
-      name: new_tag_name,
-      tag_id: tag.id,
-      tag: tag
-    }
+    try_rename_tag(categories(:main), tag, new_tag_name)
 
     assert_response(:success)
     assert_valid_json_response
 
     res_body = JSON.parse(response.body)
 
-    assert_equal true, res_body['success']
+    assert_equal 'success', res_body['status']
     assert_equal new_tag_name, res_body['tag']['name']
 
     log_entry = AuditLog.last
@@ -204,24 +197,33 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
 
     tag = tags(:base)
-
     old_tag_name = tag.name
 
-    post :rename, params: {
-      format: :json,
-      id: categories(:main).id,
-      name: '',
-      tag_id: tag.id,
-      tag: tag
-    }
+    try_rename_tag(categories(:main), tag, '')
 
-    assert_response(:success)
+    assert_response(:bad_request)
     assert_valid_json_response
 
     res_body = JSON.parse(response.body)
 
-    assert_equal false, res_body['success']
+    assert_equal 'failed', res_body['status']
+    assert_equal I18n.t('tags.errors.rename_generic'), res_body['message']
     tag.reload
     assert_equal tag.name, old_tag_name
+  end
+
+  private
+
+  # @param category [Category] category to rename the tag in
+  # @param tag [Tag] tag to rename
+  # @param name [String] new tag name
+  def try_rename_tag(category, tag, name)
+    post :rename, params: {
+      format: :json,
+      id: category.id,
+      name: name,
+      tag_id: tag.id,
+      tag: tag
+    }
   end
 end

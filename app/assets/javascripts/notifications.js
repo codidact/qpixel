@@ -1,4 +1,7 @@
 $(() => {
+  /**
+   * @param {QPixelNotification} notification 
+   */
   const makeNotification = (notification) => {
     const template = `<div class="js-notification widget h-m-0 h-m-b-2 ${notification.is_read ? 'read' : 'is-teal'}">
         <div class="widget--body h-p-2">
@@ -18,6 +21,9 @@ $(() => {
     return template;
   };
 
+  /**
+   * @param {number} change 
+   */
   const changeInboxCount = (change) => {
     const counter = $('.inbox-count');
     let count;
@@ -42,16 +48,12 @@ $(() => {
     }
   };
 
-  $('.inbox-toggle').on('click', async (evt) => {
-    evt.preventDefault();
+  $('.inbox-toggle').on('click', async (ev) => {
+    ev.preventDefault();
     const $inbox = $('.inbox');
     if($inbox.hasClass("is-active")) {
-      const resp = await fetch(`/users/me/notifications`, {
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' }
-      });
+      const data = await QPixel.getNotifications();
 
-      const data = await resp.json();
       const $inboxContainer = $inbox.find(".inbox--container");
       $inboxContainer.html('');
   

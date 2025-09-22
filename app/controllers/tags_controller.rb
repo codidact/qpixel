@@ -10,11 +10,16 @@ class TagsController < ApplicationController
     @tag_set = if params[:tag_set].present?
                  TagSet.find(params[:tag_set])
                end
+
     @tags = if params[:term].present?
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
+            end
+
+    @tags = @tags.list_includes
+                 .paginate(page: params[:page], per_page: 50)
+
     respond_to do |format|
       format.json do
         render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
@@ -38,7 +43,7 @@ class TagsController < ApplicationController
               @tag_set.tags.where(excerpt: ['', nil])
             else
               @tag_set.tags
-            end
+            end.list_includes
 
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
@@ -66,10 +71,15 @@ class TagsController < ApplicationController
                 @tag.all_children + [@tag.id]
               end
     displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
-    @posts = Post.joins(:tags).where(id: PostsTag.select(:post_id).distinct.where(tag_id: tag_ids))
-                 .undeleted.where(post_type_id: displayed_post_types)
-                 .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
+    post_ids = Post.undeleted
+                   .where(post_type_id: displayed_post_types)
+                   .joins(:posts_tags)
+                   .where(posts_tags: { tag_id: tag_ids })
+                   .select(:id)
+    @posts = Post.where(id: post_ids)
+                 .list_includes
                  .order(sort_param)
+                 .paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.html
       format.rss
@@ -141,7 +151,14 @@ class TagsController < ApplicationController
       end
     end
 
-    render json: { success: status, tag: @tag }
+    if status
+      render json: { status: 'success', tag: @tag }
+    else
+      render json: { status: 'failed',
+                     message: I18n.t('tags.errors.rename_generic'),
+                     tag: @tag },
+             status: :bad_request
+    end
   end
 
   def select_merge; end

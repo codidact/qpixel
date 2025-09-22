@@ -38,6 +38,8 @@ default_license:
     Your choice of default license. This will override site and category default licensing.
   default: ~
   choice:
+    - name: Site or category default
+      value: ~
     - name: CC BY-SA 4.0
       value: CC BY-SA 4.0
     - name: CC BY 4.0

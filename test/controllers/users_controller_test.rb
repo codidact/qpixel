@@ -7,9 +7,18 @@ class UsersControllerTest < ActionController::TestCase
   include UsersAbilitiesTest
 
   test 'should get index' do
-    get :index
-    assert_not_nil assigns(:users)
-    assert_response(:success)
+    [:html, :json].each do |format|
+      get :index, params: { format: format }
+
+      assert_response(:success)
+
+      case format
+      when :html
+        assert_not_nil(assigns(:users))
+      when :json
+        assert_valid_json_response
+      end
+    end
   end
 
   test 'should not include users not in current community' do
@@ -56,28 +65,6 @@ class UsersControllerTest < ActionController::TestCase
   test 'should require moderator status to access mod tools' do
     sign_in users(:standard_user)
     get :mod, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should destroy user' do
-    sign_in users(:global_admin)
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_not_nil assigns(:user)
-    assert_equal 'success', JSON.parse(response.body)['status']
-    assert_response(:success)
-  end
-
-  test 'should require authentication to destroy user' do
-    sign_out :user
-    delete :destroy, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should require moderator status to destroy user' do
-    sign_in users(:standard_user)
-    delete :destroy, params: { id: users(:standard_user).id }
     assert_nil assigns(:user)
     assert_response(:not_found)
   end
@@ -520,6 +507,64 @@ class UsersControllerTest < ActionController::TestCase
     assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
   end
 
+  test 'set_filter should correctly save valid filters' do
+    sign_in users(:standard_user)
+
+    [false, true].each do |is_default|
+      try_save_filter(is_default: is_default)
+      assert_json_success
+    end
+  end
+
+  test 'set_preference should correclty save valid preferences' do
+    sign_in users(:standard_user)
+
+    pref_key = 'default_license'
+    license = licenses(:cc_by_sa)
+
+    [nil, communities(:sample)].each do |community|
+      try_save_preference(pref_key, license, community: community)
+
+      assert_response(:success)
+      assert_valid_json_response
+
+      parsed_body = JSON.parse(response.body)
+      assert_equal 'success', parsed_body['status']
+      assert_not_nil parsed_body['preferences']
+
+      comm_key = community.present? ? 'community' : 'global'
+      assert_not_nil parsed_body['preferences'][comm_key]
+      assert_equal license.id.to_s, parsed_body['preferences'][comm_key][pref_key]
+    end
+  end
+
+  test 'set_preference should correctly handle invalid preferences' do
+    sign_in users(:standard_user)
+
+    [nil, communities(:sample)].each do |community|
+      post :set_preference, params: { community: community, format: :json }
+
+      assert_response(:bad_request)
+      assert_valid_json_response
+
+      parsed_body = JSON.parse(response.body)
+      assert_equal 'failed', parsed_body['status']
+      assert_not_nil parsed_body['message']
+    end
+  end
+
+  test 'default_filter should correctly respond to missing category' do
+    sign_in users(:standard_user)
+    try_default_filter(nil)
+    assert_response(:bad_request)
+  end
+
+  test 'default_filter should correctly get default category filters' do
+    sign_in users(:standard_user)
+    try_default_filter(categories(:main))
+    assert_json_success
+  end
+
   private
 
   def create_other_user
@@ -528,5 +573,26 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_default_filter(category)
+    get :default_filter, params: {
+      category: category&.id,
+      format: :json
+    }
+  end
+
+  def try_save_filter(**opts)
+    filter = { name: 'test filter' }.merge(opts)
+    post :set_filter, params: filter.merge({ format: :json })
+  end
+
+  def try_save_preference(name, value, community: nil)
+    post :set_preference, params: {
+      community: community,
+      name: name,
+      value: value,
+      format: :json
+    }
   end
 end

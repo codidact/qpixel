@@ -1,12 +1,15 @@
 class Users::SessionsController < Devise::SessionsController
-  protect_from_forgery except: [:create]
+  include Devise::Controllers::Rememberable
+
+  protect_from_forgery with: :exception, except: [:create, :destroy], store: :cookie
 
   mattr_accessor :first_factor, default: [], instance_writer: false, instance_reader: false
 
   # Any changes made here may also require changes to Users::SamlSessionsController#create.
   def create
     super do |user|
-      return unless post_sign_in(user)
+      remember_me = remember_me_is_active?(user)
+      return unless post_sign_in(user, remember_me)
     end
   end
 
@@ -29,10 +32,15 @@ class Users::SessionsController < Devise::SessionsController
                             'a backup code. Please re-configure two-factor authentication via your profile.'
         end
 
+        if params[:remember_me] == 'true'
+          remember_me(target_user)
+        end
+
         AuditLog.user_history(event_type: 'two_factor_success', related: target_user)
         @@first_factor.delete params[:uid].to_i
+
         flash[:info] = 'Signed in successfully.'
-        sign_in_and_redirect target_user
+        sign_in_and_redirect(target_user)
       else
         AuditLog.user_history(event_type: 'two_factor_fail', related: target_user, comment: 'first factor not present')
         flash[:danger] = "You haven't entered your password yet."
@@ -56,9 +64,10 @@ class Users::SessionsController < Devise::SessionsController
   #
   # In general, this method should have similar behavior to the Users::SamlSessionsController#post_sign_in method.
   # If you make changes here, you may also have to update that method.
-  # @param user [User]
+  # @param user [User] currently signed in user
+  # @param remember_me [Boolean] whether the user should be remembered after special conditions
   # @return [Boolean] false if the handling by the calling method should be stopped
-  def post_sign_in(user)
+  def post_sign_in(user, remember_me = false)
     # For a deleted user (banished), tell them non-specifically that there was a mistake with their credentials.
     if user.deleted?
       sign_out user
@@ -88,20 +97,20 @@ class Users::SessionsController < Devise::SessionsController
 
     # Enforce 2FA
     if user.enabled_2fa
-      handle_2fa_login(user)
+      handle_2fa_login(user, remember_me)
       return false
     end
 
     true
   end
 
-  def handle_2fa_login(user)
+  def handle_2fa_login(user, remember_me = false)
     sign_out user
     case user.two_factor_method
     when 'app'
       id = user.id
       @@first_factor << id
-      redirect_to login_verify_2fa_path(uid: id)
+      redirect_to login_verify_2fa_path(uid: id, remember_me: remember_me)
     when 'email'
       TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
       flash[:notice] = nil

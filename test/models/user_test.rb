@@ -41,6 +41,24 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'example.com', users(:closer).website_domain
   end
 
+  test 'can_close? should correctly determine if the user can close a given post' do
+    closer = users(:closer)
+
+    assert closer.can_close?(posts(:question_one))
+    assert_not closer.can_close?(posts(:answer_one))
+    assert_not closer.can_close?(posts(:locked))
+
+    std = users(:standard_user)
+
+    posts.each do |post|
+      if post.locked? || !post.closeable?
+        assert_not std.can_close?(post)
+      else
+        assert_equal post.user.same_as?(std), std.can_close?(post)
+      end
+    end
+  end
+
   test 'can_update? should determine if the user can update a given post' do
     basic_user = users(:basic_user)
     post_owner = users(:standard_user)
@@ -199,31 +217,39 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'ability_on? should return true for every undeleted user with profile on a community' do
+  test "ability_on? should correctly check the 'everyone' ability" do
     everyone = abilities(:everyone)
 
     communities.each do |community|
       CommunityUser.unscoped.undeleted.where(community_id: community.id).each do |cu|
         unless cu.user.deleted
-          assert_equal cu.user.ability_on?(community.id, everyone.internal_id), true
+          assert cu.user.ability_on?(community.id, everyone.internal_id),
+                 "Expected user '#{cu.user.username}' to have the 'everyone' ability"
         end
       end
     end
   end
 
-  test 'ability_on? should correctly check for unrestricted ability' do
+  test "ability_on? should correctly check the 'unrestricted' ability" do
+    ability = abilities(:unrestricted)
     community = communities(:sample)
     basic = users(:basic_user)
     system = users(:system)
 
-    unrestricted = abilities(:unrestricted)
+    restricted_users = [basic, system]
 
-    [basic, system].each do |user|
-      assert_equal user.ability_on?(community.id, unrestricted.internal_id), false
+    restricted_users.each do |user|
+      assert_not user.ability_on?(community.id, ability.internal_id),
+                 "Expected user '#{user.name}' not to have the ability"
     end
 
-    CommunityUser.unscoped.undeleted.where(community_id: community.id).where.not(user_id: [basic.id, system.id]).each do |cu|
-      assert_equal cu.user.ability_on?(community.id, unrestricted.internal_id), !cu.user.deleted
+    users.each do |user|
+      next unless user.profile_on?(community.id) && !user.community_user.deleted?
+      next if restricted_users.any? { |u| u.same_as?(user) }
+
+      assert_equal user.ability_on?(community.id, ability.internal_id),
+                   !user.deleted?,
+                   "Expected user '#{user.name}' #{'not ' if user.deleted?}to have the ability"
     end
   end
 
@@ -288,16 +314,5 @@ class UserTest < ActiveSupport::TestCase
 
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
-  end
-
-  test 'not_blocklisted? should correctly determine if the user is blocklisted' do
-    std = users(:standard_user)
-
-    std.skip_reconfirmation!
-    std.update(email: blocked_items(:email).value)
-    std.valid?
-
-    assert_equal false, std.changed?
-    assert std.errors[:base].intersect?(ApplicationRecord.useful_err_msg)
   end
 end

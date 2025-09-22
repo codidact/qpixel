@@ -1,6 +1,6 @@
 <% prefs.each do |name, value| %>
   <% pref_config = AppConfig.preferences[name] %>
-  <div class="user-pref">
+  <label class="user-pref">
     <div class="user-pref--meta">
       <strong><%= name.humanize %></strong><br/>
       <span class="desc"><%= pref_config['description'] %></span>
@@ -11,8 +11,10 @@
         <input class="js-user-pref" type="checkbox" data-pref="<%= name %>" <%= 'checked' if value == 'true' %>
                data-community="<%= community %>" />
       <% when 'choice' %>
-        <%= select_tag nil, options_for_select(preference_choice(pref_config), selected: value),
-                       include_blank: true, class: 'js-user-pref form-element', data: { pref: name, community: community } %>
+        <%= select_tag nil,
+                       options_for_select(preference_choice(pref_config), selected: value),
+                       class: 'js-user-pref form-element',
+                       data: { pref: name, community: community } %>
       <% when 'integer' %>
         <input class="js-user-pref form-element" type="number" data-pref="<%= name %>" value="<%= value %>"
                data-community="<%= community %>" />
@@ -21,5 +23,5 @@
                data-community="<%= community %>" />
       <% end %>
     </div>
-  </div>
+  </label>
 <% end %>

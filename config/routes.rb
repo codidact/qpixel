@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   mount Rack::Directory.new('coverage/'), at: '/coverage' if Rails.env.development?
   mount MaintenanceTasks::Engine, at: '/maintenance'
-  
+
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
     get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
@@ -99,7 +99,8 @@ Rails.application.routes.draw do
     get    'flags',                        to: 'flags#queue', as: :flag_queue
     get    'flags/handled',                to: 'flags#handled', as: :handled_flags
     get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
-    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
+    get    'users/spam',                   to: 'moderator#spammy_users', as: :mod_spammers
+    post   'users/spam',                   to: 'moderator#handle_spammy_users', as: :mod_handle_spammers
     get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
     post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
     post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
@@ -240,11 +241,17 @@ Rails.application.routes.draw do
     get    'thread/:id/pingable',          to: 'comments#pingable', as: :thread_pingable
     post   'thread/:id/new',               to: 'comments#create', as: :create_comment
     post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
-    post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
+
+    post   'thread/:id/archive',           to: 'comments#archive_thread', as: :archive_comment_thread
+    post   'thread/:id/delete',            to: 'comments#delete_thread', as: :delete_comment_thread
+    post   'thread/:id/follow',            to: 'comments#follow_thread', as: :follow_comment_thread
+    post   'thread/:id/lock',              to: 'comments#lock_thread', as: :lock_comment_thread
+
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
     get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
+    post   'post/:post_id/unfollow',       to: 'comments#post_unfollow', as: :unfollow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
     get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
@@ -253,9 +260,10 @@ Rails.application.routes.draw do
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
   end
 
-  get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
+  get    'subscriptions/new',              to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
   get    'subscriptions',                  to: 'subscriptions#index', as: :subscriptions
+  get    'subscriptions/qualifiers',       to: 'subscriptions#qualifiers', as: :subscription_qualifiers
   post   'subscriptions/:id/enable',       to: 'subscriptions#enable', as: :enable_subscription
   delete 'subscriptions/:id',              to: 'subscriptions#destroy', as: :destroy_subscription
 

@@ -29,6 +29,13 @@ class UsersController < ApplicationController
                    .paginate(page: params[:page], per_page: 48)
 
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
+
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @users
+      end
+    end
   end
 
   def show
@@ -170,13 +177,12 @@ class UsersController < ApplicationController
   end
 
   def default_filter
-    if user_signed_in? && params[:category]
+    if user_signed_in? && params[:category].present?
       default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
-      render json: { status: 'success', success: true, name: default_filter&.name },
-             status: 200
+      render json: { status: 'success', success: true, name: default_filter&.name }
     else
       render json: { status: 'failed', success: false },
-             status: 400
+             status: :bad_request
     end
   end
 
@@ -186,12 +192,14 @@ class UsersController < ApplicationController
       community_key = "prefs.#{current_user.id}.community.#{RequestContext.community_id}"
       key = params[:community].present? && params[:community] ? community_key : global_key
       current_user.validate_prefs!
-      render json: { status: 'success', success: true,
+      render json: { status: 'success',
                      count: RequestContext.redis.hset(key, params[:name], params[:value].to_s),
                      preferences: current_user.preferences }
     else
-      render json: { status: 'failed', success: false, errors: ['Both name and value parameters are required'] },
-             status: 400
+      render json: { status: 'failed',
+                     message: 'Failed to save the preference',
+                     errors: ['Both name and value parameters are required'] },
+             status: :bad_request
     end
   end
 
@@ -303,39 +311,6 @@ class UsersController < ApplicationController
     @abilities = Ability.all
   end
 
-  def destroy
-    if @user.votes.count > 100
-      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    if @user.at_least_moderator?
-      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    before = @user.attributes_print
-    @user.block('user destroyed')
-
-    if @user.destroy
-      Post.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                         deleted: true, deleted_at: DateTime.now,
-                                         deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
-      Comment.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                            deleted: true)
-      Flag.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      SuggestedEdit.unscoped.by(@user).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
-      render json: { status: 'success' }
-    else
-      render json: { status: 'failed',
-                     message: 'Failed to destroy user; ask a dev.' },
-             status: :internal_server_error
-    end
-  end
-
   def soft_delete
     if @user.at_least_moderator?
       render json: { status: 'failed', message: 'Admins and moderators cannot be deleted.' },
@@ -391,7 +366,7 @@ class UsersController < ApplicationController
     @user = current_user
 
     if params[:user][:avatar].present?
-      if helpers.valid_image?(params[:user][:avatar])
+      if helpers.valid_upload?(params[:user][:avatar])
         @user.avatar.attach(params[:user][:avatar])
       else
         @user.errors.add(:avatar, 'must be a valid image')
@@ -682,11 +657,9 @@ class UsersController < ApplicationController
   end
 
   def user_scope
-    if current_user&.at_least_moderator?
-      User.all
-    else
-      User.undeleted
-    end.joins(:community_user).includes(:community_user, :avatar_attachment)
+    User.accessible_to(current_user)
+        .joins(:community_user)
+        .includes(:community_user, :avatar_attachment)
   end
 
   def check_deleted

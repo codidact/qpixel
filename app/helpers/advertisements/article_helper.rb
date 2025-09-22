@@ -6,6 +6,7 @@ module Advertisements::ArticleHelper
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/BlockLength
   def article_ad(article)
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch "posts/#{article.id}/ad", expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'

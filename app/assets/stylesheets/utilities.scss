@@ -38,6 +38,10 @@
   flex-direction: column;
   flex-wrap: wrap;
 
+  &.space-between {
+    justify-content: space-between;
+  }
+
   @media screen and (min-width: $screen-md) {
     flex-direction: row;
 
@@ -357,6 +361,10 @@ span.spoiler {
 
 .wrap-anywhere {
   overflow-wrap: anywhere;
+}
+
+.wrap-word {
+  overflow-wrap: break-word;
 }
 
 .nowrap {

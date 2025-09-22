@@ -8,15 +8,15 @@ class PostType < ApplicationRecord
   validates :answer_type_id, presence: true, if: :has_answers?
 
   def reactions
-    Rails.cache.fetch "post_type/#{name}/reactions" do
+    Rails.cache.fetch_collection "post_type/#{name}/reactions" do
       return [] unless has_reactions
 
       if has_only_specific_reactions
         ReactionType.active.where(post_type: self)
       else
         ReactionType.active.where(post_type: self).or(ReactionType.active.where(post_type: nil))
-      end.order(position: :asc).all
-    end
+      end
+    end.order(position: :asc)
   end
 
   # @return [Boolean] whether the post type is a system type
@@ -39,13 +39,13 @@ class PostType < ApplicationRecord
   end
 
   def self.top_level
-    Rails.cache.fetch 'network/post_types/top_level', include_community: false do
+    Rails.cache.fetch_collection 'network/post_types/top_level', include_community: false do
       where(is_top_level: true)
     end
   end
 
   def self.second_level
-    Rails.cache.fetch 'network/post_types/second_level', include_community: false do
+    Rails.cache.fetch_collection 'network/post_types/second_level', include_community: false do
       where(is_top_level: false)
     end
   end

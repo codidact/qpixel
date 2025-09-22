@@ -127,8 +127,9 @@ module ApplicationHelper
   # This isn't a perfect way to strip out Markdown, so it should only be used for non-critical things like
   # page descriptions - things that will later be supplemented by the full formatted content.
   # @param markdown [String] The Markdown string to strip.
+  # @param strip_leading_quote [Boolean] whether to remove the leading blockquote if present
   # @return [String] The plain-text equivalent.
-  def strip_markdown(markdown)
+  def strip_markdown(markdown, strip_leading_quote: false)
     # Remove block-level formatting: headers, hr, references, images, HTML tags
     markdown = markdown.gsub(/(?:^#+ +|^-{3,}|^\[[^\]]+\]: ?.+$|^!\[[^\]]+\](?:\([^)]+\)|\[[^\]]+\])$|<[^>]+>)/, '')
 
@@ -136,7 +137,10 @@ module ApplicationHelper
     markdown = markdown.gsub(/[*_~]+/, '')
 
     # Remove links and inline images but replace them with their text/alt text.
-    markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+    markdown = markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+
+    # Optionally remove the leading blockquote
+    strip_leading_quote ? markdown.gsub(/^>.+?$/, '') : markdown
   end
 
   ##

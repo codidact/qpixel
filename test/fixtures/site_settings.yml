@@ -13,6 +13,16 @@ int:
   value: 42
   value_type: integer
 
+float:
+  name: SettingWithFloatValue
+  value: 3.14
+  value_type: float
+
+string:
+  name: SettingWithStringValue
+  value: plain text value
+  value_type: string
+
 text:
   name: SettingWithTextValue
   value: "<p>a paragraph of text</p>"
