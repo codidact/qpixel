@@ -27,13 +27,13 @@
   <% end %>
   <% if num_answers > 1 %>
     <div class="button-list is-gutterless has-float-right">
-      <%= link_to 'Score', request.params.merge(sort: 'score'),
+      <%= link_to 'Score', query_url(sort: 'score'),
           class: "button is-muted is-outlined #{params[:sort].nil? || params[:sort] == 'score' ? 'is-active' : ''}",
     title: 'highest score first (not the same as net votes)' %>
-      <%= link_to 'Active', request.params.merge(sort: 'active'),
+      <%= link_to 'Active', query_url(sort: 'active'),
           class: "button is-muted is-outlined #{params[:sort] == 'active' ? 'is-active' : ''}",
     title: 'most recent changes first: new answers, edits, delete/undelete' %>
-      <%= link_to 'Age', request.params.merge(sort: 'age'),
+      <%= link_to 'Age', query_url(sort: 'age'),
     class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
     title: 'newest posts first (ignores other activity)' %>
     </div>

@@ -26,29 +26,29 @@
   </span>
 
   <div class="button-list is-gutterless has-margin-2">
-    <%= link_to 'Activity', request.params.merge(sort: 'activity'),
+    <%= link_to 'Activity', query_url(sort: 'activity'),
                 class: "button is-muted is-outlined #{(params[:sort].nil?) && !current_page?(questions_lottery_path) ||
                     params[:sort] == 'activity' ? 'is-active' : ''}",
                 title: 'most recent changes: new posts, edits, close/open, delete/undelete' %>
-    <%= link_to 'Age', request.params.merge(sort: 'age'),
+    <%= link_to 'Age', query_url(sort: 'age'),
                 class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
                 title: 'newest posts (ignores other activity)' %>
-    <%= link_to 'Score', request.params.merge(sort: 'score'),
+    <%= link_to 'Score', query_url(sort: 'score'),
                 class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}",
                 title: 'highest score first (not the same as net votes)' %>
     <% if SiteSetting['AllowContentTransfer'] %>
-      <%= link_to 'Native', request.params.merge(sort: 'native'),
+      <%= link_to 'Native', query_url(sort: 'native'),
                   class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}",
                   title: 'exclude imported posts' %>
     <% end %>
-    <%= link_to 'Random', request.params.merge(sort: 'lottery'),
+    <%= link_to 'Random', query_url(sort: 'lottery'),
         class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
         title: 'random set of questions, usually older ones' %>
   </div>
 </div>
 
 <details class="category-filters">
-  <summary>Filters (<%= @filtered ? @active_filter[:name].empty? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
+  <summary>Filters (<%= @filtered ? @active_filter[:name].blank? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
   <% if @active_filter[:default] == :user %>
     <div class="notice is-info">
       You are currently filtering by <strong><%= @active_filter[:name] %></strong> because it is set as your default for this category

@@ -9,17 +9,18 @@
       <%= text_field_tag :search, params[:search], class: 'form-element' %>
       <%= hidden_field_tag :sort, params[:sort] || @sort_param  %>
     </div>
-    <div class="actions has-padding-bottom-1">
+    <div class="actions">
       <button type="submit" class="button is-filled is-medium"><i class="fas fa-search"></i><span class="sr-only">Search</span></button>
     </div>
   </div>
 <% end %>
 
 <div class="button-list is-gutterless has-margin-bottom-4">
-  <%= link_to 'Reputation', request.params.merge(sort: 'reputation'),
+  <%= link_to 'Reputation', query_url(sort: 'reputation'),
       class: "button is-muted is-outlined #{params[:sort] == 'reputation' || (params[:sort].nil? && params[:search].nil?) ? 'is-active' : ''}",
       role: 'button', 'aria-label': 'Sort by reputation' %>
-  <%= link_to 'Age', request.params.merge(sort: 'age'), class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
+  <%= link_to 'Age', query_url(sort: 'age'),
+              class: "button is-muted is-outlined #{params[:sort] == 'age' ? 'is-active' : ''}",
               role: 'button', 'aria-label': 'Sort by age' %>
 </div>
 

@@ -33,7 +33,8 @@
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
       <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>
-      <% if category.display_post_types.reject { |e| e.to_s.empty? }.size > 1 %>
+      <% post_types = category&.display_post_types || [] %>
+      <% if post_types.reject(&:blank?).size > 1 %>
         <%= post_type_badge(post_type) %>
       <% end %>
     </h1>
@@ -125,7 +126,7 @@
                 <% end %>
               <% elsif current_user.present? %>
                 <% if post.pending_suggested_edit? %>
-                      <%= link_to 'suggested edit pending...',
+                  <%= link_to 'suggested edit pending...',
                                    suggested_edit_url(post.pending_suggested_edit.id),
                                    class: "tools--item" %>
                 <% elsif post_type.is_freely_editable %>
@@ -254,12 +255,12 @@
           <% available_count = current_user&.post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>
           <div class="post--comments-header">
-          <h4 class="has-margin-0">
-            <%= pluralize(public_count, 'comment thread') %>
-          </h4>
-          <% if user_signed_in? %>
-            <%= render 'posts/follow_comments_link', post: post, user: current_user %>
-          <% end %>
+            <h4 class="has-margin-0">
+              <%= pluralize(public_count, 'comment thread') %>
+            </h4>
+            <% if user_signed_in? %>
+              <%= render 'posts/follow_comments_link', post: post, user: current_user %>
+            <% end %>
           </div>
           <div class="post--comments-container" role="list">
             <%= render 'comments/threads_list', comment_threads: comment_threads.first(5),
