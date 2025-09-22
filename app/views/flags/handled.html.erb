@@ -14,7 +14,7 @@
 
   <%= render 'shared/sorting', default_order: @default_sort_order,
                                default_type: @default_sort_type,
-                               types: %w[age handled] %>
+                               types: ['age', { type: 'handled', title: 'time handled' }] %>
 </div>
 
 <% @flags.each do |flag| %>

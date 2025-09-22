@@ -19,9 +19,13 @@
     <% end %>
   </div>
 
+  <% sorting_types = current_page?(escalated_flags_path) ?
+                      ['age', { type: 'escalated', title: 'time escalated' }] :
+                      %w[age] %>
+
   <%= render 'shared/sorting', default_order: @default_sort_order,
                                default_type: @default_sort_type,
-                               types: current_page?(escalated_flags_path) ? %w[age escalated] : %w[age] %>
+                               types: sorting_types %>
 </div>
 
 <% @flags.each do |flag| %>
