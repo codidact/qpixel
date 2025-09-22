@@ -48,7 +48,7 @@
 </div>
 
 <details class="category-filters">
-  <summary>Filters (<%= @filtered ? @active_filter[:name].empty? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
+  <summary>Filters (<%= @filtered ? @active_filter[:name].blank? ? 'Custom' : @active_filter[:name] : 'None' %>)</summary>
   <% if @active_filter[:default] == :user %>
     <div class="notice is-info">
       You are currently filtering by <strong><%= @active_filter[:name] %></strong> because it is set as your default for this category
