@@ -123,10 +123,16 @@ class FlagsController < ApplicationController
 
   def set_sorting
     sort_orders = { asc: :asc, desc: :desc }
-    sort_types = { age: :created_at, handled: :handled_at }
+    sort_types = { age: :created_at,
+                   escalated: :escalated_at,
+                   handled: :handled_at }
 
-    @default_sort_order = :asc
-    @default_sort_type = :age
+    @default_sort_type, @default_sort_order = case params[:action]
+                                              when 'escalated_queue' then [:escalated, :desc]
+                                              when 'handled' then [:handled, :desc]
+                                              else [:age, :asc]
+                                              end
+
     @sort_order = sort_orders[params[:order]&.to_sym] || sort_orders[@default_sort_order]
     @sort_type = sort_types[params[:sort]&.to_sym] || sort_types[@default_sort_type]
   end
