@@ -10,11 +10,16 @@ class TagsController < ApplicationController
     @tag_set = if params[:tag_set].present?
                  TagSet.find(params[:tag_set])
                end
+
     @tags = if params[:term].present?
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
+            end
+
+    @tags = @tags.includes(:tag_synonyms)
+                 .paginate(page: params[:page], per_page: 50)
+
     respond_to do |format|
       format.json do
         render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
