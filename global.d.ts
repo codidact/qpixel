@@ -52,6 +52,11 @@ interface QPixelDOM {
    */
   fadeOut?: (element: HTMLElement, duration: number) => void;
   /**
+   * Checks common modifier states on a given keyboard event
+   * @param event 
+   */
+  getModifierState: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
+  /**
    * Is a given event target an HTMLElement?
    * @param target event target to check
    */
@@ -130,7 +135,6 @@ type QPixelKeyboardState =
 
 type SelectedItemType = "link" | "post";
 
-// TODO: rename CodidactKeyboard
 interface QPixelKeyboard {
   is_mod: boolean;
   state: QPixelKeyboardState;
@@ -652,6 +656,8 @@ interface QPixel {
 
   // qpixel_dom
   DOM?: QPixelDOM;
+  // qpixel keyboard actions
+  Keyboard?: QPixelKeyboard;
   // qpixel Markdown
   MD?: QPixelMD;
   // qpixel popups
@@ -664,7 +670,6 @@ interface QPixel {
 
 // Chartkick, TODO: types
 declare var Chartkick: any;
-declare var _CodidactKeyboard: QPixelKeyboard;
 // Highlight.js lib, TODO: types
 declare var hljs: any;
 // MathJax lib, TODO: types
