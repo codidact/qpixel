@@ -1,0 +1,21 @@
+<%#
+   "Renders list of errors for a given subscription
+
+    Variables:
+      subscription : Subscription to render errors for
+"%>
+
+<div class="notice is-danger">
+  <p>
+    There was a problem saving your subscription:
+
+  <ul>
+    <% subscription.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+  </ul>
+  </p>
+
+  <p>If you came here from a link and had filled in the requested details, this may be a bug.<br>
+    Please let us know on <%= link_to 'Meta', 'https://meta.codidact.com/' %>.</p>
+</div>

@@ -75,3 +75,4 @@ node_modules
 
 # YARD data
 .yardoc
+doc/

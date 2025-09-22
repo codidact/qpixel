@@ -1,12 +1,14 @@
 one:
   reason: ABCDEF GHIJKL MNOPQR STUVWX YZ
   post: answer_two (Post)
+  post_flag_type: not_confidential
   user: standard_user
   community: sample
 
 declined:
   reason: Please decline it
   post: question_one (Post)
+  post_flag_type: not_confidential
   user: standard_user
   community: sample
   status: declined
@@ -34,3 +36,11 @@ escalated:
   escalation_comment: what do I do with this
   escalated_at: 2025-01-01T00:00:00.000000Z
   escalated_by: moderator
+
+helpful_flag_scorer:
+  reason: For abilities!
+  post: question_one (Post)
+  post_flag_type: not_confidential
+  user: flag_scorer
+  community: sample
+  status: helpful

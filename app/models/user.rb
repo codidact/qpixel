@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include ::EmailValidations
   include ::UsernameValidations
   include ::UserRateLimits
   include ::UserMerge
@@ -36,11 +37,17 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :user_websites
 
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
-  validate :email_domain_not_blocklisted
-  validate :not_blocklisted?
-  validate :email_not_bad_pattern
 
   delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+
+  alias_attribute :name, :username
+
+  # Gets users appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<User>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? User.all : User.undeleted)
+  end
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -108,11 +115,27 @@ class User < ApplicationRecord
     post.comments_allowed? && !comment_rate_limited?(post)
   end
 
+  # Can the user close a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_close?(post)
+    return false unless post.closeable?
+    return false if post.locked?
+
+    privilege?('flag_close') || post.user&.same_as?(self)
+  end
+
   # Can the user delete a given target?
   # @param target [ApplicationRecord] record to delete
   # @return [Boolean] check result
   def can_delete?(target)
     privilege?('flag_curate') && !target.deleted?
+  end
+
+  # Can the user handle flags?
+  # @return [Boolean] check result
+  def can_handle_flags?
+    privilege?('flag_curate') || false
   end
 
   # Can the user undelete a given target?
@@ -350,54 +373,6 @@ class User < ApplicationRecord
     "#{username}\u202D"
   end
 
-  def email_domain_not_blocklisted
-    return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
-    return unless saved_changes.include? 'email'
-
-    blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
-    email_domain = email.split('@')[-1]
-    matched = blocklist.select { |x| email_domain == x }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_domains = matched.map { |d| "equals: #{d}" }
-      AuditLog.block_log(event_type: 'user_email_domain_blocked',
-                         comment: "email: #{email}\n#{matched_domains.join("\n")}\nsource: file")
-    end
-  end
-
-  def not_blocklisted?
-    return true unless saved_changes.include? 'email'
-
-    email_domain = email.split('@')[-1]
-    is_mail_blocked = BlockedItem.emails.where(value: email)
-    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain)
-    if is_mail_blocked.any? || is_mail_host_blocked.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      if is_mail_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_blocked', related: is_mail_blocked.first,
-                           comment: "email: #{email}\nfull match to: #{is_mail_blocked.first.value}")
-      end
-      if is_mail_host_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_domain_blocked', related: is_mail_host_blocked.first,
-                           comment: "email: #{email}\ndomain match to: #{is_mail_host_blocked.first.value}")
-      end
-    end
-  end
-
-  def email_not_bad_pattern
-    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless changes.include? 'email'
-
-    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
-    matched = patterns.select { |p| email.match? Regexp.new(p) }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_patterns = matched.map { |p| "matched: #{p}" }
-      AuditLog.block_log(event_type: 'user_email_pattern_match',
-                         comment: "email: #{email}\n#{matched_patterns.join("\n")}")
-    end
-  end
-
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
   end
@@ -415,7 +390,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason, length: 180.days)
+  def block(reason, length: 180.days, automatic: true)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -424,10 +399,10 @@ class User < ApplicationRecord
     end
 
     BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
-                       automatic: true, reason: "#{reason}: #" + id.to_s)
+                       automatic: automatic, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
-                         automatic: true, reason: "#{reason}: #" + id.to_s)
+                         automatic: automatic, reason: "#{reason}: #" + id.to_s)
     end
   end
 

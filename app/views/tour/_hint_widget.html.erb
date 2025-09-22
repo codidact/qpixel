@@ -1,0 +1,15 @@
+<div class="widget<%= " #{classes}" if defined?(classes) %>">
+  <div class="widget--header">
+    <img src="/assets/codidactyl.png" alt="Codidactyl" class="codidactyl-small">
+    Codidactyl's Hints
+  </div>
+  <div class="widget--body">
+    <%= yield %>
+    <%= content_for :body %>
+  </div>
+  <% if content_for?(:footer) %>
+    <div class="widget--footer">
+      <%= yield :footer %>
+    </div>
+  <% end %>
+</div>

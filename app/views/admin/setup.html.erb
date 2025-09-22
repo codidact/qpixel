@@ -16,9 +16,10 @@
       <div class="form-group">
         <%= label_tag :primary_color, 'Primary color', class: 'form-element' %>
         <span class="form-caption">Select a primary color for this site. Will be used as default for all categories.</span>
-        <%= select_tag :primary_color, options_for_select(['turquoise', 'green', 'blue', 'darkblue', 'purple', 'gray', 'bluegray', 'yellow', 'orange', 'pink', 'red'],
-                                                          selected: SiteSetting['SiteCategoryHeaderDefaultColor']),
-                      class: 'form-element' %>
+        <%= select_tag :primary_color,
+                       options_for_select(Category::COLORS,
+                       selected: SiteSetting['SiteCategoryHeaderDefaultColor']),
+                       class: 'form-element' %>
       </div>
 
       <div class="form-group">

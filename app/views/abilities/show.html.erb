@@ -51,11 +51,11 @@
         <div class="widget--body">
           <% if @user.id == current_user&.id %>
             <p>You need to reach these thresholds to earn the ability:</p>
-	  <% else %>
+          <% else %>
             <p><%= @user.username %> needs to reach these thresholds to earn the ability:</p>
-	  <% end %>
+          <% end %>
           <% unless @ability.post_score_threshold.nil? %>
-            <% post_score_percent = (linearize_progress(@user.community_user.post_score) / linearize_progress(@ability.post_score_threshold) * 100).to_i %>
+            <% post_score_percent = @ability.post_score_percent_for(@user) %>
 
             <p><strong>Post score threshold</strong></p>
             <% if post_score_percent < 100 %>
@@ -74,7 +74,7 @@
           <% end %>
 
           <% unless @ability.edit_score_threshold.nil? %>
-            <% edit_score_percent = (linearize_progress(@user.community_user.edit_score) / linearize_progress(@ability.edit_score_threshold) * 100).to_i %>
+            <% edit_score_percent = @ability.edit_score_percent_for(@user) %>
 
             <p><strong>Edit score threshold</strong></p>
             <% if edit_score_percent < 100 %>
@@ -93,7 +93,7 @@
           <% end %>
 
           <% unless @ability.flag_score_threshold.nil? %>
-            <% flag_score_percent = (linearize_progress(@user.community_user.flag_score) / linearize_progress(@ability.flag_score_threshold) * 100).to_i %>
+            <% flag_score_percent = @ability.flag_score_percent_for(@user) %>
 
             <p><strong>Flag score threshold</strong></p>
             <% if flag_score_percent < 100 %>
@@ -124,21 +124,21 @@
       <% end %>
     </div>
     <% if @your_ability&.is_suspended && (@user.id == current_user&.id || current_user&.at_least_moderator?) %>
-    <div class="widget--body">
-      <div class="notice is-danger">
-        <% if @your_ability.suspension_end.nil? %>
-          <p><strong>Your use of the <%= @ability.name %> ability has been suspended.</strong></p>
-        <% else %>
-          <p><strong>Your use of the <%= @ability.name %> ability has been temporarily suspended (ends <span title="<%= @your_ability.suspension_end.iso8601 %>">in <%= time_ago_in_words(@your_ability.suspension_end) %></span>)</strong>.</p>
-        <% end %>
-        <p><%= @your_ability.suspension_message %></p>
-        <p>If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this suspension or would like to dispute it, use the Meta category or <a href="mailto:<%= SiteSetting['AdministratorContactEmail'] %>">contact us</a>.
-      </div>
+      <div class="widget--body">
+        <div class="notice is-danger">
+          <% if @your_ability.suspension_end.nil? %>
+            <p><strong>Your use of the <%= @ability.name %> ability has been suspended.</strong></p>
+          <% else %>
+            <p><strong>Your use of the <%= @ability.name %> ability has been temporarily suspended (ends <span title="<%= @your_ability.suspension_end.iso8601 %>">in <%= time_ago_in_words(@your_ability.suspension_end) %></span>)</strong>.</p>
+          <% end %>
+          <p><%= @your_ability.suspension_message %></p>
+          <p>If you have any questions regarding the site rules, you can ask them in the Meta category of this site or on <a href="https://meta.codidact.com/">meta.codidact.com</a>. If you have any questions about this suspension or would like to dispute it, use the Meta category or <a href="mailto:<%= SiteSetting['AdministratorContactEmail'] %>">contact us</a>.
+          </div>
+        </div>
+      <% end %>
     </div>
-    <% end %>
-  </div>
-<% end %>
+  <% end %>
 
-<div class="h-p-2">
-  <%= raw @ability.description %>
-</div>
+  <div class="h-p-2">
+    <%= raw @ability.description %>
+  </div>

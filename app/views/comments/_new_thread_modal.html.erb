@@ -1,6 +1,6 @@
 <%#
-    Start new comment thread dialog.
-%>
+   "Start new comment thread dialog.
+"%>
 
 <%
   # TODO: make configurable
@@ -43,10 +43,16 @@
                          class: 'form-element js-thread-title-field',
                          data: { post: post.id,
                                  thread: '-1',
-                                 character_count: ".js-character-count-thread-title" } %>
-      <%= render 'shared/char_count', type: 'thread-title' %>
+                                 character_count: ".js-character-count-thread-title-#{post.id}",
+                                 markdown: 'strip' } %>
+      <%= render 'shared/char_count',
+                 type: "thread-title-#{post.id}",
+                 max: maximum_thread_title_length %>
 
-      <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
+      <%= submit_tag 'Create thread',
+                     class: 'button is-filled',
+                     id: "create_thread_button_#{post.id}",
+                     disabled: true %>
     <% end %>
   </div>
 </div>

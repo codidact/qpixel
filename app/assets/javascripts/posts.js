@@ -1,16 +1,10 @@
-// IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/helpers/posts_helper.rb
-const ALLOWED_TAGS = ['a', 'p', 'span', 'b', 'i', 'em', 'strong', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'blockquote', 'img', 'strike', 'del', 'code', 'pre', 'br', 'ul', 'ol', 'li', 'sup', 'sub', 'section', 'details',
-  'summary', 'ins', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 's'];
-const ALLOWED_ATTR = ['id', 'class', 'href', 'title', 'src', 'height', 'width', 'alt', 'rowspan', 'colspan', 'lang',
-  'start', 'dir'];
 // this is a list of constructors to ignore even if they are removed by sanitizer (mostly comments & body)
 const IGNORE_UNSUPPORTED = [Comment, HTMLBodyElement];
 
 $(() => {
-  DOMPurify.addHook("uponSanitizeAttribute", (node, event) => {
-    const rowspan = node.getAttribute("rowspan");
-    const colspan = node.getAttribute("colspan");
+  DOMPurify.addHook('uponSanitizeAttribute', (node, event) => {
+    const rowspan = node.getAttribute('rowspan');
+    const colspan = node.getAttribute('colspan');
 
     if (rowspan && Number.isNaN(+rowspan)) {
       event.keepAttr = false;
@@ -35,7 +29,7 @@ $(() => {
    */
   const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
 
-  const placeholder = "![Uploading, please wait...]()";
+  const placeholder = '![Uploading, please wait...]()';
 
   $uploadForm.find('input[type="file"]').on('change', async (evt) => {
     /** @type {HTMLInputElement} */
@@ -45,7 +39,15 @@ $(() => {
 
     postField.value = stringInsert(postText, cursorPos, placeholder);
 
-    $uploadForm.trigger('submit')
+    $uploadForm.trigger('submit');
+  });
+
+  QPixel.DOM?.watchClass('#markdown-image-upload.is-active', (target) => {
+    const fileInput = target.querySelector('input[type="file"]');
+
+    if (fileInput instanceof HTMLInputElement) {
+      fileInput.focus();
+    }
   });
 
   $uploadForm.on('submit', async (evt) => {
@@ -55,6 +57,7 @@ $(() => {
 
     const $fileInput = $tgt.find('input[type="file"]');
     const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
+    const form = /** @type {HTMLFormElement} */ ($tgt[0]);
 
     // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
@@ -65,7 +68,8 @@ $(() => {
 
       if (!isUploadModalOpened) {
         QPixel.createNotification('danger', `Can't upload files with size more than 2MB`);
-      } else {
+      }
+      else {
         $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
         setTimeout(() => {
           $tgt.find('.js-max-size').removeClass('error-shake');
@@ -78,95 +82,125 @@ $(() => {
       $tgt.find('.js-max-size').removeClass('has-color-red-700');
     }
 
-    const resp = await fetch($tgt.attr('action'), {
-      method: $tgt.attr('method'),
-      body: new FormData(/** @type {HTMLFormElement} */ ($tgt[0]))
-    });
+    const data = await QPixel.upload($tgt.attr('action'), form);
 
-    const data = await resp.json();
+    QPixel.handleJSONResponse(
+      data,
+      (data) => {
+        form.reset();
 
-    if (resp.status === 200) {
-      $tgt.trigger('ajax:success', data);
-    }
-    else {
-      $tgt.trigger('ajax:failure', data);
-    }
-  });
+        const $postField = $('.js-post-field');
+        const postText = $postField.val()?.toString();
+        $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
+        $tgt.parents('.modal').removeClass('is-active');
 
-  $uploadForm.on('ajax:success', async (evt, data) => {
-    const $tgt = $(evt.target);
-    /** @type {HTMLFormElement} */ ($tgt[0]).reset();
-
-    const $postField = $('.js-post-field');
-    const postText = $postField.val()?.toString();
-    $postField.val(postText.replace(placeholder, `![Image_alt_text](${data.link})`));
-    $tgt.parents('.modal').removeClass('is-active');
-
-    $postFields.trigger('change')
-  });
-
-  $uploadForm.on('ajax:failure', async (evt, data) => {
-    const $tgt = $(evt.target);
-    const $postField = $('.js-post-field');
-    const error = data['error'];
-    QPixel.createNotification('danger', error);
-    $tgt.parents('.modal').removeClass('is-active');
-    $postField.val($postField.val()?.toString().replace(placeholder, ''));
-  });
-
-  $('.js-category-select').select2({
-    tags: true
+        $postFields.trigger('change');
+      },
+      (data) => {
+        if (data.status === 'failed') {
+          const $postField = $('.js-post-field');
+          $postField.val($postField.val()?.toString().replace(placeholder, ''));
+        }
+      },
+    );
   });
 
   /**
-   * @typedef {{
-   *  body: string
-   *  comment?: string
-   *  excerpt?: string
-   *  license?: string
-   *  tag_name?: string
-   *  tags?: string[]
-   *  title?: string
-   * }} PostDraft
-   * 
+   * Temporarily displays the draft's status with a given message
+   * @param {JQuery<Element>} $field draftable field
+   * @param {string} message draft status message
+   * @returns {void}
+   */
+  const flashDraftStatus = ($field, message) => {
+    const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+
+    $statusEl.text(message);
+    $statusEl.removeClass('transparent');
+
+    setTimeout(() => {
+      $statusEl.addClass('transparent');
+    }, 1500);
+  };
+
+  /**
+   * Removes the "draft loaded" notice from the page
+   * @returns {void}
+   */
+  const removeDraftLoadedNotice = () => {
+    document.querySelector('.js-draft-notice')?.remove();
+  };
+
+  /**
    * Attempts to save a post draft
-   * @param {PostDraft} draft post draft
-   * @param {JQuery<Element>} $field body input element
+   * @param {QPixelDraft} draft post draft
+   * @param {JQuery<Element>} $field draftable field
    * @param {boolean} [manual] whether manual draft saving is enabled
    * @returns {Promise<void>}
    */
   const saveDraft = async (draft, $field, manual = false) => {
     const autosavePref = await QPixel.preference('autosave', true);
+
     if (autosavePref !== 'on' && !manual) {
       return;
     }
 
-    const resp = await QPixel.fetchJSON('/posts/save-draft', { ...draft, path: location.pathname });
+    const data = await QPixel.saveDraft(draft);
 
-    if (resp.status === 200) {
-      const $statusEl = $field.parents('.widget').find('.js-post-draft-status');
+    QPixel.handleJSONResponse(data, () => {
+      flashDraftStatus($field, 'draft saved');
+    });
+  };
 
-      $statusEl.removeClass('transparent');
+  /**
+   * Attempts to remove a post draft
+   * @param {JQuery<Element>} $field draftable field
+   * @returns {Promise<boolean>}
+   */
+  const deleteDraft = async ($field) => {
+    // TODO: extra error handling should be moved to QPixel#deleteDraft
+    try {
+      const data = await QPixel.deleteDraft();
 
-      setTimeout(() => {
-        $statusEl.addClass('transparent');
-      }, 1500);
+      return QPixel.handleJSONResponse(data, () => {
+        flashDraftStatus($field, 'draft deleted');
+        removeDraftLoadedNotice();
+      });
+    }
+    catch (error) {
+      QPixel.createNotification('danger', `Failed to delete post draft`);
+      return false;
     }
   };
 
   /**
-   * Extracts draft info from a given target
-   * @param {EventTarget} target post input field or "save draft" button
-   * @returns {{ draft: PostDraft, field: any }}
+   * Helper for getting draft-related elements from a given event target
+   * @param {EventTarget} target post field or one of the draft buttons
+   * @returns {{
+   *  $form: JQuery<HTMLFormElement>,
+   *  $field: JQuery<HTMLElement>
+   * }}
    */
-  const parseDraft = (target) => {
+  const getDraftElements = (target) => {
     const $tgt = $(target);
     const $form = $tgt.parents('form');
+    const $field = $form.find('.js-post-field');
+    return { $form, $field };
+  };
 
-    const $bodyField = $form.find('.js-post-field');
+  /**
+   * Extracts draft info from a given target
+   * @param {EventTarget} target post field or one of the draft buttons
+   * @returns {{
+   *  draft: QPixelDraft,
+   *  $field: JQuery<HTMLElement>
+   * }}
+   */
+  const parseDraft = (target) => {
+    const { $field: $bodyField, $form } = getDraftElements(target);
+
     const $licenseField = $form.find('.js-license-select');
     const $excerptField = $form.find('.js-tag-excerpt');
-    
+
     const $tagsField = $form.find('#post_tags_cache');
     const $titleField = $form.find('#post_title');
     const $commentField = $form.find('#edit_comment');
@@ -180,23 +214,28 @@ $(() => {
     const titleText = $titleField.val()?.toString();
     const tagName = $tagNameField.val()?.toString();
 
-    /** @type {PostDraft} */
+    /** @type {QPixelDraft} */
     const draft = {
       body: bodyText,
       comment: commentText,
       excerpt: excerptText,
       license: license,
-      tags: Array.isArray(tags) ? tags: [],
+      tags: Array.isArray(tags) ? tags : [],
       tag_name: tagName,
       title: titleText,
     };
 
-    return { draft, field: $bodyField };
+    return { draft, $field: $bodyField };
   };
 
+  $('.js-delete-draft').on('click', async (ev) => {
+    const { $field } = getDraftElements(ev.target);
+    await deleteDraft($field);
+  });
+
   $('.js-save-draft').on('click', async (ev) => {
-    const { draft, field } = parseDraft(ev.target);
-    await saveDraft(draft, field, true);
+    const { draft, $field } = parseDraft(ev.target);
+    await saveDraft(draft, $field, true);
   });
 
   let featureTimeout = null;
@@ -217,8 +256,8 @@ $(() => {
   $(draftFieldsSelectors.join(', ')).on('keyup change', (ev) => {
     clearTimeout(draftTimeout);
     draftTimeout = setTimeout(() => {
-      const { draft, field } = parseDraft(ev.target);
-      saveDraft(draft, field);
+      const { draft, $field } = parseDraft(ev.target);
+      saveDraft(draft, $field);
     }, 1000);
   });
 
@@ -226,7 +265,7 @@ $(() => {
     const eventData = /** @type {ClipboardEvent} */ (evt.originalEvent);
     if (eventData.clipboardData.files.length > 0) {
       // must be called to prevent raw file name to be inserted after the placeholder
-      evt.preventDefault()
+      evt.preventDefault();
 
       /** @type {JQuery<HTMLInputElement>} */
       const $fileInput = $uploadForm.find('input[type="file"]');
@@ -235,53 +274,79 @@ $(() => {
     }
   });
 
-  $postFields.on('focus keyup paste change markdown', (() => {
+  const onPostFieldChange = (() => {
+    /** @type {string | null} */
     let previous = null;
+
+    /**
+     * @param {JQuery.EventBase} evt
+     */
     return (evt) => {
       const $tgt = $(evt.target);
       const text = $(evt.target).val();
+
       // Don't bother re-rendering if nothing's changed
-      if (text === previous) { return; }
+      if (text === previous) {
+        return;
+      }
+
       previous = text;
+
       if (!window.converter) {
         window.converter = window.markdownit({
           html: true,
           breaks: false,
-          linkify: true
+          linkify: true,
         });
         window.converter.use(window.markdownitFootnote);
         window.converter.use(window.latexEscape);
       }
+
       window.setTimeout(() => {
         const converter = window.converter;
         const unsafe_html = converter.render(text);
         const html = DOMPurify.sanitize(unsafe_html, {
-          ALLOWED_TAGS,
-          ALLOWED_ATTR
+          ALLOWED_TAGS: QPixel.ALLOWED_POST_TAGS,
+          ALLOWED_ATTR: QPixel.ALLOWED_POST_ATTRS,
         });
 
-        const removedElements = [...new Set(DOMPurify.removed
-          .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
-          .map((entry) => entry.element.localName))];
+        const removedElements = [
+          ...new Set(
+            DOMPurify.removed
+              .filter((entry) => entry.element && !IGNORE_UNSUPPORTED.some((ctor) => entry.element instanceof ctor))
+              .map((entry) => entry.element.localName),
+          ),
+        ];
 
-        const removedAttributes = [...new Set(DOMPurify.removed
-          .filter((entry) => entry.attribute)
-          .map((entry) => [
-            entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
-            entry.from.localName
-          ]))]
+        const removedAttributes = [
+          ...new Set(
+            DOMPurify.removed
+              .filter((entry) => entry.attribute)
+              .map((entry) => [
+                entry.attribute.name + (entry.attribute.value ? `='${entry.attribute.value}'` : ''),
+                entry.from.localName,
+              ]),
+          ),
+        ];
 
-        $tgt.parents('form')
+        $tgt
+          .parents('form')
           .find('.rejected-elements')
           .toggleClass('hide', removedElements.length === 0 && removedAttributes.length === 0)
           .find('ul')
           .empty()
           .append(
             removedElements.map((name) => $(`<li><code>&lt;${name}&gt;</code></li>`)),
-            removedAttributes.map(([attr, elName]) => $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`)));
+            removedAttributes.map(([attr, elName]) =>
+              $(`<li><code>${attr}</code> (in <code>&lt;${elName}&gt;</code>)</li>`),
+            ),
+          );
 
         $tgt.parents('.form-group').siblings('.post-preview').html(html);
-        $tgt.parents('form').find('.js-post-html[name="__html"]').val(html + '<!-- g: js, mdit -->');
+        $tgt
+          .parents('form')
+          .find('.js-post-html[name="__html"]')
+          .val(html + '<!-- g: js, mdit -->');
       }, 0);
 
       if (featureTimeout) {
@@ -297,117 +362,98 @@ $(() => {
         }
       }, 1000);
     };
-  })()).trigger('markdown');
+  })();
+
+  $postFields.on('focus keyup paste change markdown', onPostFieldChange).trigger('markdown');
 
   $postFields.parents('form').on('submit', async (ev) => {
     const $tgt = $(ev.target);
-    const field = $tgt.find('.post-field');
+    const $field = $tgt.find('.js-post-field');
 
-    const draftDeleted = $tgt.attr('data-draft-deleted') === 'true';
     const isValidated = $tgt.attr('data-validated') === 'true';
 
-    if (draftDeleted && isValidated) {
+    if (isValidated) {
       return;
     }
+
     ev.preventDefault();
 
-    // Draft handling
-    if (!draftDeleted) {
-      const resp = await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
-      if (resp.status === 200) {
-        $tgt.attr('data-draft-deleted', 'true');
-
-        if (isValidated) {
-          $tgt.submit();
-        }
-      }
-      else {
-        console.error('Failed to delete draft.');
-      }
+    const text = $field.val()?.toString();
+    const validated = QPixel.validatePost(text);
+    if (validated[0] === true) {
+      $tgt.attr('data-validated', 'true');
+      $tgt.submit();
     }
+    else {
+      const warnings = validated[1].filter((x) => x['type'] === 'warning');
+      const errors = validated[1].filter((x) => x['type'] === 'error');
 
+      if (warnings.length > 0) {
+        const $warningBox = $(`<div class="notice is-warning"></div>`);
+        const $warningList = $(`<ul></ul>`);
+        warnings.forEach((w) => {
+          $warningList.append(`<li>${w['message']}</li>`);
+        });
+        $warningBox.append($warningList);
+        $tgt.find('input[type="submit"]').before($warningBox);
+      }
 
-    // Validation
-    if (!isValidated) {
-      const text = $(field).val()?.toString();
-      const validated = QPixel.validatePost(text);
-      if (validated[0] === true) {
+      if (errors.length > 0) {
+        const $errorBox = $(`<div class="notice is-danger"></div>`);
+        const $errorList = $(`<ul></ul>`);
+        errors.forEach((e) => {
+          $errorList.append(`<li>${e['message']}</li>`);
+        });
+        $errorBox.append($errorList);
+        $tgt.find('input[type="submit"]').before($errorBox);
+      }
+
+      if (warnings.length > 0 && errors.length === 0) {
         $tgt.attr('data-validated', 'true');
-        $tgt.submit();
       }
-      else {
-        const warnings = validated[1].filter((x) => x['type'] === 'warning');
-        const errors = validated[1].filter((x) => x['type'] === 'error');
-
-        if (warnings.length > 0) {
-          const $warningBox = $(`<div class="notice is-warning"></div>`);
-          const $warningList = $(`<ul></ul>`);
-          warnings.forEach((w) => {
-            $warningList.append(`<li>${w['message']}</li>`);
-          });
-          $warningBox.append($warningList);
-          $tgt.find('input[type="submit"]').before($warningBox);
-        }
-
-        if (errors.length > 0) {
-          const $errorBox = $(`<div class="notice is-danger"></div>`);
-          const $errorList = $(`<ul></ul>`);
-          errors.forEach((e) => {
-            $errorList.append(`<li>${e['message']}</li>`);
-          });
-          $errorBox.append($errorList);
-          $tgt.find('input[type="submit"]').before($errorBox);
-        }
-
-        if (warnings.length > 0 && errors.length === 0) {
-          $tgt.attr('data-validated', 'true');
-        }
-      }
-
-      setTimeout(() => {
-        $tgt.find('input[type="submit"]').attr('disabled', null);
-      }, 1000);
     }
+
+    setTimeout(() => {
+      $tgt.find('input[type="submit"]').attr('disabled', null);
+    }, 1000);
   });
 
   $('.js-draft-loaded').each((_i, e) => {
-    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption">
+    $(e).parents('.widget').after(`<div class="notice is-info has-font-size-caption js-draft-notice">
       <i class="fas fa-exclamation-circle"></i> <strong>Draft loaded.</strong>
       You had edited this before but haven't saved it. We loaded the edits for you.
     </div>`);
   });
 
   const setCopyButtonState = ($button, state) => {
-    const isSuccess = state === "success";
-    const buttonClass = isSuccess ? "is-green" : "is-danger";
-    const iconClass = isSuccess ? "fa-check" : "fa-times";
+    const isSuccess = state === 'success';
+    const buttonClass = isSuccess ? 'is-green' : 'is-danger';
+    const iconClass = isSuccess ? 'fa-check' : 'fa-times';
 
-    const $icon = $button.find(".fa");
+    const $icon = $button.find('.fa');
 
-    $icon.removeClass("fa-copy");
+    $icon.removeClass('fa-copy');
     $icon.addClass(iconClass);
     $button.addClass(buttonClass);
 
     setTimeout(() => {
       $icon.removeClass(iconClass);
       $button.removeClass(buttonClass);
-      $icon.addClass("fa-copy");
+      $icon.addClass('fa-copy');
     }, 1e3);
   };
 
-  $(".js-permalink-trigger").removeAttr("hidden");
+  $('.js-permalink-trigger').removeAttr('hidden');
 
-  $(".js-permalink-copy").on("click", async (ev) => {
+  $('.js-permalink-copy').on('click', async (ev) => {
     ev.preventDefault();
 
     const $tgt = $(ev.target);
 
-    const $button = $tgt.hasClass("js-permalink-copy")
-      ? $tgt
-      : $tgt.parents(".js-permalink-copy");
+    const $button = $tgt.hasClass('js-permalink-copy') ? $tgt : $tgt.parents('.js-permalink-copy');
 
-    const postId = $button.data("post-id");
-    const linkType = $button.data("link-type");
+    const postId = $button.data('post-id');
+    const linkType = $button.data('link-type');
 
     if (!postId || !linkType) {
       return;
@@ -423,10 +469,10 @@ $(() => {
 
     try {
       await navigator.clipboard.writeText(url);
-      setCopyButtonState($button, "success");
+      setCopyButtonState($button, 'success');
     }
     catch (_e) {
-      setCopyButtonState($button, "error");
+      setCopyButtonState($button, 'error');
     }
   });
 
@@ -458,7 +504,9 @@ $(() => {
       return;
     }
 
-    await QPixel.fetchJSON('/posts/delete-draft', { path: location.pathname });
+    const { $field } = getDraftElements(ev.target);
+
+    await deleteDraft($field);
 
     location.href = $btn.attr('href');
   });
