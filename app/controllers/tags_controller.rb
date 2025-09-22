@@ -17,7 +17,7 @@ class TagsController < ApplicationController
               (@tag_set&.tags || Tag.all).order(:name)
             end
 
-    @tags = @tags.includes(:tag_synonyms)
+    @tags = @tags.list_includes
                  .paginate(page: params[:page], per_page: 50)
 
     respond_to do |format|
@@ -43,7 +43,7 @@ class TagsController < ApplicationController
               @tag_set.tags.where(excerpt: ['', nil])
             else
               @tag_set.tags
-            end
+            end.list_includes
 
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
