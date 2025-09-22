@@ -34,7 +34,7 @@
                  (post.duplicate_post ? " [duplicate]" : "") %>
       <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>
       <% post_types = category&.display_post_types || [] %>
-      <% if post_types.reject(&:empty?).size > 1 %>
+      <% if post_types.reject(&:blank?).size > 1 %>
         <%= post_type_badge(post_type) %>
       <% end %>
     </h1>
