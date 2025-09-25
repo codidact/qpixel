@@ -6,6 +6,8 @@ class AdminController < ApplicationController
   before_action :verify_developer, only: [:change_users, :impersonate]
   before_action :set_user, only: [:change_users, :hellban, :impersonate]
 
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
+
   def index; end
 
   def error_reports

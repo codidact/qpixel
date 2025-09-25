@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :enforce_signed_in, unless: :devise_controller?
-  before_action :check_if_warning_or_suspension_pending
+  before_action :check_if_warning_or_suspension_pending, if: [:user_signed_in?], unless: [:devise_controller?]
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
@@ -272,13 +272,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_warning_or_suspension_pending
-    return if current_user.nil?
-
-    warning = ModWarning.to(current_user).active.any?
-    return unless warning
-
-    # Ignore devise and warning routes
-    return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
+    return unless ModWarning.to(current_user).active.any?
 
     flash.clear
 

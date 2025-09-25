@@ -3,6 +3,7 @@
 # Note that it requires +consider_all_requests_local+ to be +false+ (see environment config files for details)
 class ErrorsController < ApplicationController
   protect_from_forgery with: :exception, except: [:error], store: :cookie
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:error]
 
   def error
     @exception = request.env['action_dispatch.exception']

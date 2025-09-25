@@ -1,8 +1,9 @@
 class ModWarningController < ApplicationController
   before_action :verify_moderator, only: [:log, :new, :create, :lift]
-
   before_action :set_warning, only: [:current, :approve]
   before_action :set_user, only: [:log, :new, :create, :lift]
+
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:current, :approve]
 
   def current
     render layout: 'without_sidebar'
