@@ -430,9 +430,9 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
-    const is_failed = data.status === 'failed';
+    const isFailed = data.status === 'failed';
 
-    if(is_failed) {
+    if(isFailed) {
       if (data.message) {
         QPixel.createNotification('danger', data.message);
       }
@@ -447,7 +447,7 @@ window.QPixel = {
 
     onFinally?.(data);
 
-    return !is_failed;
+    return !isFailed;
   },
 
   flag: async (flag) => {
