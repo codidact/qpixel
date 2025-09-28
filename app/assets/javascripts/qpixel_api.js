@@ -430,19 +430,24 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
-    const is_modified = data.status === 'modified';
-    const is_success = data.status === 'success';
+    const is_failed = data.status === 'failed';
 
-    if (is_modified || is_success) {
-      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
+    if(is_failed) {
+      if (data.message) {
+        QPixel.createNotification('danger', data.message);
+      }
+
+      for (const error of data.errors ?? []) {
+        QPixel.createNotification('danger', error);
+      }
     }
     else {
-      QPixel.createNotification('danger', data.message);
+      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
     }
 
     onFinally?.(data);
 
-    return is_success;
+    return !is_failed;
   },
 
   flag: async (flag) => {
