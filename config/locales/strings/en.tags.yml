@@ -1,5 +1,7 @@
 en:
   tags:
     errors:
+      rename_taken: >
+        A tag with that name already exists.
       rename_generic: >
         Failed to rename the tag.

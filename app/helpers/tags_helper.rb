@@ -38,4 +38,15 @@ module TagsHelper
     sql = "SELECT post_id FROM posts_tags WHERE tag_id IN #{ApplicationRecord.sanitize_sql_in(tag_ids)}"
     ActiveRecord::Base.connection.execute(sql).to_a.flatten
   end
+
+  # Gets a standard tag rename error message for a tag
+  # @param post [Tag] target tag
+  # @return [String] error message
+  def tag_rename_error_msg(tag)
+    if tag.errors.where(:name, :taken)
+      I18n.t('tags.errors.rename_taken')
+    else
+      I18n.t('tags.errors.rename_generic')
+    end
+  end
 end
