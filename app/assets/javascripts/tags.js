@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagId = $tgt.attr('data-tag');
     const tagName = $tgt.attr('data-name');
 
-    const renameTo = prompt(`Rename tag ${tagName} to:`);
+    const renameTo = prompt(`Rename tag "${tagName}" to:`);
 
     if (!renameTo) {
       return;
