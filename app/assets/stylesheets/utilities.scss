@@ -38,6 +38,10 @@
   flex-direction: column;
   flex-wrap: wrap;
 
+  &.items-end {
+    align-items: end;
+  }
+
   &.space-between {
     justify-content: space-between;
   }

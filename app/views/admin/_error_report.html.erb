@@ -27,7 +27,7 @@
 
     <% if report.version? %>
       <br/>
-      <strong>Version:</strong>
+      <strong><%= t('g.version').capitalize %>:</strong>
       <%= link_to report.version, query_url(version: report.version) %>
     <% end %>
   </p>
