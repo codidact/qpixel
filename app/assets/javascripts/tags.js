@@ -1,4 +1,4 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   const sum = (/** @type {number[]} */ ary) => ary.reduce((a, b) => a + b, 0);
 
   /**
@@ -135,10 +135,10 @@ $(() => {
     $newTagSynonym.show();
 
     //Add handler for removing an element
-    $newTagSynonym.find(`.remove-tag-synonym`).click(removeTagSynonym);
+    $newTagSynonym.find(`.remove-tag-synonym`).on('click', removeTagSynonym);
   });
 
-  $('.remove-tag-synonym').click(removeTagSynonym);
+  $('.remove-tag-synonym').on('click', removeTagSynonym);
 
   function removeTagSynonym() {
     const synonym = $(this).closest('.tag-synonym');
