@@ -17,6 +17,8 @@ class AdminController < ApplicationController
                    ErrorLog.where(community: RequestContext.community)
                  end
 
+    @error_types = base_scope.select(:klass).distinct.to_a.map(&:klass)
+
     if params[:type].present?
       base_scope = base_scope.where(klass: params[:type])
     end
