@@ -11,11 +11,15 @@ class AdminController < ApplicationController
   def index; end
 
   def error_reports
-    base_scope = if current_user.is_global_admin
+    base_scope = if current_user.global_admin?
                    ErrorLog.all
                  else
                    ErrorLog.where(community: RequestContext.community)
                  end
+
+    if params[:type].present?
+      base_scope = base_scope.where(klass: params[:type])
+    end
 
     if params[:uuid].present?
       base_scope = base_scope.where(uuid: params[:uuid])
