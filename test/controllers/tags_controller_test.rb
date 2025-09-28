@@ -37,12 +37,14 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should get category tags list' do
     get :category, params: { id: categories(:main).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tags)
     assert_not_nil assigns(:category)
 
     sign_in users(:standard_user)
     get :category, params: { id: categories(:main).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tags)
     assert_not_nil assigns(:category)
@@ -50,12 +52,14 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should get children list' do
     get :children, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tags)
     assert_not_nil assigns(:category)
 
     sign_in users(:standard_user)
     get :children, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tags)
     assert_not_nil assigns(:category)
@@ -63,6 +67,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should get tag page and RSS' do
     get :show, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tag)
     assert_not_nil assigns(:category)
@@ -70,6 +75,7 @@ class TagsControllerTest < ActionController::TestCase
 
     sign_in users(:standard_user)
     get :show, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tag)
     assert_not_nil assigns(:category)
@@ -78,6 +84,7 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should get tag RSS feed' do
     get :show, params: { id: categories(:main).id, tag_id: tags(:topic).id, format: :rss }
+
     assert_response(:success)
     assert_not_nil assigns(:tag)
     assert_not_nil assigns(:category)
@@ -85,6 +92,7 @@ class TagsControllerTest < ActionController::TestCase
 
     sign_in users(:standard_user)
     get :show, params: { id: categories(:main).id, tag_id: tags(:topic).id, format: :rss }
+
     assert_response(:success)
     assert_not_nil assigns(:tag)
     assert_not_nil assigns(:category)
@@ -93,18 +101,21 @@ class TagsControllerTest < ActionController::TestCase
 
   test 'should deny edit to anonymous user' do
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_redirected_to_sign_in
   end
 
   test 'should deny edit to unprivileged user' do
     sign_in users(:standard_user)
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:forbidden)
   end
 
   test 'should get edit' do
     sign_in users(:deleter)
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
+
     assert_response(:success)
     assert_not_nil assigns(:tag)
     assert_not_nil assigns(:category)
@@ -113,6 +124,7 @@ class TagsControllerTest < ActionController::TestCase
   test 'should deny update to anonymous user' do
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:discussion).id, excerpt: 'things' } }
+
     assert_redirected_to_sign_in
   end
 
@@ -120,6 +132,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:discussion).id, excerpt: 'things' } }
+
     assert_response(:forbidden)
   end
 
@@ -127,6 +140,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:discussion).id, excerpt: 'things' } }
+
     assert_response(:found)
     assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:topic).id)
     assert_not_nil assigns(:tag)
@@ -138,6 +152,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { tag_synonyms_attributes: { '1': { name: 'conversation' } } } }
+
     assert_response(:found)
     assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:topic).id)
     assert_not_nil assigns(:tag)
@@ -148,6 +163,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:base).id,
                              tag: { tag_synonyms_attributes: { '1': { id: tag_synonyms(:base_synonym).id, _destroy: 'true' } } } }
+
     assert_response(:found)
     assert_redirected_to tag_path(id: categories(:main).id, tag_id: tags(:base).id)
     assert_not_nil assigns(:tag)
@@ -158,6 +174,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:topic).id, excerpt: 'things' } }
+
     assert_response(:bad_request)
     assert_not_nil assigns(:tag)
     assert_equal ['A tag cannot be its own parent.'], assigns(:tag).errors.full_messages
@@ -167,6 +184,7 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:deleter)
     patch :update, params: { id: categories(:main).id, tag_id: tags(:topic).id,
                              tag: { parent_id: tags(:child).id, excerpt: 'things' } }
+
     assert_response(:bad_request)
     assert_not_nil assigns(:tag)
     assert_equal ["The #{tags(:child).name} tag is already a child of this tag."], assigns(:tag).errors.full_messages
@@ -180,12 +198,8 @@ class TagsControllerTest < ActionController::TestCase
 
     try_rename_tag(categories(:main), tag, new_tag_name)
 
-    assert_response(:success)
-    assert_valid_json_response
-
+    assert_json_success
     res_body = JSON.parse(response.body)
-
-    assert_equal 'success', res_body['status']
     assert_equal new_tag_name, res_body['tag']['name']
 
     log_entry = AuditLog.last
@@ -201,13 +215,9 @@ class TagsControllerTest < ActionController::TestCase
 
     try_rename_tag(categories(:main), tag, '')
 
-    assert_response(:bad_request)
-    assert_valid_json_response
-
+    assert_json_failure(:bad_request)
     res_body = JSON.parse(response.body)
-
-    assert_equal 'failed', res_body['status']
-    assert_equal I18n.t('tags.errors.rename_generic'), res_body['message']
+    assert_equal @controller.helpers.tag_rename_error_msg(tag), res_body['message']
     tag.reload
     assert_equal tag.name, old_tag_name
   end
