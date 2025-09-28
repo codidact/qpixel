@@ -211,15 +211,23 @@ class TagsControllerTest < ActionController::TestCase
     sign_in users(:moderator)
 
     tag = tags(:base)
-    old_tag_name = tag.name
+    old_name = tag.name
 
-    try_rename_tag(categories(:main), tag, '')
+    [
+      ['', I18n.t('tags.errors.no_blank_name')],
+      ['name with spaces', I18n.t('tags.errors.no_spaces_in_name')],
+      [tags(:discussion).name, I18n.t('tags.errors.no_duplicate_names')]
+    ].each do |test_case|
+      new_name, error_message = test_case
 
-    assert_json_failure(:bad_request)
-    res_body = JSON.parse(response.body)
-    assert_equal @controller.helpers.tag_rename_error_msg(tag), res_body['message']
-    tag.reload
-    assert_equal tag.name, old_tag_name
+      try_rename_tag(categories(:main), tag, new_name)
+
+      assert_json_failure(:bad_request)
+      res_body = JSON.parse(response.body)
+      assert res_body['errors'].include?(error_message)
+      tag.reload
+      assert_equal tag.name, old_name
+    end
   end
 
   private

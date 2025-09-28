@@ -155,7 +155,7 @@ class TagsController < ApplicationController
       render json: { status: 'success', tag: @tag }
     else
       render json: { status: 'failed',
-                     message: helpers.tag_rename_error_msg(@tag),
+                     errors: @tag.errors.messages.values.flatten,
                      tag: @tag },
              status: :bad_request
     end
