@@ -26,7 +26,7 @@
      data-ckb-post-id="<%= post.id %>">
   <% if post.top_level? %>
     <h1 class="post--title has-margin-top-0 has-padding-2">
-      <% title = post.title +
+      <% title = rendered_title(post) +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
       <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>

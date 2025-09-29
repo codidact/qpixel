@@ -8,6 +8,14 @@ module PostsHelper
     user_link(user, { host: post.community.host })
   end
 
+  # Renders title for a given post
+  # @param post [Post] post to render the title for
+  # @return [ActiveSupport::SafeBuffer] rendered title
+  def rendered_title(post)
+    raw_title = post.top_level? ? post.title : post.parent.title
+    sanitize(render_markdown(raw_title))
+  end
+
   ##
   # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
   # rendered HTML over rendering server-side.
