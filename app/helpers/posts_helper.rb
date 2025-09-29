@@ -13,7 +13,7 @@ module PostsHelper
   # @return [ActiveSupport::SafeBuffer] rendered title
   def rendered_title(post)
     raw_title = post.top_level? ? post.title : post.parent.title
-    sanitize(render_markdown(raw_title))
+    sanitize(render_markdown(raw_title), scrubber: title_scrubber)
   end
 
   ##
@@ -84,6 +84,22 @@ module PostsHelper
     [SiteSetting['MaxTitleLength'] || 255, 255].min
   end
 
+  class PostTitleScrubber < Rails::HTML::PermitScrubber
+    ALLOWED_ATTRS = %w[].freeze
+
+    ALLOWED_TAGS = %w[code em strong strike del sup sub kbd].freeze
+
+    def initialize
+      super
+      self.tags = ALLOWED_TAGS
+      self.attributes = ALLOWED_ATTRS
+    end
+
+    def skip_node?(node)
+      node.text?
+    end
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     ALLOWED_ATTRS = %w[id class href title src height width alt rowspan colspan lang start dir].freeze
 
@@ -107,5 +123,11 @@ module PostsHelper
   # @return [PostScrubber]
   def scrubber
     PostsHelper::PostScrubber.new
+  end
+
+  # Get a post title scrubber instance
+  # @return [PostTitleScrubber]
+  def title_scrubber
+    PostsHelper::PostTitleScrubber.new
   end
 end
