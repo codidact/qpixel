@@ -117,9 +117,10 @@ module ApplicationHelper
   # @param markdown [String] The markdown string to render.
   # @return [String] The rendered HTML string.
   def render_markdown(markdown)
-    CommonMarker.render_doc(markdown,
-                            [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
-                            [:table, :strikethrough, :autolink]).to_html(:UNSAFE)
+    extensions = [:table, :strikethrough, :autolink]
+    options = [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE]
+
+    CommonMarker.render_doc(markdown, options, extensions).to_html(:UNSAFE)
   end
 
   ##
