@@ -58,6 +58,10 @@ h1 .badge.is-tag.is-master-tag {
     width: 100%;
     overflow-wrap: break-word;
   }
+
+  del {
+    background-color: transparent;
+  }
 }
 
 .post-list--content {
@@ -143,6 +147,10 @@ h1 .badge.is-tag.is-master-tag {
 
   .post--title-text {
     width: 100%;
+  }
+
+  del {
+    background-color: transparent;
   }
 
   @media screen and (min-width: $screen-md) {
