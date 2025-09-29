@@ -94,10 +94,8 @@ class TagsController < ApplicationController
   def create
     @tag = Tag.new(tag_params.merge(tag_set_id: @category.tag_set.id))
     if @tag.save
-      flash[:danger] = nil
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
-      flash[:danger] = @tag.errors.full_messages.join(', ')
       render :new, status: :bad_request
     end
   end
