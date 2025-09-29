@@ -246,6 +246,14 @@ class Post < ApplicationRecord
     ThreadFollower.where(post: self, user: user).any?
   end
 
+  # Does the post have any pending (not handled) spam flags?
+  # A spam flag could be marked helpful but the post wouldn't be deleted, and
+  # we don't want the post to be treated like it's spam risk if that happens.
+  # @return [Boolean] check result
+  def pending_spam_flag?
+    flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
+  end
+
   # Does the post have a pending suggested edit?
   # @return [Boolean] check result
   def pending_suggested_edit?
@@ -257,14 +265,6 @@ class Post < ApplicationRecord
   # @return [Boolean] check result
   def related_posts_for?(user)
     related_posts_for(user).any?
-  end
-
-  # Does the post have any pending (not handled) spam flags?
-  # A spam flag could be marked helpful but the post wouldn't be deleted, and
-  # we don't want the post to be treated like it's spam risk if that happens.
-  # @return [Boolean] check result
-  def spam_flag_pending?
-    flags.any? { |flag| flag.post_flag_type&.name == "it's spam" && !flag.status }
   end
 
   # Is the post a top level post?

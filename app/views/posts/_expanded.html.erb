@@ -72,7 +72,7 @@
         <%= render('posts/notices/locked', post: post) %>
       <% end %>
 
-      <% if post.spam_flag_pending? && user_signed_in? %>
+      <% if post.pending_spam_flag? && user_signed_in? %>
         <%= render('posts/notices/flagged', post: post, user: current_user) %>
       <% end %>
 
@@ -82,7 +82,7 @@
 
       <div class="post--body">
         <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
-        <% if post.spam_flag_pending? && !user_signed_in? %>
+        <% if post.pending_spam_flag? && !user_signed_in? %>
           <%= sanitize(effective_post, attributes: %w()) %>
         <% else %>
           <%= effective_post %>
