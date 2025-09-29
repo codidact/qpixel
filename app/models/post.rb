@@ -246,12 +246,6 @@ class Post < ApplicationRecord
     ThreadFollower.where(post: self, user: user).any?
   end
 
-  # Is the post a Meta post?
-  # @return [Boolean] check result
-  def meta?
-    false
-  end
-
   # Does the post have a pending suggested edit?
   # @return [Boolean] check result
   def pending_suggested_edit?

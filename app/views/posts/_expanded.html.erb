@@ -22,7 +22,7 @@
 <% is_question = post.post_type_id == Question.post_type_id %>
 <% is_top_level = post.parent_id.nil? %>
 
-<div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>"
+<div class="post <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>"
      id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>"
      data-post-id="<%= post.id %>"
      data-ckb-list-item data-ckb-item-type="post"
