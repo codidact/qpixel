@@ -224,8 +224,6 @@ class TagsControllerTest < ActionController::TestCase
       res_body = JSON.parse(response.body)
       error_message = I18n.t("tags.validation.errors.#{error_key}")
 
-      Rails.logger.warn(res_body['errors'])
-
       assert res_body['errors'].any? { |msg| msg.include?(error_message) },
              "Expected '#{error_message}' to be among the errors"
 
