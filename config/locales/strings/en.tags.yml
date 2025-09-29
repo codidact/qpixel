@@ -1,11 +1,13 @@
 en:
   tags:
+    validation:
+      errors:
+        no_blank_name: >
+          should contain at least 1 character
+        no_duplicate_names: >
+          cannot match an already existing tag
+        no_spaces_in_name: >
+          should not contain spaces
     errors:
-      no_blank_name: >
-        Tag name should contain at least 1 character.
-      no_duplicate_names: >
-        A tag with that name already exists.
-      no_spaces_in_name: >
-        Tag names may not contain spaces.
       rename_generic: >
-        Failed to rename the tag.
+        Failed to rename the tag

@@ -13,11 +13,11 @@ class Tag < ApplicationRecord
   validates :excerpt, length: { maximum: 600 }, allow_blank: true
   validates :wiki_markdown, length: { maximum: 30_000 }, allow_blank: true
   validates :name, presence: {
-    message: I18n.t('tags.errors.no_blank_name')
+    message: I18n.t('tags.validation.errors.no_blank_name')
   }
   validates :name, format: {
     with: /\A[^\s]+\Z/, # https://regex101.com/r/7BxgIn/1
-    message: I18n.t('tags.errors.no_spaces_in_name')
+    message: I18n.t('tags.validation.errors.no_spaces_in_name')
   }
   validate :parent_not_self
   validate :parent_not_own_child
@@ -25,7 +25,7 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: {
     scope: [:tag_set_id],
     case_sensitive: false,
-    message: I18n.t('tags.errors.no_duplicate_names')
+    message: I18n.t('tags.validation.errors.no_duplicate_names')
   }
 
   # scopes

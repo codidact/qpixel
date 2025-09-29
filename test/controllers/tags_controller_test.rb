@@ -213,18 +213,22 @@ class TagsControllerTest < ActionController::TestCase
     tag = tags(:base)
     old_name = tag.name
 
-    [
-      ['', I18n.t('tags.errors.no_blank_name')],
-      ['name with spaces', I18n.t('tags.errors.no_spaces_in_name')],
-      [tags(:discussion).name, I18n.t('tags.errors.no_duplicate_names')]
-    ].each do |test_case|
-      new_name, error_message = test_case
-
+    {
+      '' => 'no_blank_name',
+      'name with spaces' => 'no_spaces_in_name',
+      tags(:discussion).name => 'no_duplicate_names'
+    }.each do |new_name, error_key|
       try_rename_tag(categories(:main), tag, new_name)
 
       assert_json_failure(:bad_request)
       res_body = JSON.parse(response.body)
-      assert res_body['errors'].include?(error_message)
+      error_message = I18n.t("tags.validation.errors.#{error_key}")
+
+      Rails.logger.warn(res_body['errors'])
+
+      assert res_body['errors'].any? { |msg| msg.include?(error_message) },
+             "Expected '#{error_message}' to be among the errors"
+
       tag.reload
       assert_equal tag.name, old_name
     end

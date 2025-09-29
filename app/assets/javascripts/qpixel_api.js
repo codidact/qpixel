@@ -433,12 +433,22 @@ window.QPixel = {
     const isFailed = data.status === 'failed';
 
     if(isFailed) {
-      if (data.message) {
-        QPixel.createNotification('danger', data.message);
-      }
+      const { errors = [], message } = data;
 
-      for (const error of data.errors ?? []) {
-        QPixel.createNotification('danger', error);
+      if (message) {
+        const fullMessage =
+          errors.length > 1
+            ? `${message}:<ul>${errors.map((e) => `<li>${e.trim()}</li>`).join('')}</ul>`
+            : errors.length === 1
+              ? `${message} (${errors[0].toLowerCase().trim()})`
+              : message;
+
+          QPixel.createNotification('danger', fullMessage);
+      }
+      else {
+        for (const error of errors) {
+          QPixel.createNotification('danger', error);
+        }
       }
     }
     else {
