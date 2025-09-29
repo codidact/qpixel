@@ -198,6 +198,12 @@ class Post < ApplicationRecord
     SuggestedEdit.where(post_id: id, active: true).any?
   end
 
+  # Is the post a top level post?
+  # @return [Boolean] check result
+  def top_level?
+    post_type.is_top_level
+  end
+
   # @return [SuggestedEdit, Nil] the suggested edit pending for this post (if any)
   def pending_suggested_edit
     SuggestedEdit.where(post_id: id, active: true).last
