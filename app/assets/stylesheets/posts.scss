@@ -58,10 +58,6 @@ h1 .badge.is-tag.is-master-tag {
     width: 100%;
     overflow-wrap: break-word;
   }
-
-  code {
-    vertical-align: middle;
-  }
 }
 
 .post-list--content {
@@ -147,10 +143,6 @@ h1 .badge.is-tag.is-master-tag {
 
   .post--title-text {
     width: 100%;
-  }
-
-  code {
-    vertical-align: text-top;
   }
 
   @media screen and (min-width: $screen-md) {
