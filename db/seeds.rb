@@ -6,6 +6,8 @@ files = SeedsHelper.files(ENV['SEEDS'])
 types = SeedsHelper.types(files)
 sorted = SeedsHelper.prioritize(types, files)
 
+should_update_posts = ENV['UPDATE_POSTS'] == 'true'
+
 def expand_communities(type, seed)
   if type.column_names.include?('community_id') && !seed.include?('community_id')
     # if model includes a community_id, create the seed for every community
@@ -76,6 +78,17 @@ def ensure_system_user_abilities
   end
 end
 
+def render_seed(seed)
+  ApplicationController.helpers.render_markdown(seed['body_markdown'])
+end
+
+# TODO: make it the Post model's predicate (and add association):
+def not_edited?(post)
+  PostHistory.where(post: post)
+             .where.not(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
+             .count.zero?
+end
+
 sorted.each do |f, type|
   begin
     processed = ERB.new(File.read(f)).result(binding)
@@ -91,19 +104,16 @@ sorted.each do |f, type|
         end
       end
 
-      if type == Post && ENV['UPDATE_POSTS'] == 'true'
-        seed['body'] = ApplicationController.helpers.render_markdown(seed['body_markdown'])
+      if type == Post
+        seed['body'] = render_seed(seed)
 
         system_usr = User.find(-1)
 
         Community.all.each do |c|
           RequestContext.community = c
-          post = Post.find_by doc_slug: seed['doc_slug']
-          if post.present? && PostHistory.where(post: post)
-                                         .where.not(post_history_type:
-                                                      PostHistoryType.find_by(name: 'initial_revision'))
-                                         .count.zero?
+          post = Post.find_by(doc_slug: seed['doc_slug'])
 
+          if post.present? && should_update_posts && not_edited?(post)
             # post exists, still original version: update post
             post.update(seed.merge('community_id' => c.id))
 
@@ -121,7 +131,7 @@ sorted.each do |f, type|
             # post doesn't exist: create post
             status = Post.create seed.merge('community_id' => c.id, 'user' => system_usr)
 
-            if status.errors.size
+            if status.errors.any?
               status.errors.full_messages.each do |msg|
                 puts "[#{c.name}:#{seed['doc_slug']}] invalid: #{msg}"
               end
