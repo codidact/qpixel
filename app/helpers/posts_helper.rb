@@ -91,7 +91,7 @@ module PostsHelper
       attrs = []
       tags = []
 
-      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes']
+      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes'] || []
       tags.push('del', 'strike') if allowed_types.include?('strikethrough')
       tags << 'code' if allowed_types.include?('code')
       tags << 'kbd' if allowed_types.include?('keyboard')
