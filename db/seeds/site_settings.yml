@@ -784,6 +784,7 @@
     - code
     - italic
     - keyboard
+    - strikethrough
     - subscript
     - superscript
   value_type: array

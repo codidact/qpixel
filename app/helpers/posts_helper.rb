@@ -85,14 +85,23 @@ module PostsHelper
   end
 
   class PostTitleScrubber < Rails::HTML::PermitScrubber
-    ALLOWED_ATTRS = %w[].freeze
-
-    ALLOWED_TAGS = %w[code em strong strike del sup sub kbd].freeze
-
     def initialize
       super
-      self.tags = ALLOWED_TAGS
-      self.attributes = ALLOWED_ATTRS
+
+      attrs = []
+      tags = []
+
+      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes']
+      tags.push('del', 'strike') if allowed_types.include?('strikethrough')
+      tags << 'code' if allowed_types.include?('code')
+      tags << 'kbd' if allowed_types.include?('keyboard')
+      tags << 'em' if allowed_types.include?('italic')
+      tags << 'strong' if allowed_types.include?('bold')
+      tags << 'sub' if allowed_types.include?('subscript')
+      tags << 'sup' if allowed_types.include?('superscript')
+
+      self.tags = tags
+      self.attributes = attrs
     end
 
     def skip_node?(node)
