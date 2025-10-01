@@ -776,3 +776,18 @@
   community_id: ~
   description: >
     File types that users will be able to upload.
+
+- name: AllowedPostTitleFormattingTypes
+  value: code italic keyboard
+  options:
+    - bold
+    - code
+    - italic
+    - keyboard
+    - subscript
+    - superscript
+  value_type: array
+  category: Display
+  description: >
+    Formatting types allowed in post titles.
+    By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.
