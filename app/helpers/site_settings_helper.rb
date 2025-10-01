@@ -1,3 +1,5 @@
-# Provides helper methods for use by views under <tt>SiteSettingsController</tt>.
 module SiteSettingsHelper
+  def rendered_description(setting)
+    sanitize(render_markdown(setting.description))
+  end
 end
