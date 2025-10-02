@@ -54,7 +54,7 @@ module SearchHelper
     qualifiers.append({ param: :include_tags, tag_ids: filter.include_tags }) unless filter.include_tags.nil?
     qualifiers.append({ param: :exclude_tags, tag_ids: filter.exclude_tags }) unless filter.exclude_tags.nil?
     qualifiers.append({ param: :status, value: filter.status }) unless filter.status.nil?
-    qualifiers.append({ param: :imports, value: filter.imports }) unless filter.imports.nil?
+    qualifiers.append({ param: :source, value: filter.source }) unless filter.source.nil?
     qualifiers
   end
 
@@ -72,7 +72,7 @@ module SearchHelper
       include_tags: params[:include_tags],
       exclude_tags: params[:exclude_tags],
       status: params[:status],
-      imports: params[:imports]
+      source: params[:source]
     }
   end
 
@@ -110,8 +110,8 @@ module SearchHelper
       filter_qualifiers.append({ param: :status, value: params[:status] })
     end
 
-    if SOURCE_TYPES.include?(params[:imports]&.to_sym)
-      filter_qualifiers.append({ param: :imports, value: params[:imports] })
+    if SOURCE_TYPES.include?(params[:source]&.to_sym)
+      filter_qualifiers.append({ param: :source, value: params[:source].to_sym })
     end
 
     if params[:include_tags]&.all? { |id| id.match? valid_value[:integer] }
@@ -145,9 +145,7 @@ module SearchHelper
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
     qualifiers.map do |qualifier|
-      splat = qualifier.split ':'
-      parameter = splat[0]
-      value = splat[1]
+      parameter, value = qualifier.split(':')
 
       parsed = case parameter
                when 'score'
@@ -174,6 +172,8 @@ module SearchHelper
                  parse_answers_qualifier(value)
                when 'status'
                  parse_status_qualifier(value)
+               when 'source'
+                 parse_source_qualifier(value)
                end
 
       parsed
@@ -231,7 +231,7 @@ module SearchHelper
         when 'closed'
           query = query.where(closed: true)
         end
-      when :imports
+      when :source
         case qualifier[:value]
         when :native
           query = query.where(att_source: nil)

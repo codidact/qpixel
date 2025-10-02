@@ -103,7 +103,7 @@ class UsersController < ApplicationController
       max_answers: filter.max_answers,
       include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
       exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
-      imports: filter.imports,
+      source: filter.source,
       status: filter.status,
       system: filter.user_id == -1
     }
@@ -644,7 +644,7 @@ class UsersController < ApplicationController
 
   def filter_params
     params.permit(:min_score, :max_score, :min_answers, :max_answers,
-                  :status, :imports,
+                  :status, :source,
                   :include_tags, :exclude_tags,
                   include_tags: [], exclude_tags: [])
   end

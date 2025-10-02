@@ -245,6 +245,10 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFilterSource = 'any' | 'native' | 'imported'
+
+type QPixelFilterStatus = 'any' | 'closed' | 'open'
+
 type QPixelFilter = {
   exclude_tags: [string, number][]
   include_tags: [string, number][]
@@ -252,8 +256,8 @@ type QPixelFilter = {
   max_score: number | null
   min_answers: number | null
   min_score: number | null
-  imports: 'any' | 'native' | 'imported'
-  status: 'any' | 'closed' | 'open'
+  source: QPixelFilterSource
+  status: QPixelFilterStatus
   system: boolean
 }
 

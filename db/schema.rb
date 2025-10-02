@@ -270,7 +270,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_02_164957) do
     t.string "exclude_tags"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "imports", default: "any", null: false
+    t.string "source", default: "any", null: false
     t.index ["user_id"], name: "index_filters_on_user_id"
   end
 

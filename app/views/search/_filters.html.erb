@@ -70,12 +70,12 @@
 
     <% if SiteSetting['AllowContentTransfer'] %>
       <div class="form-group">
-        <%= label_tag :imports, 'Source', class: "form-element nowrap" %>
-        <%= select_tag :imports,
+        <%= label_tag :source, 'Source', class: "form-element nowrap" %>
+        <%= select_tag :source,
                        options_for_select(SearchHelper::SOURCE_TYPES,
-                       selected: @active_filter[:imports] || :any),
+                       selected: @active_filter[:source] || :any),
                        class: 'form-element form--filter',
-                       data: { name: 'imports' } %>
+                       data: { name: 'source' } %>
       </div>
     <% end %>
 

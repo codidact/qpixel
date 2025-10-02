@@ -186,7 +186,7 @@ class CategoriesController < ApplicationController
       end
 
       unless default_filter.nil?
-        filter_qualifiers = helpers.filter_to_qualifiers default_filter
+        filter_qualifiers = helpers.filter_to_qualifiers(default_filter)
         @active_filter = {
           default: default,
           name: default_filter.name,
@@ -197,7 +197,7 @@ class CategoriesController < ApplicationController
           include_tags: default_filter.include_tags,
           exclude_tags: default_filter.exclude_tags,
           status: default_filter.status,
-          imports: default_filter.imports
+          source: default_filter.source
         }
       end
     end
