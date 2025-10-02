@@ -235,4 +235,14 @@ class SearchHelperTest < ActionView::TestCase
 
     assert_not(posts.any? { |p| p.category.id == admin_category.id })
   end
+
+  test 'valid_source_type? should correctly determine if the param is valid' do
+    SearchHelper::SOURCE_TYPES.each do |type|
+      assert valid_source_type?(type)
+    end
+
+    ['external', :source, nil].each do |invalid|
+      assert_not valid_source_type?(invalid)
+    end
+  end
 end

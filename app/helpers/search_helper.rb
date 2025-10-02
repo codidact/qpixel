@@ -110,7 +110,7 @@ module SearchHelper
       filter_qualifiers.append({ param: :status, value: params[:status] })
     end
 
-    if SOURCE_TYPES.include?(params[:source]&.to_sym)
+    if valid_source_type?(params[:source])
       filter_qualifiers.append({ param: :source, value: params[:source].to_sym })
     end
 
@@ -242,5 +242,12 @@ module SearchHelper
     end
 
     query
+  end
+
+  # Is a given param a valid source type?
+  # @param param [String, Symbol, nil] parameter to check
+  # @return [Boolean] check result
+  def valid_source_type?(param)
+    SOURCE_TYPES.include?(param&.to_sym)
   end
 end
