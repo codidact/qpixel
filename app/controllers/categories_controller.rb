@@ -164,8 +164,7 @@ class CategoriesController < ApplicationController
   def set_list_posts
     sort_params = { activity: { last_activity: :desc }, age: { created_at: :desc }, score: { score: :desc },
                     lottery: [Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
-                              SiteSetting['LotteryAgeDeprecationSpeed']],
-                    native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
+                              SiteSetting['LotteryAgeDeprecationSpeed']] }
     sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
     @posts = @category.posts
                       .undeleted
@@ -197,7 +196,8 @@ class CategoriesController < ApplicationController
           max_answers: default_filter.max_answers,
           include_tags: default_filter.include_tags,
           exclude_tags: default_filter.exclude_tags,
-          status: default_filter.status
+          status: default_filter.status,
+          imports: default_filter.imports
         }
       end
     end

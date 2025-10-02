@@ -1,6 +1,8 @@
 module SearchHelper
   include SearchQualifierHelper
 
+  SOURCE_TYPES = [:any, :native, :imported].freeze
+
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
@@ -52,6 +54,7 @@ module SearchHelper
     qualifiers.append({ param: :include_tags, tag_ids: filter.include_tags }) unless filter.include_tags.nil?
     qualifiers.append({ param: :exclude_tags, tag_ids: filter.exclude_tags }) unless filter.exclude_tags.nil?
     qualifiers.append({ param: :status, value: filter.status }) unless filter.status.nil?
+    qualifiers.append({ param: :imports, value: filter.imports }) unless filter.imports.nil?
     qualifiers
   end
 
@@ -68,7 +71,8 @@ module SearchHelper
       max_answers: params[:max_answers],
       include_tags: params[:include_tags],
       exclude_tags: params[:exclude_tags],
-      status: params[:status]
+      status: params[:status],
+      imports: params[:imports]
     }
   end
 
@@ -104,6 +108,10 @@ module SearchHelper
 
     if params[:status]&.match?(valid_value[:status])
       filter_qualifiers.append({ param: :status, value: params[:status] })
+    end
+
+    if SOURCE_TYPES.include?(params[:imports]&.to_sym)
+      filter_qualifiers.append({ param: :imports, value: params[:imports] })
     end
 
     if params[:include_tags]&.all? { |id| id.match? valid_value[:integer] }
@@ -222,6 +230,13 @@ module SearchHelper
           query = query.where(closed: false)
         when 'closed'
           query = query.where(closed: true)
+        end
+      when :imports
+        case qualifier[:value]
+        when :native
+          query = query.where(att_source: nil)
+        when :imported
+          query = query.where.not(att_source: nil)
         end
       end
     end

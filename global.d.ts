@@ -252,6 +252,7 @@ type QPixelFilter = {
   max_score: number | null
   min_answers: number | null
   min_score: number | null
+  imports: 'any' | 'native' | 'imported'
   status: 'any' | 'closed' | 'open'
   system: boolean
 }
