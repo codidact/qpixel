@@ -13,6 +13,43 @@ class SearchHelperTest < ActionView::TestCase
     end
   end
 
+  test 'parse_qualifier_strings should correctly parse qualifiers' do
+    exclude_tag = tags(:bug)
+    include_tag = tags(:support)
+
+    {
+      'answers:>42' => { param: :answers, operator: '>', value: 42 },
+      'category:1' => { param: :category, operator: '=', category_id: 1 },
+      'downvotes:>10' => { param: :downvotes, operator: '>', value: 10 },
+      'post_type:2' => { param: :post_type, operator: '=', post_type_id: 2 },
+      'score:0.5' => { param: :score, operator: '=', value: 0.5 },
+      'status:any' => { param: :status, value: 'any' },
+      "tag:#{include_tag.name}" => { param: :include_tag, tag_id: include_tag },
+      "-tag:#{exclude_tag.name}" => { param: :exclude_tag, tag_id: exclude_tag },
+      'source:native' => { param: :source, value: 'native' },
+      'upvotes:<3' => { param: :upvotes, operator: '<', value: 3 },
+      'user:-1' => { param: :user, operator: '=', user_id: -1 },
+      'votes:0' => { param: :net_votes, operator: '=', value: 0 }
+    }.each do |input, expect|
+      parsed = parse_qualifier_strings([input])
+      assert_equal expect[:param], parsed[0][:param]
+
+      # TODO: make return types of parse_*_qualifier helpers consistent
+      if [:category, :post_type, :user].include?(expect[:param])
+        value_key = :"#{expect[:param]}_id"
+        assert_equal expect[value_key], parsed[0][value_key]
+      elsif [:include_tag, :exclude_tag].include?(expect[:param])
+        assert_equal expect[:tag_id].id, parsed[0][:tag_id].first&.id
+      else
+        assert_equal expect[:value], parsed[0][:value]
+      end
+
+      if expect[:operator].present?
+        assert_equal expect[:operator], parsed[0][:operator]
+      end
+    end
+  end
+
   test 'qualifiers_to_sql should correctly narrow by :category qualifier' do
     main = categories(:main)
     admin_only = categories(:admin_only)
