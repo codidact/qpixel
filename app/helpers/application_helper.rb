@@ -114,12 +114,29 @@ module ApplicationHelper
 
   ##
   # Render a markdown string to HTML with consistent options.
-  # @param markdown [String] The markdown string to render.
-  # @return [String] The rendered HTML string.
-  def render_markdown(markdown)
-    CommonMarker.render_doc(markdown,
-                            [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
-                            [:table, :strikethrough, :autolink]).to_html(:UNSAFE)
+  # @param markdown [String] markdown string to render
+  # @option opts :footnotes [Boolean] render footnotes?
+  # @option opts :strikethrough [Boolean] render strikethrough?
+  # @option opts :tables [Boolean] render tables?
+  # @return [String] rendered HTML string
+  def render_markdown(markdown, **opts)
+    extensions = [:autolink]
+    options = [:LIBERAL_HTML_TAG]
+
+    unless opts[:footnotes] == false
+      options << :FOOTNOTES
+    end
+
+    unless opts[:strikethrough] == false
+      extensions << :strikethrough
+      options << :STRIKETHROUGH_DOUBLE_TILDE
+    end
+
+    unless opts[:tables] == false
+      extensions << :table
+    end
+
+    CommonMarker.render_doc(markdown, options, extensions).to_html(:UNSAFE)
   end
 
   ##

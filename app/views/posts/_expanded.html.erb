@@ -19,17 +19,14 @@
 <% category ||= defined?(@category) && @category.id == post.category_id ? @category : post.category %>
 <% post_type ||= defined?(@post_type) && @post_type.id == post.post_type_id ? @post_type : post.post_type %>
 
-<% is_question = post.post_type_id == Question.post_type_id %>
-<% is_top_level = post.parent_id.nil? %>
-
-<div class="post <%= post.meta? ? 'is-meta' : '' %> <%= is_top_level ? '' : 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' %>"
-     id="<%= (is_question ? 'question-' : 'answer-') + post.id.to_s %>"
+<div class="post <%= 'has-border-bottom-style-solid has-border-bottom-width-1 has-border-color-tertiary-100' unless post.top_level? %>"
+     id="<%= (post.question? ? 'question-' : 'answer-') + post.id.to_s %>"
      data-post-id="<%= post.id %>"
      data-ckb-list-item data-ckb-item-type="post"
      data-ckb-post-id="<%= post.id %>">
-  <% if is_top_level %>
+  <% if post.top_level? %>
     <h1 class="post--title has-margin-top-0 has-padding-2">
-      <% title = post.title +
+      <% title = rendered_title(post) +
                  (post.closed && !post.duplicate_post ? " [closed]" : "") +
                  (post.duplicate_post ? " [duplicate]" : "") %>
       <a href="<%= generic_share_link(post) %>" class="post--title-text"><%= title %></a>
@@ -72,7 +69,7 @@
         <%= render('posts/notices/locked', post: post) %>
       <% end %>
 
-      <% if post.spam_flag_pending? && user_signed_in? %>
+      <% if post.pending_spam_flag? && user_signed_in? %>
         <%= render('posts/notices/flagged', post: post, user: current_user) %>
       <% end %>
 
@@ -82,7 +79,7 @@
 
       <div class="post--body">
         <% effective_post = raw(sanitize(post.body, scrubber: scrubber)) %>
-        <% if post.spam_flag_pending? && !user_signed_in? %>
+        <% if post.pending_spam_flag? && !user_signed_in? %>
           <%= sanitize(effective_post, attributes: %w()) %>
         <% else %>
           <%= effective_post %>
@@ -223,7 +220,7 @@
           <%= render 'posts/flags_modal', post: post, user: current_user %>
         <% end %>
 
-        <% if is_top_level && post.children.undeleted.length >= SiteSetting["TableOfContentsThreshold"] && SiteSetting["TableOfContentsThreshold"] != -1 %>
+        <% if post.top_level? && post.children.undeleted.length >= SiteSetting["TableOfContentsThreshold"] && SiteSetting["TableOfContentsThreshold"] != -1 %>
           <div class="toc has-margin-left-4" id="toc-toggle">
             <button class="toc--header"
                     data-toggle="#toc-toggle"

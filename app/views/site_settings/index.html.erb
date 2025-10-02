@@ -28,7 +28,7 @@
               </p>
               <h4 class="overflow-ellipsis"
                   title="<%= setting.name %>"><%= setting.name %></h4>
-              <div class="form-caption"><%= setting.description %></div>
+              <div class="form-caption"><%= rendered_description(setting) %></div>
             </td>
             <% nowrap = setting.boolean? || setting.numeric? %>
             <td class="site-setting--value js-setting-value<%= nowrap ? ' nowrap' : ' wrap-word' %>"

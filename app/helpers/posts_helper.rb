@@ -8,6 +8,14 @@ module PostsHelper
     user_link(user, { host: post.community.host })
   end
 
+  # Renders title for a given post
+  # @param post [Post] post to render the title for
+  # @return [ActiveSupport::SafeBuffer] rendered title
+  def rendered_title(post)
+    raw_title = post.top_level? ? post.title : post.parent.title
+    sanitize(render_markdown(raw_title), scrubber: title_scrubber)
+  end
+
   ##
   # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
   # rendered HTML over rendering server-side.
@@ -76,6 +84,31 @@ module PostsHelper
     [SiteSetting['MaxTitleLength'] || 255, 255].min
   end
 
+  class PostTitleScrubber < Rails::HTML::PermitScrubber
+    def initialize
+      super
+
+      attrs = []
+      tags = []
+
+      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes'] || ['code', 'italic', 'keyboard']
+      tags.push('del', 'strike') if allowed_types.include?('strikethrough')
+      tags << 'code' if allowed_types.include?('code')
+      tags << 'kbd' if allowed_types.include?('keyboard')
+      tags << 'em' if allowed_types.include?('italic')
+      tags << 'strong' if allowed_types.include?('bold')
+      tags << 'sub' if allowed_types.include?('subscript')
+      tags << 'sup' if allowed_types.include?('superscript')
+
+      self.tags = tags
+      self.attributes = attrs
+    end
+
+    def skip_node?(node)
+      node.text?
+    end
+  end
+
   class PostScrubber < Rails::Html::PermitScrubber
     ALLOWED_ATTRS = %w[id class href title src height width alt rowspan colspan lang start dir].freeze
 
@@ -99,5 +132,11 @@ module PostsHelper
   # @return [PostScrubber]
   def scrubber
     PostsHelper::PostScrubber.new
+  end
+
+  # Get a post title scrubber instance
+  # @return [PostTitleScrubber]
+  def title_scrubber
+    PostsHelper::PostTitleScrubber.new
   end
 end
