@@ -141,7 +141,7 @@ module SearchHelper
 
   ##
   # Parses a full qualifier string into an array of qualifier objects.
-  # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
+  # @param qualifiers [Array<String>] Qualifier strings as returned by {#parse_search}.
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
     qualifiers.map do |qualifier|
