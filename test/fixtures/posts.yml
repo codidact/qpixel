@@ -495,3 +495,18 @@ post_scorer_question:
   community: sample
   category: main
   license: cc_by_sa
+
+imported_question:
+  post_type: question
+  title: This is a question imported from an external source
+  body: This is the body of the question imported from an external source
+  body_markdown: <p>This is the body of the question imported from an external source</p>
+  att_source: https://example.com/posts/42
+  tags_cache:
+    - support
+  tags:
+    - support
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa

@@ -83,6 +83,28 @@ class SearchHelperTest < ActionView::TestCase
     assert only_neut_posts
   end
 
+  test 'qualifiers_to_sql should correctly narrow by :source qualifier' do
+    std_user = users(:standard_user)
+
+    posts_query = Post.accessible_to(std_user)
+    native_post = [{ param: :source, value: :native }]
+    imported_post = [{ param: :source, value: :imported }]
+
+    native_query = qualifiers_to_sql(native_post, posts_query, std_user)
+    imported_query = qualifiers_to_sql(imported_post, posts_query, std_user)
+
+    only_native_posts = native_query.to_a.none?(&:imported?)
+    only_imported_posts = imported_query.to_a.all?(&:imported?)
+
+    assert_not_equal posts_query.size, native_query.size
+    assert_not_equal native_query.size, 0
+    assert only_native_posts
+
+    assert_not_equal posts_query.size, imported_query.size
+    assert_not_equal imported_query.size, 0
+    assert only_imported_posts
+  end
+
   test 'qualifiers_to_sql should correctly narrow by :status qualifier' do
     std_user = users(:standard_user)
 

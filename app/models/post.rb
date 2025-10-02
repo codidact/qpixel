@@ -246,6 +246,12 @@ class Post < ApplicationRecord
     ThreadFollower.where(post: self, user: user).any?
   end
 
+  # Is the post an imported post?
+  # @return [Boolean] check result
+  def imported?
+    att_source.present?
+  end
+
   # Does the post have any pending (not handled) spam flags?
   # A spam flag could be marked helpful but the post wouldn't be deleted, and
   # we don't want the post to be treated like it's spam risk if that happens.
