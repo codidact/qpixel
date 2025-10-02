@@ -198,7 +198,7 @@
 
 - name: InterestingSubscriptionScoreThreshold
   value: 1
-  value_type: integer
+  value_type: float
   category: Email
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
