@@ -12,6 +12,13 @@ interface PostValidatorMessage {
 
 type PostValidator = (postText: string) => [boolean, PostValidatorMessage[]];
 
+ interface ProcessedTag {
+  id: number | string
+  text: string
+  desc: string
+  synonyms?: string | QPixelTagSynonym[]
+ }
+
 interface UserPreferences {
   community: Record<string, string | null>;
   global: Record<string, string | null>;
