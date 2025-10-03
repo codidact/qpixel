@@ -41,6 +41,16 @@ class SearchQualifierHelperTest < ActionView::TestCase
     end
   end
 
+  test 'matches_source? should correctly match status' do
+    [:any, :imported, :native].each do |value|
+      assert matches_source?(value)
+    end
+
+    [:from_somewhere, :source, '42'].each do |value|
+      assert_not matches_source?(value)
+    end
+  end
+
   test 'matches_status? should correctly match status' do
     ['any', 'closed', 'open'].each do |value|
       assert matches_status?(value)
@@ -144,6 +154,14 @@ class SearchQualifierHelperTest < ActionView::TestCase
       assert_equal :upvotes, parsed[:param]
       assert_equal expected_op, parsed[:operator]
       assert_equal expected_val, parsed[:value]
+    end
+  end
+
+  test 'parse_source_qualifier should correctly parse status:' do
+    [:any, :imported, :native].each do |value|
+      parsed = parse_source_qualifier(value)
+      assert_equal :source, parsed[:param]
+      assert_equal value, parsed[:value]
     end
   end
 

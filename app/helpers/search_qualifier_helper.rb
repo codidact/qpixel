@@ -23,6 +23,10 @@ module SearchQualifierHelper
     value.match?(/any|open|closed/)
   end
 
+  def matches_source?(value)
+    value.match?(/any|imported|native/)
+  end
+
   def parse_answers_qualifier(value)
     return unless matches_non_negative_int?(value)
 
@@ -79,6 +83,12 @@ module SearchQualifierHelper
     return unless matches_status?(value)
 
     { param: :status, value: value }
+  end
+
+  def parse_source_qualifier(value)
+    return unless matches_source?(value)
+
+    { param: :source, value: value }
   end
 
   def parse_include_tag_qualifier(value)
