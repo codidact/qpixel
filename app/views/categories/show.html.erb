@@ -36,11 +36,6 @@
     <%= link_to 'Score', query_url(sort: 'score'),
                 class: "button is-muted is-outlined #{params[:sort] == 'score' ? 'is-active' : ''}",
                 title: 'highest score first (not the same as net votes)' %>
-    <% if SiteSetting['AllowContentTransfer'] %>
-      <%= link_to 'Native', query_url(sort: 'native'),
-                  class: "button is-muted is-outlined #{params[:sort] == 'native' ? 'is-active' : ''}",
-                  title: 'exclude imported posts' %>
-    <% end %>
     <%= link_to 'Random', query_url(sort: 'lottery'),
         class: "button is-muted is-outlined #{params[:sort] == 'lottery' ? 'is-active' : ''}",
         title: 'random set of questions, usually older ones' %>

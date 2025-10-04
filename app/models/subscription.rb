@@ -37,9 +37,8 @@ class Subscription < ApplicationRecord
               .where(Question.arel_table[:created_at].gteq(last_sent_at || created_at))
               .where(user_id: qualifier)
     when 'interesting'
-      RequestContext.community = community # otherwise SiteSetting#[] doesn't work
       Question.unscoped.on(community).where(post_type_id: Question.post_type_id)
-              .where('score >= ?', SiteSetting['InterestingSubscriptionScoreThreshold'])
+              .where('score >= ?', interesting_threshold)
               .order(Arel.sql('RAND()'))
     when 'category'
       Question.unscoped.on(community).where(post_type_id: Question.post_type_id)
@@ -78,6 +77,10 @@ class Subscription < ApplicationRecord
   end
 
   private
+
+  def interesting_threshold
+    SiteSetting.applied_setting('InterestingSubscriptionScoreThreshold', community: community).typed
+  end
 
   def qualifier_presence
     return unless qualified?
