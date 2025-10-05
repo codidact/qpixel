@@ -99,6 +99,45 @@ class TagsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:posts)
   end
 
+  test ':create should require authentication' do
+    try_create_tag(categories(:main), tag_sets(:main))
+
+    assert_redirected_to_sign_in
+  end
+
+  test 'only users who can edit tags should be able to create them' do
+    category = categories(:main)
+    tag_set = tag_sets(:main)
+
+    users.each do |user|
+      sign_in(user)
+      try_create_tag(category, tag_set, name: "test-tag-#{user.id}")
+
+      if !@controller.helpers.user_signed_in?
+        assert_redirected_to_sign_in
+      elsif user.can_edit_tags?
+        assert_response(:found, "Expected user '#{user.name}' to be able to create tags")
+      else
+        assert_response(:not_found, "Expected user '#{user.name}' to not be able to create tags")
+      end
+    end
+  end
+
+  test ':create should correctly create tags' do
+    sign_in users(:editor)
+
+    category = categories(:main)
+    tag_set = tag_sets(:main)
+    tag_name = 'test-tag'
+
+    try_create_tag(category, tag_set, name: tag_name)
+
+    @tag = assigns(:tag)
+
+    assert_not_nil @tag
+    assert_redirected_to(tag_path(id: category.id, tag_id: @tag.id))
+  end
+
   test 'should deny edit to anonymous user' do
     get :edit, params: { id: categories(:main).id, tag_id: tags(:topic).id }
 
@@ -233,6 +272,20 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   private
+
+  # @param category [Category] category to create the tag in
+  # @param tag_set [TagSet] tag set the tag belongs to
+  def try_create_tag(tag_set, category, **opts)
+    post :create, params: {
+      id: category.id,
+      tag: {
+        excerpt: 'Usage guidance goes here',
+        name: 'test-tag',
+        tag_set_id: tag_set.id,
+        wiki_markdown: 'Extended tag description goes here'
+      }.merge(opts)
+    }
+  end
 
   # @param category [Category] category to rename the tag in
   # @param tag [Tag] tag to rename
