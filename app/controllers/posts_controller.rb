@@ -113,7 +113,7 @@ class PostsController < ApplicationController
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
 
-      do_draft_delete(URI(request.referer || '').path)
+      do_delete_draft(current_user, URI(request.referer || '').path)
 
       redirect_to helpers.generic_show_link(@post)
     else
@@ -263,7 +263,7 @@ class PostsController < ApplicationController
               PostHistory.redact(@post, current_user)
             end
             Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-            do_draft_delete(URI(request.referer || '').path)
+            do_delete_draft(current_user, URI(request.referer || '').path)
             redirect_to post_path(@post)
           end
 
@@ -302,7 +302,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
-          do_draft_delete(URI(request.referer || '').path)
+          do_delete_draft(current_user, URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           @post.errors.copy!(edit.errors)
@@ -634,12 +634,12 @@ class PostsController < ApplicationController
   end
 
   def save_draft
-    base_key = do_save_draft(params[:path])
+    base_key = do_save_draft(current_user, params[:path])
     render json: { status: 'success', success: true, key: base_key }
   end
 
   def delete_draft
-    do_draft_delete(params[:path])
+    do_delete_draft(current_user, params[:path])
     render json: { status: 'success', success: true }
   end
 

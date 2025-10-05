@@ -98,7 +98,7 @@ class TagsController < ApplicationController
 
     @tag = Tag.new(create_params)
     if @tag.save
-      do_draft_delete(URI(request.referer || '').path)
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :new, status: :bad_request
@@ -118,7 +118,7 @@ class TagsController < ApplicationController
                               .except(:name)
 
     if @tag.update(update_params)
-      do_draft_delete(URI(request.referer || '').path)
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :edit, status: :bad_request
