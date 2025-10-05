@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
+  include DraftManagement
+
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
@@ -725,19 +727,6 @@ class PostsController < ApplicationController
 
   def unless_locked
     check_if_locked(@post)
-  end
-
-  # Attempts to actually delete a post draft
-  # @param path [String] draft path to delete
-  # @return [Boolean] status of the operation
-  def do_draft_delete(path)
-    keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
-      pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
-      base = "#{pfx}.#{current_user.id}.#{path}"
-      [:body, :saved_at].include?(key) ? base : "#{base}.#{key}"
-    end
-
-    RequestContext.redis.del(*keys)
   end
 end
 # rubocop:enable Metrics/MethodLength
