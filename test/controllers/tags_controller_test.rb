@@ -111,12 +111,21 @@ class TagsControllerTest < ActionController::TestCase
 
     users.each do |user|
       sign_in(user)
-      try_create_tag(category, tag_set, name: "test-tag-#{user.id}")
+
+      draft_path = create_tag_path(id: category.id)
+      tag_name = "test-tag-#{user.id}"
+
+      @controller.stub('params', { tag_name: tag_name }) do
+        @controller.do_save_draft(user, draft_path)
+      end
+
+      try_create_tag(category, tag_set, name: tag_name)
 
       if !@controller.helpers.user_signed_in?
         assert_redirected_to_sign_in
       elsif user.can_edit_tags?
         assert_response(:found, "Expected user '#{user.name}' to be able to create tags")
+        assert_draft_deleted(user, draft_path, :tag_name)
       else
         assert_response(:not_found, "Expected user '#{user.name}' to not be able to create tags")
       end
@@ -276,6 +285,9 @@ class TagsControllerTest < ActionController::TestCase
   # @param category [Category] category to create the tag in
   # @param tag_set [TagSet] tag set the tag belongs to
   def try_create_tag(tag_set, category, **opts)
+    # this is needed for draft deletion until we switch from request.referer
+    @request.set_header('HTTP_REFERER', create_tag_path(id: category.id))
+
     post :create, params: {
       id: category.id,
       tag: {
