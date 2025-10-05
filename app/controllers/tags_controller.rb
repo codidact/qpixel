@@ -98,7 +98,6 @@ class TagsController < ApplicationController
 
     @tag = Tag.new(create_params)
     if @tag.save
-      Rails.logger.warn(URI(request.referer || '').path)
       do_draft_delete(URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
