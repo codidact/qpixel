@@ -21,13 +21,27 @@ class ModWarningControllerTest < ActionController::TestCase
 
   test 'mods or admins should be able to access pages' do
     [users(:moderator), users(:admin)].each do |user|
-      sign_in user
+      sign_in(user)
 
       [:log, :new].each do |path|
         get path, params: { user_id: users(:standard_user).id }
         assert_response(:success)
       end
     end
+  end
+
+  test ':create should correclty create mod warnings' do
+    user = users(:moderator)
+    subject = users(:standard_user)
+
+    sign_in(user)
+
+    try_create_mod_warning(subject)
+
+    assert_redirected_to(user_path(subject))
+    warning = assigns(:warning)
+    assert_not_nil warning
+    assert_audit_log('warning_create', related: warning)
   end
 
   test 'suspended user should redirect to current warning page' do
@@ -82,5 +96,24 @@ class ModWarningControllerTest < ActionController::TestCase
     assert_response(:found)
     warning.reload
     assert_not warning.active
+  end
+
+  private
+
+  # @param subject [User] to whom the mod warning is issued
+  # @option opts :body [String]
+  # @option opts :suspension_public_notice [String]
+  # @option opts :is_suspension [Boolean]
+  # @option opts :suspension_duration [Integer]
+  def try_create_mod_warning(subject, **opts)
+    post :create, params: {
+      user_id: subject.id,
+      mod_warning: {
+        body: 'You have been suspended for science. Your sacrifice will not be forgotten',
+        suspension_public_notice: 'Do not mind this suspension, nothing to see here, move along',
+        is_suspension: true,
+        suspension_duration: 365
+      }.merge(opts)
+    }
   end
 end
