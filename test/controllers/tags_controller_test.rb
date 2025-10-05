@@ -124,7 +124,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test ':create should correctly create tags' do
-    sign_in users(:editor)
+    sign_in users(:tags_editor)
 
     category = categories(:main)
     tag_set = tag_sets(:main)
