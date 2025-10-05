@@ -138,6 +138,12 @@ class User < ApplicationRecord
     privilege?('flag_curate') && !target.deleted?
   end
 
+  # Can the user edit tags?
+  # @return [Boolean] check result
+  def can_edit_tags?
+    privilege?('edit_tags') || false
+  end
+
   # Can the user handle flags?
   # @return [Boolean] check result
   def can_handle_flags?
