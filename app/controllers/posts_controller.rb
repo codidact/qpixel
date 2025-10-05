@@ -633,36 +633,8 @@ class PostsController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
-  # saving by-field is kept for backwards compatibility with old drafts
   def save_draft
-    expiration_time = 86_400 * 7
-
-    base_key = "saved_post.#{current_user.id}.#{params[:path]}"
-
-    [:body, :comment, :excerpt, :license, :tag_name, :tags, :title].each do |key|
-      next unless params.key?(key)
-
-      key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
-
-      if key == :tags
-        valid_tags = params[key]&.select(&:present?)
-
-        RequestContext.redis.del(key_name)
-
-        if valid_tags.present?
-          RequestContext.redis.sadd(key_name, valid_tags)
-        end
-      else
-        RequestContext.redis.set(key_name, params[key])
-      end
-
-      RequestContext.redis.expire(key_name, expiration_time)
-    end
-
-    saved_at_key = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set(saved_at_key, DateTime.now.iso8601)
-    RequestContext.redis.expire(saved_at_key, expiration_time)
-
+    base_key = do_save_draft(params[:path])
     render json: { status: 'success', success: true, key: base_key }
   end
 
