@@ -1,4 +1,6 @@
 class TagsController < ApplicationController
+  include DraftManagement
+
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
   before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
@@ -92,8 +94,11 @@ class TagsController < ApplicationController
   end
 
   def create
-    @tag = Tag.new(tag_params.merge(tag_set_id: @category.tag_set.id))
+    create_params = tag_params.merge(tag_set_id: @category.tag_set.id)
+
+    @tag = Tag.new(create_params)
     if @tag.save
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :new, status: :bad_request
@@ -109,7 +114,11 @@ class TagsController < ApplicationController
     return unless check_your_privilege('edit_tags', nil, true)
 
     wiki_md = params[:tag][:wiki_markdown]
-    if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil).except(:name))
+    update_params = tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil)
+                              .except(:name)
+
+    if @tag.update(update_params)
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :edit, status: :bad_request
@@ -263,8 +272,7 @@ class TagsController < ApplicationController
   end
 
   def verify_tag_editor
-    unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
-      current_user.at_least_moderator?)
+    unless user_signed_in? && current_user.can_edit_tags?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
