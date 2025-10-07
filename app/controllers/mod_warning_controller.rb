@@ -70,7 +70,11 @@ class ModWarningController < ApplicationController
     @warning.update(active: false, read: false)
     @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
 
-    audit_warning('suspension_lift', @warning)
+    audit_warning('warning_lift', @warning)
+
+    if @warning.suspension?
+      audit_warning('suspension_lift', @warning)
+    end
 
     flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' \
                       'explaining your reasons.'

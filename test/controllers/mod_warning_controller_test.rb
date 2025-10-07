@@ -97,6 +97,9 @@ class ModWarningControllerTest < ActionController::TestCase
     assert_response(:found)
     warning.reload
     assert_not warning.active
+
+    assert_audit_log('warning_lift', related: warning)
+    assert_audit_log('suspension_lift', related: warning)
   end
 
   private
