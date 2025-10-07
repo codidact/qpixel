@@ -30,7 +30,7 @@ class ModWarningControllerTest < ActionController::TestCase
     end
   end
 
-  test ':create should correclty create mod warnings' do
+  test ':create should correctly create mod warnings' do
     user = users(:moderator)
     subject = users(:standard_user)
 
@@ -42,6 +42,7 @@ class ModWarningControllerTest < ActionController::TestCase
     warning = assigns(:warning)
     assert_not_nil warning
     assert_audit_log('warning_create', related: warning)
+    assert_audit_log('suspension_create', related: warning)
   end
 
   test 'suspended user should redirect to current warning page' do

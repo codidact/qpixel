@@ -46,12 +46,15 @@ class ModWarningController < ApplicationController
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: is_suspension,
                               suspension_end: suspension_end, active: true, read: false)
+
     if @warning.save
       audit_warning('warning_create', @warning)
 
       if is_suspension
         @user.community_user.update(is_suspended: is_suspension, suspension_end: suspension_end,
                                     suspension_public_comment: params[:mod_warning][:suspension_public_notice])
+
+        audit_warning('suspension_create', @warning)
       end
 
       redirect_to user_path(@user)
@@ -67,7 +70,7 @@ class ModWarningController < ApplicationController
     @warning.update(active: false, read: false)
     @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
 
-    audit_warning('warning_lift', @warning)
+    audit_warning('suspension_lift', @warning)
 
     flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' \
                       'explaining your reasons.'
