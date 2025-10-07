@@ -27,7 +27,7 @@
       <td>
         <%= raw(sanitize(render_markdown(w.body), scrubber: scrubber)) %>
       </td>
-      <td>
+      <td class="wrap-word">
         <% if w.suspension_active? %>
           <strong>Current</strong>
           <%= form_tag lift_mod_warning_url(@user.id), method: :post do %>
