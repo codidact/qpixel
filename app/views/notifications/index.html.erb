@@ -16,6 +16,10 @@
     <%= link_to 'Unread', query_url(status: 'unread'),
                 class: "button is-muted is-outlined #{'is-active' if status == 'unread'}" %>
   </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age] %>
 </div>
 
 <% @notifications.each do |notif| %>
