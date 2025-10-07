@@ -1,4 +1,6 @@
 class TagsController < ApplicationController
+  include DraftManagement
+
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :rename, :merge, :select_merge]
   before_action :set_category, except: [:index]
   before_action :set_tag, only: [:show, :edit, :update, :children, :rename, :merge, :select_merge, :nuke, :nuke_warning]
@@ -10,11 +12,16 @@ class TagsController < ApplicationController
     @tag_set = if params[:tag_set].present?
                  TagSet.find(params[:tag_set])
                end
+
     @tags = if params[:term].present?
               (@tag_set&.tags || Tag).search(params[:term])
             else
               (@tag_set&.tags || Tag.all).order(:name)
-            end.includes(:tag_synonyms).paginate(page: params[:page], per_page: 50)
+            end
+
+    @tags = @tags.list_includes
+                 .paginate(page: params[:page], per_page: 50)
+
     respond_to do |format|
       format.json do
         render json: @tags.to_json(include: { tag_synonyms: { only: :name } })
@@ -38,7 +45,7 @@ class TagsController < ApplicationController
               @tag_set.tags.where(excerpt: ['', nil])
             else
               @tag_set.tags
-            end
+            end.list_includes
 
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
@@ -66,10 +73,15 @@ class TagsController < ApplicationController
                 @tag.all_children + [@tag.id]
               end
     displayed_post_types = @tag.tag_set.categories.map(&:display_post_types).flatten
-    @posts = Post.joins(:tags).where(id: PostsTag.select(:post_id).distinct.where(tag_id: tag_ids))
-                 .undeleted.where(post_type_id: displayed_post_types)
-                 .includes(:post_type, :tags).list_includes.paginate(page: params[:page], per_page: 50)
+    post_ids = Post.undeleted
+                   .where(post_type_id: displayed_post_types)
+                   .joins(:posts_tags)
+                   .where(posts_tags: { tag_id: tag_ids })
+                   .select(:id)
+    @posts = Post.where(id: post_ids)
+                 .list_includes
                  .order(sort_param)
+                 .paginate(page: params[:page], per_page: 50)
     respond_to do |format|
       format.html
       format.rss
@@ -82,12 +94,13 @@ class TagsController < ApplicationController
   end
 
   def create
-    @tag = Tag.new(tag_params.merge(tag_set_id: @category.tag_set.id))
+    create_params = tag_params.merge(tag_set_id: @category.tag_set.id)
+
+    @tag = Tag.new(create_params)
     if @tag.save
-      flash[:danger] = nil
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
-      flash[:danger] = @tag.errors.full_messages.join(', ')
       render :new, status: :bad_request
     end
   end
@@ -101,7 +114,11 @@ class TagsController < ApplicationController
     return unless check_your_privilege('edit_tags', nil, true)
 
     wiki_md = params[:tag][:wiki_markdown]
-    if @tag.update(tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil).except(:name))
+    update_params = tag_params.merge(wiki: wiki_md.present? ? helpers.render_markdown(wiki_md) : nil)
+                              .except(:name)
+
+    if @tag.update(update_params)
+      do_delete_draft(current_user, URI(request.referer || '').path)
       redirect_to tag_path(id: @category.id, tag_id: @tag.id)
     else
       render :edit, status: :bad_request
@@ -146,6 +163,7 @@ class TagsController < ApplicationController
     else
       render json: { status: 'failed',
                      message: I18n.t('tags.errors.rename_generic'),
+                     errors: @tag.errors.full_messages,
                      tag: @tag },
              status: :bad_request
     end
@@ -254,8 +272,7 @@ class TagsController < ApplicationController
   end
 
   def verify_tag_editor
-    unless user_signed_in? && (current_user.privilege?(:edit_tags) ||
-      current_user.at_least_moderator?)
+    unless user_signed_in? && current_user.can_edit_tags?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found

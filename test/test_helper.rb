@@ -129,10 +129,29 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_draft_deleted(user, path, *fields)
+    base_key = "saved_post.#{user.id}.#{path}"
+
+    fields.each do |key|
+      key_name = DraftManagement::NESTED_DRAFTABLE_FIELDS.include?(key) ? base_key : "#{base_key}.#{key}"
+      assert_not(RequestContext.redis.exists?(key_name),
+                 "Expected '#{key_name}' draft to be deleted")
+    end
+  end
+
   def assert_valid_json_response
     assert_nothing_raised do
       parsed = JSON.parse(response.body)
       assert_not_nil(parsed)
+    end
+  end
+
+  def assert_json_failure(code, status: 'failed')
+    assert_response(code)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal status, parsed['status']
     end
   end
 

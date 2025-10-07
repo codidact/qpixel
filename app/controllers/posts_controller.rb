@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
+  include DraftManagement
+
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
@@ -111,7 +113,7 @@ class PostsController < ApplicationController
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
 
-      do_draft_delete(URI(request.referer || '').path)
+      do_delete_draft(current_user, URI(request.referer || '').path)
 
       redirect_to helpers.generic_show_link(@post)
     else
@@ -261,7 +263,7 @@ class PostsController < ApplicationController
               PostHistory.redact(@post, current_user)
             end
             Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-            do_draft_delete(URI(request.referer || '').path)
+            do_delete_draft(current_user, URI(request.referer || '').path)
             redirect_to post_path(@post)
           end
 
@@ -300,7 +302,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
-          do_draft_delete(URI(request.referer || '').path)
+          do_delete_draft(current_user, URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           @post.errors.copy!(edit.errors)
@@ -510,14 +512,16 @@ class PostsController < ApplicationController
 
   def upload
     unless helpers.valid_upload?(params[:file])
-      render json: { error: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
+      render json: { status: 'failed',
+                     message: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
              status: :bad_request
       return
     end
 
     @blob = ActiveStorage::Blob.create_and_upload!(io: params[:file], filename: params[:file].original_filename,
                                                    content_type: params[:file].content_type)
-    render json: { link: uploaded_url(@blob.key) }
+    render json: { status: 'success',
+                   link: uploaded_url(@blob.key) }
   end
 
   def help_center
@@ -629,41 +633,13 @@ class PostsController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
-  # saving by-field is kept for backwards compatibility with old drafts
   def save_draft
-    expiration_time = 86_400 * 7
-
-    base_key = "saved_post.#{current_user.id}.#{params[:path]}"
-
-    [:body, :comment, :excerpt, :license, :tag_name, :tags, :title].each do |key|
-      next unless params.key?(key)
-
-      key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
-
-      if key == :tags
-        valid_tags = params[key]&.select(&:present?)
-
-        RequestContext.redis.del(key_name)
-
-        if valid_tags.present?
-          RequestContext.redis.sadd(key_name, valid_tags)
-        end
-      else
-        RequestContext.redis.set(key_name, params[key])
-      end
-
-      RequestContext.redis.expire(key_name, expiration_time)
-    end
-
-    saved_at_key = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set(saved_at_key, DateTime.now.iso8601)
-    RequestContext.redis.expire(saved_at_key, expiration_time)
-
+    base_key = do_save_draft(current_user, params[:path])
     render json: { status: 'success', success: true, key: base_key }
   end
 
   def delete_draft
-    do_draft_delete(params[:path])
+    do_delete_draft(current_user, params[:path])
     render json: { status: 'success', success: true }
   end
 
@@ -723,19 +699,6 @@ class PostsController < ApplicationController
 
   def unless_locked
     check_if_locked(@post)
-  end
-
-  # Attempts to actually delete a post draft
-  # @param path [String] draft path to delete
-  # @return [Boolean] status of the operation
-  def do_draft_delete(path)
-    keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
-      pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
-      base = "#{pfx}.#{current_user.id}.#{path}"
-      [:body, :saved_at].include?(key) ? base : "#{base}.#{key}"
-    end
-
-    RequestContext.redis.del(*keys)
   end
 end
 # rubocop:enable Metrics/MethodLength

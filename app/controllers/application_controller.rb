@@ -4,11 +4,11 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, store: :cookie
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :enforce_signed_in, unless: :devise_controller?
-  before_action :check_if_warning_or_suspension_pending
+  before_action :check_if_warning_or_suspension_pending, if: [:user_signed_in?], unless: [:devise_controller?]
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
@@ -272,13 +272,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_warning_or_suspension_pending
-    return if current_user.nil?
-
-    warning = ModWarning.to(current_user).active.any?
-    return unless warning
-
-    # Ignore devise and warning routes
-    return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
+    return unless ModWarning.to(current_user).active.any?
 
     flash.clear
 
@@ -416,5 +410,11 @@ class ApplicationController < ActionController::Base
       session[:sudo_return] = request.fullpath
       redirect_to user_sudo_path
     end
+  end
+
+  # default request_authenticity_tokens only checks form tokens and request.x_csrf_token
+  # for some reason, even if cookie-based strategy is officially supported, it's not checked here
+  def request_authenticity_tokens
+    super << csrf_token_storage_strategy.fetch(request)
   end
 end

@@ -1,11 +1,35 @@
 <h1><%= t 'admin.tools.error_reports' %></h1>
-<p class="is-lead"><%= pluralize(@reports.count, t('g.error')) %> <%= t 'g.logged' %></p>
+<p class="is-lead"><%= pluralize(@reports.count, t('g.error')) %> <%= t('g.logged') %></p>
 
-<%= form_tag admin_error_reports_path, method: :get, class: 'has-margin-bottom-4' do %>
-  <%= label_tag :uuid, t('admin.error_search_uuid') %>
-  <%= text_field_tag :uuid, params[:uuid], class: 'form-element', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' %>
-  <%= submit_tag t('g.search').capitalize, class: 'button is-filled' %>
-<% end %>
+<div class="error-reports-filters flex-row items-end">
+  <%= form_tag admin_error_reports_path, method: :get, class: 'has-margin-bottom-4 primary' do %>
+    <div class="form-group-horizontal">
+      <div class="form-group">
+        <%= label_tag :type, 'Error type' %>
+        <%= select_tag :type,
+                       options_for_select(@error_types.map { |et| [et, et] }, selected: params[:type]),
+                       include_blank: true, class: 'form-element js-error-type-select' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :uuid, 'Error UUID' %>
+        <%= text_field_tag :uuid, params[:uuid],
+                                  class: 'form-element',
+                                  placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :version, t('admin.error_search_version') %>
+        <%= text_field_tag :version, params[:version], class: 'form-element', placeholder: '(full SHA)' %>
+      </div>
+
+      <div class="actions gap-sm">
+        <button type="submit" class="button is-filled is-medium"><%= t('g.search').capitalize %></button>
+        <%= link_to 'Current', query_url(version: 'current'), class: 'button is-outlined is-medium' %>
+      </div>
+    </div>
+  <% end %>
+</div>
 
 <% @reports.each do |report| %>
   <%= render 'error_report', report: report %>

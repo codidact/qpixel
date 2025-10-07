@@ -24,6 +24,12 @@
 
     <strong>UUID:</strong>
     <span class="raw-markdown"><%= report.uuid %></span>
+
+    <% if report.version? %>
+      <br/>
+      <strong><%= t('g.version').capitalize %>:</strong>
+      <%= link_to report.version, query_url(version: report.version) %>
+    <% end %>
   </p>
 
   <% backtrace_lines = report.backtrace.split("\n").select { |l| l.include? Rails.root.to_s } %>

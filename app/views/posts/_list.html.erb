@@ -26,9 +26,9 @@
         <% if @show_category_tag && post.post_type.has_category %>
           <span class="badge is-tag is-filled"><%= post.category.name %></span>
         <% end %>
-        <%= post.post_type.is_top_level ? post.title : post.parent.title %>
+        <%= rendered_title(post) %>
         <%= post.post_type.is_closeable && post.closed && !post.duplicate_post  ? "[closed]" : "" %>
-      <%= post.duplicate_post && post.post_type.is_closeable && post.closed ? "[duplicate]" : "" %>
+        <%= post.duplicate_post && post.post_type.is_closeable && post.closed ? "[duplicate]" : "" %>
       <% end %>
     </div>
     <% if (SiteSetting['PostBodyListTruncateLength'] || 0) > 0 %>

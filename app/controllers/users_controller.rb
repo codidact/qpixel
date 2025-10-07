@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
                                             :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
+                                            :disconnect_sso, :confirm_disconnect_sso]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -103,6 +103,7 @@ class UsersController < ApplicationController
       max_answers: filter.max_answers,
       include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
       exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
+      source: filter.source,
       status: filter.status,
       system: filter.user_id == -1
     }
@@ -642,7 +643,9 @@ class UsersController < ApplicationController
   private
 
   def filter_params
-    params.permit(:min_score, :max_score, :min_answers, :max_answers, :status, :include_tags, :exclude_tags,
+    params.permit(:min_score, :max_score, :min_answers, :max_answers,
+                  :status, :source,
+                  :include_tags, :exclude_tags,
                   include_tags: [], exclude_tags: [])
   end
 

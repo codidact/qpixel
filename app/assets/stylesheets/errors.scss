@@ -23,7 +23,8 @@
 .error-report-summary {
   display: flex;
   align-items: center;
-  gap: 0.15em;
+  gap: 1em;
+  word-break: break-word;
 
   .details {
     flex: 1;

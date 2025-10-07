@@ -10,17 +10,17 @@
 <div class="has-color-tertiary-500 category-meta">
   <span title="<%= post_count %> posts">
     <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %> 
+    <%= 'post'.pluralize(post_count) %>
   </span>
 
   <div class="button-list is-gutterless has-margin-2">
-    <%= link_to 'Activity', request.params.merge(sort: 'activity'), 
+    <%= link_to 'Activity', query_url(sort: 'activity'), 
                             class: 'button is-muted is-outlined ' + (active_search?('last_activity') ? 'is-active' : ''),
                             role: 'button', 'aria-label': 'Sort by activity' %>
-    <%= link_to 'Age', request.params.merge(sort: 'age'), 
+    <%= link_to 'Age', query_url(sort: 'age'), 
                        class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : ''),
                        role: 'button', 'aria-label': 'Sort by age' %>
-    <%= link_to 'Score', request.params.merge(sort: 'score'), 
+    <%= link_to 'Score', query_url(sort: 'score'), 
                          class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : ''),
                          role: 'button', 'aria-label': 'Sort by score' %>
   </div>

@@ -12,6 +12,13 @@ interface PostValidatorMessage {
 
 type PostValidator = (postText: string) => [boolean, PostValidatorMessage[]];
 
+ interface ProcessedTag {
+  id: number | string
+  text: string
+  desc: string
+  synonyms?: string | QPixelTagSynonym[]
+ }
+
 interface UserPreferences {
   community: Record<string, string | null>;
   global: Record<string, string | null>;
@@ -217,6 +224,10 @@ type QPixelResponseJSON<
   Success extends object = object
 > = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
 
+type QPixelUploadResponseJSON = QPixelResponseJSON<{
+  link: string
+}>
+
 type QPixelVoteResponseJSON = QPixelResponseJSON<{
   vote_id: number
   upvotes: number
@@ -245,6 +256,10 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFilterSource = 'any' | 'native' | 'imported'
+
+type QPixelFilterStatus = 'any' | 'closed' | 'open'
+
 type QPixelFilter = {
   exclude_tags: [string, number][]
   include_tags: [string, number][]
@@ -252,7 +267,8 @@ type QPixelFilter = {
   max_score: number | null
   min_answers: number | null
   min_score: number | null
-  status: 'any' | 'closed' | 'open'
+  source: QPixelFilterSource
+  status: QPixelFilterStatus
   system: boolean
 }
 
@@ -414,12 +430,6 @@ interface QPixel {
    * ]
    */
   addPrePostValidation?: (callback: PostValidator) => void;
-
-  /**
-   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
-   * making AJAX POST requests.
-   */
-  csrfToken?: () => string;
 
   /**
    * Create a notification popup - not an inbox notification.
@@ -649,6 +659,12 @@ interface QPixel {
    * @returns result of the operation
    */
   vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
+
+  /**
+   * @param url upload endpoint URL (differs between routes)
+   * @param form upload form to get the file from
+   */
+  upload?: (url: string, form: HTMLFormElement) => Promise<QPixelUploadResponseJSON>
 
   // qpixel_dom
   DOM?: QPixelDOM;

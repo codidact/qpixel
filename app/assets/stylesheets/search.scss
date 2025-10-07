@@ -4,6 +4,24 @@
   border-top: 1px solid $muted-graphic;
 }
 
+.search-filters-constraints {
+  display: grid;
+  column-gap: 0.5em;
+  grid-template-columns: repeat(4, 1fr);
+
+  @media screen and (max-width: $screen-lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (max-width: $screen-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (max-width: $screen-sm) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 .search-sorting {
   align-items: center;
   display: flex;

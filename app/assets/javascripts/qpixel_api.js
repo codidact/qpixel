@@ -7,12 +7,6 @@ const validators = [];
 let popped_modals_ct = 0;
 
 window.QPixel = {
-  csrfToken: () => {
-    const token = $('meta[name="csrf-token"]').attr('content');
-    QPixel.csrfToken = () => token;
-    return token;
-  },
-
   createNotification: function (type, message) {
     // Some messages include a date stamp, `append_date` governs that.
     let append_date = false;
@@ -320,10 +314,8 @@ window.QPixel = {
 
   fetch: async (uri, init) => {
     const defaultHeaders = {
-      'X-CSRF-Token': QPixel.csrfToken(),
       // X-Requested-With is necessary for request.xhr? to work
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json',
     };
 
     const { headers = {}, ...restInit } = init ?? {};
@@ -342,11 +334,17 @@ window.QPixel = {
   },
 
   fetchJSON: async (uri, data, options = {}) => {
+    const { headers = {}, ...restOptions } = options
+
     /** @type {RequestInit} */
     const requestInit = {
       method: 'POST',
       body: options.method === 'GET' ? void 0 : JSON.stringify(data),
-      ...options,
+      headers: {
+          'Content-Type': 'application/json',
+          ...headers,
+      },
+      ...restOptions,
     };
 
     return QPixel.fetch(uri, requestInit);
@@ -432,19 +430,34 @@ window.QPixel = {
   },
 
   handleJSONResponse: (data, onSuccess, onFinally) => {
-    const is_modified = data.status === 'modified';
-    const is_success = data.status === 'success';
+    const isFailed = data.status === 'failed';
 
-    if (is_modified || is_success) {
-      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
+    if(isFailed) {
+      const { errors = [], message } = data;
+
+      if (message) {
+        const fullMessage =
+          errors.length > 1
+            ? `${message}:<ul>${errors.map((e) => `<li>${e.trim()}</li>`).join('')}</ul>`
+            : errors.length === 1
+              ? `${message} (${errors[0].toLowerCase().trim()})`
+              : message;
+
+          QPixel.createNotification('danger', fullMessage);
+      }
+      else {
+        for (const error of errors) {
+          QPixel.createNotification('danger', error);
+        }
+      }
     }
     else {
-      QPixel.createNotification('danger', data.message);
+      onSuccess(/** @type {Parameters<typeof onSuccess>[0]} */(data));
     }
 
     onFinally?.(data);
 
-    return is_success;
+    return !isFailed;
   },
 
   flag: async (flag) => {
@@ -462,6 +475,15 @@ window.QPixel = {
     });
 
     return QPixel.parseJSONResponse(resp, 'Failed to vote');
+  },
+
+  upload: async (url, form) => {
+    const resp = await QPixel.fetch(url, {
+      method: 'POST',
+      body: new FormData(form)
+    });
+
+    return QPixel.parseJSONResponse(resp, 'Failed to upload');
   },
 
   archiveThread: async (id) => {

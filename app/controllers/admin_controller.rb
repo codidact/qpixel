@@ -6,16 +6,36 @@ class AdminController < ApplicationController
   before_action :verify_developer, only: [:change_users, :impersonate]
   before_action :set_user, only: [:change_users, :hellban, :impersonate]
 
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
+
   def index; end
 
   def error_reports
-    @reports = if params[:uuid].present?
-                 ErrorLog.where(uuid: params[:uuid])
-               elsif current_user.is_global_admin
-                 ErrorLog.all
-               else
-                 ErrorLog.where(community: RequestContext.community)
-               end.newest_first.paginate(page: params[:page], per_page: 50)
+    base_scope = if current_user.global_admin?
+                   ErrorLog.all
+                 else
+                   ErrorLog.where(community: RequestContext.community)
+                 end
+
+    @error_types = base_scope.select(:klass).distinct.to_a.map(&:klass)
+
+    if params[:type].present?
+      base_scope = base_scope.where(klass: params[:type])
+    end
+
+    if params[:uuid].present?
+      base_scope = base_scope.where(uuid: params[:uuid])
+    end
+
+    if params[:version].present? && params[:version] == 'current'
+      sha, _date = helpers.current_commit
+      base_scope = base_scope.where(version: sha)
+    elsif params[:version].present?
+      base_scope = base_scope.where(version: params[:version])
+    end
+
+    @reports = base_scope.newest_first.paginate(page: params[:page], per_page: 50)
+    render layout: 'without_sidebar'
   end
 
   def privileges

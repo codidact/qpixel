@@ -3,20 +3,20 @@
 <% sticky_header = user_preference('sticky_header', community: false) == 'true' %>
 
 <script>
-const toggleSearchFocus = () => {
-  const $input = $('#search');
+  const toggleSearchFocus = () => {
+    const $input = $('#search');
 
-  if ($input.is(':focus')) {
-    $input.blur();
-  }
-  else {
-      $input.focus();
-  }
-};
+    if ($input.is(':focus')) {
+      $input.blur();
+    }
+    else {
+        $input.focus();
+    }
+  };
 
-$(() => {
-  $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
-});
+  $(() => {
+    $('a[data-header-slide="#search-slide"]').on('click', toggleSearchFocus);
+  });
 </script>
 
 <header class="header is-small has-margin-0<%=' is-dark' if SiteSetting['SiteHeaderIsDark'] %><%= ' sticky' if sticky_header %>">
@@ -96,10 +96,12 @@ $(() => {
          data-header-slide="#communities-slide"
          title="Show Communities"
          >
-          <i class="far fa-fw fa-caret-square-down"></i>
+        <i class="far fa-fw fa-caret-square-down"></i>
       </a>
-      <% unless user_signed_in? %>
-        <div class="header--item">
+      <div class="header--item">
+        <% if user_signed_in? %>
+          <%= render 'users/sessions/sign_out' %>
+        <% else %>
           <% if devise_sign_in_enabled? %>
             <%= link_to 'Sign Up', new_user_registration_path, class: 'button is-muted is-filled' %>
             <%= link_to 'Sign In', new_user_session_path, class: 'button is-muted is-outlined' %>
@@ -107,15 +109,16 @@ $(() => {
           <% if sso_sign_in_enabled? %>
             <%= link_to 'SSO Sign In', new_saml_user_session_path, class: 'button is-muted is-outlined' %>
           <% end %>
-        </div>
-      <% end %>
+
+        <% end %>
+      </div>
       <% unless @community.is_fake %>
         <a class="header--item is-mobile-menu is-complex" aria-label="Menu" href="#" data-header-slide="#js-mobile-menu">
-            <span class="header--menu-bars">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+          <span class="header--menu-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
         </a>
       <% end %>
     </nav>
@@ -123,13 +126,6 @@ $(() => {
 </header>
 
 <div class="header-slide" id="communities-slide">
-  <% if user_signed_in? %>
-    <% if devise_sign_in_enabled? %>
-      <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
-    <% else %>
-      <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'button is-muted has-float-right', role: 'button' %>
-    <% end %>
-  <% end %>
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
     <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
@@ -173,165 +169,164 @@ $(() => {
     </div>
     <div class="grid--cell is-6 is-12-sm">
       <span>created:<1w</span> <span class="has-color-tertiary-600">created < 1 week ago</span>
-    </div>
-    <div class="grid--cell is-6 is-12-sm">
-      <span>post_type:xxxx</span> <span class="has-color-tertiary-600">type of post</span>
-    </div>
-  </div>
+            </div>
+            <div class="grid--cell is-6 is-12-sm">
+              <span>post_type:xxxx</span> <span class="has-color-tertiary-600">type of post</span>
+            </div>
+          </div>
 
-  <%= form_tag search_path, method: :get, role: 'search' do %>
-    <div class="grid is-nowrap">
-        <%= search_field_tag :search, params[:search], class: 'form-element' %>
-        <div class="h-m-1">
-          <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
-            <i class="fa fa-search"></i>
+          <%= form_tag search_path, method: :get, role: 'search' do %>
+            <div class="grid is-nowrap">
+              <%= search_field_tag :search, params[:search], class: 'form-element' %>
+              <div class="h-m-1">
+                <%= button_tag type: :submit, class: 'button is-filled is-outlined', name: nil do %>
+                  <i class="fa fa-search"></i>
+                <% end %>
+              </div>
+            </div>
           <% end %>
+          <div class="has-padding-top-2 has-padding-right-1 has-float-right">
+            <a href="<%= help_path('search') %>">Search help</a>
+          </div>
         </div>
-    </div>
-  <% end %>
-  <div class="has-padding-top-2 has-padding-right-1 has-float-right">
-    <a href="<%= help_path('search') %>">Search help</a>
-  </div>
-</div>
 
-<div class="header-slide inbox h-p-0" id="js-inbox">
-  <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
-  <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
-    <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
-    <a href="/users/me/notifications" class="button is-muted is-small">See all your notifications &raquo;</a>
-  </div>
-  <div class="inbox--container h-p-2"></div>
-</div>
-<% unless @community.is_fake %>
-<div class="header-slide mobile-menu" id="js-mobile-menu">
-  <div class="menu">
-    <%= link_to 'Users', users_path, class: 'menu--item' %>
-    <%= link_to 'Search', search_path, class: 'menu--item' %>
-
-    <div class='header-slide--separator'></div>
-
-    <%= link_to 'Help', help_center_path, class: 'menu--item' %>	
-
-    <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
-
-    <% if user_signed_in? %>
-      <% if current_user.at_least_moderator? %>
-        <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
-          Mod
-          <% if @open_flags > 0 %>
-            <span class="badge is-status"><%= @open_flags %></span>
-          <% end %>
-        <% end %>
-      <% end %>
-      <% if devise_sign_in_enabled? %>
-        <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
-      <% else %>
-        <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
-      <% end %>
-    <% else %>
-      <% if sso_sign_in_enabled? %>
-        <%= link_to 'SSO Sign In', new_saml_user_session_path, class: 'menu--item' %>
-      <% end %>
-      <% if devise_sign_in_enabled? %>
-        <%= link_to 'Sign In', new_user_session_path, class: 'menu--item' %>
-        <%= link_to 'Sign Up', new_user_registration_path, class: 'menu--item' %>
-      <% end %>
-    <% end %>
-  </div>
-</div>
-<% end %>
-
-
-<% unless @community.is_fake %>
-  <% if expandable? %>
-    <% current_cat = current_category %>
-    <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
-  <% else %>
-    <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
-  <% end %>
-  <header class="category-header is-<%= header_class %>">
-    <div class="category-header--tabs">
-      <div class="container category-header--tabs-container">
-        <% @header_categories.each do |cat| %>
-          <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
-          <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
-            <%= cat.name %>
-            <% if user_signed_in? && cat.new_posts_for?(current_user) %>
-              <span class="badge is-status" title="unread activity in category"></span>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-    <% if expandable? %>
-      <div class="container category-header--container">
-        <% if (current_cat&.min_view_trust_level || -1) > 0 %>
-          <i class="fas fa-lock-open h-m-r-2" title="The access to this category is restricted, but you are exempt."></i>
-        <% end %>
-        <div class="category-header--name">
-          <%= current_cat.name %>
+        <div class="header-slide inbox h-p-0" id="js-inbox">
+          <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">Notifications</div>
+          <div class="h-p-2 h-bg-tertiary-050 h-fw-bold">
+            <a class="no-unread js-read-all-notifs" href="#"><i class="fas fa-envelope-open"></i> Mark all as read</a>
+            <a href="/users/me/notifications" class="button is-muted is-small">See all your notifications &raquo;</a>
+          </div>
+          <div class="inbox--container h-p-2"></div>
         </div>
-        <div class="category-header--nav">
-          <%= link_to 'Posts', category_path(current_cat),
-                      class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
-          <%= link_to 'Tags', category_tags_path(current_cat),
-                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
-          <%= link_to suggested_edits_queue_path(current_cat),
-                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
-            Edits
-            <% if pending_suggestions?  && check_your_privilege('edit_posts') %>
-              <span class="badge is-status" title="Suggested edits pending"></span>
-            <% end %>
-          <% end %>
-          <div class="category-header--nav-separator"></div>
-          <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
-          <% if current_cat&.top_level_post_types.any? || admin? %>
-            <%= link_to category_post_types_path(current_cat.id),
-                        class: "category-header--nav-item is-button" do %>
-              <%= button_text %>
-            <% end %>
+        <% unless @community.is_fake %>
+          <div class="header-slide mobile-menu" id="js-mobile-menu">
+            <div class="menu">
+              <%= link_to 'Users', users_path, class: 'menu--item' %>
+              <%= link_to 'Search', search_path, class: 'menu--item' %>
+
+              <div class='header-slide--separator'></div>
+
+              <%= link_to 'Help', help_center_path, class: 'menu--item' %>
+
+              <%= link_to 'Dashboard', dashboard_path, class: 'menu--item' %>
+
+              <% if user_signed_in? %>
+                <% if current_user.at_least_moderator? %>
+                  <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, class: 'menu--item' do %>
+                    Mod
+                    <% if @open_flags > 0 %>
+                      <span class="badge is-status"><%= @open_flags %></span>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <% if devise_sign_in_enabled? %>
+                  <%= link_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
+                <% else %>
+                  <%= link_to 'Sign Out', destroy_saml_user_session_path, method: :delete, class: 'menu--item', role: 'button' %>
+                <% end %>
+              <% else %>
+                <% if sso_sign_in_enabled? %>
+                  <%= link_to 'SSO Sign In', new_saml_user_session_path, class: 'menu--item' %>
+                <% end %>
+                <% if devise_sign_in_enabled? %>
+                  <%= link_to 'Sign In', new_user_session_path, class: 'menu--item' %>
+                  <%= link_to 'Sign Up', new_user_registration_path, class: 'menu--item' %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% unless @community.is_fake %>
+          <% if expandable? %>
+            <% current_cat = current_category %>
+            <% header_class = current_cat.color_code.present? ? current_cat.color_code : SiteSetting['SiteCategoryHeaderDefaultColor'] %>
           <% else %>
-            <%= button_tag button_text, class: "button is-muted is-outlined",
+            <% header_class = SiteSetting['SiteCategoryHeaderDefaultColor'] %>
+          <% end %>
+          <header class="category-header is-<%= header_class %>">
+            <div class="category-header--tabs">
+              <div class="container category-header--tabs-container">
+                <% @header_categories.each do |cat| %>
+                  <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
+                  <%= link_to category_path(cat), class: "category-header--tab #{active?(cat) ? 'is-active' : ''}" do %>
+                    <%= cat.name %>
+                    <% if user_signed_in? && cat.new_posts_for?(current_user) %>
+                      <span class="badge is-status" title="unread activity in category"></span>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <% if expandable? %>
+              <div class="container category-header--container">
+                <% if (current_cat&.min_view_trust_level || -1) > 0 %>
+                  <i class="fas fa-lock-open h-m-r-2" title="The access to this category is restricted, but you are exempt."></i>
+                <% end %>
+                <div class="category-header--name">
+                  <%= current_cat.name %>
+                </div>
+                <div class="category-header--nav">
+                  <%= link_to 'Posts', category_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && !['tags', 'suggested_edit'].include?(controller_name) ? 'is-active' : ''}" %>
+                  <%= link_to 'Tags', category_tags_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'tags' ? 'is-active' : ''}" %>
+                  <%= link_to suggested_edits_queue_path(current_cat),
+                      class: "category-header--nav-item #{active?(current_cat) && controller_name == 'suggested_edit' ? 'is-active' : ''}" do %>
+                    Edits
+                    <% if pending_suggestions?  && check_your_privilege('edit_posts') %>
+                      <span class="badge is-status" title="Suggested edits pending"></span>
+                    <% end %>
+                  <% end %>
+                  <div class="category-header--nav-separator"></div>
+                  <% button_text = current_cat.button_text.present? ? current_cat.button_text : 'Create Post' %>
+                  <% if current_cat&.top_level_post_types.any? || admin? %>
+                    <%= link_to category_post_types_path(current_cat.id),
+                        class: "category-header--nav-item is-button" do %>
+                      <%= button_text %>
+                    <% end %>
+                  <% else %>
+                    <%= button_tag button_text, class: "button is-muted is-outlined",
                                         disabled: true,
                                         title: "The category doesn't have any allowed post types" %>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
-  </header>
-<% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </header>
+        <% end %>
 
-<% if Rails.env.development? %>
-  <div class="notice is-danger is-banner has-padding-2 notice__dev-mode has-color-red-900">
-    <div class="container">
-      <p>This site is in development mode!</p>
-    </div>
-  </div>
-<% end %>
+        <% if Rails.env.development? %>
+          <div class="notice is-danger is-banner has-padding-2 notice__dev-mode has-color-red-900">
+            <div class="container">
+              <p>This site is in development mode!</p>
+            </div>
+          </div>
+        <% end %>
 
-<% if read_only? %>
-  <div class="notice is-warning is-filled is-banner has-padding-2 has-color-yellow-900 has-font-size-caption">
-    <div class="container">
-      <p>This site is in read-only mode.</p>
-    </div>
-  </div>
-<% end %>
+        <% if read_only? %>
+          <div class="notice is-warning is-filled is-banner has-padding-2 has-color-yellow-900 has-font-size-caption">
+            <div class="container">
+              <p>This site is in read-only mode.</p>
+            </div>
+          </div>
+        <% end %>
 
-<% if user_signed_in? && session[:impersonator_id].present? %>
-  <div class="notice is-info is-banner is-filled has-padding-2">
-    <div class="container">
-      <p class="has-font-size-caption">
-        You are impersonating <%= current_user.username %>.
-        <%= link_to 'Stop impersonating', stop_impersonating_path, class: 'is-underlined' %>
-      </p>
-    </div>
-  </div>
-<% end %>
+        <% if user_signed_in? && session[:impersonator_id].present? %>
+          <div class="notice is-info is-banner is-filled has-padding-2">
+            <div class="container">
+              <p class="has-font-size-caption">
+                You are impersonating <%= current_user.username %>.
+                <%= link_to 'Stop impersonating', stop_impersonating_path, class: 'is-underlined' %>
+              </p>
+            </div>
+          </div>
+        <% end %>
 
-<% if RequestContext.redis.exists? 'banner_text' %>
-  <div class="notice is-filled <%= RequestContext.redis.get('banner_class') || 'is-warning' %> has-padding-2 is-banner">
-    <div class="container">
-      <%= RequestContext.redis.get 'banner_text' %>
-    </div>
-  </div>
-<% end %>
+        <% if RequestContext.redis.exists? 'banner_text' %>
+          <div class="notice is-filled <%= RequestContext.redis.get('banner_class') || 'is-warning' %> has-padding-2 is-banner">
+            <div class="container">
+              <%= RequestContext.redis.get 'banner_text' %>
+            </div>
+          </div>
+        <% end %>

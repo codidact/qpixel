@@ -198,7 +198,7 @@
 
 - name: InterestingSubscriptionScoreThreshold
   value: 1
-  value_type: integer
+  value_type: float
   category: Email
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
@@ -776,3 +776,19 @@
   community_id: ~
   description: >
     File types that users will be able to upload.
+
+- name: AllowedPostTitleFormattingTypes
+  value: code italic keyboard
+  options:
+    - bold
+    - code
+    - italic
+    - keyboard
+    - strikethrough
+    - subscript
+    - superscript
+  value_type: array
+  category: Display
+  description: >
+    Formatting types allowed in post titles.
+    By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.
