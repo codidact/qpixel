@@ -5,7 +5,9 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!, only: [:index]
 
   def index
-    @notifications = Notification.unscoped.where(user: current_user).paginate(page: params[:page], per_page: 100)
+    @notifications = Notification.unscoped
+                                 .where(user: current_user)
+                                 .paginate(page: params[:page], per_page: 100)
                                  .order(Arel.sql('is_read ASC, created_at DESC'))
 
     if stale?(@notifications)
