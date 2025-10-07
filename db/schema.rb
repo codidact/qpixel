@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_20_103432) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_07_224207) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -231,6 +231,33 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_20_103432) do
     t.index ["community_id"], name: "index_community_users_on_community_id"
     t.index ["deleted_by_id"], name: "index_community_users_on_deleted_by_id"
     t.index ["user_id"], name: "index_community_users_on_user_id"
+  end
+
+  create_table "complaint_comments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "complaint_id", null: false
+    t.bigint "user_id"
+    t.text "content", null: false
+    t.boolean "internal", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["complaint_id"], name: "index_complaint_comments_on_complaint_id"
+    t.index ["user_id"], name: "index_complaint_comments_on_user_id"
+  end
+
+  create_table "complaints", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "report_type"
+    t.string "status"
+    t.bigint "assignee_id"
+    t.boolean "user_wants_updates"
+    t.string "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["access_token"], name: "index_complaints_on_access_token", unique: true
+    t.index ["assignee_id"], name: "index_complaints_on_assignee_id"
+    t.index ["report_type"], name: "index_complaints_on_report_type"
+    t.index ["status"], name: "index_complaints_on_status"
+    t.index ["user_id"], name: "index_complaints_on_user_id"
   end
 
   create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -823,6 +850,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_20_103432) do
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
   add_foreign_key "community_users", "users", column: "deleted_by_id"
+  add_foreign_key "complaint_comments", "complaints"
+  add_foreign_key "complaint_comments", "users"
+  add_foreign_key "complaints", "users"
+  add_foreign_key "complaints", "users", column: "assignee_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "filters", "users"

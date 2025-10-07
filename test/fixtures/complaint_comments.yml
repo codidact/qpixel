@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  complaint: one
+  user: one
+  content: MyText
+  internal: false
+
+two:
+  complaint: two
+  user: two
+  content: MyText
+  internal: false
