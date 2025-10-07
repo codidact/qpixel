@@ -1,7 +1,22 @@
 <%= render 'users/tabs', user: current_user %>
 
+<%
+  status = params[:status].presence || 'all'
+%>
+
 <h1>Your Inbox</h1>
 <p>You'll find all your inbox messages here, as far back as your account goes.</p>
+
+<div class="notifications-list-header has-margin-bottom-2">
+  <div class="button-list is-gutterless">
+    <%= link_to 'All', notifications_path,
+                class: "button is-muted is-outlined #{'is-active' if status == 'all'}" %>
+    <%= link_to 'Read', query_url(status: 'read'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'read'}" %>
+    <%= link_to 'Unread', query_url(status: 'unread'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'unread'}" %>
+  </div>
+</div>
 
 <% @notifications.each do |notif| %>
   <div class="notification">

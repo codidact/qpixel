@@ -10,6 +10,10 @@ class NotificationsController < ApplicationController
                                  .paginate(page: params[:page], per_page: 100)
                                  .order(Arel.sql('is_read ASC, created_at DESC'))
 
+    if params[:status].present?
+      @notifications = @notifications.where(is_read: params[:status] == 'read')
+    end
+
     if stale?(@notifications)
       respond_to do |format|
         format.html { render :index, layout: 'without_sidebar' }

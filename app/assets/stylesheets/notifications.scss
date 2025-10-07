@@ -1,5 +1,10 @@
 @import 'variables';
 
+.notifications-list-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .notification {
   border-top: 1px solid $muted-graphic;
   padding: 0.5em;
