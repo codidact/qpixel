@@ -90,9 +90,9 @@ class ModWarningControllerTest < ActionController::TestCase
 
     std = users(:standard_user)
     warning = mod_warnings(:third_warning)
-
     warning.update(active: true)
-    post :lift, params: { user_id: std.id }
+
+    try_lift_suspension(std)
 
     assert_response(:found)
     warning.reload
@@ -116,5 +116,10 @@ class ModWarningControllerTest < ActionController::TestCase
         suspension_duration: 365
       }.merge(opts)
     }
+  end
+
+  # @param subject [User] for whome to lift the suspension
+  def try_lift_suspension(subject)
+    post :lift, params: { user_id: subject.id }
   end
 end
