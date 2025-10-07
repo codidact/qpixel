@@ -41,14 +41,14 @@ $(() => {
     window.hljs && hljs.highlightAll();
   }
 
-  $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
-    if (evt.ctrlKey) {
-      return; // TODO: do we need this early exit?
+  $(document).on('click', '.post--comments-thread.is-inline a', async (ev) => {
+    if (ev.ctrlKey || ev.metaKey) {
+      return;
     }
 
-    evt.preventDefault();
+    ev.preventDefault();
 
-    const $tgt = $(evt.target);
+    const $tgt = $(ev.target);
     const $threadId = $tgt.data('thread');
     const wrapper = getCommentThreadWrapper($tgt);
 
@@ -56,9 +56,9 @@ $(() => {
   });
 
   $(document).on('click', '.js-show-deleted-comments', (ev) => {
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey || ev.metaKey) {
       return;
-    } // do we really need it?
+    }
 
     ev.preventDefault();
 

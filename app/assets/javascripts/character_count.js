@@ -91,6 +91,7 @@ $(() => {
     } else if (gteThreshold) {
       setCounterState($counter, 'warning');
       setCounterIcon($icon, 'fa-exclamation-circle');
+      setInputValidationState($tgt, 'valid');
     } else {
       setCounterState($counter, 'default');
       setCounterIcon($icon, 'fa-check');

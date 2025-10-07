@@ -3,10 +3,18 @@ class NotificationsController < ApplicationController
   include CommentsHelper
 
   before_action :authenticate_user!, only: [:index]
+  before_action :set_sorting, only: [:index]
 
   def index
-    @notifications = Notification.unscoped.where(user: current_user).paginate(page: params[:page], per_page: 100)
+    @notifications = Notification.unscoped
+                                 .where(user: current_user)
+                                 .order(:is_read => :asc, @sort_type => @sort_order)
+                                 .paginate(page: params[:page], per_page: 100)
                                  .order(Arel.sql('is_read ASC, created_at DESC'))
+
+    if params[:status].present?
+      @notifications = @notifications.where(is_read: params[:status] == 'read')
+    end
 
     if stale?(@notifications)
       respond_to do |format|
@@ -71,5 +79,18 @@ class NotificationsController < ApplicationController
         format.json { render json: { status: 'failed' } }
       end
     end
+  end
+
+  private
+
+  def set_sorting
+    sort_orders = { asc: :asc, desc: :desc }
+    sort_types = { age: :created_at }
+
+    @default_sort_type = :age
+    @default_sort_order = :desc
+
+    @sort_order = sort_orders[params[:order]&.to_sym] || sort_orders[@default_sort_order]
+    @sort_type = sort_types[params[:sort]&.to_sym] || sort_types[@default_sort_type]
   end
 end

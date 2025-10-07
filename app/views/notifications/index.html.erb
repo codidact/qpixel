@@ -1,12 +1,36 @@
 <%= render 'users/tabs', user: current_user %>
 
+<%
+  status = params[:status].presence || 'all'
+%>
+
 <h1>Your Inbox</h1>
 <p>You'll find all your inbox messages here, as far back as your account goes.</p>
 
+<div class="notifications-list-header has-margin-bottom-2">
+  <div class="button-list is-gutterless">
+    <%= link_to 'All', notifications_path,
+                class: "button is-muted is-outlined #{'is-active' if status == 'all'}" %>
+    <%= link_to 'Read', query_url(status: 'read'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'read'}" %>
+    <%= link_to 'Unread', query_url(status: 'unread'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'unread'}" %>
+  </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age] %>
+</div>
+
 <% @notifications.each do |notif| %>
   <div class="notification">
-    <div class="form-caption"><%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %></div>
-    <a href="<%= notif.link %>"><%= render_pings_text(notif.content) %></a>
+    <i class="notification-icon fas <%= notif.read? ? 'fa-envelope' : 'fa-envelope-open' %>"></i>
+    <div class="notification-content">
+      <div class="form-caption">
+        <%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %>
+      </div>
+      <a href="<%= notif.link %>"><%= render_pings_text(notif.content) %></a>
+    </div>
   </div>
 <% end %>
 
