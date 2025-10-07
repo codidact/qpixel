@@ -26,6 +26,13 @@ sample_editor:
   is_moderator: false
   reputation: 501
 
+sample_tags_editor:
+  user: tags_editor
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 42
+
 sample_deleter:
   user: deleter
   community: sample

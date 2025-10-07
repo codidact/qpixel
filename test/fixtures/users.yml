@@ -40,6 +40,15 @@ editor:
   login_token_expires_at: 2000-01-01T00:00:00.000000Z
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
+tags_editor:
+  email: editor@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: tags-editor
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 deleter:
   email: delete@qpixel-test.net
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
