@@ -374,6 +374,12 @@ Rails.application.routes.draw do
     post   'log', to: 'email_logs#log', as: :create_email_log
   end
 
+  scope 'safety' do
+    root                                   to: 'complaints#index', as: :safety_center
+    get    'report',                       to: 'complaints#report', as: :new_complaint
+    post   'report',                       to: 'complaints#create', as: :create_complaint
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
