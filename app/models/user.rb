@@ -38,7 +38,7 @@ class User < ApplicationRecord
 
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user, allow_nil: true
 
   alias_attribute :name, :username
 
@@ -55,6 +55,12 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
+
+  # Safely gets the user's reputation even if they don't have a community user
+  # @return [Integer] user's reputation
+  def reputation
+    community_user&.reputation || 1
   end
 
   # Safely gets the user's trust level even if they don't have a community user
@@ -130,6 +136,12 @@ class User < ApplicationRecord
   # @return [Boolean] check result
   def can_delete?(target)
     privilege?('flag_curate') && !target.deleted?
+  end
+
+  # Can the user edit tags?
+  # @return [Boolean] check result
+  def can_edit_tags?
+    privilege?('edit_tags') || false
   end
 
   # Can the user handle flags?
@@ -208,6 +220,8 @@ class User < ApplicationRecord
   end
 
   def metric(key)
+    return 0 unless community_user
+
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'

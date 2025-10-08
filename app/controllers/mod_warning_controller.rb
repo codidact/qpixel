@@ -1,8 +1,9 @@
 class ModWarningController < ApplicationController
   before_action :verify_moderator, only: [:log, :new, :create, :lift]
-
   before_action :set_warning, only: [:current, :approve]
   before_action :set_user, only: [:log, :new, :create, :lift]
+
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:current, :approve]
 
   def current
     render layout: 'without_sidebar'
@@ -45,10 +46,15 @@ class ModWarningController < ApplicationController
     @warning = ModWarning.new(author: current_user, community_user: @user.community_user,
                               body: params[:mod_warning][:body], is_suspension: is_suspension,
                               suspension_end: suspension_end, active: true, read: false)
+
     if @warning.save
+      audit_warning('warning_create', @warning)
+
       if is_suspension
         @user.community_user.update(is_suspended: is_suspension, suspension_end: suspension_end,
                                     suspension_public_comment: params[:mod_warning][:suspension_public_notice])
+
+        audit_warning('suspension_create', @warning)
       end
 
       redirect_to user_path(@user)
@@ -64,8 +70,11 @@ class ModWarningController < ApplicationController
     @warning.update(active: false, read: false)
     @user.community_user.update is_suspended: false, suspension_public_comment: nil, suspension_end: nil
 
-    AuditLog.moderator_audit(event_type: 'warning_lift', related: @warning, user: current_user,
-                             comment: "<<Warning #{@warning.attributes_print} >>")
+    audit_warning('warning_lift', @warning)
+
+    if @warning.suspension?
+      audit_warning('suspension_lift', @warning)
+    end
 
     flash[:success] = 'The warning or suspension has been lifted. Please consider adding an annotation ' \
                       'explaining your reasons.'
@@ -86,5 +95,14 @@ class ModWarningController < ApplicationController
 
   def user_scope
     User.joins(:community_user).includes(:community_user, :avatar_attachment)
+  end
+
+  # Adds an audit log for a given mod warning
+  # @param event_type [String] type of the event
+  # @param warning [ModWarning] warning to audit
+  def audit_warning(event_type, warning)
+    AuditLog.moderator_audit(event_type: event_type,
+                             related: warning, user: current_user,
+                             comment: "<<Warning #{warning.attributes_print} >>")
   end
 end

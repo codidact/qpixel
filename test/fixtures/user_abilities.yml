@@ -10,6 +10,10 @@ e_eo:
   community_user: sample_editor
   ability: everyone
 
+et_eo:
+  community_user: sample_tags_editor
+  ability: everyone
+
 d_eo:
   community_user: sample_deleter
   ability: everyone
@@ -36,6 +40,10 @@ c_ur:
 
 e_ur:
   community_user: sample_editor
+  ability: unrestricted
+
+et_ur:
+  community_user: sample_tags_editor
   ability: unrestricted
 
 d_ur:
@@ -76,6 +84,10 @@ d_ep:
 
 d_et:
   community_user: sample_deleter
+  ability: edit_tags
+
+te_et:
+  community_user: sample_tags_editor
   ability: edit_tags
 
 b_eo:

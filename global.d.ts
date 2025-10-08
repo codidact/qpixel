@@ -12,6 +12,13 @@ interface PostValidatorMessage {
 
 type PostValidator = (postText: string) => [boolean, PostValidatorMessage[]];
 
+ interface ProcessedTag {
+  id: number | string
+  text: string
+  desc: string
+  synonyms?: string | QPixelTagSynonym[]
+ }
+
 interface UserPreferences {
   community: Record<string, string | null>;
   global: Record<string, string | null>;
@@ -245,6 +252,10 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFilterSource = 'any' | 'native' | 'imported'
+
+type QPixelFilterStatus = 'any' | 'closed' | 'open'
+
 type QPixelFilter = {
   exclude_tags: [string, number][]
   include_tags: [string, number][]
@@ -252,7 +263,8 @@ type QPixelFilter = {
   max_score: number | null
   min_answers: number | null
   min_score: number | null
-  status: 'any' | 'closed' | 'open'
+  source: QPixelFilterSource
+  status: QPixelFilterStatus
   system: boolean
 }
 

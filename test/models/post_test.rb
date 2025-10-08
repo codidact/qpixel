@@ -136,4 +136,12 @@ class PostTest < ActiveSupport::TestCase
       assert_not post.deleted_by_owner?
     end
   end
+
+  test 'top_level? should correctly determine if the post is top level' do
+    post_types.each do |type|
+      Post.where(post_type: type).each do |post|
+        assert_equal post.top_level?, type.is_top_level
+      end
+    end
+  end
 end

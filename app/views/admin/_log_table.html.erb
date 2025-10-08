@@ -1,31 +1,33 @@
 <table class="table is-full-width is-with-hover">
   <thead>
-  <tr>
-    <th><%= t('g.type').capitalize %></th>
-    <th><%= t('g.event').capitalize %></th>
-    <th><%= t('g.user').capitalize %></th>
-    <th><%= t('g.related').capitalize %></th>
-    <th><%= t('g.comment').capitalize %></th>
-    <th><%= t('g.created').capitalize %></th>
-  </tr>
+    <tr>
+      <th><%= t('g.type').capitalize %></th>
+      <th><%= t('g.event').capitalize %></th>
+      <th><%= t('g.user').capitalize %></th>
+      <th><%= t('g.related').capitalize %></th>
+      <th><%= t('g.comment').capitalize %></th>
+      <th><%= t('g.created').capitalize %></th>
+    </tr>
   </thead>
   <tbody>
-  <% @logs.each do |log| %>
-    <tr>
-      <td><%= log.log_type.humanize %></td>
-      <td><%= log.event_type.humanize %></td>
-      <td><%= user_link log.user %></td>
-      <td>
-        <% if log.related.present? %>
-          <%= log.related_type %> #<%= log.related_id %>
-          <% if log.related.respond_to? :name %>
-            (<%= log.related.name %>)
+    <% @logs.each do |log| %>
+      <tr>
+        <td class="wrap-word"><%= log.log_type.humanize %></td>
+        <td class="wrap-word"><%= log.event_type.humanize %></td>
+        <td><%= user_link log.user %></td>
+        <td class="wrap-word">
+          <% if log.related.present? %>
+            <%= log.related_type %> #<%= log.related_id %>
+            <% if log.related.respond_to? :name %>
+              (<%= log.related.name %>)
+            <% end %>
           <% end %>
-        <% end %>
-      </td>
-      <td><pre class="pre-wrap"><%= log.comment %></pre></td>
-      <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
-    </tr>
-  <% end %>
+        </td>
+        <td>
+          <pre class="pre-wrap"><%= log.comment %></pre>
+        </td>
+        <td title="<%= log.created_at.iso8601 %>"><%= time_ago_in_words(log.created_at) %> ago</td>
+      </tr>
+    <% end %>
   </tbody>
 </table>

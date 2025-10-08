@@ -6,14 +6,22 @@ class AdminController < ApplicationController
   before_action :verify_developer, only: [:change_users, :impersonate]
   before_action :set_user, only: [:change_users, :hellban, :impersonate]
 
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
+
   def index; end
 
   def error_reports
-    base_scope = if current_user.is_global_admin
+    base_scope = if current_user.global_admin?
                    ErrorLog.all
                  else
                    ErrorLog.where(community: RequestContext.community)
                  end
+
+    @error_types = base_scope.select(:klass).distinct.to_a.map(&:klass)
+
+    if params[:type].present?
+      base_scope = base_scope.where(klass: params[:type])
+    end
 
     if params[:uuid].present?
       base_scope = base_scope.where(uuid: params[:uuid])
