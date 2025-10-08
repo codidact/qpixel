@@ -1,5 +1,6 @@
 class TagSet < ApplicationRecord
   include CommunityRelated
+
   has_many :tags
   has_many :tags_with_paths, class_name: 'TagWithPath'
   has_many :categories

@@ -1,6 +1,7 @@
 class ActiveStorage::BaseController < ActionController::Base
   before_action :enforce_signed_in
   include ActiveStorage::SetCurrent
+
   protect_from_forgery with: :exception
 
   self.etag_with_template_digest = false
