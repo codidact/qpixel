@@ -30,7 +30,7 @@ class ComplaintsController < ApplicationController
       if @comment.save
         redirect_to safety_center_path # report path
       else
-        @errors = @comment.errors.full_messages + @complaint.errors.full_messages
+        @errors = @comment.errors.full_messages
         render :report, status: :bad_request, layout: 'without_sidebar'
       end
     else

@@ -63,6 +63,14 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 3, assigns(:errors).size
   end
 
+  test 'should correct validate missing comment' do
+    try_create_report report_type: 'illegal', reported_url: 'https://example.com', content_type: 'fraud',
+                      email: 'test@example.com', user_wants_updates: true
+    assert_response(:bad_request)
+    assert_not_nil assigns(:complaint)
+    assert_equal 1, assigns(:errors).size
+  end
+
   private
 
   def try_create_report(**params)
