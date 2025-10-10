@@ -220,13 +220,26 @@ class CommentsController < ApplicationController
       return
     end
 
+    orig_title = @comment_thread.title
     title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
     status = @comment_thread.update(title: title)
+
+    if status
+      # Comment is owned by System so regular users can't delete it. Without
+      # this record, the title would be attributed to the thread creator,
+      # which can be abused.
+      log_msg = Comment.new(post: @post, content: 'Thread renamed from \"' + orig_title + '\" to \"' + title + '\" by ' + current_user.username, user: User.find(-1), comment_thread: @comment_thread, has_reference: false)
+      comment_status = log_msg.save
+    end
 
     unless status
       flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
     end
 
+    unless comment_status
+      flash[:danger] = I18n.t('comments.errors.comment_not_posted')
+    end
+      
     redirect_to comment_thread_path(@comment_thread.id)
   end
 
