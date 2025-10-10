@@ -95,7 +95,7 @@ class User < ApplicationRecord
     privilege?('flag_curate') ||
       Comment.where(user: self, comment_thread_id: thread.id).any?
   end
-  
+
   # Can the user archive a given comment thread?
   # @param thread [CommentThread] thread to archive
   # @return [Boolean] check result
