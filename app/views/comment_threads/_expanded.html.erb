@@ -38,6 +38,15 @@
         <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
       <% end %>
+      <% if current_user&.can_rename?(thread) && !current_user&.privilege?('flag_curate') %>
+      <a href="javascript:void(0)"
+	 class="widget--header-link"
+	 data-modal=".js--rename-thread-<%= thread.id %>"
+         role="button"
+         aria-label="Rename thread">
+        <i class="fas fa-pen fa-fw"></i> rename
+      </a>
+      <% end %>
       <% if current_user&.privilege?('flag_curate') %>
         <%= render 'comments/thread_tools_link', thread: thread %>
       <% end %>
@@ -105,6 +114,10 @@
       </div>
     <% end %>
   <% end %>
+<% end %>
+
+<% if current_user&.can_rename?(thread)  %>
+  <%= render 'comments/rename_thread_modal', thread: thread %>
 <% end %>
 
 <% if current_user&.privilege?('flag_curate') %>

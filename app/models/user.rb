@@ -88,6 +88,13 @@ class User < ApplicationRecord
     post.user == self || privilege?(name)
   end
 
+  # Can the user rename a given comment thread?
+  # @param thread [CommentThread] thread to archive
+  # @return [Boolean] check result
+  def can_rename?(thread)
+    privilege?('flag_curate')
+  end
+  
   # Can the user archive a given comment thread?
   # @param thread [CommentThread] thread to archive
   # @return [Boolean] check result
