@@ -33,6 +33,8 @@ en:
         Failed to rename the thread.
       title_presence: >
         can't be empty after Markdown is removed.
+      comment_not_posted: >
+        Failed to create comment.
     labels:
       create_new_thread: >
         Start new comment thread
