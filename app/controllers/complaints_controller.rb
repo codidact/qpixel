@@ -28,7 +28,7 @@ class ComplaintsController < ApplicationController
     if @complaint.save
       @comment = ComplaintComment.new(comment_params.merge(complaint: @complaint, internal: false))
       if @comment.save
-        redirect_to safety_center_path # report path
+        redirect_to complaint_path(@complaint.access_token)
       else
         @errors = @comment.errors.full_messages
         render :report, status: :bad_request, layout: 'without_sidebar'
@@ -36,6 +36,35 @@ class ComplaintsController < ApplicationController
     else
       @errors = @complaint.errors.full_messages
       render :report, status: :bad_request, layout: 'without_sidebar'
+    end
+  end
+
+  def show
+    @complaint = Complaint.includes(:comments, :assignee, comments: :user).where(access_token: params[:token]).first
+
+    if @complaint.nil?
+      raise ActiveRecord::RecordNotFound, "Complaint not found with token=#{params[:token]}"
+    end
+
+    return unless access_check(@complaint)
+
+    @report_type = AppConfig.safety_center['report_types'][@complaint.report_type]
+    @content_type = AppConfig.safety_center['content_types'][@complaint.content_type]
+    @status = AppConfig.safety_center['statuses'][@complaint.status]
+    render layout: 'without_sidebar'
+  end
+
+  private
+
+  def access_check(complaint)
+    if user_signed_in? && (current_user.staff? || current_user == complaint.user)
+      # only allow complainants to access their own complaints regardless of access token
+      true
+    elsif !user_signed_in?
+      # if not signed in then we're just relying on the access token as proof of access
+      true
+    else
+      raise ActiveRecord::RecordNotFound
     end
   end
 end

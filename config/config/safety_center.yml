@@ -1,15 +1,36 @@
+statuses:
+  new:
+    name: New
+    description: This is a new report, waiting to be assigned an investigator.
+  assigned:
+    name: Assigned
+    description: This report has been assigned to a member of staff and is being investigated.
+  reviewed:
+    name: Reviewed
+    description: This report has been investigated and appropriate action taken.
+  responded:
+    name: Responded
+    description: This report has had a response from the reporter.
+  closed:
+    name: Closed
+    description: This report has been closed. No further action may be taken.
+
 report_types:
   illegal:
     enabled: true
+    name: Report of illegal content
     description: illegal harmful content
   abusive:
     enabled: true
+    name: Report of abusive content
     description: abusive or otherwise harmful content
   copyright:
     enabled: true
+    name: Report of copyright infringement
     description: copyright infringement
   appeal:
     enabled: true
+    name: Classification Appeal
     description: an appeal regarding how we've handled your content
 
 content_types:
