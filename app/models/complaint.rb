@@ -20,7 +20,7 @@ class Complaint < ApplicationRecord
     attribution = attribute_to.nil? ? 'automatically' : "by #{attribute_to}"
     comments.create(content: "Status updated to #{new_status} at #{dt.iso8601} #{attribution}.", internal: true,
                     user_id: -1)
-    # TODO send email
+    # TODO: send email
   end
 
   private

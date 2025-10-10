@@ -43,7 +43,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
                       content: 'test', email: 'something@else.com', user_wants_updates: true
     assert_response(:found)
     assert_not_nil assigns(:complaint)
-    assert_redirected_to complaint_path(@complaint.access_token)
+    assert_redirected_to complaint_path(assigns(:complaint).access_token)
     assert_equal users(:basic_user).email, assigns(:complaint).email
   end
 
@@ -52,7 +52,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
                       content: 'test', email: 'something@else.com', user_wants_updates: true
     assert_response(:found)
     assert_not_nil assigns(:complaint)
-    assert_redirected_to complaint_path(@complaint.access_token)
+    assert_redirected_to complaint_path(assigns(:complaint).access_token)
     assert_equal 'something@else.com', assigns(:complaint).email
   end
 

@@ -12,7 +12,7 @@
           <div class="grid--cell is-3">Reported URL</div>
           <div class="grid--cell is-9 has-color-yellow-700">
             <i class="fas fa-exclamation-triangle"></i>
-            <%= link_to @complaint.reported_url, @complaint.reported_url, class: 'is-yellow' %>
+            <%= sanitize(link_to(@complaint.reported_url, @complaint.reported_url, class: 'is-yellow')) %>
           </div>
 
           <% if @content_type.present? %>

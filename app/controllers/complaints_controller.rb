@@ -57,6 +57,7 @@ class ComplaintsController < ApplicationController
   private
 
   def access_check(complaint)
+    # rubocop:disable Lint/DuplicateBranch
     if user_signed_in? && (current_user.staff? || current_user == complaint.user)
       # only allow complainants to access their own complaints regardless of access token
       true
@@ -66,5 +67,6 @@ class ComplaintsController < ApplicationController
     else
       raise ActiveRecord::RecordNotFound
     end
+    # rubocop:enable Lint/DuplicateBranch
   end
 end
