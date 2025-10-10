@@ -1,0 +1,126 @@
+<%= link_to safety_center_path do %>
+  &laquo; Back to Safety Center
+<% end %>
+
+<h1>Make a report or complaint</h1>
+<p>
+  Thank you for taking the time to make a report. If you've seen harmful, abusive, or illegal content on our
+  communities, you can report this to us here. You can also use this page if you've received a message saying we've
+  classified your content as harmful, abusive, or illegal and you wish to contest it.
+</p>
+
+<div class="notice is-warning has-color-yellow-900 flex-row-always ai-c has-font-size-caption h-m-b-4">
+  <i class="fas fa-exclamation-triangle"></i>
+  <p>
+    Please don't use this tool to complain about moderator actions, including deletion of posts. Raise these in the
+    appropriate Meta category instead.
+  </p>
+</div>
+
+<% if @errors.any? %>
+  <div class="notice is-danger is-filled">
+    <p>Your report could not be saved because:</p>
+    <ul>
+      <% @errors.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="widget">
+  <%= form_tag create_complaint_path, class: 'widget--body complaint-form' do %>
+    <div class="form-group">
+      <%= label_tag :report_type, 'What are you reporting?' %>
+      <% @report_types.each do |key, type| %>
+        <div class="form-radio-group">
+          <%= radio_button_tag :report_type, key, id: "report_type_#{key}", class: 'form-radio-element',
+                               required: true %>
+          <%= label_tag "report_type_#{key}", type['description'] %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag :reported_url, 'Where is this content?' %>
+      <div class="form-caption">
+        Enter a URL or link to where we can find this content on our network. You can use the Copy Link button under
+        posts to get a direct link to a post.
+      </div>
+      <%= text_field_tag :reported_url, nil, class: 'form-element', required: true %>
+    </div>
+
+    <div class="form-group hidden js-content-type" data-report-type="illegal">
+      <%= label_tag :content_type, 'Does this content fall into any of these types of illegal content?' %>
+      <div class="form-caption">
+        This question helps us to classify reports and ensure harmful content is reported to the right channels.
+      </div>
+      <% @content_types.each do |key, type| %>
+        <div class="form-radio-group">
+          <%= radio_button_tag :content_type, key, id: "content_type_#{key}", class: 'form-radio-element',
+                               data: { report_type: 'illegal' } %>
+          <div>
+            <%= label_tag "content_type_#{key}", type['name'] %>
+            <div class="form-caption">
+              <%= type['description'] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-radio-group">
+        <%= radio_button_tag :content_type, 'none', id: 'content_type_none', class: 'form-radio-element',
+                             data: { report_type: 'illegal' } %>
+        <%= label_tag 'content_type_none', 'None of the above' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag :content, 'Tell us more' %>
+      <div class="form-caption" data-report-type="none">
+        Tell us any additional information you have about this report.
+      </div>
+      <div class="form-caption hidden" data-report-type="illegal">
+        Tell us any additional information you have about this report. For example, why do you think this content is
+        harmful or illegal? How did you come across it? Has the user posted any other content you wish to report?
+      </div>
+      <div class="form-caption hidden" data-report-type="abusive">
+        Tell us any additional information you have about this report. For example, why do you think this content is
+        abusive, or in what way is it harmful? Has the user posted any other content you wish to report?
+      </div>
+      <div class="form-caption hidden" data-report-type="copyright">
+        Tell us any additional information you have about this report. Do you own the copyright? What part of the
+        content is infringing?
+      </div>
+      <div class="form-caption hidden" data-report-type="appeal">
+        Tell us any additional information you have about this report. Is there any additional content we removed that
+        you would like to include? Provide detailed reasoning explaining why you disagree with our classification.
+      </div>
+      <%= text_area_tag :content, nil, class: 'form-element', required: true, rows: 10 %>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag :email, 'Your email address' %>
+      <div class="form-caption">
+        This is used for abuse prevention purposes, and to contact you if we need additional information or to update
+        you on the status of your report. If you do not wish to receive further updates about your report, please
+        opt out below.
+      </div>
+      <%= text_field_tag :email, user_signed_in? ? current_user.email : nil, class: 'form-element',
+                         disabled: user_signed_in?, required: true %>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag :updates, 'Do you wish to receive updates about this report?' %>
+      <div class="form-caption">
+        We will let you know once we have investigated your report, and once we've taken any necessary action and closed
+        your report. If you do not wish to receive these updates, please untick the box.
+      </div>
+      <div class="form-radio-group">
+        <%= check_box_tag :user_wants_updates, 'true', true, class: 'form-radio-element' %>
+        <%= label_tag :user_wants_updates, 'Receive updates?' %>
+      </div>
+    </div>
+
+    <%= submit_tag 'Submit report', class: 'button is-primary is-filled' %>
+  <% end %>
+</div>

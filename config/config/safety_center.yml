@@ -1,0 +1,102 @@
+statuses:
+  new:
+    name: New
+    description: This is a new report, waiting to be assigned an investigator.
+  assigned:
+    name: Assigned
+    description: This report has been assigned to a member of staff and is being investigated.
+  reviewed:
+    name: Reviewed
+    description: This report has been investigated and appropriate action taken.
+  responded:
+    name: Responded
+    description: This report has had a response from the reporter.
+  closed:
+    name: Closed
+    description: This report has been closed. No further action may be taken.
+
+report_types:
+  illegal:
+    enabled: true
+    name: Report of illegal content
+    description: illegal harmful content
+  abusive:
+    enabled: true
+    name: Report of abusive content
+    description: abusive or otherwise harmful content
+  copyright:
+    enabled: true
+    name: Report of copyright infringement
+    description: copyright infringement
+  appeal:
+    enabled: true
+    name: Classification Appeal
+    description: an appeal regarding how we've handled your content
+
+content_types:
+  terrorism:
+    name: Terrorism
+    description: Content promoting, glorifying, or encouraging terrorism.
+  grooming:
+    name: Grooming
+    description: Content which appears to be for the purpose of grooming a child for the purposes of sexual exploitation
+      or abuse.
+  image_csam:
+    name: Image-based child sexual abuse material
+    description: Images which depict or encourage child sexual exploitation or abuse.
+  csam_urls:
+    name: Child sexual abuse material URLs
+    description: Content which links to child sexual abuse material.
+  hate:
+    name: Hate
+    description: Content which appears to amount to hate speech - abuse relating to a protected characteristic like 
+      race or sexual orientation.
+  harassment:
+    name: Harassment, stalking, threats, or abuse
+    description: Content which appears to be harassing or threatening another user, or which appears to be part of a
+      course of action in stalking another user.
+  ccb:
+    name: Controlling or coercive behaviour
+    description: Content posted for the purpose of controlling another user or which may an attempt to coerce another
+      user.
+  intimate_images:
+    name: Intimate image abuse
+    description: Intimate images which appear to have been posted without the consent of their subject. Commonly known
+      as "revenge porn".
+  extreme_pornography:
+    name: Extreme pornography
+    description: Content, including images, which is pornographic in nature and which may depict an illegal sexual act.
+  sea:
+    name: Sexual exploitation of adults
+    description: Content offering or promoting sexual services involving adult participants who are non-consenting or
+      being controlled by someone else.
+  human_trafficking:
+    name: Human trafficking
+    description: Content which promotes or offers services related to human trafficking.
+  unlawful_immigration:
+    name: Unlawful immigration
+    description: Content which promotes or offers services related to unlawful immigration.
+  fraud:
+    name: Fraud & illegal financial services
+    description: Content which appears to be fraudulent in nature, or which offers or promotes illegal financial
+      services.
+  proceeds_crime:
+    name: Proceeds of crime
+    description: Content which relates to the posession or concealment of the proceeds of criminal activity.
+  drugs:
+    name: Drugs & psychoactive substances
+    description: Content which relates to the possession or use of illegal drugs or psychoactive substances.
+  weapons:
+    name: Firearms, knives, & other weapons
+    description: Content which relates to the possession or use of illegal firearms, knives, or other weapons.
+  suicide:
+    name: Encouraging or assisting suicide
+    description: Content which glorifies or promotes suicide or attempted suicide, or which appears to be an attempt to
+      encourage another user to commit or attempt suicide.
+  foreign_interference:
+    name: Foreign interference
+    description: Content which appears to be posted on behalf of a hostile foreign power with the intent to disrupt or
+      interfere with society.
+  animal_cruelty:
+    name: Animal cruelty
+    description: Content which glorifies or promotes animal cruelty, or which depicts acts of animal cruelty.

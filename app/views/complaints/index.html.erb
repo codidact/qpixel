@@ -1,0 +1,41 @@
+<h1>Safety Center</h1>
+<p>
+  We are committed to protecting your privacy and safety online, and to protecting our communities from harmful or
+  abusive content. If you see something that has no place in our communities, please report it to us here.
+</p>
+
+<div class="grid">
+  <div class="grid--cell is-12 is-6-md is-6-lg">
+    <div class="widget">
+      <div class="widget--body">
+        <h2 class="has-font-size-larger h-m-t-0">
+          <%= link_to new_complaint_path do %>
+            Make a report or complaint &raquo;
+          <% end %>
+        </h2>
+        <p class="has-font-size-caption">
+          Report seeing abusive, harmful, or illegal content, or make a complaint about how we've handled your content.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if user_signed_in? && current_user.staff? %>
+  <div class="grid">
+    <div class="grid--cell is-12 is-6-md is-6-lg">
+      <div class="widget">
+        <div class="widget--body">
+          <h2 class="has-font-size-larger h-m-t-0">
+            <%= link_to '#' do %>
+              Reports &raquo;
+            <% end %>
+          </h2>
+          <p class="has-font-size-caption">
+            View and handle content reports and complaints from users.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

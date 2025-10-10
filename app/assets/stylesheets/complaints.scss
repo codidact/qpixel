@@ -1,0 +1,52 @@
+@import 'variables';
+
+.complaint-form {
+  label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #222;
+
+    &.inline {
+      display: inline-block;
+      font-weight: normal;
+      font-size: 1rem;
+    }
+  }
+
+  .form-radio-group {
+    display: flex;
+    margin: 0.75rem 0;
+    justify-content: flex-start;
+    align-items: center;
+
+    :first-child {
+      margin-right: 0.5rem;
+    }
+
+    label {
+      display: block;
+      margin: 0;
+      font-weight: normal;
+      font-size: 1rem;
+    }
+
+    .form-caption {
+      margin: 0;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  [disabled] {
+    border: 1px solid $muted-text;
+    background: $muted-graphic;
+  }
+}

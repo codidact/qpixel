@@ -1,5 +1,6 @@
 class PinnedLink < ApplicationRecord
   include MaybeCommunityRelated
+
   belongs_to :post, optional: true
 
   scope :list_includes, lambda {

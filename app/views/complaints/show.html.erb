@@ -1,0 +1,65 @@
+<%= link_to safety_center_path do %>
+  &laquo; Back to Safety Center
+<% end %>
+
+<h1><%= @report_type['name'] %></h1>
+<div class="grid">
+  <div class="grid--cell is-12 is-6-md is-6-lg">
+    <div class="widget">
+      <div class="widget--body">
+        <h2 class="has-font-size-base h-m-t-0">Report</h2>
+        <div class="grid has-font-size-caption">
+          <div class="grid--cell is-3">Reported URL</div>
+          <div class="grid--cell is-9 has-color-yellow-700">
+            <i class="fas fa-exclamation-triangle"></i>
+            <%= sanitize(link_to(@complaint.reported_url, @complaint.reported_url, class: 'is-yellow')) %>
+          </div>
+
+          <% if @content_type.present? %>
+            <div class="grid--cell is-3">Content type</div>
+            <div class="grid--cell is-9"><%= @content_type['name'] %></div>
+          <% end %>
+
+          <div class="grid--cell is-3">Reported by</div>
+          <div class="grid--cell is-9">
+            <% if @complaint.user.present? %>
+              <%= user_link @complaint.user %>
+            <% else %>
+              <%= @complaint.email %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid--cell is-12 is-6-md is-6-lg">
+    <div class="widget">
+      <div class="widget--body">
+        <h2 class="has-font-size-base h-m-t-0">Investigation</h2>
+        <div class="grid has-font-size-caption">
+          <div class="grid--cell is-3">Status</div>
+          <div class="grid--cell is-9">
+            <%= @status['name'] %>
+            (last updated <%= time_ago_in_words(@complaint.status_updated_at) %> ago)
+          </div>
+
+          <div class="grid--cell is-3">Assignee</div>
+          <div class="grid--cell is-9">
+            <% if @complaint.assignee.nil? %>
+              (unassigned)
+            <% elsif user_signed_in? && current_user.staff? %>
+              <%= user_link @complaint.assignee %>
+            <% else %>
+              Yes - Assigned to Investigator
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% @complaint.comments.sort_by(&:created_at).each do |comment| %>
+  <% next if comment.internal? && !current_user&.staff? %>
+  <%= render 'comment', comment: comment %>
+<% end %>
