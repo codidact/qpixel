@@ -129,6 +129,20 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_audit_log(event_type, related: nil)
+    log_entry = AuditLog.where(event_type: event_type)
+                        .order(created_at: :desc)
+                        .last
+    assert_not_nil(log_entry)
+    assert_equal event_type, log_entry['event_type']
+
+    if related.present?
+      assert_equal related.id, log_entry['related_id']
+    else
+      assert_nil(log_entry['related_id'])
+    end
+  end
+
   def assert_draft_deleted(user, path, *fields)
     base_key = "saved_post.#{user.id}.#{path}"
 
