@@ -18,14 +18,14 @@
           <i class="fas <%= collapse_hot ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
         </button>
       </div>
-      <% posts.each do |hq| %>
+      <% posts.each do |post| %>
         <div class="widget--body <%= 'hidden' if collapse_hot %>">
-          <% unless hq.category.nil? %>
-            <%= hq.category.name %>
+          <% unless post.category.nil? %>
+            <%= post.category.name %>
             &mdash;
           <% end %>
-          <%= link_to generic_share_link(hq) do %>
-            <%= hq.title %>
+          <%= link_to generic_share_link(post), class: 'post-widget--title' do %>
+            <%= rendered_title(post) %>
           <% end %>
         </div>
       <% end %>
