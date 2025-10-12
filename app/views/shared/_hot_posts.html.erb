@@ -1,0 +1,34 @@
+<%#
+   "Render s a Hot Posts widget
+
+    Variables:
+      posts : ActiveRecord::Relation<Post> to list in the widget
+"%>
+
+<% if Rails.env.development? || posts.to_a.size > 0 %>
+  <% collapse_hot = user_preference('collapse_hot_posts') == 'true' %>
+  <% cache posts do %>
+    <div class="widget has-margin-4 is-tertiary"
+         data-collapsed="<%= user_preference('collapse_hot_posts') %>">
+      <div class="widget--header">
+        Hot Posts
+        <button type="button"
+                class="widget--header-link button is-icon-only-button js-widget-hide"
+                aria-label="Collapse Hot Posts">
+          <i class="fas <%= collapse_hot ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
+        </button>
+      </div>
+      <% posts.each do |hq| %>
+        <div class="widget--body <%= 'hidden' if collapse_hot %>">
+          <% unless hq.category.nil? %>
+            <%= hq.category.name %>
+            &mdash;
+          <% end %>
+          <%= link_to generic_share_link(hq) do %>
+            <%= hq.title %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
