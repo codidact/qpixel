@@ -8,6 +8,7 @@
       thread       : CommentThread to display
 %>
 
+<% can_only_rename = current_user&.can_rename?(thread) && !current_user&.privilege?('flag_curate') %>
 <% max_shown_comments = 5 %>
 <% comment_id ||= defined?(comment_id) ? comment_id : nil %>
 <% pingable = thread.pingable %>
@@ -38,10 +39,10 @@
         <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
       <% end %>
-      <% if current_user&.can_rename?(thread) && !current_user&.privilege?('flag_curate') %>
+      <% if can_only_rename %>
       <a href="javascript:void(0)"
-	 class="widget--header-link"
-	 data-modal=".js--rename-thread-<%= thread.id %>"
+	       class="widget--header-link"
+	       data-modal=".js--rename-thread-<%= thread.id %>"
          role="button"
          aria-label="Rename thread">
         <i class="fas fa-pen fa-fw"></i> rename
@@ -116,7 +117,7 @@
   <% end %>
 <% end %>
 
-<% if current_user&.can_rename?(thread)  %>
+<% if can_only_rename %>
   <%= render 'comments/rename_thread_modal', thread: thread %>
 <% end %>
 
