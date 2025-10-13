@@ -287,6 +287,16 @@ mjx-container {
     overflow-y: hidden;
 }
 
+code,
+kbd {
+  padding: {
+    top: 0.1em;
+    bottom: 0.1em;
+    left: 0.25em;
+    right: 0.25em;
+  };
+}
+
 kbd {
   border: {
     color: $muted-graphic;
@@ -301,11 +311,5 @@ kbd {
   margin: {
     left: 0.15em;
     right: 0.15em;
-  };
-  padding: {
-    top: 0.1em;
-    bottom: 0.1em;
-    left: 0.25em;
-    right: 0.25em;
   };
 }
