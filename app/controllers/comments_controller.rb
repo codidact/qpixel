@@ -231,7 +231,7 @@ class CommentsController < ApplicationController
       log_msg =
         Comment.new(post: @post,
                     content:
-                      "Thread renamed from \\\"#{orig_title}\\\" to \\\"#{title}\\\" by #{current_user.username}",
+                      "Thread renamed from \\\"#{orig_title}\\\" to \\\"#{title}\\\" by @##{current_user.id}",
                     user: User.find(-1),
                     comment_thread: @comment_thread,
                     has_reference: false)
