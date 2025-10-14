@@ -52,6 +52,8 @@ Minitest.after_run do
     Subscription,
     MicroAuth::Token,
     MicroAuth::App,
+    ComplaintComment,
+    Complaint,
     User,
     Notification,
     SiteSetting,

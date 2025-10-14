@@ -7,11 +7,12 @@ class ComplaintComment < ApplicationRecord
 
   scope :internal, -> { where(internal: true) }
   scope :external, -> { where(internal: false) }
+  scope :most_recent, -> { order(created_at: :desc).limit(1).first }
 
   private
 
   def can_add_more
-    unless complaint.can_add_more_comments?(user)
+    unless user_id == -1 || internal? || complaint.can_add_more_comments?(user)
       errors.add(:base, 'You can only add one reply between staff responses')
     end
   end

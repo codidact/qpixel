@@ -3,51 +3,67 @@ anonymous_initial:
   user: ~
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>
+
+anonymous_staff:
+  complaint: anonymous
+  user: staff
+  content: staff response
+  internal: false
+  created_at: <%= 59.minutes.ago %>
 
 illegal_initial:
   complaint: illegal
   user: basic_user
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>
 
 assigned_initial:
   complaint: assigned
   user: basic_user
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>
 
 reviewed_initial:
   complaint: reviewed
   user: basic_user
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>
 
 reviewed_staff:
   complaint: reviewed
   user: staff
   content: staff response
   internal: false
+  created_at: <%= 59.minutes.ago %>
 
 responded_initial:
   complaint: responded
   user: basic_user
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>
 
 responded_staff:
   complaint: responded
   user: staff
   content: staff response
   internal: false
+  created_at: <%= 59.minutes.ago %>
 
 responded_response:
   complaint: responded
   user: basic_user
   content: reporter response
   internal: false
+  created_at: <%= 58.minutes.ago %>
 
 closed_initial:
   complaint: closed
   user: basic_user
   content: initial report
   internal: false
+  created_at: <%= 60.minutes.ago %>

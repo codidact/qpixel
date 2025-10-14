@@ -140,7 +140,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should allow signed in user to comment on report' do
     sign_in users(:basic_user)
-    try_comment :illegal
+    try_comment :reviewed
     assert_response(:found)
     assert_not_nil assigns(:complaint)
     assert_not_nil assigns(:comment)
@@ -203,8 +203,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def try_comment(complaint_sym, internal: false, content: 'test', format: :html)
-    post create_complaint_comment_path(complaints(complaint_sym).access_token,
-                                       params: { content: content, internal: internal },
-                                       formats: [format])
+    post create_complaint_comment_path(complaints(complaint_sym).access_token, format: format),
+         params: { content: content, internal: internal }
   end
 end

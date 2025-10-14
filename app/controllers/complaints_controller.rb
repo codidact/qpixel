@@ -96,7 +96,7 @@ class ComplaintsController < ApplicationController
       # if not signed in then we're just relying on the access token as proof of access as long as user is nil
       true
     else
-      raise ActiveRecord::RecordNotFound
+      not_found!
     end
     # rubocop:enable Lint/DuplicateBranch
   end
@@ -105,7 +105,7 @@ class ComplaintsController < ApplicationController
     if user_signed_in? && current_user.staff?
       true
     else
-      raise ActiveRecord::RecordNotFound
+      not_found!
     end
   end
 
@@ -113,7 +113,7 @@ class ComplaintsController < ApplicationController
     @complaint = Complaint.includes(:comments, :assignee, comments: :user).where(access_token: params[:token]).first
 
     if @complaint.nil?
-      raise ActiveRecord::RecordNotFound, "Complaint not found with token=#{params[:token]}"
+      not_found!
     end
 
     @complaint

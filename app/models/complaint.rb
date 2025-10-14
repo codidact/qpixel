@@ -28,12 +28,12 @@ class Complaint < ApplicationRecord
   # @param user [User, nil] The user to check.
   # @return [Boolean] check result
   def can_add_more_comments?(user)
-    # If the current user is staff, the last user is irrelevant - don't query.
-    last_user_id = user&.staff? ? nil : comments.external.last&.user_id
-
-    # Reporters may only add one reply between staff responses, so can_add_more is true if current_user is staff
-    # or if the last comment's user ID is not nil and not equal to the current user ID, and the report is open.
-    user&.staff? || (last_user_id.nil? && last_user_id != user&.id && status != 'closed')
+    if user&.staff? || comments.external.empty?
+      true
+    else
+      last_user_id = comments.external.most_recent&.user_id
+      last_user_id != user&.id && status != 'closed'
+    end
   end
 
   private

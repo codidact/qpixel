@@ -34,6 +34,8 @@ class User < ApplicationRecord
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
   has_many :user_websites, dependent: :destroy
+  has_many :complaints, dependent: :nullify
+  has_many :complaint_comments, dependent: :nullify
   accepts_nested_attributes_for :user_websites
 
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }

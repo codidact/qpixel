@@ -7,6 +7,7 @@ anonymous:
   email: test1@example.com
   status: new
   access_token: 6e71ca8e-6d42-4af9-8497-092a0472edbe
+  status_updated_at: <%= 1.day.ago %>
 
 illegal:
   report_type: illegal
@@ -17,6 +18,7 @@ illegal:
   email: test1@example.com
   status: new
   access_token: 1c699739-fe1c-4d2c-bada-271b2ce10445
+  status_updated_at: <%= 1.day.ago %>
 
 assigned:
   report_type: illegal
@@ -27,6 +29,7 @@ assigned:
   email: test1@example.com
   status: assigned
   access_token: 873f0bc6-a03f-422a-bf34-0006456e69a8
+  status_updated_at: <%= 1.day.ago %>
 
 reviewed:
   report_type: illegal
@@ -37,6 +40,7 @@ reviewed:
   email: test1@example.com
   status: reviewed
   access_token: a84acee3-117a-4719-a5d5-72ad720bbfd7
+  status_updated_at: <%= 1.day.ago %>
 
 responded:
   report_type: illegal
@@ -47,6 +51,7 @@ responded:
   email: test1@example.com
   status: responded
   access_token: 160d672b-fc84-4ca5-864f-8b70a3f714bc
+  status_updated_at: <%= 1.day.ago %>
 
 closed:
   report_type: illegal
@@ -57,3 +62,4 @@ closed:
   email: test1@example.com
   status: closed
   access_token: e9e25c72-6074-44a3-bd96-ff17b7e33574
+  status_updated_at: <%= 1.day.ago %>
