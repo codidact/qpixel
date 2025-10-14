@@ -26,6 +26,7 @@ class CommentsController < ApplicationController
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  before_action :verify_moderator, only: [:thread_followers]
 
   def create_thread
     title = params[:title]
@@ -203,8 +204,6 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found! unless current_user&.at_least_moderator?
-
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
     respond_to do |format|
