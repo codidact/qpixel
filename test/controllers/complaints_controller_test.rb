@@ -200,6 +200,28 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal true, assigns(:comment).internal
   end
 
+  test 'should allow staff to self-assign to report' do
+    sign_in users(:staff)
+    try_self_assign :anonymous
+    assert_response(:found)
+    assert_redirected_to complaint_path(complaints(:anonymous).access_token)
+    assert_nil flash[:danger]
+    assert_not_nil assigns(:complaint)
+    assert_equal users(:staff).id, assigns(:complaint).assignee_id
+    assert_equal 'assigned', assigns(:complaint).status
+  end
+
+  test 'should prevent anonymous user assigning' do
+    try_self_assign :anonymous
+    assert_response(:not_found)
+  end
+
+  test 'should prevent basic user assigning' do
+    sign_in users(:basic_user)
+    try_self_assign :anonymous
+    assert_response(:not_found)
+  end
+
   private
 
   def try_create_report(**params)
@@ -213,5 +235,9 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
   def try_comment(complaint_sym, internal: false, content: 'test', format: :html)
     post create_complaint_comment_path(complaints(complaint_sym).access_token, format: format),
          params: { content: content, internal: internal }
+  end
+
+  def try_self_assign(complaint_sym)
+    post complaint_self_assign_path(complaints(complaint_sym).access_token)
   end
 end
