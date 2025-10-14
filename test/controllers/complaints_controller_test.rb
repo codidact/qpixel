@@ -137,7 +137,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_empty assigns(:comment).errors.full_messages
     assert_nil flash[:danger]
   end
-  
+
   test 'should allow signed in user to comment on report' do
     sign_in users(:basic_user)
     try_comment :illegal
@@ -148,7 +148,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_empty assigns(:comment).errors.full_messages
     assert_nil flash[:danger]
   end
-  
+
   test 'should allow staff to comment on report' do
     sign_in users(:staff)
     try_comment :illegal
