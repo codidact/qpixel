@@ -1,6 +1,7 @@
 class ComplaintsController < ApplicationController
-  before_action :set_complaint, only: [:show, :comment]
+  before_action :set_complaint, only: [:show, :comment, :self_assign, :update_status]
   before_action :access_check, only: [:show, :comment]
+  before_action :write_access_check, only: [:self_assign, :update_status]
 
   def index
     render layout: 'without_sidebar'
@@ -27,17 +28,15 @@ class ComplaintsController < ApplicationController
       complaint_params.merge!(email: params[:email])
     end
 
-    @complaint = Complaint.new(complaint_params)
-    if @complaint.save
-      @comment = ComplaintComment.new(comment_params.merge(complaint: @complaint, internal: false))
-      if @comment.save
-        redirect_to complaint_path(@complaint.access_token)
-      else
-        @errors = @comment.errors.full_messages
-        render :report, status: :bad_request, layout: 'without_sidebar'
-      end
+    success = Complaint.transaction do
+      @complaint.save!
+      @comment.save!
+    end
+
+    if success
+      redirect_to complaint_path(@complaint.access_token)
     else
-      @errors = @complaint.errors.full_messages
+      @errors = @complaint.errors.full_messages + @comment.errors.full_messages
       render :report, status: :bad_request, layout: 'without_sidebar'
     end
   end
@@ -75,7 +74,8 @@ class ComplaintsController < ApplicationController
     else
       respond_to do |format|
         format.json do
-          render json: { status: 'failed', message: "Couldn't save your reply", errors: @comment.errors.full_messages }
+          render json: { status: 'failed', message: "Couldn't save your reply", errors: @comment.errors.full_messages },
+                 status: :bad_request
         end
         format.html do
           flash[:danger] = "Couldn't save your reply: #{@comment.errors.full_messages.join(', ')}"
@@ -83,6 +83,28 @@ class ComplaintsController < ApplicationController
         end
       end
     end
+  end
+
+  def self_assign
+    update_params = { assignee: current_user }
+    if @complaint.status == 'new'
+      update_params.merge!(status: 'assigned', status_updated_at: DateTime.now)
+    end
+
+    @comment = @complaint.comments.new(user_id: -1, internal: true,
+                                       content: "Report assigned to #{current_user.username}.")
+
+    success = Complaint.transaction do
+      @complaint.update!(update_params)
+      @comment.save!
+    end
+
+    unless success
+      errors = @complaint.errors.full_messages + @comment.errors.full_messages
+      flash[:danger] = "Couldn't assign you to this report (#{errors.join(', ')})"
+    end
+
+    redirect_to complaint_path(@complaint.access_token)
   end
 
   private

@@ -179,6 +179,14 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil flash[:danger]
   end
 
+  test 'should prevent reporter adding multiple consecutive comments (JSON)' do
+    sign_in users(:basic_user)
+    try_comment :responded, format: :json
+    assert_response(:bad_request)
+    assert_not_empty assigns(:comment).errors.full_messages
+    assert_valid_json_response
+  end
+
   test 'should prevent user from adding internal comment' do
     try_comment :anonymous, internal: true
     assert_response(:found)

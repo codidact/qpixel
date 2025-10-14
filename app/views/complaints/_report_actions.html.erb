@@ -1,0 +1,10 @@
+<div class="js-actions-container">
+  <div class="button-list">
+    <% unless @complaint.assignee&.same_as?(current_user) %>
+      <%= button_to complaint_self_assign_path(@complaint.access_token), method: :post,
+                    class: 'button is-primary is-filled' do %>
+        <i class="fas fa-user-plus"></i> Assign to me
+      <% end %>
+    <% end %>
+  </div>
+</div>
