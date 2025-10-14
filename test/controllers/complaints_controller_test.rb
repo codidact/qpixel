@@ -71,9 +71,60 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, assigns(:errors).size
   end
 
+  test 'show should work for anonymous user' do
+    try_show_report :anonymous
+    assert_response(:success)
+    assert_not_nil assigns(:complaint)
+    assert_not_nil assigns(:report_type)
+    assert_not_nil assigns(:content_type)
+    assert_not_nil assigns(:status)
+  end
+
+  test 'should prevent anonymous user accessing a report with a user' do
+    try_show_report :illegal
+    assert_response(:not_found)
+  end
+
+  test 'show should work for signed in user on own report' do
+    sign_in users(:basic_user)
+    try_show_report :illegal
+    assert_response(:success)
+    assert_not_nil assigns(:complaint)
+  end
+
+  test 'should prevent signed in user accessing anonymous report' do
+    sign_in users(:basic_user)
+    try_show_report :anonymous
+    assert_response(:not_found)
+  end
+
+  test 'should prevent signed in user accessing report of another user' do
+    sign_in users(:basic_user)
+    try_show_report :assigned
+    assert_response(:not_found)
+  end
+
+  test 'should allow staff to access anonymous report' do
+    sign_in users(:staff)
+    try_show_report :anonymous
+    assert_response(:success)
+    assert_not_nil assigns(:complaint)
+  end
+
+  test 'should allow staff to access report of another user' do
+    sign_in users(:staff)
+    try_show_report :illegal
+    assert_response(:success)
+    assert_not_nil assigns(:complaint)
+  end
+
   private
 
   def try_create_report(**params)
     post create_complaint_path, params: params
+  end
+
+  def try_show_report(complaint_sym)
+    get complaint_path(complaints(complaint_sym).access_token)
   end
 end

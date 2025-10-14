@@ -92,8 +92,8 @@ class ComplaintsController < ApplicationController
     if user_signed_in? && (current_user.staff? || current_user == @complaint.user)
       # only allow complainants to access their own complaints regardless of access token
       true
-    elsif !user_signed_in?
-      # if not signed in then we're just relying on the access token as proof of access
+    elsif !user_signed_in? && @complaint.user.nil?
+      # if not signed in then we're just relying on the access token as proof of access as long as user is nil
       true
     else
       raise ActiveRecord::RecordNotFound

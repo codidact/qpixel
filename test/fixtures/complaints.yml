@@ -1,0 +1,59 @@
+anonymous:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: ~
+  user_wants_updates: true
+  email: test1@example.com
+  status: new
+  access_token: 6e71ca8e-6d42-4af9-8497-092a0472edbe
+
+illegal:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: basic_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: new
+  access_token: 1c699739-fe1c-4d2c-bada-271b2ce10445
+
+assigned:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: standard_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: assigned
+  access_token: 873f0bc6-a03f-422a-bf34-0006456e69a8
+
+reviewed:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: basic_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: reviewed
+  access_token: a84acee3-117a-4719-a5d5-72ad720bbfd7
+
+responded:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: basic_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: responded
+  access_token: 160d672b-fc84-4ca5-864f-8b70a3f714bc
+
+closed:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: basic_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: closed
+  access_token: e9e25c72-6074-44a3-bd96-ff17b7e33574

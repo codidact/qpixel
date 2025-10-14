@@ -1,13 +1,53 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  complaint: one
-  user: one
-  content: MyText
+anonymous_initial:
+  complaint: anonymous
+  user: ~
+  content: initial report
   internal: false
 
-two:
-  complaint: two
-  user: two
-  content: MyText
+illegal_initial:
+  complaint: illegal
+  user: basic_user
+  content: initial report
+  internal: false
+
+assigned_initial:
+  complaint: assigned
+  user: basic_user
+  content: initial report
+  internal: false
+
+reviewed_initial:
+  complaint: reviewed
+  user: basic_user
+  content: initial report
+  internal: false
+
+reviewed_staff:
+  complaint: reviewed
+  user: staff
+  content: staff response
+  internal: false
+
+responded_initial:
+  complaint: responded
+  user: basic_user
+  content: initial report
+  internal: false
+
+responded_staff:
+  complaint: responded
+  user: staff
+  content: staff response
+  internal: false
+
+responded_response:
+  complaint: responded
+  user: basic_user
+  content: reporter response
+  internal: false
+
+closed_initial:
+  complaint: closed
+  user: basic_user
+  content: initial report
   internal: false
