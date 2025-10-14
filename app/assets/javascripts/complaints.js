@@ -29,7 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
       widget.classList.remove('is-yellow');
       label.innerText = 'Add your reply';
     }
-    form.querySelector('input[name="internal"]').value = internal;
+    /** @type HTMLInputElement */(form.querySelector('input[name="internal"]')).value = internal;
 
     widget.classList.remove('hidden');
   });
