@@ -48,9 +48,9 @@
   </div>
 </div>
 
-<div class="audit-log-table-wrapper">
-  <%= render 'log_table' %>
-</div>
+<% @logs.each do |log| %>
+  <%= render 'admin/audit_log', log: log %>
+<% end %>
 
 <div class="has-padding-top-4">
   <%= will_paginate @logs, renderer: BootstrapPagination::Rails %>

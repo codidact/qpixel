@@ -1,7 +1,9 @@
 @import 'variables';
 
 .audit-log-filters {
-  .form-group-horizontal .actions, .select2-container {
+
+  .form-group-horizontal .actions,
+  .select2-container {
     height: 37px;
     margin: 4px 0px;
   }
@@ -33,4 +35,23 @@
 
 .audit-log-table-wrapper {
   overflow: scroll;
+}
+
+.audit-log-summary {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  word-break: break-word;
+
+  &[open] {
+    margin: 0;
+  }
+
+  &::before {
+    top: unset;
+  }
+
+  .details {
+    flex: 1;
+  }
 }
