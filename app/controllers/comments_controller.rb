@@ -221,6 +221,13 @@ class CommentsController < ApplicationController
 
     orig_title = @comment_thread.title
     title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+
+    if orig_title == title
+      flash[:danger] = I18n.t('comments.errors.no_rename_thread_to_current_title')
+      redirect_to comment_thread_path(@comment_thread.id)
+      return
+    end
+
     status = @comment_thread.update(title: title)
 
     if status
