@@ -227,13 +227,11 @@ class CommentsController < ApplicationController
       # Comment is owned by System so regular users can't delete it. Without
       # this record, the title would be attributed to the thread creator,
       # which can be abused.
-      log_msg =
-        Comment.new(post: @post,
-                    content:
-                      "Thread renamed from \\\"#{orig_title}\\\" to \\\"#{title}\\\" by @##{current_user.id}",
-                    user: User.find(-1),
-                    comment_thread: @comment_thread,
-                    has_reference: false)
+      log_msg = Comment.new(post: @post,
+                            content: "Thread renamed from \"#{orig_title}\" to \"#{title}\" by @##{current_user.id}",
+                            user: User.find(-1),
+                            comment_thread: @comment_thread,
+                            has_reference: false)
       comment_status = log_msg.save
     end
 
