@@ -3,7 +3,7 @@ require 'test_helper'
 class AdminControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_log, :email_query, :admin_email, :all_email].freeze
+  PARAM_LESS_ACTIONS = [:index, :error_reports, :privileges, :audit_logs, :email_query, :admin_email, :all_email].freeze
 
   test 'should get index' do
     sign_in users(:admin)
@@ -127,7 +127,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'should get audit log' do
     sign_in users(:admin)
-    get :audit_log
+    get :audit_logs
     assert_response(:success)
     assert_not_nil assigns(:logs)
   end
@@ -174,7 +174,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'audit log should work with filter params' do
     sign_in users(:admin)
-    get :audit_log, params: { log_type: 'admin_audit', event_type: 'setting_update', from: '2025-04-13',
+    get :audit_logs, params: { log_type: 'admin_audit', event_type: 'setting_update', from: '2025-04-13',
                               to: '2025-04-13' }
     assert_response(:success)
     assert_not_nil assigns(:logs)

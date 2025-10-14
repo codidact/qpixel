@@ -1,8 +1,8 @@
-<h1><%= t 'admin.tools.audit_log' %></h1>
+<h1><%= t 'admin.tools.audit_logs' %></h1>
 
 <div>
   <h3>Filters</h3>
-  <%= form_tag audit_log_path, method: :get, class: 'form-inline audit-log-filters' do %>
+  <%= form_tag audit_logs_path, method: :get, class: 'form-inline audit-log-filters' do %>
     <div class="form-group-horizontal">
       <div class="form-group">
         <%= label_tag :log_type, 'Log category', class: 'form-element' %>

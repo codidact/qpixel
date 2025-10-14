@@ -100,7 +100,7 @@ class AdminController < ApplicationController
     redirect_to admin_path
   end
 
-  def audit_log
+  def audit_logs
     @page = helpers.safe_page(params)
     @per_page = helpers.safe_per_page(params)
 
