@@ -118,6 +118,80 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil assigns(:complaint)
   end
 
+  test 'should allow anonymous user to comment on report (HTML, redirect)' do
+    try_comment :anonymous
+    assert_response(:found)
+    assert_not_nil assigns(:complaint)
+    assert_not_nil assigns(:comment)
+    assert_redirected_to complaint_path(assigns(:complaint).access_token)
+    assert_empty assigns(:comment).errors.full_messages
+    assert_nil flash[:danger]
+  end
+
+  test 'should allow anonymous user to comment on report (JSON)' do
+    try_comment :anonymous, format: :json
+    assert_response(:success)
+    assert_valid_json_response
+    assert_not_nil assigns(:complaint)
+    assert_not_nil assigns(:comment)
+    assert_empty assigns(:comment).errors.full_messages
+    assert_nil flash[:danger]
+  end
+  
+  test 'should allow signed in user to comment on report' do
+    sign_in users(:basic_user)
+    try_comment :illegal
+    assert_response(:found)
+    assert_not_nil assigns(:complaint)
+    assert_not_nil assigns(:comment)
+    assert_redirected_to complaint_path(assigns(:complaint).access_token)
+    assert_empty assigns(:comment).errors.full_messages
+    assert_nil flash[:danger]
+  end
+  
+  test 'should allow staff to comment on report' do
+    sign_in users(:staff)
+    try_comment :illegal
+    assert_response(:found)
+    assert_not_nil assigns(:complaint)
+    assert_not_nil assigns(:comment)
+    assert_redirected_to complaint_path(assigns(:complaint).access_token)
+    assert_empty assigns(:comment).errors.full_messages
+    assert_nil flash[:danger]
+  end
+
+  test 'should prevent anonymous user from commenting on report from another user' do
+    try_comment :illegal
+    assert_response(:not_found)
+  end
+
+  test 'should prevent signed in user from commenting on report from another user' do
+    sign_in users(:basic_user)
+    try_comment :assigned
+    assert_response(:not_found)
+  end
+
+  test 'should prevent reporter adding multiple consecutive comments' do
+    sign_in users(:basic_user)
+    try_comment :responded
+    assert_response(:found)
+    assert_not_empty assigns(:comment).errors.full_messages
+    assert_not_nil flash[:danger]
+  end
+
+  test 'should prevent user from adding internal comment' do
+    try_comment :anonymous, internal: true
+    assert_response(:found)
+    assert_equal false, assigns(:comment).internal
+  end
+
+  test 'should allow staff to add internal comment' do
+    sign_in users(:staff)
+    try_comment :anonymous, internal: true
+    assert_response(:found)
+    assert_equal true, assigns(:comment).internal
+  end
+
   private
 
   def try_create_report(**params)
@@ -126,5 +200,11 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
 
   def try_show_report(complaint_sym)
     get complaint_path(complaints(complaint_sym).access_token)
+  end
+
+  def try_comment(complaint_sym, internal: false, content: 'test', format: :html)
+    post create_complaint_comment_path(complaints(complaint_sym).access_token,
+                                       params: { content: content, internal: internal },
+                                       formats: [format])
   end
 end
