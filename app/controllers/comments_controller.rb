@@ -229,7 +229,7 @@ class CommentsController < ApplicationController
       # which can be abused.
       log_msg = Comment.new(post: @post,
                             content: "Thread renamed from \"#{orig_title}\" to \"#{title}\" by @##{current_user.id}",
-                            user: User.find(-1),
+                            user: helpers.system_user,
                             comment_thread: @comment_thread,
                             has_reference: false)
       comment_status = log_msg.save
