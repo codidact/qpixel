@@ -1,13 +1,14 @@
 <%#
-    Full thread view with all the details & actions
+   "Full thread view with all the details & actions
 
     Variables:
     ? comment_id   : Comment ID to show even if it would be hidden otherwise
       inline       : whether the thread is diplayed inline with the parent post
       show_deleted : whether to display deleted comments for those who can see them
       thread       : CommentThread to display
-%>
+"%>
 
+<% can_only_rename = current_user&.can_rename?(thread) && !current_user&.privilege?('flag_curate') %>
 <% max_shown_comments = 5 %>
 <% comment_id ||= defined?(comment_id) ? comment_id : nil %>
 <% pingable = thread.pingable %>
@@ -37,6 +38,15 @@
       <% if inline %>
         <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
         <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
+      <% end %>
+      <% if can_only_rename %>
+      <a href="javascript:void(0)"
+         class="widget--header-link"
+         data-modal=".js--rename-thread-<%= thread.id %>"
+         role="button"
+         aria-label="Rename thread">
+        <i class="fas fa-pen fa-fw"></i> rename
+      </a>
       <% end %>
       <% if current_user&.privilege?('flag_curate') %>
         <%= render 'comments/thread_tools_link', thread: thread %>
@@ -105,6 +115,10 @@
       </div>
     <% end %>
   <% end %>
+<% end %>
+
+<% if can_only_rename %>
+  <%= render 'comments/rename_thread_modal', thread: thread %>
 <% end %>
 
 <% if current_user&.privilege?('flag_curate') %>
