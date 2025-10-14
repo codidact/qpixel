@@ -59,7 +59,13 @@
   </div>
 </div>
 
-<% @complaint.comments.sort_by(&:created_at).each do |comment| %>
-  <% next if comment.internal? && !current_user&.staff? %>
-  <%= render 'comment', comment: comment %>
+<div class="js-comments">
+  <% @complaint.comments.sort_by(&:created_at).each do |comment| %>
+    <% next if comment.internal? && !current_user&.staff? %>
+    <%= render 'comment', comment: comment %>
+  <% end %>
+</div>
+
+<% if @complaint.can_add_more_comments?(current_user) %>
+  <%= render 'comment_form' %>
 <% end %>

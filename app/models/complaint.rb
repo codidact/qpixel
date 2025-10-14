@@ -23,6 +23,19 @@ class Complaint < ApplicationRecord
     # TODO: send email
   end
 
+  ##
+  # Can a specified user currently add more comments to this complaint?
+  # @param user [User, nil] The user to check.
+  # @return [Boolean] check result
+  def can_add_more_comments?(user)
+    # If the current user is staff, the last user is irrelevant - don't query.
+    last_user_id = user&.staff? ? nil : comments.external.last&.user_id
+
+    # Reporters may only add one reply between staff responses, so can_add_more is true if current_user is staff
+    # or if the last comment's user ID is not nil and not equal to the current user ID.
+    user&.staff? || (last_user_id.nil? && last_user_id != user&.id)
+  end
+
   private
 
   def generate_access_token

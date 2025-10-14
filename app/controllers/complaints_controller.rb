@@ -1,4 +1,7 @@
 class ComplaintsController < ApplicationController
+  before_action :set_complaint, only: [:show, :comment]
+  before_action :access_check, only: [:show, :comment]
+
   def index
     render layout: 'without_sidebar'
   end
@@ -40,25 +43,53 @@ class ComplaintsController < ApplicationController
   end
 
   def show
-    @complaint = Complaint.includes(:comments, :assignee, comments: :user).where(access_token: params[:token]).first
-
-    if @complaint.nil?
-      raise ActiveRecord::RecordNotFound, "Complaint not found with token=#{params[:token]}"
-    end
-
-    return unless access_check(@complaint)
-
     @report_type = AppConfig.safety_center['report_types'][@complaint.report_type]
     @content_type = AppConfig.safety_center['content_types'][@complaint.content_type]
     @status = AppConfig.safety_center['statuses'][@complaint.status]
     render layout: 'without_sidebar'
   end
 
+  def comment
+    permitted = [:content]
+    if user_signed_in? && current_user.staff?
+      permitted << :internal
+    end
+
+    default_params = { user: current_user, internal: false, complaint: @complaint }
+    comment_params = default_params.merge(params.permit(*permitted).to_h)
+
+    @comment = ComplaintComment.new(comment_params)
+    if @comment.save
+      respond_to do |format|
+        format.json do
+          render json: { status: 'success',
+                         comment: render_to_string(partial: 'comment', locals: { comment: @comment },
+                                                   formats: [:html]),
+                         can_add_more: @complaint.can_add_more_comments?(current_user) }
+        end
+        format.html do
+          flash[:success] = 'Your reply was saved.'
+          redirect_to complaint_path(@complaint.access_token)
+        end
+      end
+    else
+      respond_to do |format|
+        format.json do
+          render json: { status: 'failed', message: "Couldn't save your reply", errors: @comment.errors.full_messages }
+        end
+        format.html do
+          flash[:danger] = "Couldn't save your reply: #{@comment.errors.full_messages.join(', ')}"
+          redirect_to complaint_path(@complaint.access_token)
+        end
+      end
+    end
+  end
+
   private
 
-  def access_check(complaint)
+  def access_check
     # rubocop:disable Lint/DuplicateBranch
-    if user_signed_in? && (current_user.staff? || current_user == complaint.user)
+    if user_signed_in? && (current_user.staff? || current_user == @complaint.user)
       # only allow complainants to access their own complaints regardless of access token
       true
     elsif !user_signed_in?
@@ -68,5 +99,23 @@ class ComplaintsController < ApplicationController
       raise ActiveRecord::RecordNotFound
     end
     # rubocop:enable Lint/DuplicateBranch
+  end
+
+  def write_access_check
+    if user_signed_in? && current_user.staff?
+      true
+    else
+      raise ActiveRecord::RecordNotFound
+    end
+  end
+
+  def set_complaint
+    @complaint = Complaint.includes(:comments, :assignee, comments: :user).where(access_token: params[:token]).first
+
+    if @complaint.nil?
+      raise ActiveRecord::RecordNotFound, "Complaint not found with token=#{params[:token]}"
+    end
+
+    @complaint
   end
 end
