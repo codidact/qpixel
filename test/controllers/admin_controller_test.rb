@@ -174,10 +174,26 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'audit log should work with filter params' do
     sign_in users(:admin)
-    get :audit_logs, params: { log_type: 'admin_audit', event_type: 'setting_update', from: '2025-04-13',
-                              to: '2025-04-13' }
-    assert_response(:success)
-    assert_not_nil assigns(:logs)
+
+    log_types = audit_logs.map(&:log_type)
+
+    log_types.each do |type|
+      try_audit_logs(log_type: type)
+      @logs = assigns(:logs)
+      assert_response(:success)
+      assert_not_nil @logs
+      assert(@logs.all? { |l| l.log_type == type })
+    end
+
+    event_types = audit_logs.map(&:event_type)
+
+    event_types.each do |type|
+      try_audit_logs(event_type: type)
+      @logs = assigns(:logs)
+      assert_response(:success)
+      assert_not_nil @logs
+      assert(@logs.all? { |l| l.event_type == type })
+    end
   end
 
   test 'hellban should correctly block the user' do
@@ -202,6 +218,10 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   private
+
+  def try_audit_logs(**params)
+    get :audit_logs, params: params
+  end
 
   def try_hellban_user(user)
     post :hellban, params: { id: user.id }

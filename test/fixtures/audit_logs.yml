@@ -1,6 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-admin_log:
+site_setting_update_log:
   community: sample
   log_type: admin_audit
   event_type: setting_update
@@ -8,3 +8,14 @@ admin_log:
   related: one
   user: admin
   comment: some words
+
+vote_rate_limit_log:
+  community: sample
+  log_type: rate_limit_log
+  event_type: vote
+  related_type: Post
+  related: question_one
+  user: standard_user
+  comment: >
+    limit: 10
+    vote: 1
