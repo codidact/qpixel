@@ -29,9 +29,14 @@
     </div>
     <div class="modal--body">
       <h4>Available Outcomes</h4>
-      <p>
+      <p class="has-font-size-caption">
         Now that you have completed your review of this content, please select an outcome below from the following
         options. Consider your choice carefully as this will be used in reports.
+      </p>
+
+      <p class="has-font-size-caption">
+        You should also add a reply to summarise your review and any actions you've taken. If the reporter has asked for
+        updates, this will also be sent to them.
       </p>
 
       <% AppConfig.safety_center['outcomes'].each do |_k, outcome| %>
