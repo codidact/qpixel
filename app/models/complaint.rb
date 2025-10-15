@@ -1,4 +1,6 @@
 class Complaint < ApplicationRecord
+  include Timestamped
+
   belongs_to :user, required: false
   belongs_to :assignee, required: false, class_name: 'User'
   has_many :comments, class_name: 'ComplaintComment', dependent: :destroy

@@ -2,7 +2,7 @@ class ComplaintsController < ApplicationController
   before_action :set_complaint, only: [:show, :comment, :self_assign, :update_status]
   before_action :access_check, only: [:show, :comment]
   before_action :write_access_check, only: [:self_assign, :update_status]
-  before_action :verify_staff, only: [:reports]
+  before_action :verify_staff, only: [:reports, :reporting]
 
   def index
     render layout: 'without_sidebar'
@@ -148,6 +148,17 @@ class ComplaintsController < ApplicationController
     end
 
     redirect_to complaint_path(@complaint.access_token)
+  end
+
+  def reporting
+    @total = Complaint.recent(12.months.ago).count
+    @by_type = Complaint.recent(12.months.ago).group(:report_type).group_by_month(:created_at).count
+    @by_content_type = Complaint.recent(12.months.ago).where(report_type: 'illegal')
+                             .group(:content_type).group_by_month(:created_at).count
+    @by_outcome = Complaint.recent(12.months.ago).where.not(outcome: nil)
+                           .group(:outcome).group_by_month(:created_at).count
+    @type_totals = Complaint.recent(12.months.ago).group(:report_type).count
+    render layout: 'without_sidebar'
   end
 
   private

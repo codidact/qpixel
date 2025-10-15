@@ -1,0 +1,28 @@
+<%= link_to safety_center_path do %>
+  &laquo; Back to Safety Center
+<% end %>
+
+<h1>Reporting</h1>
+
+<div class="flex-row">
+  <%= stat_panel 'total reports', @total %>
+</div>
+
+<div class="grid">
+  <div class="grid--cell is-12 is-6-lg">
+    <h2 class="has-font-size-base has-text-align-center">Report types by month, last 12 months</h2>
+    <%= line_chart @by_type %>
+  </div>
+  <div class="grid--cell is-12 is-6-lg">
+    <h2 class="has-font-size-base has-text-align-center">Content types by month, last 12 months</h2>
+    <%= line_chart @by_content_type %>
+  </div>
+  <div class="grid--cell is-12 is-6-lg">
+    <h2 class="has-font-size-base has-text-align-center">Outcomes by month, last 12 months</h2>
+    <%= line_chart @by_outcome %>
+  </div>
+  <div class="grid--cell is-12 is-6-lg">
+    <h2 class="has-font-size-base has-text-align-center">Totals by report type, last 12 months</h2>
+    <%= column_chart @type_totals %>
+  </div>
+</div>

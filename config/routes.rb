@@ -383,6 +383,7 @@ Rails.application.routes.draw do
     post   'report/:token/assign',         to: 'complaints#self_assign', as: :complaint_self_assign
     post   'report/:token/status',         to: 'complaints#update_status', as: :update_complaint_status
     get    'reports',                      to: 'complaints#reports', as: :complaints
+    get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
   end
 
   get   '403',                             to: 'errors#forbidden'

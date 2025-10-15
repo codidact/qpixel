@@ -288,6 +288,25 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_response(:not_found)
   end
 
+  test 'reporting should work for staff' do
+    sign_in users(:staff)
+    try_reporting
+    assert_response(:success)
+    assert_not_nil assigns(:by_type)
+    assert_not_nil assigns(:by_content_type)
+    assert_not_nil assigns(:by_outcome)
+  end
+
+  test 'reporting should not be accessible to anonymous' do
+    try_reporting
+    assert_response(:not_found)
+  end
+
+  test 'reporting should not be accessible to basic user' do
+    sign_in users(:basic_user)
+    try_reporting
+  end
+
   private
 
   def try_create_report(**params)
@@ -315,5 +334,9 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
 
   def try_reports(status: nil, report_type: nil, outcome: nil)
     get complaints_path, params: { status: status, report_type: report_type, outcome: outcome }
+  end
+
+  def try_reporting
+    get complaints_reporting_path
   end
 end
