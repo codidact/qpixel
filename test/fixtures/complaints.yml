@@ -40,6 +40,7 @@ reviewed:
   user_wants_updates: true
   email: test1@example.com
   status: reviewed
+  outcome: disputed
   access_token: a84acee3-117a-4719-a5d5-72ad720bbfd7
   status_updated_at: <%= 1.day.ago %>
 

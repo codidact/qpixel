@@ -29,12 +29,19 @@ outcomes:
   upheld:
     name: Upheld
     description: The report is upheld; the reporter's classification of the content is correct.
+    user_facing: our community team agreed with your report and how you classified this content, and have taken
+      appropriate action.
   actionable:
     name: Actionable
     description: The content is actionable but the reported classification is not correct.
+    user_facing: our community team agreed that the content you reported was actionable and have taken appropriate
+      action, but have changed your classification of the content for reporting purposes.
   disputed:
     name: Disputed
     description: The reporter's classification is disputed; the content does not appear to be actionable.
+    user_facing: our community team have reviewed your report and have decided that the content you reported is not
+      actionable. This does not mean that the content cannot be removed by community moderators for breaking
+      community-specific rules, just that it does not breach our Content Policy.
 
 report_types:
   illegal:

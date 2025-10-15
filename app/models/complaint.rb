@@ -5,6 +5,8 @@ class Complaint < ApplicationRecord
 
   after_create :generate_access_token
   after_create :assign_status
+  after_create :send_receipt_email
+  after_update :send_reviewed_email
 
   validates :email, presence: -> { !user.present? }
   validates :report_type, presence: true
@@ -24,7 +26,6 @@ class Complaint < ApplicationRecord
     attribution = attribute_to.nil? ? 'automatically' : "by #{attribute_to}"
     comments.create(content: "Status updated to #{new_status} at #{dt.iso8601} #{attribution}.", internal: true,
                     user_id: -1)
-    # TODO: send email
   end
 
   ##
@@ -48,5 +49,15 @@ class Complaint < ApplicationRecord
 
   def assign_status
     update_status 'new'
+  end
+
+  def send_receipt_email
+    ComplaintsMailer.with(complaint: self).new_complaint.deliver_later
+  end
+
+  def send_reviewed_email
+    if status == 'reviewed' && !outcome.nil? && user_wants_updates?
+      ComplaintsMailer.with(complaint: self).complaint_reviewed.deliver_later
+    end
   end
 end
