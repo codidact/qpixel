@@ -260,6 +260,34 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'assigned', assigns(:complaint).status
   end
 
+  test 'reports should work for staff' do
+    sign_in users(:staff)
+    try_reports
+    assert_response(:success)
+    assert_not_nil assigns(:complaints)
+  end
+
+  test 'reports should allow staff to filter' do
+    sign_in users(:staff)
+    try_reports status: 'assigned'
+    assert_response(:success)
+    assert_not_nil assigns(:complaints)
+    assigns(:complaints).each do |complaint|
+      assert_equal 'assigned', complaint.status
+    end
+  end
+
+  test 'reports should not be accessible to anonymous' do
+    try_reports
+    assert_response(:not_found)
+  end
+
+  test 'reports should not be accessible to basic user' do
+    sign_in users(:basic_user)
+    try_reports
+    assert_response(:not_found)
+  end
+
   private
 
   def try_create_report(**params)
@@ -283,5 +311,9 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     params = { new_status: status }
     params.merge!(outcome: outcome) unless outcome.nil?
     post update_complaint_status_path(complaints(complaint_sym).access_token), params: params
+  end
+
+  def try_reports(status: nil, report_type: nil, outcome: nil)
+    get reports_path, params: { status: status, report_type: report_type, outcome: outcome }
   end
 end

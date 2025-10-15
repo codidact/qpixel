@@ -92,7 +92,7 @@ class ComplaintsController < ApplicationController
 
   def reports
     default_filters = { status: ['new', 'assigned', 'responded'] }
-    filters = default_filters.merge(params.permit(:status, :report_type, :outcome).reject { |_k, v| v.blank?})
+    filters = default_filters.merge(params.permit(:status, :report_type, :outcome).reject { |_k, v| v.blank? })
     @complaints = Complaint.includes(:comments, :user, :assignee).where(**filters).order(created_at: :desc)
                            .paginate(page: params[:page], per_page: 20)
     render layout: 'without_sidebar'
