@@ -45,7 +45,7 @@ Rails.application.routes.draw do
     get    'email-all',                    to: 'admin#all_email', as: :email_all
     post   'email-all',                    to: 'admin#send_all_email', as: :send_all_email
 
-    get    'audits',                       to: 'admin#audit_log', as: :audit_log
+    get    'audits',                       to: 'admin#audit_logs', as: :audit_logs
 
     get    'new-site',                     to: 'admin#new_site', as: :new_site
     post   'new-site',                     to: 'admin#create_site', as: :create_site
