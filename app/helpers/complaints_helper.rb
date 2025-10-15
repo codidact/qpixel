@@ -14,4 +14,12 @@ module ComplaintsHelper
   def outcome(key)
     AppConfig.safety_center['outcomes'][key]
   end
+
+  def report_types_select_options
+    AppConfig.safety_center['report_types'].map { |k, v| [v['name'], k] }
+  end
+
+  def report_type(key)
+    AppConfig.safety_center['report_types'][key]
+  end
 end

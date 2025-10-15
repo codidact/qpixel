@@ -2,7 +2,8 @@
   &laquo; Back to Safety Center
 <% end %>
 
-<h1><%= @report_type['name'] %></h1>
+<p class="is-lead"><%= @complaint.access_token.split('-')[0] %></p>
+<h1 class="complaint-title"><%= @report_type['name'] %></h1>
 
 <% if current_user&.staff? %>
   <%= render 'report_actions' %>
@@ -17,7 +18,7 @@
           <div class="grid--cell is-3">Reported URL</div>
           <div class="grid--cell is-9 has-color-yellow-700">
             <i class="fas fa-exclamation-triangle"></i>
-            <%= sanitize(link_to(@complaint.reported_url, @complaint.reported_url, class: 'is-yellow')) %>
+            <%= sanitize(link_to(@complaint.reported_url.truncate(40), @complaint.reported_url, class: 'is-yellow')) %>
           </div>
 
           <% if @content_type.present? %>
@@ -33,6 +34,9 @@
               <%= @complaint.email %>
             <% end %>
           </div>
+
+          <div class="grid--cell is-3">Reported</div>
+          <div class="grid--cell is-9"><%= @complaint.created_at.strftime '%Y-%m-%d %H:%M' %></div>
         </div>
       </div>
     </div>

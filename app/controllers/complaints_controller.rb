@@ -2,6 +2,7 @@ class ComplaintsController < ApplicationController
   before_action :set_complaint, only: [:show, :comment, :self_assign, :update_status]
   before_action :access_check, only: [:show, :comment]
   before_action :write_access_check, only: [:self_assign, :update_status]
+  before_action :verify_staff, only: [:reports]
 
   def index
     render layout: 'without_sidebar'
@@ -87,6 +88,14 @@ class ComplaintsController < ApplicationController
         end
       end
     end
+  end
+
+  def reports
+    default_filters = { status: ['new', 'assigned', 'responded'] }
+    filters = default_filters.merge(params.permit(:status, :report_type, :outcome).reject { |_k, v| v.blank?})
+    @complaints = Complaint.includes(:comments, :user, :assignee).where(**filters).order(created_at: :desc)
+                           .paginate(page: params[:page], per_page: 20)
+    render layout: 'without_sidebar'
   end
 
   def self_assign

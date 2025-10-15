@@ -10,6 +10,10 @@ class Complaint < ApplicationRecord
   validates :report_type, presence: true
   validates :reported_url, presence: true
 
+  scope :active, -> { where(status: ['new', 'assigned', 'responded']) }
+  scope :closed, -> { where(status: 'closed') }
+  scope :reviewed, -> { where(status: 'reviewed') }
+
   ##
   # Update the complaint's status, create a comment to record the change, and send emails to the right people.
   # @param new_status [String] The new status to set, from safety_center.yml.

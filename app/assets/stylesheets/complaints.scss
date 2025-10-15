@@ -56,3 +56,7 @@
   padding: 0.3rem;
   border-radius: 0.2rem;
 }
+
+.is-lead + h1.complaint-title {
+  margin-top: -1rem;
+}
