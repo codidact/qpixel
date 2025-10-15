@@ -314,6 +314,6 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def try_reports(status: nil, report_type: nil, outcome: nil)
-    get reports_path, params: { status: status, report_type: report_type, outcome: outcome }
+    get complaints_path, params: { status: status, report_type: report_type, outcome: outcome }
   end
 end
