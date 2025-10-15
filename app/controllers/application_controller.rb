@@ -351,6 +351,10 @@ class ApplicationController < ActionController::Base
     helpers.current_user
   end
 
+  def system_user
+    helpers.system_user
+  end
+
   def user_signed_in?
     helpers.user_signed_in?
   end

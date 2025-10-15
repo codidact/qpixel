@@ -255,6 +255,57 @@ $(() => {
     });
   });
 
+  /**
+   * @param {Element} target
+   */
+  const checkThreadRename = (target) => {
+    if (target instanceof HTMLInputElement) {
+      const $tgt = $(target);
+      const threadID = $tgt.data('thread');
+      const $form = $tgt.closest(`form[data-thread=${threadID}]`);
+      const $submitter = $form.find('.js-rename-thread');
+
+      const newStripped = QPixel.MD.stripMarkdown($tgt.val(), {
+        removeLeadingQuote: true
+      });
+
+      if (newStripped === $tgt.data('old')) {
+        $submitter.attr('disabled', 'true');
+      }
+    }
+  };
+
+  document.querySelectorAll('.js-thread-title-field').forEach((el) => {
+    checkThreadRename(el);
+  });
+
+  $(document).on('keyup change paste', '.js-thread-title-field', (ev) => {
+    checkThreadRename(ev.target);
+  });
+
+  $(document).on('click', '.js-rename-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+    const form = $tgt.closest(`form[data-thread=${threadID}]`).get(0);
+
+    if (form instanceof HTMLFormElement) {
+      const { value: newTitle, dataset = {} } = form.elements['title'] ?? {};
+      const { old } = dataset;
+
+      const newStripped = QPixel.MD.stripMarkdown(newTitle, {
+        removeLeadingQuote: true
+      });
+
+      if (newStripped === old) {
+        return;
+      }
+
+      form.submit();
+    }
+  });
+
   $(document).on('click', '.js-lock-thread', async (ev) => {
     ev.preventDefault();
 
