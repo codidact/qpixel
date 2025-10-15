@@ -33,7 +33,7 @@ en:
       privileges: 'Privileges'
       close_reasons: 'Close Reasons'
       licenses: 'Licenses'
-      audit_log: 'Audit Log'
+      audit_logs: 'Audit Log'
       post_types: 'Post Types'
       email_query: 'User Lookup by Email'
     user_fed_stat: 'User fed to STAT.'

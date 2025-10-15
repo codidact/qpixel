@@ -1,0 +1,41 @@
+<%#
+   "Renders an audit log item
+
+    Variables:
+      log : AuditLog to render
+"%>
+
+<details class="audit-log">
+  <summary class="audit-log-summary">
+    <span class="details">
+      <strong><%= log.event_type.humanize %></strong>
+      <br/>
+      <span class="has-font-size-caption has-color-tertiary-600">
+        by <%= user_link(log.user) %><% if log.related.present? %>
+          for <%= rendered_related(log) %>
+        <% end %>
+      </span>
+    </span>
+    <span class="has-padding-right-2 has-float-right has-color-tertiary-600"
+          title="<%= log.created_at.iso8601 %>">
+      <%= time_ago_in_words(log.created_at.iso8601) %> ago
+    </span>
+  </summary>
+
+  <p>
+    <strong><%= t('g.type').capitalize %>:</strong>
+    <%= log.log_type.humanize %><br/>
+
+    <strong><%= t('g.user').capitalize %>:</strong>
+    <%= user_link(log.user) %><br/>
+
+    <% if log.related.present? %>
+      <strong><%= t('g.related').capitalize %>:</strong>
+      <%= rendered_related(log) %><br/>
+    <% end %>
+  </p>
+
+  <% if log.comment.present? %>
+    <pre><%= log.comment %></pre>
+  <% end %>
+</details>
