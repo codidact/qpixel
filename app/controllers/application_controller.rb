@@ -207,6 +207,10 @@ class ApplicationController < ActionController::Base
     if current_user&.admin?
       Rack::MiniProfiler.authorize_request
     end
+
+    if current_user&.staff?
+      @complaints_count = Complaint.where(status: 'new').count
+    end
   end
 
   def setup_request_context
