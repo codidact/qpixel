@@ -1,5 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+impersonation_start_log:
+  community: sample
+  log_type: admin_audit
+  event_type: impersonation_start
+  related_type: User
+  related: moderator
+  user: admin
+  comment: For science!
+
+impersonation_end_log:
+  community: sample
+  log_type: admin_audit
+  event_type: impersonation_end
+  related_type: User
+  related: moderator
+  user: admin
+
 site_setting_update_log:
   community: sample
   log_type: admin_audit
