@@ -154,7 +154,7 @@ class ComplaintsController < ApplicationController
     @total = Complaint.recent(12.months.ago).count
     @by_type = Complaint.recent(12.months.ago).group(:report_type).group_by_month(:created_at).count
     @by_content_type = Complaint.recent(12.months.ago).where(report_type: 'illegal')
-                             .group(:content_type).group_by_month(:created_at).count
+                                .group(:content_type).group_by_month(:created_at).count
     @by_outcome = Complaint.recent(12.months.ago).where.not(outcome: nil)
                            .group(:outcome).group_by_month(:created_at).count
     @type_totals = Complaint.recent(12.months.ago).group(:report_type).count
