@@ -63,7 +63,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 3, assigns(:errors).size
   end
 
-  test 'should correct validate missing comment' do
+  test 'should correctly validate missing comment' do
     try_create_report report_type: 'illegal', reported_url: 'https://example.com', content_type: 'fraud',
                       email: 'test@example.com', user_wants_updates: true
     assert_response(:bad_request)
@@ -222,6 +222,44 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_response(:not_found)
   end
 
+  test 'should allow assignee to mark as reviewed' do
+    sign_in users(:staff)
+    try_update_status :assigned, 'reviewed', outcome: 'upheld'
+    assert_response(:found)
+    assert_redirected_to complaint_path(complaints(:assigned).access_token)
+    assert_nil flash[:danger]
+    assert_not_nil assigns(:complaint)
+    assert_equal 'reviewed', assigns(:complaint).status
+    assert_equal 'upheld', assigns(:complaint).outcome
+  end
+
+  test 'should prevent anonymous user updating status' do
+    try_update_status :anonymous, 'assigned'
+    assert_response(:not_found)
+  end
+
+  test 'should prevent basic user updating status' do
+    sign_in users(:basic_user)
+    try_update_status :anonymous, 'assigned'
+    assert_response(:not_found)
+  end
+
+  test 'should prevent unassigned staff updating status' do
+    sign_in users(:other_staff)
+    try_update_status :assigned, 'reviewed'
+    assert_response(:found)
+    assert_equal 'You are not assigned to this report. Assign yourself before changing its status.', flash[:danger]
+    assert_equal 'assigned', assigns(:complaint).status
+  end
+
+  test 'should prevent invalid status update' do
+    sign_in users(:staff)
+    try_update_status :assigned, 'invalid'
+    assert_response(:found)
+    assert_equal 'Invalid status.', flash[:danger]
+    assert_equal 'assigned', assigns(:complaint).status
+  end
+
   private
 
   def try_create_report(**params)
@@ -239,5 +277,11 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
 
   def try_self_assign(complaint_sym)
     post complaint_self_assign_path(complaints(complaint_sym).access_token)
+  end
+
+  def try_update_status(complaint_sym, status, outcome: nil)
+    params = { new_status: status }
+    params.merge!(outcome: outcome) unless outcome.nil?
+    post update_complaint_status_path(complaints(complaint_sym).access_token), params: params
   end
 end

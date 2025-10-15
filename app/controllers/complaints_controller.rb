@@ -28,14 +28,18 @@ class ComplaintsController < ApplicationController
       complaint_params.merge!(email: params[:email])
     end
 
-    success = Complaint.transaction do
-      @complaint.save!
-      @comment.save!
-    end
+    @complaint = Complaint.new(complaint_params)
+    @comment = ComplaintComment.new(comment_params.merge(internal: false))
 
-    if success
+    begin
+      Complaint.transaction do
+        @complaint.save!
+        @comment.complaint = @complaint
+        @comment.save!
+      end
+
       redirect_to complaint_path(@complaint.access_token)
-    else
+    rescue ActiveRecord::RecordInvalid
       @errors = @complaint.errors.full_messages + @comment.errors.full_messages
       render :report, status: :bad_request, layout: 'without_sidebar'
     end
@@ -94,14 +98,44 @@ class ComplaintsController < ApplicationController
     @comment = @complaint.comments.new(user_id: -1, internal: true,
                                        content: "Report assigned to #{current_user.username}.")
 
-    success = Complaint.transaction do
-      @complaint.update!(update_params)
-      @comment.save!
-    end
-
-    unless success
+    begin
+      Complaint.transaction do
+        @complaint.update!(update_params)
+        @comment.save!
+      end
+    rescue ActiveRecord::RecordInvalid
       errors = @complaint.errors.full_messages + @comment.errors.full_messages
       flash[:danger] = "Couldn't assign you to this report (#{errors.join(', ')})"
+    end
+
+    redirect_to complaint_path(@complaint.access_token)
+  end
+
+  def update_status
+    unless current_user&.same_as?(@complaint.assignee)
+      flash[:danger] = 'You are not assigned to this report. Assign yourself before changing its status.'
+      redirect_back fallback_location: complaint_path(@complaint.access_token) and return
+    end
+
+    new_status = AppConfig.safety_center['statuses'][params[:new_status]]
+    if new_status.nil?
+      flash[:danger] = 'Invalid status.'
+      redirect_back fallback_location: complaint_path(@complaint.access_token) and return
+    end
+
+    update_params = { status: params[:new_status], status_updated_at: DateTime.now }
+    update_params.merge!(outcome: params[:outcome]) unless params[:outcome].nil?
+    @comment = @complaint.comments.new(user_id: -1, internal: true,
+                                       content: "Status changed to #{new_status['name']} by #{current_user.username}.")
+
+    begin
+      Complaint.transaction do
+        @complaint.update!(update_params)
+        @comment.save!
+      end
+    rescue ActiveRecord::RecordInvalid
+      errors = @complaint.errors.full_messages + @comment.errors.full_messages
+      flash[:danger] = "Couldn't change status of this report (#{errors.join(', ')})"
     end
 
     redirect_to complaint_path(@complaint.access_token)

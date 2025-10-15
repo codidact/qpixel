@@ -28,6 +28,7 @@ assigned:
   user_wants_updates: true
   email: test1@example.com
   status: assigned
+  assignee: staff
   access_token: 873f0bc6-a03f-422a-bf34-0006456e69a8
   status_updated_at: <%= 1.day.ago %>
 

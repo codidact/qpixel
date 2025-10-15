@@ -4,7 +4,7 @@
 
 <h1><%= @report_type['name'] %></h1>
 
-<% if current_user.staff? %>
+<% if current_user&.staff? %>
   <%= render 'report_actions' %>
 <% end %>
 
@@ -44,7 +44,10 @@
         <div class="grid has-font-size-caption">
           <div class="grid--cell is-3">Status</div>
           <div class="grid--cell is-9">
-            <%= @status['name'] %>
+            <div class="complaint-status-badge has-background-color-<%= @status['color'] %>">
+              <i class="<%= @status['icon'] %>"></i>
+              <%= @status['name'] %>
+            </div>
             (last updated <%= time_ago_in_words(@complaint.status_updated_at) %> ago)
           </div>
 
@@ -58,6 +61,11 @@
               Yes - Assigned to Investigator
             <% end %>
           </div>
+
+          <% if @complaint.outcome.present? %>
+            <div class="grid--cell is-3">Outcome</div>
+            <div class="grid--cell is-9"><%= outcome(@complaint.outcome)['name'] %></div>
+          <% end %>
         </div>
       </div>
     </div>

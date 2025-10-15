@@ -2,18 +2,39 @@ statuses:
   new:
     name: New
     description: This is a new report, waiting to be assigned an investigator.
+    color: red
+    icon: fas fa-envelope
   assigned:
     name: Assigned
     description: This report has been assigned to a member of staff and is being investigated.
+    color: yellow
+    icon: fas fa-user-clock
   reviewed:
     name: Reviewed
     description: This report has been investigated and appropriate action taken.
+    color: green
+    icon: fas fa-check-circle
   responded:
-    name: Responded
+    name: Reporter Responded
     description: This report has had a response from the reporter.
+    color: yellow
+    icon: fas fa-user-edit
   closed:
     name: Closed
     description: This report has been closed. No further action may be taken.
+    color: tertiary
+    icon: fas fa-times-circle
+
+outcomes:
+  upheld:
+    name: Upheld
+    description: The report is upheld; the reporter's classification of the content is correct.
+  actionable:
+    name: Actionable
+    description: The content is actionable but the reported classification is not correct.
+  disputed:
+    name: Disputed
+    description: The reporter's classification is disputed; the content does not appear to be actionable.
 
 report_types:
   illegal:

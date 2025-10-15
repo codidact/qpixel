@@ -6,5 +6,89 @@
         <i class="fas fa-user-plus"></i> Assign to me
       <% end %>
     <% end %>
+    <% if @complaint.assignee&.same_as?(current_user) %>
+      <% unless ['reviewed', 'responded', 'closed'].include?(@complaint.status) %>
+        <button type="button" class="button is-primary is-filled" data-modal="#review-modal">
+          <i class="<%= status('reviewed')['icon'] %>"></i> Reviewed
+        </button>
+      <% end %>
+      <button type="button" class="button is-primary is-outlined" data-modal="#status-modal">
+        <i class="fas fa-tasks"></i> Change status
+      </button>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal is-with-backdrop" id="review-modal">
+  <div class="modal--container">
+    <div class="modal--header">
+      <button type="button" class="button is-close-button modal--header-button" data-modal="#review-modal">
+        &times;
+      </button>
+      Complete review
+    </div>
+    <div class="modal--body">
+      <h4>Available Outcomes</h4>
+      <p>
+        Now that you have completed your review of this content, please select an outcome below from the following
+        options. Consider your choice carefully as this will be used in reports.
+      </p>
+
+      <% AppConfig.safety_center['outcomes'].each do |_k, outcome| %>
+        <p>
+          <strong><%= outcome['name'] %></strong> &mdash; <%= outcome['description'] %>
+        </p>
+      <% end %>
+
+      <%= form_tag update_complaint_status_path(@complaint.access_token), method: :post do %>
+        <%= hidden_field_tag :new_status, 'reviewed', id: 'new-status-reviewed' %>
+
+        <div class="form-group">
+          <%= label_tag :outcome, 'Outcome', class: 'form-element' %>
+          <%= select_tag :outcome, options_for_select(outcomes_select_options), include_blank: true,
+                         class: 'form-element', required: true %>
+        </div>
+
+        <div class="form-group">
+          <%= submit_tag 'Complete review', class: 'button is-primary is-filled' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="modal is-with-backdrop" id="status-modal">
+  <div class="modal--container">
+    <div class="modal--header">
+      <button type="button" class="button is-close-button modal--header-button" data-modal="#status-modal">
+        &times;
+      </button>
+      Change report status
+    </div>
+    <div class="modal--body">
+      <div class="notice is-info has-color-teal-900 has-font-size-caption">
+        This function is provided to allow you to change the status of this report manually when the automatic process
+        has not done so appropriately. If you have finished reviewing the report, use the "Reviewed" button in the
+        report view instead.
+      </div>
+
+      <%= form_tag update_complaint_status_path(@complaint.access_token), method: :post do %>
+        <div class="form-group">
+          <%= label_tag :current_status, 'Current status', class: 'form-element' %>
+          <%= text_field_tag :current_status, AppConfig.safety_center['statuses'][@complaint.status]['name'],
+                             readonly: true, disabled: true, class: 'form-element' %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :new_status, 'New status', class: 'form-element' %>
+          <%= select_tag :new_status, options_for_select(statuses_select_options), include_blank: true,
+                         class: 'form-element' %>
+        </div>
+
+        <div class="form-group">
+          <%= submit_tag 'Change status', class: 'button is-primary is-filled' %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
