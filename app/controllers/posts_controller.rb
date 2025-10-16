@@ -649,9 +649,10 @@ class PostsController < ApplicationController
   end
 
   def legal_delete
+    placeholder = 'This post has been removed by staff for legal reasons and cannot be restored.'
     ApplicationRecord.transaction do
-      @post.assign_attributes(body: '<p>This post has been removed by staff for legal reasons.</p>',
-                              body_markdown: 'This post has been removed by staff for legal reasons.',
+      @post.assign_attributes(body: "<p>#{placeholder}</p>",
+                              body_markdown: placeholder,
                               title: 'Removed for legal reasons')
       unless @post.save(validate: false)
         flash[:danger] = helpers.i18ns('posts.cant_delete_post')
