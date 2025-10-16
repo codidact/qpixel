@@ -22,4 +22,12 @@ class ComplaintsMailer < ApplicationMailer
          subject: 'Your post has been removed for legal reasons',
          to: @post.user.email)
   end
+
+  def staff_reply
+    @complaint = params[:complaint]
+    @comment = params[:comment]
+    mail(from: "#{SiteSetting['NoReplySenderName']} <#{SiteSetting['NoReplySenderEmail']}>",
+         subject: 'Your report has a reply from a member of staff',
+         to: @complaint.email)
+  end
 end

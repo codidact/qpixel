@@ -11,4 +11,8 @@ class ComplaintsMailerPreview < ActionMailer::Preview
   def legal_deletion
     ComplaintsMailer.with(post: Post.unscoped.last, complaint: Complaint.last).legal_deletion
   end
+
+  def staff_reply
+    ComplaintsMailer.with(complaint: Complaint.last, comment: ComplaintComment.last).staff_reply
+  end
 end

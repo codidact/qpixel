@@ -68,6 +68,10 @@ class ComplaintsController < ApplicationController
 
     @comment = ComplaintComment.new(comment_params)
     if @comment.save
+      if @comment.user.staff? && !@comment.internal && @complaint.user_wants_updates?
+        ComplaintsMailer.with(complaint: @complaint, comment: @comment).staff_reply.deliver_later
+      end
+
       respond_to do |format|
         format.json do
           render json: { status: 'success',

@@ -32,4 +32,13 @@ class ComplaintsMailerTest < ActionMailer::TestCase
     end
     assert_operator email.from[0].length, :>, 3, 'Sender appears to be empty or default value'
   end
+
+  test 'staff_reply' do
+    email = ComplaintsMailer.with(complaint: complaints(:reviewed), comment: complaint_comments(:reviewed_staff))
+                            .staff_reply
+    assert_emails 1 do
+      email.deliver_later
+    end
+    assert_operator email.from[0].length, :>, 3, 'Sender appears to be empty or default value'
+  end
 end
