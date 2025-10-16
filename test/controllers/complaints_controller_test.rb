@@ -260,6 +260,43 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'assigned', assigns(:complaint).status
   end
 
+  test 'should allow assignee to change content type' do
+    sign_in users(:staff)
+    try_update_content_type :assigned, 'fraud'
+    assert_response(:found)
+    assert_redirected_to complaint_path(complaints(:assigned).access_token)
+    assert_nil flash[:danger]
+    assert_not_nil assigns(:complaint)
+    assert_equal 'fraud', assigns(:complaint).content_type
+  end
+
+  test 'should prevent anonymous user changing content type' do
+    try_update_content_type :anonymous, 'fraud'
+    assert_response(:not_found)
+  end
+
+  test 'should prevent basic user changing content type' do
+    sign_in users(:basic_user)
+    try_update_content_type :anonymous, 'fraud'
+    assert_response(:not_found)
+  end
+
+  test 'should prevent unassigned staff changing content type' do
+    sign_in users(:other_staff)
+    try_update_content_type :assigned, 'reviewed'
+    assert_response(:found)
+    assert_equal 'You are not assigned to this report. Assign yourself before changing the content type.',
+                 flash[:danger]
+    assert_equal 'ccb', assigns(:complaint).content_type
+  end
+
+  test 'should prevent invalid content type update' do
+    sign_in users(:staff)
+    try_update_content_type :assigned, 'invalid'
+    assert_response(:found)
+    assert_equal 'Invalid content type.', flash[:danger]
+  end
+
   test 'reports should work for staff' do
     sign_in users(:staff)
     try_reports
@@ -331,6 +368,11 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     params = { new_status: status }
     params.merge!(outcome: outcome) unless outcome.nil?
     post update_complaint_status_path(complaints(complaint_sym).access_token), params: params
+  end
+
+  def try_update_content_type(complaint_sym, content_type)
+    params = { new_content_type: content_type }
+    post update_complaint_content_type_path(complaints(complaint_sym).access_token), params: params
   end
 
   def try_reports(status: nil, report_type: nil, outcome: nil)

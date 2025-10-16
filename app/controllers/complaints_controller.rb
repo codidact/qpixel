@@ -1,7 +1,7 @@
 class ComplaintsController < ApplicationController
-  before_action :set_complaint, only: [:show, :comment, :self_assign, :update_status]
+  before_action :set_complaint, only: [:show, :comment, :self_assign, :update_status, :change_content_type]
   before_action :access_check, only: [:show, :comment]
-  before_action :write_access_check, only: [:self_assign, :update_status]
+  before_action :write_access_check, only: [:self_assign, :update_status, :change_content_type]
   before_action :verify_staff, only: [:reports, :reporting]
 
   def index
@@ -149,6 +149,35 @@ class ComplaintsController < ApplicationController
     rescue ActiveRecord::RecordInvalid
       errors = @complaint.errors.full_messages + @comment.errors.full_messages
       flash[:danger] = "Couldn't change status of this report (#{errors.join(', ')})"
+    end
+
+    redirect_to complaint_path(@complaint.access_token)
+  end
+
+  def change_content_type
+    unless current_user&.same_as?(@complaint.assignee)
+      flash[:danger] = 'You are not assigned to this report. Assign yourself before changing the content type.'
+      redirect_back fallback_location: complaint_path(@complaint.access_token) and return
+    end
+
+    new_content_type = helpers.content_type(params[:new_content_type])
+    if new_content_type.nil?
+      flash[:danger] = 'Invalid content type.'
+      redirect_back fallback_location: complaint_path(@complaint.access_token) and return
+    end
+
+    update_params = { content_type: params[:new_content_type] }
+    message = "Content type changed to #{new_content_type['name']} by #{current_user.username}."
+    @comment = @complaint.comments.new(user_id: -1, internal: true, content: message)
+
+    begin
+      Complaint.transaction do
+        @complaint.update!(update_params)
+        @comment.save!
+      end
+    rescue ActiveRecord::RecordInvalid
+      errors = @complaint.errors.full_messages + @comment.errors.full_messages
+      flash[:danger] = "Couldn't change content type (#{errors.join(', ')})"
     end
 
     redirect_to complaint_path(@complaint.access_token)

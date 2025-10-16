@@ -7,6 +7,10 @@ module ComplaintsHelper
     value_for('content_types', key)
   end
 
+  def content_types_select_options
+    select_options_for('content_types')
+  end
+
   def outcomes_select_options
     select_options_for('outcomes')
   end

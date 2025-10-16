@@ -382,6 +382,7 @@ Rails.application.routes.draw do
     post   'report/:token/comment',        to: 'complaints#comment', as: :create_complaint_comment
     post   'report/:token/assign',         to: 'complaints#self_assign', as: :complaint_self_assign
     post   'report/:token/status',         to: 'complaints#update_status', as: :update_complaint_status
+    post   'report/:token/content_type',   to: 'complaints#change_content_type', as: :update_complaint_content_type
     get    'reports',                      to: 'complaints#reports', as: :complaints
     get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
   end
