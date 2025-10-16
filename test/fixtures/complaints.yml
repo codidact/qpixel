@@ -44,6 +44,18 @@ reviewed:
   access_token: a84acee3-117a-4719-a5d5-72ad720bbfd7
   status_updated_at: <%= 1.day.ago %>
 
+old_reviewed:
+  report_type: illegal
+  content_type: ccb
+  reported_url: https://example.com/test
+  user: basic_user
+  user_wants_updates: true
+  email: test1@example.com
+  status: reviewed
+  outcome: upheld
+  access_token: cc42c90b-0503-486e-97be-e3aa92562e5c
+  status_updated_at: <%= 15.days.ago %>
+
 responded:
   report_type: illegal
   content_type: ccb
