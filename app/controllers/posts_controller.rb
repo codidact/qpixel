@@ -133,7 +133,7 @@ class PostsController < ApplicationController
       redirect_to policy_path(@post.doc_slug)
     end
 
-    if @post.deleted? && !current_user&.post_privilege?('flag_curate', @post)
+    if @post.deleted? && !current_user&.post_privilege?('flag_curate', @post) && !current_user&.staff?
       return not_found!
     end
 
@@ -147,7 +147,7 @@ class PostsController < ApplicationController
     end
 
     # @post = @post.includes(:flags, flags: :post_flag_type)
-    @children = if current_user&.privilege?('flag_curate')
+    @children = if current_user&.privilege?('flag_curate') || current_user&.staff?
                   Post.where(parent_id: @post.id)
                 else
                   Post.where(parent_id: @post.id).undeleted
