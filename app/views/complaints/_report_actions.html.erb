@@ -39,11 +39,13 @@
         updates, this will also be sent to them.
       </p>
 
-      <% AppConfig.safety_center['outcomes'].each do |_k, outcome| %>
-        <p>
-          <strong><%= outcome['name'] %></strong> &mdash; <%= outcome['description'] %>
-        </p>
-      <% end %>
+      <ul>
+        <% AppConfig.safety_center['outcomes'].each do |_k, outcome| %>
+          <li class="has-font-size-caption">
+            <strong><%= outcome['name'] %></strong><br/><%= outcome['description'] %>
+          </li>
+        <% end %>
+      </ul>
 
       <%= form_tag update_complaint_status_path(@complaint.access_token), method: :post do %>
         <%= hidden_field_tag :new_status, 'reviewed', id: 'new-status-reviewed' %>

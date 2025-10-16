@@ -6,7 +6,7 @@
 
 <p>
   The outcome of your report is: <strong><%= outcome(@complaint.outcome)['name'] %></strong>. This means
-  <%= outcome(@complaint.outcome)['user_facing'] %>
+  <%= outcome(@complaint.outcome)['user_facing'][@complaint.report_type]['content'] %>
 </p>
 
 <p>

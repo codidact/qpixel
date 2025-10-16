@@ -28,20 +28,40 @@ statuses:
 outcomes:
   upheld:
     name: Upheld
-    description: The report is upheld; the reporter's classification of the content is correct.
-    user_facing: our community team agreed with your report and how you classified this content, and have taken
-      appropriate action.
+    description: The report is upheld; the reporter's classification of the content is correct; in the case of an
+      appeal, the appeal is upheld and the action taken has been reversed.
+    user_facing:
+      illegal: &illegal_upheld
+        content: our community team agreed with your report and how you classified this content, and have taken
+          appropriate action.
+      abusive: *illegal_upheld
+      copyright: *illegal_upheld
+      appeal:
+        content: our community team agreed with your appeal and have reversed the action taken in your case.
   actionable:
     name: Actionable
-    description: The content is actionable but the reported classification is not correct.
-    user_facing: our community team agreed that the content you reported was actionable and have taken appropriate
-      action, but have changed your classification of the content for reporting purposes.
+    description: The content is actionable but the reported classification is not correct. NOT applicable to appeals.
+    user_facing:
+      illegal: &illegal_actionable
+        content: our community team agreed that the content you reported was actionable and have taken appropriate
+          action, but have changed your classification of the content for reporting purposes.
+      abusive: *illegal_actionable
+      copyright: *illegal_actionable
+      appeal: ~
   disputed:
     name: Disputed
-    description: The reporter's classification is disputed; the content does not appear to be actionable.
-    user_facing: our community team have reviewed your report and have decided that the content you reported is not
-      actionable. This does not mean that the content cannot be removed by community moderators for breaking
-      community-specific rules, just that it does not breach our Content Policy.
+    description: The reporter's classification is disputed; the content does not appear to be actionable; in the case of
+      an appeal, the action taken was appropriate.
+    user_facing:
+      illegal: &illegal_disputed
+        content: our community team have reviewed your report and have decided that the content you reported is not
+          actionable. This does not mean that the content cannot be removed by community moderators for breaking
+          community-specific rules, just that it does not breach our Content Policy.
+      abusive: *illegal_disputed
+      copyright: *illegal_disputed
+      appeal:
+        content: our community team have reviewed your appeal and have decided that the action taken in your case was
+          appropriate.
 
 report_types:
   illegal:
