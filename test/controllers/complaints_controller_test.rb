@@ -305,6 +305,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
   test 'reporting should not be accessible to basic user' do
     sign_in users(:basic_user)
     try_reporting
+    assert_response(:not_found)
   end
 
   private

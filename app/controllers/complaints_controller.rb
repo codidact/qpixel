@@ -9,19 +9,22 @@ class ComplaintsController < ApplicationController
   end
 
   def report
-    @report_types = AppConfig.safety_center['report_types'].select { |_k, t| t['enabled'] }
-    @content_types = AppConfig.safety_center['content_types']
+    @report_types = helpers.enabled_report_types
+    @content_types = helpers.content_types
+
     @complaint = Complaint.new
     @errors = []
+
     render layout: 'without_sidebar'
   end
 
   def create
-    @report_types = AppConfig.safety_center['report_types'].select { |_k, t| t['enabled'] }
-    @content_types = AppConfig.safety_center['content_types']
+    @report_types = helpers.enabled_report_types
+    @content_types = helpers.content_types
 
     complaint_params = params.permit(:report_type, :reported_url, :content_type, :user_wants_updates)
     comment_params = params.permit(:content)
+
     if user_signed_in?
       complaint_params.merge!(user: current_user, email: current_user.email)
       comment_params.merge!(user: current_user)
@@ -47,9 +50,10 @@ class ComplaintsController < ApplicationController
   end
 
   def show
-    @report_type = AppConfig.safety_center['report_types'][@complaint.report_type]
-    @content_type = AppConfig.safety_center['content_types'][@complaint.content_type]
-    @status = AppConfig.safety_center['statuses'][@complaint.status]
+    @report_type = helpers.report_type(@complaint.report_type)
+    @content_type = helpers.content_type(@complaint.content_type)
+    @status = helpers.status(@complaint.status)
+
     render layout: 'without_sidebar'
   end
 
@@ -126,7 +130,7 @@ class ComplaintsController < ApplicationController
       redirect_back fallback_location: complaint_path(@complaint.access_token) and return
     end
 
-    new_status = AppConfig.safety_center['statuses'][params[:new_status]]
+    new_status = helpers.status(params[:new_status])
     if new_status.nil?
       flash[:danger] = 'Invalid status.'
       redirect_back fallback_location: complaint_path(@complaint.access_token) and return
