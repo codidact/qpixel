@@ -72,6 +72,10 @@ class ComplaintsController < ApplicationController
         ComplaintsMailer.with(complaint: @complaint, comment: @comment).staff_reply.deliver_later
       end
 
+      if @comment.user.nil? || @comment.user.same_as?(@complaint.user)
+        @complaint.update_status 'responded'
+      end
+
       respond_to do |format|
         format.json do
           render json: { status: 'success',

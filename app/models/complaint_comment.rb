@@ -12,6 +12,10 @@ class ComplaintComment < ApplicationRecord
   private
 
   def can_add_more
+    if complaint.status == 'closed'
+      errors.add(:base, 'You cannot reply to a closed complaint') and return
+    end
+
     unless user_id == -1 || internal? || complaint.can_add_more_comments?(user)
       errors.add(:base, 'You can only add one reply between staff responses')
     end
