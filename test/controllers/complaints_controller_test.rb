@@ -126,6 +126,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to complaint_path(assigns(:complaint).access_token)
     assert_empty assigns(:comment).errors.full_messages
     assert_nil flash[:danger]
+    assert_equal 'responded', assigns(:complaint).status
   end
 
   test 'should allow anonymous user to comment on report (JSON)' do
