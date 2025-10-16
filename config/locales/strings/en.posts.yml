@@ -33,6 +33,8 @@ en:
       Can't restore a post that isn't deleted.
     cant_restore_deleted_by_moderator: >
       You cannot restore this post deleted by a moderator.
+    cant_restore_deleted_by_staff: >
+      You cannot restore this post deleted by staff.
     cant_change_category: >
       You don't have permission to make that change.
     type_not_included: >
