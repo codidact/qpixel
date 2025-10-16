@@ -10,8 +10,9 @@
       <div class="form-group">
         <%= label_tag :status, 'Status' %>
         <%= select_tag :status,
-                       options_for_select(statuses_select_options, selected: params[:status]),
-                       include_blank: true, class: 'form-element js-complaint-status-select' %>
+                       options_for_select([['All open reports', '']] + statuses_select_options,
+                                          selected: params[:status]),
+                       class: 'form-element js-complaint-status-select' %>
       </div>
 
       <div class="form-group">
