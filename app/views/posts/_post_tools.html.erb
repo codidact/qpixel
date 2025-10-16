@@ -6,7 +6,7 @@
     </div>
     <div class="modal--body">
       <% unless post.locked? && !at_least_moderator? %>
-        <% if post.answer? %>
+        <% if post.answer? && current_user&.post_privilege?('flag_curate', post) %>
           <details>
             <summary>Convert to comment</summary>
             <p>
