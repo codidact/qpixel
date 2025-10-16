@@ -5,7 +5,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'legal delete should work' do
     sign_in users(:staff)
-    try_legal_delete :question_one
+    try_legal_delete :question_one, 'fraud'
     assert_response(:found)
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil assigns(:post)
@@ -29,7 +29,7 @@ class PostsControllerTest < ActionController::TestCase
 
   private
 
-  def try_legal_delete(post_sym)
-    delete :legal_delete, params: { id: posts(post_sym).id }
+  def try_legal_delete(post_sym, content_type)
+    delete :legal_delete, params: { id: posts(post_sym).id, content_type: content_type }
   end
 end

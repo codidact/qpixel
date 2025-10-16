@@ -108,7 +108,7 @@ class ComplaintsController < ApplicationController
       update_params.merge!(status: 'assigned', status_updated_at: DateTime.now)
     end
 
-    @comment = @complaint.comments.new(user_id: -1, internal: true,
+    @comment = @complaint.comments.new(user: helpers.system_user, internal: true,
                                        content: "Report assigned to #{current_user.username}.")
 
     begin
@@ -138,7 +138,7 @@ class ComplaintsController < ApplicationController
 
     update_params = { status: params[:new_status], status_updated_at: DateTime.now }
     update_params.merge!(outcome: params[:outcome]) unless params[:outcome].nil?
-    @comment = @complaint.comments.new(user_id: -1, internal: true,
+    @comment = @complaint.comments.new(user: helpers.system_user, internal: true,
                                        content: "Status changed to #{new_status['name']} by #{current_user.username}.")
 
     begin
@@ -168,7 +168,7 @@ class ComplaintsController < ApplicationController
 
     update_params = { content_type: params[:new_content_type] }
     message = "Content type changed to #{new_content_type['name']} by #{current_user.username}."
-    @comment = @complaint.comments.new(user_id: -1, internal: true, content: message)
+    @comment = @complaint.comments.new(user: helpers.system_user, internal: true, content: message)
 
     begin
       Complaint.transaction do
