@@ -4,11 +4,12 @@ class PostsController < ApplicationController
   include DraftManagement
 
   before_action :authenticate_user!, except: [:document, :help_center, :show]
-  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
+  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock, :legal_delete]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
   before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
+  before_action :verify_staff, only: [:legal_delete]
 
   def new
     @post_type = PostType.find(params[:post_type])
@@ -405,6 +406,35 @@ class PostsController < ApplicationController
                                        last_activity_by_id: user.id)
   end
 
+  def do_atomic_delete_with_children(post, user)
+    post.transaction do
+      unless do_delete(post, user)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+
+      history_entry = PostHistory.post_deleted(post, user)
+
+      if history_entry&.errors&.any?
+        post.errors.merge!(history_entry.errors)
+        raise ActiveRecord::Rollback
+      end
+
+      if post.children.undeleted.any?
+        unless do_delete_children(post, user)
+          raise ActiveRecord::Rollback
+        end
+
+        histories = post.children.map do |c|
+          { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: user, post: c,
+            community: RequestContext.community }
+        end
+
+        PostHistory.create!(histories)
+      end
+    end
+  end
+
   def delete
     unless check_your_privilege('flag_curate', @post, false)
       flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
@@ -431,32 +461,7 @@ class PostsController < ApplicationController
     end
 
     # post deletion, its children deletion, and post history creation must all be made as one atomic operation
-    @post.transaction do
-      unless do_delete(@post, current_user)
-        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
-        raise ActiveRecord::Rollback
-      end
-
-      history_entry = PostHistory.post_deleted(@post, current_user)
-
-      if history_entry&.errors&.any?
-        @post.errors.merge!(history_entry.errors)
-        raise ActiveRecord::Rollback
-      end
-
-      if @post.children.undeleted.any?
-        unless do_delete_children(@post, current_user)
-          raise ActiveRecord::Rollback
-        end
-
-        histories = @post.children.map do |c|
-          { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
-            community: RequestContext.community }
-        end
-
-        PostHistory.create!(histories)
-      end
-    end
+    do_atomic_delete_with_children(@post, current_user)
 
     redirect_to post_path(@post)
   end
@@ -641,6 +646,46 @@ class PostsController < ApplicationController
   def delete_draft
     do_delete_draft(current_user, params[:path])
     render json: { status: 'success', success: true }
+  end
+
+  def legal_delete
+    ApplicationRecord.transaction do
+      @post.assign_attributes(body: '<p>This post has been removed by staff for legal reasons.</p>',
+                              body_markdown: 'This post has been removed by staff for legal reasons.',
+                              title: 'Removed for legal reasons')
+      unless @post.save(validate: false)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+      do_atomic_delete_with_children(@post, current_user)
+      PostHistory.redact(@post, current_user)
+    end
+
+    @complaint = Complaint.new(user: current_user, report_type: 'illegal', user_wants_updates: false,
+                               content_type: params[:content_type], email: 'none@localhost',
+                               reported_url: helpers.generic_share_link(@post))
+    @comment = ComplaintComment.new(user: current_user, internal: false,
+                                    content: 'Report automatically created from legal deletion of linked post.')
+
+    Complaint.transaction do
+      unless @complaint.save
+        flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+        raise ActiveRecord::Rollback
+      end
+
+      @comment.complaint = @complaint
+      unless @comment.save
+        flash[:danger] = "Post deleted, but couldn't create report: ('#{@comment.errors.full_messages.join(', ')}')"
+        raise ActiveRecord::Rollback
+      end
+
+      unless @complaint.update(status: 'reviewed', assignee: current_user, outcome: 'upheld')
+        flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    redirect_to post_path(@post)
   end
 
   private

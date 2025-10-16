@@ -162,6 +162,7 @@ Rails.application.routes.draw do
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
+    delete ':id/legal-delete',             to: 'posts#legal_delete', as: :legal_delete_post
 
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
