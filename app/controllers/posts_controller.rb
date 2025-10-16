@@ -661,28 +661,34 @@ class PostsController < ApplicationController
       PostHistory.redact(@post, current_user)
     end
 
-    @complaint = Complaint.new(user: current_user, report_type: 'illegal', user_wants_updates: false,
-                               content_type: params[:content_type], email: 'none@localhost',
-                               reported_url: helpers.generic_share_link(@post))
-    @comment = ComplaintComment.new(user: current_user, internal: false,
-                                    content: 'Report automatically created from legal deletion of linked post.')
+    if params[:content_type].present?
+      @complaint = Complaint.new(user: current_user, report_type: 'illegal', user_wants_updates: false,
+                                 content_type: params[:content_type], email: 'none@localhost',
+                                 reported_url: helpers.generic_share_link(@post))
+      @comment = ComplaintComment.new(user: current_user, internal: false,
+                                      content: 'Report automatically created from legal deletion of linked post.')
 
-    Complaint.transaction do
-      unless @complaint.save
-        flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
-        raise ActiveRecord::Rollback
+      Complaint.transaction do
+        unless @complaint.save
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
+
+        @comment.complaint = @complaint
+        unless @comment.save
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@comment.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
+
+        unless @complaint.update(status: 'reviewed', assignee: current_user, outcome: 'upheld')
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
       end
 
-      @comment.complaint = @complaint
-      unless @comment.save
-        flash[:danger] = "Post deleted, but couldn't create report: ('#{@comment.errors.full_messages.join(', ')}')"
-        raise ActiveRecord::Rollback
-      end
-
-      unless @complaint.update(status: 'reviewed', assignee: current_user, outcome: 'upheld')
-        flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
-        raise ActiveRecord::Rollback
-      end
+      ComplaintsMailer.with(post: @post, complaint: @complaint).legal_deletion.deliver_later
+    else
+      ComplaintsMailer.with(post: @post, complaint: nil).legal_deletion.deliver_later
     end
 
     redirect_to post_path(@post)

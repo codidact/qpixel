@@ -7,4 +7,8 @@ class ComplaintsMailerPreview < ActionMailer::Preview
   def complaint_reviewed
     ComplaintsMailer.with(complaint: Complaint.where(status: 'reviewed').first).complaint_reviewed
   end
+
+  def legal_deletion
+    ComplaintsMailer.with(post: Post.unscoped.last, complaint: Complaint.last).legal_deletion
+  end
 end

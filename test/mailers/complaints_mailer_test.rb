@@ -16,4 +16,20 @@ class ComplaintsMailerTest < ActionMailer::TestCase
     end
     assert_operator email.from[0].length, :>, 3, 'Sender appears to be empty or default value'
   end
+
+  test 'legal_deletion with nil complaint' do
+    email = ComplaintsMailer.with(post: posts(:question_one), complaint: nil).legal_deletion
+    assert_emails 1 do
+      email.deliver_later
+    end
+    assert_operator email.from[0].length, :>, 3, 'Sender appears to be empty or default value'
+  end
+
+  test 'legal_deletion with complaint' do
+    email = ComplaintsMailer.with(post: posts(:question_one), complaint: complaints(:anonymous)).legal_deletion
+    assert_emails 1 do
+      email.deliver_later
+    end
+    assert_operator email.from[0].length, :>, 3, 'Sender appears to be empty or default value'
+  end
 end
