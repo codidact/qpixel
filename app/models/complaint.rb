@@ -27,7 +27,7 @@ class Complaint < ApplicationRecord
     update(status: new_status, status_updated_at: dt)
     attribution = attribute_to.nil? ? 'automatically' : "by #{attribute_to}"
     comments.create(content: "Status updated to #{new_status} at #{dt.iso8601} #{attribution}.", internal: true,
-                    user_id: -1)
+                    user: ApplicationController.helpers.system_user)
   end
 
   ##
