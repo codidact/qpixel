@@ -44,7 +44,22 @@ class PostsControllerTest < ActionController::TestCase
     assert_response(:found)
     assert_redirected_to post_path(assigns(:post))
     assert_not_nil flash[:danger]
-    assert_equal before_history, after_history, 'PostHistory event incorrectly created on deletion'
+    assert_equal before_history, after_history, 'Expected no PostHistory events to be created'
+  end
+
+  test 'no one but staff should be able to restore posts deleted by staff' do
+    deleted_by_staff = posts(:deleted_staff)
+
+    sign_in users(:deleter)
+
+    before_history = PostHistory.where(post: deleted_by_staff).count
+    post :restore, params: { id: deleted_by_staff.id }
+    after_history = PostHistory.where(post: deleted_by_staff).count
+
+    assert_response(:found)
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil flash[:danger]
+    assert_equal before_history, after_history, 'Expected no PostHistory events to be created'
   end
 
   test 'cannot restore a restored post' do

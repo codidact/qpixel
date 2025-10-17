@@ -130,6 +130,26 @@ deleted_mod:
   upvote_count: 0
   downvote_count: 0
 
+deleted_staff:
+  post_type: question
+  title: Q4DS - This question is deleted by a staff member
+  body: Q4DS - This question is in category main, posted by standard_user. It has been deleted by a staff member.
+  body_markdown: Q4DS - This question is in category main, posted by standard_user. It has been deleted by a staff member.
+  tags_cache:
+    - support
+  tags:
+    - support
+  score: 0.5
+  user: standard_user
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: staff
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 closed:
   post_type: question
   title: Q4C - This question is closed
