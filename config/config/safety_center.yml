@@ -1,3 +1,10 @@
+##
+# Safety Center definitions
+# =========================
+# It is generally fine to _add_ items to these lists, but the default items that are already here should NOT be
+# removed or altered - they are hard-coded in various places, usually by key.
+##
+
 statuses:
   new:
     name: New
@@ -81,6 +88,10 @@ report_types:
     name: Classification Appeal
     description: an appeal regarding how we've handled your content
 
+# This list is sourced from Ofcom's list of the 17 types of priority illegal content, which is in turn sourced from
+# Schedules 5-7 of the Online Safety Act.
+# https://www.ofcom.org.uk/siteassets/resources/documents/online-safety/information-for-industry/illegal-harms/risk-assessment-guidance-and-risk-profiles.pdf
+# https://www.legislation.gov.uk/ukpga/2023/50
 content_types:
   terrorism:
     name: Terrorism
