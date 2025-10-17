@@ -216,7 +216,7 @@ class Post < ApplicationRecord
   # @param user [User, Nil] user to check access for
   # @return [Boolean] check result
   def can_access?(user)
-    (!deleted? || user&.post_privilege?('flag_curate', self)) &&
+    (!deleted? || user&.post_privilege?('flag_curate', self) || user&.staff?) &&
       (!category.present? || !category.min_view_trust_level.present? ||
         category.min_view_trust_level <= (user&.trust_level || 0))
   end

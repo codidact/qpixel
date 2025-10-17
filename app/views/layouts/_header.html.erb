@@ -51,6 +51,12 @@
       <div class='header--separator'></div>
       <% if user_signed_in? %>
         <% unless @community.is_fake %>
+          <% if current_user&.staff? && @complaints_count > 0 %>
+            <%= link_to complaints_path, class: 'header--item', title: 'New reports' do %>
+              <span class="header--alert is-red"><%= @complaints_count %></span>
+            <% end %>
+          <% end %>
+
           <% if current_user.at_least_moderator? %>
             <%= link_to (@open_flags > 0) ? flag_queue_path : moderator_path, 
                 class: 'header--item',

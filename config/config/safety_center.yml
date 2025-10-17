@@ -1,0 +1,161 @@
+##
+# Safety Center definitions
+# =========================
+# It is generally fine to _add_ items to these lists, but the default items that are already here should NOT be
+# removed or altered - they are hard-coded in various places, usually by key.
+##
+
+statuses:
+  new:
+    name: New
+    description: This is a new report, waiting to be assigned an investigator.
+    color: red
+    icon: fas fa-envelope
+  assigned:
+    name: Assigned
+    description: This report has been assigned to a member of staff and is being investigated.
+    color: yellow
+    icon: fas fa-user-clock
+  reviewed:
+    name: Reviewed
+    description: This report has been investigated and appropriate action taken.
+    color: green
+    icon: fas fa-check-circle
+  responded:
+    name: Reporter Responded
+    description: This report has had a response from the reporter.
+    color: yellow
+    icon: fas fa-user-edit
+  closed:
+    name: Closed
+    description: This report has been closed. No further action may be taken.
+    color: tertiary
+    icon: fas fa-times-circle
+
+outcomes:
+  upheld:
+    name: Upheld
+    description: The report is upheld; the reporter's classification of the content is correct; in the case of an
+      appeal, the appeal is upheld and the action taken has been reversed.
+    user_facing:
+      illegal: &illegal_upheld
+        content: our community team agreed with your report and how you classified this content, and have taken
+          appropriate action.
+      abusive: *illegal_upheld
+      copyright: *illegal_upheld
+      appeal:
+        content: our community team agreed with your appeal and have reversed the action taken in your case.
+  actionable:
+    name: Actionable
+    description: The content is actionable but the reported classification is not correct. NOT applicable to appeals.
+    user_facing:
+      illegal: &illegal_actionable
+        content: our community team agreed that the content you reported was actionable and have taken appropriate
+          action, but have changed your classification of the content for reporting purposes.
+      abusive: *illegal_actionable
+      copyright: *illegal_actionable
+      appeal: ~
+  disputed:
+    name: Disputed
+    description: The reporter's classification is disputed; the content does not appear to be actionable; in the case of
+      an appeal, the action taken was appropriate.
+    user_facing:
+      illegal: &illegal_disputed
+        content: our community team have reviewed your report and have decided that the content you reported is not
+          actionable. This does not mean that the content cannot be removed by community moderators for breaking
+          community-specific rules, just that it does not breach our Content Policy.
+      abusive: *illegal_disputed
+      copyright: *illegal_disputed
+      appeal:
+        content: our community team have reviewed your appeal and have decided that the action taken in your case was
+          appropriate.
+
+report_types:
+  illegal:
+    enabled: true
+    name: Report of illegal content
+    description: illegal harmful content
+  abusive:
+    enabled: true
+    name: Report of abusive content
+    description: abusive or otherwise harmful content
+  copyright:
+    enabled: true
+    name: Report of copyright infringement
+    description: copyright infringement
+  appeal:
+    enabled: true
+    name: Classification Appeal
+    description: an appeal regarding how we've handled your content
+
+# This list is sourced from Ofcom's list of the 17 types of priority illegal content, which is in turn sourced from
+# Schedules 5-7 of the Online Safety Act.
+# https://www.ofcom.org.uk/siteassets/resources/documents/online-safety/information-for-industry/illegal-harms/risk-assessment-guidance-and-risk-profiles.pdf
+# https://www.legislation.gov.uk/ukpga/2023/50
+content_types:
+  terrorism:
+    name: Terrorism
+    description: Content promoting, glorifying, or encouraging terrorism.
+  grooming:
+    name: Grooming
+    description: Content which appears to be for the purpose of grooming a child for the purposes of sexual exploitation
+      or abuse.
+  image_csam:
+    name: Image-based child sexual abuse material
+    description: Images which depict or encourage child sexual exploitation or abuse.
+  csam_urls:
+    name: Child sexual abuse material URLs
+    description: Content which links to child sexual abuse material.
+  hate:
+    name: Hate
+    description: Content which appears to amount to hate speech - abuse relating to a protected characteristic like 
+      race or sexual orientation.
+  harassment:
+    name: Harassment, stalking, threats, or abuse
+    description: Content which appears to be harassing or threatening another user, or which appears to be part of a
+      course of action in stalking another user.
+  ccb:
+    name: Controlling or coercive behaviour
+    description: Content posted for the purpose of controlling another user or which may an attempt to coerce another
+      user.
+  intimate_images:
+    name: Intimate image abuse
+    description: Intimate images which appear to have been posted without the consent of their subject. Commonly known
+      as "revenge porn".
+  extreme_pornography:
+    name: Extreme pornography
+    description: Content, including images, which is pornographic in nature and which may depict an illegal sexual act.
+  sea:
+    name: Sexual exploitation of adults
+    description: Content offering or promoting sexual services involving adult participants who are non-consenting or
+      being controlled by someone else.
+  human_trafficking:
+    name: Human trafficking
+    description: Content which promotes or offers services related to human trafficking.
+  unlawful_immigration:
+    name: Unlawful immigration
+    description: Content which promotes or offers services related to unlawful immigration.
+  fraud:
+    name: Fraud & illegal financial services
+    description: Content which appears to be fraudulent in nature, or which offers or promotes illegal financial
+      services.
+  proceeds_crime:
+    name: Proceeds of crime
+    description: Content which relates to the posession or concealment of the proceeds of criminal activity.
+  drugs:
+    name: Drugs & psychoactive substances
+    description: Content which relates to the possession or use of illegal drugs or psychoactive substances.
+  weapons:
+    name: Firearms, knives, & other weapons
+    description: Content which relates to the possession or use of illegal firearms, knives, or other weapons.
+  suicide:
+    name: Encouraging or assisting suicide
+    description: Content which glorifies or promotes suicide or attempted suicide, or which appears to be an attempt to
+      encourage another user to commit or attempt suicide.
+  foreign_interference:
+    name: Foreign interference
+    description: Content which appears to be posted on behalf of a hostile foreign power with the intent to disrupt or
+      interfere with society.
+  animal_cruelty:
+    name: Animal cruelty
+    description: Content which glorifies or promotes animal cruelty, or which depicts acts of animal cruelty.

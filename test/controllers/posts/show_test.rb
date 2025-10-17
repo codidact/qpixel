@@ -49,4 +49,12 @@ class PostsControllerTest < ActionController::TestCase
     get :show, params: { id: posts(:high_trust).id }
     assert_response(:not_found)
   end
+
+  test 'staff can see deleted post' do
+    sign_in users(:staff)
+    get :show, params: { id: posts(:deleted).id }
+    assert_response(:success)
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:children)
+  end
 end

@@ -162,6 +162,7 @@ Rails.application.routes.draw do
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
+    delete ':id/legal-delete',             to: 'posts#legal_delete', as: :legal_delete_post
 
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
@@ -372,6 +373,19 @@ Rails.application.routes.draw do
 
   scope 'emails' do
     post   'log', to: 'email_logs#log', as: :create_email_log
+  end
+
+  scope 'safety' do
+    root                                   to: 'complaints#index', as: :safety_center
+    get    'report',                       to: 'complaints#report', as: :new_complaint
+    post   'report',                       to: 'complaints#create', as: :create_complaint
+    get    'report/:token',                to: 'complaints#show', as: :complaint
+    post   'report/:token/comment',        to: 'complaints#comment', as: :create_complaint_comment
+    post   'report/:token/assign',         to: 'complaints#self_assign', as: :complaint_self_assign
+    post   'report/:token/status',         to: 'complaints#update_status', as: :update_complaint_status
+    post   'report/:token/content_type',   to: 'complaints#change_content_type', as: :update_complaint_content_type
+    get    'reports',                      to: 'complaints#reports', as: :complaints
+    get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
   end
 
   get   '403',                             to: 'errors#forbidden'

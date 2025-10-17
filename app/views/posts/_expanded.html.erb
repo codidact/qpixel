@@ -181,7 +181,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <% if current_user&.can_handle_flags? %>
+            <% if current_user&.can_handle_flags? || current_user&.staff? %>
               <a href="javascript:void(0)"
                  data-modal="#mod-tools-<%= post.id %>"
                  class="tools--item"
@@ -283,7 +283,7 @@
   </div>
 </div>
 
-<% if at_least_moderator? || current_user&.post_privilege?('flag_curate', post) %>
+<% if at_least_moderator? || current_user&.post_privilege?('flag_curate', post) || current_user&.staff? %>
   <%= render 'posts/post_tools', post: post %>
 <% end %>
 
