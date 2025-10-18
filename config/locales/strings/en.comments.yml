@@ -31,8 +31,12 @@ en:
         Something went wrong when trying to undelete the comment.
       rename_thread_generic: >
         Failed to rename the thread.
+      no_rename_thread_to_current_title: >
+        Cannot rename a thread to its current title.
       title_presence: >
         can't be empty after Markdown is removed.
+      comment_not_posted: >
+        Failed to create comment.
     labels:
       create_new_thread: >
         Start new comment thread

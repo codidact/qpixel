@@ -26,6 +26,7 @@ class CommentsController < ApplicationController
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :post_follow]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  before_action :verify_moderator, only: [:thread_followers]
 
   def create_thread
     title = params[:title]
@@ -203,8 +204,6 @@ class CommentsController < ApplicationController
   end
 
   def thread_followers
-    return not_found! unless current_user&.at_least_moderator?
-
     @followers = ThreadFollower.where(comment_thread: @comment_thread).joins(:user, user: :community_user)
                                .includes(:user, user: [:community_user, :avatar_attachment])
     respond_to do |format|
@@ -220,11 +219,35 @@ class CommentsController < ApplicationController
       return
     end
 
+    orig_title = @comment_thread.title
     title = helpers.strip_markdown(params[:title], strip_leading_quote: true)
+
+    if orig_title == title
+      flash[:danger] = I18n.t('comments.errors.no_rename_thread_to_current_title')
+      redirect_to comment_thread_path(@comment_thread.id)
+      return
+    end
+
     status = @comment_thread.update(title: title)
+
+    if status
+      # Comment is owned by System so regular users can't delete it. Without
+      # this record, the title would be attributed to the thread creator,
+      # which can be abused.
+      log_msg = Comment.new(post: @post,
+                            content: "Thread renamed from \"#{orig_title}\" to \"#{title}\" by @##{current_user.id}",
+                            user: helpers.system_user,
+                            comment_thread: @comment_thread,
+                            has_reference: false)
+      comment_status = log_msg.save
+    end
 
     unless status
       flash[:danger] = I18n.t('comments.errors.rename_thread_generic')
+    end
+
+    unless comment_status
+      flash[:danger] = I18n.t('comments.errors.comment_not_posted')
     end
 
     redirect_to comment_thread_path(@comment_thread.id)

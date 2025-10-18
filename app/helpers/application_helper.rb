@@ -336,6 +336,12 @@ module ApplicationHelper
     @current_user
   end
 
+  # Gets the special System user
+  # @return [User, nil]
+  def system_user
+    User.find(-1)
+  end
+
   ##
   # Is there a user signed in on this request?
   # @return [Boolean]

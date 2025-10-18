@@ -8,7 +8,7 @@ class SendSummaryEmailsJobTest < ActiveJob::TestCase
       SendSummaryEmailsJob.perform_later
     end
 
-    assert_performed_jobs(2)
+    assert_performed_jobs(3)
 
     delivered = SummaryMailer.deliveries.first
 
