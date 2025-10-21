@@ -3,6 +3,7 @@ class NotificationsController < ApplicationController
   include CommentsHelper
 
   before_action :authenticate_user!, only: [:index]
+  before_action :set_notification, only: [:read]
   before_action :set_sorting, only: [:index]
 
   def index
@@ -30,8 +31,6 @@ class NotificationsController < ApplicationController
   end
 
   def read
-    @notification = Notification.unscoped.find params[:id]
-
     unless @notification.user == current_user
       respond_to do |format|
         format.html { render template: 'errors/forbidden', status: :forbidden }
@@ -82,6 +81,10 @@ class NotificationsController < ApplicationController
   end
 
   private
+
+  def set_notification
+    @notification = Notification.unscoped.find(params[:id])
+  end
 
   def set_sorting
     sort_orders = { asc: :asc, desc: :desc }
