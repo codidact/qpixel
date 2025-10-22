@@ -9,14 +9,11 @@
 
 <%
   is_same_user = @user.same_as?(current_user)
+  title_prefix = is_same_user ? 'My Flag History' : 'Flag History for'
   translation_key = is_same_user ? 'history_self' : 'history_other'
 %>
 
-<% if is_same_user %>
-  <h1> My Flag History </h1>
-<% else %>
-  <h1> Flag History for <%= user_link(@user) %> </h1>
-<% end %>
+<h1><%= title_prefix %> <%= user_link(@user) unless is_same_user %></h1>
 <p><%= t("flags.descriptions.#{translation_key}") %></p>
 
 <h3>
