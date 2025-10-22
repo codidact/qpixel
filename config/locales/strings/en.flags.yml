@@ -2,8 +2,8 @@ en:
   flags:
     descriptions:
       history_other: >
-        Below is a list of all the flags that the user have cast,
-        the outcome of each them, and handling moderators' feedback, if any.
+        Below is a list of all the flags this user has cast,
+        the outcome of each of them, and handling moderators' feedback, if any.
       history_self: >
         Below is a list of all the flags you have cast and the outcome of each of them.
         Moderators handling your flags may also have left you feedback.
