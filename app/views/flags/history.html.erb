@@ -9,11 +9,14 @@
 
 <%
   is_same_user = @user.same_as?(current_user)
-  title_pfx = is_same_user ? 'My' : "#{@user.rtl_safe_username}'s"
   translation_key = is_same_user ? 'history_self' : 'history_other'
 %>
 
-<h1><%= title_pfx %> Flag History</h1>
+<% if is_same_user %>
+  <h1> My Flag History </h1>
+<% else %>
+  <h1> Flag History for <%= user_link(@user) %> </h1>
+<% end %>
 <p><%= t("flags.descriptions.#{translation_key}") %></p>
 
 <h3>
