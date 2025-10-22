@@ -7,8 +7,7 @@ en:
         My Flag History
     descriptions:
       history_other: >
-        Below is a list of all the flags this user has cast,
-        the outcome of each of them, and handling moderators' feedback, if any.
+        Below is a list of all the flags this user has cast with their outcomes and any moderator feedback.
       history_self: >
         Below is a list of all the flags you have cast and the outcome of each of them.
         Moderators handling your flags may also have left you feedback.
