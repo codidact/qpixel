@@ -1,5 +1,15 @@
 en:
   flags:
+    headers:
+      history_other_prefix: >
+        Flag History for
+      history_self_prefix: >
+        My Flag History
+    descriptions:
+      history_other: >
+        Below is a list of all the flags this user has cast with their outcomes and any moderator feedback.
+      history_self: >
+        Below is a list of all the flags you have cast with their outcomes and any moderator feedback.
     errors:
       create_generic: >
         Failed to raise the flag.
