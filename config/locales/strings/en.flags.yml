@@ -9,8 +9,7 @@ en:
       history_other: >
         Below is a list of all the flags this user has cast with their outcomes and any moderator feedback.
       history_self: >
-        Below is a list of all the flags you have cast and the outcome of each of them.
-        Moderators handling your flags may also have left you feedback.
+        Below is a list of all the flags you have cast with their outcomes and any moderator feedback.
     errors:
       create_generic: >
         Failed to raise the flag.
