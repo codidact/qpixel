@@ -9,12 +9,12 @@
 
 <%
   is_same_user = @user.same_as?(current_user)
-  title_prefix = is_same_user ? 'My Flag History' : 'Flag History for'
-  translation_key = is_same_user ? 'history_self' : 'history_other'
+  title_key = "history_#{is_same_user ? 'self' : 'other'}_prefix"
+  description_key = "history_#{is_same_user ? 'self' : 'other'}"
 %>
 
-<h1><%= title_prefix %> <%= user_link(@user) unless is_same_user %></h1>
-<p><%= t("flags.descriptions.#{translation_key}") %></p>
+<h1><%= t("flags.headers.#{title_key}") %> <%= user_link(@user) unless is_same_user %></h1>
+<p><%= t("flags.descriptions.#{description_key}") %></p>
 
 <h3>
   <%= pluralize(@flags.count, 'flag') %>

@@ -1,5 +1,10 @@
 en:
   flags:
+    headers:
+      history_other_prefix: >
+        Flag History for
+      history_self_prefix: >
+        My Flag History
     descriptions:
       history_other: >
         Below is a list of all the flags this user has cast,
