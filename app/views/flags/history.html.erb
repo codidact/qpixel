@@ -1,8 +1,20 @@
-<h1>Flag History</h1>
-<p>
-  Below is a list of all the flags you have cast and the outcome of each of them. Moderators handling your flags may also
-  have left you feedback.
-</p>
+<%#
+   "User's flag history view
+
+    Instance variables:
+      @flags    : ActiveRecord::Relation<Flag> collection of user's flags to display
+      @statuses : Hash{String => Integer} flag counts grouped by status
+      @user     : User to display flag history for
+"%>
+
+<%
+  is_same_user = @user.same_as?(current_user)
+  title_pfx = is_same_user ? 'My' : "#{@user.rtl_safe_username}'s"
+  translation_key = is_same_user ? 'history_self' : 'history_other'
+%>
+
+<h1><%= title_pfx %> Flag History</h1>
+<p><%= t("flags.descriptions.#{translation_key}") %></p>
 
 <h3>
   <%= pluralize(@flags.count, 'flag') %>
