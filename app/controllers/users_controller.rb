@@ -94,7 +94,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # Helper method to convert it to the form expected by the client
+  # Converts a given filter to JSON
+  # @param filter {Filter} filter to convert
+  # @return {Hash}
   def filter_json(filter)
     {
       min_score: filter.min_score,
