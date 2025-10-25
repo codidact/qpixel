@@ -565,6 +565,19 @@ class UsersControllerTest < ActionController::TestCase
     assert_json_success
   end
 
+  test 'filters should only return system filters for anonymous users' do
+    try_filters
+
+    assert_response(:success)
+    assert_valid_json_response
+
+    parsed = JSON.parse(response.body)
+    assert parsed.any?
+    parsed.each do |name, filter|
+      assert filter['system'], "'#{name}' is not a system filter"
+    end
+  end
+
   private
 
   def create_other_user
@@ -573,6 +586,12 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_filters
+    get :filters, params: {
+      format: :json
+    }
   end
 
   def try_default_filter(category)
