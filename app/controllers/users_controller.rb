@@ -109,16 +109,19 @@ class UsersController < ApplicationController
     }
   end
 
-  def filters_json
-    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
+  # Gets system filters as JSON
+  # @return [Hash{String => Hash}]
+  def system_filters_json
+    Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
       system_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
+  end
 
+  def filters_json
     if user_signed_in?
-      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
-                  .merge(system_filters)
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }.merge(system_filters_json)
     else
-      system_filters
+      system_filters_json
     end
   end
 
