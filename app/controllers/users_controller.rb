@@ -107,7 +107,7 @@ class UsersController < ApplicationController
       exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
       source: filter.source,
       status: filter.status,
-      system: filter.user_id == -1
+      system: filter.system?
     }
   end
 

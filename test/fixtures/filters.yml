@@ -17,3 +17,8 @@ two:
   min_answers: 1
   max_answers: 1
   status: MyString
+
+system:
+  name: System filter
+  user: system
+  status: open
