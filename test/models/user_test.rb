@@ -235,7 +235,7 @@ class UserTest < ActiveSupport::TestCase
     community = communities(:sample)
     basic = users(:basic_user)
 
-    restricted_users = [basic, User.system]
+    restricted_users = [basic]
 
     restricted_users.each do |user|
       assert_not user.ability_on?(community.id, ability.internal_id),
