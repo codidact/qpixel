@@ -102,7 +102,7 @@ $(() => {
 
       if (isHelp) {
         _CodidactKeyboard.dialog(
-          'Codidact Keyboard Shortcuts\n' +
+          'Keyboard Shortcuts\n' +
           '===========================\n' +
           '?   Open this help\n' +
           'esc Close this help\n' +
