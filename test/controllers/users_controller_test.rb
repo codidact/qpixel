@@ -69,6 +69,17 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
+  test 'should soft-delete user profile' do
+    sign_in users(:global_admin)
+
+    try_soft_delete_user('profile', users(:standard_user))
+    @user = assigns(:user)
+
+    assert_response(:success)
+    assert_not_nil @user
+    assert @user.community_user.deleted
+  end
+
   test 'should soft-delete user' do
     sign_in users(:global_admin)
 
@@ -76,7 +87,7 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_response(:success)
     assert_not_nil assigns(:user)
-    assert_equal true, assigns(:user).deleted
+    assert assigns(:user).deleted
   end
 
   test 'only global moderators or admins should be able to soft-delete users' do

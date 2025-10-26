@@ -321,9 +321,7 @@ class UsersController < ApplicationController
 
     case params[:type]
     when 'profile'
-      AuditLog.moderator_audit(event_type: 'profile_delete', related: @user.community_user, user: current_user,
-                               comment: @user.community_user.attributes_print(join: "\n"))
-      @user.community_user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now)
+      @user.community_user.soft_delete(current_user)
     when 'user'
       unless current_user.at_least_global_moderator?
         render json: { status: 'failed', message: 'Non-global moderator cannot perform global deletion.' },
