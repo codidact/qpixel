@@ -15,7 +15,7 @@ class AdminMailer < ApplicationMailer
     from = "#{SiteSetting['ModeratorDistributionListSenderName', community: @community]} " \
            "<#{SiteSetting['ModeratorDistributionListSenderEmail', community: @community]}>"
     to = SiteSetting['ModeratorDistributionListSenderEmail', community: @community]
-    mail subject: "Codidact Moderators: #{@subject}", to: to, from: from, bcc: emails
+    mail subject: "#{SiteSetting['NetworkName']} Moderators: #{@subject}", to: to, from: from, bcc: emails
   end
 
   def to_all_users

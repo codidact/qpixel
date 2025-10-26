@@ -10,7 +10,7 @@ class SummaryMailer < ApplicationMailer
     @users = params[:users]
 
     mail(from: "#{SiteSetting['NoReplySenderName']} <#{SiteSetting['NoReplySenderEmail']}>",
-         subject: 'Codidact Content Summary',
+         subject: "#{SiteSetting['NetworkName']} Content Summary",
          to: params[:to])
   end
 end
