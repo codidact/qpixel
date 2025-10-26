@@ -1,9 +1,9 @@
 <% if @name.nil? %>
-Your donation is unfinished
----------------------------
+  Your donation is unfinished
+  ---------------------------
 <% else %>
-Your donation is unfinished, <%= @name %>
------------------------------<%= '-' * @name.size %>
+  Your donation is unfinished, <%= @name %>
+  -----------------------------<%= '-' * @name.size %>
 <% end %>
 
 You started the process to make a donation of <%= number_to_currency(@amount, unit: @symbol) %>, but left off before finishing up.
@@ -16,4 +16,4 @@ lend a hand.
 Whatever happened, thanks for thinking of us!
 
 Thanks and see you around,
-The Codidact Team
+The <%= SiteSetting['NetworkName'] %> Team

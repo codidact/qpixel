@@ -105,5 +105,8 @@
 
 <% chat = SiteSetting['ChatLink'] %>
 <% if chat.present? %>
-<p>As a moderator, you should join our <%= link_to 'community chat server', chat %>. Ping a Codidact team member there and you'll receive access to a special moderator-only lounge, where you can discuss moderation questions with your fellow moderators.</p>
+  <p>
+    As a moderator, you should join our <%= link_to 'community chat server', chat %>.
+    Ping a <%= SiteSetting['NetworkName'] %> team member there and you'll receive access to a moderator-only lounge,
+    where you can discuss moderation questions with your fellow moderators.</p>
 <% end %>
