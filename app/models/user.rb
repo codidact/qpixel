@@ -60,6 +60,12 @@ class User < ApplicationRecord
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 
+  # Gets the system user
+  # @return [User, nil]
+  def self.system
+    find_by(id: -1)
+  end
+
   # Safely gets the user's reputation even if they don't have a community user
   # @return [Integer] user's reputation
   def reputation
