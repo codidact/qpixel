@@ -476,12 +476,16 @@ class User < ApplicationRecord
     post.flags.where(user: self, status: nil)
   end
 
-  def do_soft_delete(attribute_to)
+  # Soft-deletes the user (username, password, and email are irrevocably reset!)
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
                              comment: attributes_print(join: "\n"))
+
     assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
                       username: "user#{id}", email: "#{id}@deleted.localhost",
                       password: SecureRandom.hex(32))
+
     skip_reconfirmation!
     save
   end

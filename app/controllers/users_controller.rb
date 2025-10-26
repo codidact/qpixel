@@ -331,7 +331,7 @@ class UsersController < ApplicationController
         return
       end
 
-      @user.do_soft_delete(current_user)
+      @user.soft_delete(current_user)
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
