@@ -80,8 +80,27 @@ end
 
 Dir.glob(Rails.root.join('test/support/**/*.rb')).each { |f| require f }
 
+module WebMockStubs
+  extend ActiveSupport::Concern
+
+  included do
+    setup do
+      # TODO: for now just stubbing out the whole response is enough.
+      # Consider returning something resembling the real response
+      stub_request(:get, lambda do |uri|
+        uri.origin == 'https://cdn.jsdelivr.net'
+      end)
+    end
+
+    teardown do
+      WebMock.reset!
+    end
+  end
+end
+
 class ActiveSupport::TestCase
   include ActiveJob::TestHelper
+  include WebMockStubs
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
@@ -211,6 +230,8 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
@@ -219,6 +240,8 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
@@ -227,13 +250,5 @@ class ActionDispatch::IntegrationTest
 end
 
 class ActionMailer::TestCase
-  setup do
-    stub_request(:get, lambda do |uri|
-      uri.origin == 'https://cdn.jsdelivr.net'
-    end)
-  end
-
-  teardown do
-    WebMock.reset!
-  end
+  include WebMockStubs
 end
