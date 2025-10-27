@@ -228,14 +228,12 @@ end
 
 class ActionMailer::TestCase
   setup do
-    WebMock.disable_net_connect!
     stub_request(:get, lambda do |uri|
       uri.origin == 'https://cdn.jsdelivr.net'
     end)
   end
 
   teardown do
-    WebMock.allow_net_connect!
     WebMock.reset!
   end
 end
