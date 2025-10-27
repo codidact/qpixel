@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class TwoFactorMailerTest < ActionMailer::TestCase
+  include Rails.application.routes.url_helpers
+
   test 'disable_email should correctly send emails' do
     com_usr = communities(:sample)
     std_usr = users(:standard_user)
@@ -12,10 +14,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
       email.deliver_later
     end
 
-    token_uri = Rails.application
-                     .routes
-                     .url_helpers
-                     .two_factor_disable_link_url(token: '', host: com_usr.host)
+    token_uri = two_factor_disable_link_url(token: '', host: com_usr.host)
 
     assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
@@ -34,10 +33,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
       email.deliver_later
     end
 
-    qr_uri = Rails.application
-                  .routes
-                  .url_helpers
-                  .qr_login_url(token: '', host: com_usr.host)
+    qr_uri = qr_login_url(token: '', host: com_usr.host)
 
     assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
@@ -56,10 +52,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
       email.deliver_later
     end
 
-    backup_uri = Rails.application
-                      .routes
-                      .url_helpers
-                      .two_factor_status_url(host: com_usr.host)
+    backup_uri = two_factor_status_url(host: com_usr.host)
 
     assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
