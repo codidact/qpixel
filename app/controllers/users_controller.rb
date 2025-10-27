@@ -94,7 +94,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # Helper method to convert it to the form expected by the client
+  # Converts a given filter to JSON
+  # @param filter {Filter} filter to convert
+  # @return {Hash}
   def filter_json(filter)
     {
       min_score: filter.min_score,
@@ -105,20 +107,23 @@ class UsersController < ApplicationController
       exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
       source: filter.source,
       status: filter.status,
-      system: filter.user_id == -1
+      system: filter.system?
     }
   end
 
-  def filters_json
-    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
+  # Gets system filters as JSON
+  # @return [Hash{String => Hash}]
+  def system_filters_json
+    Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
       system_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
+  end
 
+  def filters_json
     if user_signed_in?
-      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
-                  .merge(system_filters)
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }.merge(system_filters_json)
     else
-      system_filters
+      system_filters_json
     end
   end
 
