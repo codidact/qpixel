@@ -11,6 +11,8 @@ require 'minitest/ci'
 require 'minitest/mock'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
+require 'webmock/minitest'
+
 # cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)
 Minitest.after_run do
   # IMPORTANT: the order is very specific to prevent FK constraint errors without disabling them
@@ -221,5 +223,19 @@ class ActionDispatch::IntegrationTest
 
   def load_host
     integration_session.host = Community.first.host
+  end
+end
+
+class ActionMailer::TestCase
+  setup do
+    WebMock.disable_net_connect!
+    stub_request(:get, lambda do |uri|
+      uri.origin == 'https://cdn.jsdelivr.net'
+    end)
+  end
+
+  teardown do
+    WebMock.allow_net_connect!
+    WebMock.reset!
   end
 end
