@@ -116,3 +116,11 @@ sp_eo:
 sp_ur:
   community_user: sample_spammer
   ability: unrestricted
+
+profile_spammer_everyone:
+  community_user: sample_profile_spammer
+  ability: everyone
+
+profile_spammer_unrestricted:
+  community_user: sample_profile_spammer
+  ability: unrestricted

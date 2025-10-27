@@ -173,6 +173,21 @@ spammer:
   is_global_moderator: false
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
+profile_spammer:
+  email: profile-spammer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  profile: > 
+    Find the worst spam <a href="https://example.com">here</a>!
+    The yuckiest spam you've ever tasted.
+  profile_markdown: >
+    Find the best spam [here](https://example.com)!
+    The yuckiest spam you've ever tasted.
+  sign_in_count: 1
+  username: WorstProfileSpam
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 edit_scorer:
   email: edit-scorer@example.com
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
