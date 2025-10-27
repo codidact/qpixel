@@ -17,6 +17,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
                      .url_helpers
                      .two_factor_disable_link_url(token: '', host: com_usr.host)
 
+    assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
       assert_select "a[href^='#{token_uri}']"
     end
@@ -38,6 +39,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
                   .url_helpers
                   .qr_login_url(token: '', host: com_usr.host)
 
+    assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
       assert_select "a[href^='#{qr_uri}']"
     end
@@ -59,6 +61,7 @@ class TwoFactorMailerTest < ActionMailer::TestCase
                       .url_helpers
                       .two_factor_status_url(host: com_usr.host)
 
+    assert email.subject.include?(SiteSetting['NetworkName'])
     assert_select_email do
       assert_select "a[href^='#{backup_uri}']"
     end
