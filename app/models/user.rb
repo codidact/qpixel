@@ -482,15 +482,30 @@ class User < ApplicationRecord
     post.flags.where(user: self, status: nil)
   end
 
+  # Anonymizes the user (f.e., for the purpose of soft deletion)
+  # @param dirty [Boolean] if set to +false+, will persist the changes
+  def anonymize(dirty: false)
+    assign_attributes(username: "user#{id}",
+                      email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+
+    unless dirty
+      skip_reconfirmation!
+      save
+    end
+  end
+
   # Soft-deletes the user (username, password, and email are irrevocably reset!)
   # @param attribute_to [User] user to attribute the action to
   def soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
                              comment: attributes_print(join: "\n"))
 
-    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
-                      username: "user#{id}", email: "#{id}@deleted.localhost",
-                      password: SecureRandom.hex(32))
+    assign_attributes(deleted: true,
+                      deleted_by_id: attribute_to.id,
+                      deleted_at: DateTime.now)
+
+    anonymize(dirty: true)
 
     skip_reconfirmation!
     save

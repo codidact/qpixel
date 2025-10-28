@@ -314,4 +314,28 @@ class UserTest < ActiveSupport::TestCase
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
   end
+
+  test 'anonymize should correctly clean up user data' do
+    std = users(:standard_user)
+
+    anonymized_name = "user#{std.id}"
+    anonymized_email = "#{std.id}@deleted.localhost"
+
+    [true, false].each do |dirty|
+      std.anonymize(dirty: dirty)
+
+      assert_equal std.username, anonymized_name
+      assert_equal std.email, anonymized_email
+
+      std.reload
+
+      if dirty
+        assert_not_equal std.username, anonymized_name
+        assert_not_equal std.email, anonymized_email
+      else
+        assert_equal std.username, anonymized_name
+        assert_equal std.email, anonymized_email
+      end
+    end
+  end
 end
