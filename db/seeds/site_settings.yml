@@ -684,6 +684,7 @@
 - name: NetworkName
   value: Codidact
   value_type: string
+  category: SiteDetails
   community_id: ~
   description: >
     Network name to use in headers, footers, emails, and any other place as appropriate.
