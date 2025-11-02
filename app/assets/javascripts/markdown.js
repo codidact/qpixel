@@ -19,7 +19,7 @@ $(() => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
     const action = $button.attr('data-action');
-  
+
     /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
     const $field = $('.js-post-field');
 
@@ -33,7 +33,7 @@ $(() => {
       heading: ['\n# ', null],
       hr: ['\n\n-----\n\n', null],
       table: ['\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n', null],
-      mathjax: ['$', '$']
+      mathjax: ['$', '$'],
     };
 
     if (Object.keys(actions).indexOf(action) !== -1) {
@@ -58,7 +58,7 @@ $(() => {
         case 66:
           $('[data-action="bold"]').click();
           break;
-        
+
         case 73:
           $('[data-action="italic"]').click();
           break;
@@ -123,12 +123,13 @@ $(() => {
   });
 
   QPixel.addPrePostValidation((text) => {
-    // This regex catches Markdown images with no or default alt text.
-    const altRegex = /!\[(?:Image_alt_text)?\](?:\(.+(?!\\\))\)|\[.+(?!\\\])\])/gi;
+    // catch Markdown images with no or default alt text: https://regex101.com/r/ubcVn4/2
+    const altRegex = /!\[(?:Image_alt_text)?\](?:\([^\)]+?\)|\[.+(?!\\\])\])/gi;
     if (text.match(altRegex)) {
-      const message = `It looks like you're posting an image with no alt text. Alt text is important for ` +
-                      `accessibility. Consider adding alt text to the images in your post - ` +
-                      `<a href="/help/alt-text">read this help article</a> for details and help writing alt text.`;
+      const message =
+        `It looks like you're posting an image with no alt text. Alt text is important for ` +
+        `accessibility. Consider adding alt text to the images in your post - ` +
+        `<a href="/help/alt-text">read this help article</a> for details and help writing alt text.`;
       return [false, [{ type: 'warning', message }]];
     }
     else {
