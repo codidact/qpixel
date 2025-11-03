@@ -69,15 +69,19 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
-  test 'should soft-delete user profile' do
-    sign_in users(:global_admin)
+  test 'moderators and higher should be able to delete user profiles' do
+    std_usr = users(:standard_user)
 
-    try_soft_delete_user('profile', users(:standard_user))
-    @user = assigns(:user)
+    users.select(&:at_least_moderator?).each do |user|
+      sign_in(user)
 
-    assert_response(:success)
-    assert_not_nil @user
-    assert @user.community_user.deleted
+      try_soft_delete_user('profile', std_usr)
+      @user = assigns(:user)
+
+      assert_response(:success)
+      assert_not_nil @user
+      assert @user.community_user.deleted
+    end
   end
 
   test 'should soft-delete user' do
