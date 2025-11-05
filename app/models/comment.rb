@@ -42,7 +42,7 @@ class Comment < ApplicationRecord
   end
 
   def pings
-    pingable = thread.pingable
+    pingable = comment_thread.pingable
     matches = content.scan(USER_PING_REG_EXP)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
