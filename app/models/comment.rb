@@ -4,7 +4,7 @@ class Comment < ApplicationRecord
   include SoftDeletable
   include Timestamped
 
-  USER_PING_REG_EXP = /@#(\d+)/
+  USER_PING_REG_EXP = /@#(-?\d+)/
 
   scope :by, ->(user) { where(user: user) }
 
