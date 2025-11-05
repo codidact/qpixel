@@ -33,4 +33,14 @@ class CommentTest < ActiveSupport::TestCase
       assert_not Comment::USER_PING_REG_EXP.match?(mention)
     end
   end
+
+  test 'pings should correctly' do
+    std_user = users(:standard_user)
+    with_pings = comments(:with_user_pings)
+
+    pings = with_pings.pings
+
+    assert pings.include?(std_user.id)
+    assert_not pings.include?(User.system.id)
+  end
 end
