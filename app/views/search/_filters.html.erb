@@ -3,6 +3,8 @@
 <% @active_filter ||= {} %>
 
 <div class="form-group">
+  <input name="sort" type="hidden" value="<%= params[:sort] || '' %>" />
+
   <div class="form-group-horizontal">
     <div class="form-group">
       <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
