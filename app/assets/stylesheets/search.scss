@@ -4,6 +4,26 @@
   border-top: 1px solid $muted-graphic;
 }
 
+.search-filters-filter {
+  .select2-container {
+    height: 35px;
+    margin: 2px 0;
+
+    .selection {
+      .select2-selection {
+        border-color: $muted-graphic;
+        height: 100%;
+        padding: 4px 0;
+      }
+
+      .select2-selection__arrow {
+        top: 50%;
+        translate: 0 -50%;
+      }
+    }
+  }
+}
+
 .search-filters-constraints {
   display: grid;
   column-gap: 0.5em;

@@ -5,7 +5,7 @@
 <div class="form-group">
   <input name="sort" type="hidden" value="<%= params[:sort] || '' %>" />
 
-  <div class="form-group-horizontal">
+  <div class="form-group-horizontal search-filters-filter">
     <div class="form-group">
       <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
       <%= select_tag :predefined_filter, options_for_select([@active_filter[:name]],
