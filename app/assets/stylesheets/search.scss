@@ -5,6 +5,16 @@
 }
 
 .search-filters-filter {
+  align-items: end;
+  display: grid;
+  gap: 1.25em;
+  grid-template-columns: auto max-content;
+
+  margin: {
+    top: 0;
+    bottom: 1em;
+  }
+
   .select2-container {
     height: 35px;
     margin: 2px 0;
@@ -22,6 +32,26 @@
       }
     }
   }
+
+  @media screen and (max-width: $screen-md) {
+    gap: 0.5em;
+  }
+
+  @media screen and (min-width: $screen-md) {
+    margin: {
+      left: 0.5em;
+      right: 0.5em;
+    }
+  }
+
+  @media screen and (max-width: $screen-sm) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.search-filters-filter-actions {
+  display: flex;
+  gap: 0.5em;
 }
 
 .search-filters-constraints {

@@ -5,24 +5,26 @@
 <div class="form-group">
   <input name="sort" type="hidden" value="<%= params[:sort] || '' %>" />
 
-  <div class="form-group-horizontal search-filters-filter">
-    <div class="form-group">
+  <div class="search-filters-filter">
+    <div>
       <%= label_tag :predefined_filter, 'Predefined Filters', class: "form-element" %>
       <%= select_tag :predefined_filter, options_for_select([@active_filter[:name]],
                                                             selected: @active_filter[:name]),
           include_blank: true, class: "form-element js-filter-select", id: nil,
           data: { placeholder: "" } %>
     </div>
-    <button type="button" class="filter-clear button is-medium is-danger">Clear</button>
-    <% if allow_apply %>
-      <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
-    <% end %>
-    <% if user_signed_in? %>
-      <button type="button" class="filter-save button is-medium is-filled">Save</button>
-    <% end %>
-    <% if allow_delete %>
-      <button type="button" class="filter-delete button is-medium is-filled is-danger has-margin-left-2">Delete</button>
-    <% end %>
+    <div class="search-filters-filter-actions">
+      <button type="button" class="filter-clear button is-medium is-danger">Clear</button>
+      <% if allow_apply %>
+        <%= submit_tag 'Apply', class: 'button is-medium is-outlined', name: nil %>
+      <% end %>
+      <% if user_signed_in? %>
+        <button type="button" class="filter-save button is-medium is-filled">Save</button>
+      <% end %>
+      <% if allow_delete %>
+        <button type="button" class="filter-delete button is-medium is-filled is-danger has-margin-left-2">Delete</button>
+      <% end %>
+    </div>
   </div>
   <% if user_signed_in? && defined? @category %>
     <%= label_tag :save_as_default, 'Is default for this category?' %>
