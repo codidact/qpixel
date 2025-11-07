@@ -87,7 +87,7 @@
   <div>
     <a href="/help/scoring">How scores are computed</a>
   </div>
-  <div class="form-group-horizontal">
+  <div class="form-group-horizontal search-filters-tags">
     <div class="form-group">
       <%= label_tag :include_tags, 'Include Tags', class: "form-element" %>
       <%= select_tag :include_tags, options_for_select(Tag.where(id: @active_filter[:include_tags]).map { |tag| [tag.name, tag.id] },
