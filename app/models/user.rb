@@ -483,13 +483,13 @@ class User < ApplicationRecord
   end
 
   # Anonymizes the user (f.e., for the purpose of soft deletion)
-  # @param dirty [Boolean] if set to +false+, will persist the changes
-  def anonymize(dirty: false)
+  # @param persist_changes [Boolean] if set to +false+, will persist the changes
+  def anonymize(persist_changes: false)
     assign_attributes(username: "user#{id}",
                       email: "#{id}@deleted.localhost",
                       password: SecureRandom.hex(32))
 
-    unless dirty
+    unless persist_changes
       skip_reconfirmation!
       save
     end
@@ -505,7 +505,7 @@ class User < ApplicationRecord
                       deleted_by_id: attribute_to.id,
                       deleted_at: DateTime.now)
 
-    anonymize(dirty: true)
+    anonymize(persist_changes: true)
 
     skip_reconfirmation!
     save
