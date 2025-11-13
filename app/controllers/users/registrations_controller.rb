@@ -46,7 +46,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     else
       UserMailer.with(user: @user, host: RequestContext.community.host, community: RequestContext.community)
                 .deletion_confirmation.deliver_later
-      @user.do_soft_delete(@user)
+      @user.soft_delete(@user)
       flash[:info] = 'Sorry to see you go!'
       redirect_to root_path
     end

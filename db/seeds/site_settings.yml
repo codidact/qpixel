@@ -681,6 +681,22 @@
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
 
+- name: NetworkName
+  value: Codidact
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network name to use in headers, footers, emails, and any other place as appropriate.
+
+- name: NetworkURL
+  value: https://codidact.com/
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network URL to use in headers, footers, emails, and any other place as appropriate.
+
 - name: NetworkPitch
   value: $FILE site_settings/widgets_network_pitch.html
   value_type: text

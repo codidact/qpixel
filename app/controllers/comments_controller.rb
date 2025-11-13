@@ -457,7 +457,7 @@ class CommentsController < ApplicationController
   # @return [Array<Integer>] list of pinged user ids
   def check_for_pings(thread, content)
     pingable = thread.pingable
-    matches = content.scan(/@#(\d+)/)
+    matches = content.scan(Comment::USER_PING_REG_EXP)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 

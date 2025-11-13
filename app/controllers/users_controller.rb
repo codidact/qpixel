@@ -326,17 +326,15 @@ class UsersController < ApplicationController
 
     case params[:type]
     when 'profile'
-      AuditLog.moderator_audit(event_type: 'profile_delete', related: @user.community_user, user: current_user,
-                               comment: @user.community_user.attributes_print(join: "\n"))
-      @user.community_user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now)
+      @user.community_user.soft_delete(current_user)
     when 'user'
-      unless current_user.is_global_moderator || current_user.is_global_admin
+      unless current_user.at_least_global_moderator?
         render json: { status: 'failed', message: 'Non-global moderator cannot perform global deletion.' },
-               status: 403
+               status: :forbidden
         return
       end
 
-      @user.do_soft_delete(current_user)
+      @user.soft_delete(current_user)
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return

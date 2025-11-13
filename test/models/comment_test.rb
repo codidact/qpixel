@@ -19,4 +19,28 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal posts(:question_one).id, comments(:one).root.id
     assert_equal posts(:question_one).id, comments(:on_answer).root.id
   end
+
+  test 'USER_PING_REG_EXP should correctly match user mentions' do
+    valid_mentions = ["@##{User.system.id}", "@##{users(:standard_user).id}"]
+
+    valid_mentions.each do |mention|
+      assert Comment::USER_PING_REG_EXP.match?(mention)
+    end
+
+    invalid_mentions = ['', '@', '@#', '@#system', "@##{users(:standard_user).name}"]
+
+    invalid_mentions.each do |mention|
+      assert_not Comment::USER_PING_REG_EXP.match?(mention)
+    end
+  end
+
+  test 'pings should correctly' do
+    std_user = users(:standard_user)
+    with_pings = comments(:with_user_pings)
+
+    pings = with_pings.pings
+
+    assert pings.include?(std_user.id)
+    assert_not pings.include?(User.system.id)
+  end
 end

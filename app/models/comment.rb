@@ -4,6 +4,8 @@ class Comment < ApplicationRecord
   include SoftDeletable
   include Timestamped
 
+  USER_PING_REG_EXP = /@#(-?\d+)/
+
   scope :by, ->(user) { where(user: user) }
 
   belongs_to :user
@@ -40,8 +42,8 @@ class Comment < ApplicationRecord
   end
 
   def pings
-    pingable = thread.pingable
-    matches = content.scan(/@#(\d+)/)
+    pingable = comment_thread.pingable
+    matches = content.scan(USER_PING_REG_EXP)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 

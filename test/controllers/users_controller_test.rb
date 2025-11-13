@@ -69,26 +69,67 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
+  test 'moderators and higher should be able to delete user profiles' do
+    std_usr = users(:standard_user)
+
+    users.select(&:at_least_moderator?).each do |user|
+      sign_in(user)
+
+      try_soft_delete_user('profile', std_usr)
+      @user = assigns(:user)
+
+      assert_response(:success)
+      assert_not_nil @user
+      assert @user.community_user.deleted
+    end
+  end
+
   test 'should soft-delete user' do
     sign_in users(:global_admin)
-    delete :soft_delete, params: { id: users(:standard_user).id, type: 'user' }
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:success)
     assert_not_nil assigns(:user)
-    assert_equal true, assigns(:user).deleted
+    assert assigns(:user).deleted
+  end
+
+  test 'only global moderators or admins should be able to soft-delete users' do
+    std_usr = users(:standard_user)
+
+    ([nil] + users).each do |user|
+      if user.present?
+        sign_in(user)
+      end
+
+      try_soft_delete_user('user', std_usr)
+
+      if user&.at_least_global_moderator?
+        assert_json_success
+      elsif user&.at_least_moderator?
+        assert_json_failure(:forbidden)
+      else
+        assert_json_failure(:not_found)
+      end
+    end
   end
 
   test 'should require authentication to soft-delete user' do
     sign_out :user
-    delete :soft_delete, params: { id: users(:standard_user).id, transfer: users(:editor).id }
-    assert_nil assigns(:user)
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:not_found)
+    assert_nil assigns(:user)
   end
 
   test 'should require admin status to soft-delete user' do
     sign_in users(:standard_user)
-    delete :soft_delete, params: { id: users(:standard_user).id, transfer: users(:editor).id }
-    assert_nil assigns(:user)
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:not_found)
+    assert_nil assigns(:user)
   end
 
   test 'should require authentication to get edit profile page' do
@@ -604,6 +645,14 @@ class UsersControllerTest < ActionController::TestCase
   def try_save_filter(**opts)
     filter = { name: 'test filter' }.merge(opts)
     post :set_filter, params: filter.merge({ format: :json })
+  end
+
+  # @param type [String] deletion type (user or profile)
+  # @param user [User] user to soft delete
+  def try_soft_delete_user(type, user)
+    delete :soft_delete, params: { id: user.id,
+                                   type: type,
+                                   format: :json }
   end
 
   def try_save_preference(name, value, community: nil)

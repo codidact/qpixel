@@ -339,7 +339,7 @@ module ApplicationHelper
   # Gets the special System user
   # @return [User, nil]
   def system_user
-    User.find(-1)
+    User.system
   end
 
   ##

@@ -113,6 +113,13 @@ sample_spammer:
   is_moderator: false
   reputation: 1
 
+sample_profile_spammer:
+  user: profile_spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
 sample_edit_scorer:
   user: edit_scorer
   community: sample
