@@ -4,8 +4,10 @@ require 'net/http'
 class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
-  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect,
+                                            :transfer_se_content, :qr_login_code,
+                                            :me, :my_network, :my_vote_summary,
+                                            :preferences, :set_preference,
                                             :disconnect_sso, :confirm_disconnect_sso]
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
