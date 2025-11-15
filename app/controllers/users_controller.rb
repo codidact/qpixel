@@ -9,6 +9,9 @@ class UsersController < ApplicationController
                                             :me, :my_network, :my_vote_summary,
                                             :preferences, :set_preference,
                                             :disconnect_sso, :confirm_disconnect_sso]
+
+  before_action :authenticate_user!, only: [:filters], if: [:html_request?]
+
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
