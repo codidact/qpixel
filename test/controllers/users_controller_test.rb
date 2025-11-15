@@ -300,7 +300,22 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
-  test 'my_network should redirect to current user network profile or to sign in otherwise' do
+  test 'my_activity should redirect to user activity or to sign in for anonymous access' do
+    users.each do |user|
+      sign_in user
+      get :my_activity
+
+      if user.deleted? || user.community_user.deleted?
+        assert_redirected_to_sign_in
+      else
+        assert_redirected_to user_activity_path(user), "user #{user.name} is incorrectly redirected"
+      end
+
+      sign_out :user
+    end
+  end
+
+  test 'my_network should redirect to user network profile or to sign in for anonymous access' do
     users.each do |user|
       sign_in user
       get :my_network
@@ -315,7 +330,7 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  test 'my_vote_summary should redirect to current user summary or to sign in otherwise' do
+  test 'my_vote_summary should redirect to user summary or to sign in for anonymous access' do
     users.each do |user|
       sign_in user
       get :my_vote_summary
