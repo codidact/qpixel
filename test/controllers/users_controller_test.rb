@@ -300,29 +300,19 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
-  # We can only test for one user per test block, hence there are
-  # three test blocks of users with different permission models to
-  # have a more unbiased check.
+  test 'my_vote_summary should redirect to the current user summary' do
+    users.each do |user|
+      sign_in user
+      get :my_vote_summary
 
-  test 'my vote summary redirects to current user summary (#1 deleter)' do
-    sign_in users(:deleter)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:deleter))
-    sign_out :user
-  end
+      if user.deleted? || user.community_user.deleted?
+        assert_redirected_to_sign_in
+      else
+        assert_redirected_to vote_summary_path(user)
+      end
 
-  test 'my vote summary redirects to current user summary (#2 std user)' do
-    sign_in users(:standard_user)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:standard_user))
-    sign_out :user
-  end
-
-  test 'my vote summary redirects to current user summary (#3 global_admin)' do
-    sign_in users(:global_admin)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:global_admin))
-    sign_out :user
+      sign_out :user
+    end
   end
 
   test 'vote summary rendered for all users, signed in or out, own or others' do
@@ -606,8 +596,13 @@ class UsersControllerTest < ActionController::TestCase
     assert_json_success
   end
 
-  test 'filters should only return system filters for anonymous users' do
-    try_filters
+  test 'HTML filters should redirect to sign in for anonymous users' do
+    try_filters(format: :html)
+    assert_redirected_to_sign_in
+  end
+
+  test 'JSON filters should return system filters for anonymous users' do
+    try_filters(format: :json)
 
     assert_response(:success)
     assert_valid_json_response
@@ -629,10 +624,8 @@ class UsersControllerTest < ActionController::TestCase
     other_user
   end
 
-  def try_filters
-    get :filters, params: {
-      format: :json
-    }
+  def try_filters(format: :json)
+    get :filters, params: { format: format }
   end
 
   def try_default_filter(category)
