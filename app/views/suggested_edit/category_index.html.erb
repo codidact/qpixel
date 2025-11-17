@@ -35,7 +35,11 @@
     </tr>
     <% categories.each do |cat| %>
       <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
-      <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
+      <% if current_user&.can_see_deleted_posts? %>
+        <% sug_edits = SuggestedEdit.where(post: Post.in(cat), active: !@show_decided).count %>
+      <% else %>
+        <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
+      <% end %>
       <% queue_url = suggested_edits_queue_url(cat, params.permit(:sort, :order, :show_decided)) %>
       <tr>
         <td>
@@ -57,10 +61,16 @@
   </table>
 </details>
 
-<% if @edits.any? %>
+<% if current_user&.can_see_deleted_posts? %>
+<% edits_list = @edits %>
+<% else %>
+<% edits_list = @edits_undeleted %>
+<% end %>
+
+<% if edits_list.any? %>
   <div class="widget">
     <% @edits.each do |edit| %>
-      <div class="widget--body h-p-b-0" data-ckb-list-item data-ckb-item-type="link">
+      <div class="widget--body h-p-b-0 <%= 'deleted-content' if edit.post.deleted? %>" data-ckb-list-item data-ckb-item-type="link">
         <div>
           <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger', data: {'ckb-item-link' => ''} do %>
             <%= edit.post.post_type.name %>: <strong><%= edit.post.post_type.is_top_level ? edit.post.title : edit.post.parent.title %></strong>

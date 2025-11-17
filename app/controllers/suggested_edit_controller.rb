@@ -14,10 +14,14 @@ class SuggestedEditController < ApplicationController
 
     @category = params[:category].present? ? Category.find(params[:category]) : nil
 
-    @edits = SuggestedEdit.where(post: Post.undeleted.in(@category),
+    @edits = SuggestedEdit.where(post: Post.in(@category),
                                  active: !@show_decided)
                           .order(@sort_type => @sort_order)
-  end
+
+    @edits_undeleted = SuggestedEdit.where(post: Post.undeleted.in(@category),
+                                 active: !@show_decided)
+                          .order(@sort_type => @sort_order)
+end
 
   def show
     render layout: 'without_sidebar'
