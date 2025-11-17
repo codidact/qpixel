@@ -61,11 +61,11 @@
   </table>
 </details>
 
-<% if current_user&.can_see_deleted_posts? %>
-<% edits_list = @edits %>
-<% else %>
-<% edits_list = @edits_undeleted %>
-<% end %>
+<% if current_user&.can_see_deleted_posts?
+     edits_list = @edits
+   else
+     edits_list = @edits_undeleted 
+   end %>
 
 <% if edits_list.any? %>
   <div class="widget">
