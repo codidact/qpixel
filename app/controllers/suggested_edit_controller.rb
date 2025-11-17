@@ -19,9 +19,9 @@ class SuggestedEditController < ApplicationController
                           .order(@sort_type => @sort_order)
 
     @edits_undeleted = SuggestedEdit.where(post: Post.undeleted.in(@category),
-                                 active: !@show_decided)
-                          .order(@sort_type => @sort_order)
-end
+                                           active: !@show_decided)
+                                    .order(@sort_type => @sort_order)
+  end
 
   def show
     render layout: 'without_sidebar'

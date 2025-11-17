@@ -57,5 +57,4 @@ module CategoriesHelper
       SuggestedEdit.where(post: Post.in(current_category), active: true).any?
     end
   end
-
 end
