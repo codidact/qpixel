@@ -36,9 +36,9 @@
     <% categories.each do |cat| %>
       <% next if (cat.min_view_trust_level || -1) > (current_user&.trust_level || 0) %>
       <% if current_user&.can_see_deleted_posts? %>
-        <% sug_edits = SuggestedEdit.where(post: Post.in(cat), active: !@show_decided).count %>
+        <% sug_edits_count = SuggestedEdit.where(post: Post.in(cat), active: !@show_decided).count %>
       <% else %>
-        <% sug_edits = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
+        <% sug_edits_count = SuggestedEdit.where(post: Post.undeleted.in(cat), active: !@show_decided).count %>
       <% end %>
       <% queue_url = suggested_edits_queue_url(cat, params.permit(:sort, :order, :show_decided)) %>
       <tr>
@@ -51,9 +51,9 @@
         </td>
         <td>
           <% if cat == current_cat %>
-            <%= sug_edits %>
+            <%= sug_edits_count %>
           <% else %>
-<%= link_to sug_edits, queue_url %>
+<%= link_to sug_edits_count, queue_url %>
           <% end %>
         </td>
       </tr>
