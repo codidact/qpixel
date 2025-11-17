@@ -69,7 +69,7 @@
 
 <% if edits_list.any? %>
   <div class="widget">
-    <% @edits.each do |edit| %>
+    <% edits_list.each do |edit| %>
       <div class="widget--body h-p-b-0 <%= 'deleted-content' if edit.post.deleted? %>" data-ckb-list-item data-ckb-item-type="link">
         <div>
           <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger', data: {'ckb-item-link' => ''} do %>
