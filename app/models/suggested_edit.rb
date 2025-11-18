@@ -33,6 +33,7 @@ class SuggestedEdit < ApplicationRecord
 
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"
+    Rails.cache.delete "pending_suggestions_with_deleted/#{post.category_id}"
   end
 
   def pending?
