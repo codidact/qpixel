@@ -22,6 +22,15 @@ class SuggestedEdit < ApplicationRecord
   scope :by, ->(user) { where(user: user) }
   scope :rejected, -> { where(active: false, accepted: false) }
 
+  # Gets suggested edits scoped for a given user and category
+  # @param user [User] user to check
+  # @param category [Category] category to check
+  # @return [ActiveRecord::Relation<SuggestedEdit>]
+  def self.accessible_to(user, category)
+    posts = user&.can_see_deleted_posts? ? Post.in(category) : Post.undeleted.in(category)
+    SuggestedEdit.where(post: posts)
+  end
+
   def clear_pending_cache
     Rails.cache.delete "pending_suggestions/#{post.category_id}"
   end
