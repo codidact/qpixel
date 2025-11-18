@@ -14,13 +14,9 @@ class SuggestedEditController < ApplicationController
 
     @category = params[:category].present? ? Category.find(params[:category]) : nil
 
-    @edits = SuggestedEdit.where(post: Post.in(@category),
-                                 active: !@show_decided)
+    @edits = SuggestedEdit.accessible_to(current_user, @category)
+                          .where(active: !@show_decided)
                           .order(@sort_type => @sort_order)
-
-    @edits_undeleted = SuggestedEdit.where(post: Post.undeleted.in(@category),
-                                           active: !@show_decided)
-                                    .order(@sort_type => @sort_order)
   end
 
   def show

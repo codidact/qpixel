@@ -58,15 +58,9 @@
   </table>
 </details>
 
-<% if current_user&.can_see_deleted_posts?
-     edits_list = @edits
-   else
-     edits_list = @edits_undeleted 
-   end %>
-
-<% if edits_list.any? %>
+<% if @edits.any? %>
   <div class="widget">
-    <% edits_list.each do |edit| %>
+    <% @edits.each do |edit| %>
       <div class="widget--body h-p-b-0 <%= 'deleted-content' if edit.post.deleted? %>" data-ckb-list-item data-ckb-item-type="link">
         <div>
           <%= link_to suggested_edit_path(edit.id), class: 'has-font-size-larger', data: {'ckb-item-link' => ''} do %>
