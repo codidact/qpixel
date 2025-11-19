@@ -47,9 +47,7 @@ class CategoriesController < ApplicationController
       AuditLog.admin_audit(event_type: 'category_create', related: @category, user: current_user,
                            comment: "<<Category #{before}>>")
       flash[:success] = 'Your category was created.'
-      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete 'categories/by_lowercase_name'
-      Rails.cache.delete 'categories/by_id'
+      clear_categories_cache
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
@@ -69,9 +67,7 @@ class CategoriesController < ApplicationController
       AuditLog.admin_audit(event_type: 'category_update', related: @category, user: current_user,
                            comment: "from <<Category #{before}>>\nto <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
-      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete 'categories/by_lowercase_name'
-      Rails.cache.delete 'categories/by_id'
+      clear_categories_cache
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
@@ -205,6 +201,12 @@ class CategoriesController < ApplicationController
     @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts, current_user)
     @filtered = filter_qualifiers.any?
     @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
+  end
+
+  def clear_categories_cache
+    Rails.cache.delete 'header_categories'
+    Rails.cache.delete 'categories/by_lowercase_name'
+    Rails.cache.delete 'categories/by_id'
   end
 
   # Updates last visit cache for a given category
