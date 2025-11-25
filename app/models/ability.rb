@@ -68,7 +68,7 @@ class Ability < ApplicationRecord
 
   private
 
-  # Is threshold never reachable for a given user?
+  # Is a given threshold never reachable for a given user?
   # @param threshold [Numeric] threshold to check
   # @param user [User, nil] user to check
   def unreachable_threshold_for?(threshold, user)
