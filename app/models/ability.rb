@@ -12,7 +12,7 @@ class Ability < ApplicationRecord
   # @param user [User, nil] user to get the percent for
   # @return [Integer] edit score percent
   def edit_score_percent_for(user)
-    return 0 if edit_score_threshold.nil? || user.nil?
+    return 0 if unreachable_threshold_for?(edit_score_threshold, user)
     return 100 if edit_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.edit_score)
@@ -25,7 +25,7 @@ class Ability < ApplicationRecord
   # @param user [User, nil] user to get the percent for
   # @return [Integer] flag score percent
   def flag_score_percent_for(user)
-    return 0 if flag_score_threshold.nil? || user.nil?
+    return 0 if unreachable_threshold_for?(flag_score_threshold, user)
     return 100 if flag_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.flag_score)
@@ -38,7 +38,7 @@ class Ability < ApplicationRecord
   # @param user [User, nil] user to get the percent for
   # @return [Integer] post score percent
   def post_score_percent_for(user)
-    return 0 if post_score_threshold.nil? || user.nil?
+    return 0 if unreachable_threshold_for?(post_score_threshold, user)
     return 100 if post_score_threshold.zero?
 
     linear_score = linearize_progress(user.community_user.post_score)
@@ -64,5 +64,14 @@ class Ability < ApplicationRecord
 
   def self.[](key)
     find_by internal_id: key
+  end
+
+  private
+
+  # Is threshold never reachable for a given user?
+  # @param threshold [Numeric] threshold to check
+  # @param user [User, nil] user to check
+  def unreachable_threshold_for?(threshold, user)
+    threshold.nil? || threshold.negative? || user.nil?
   end
 end
