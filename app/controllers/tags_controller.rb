@@ -47,6 +47,8 @@ class TagsController < ApplicationController
               @tag_set.tags
             end.list_includes
 
+    @count_all = @tags.length || 0
+
     table = params[:hierarchical].present? ? 'tags_paths' : 'tags'
 
     @tags = @tags.left_joins(:posts)
