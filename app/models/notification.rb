@@ -16,4 +16,9 @@ class Notification < ApplicationRecord
   def unread?
     !read?
   end
+
+  def rendered_timestamp
+    formatted = created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')
+    CGI.unescape_html(formatted).html_safe
+  end
 end
