@@ -93,6 +93,7 @@ group :test do
   gem 'capybara', '~> 3.38'
   gem 'selenium-webdriver', '~> 4.7'
   gem 'webdrivers', '~> 5.2'
+  gem 'webmock', '~> 3.26'
 end
 
 group :development, :test do

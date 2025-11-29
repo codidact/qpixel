@@ -48,7 +48,7 @@ module ApplicationHelper
   end
 
   ##
-  # Utility to add additional query parameters to a URI.
+  # Adds additional query parameters to a URI.
   # @param base_url [String, nil] A base URI to which to add parameters. If none is specified then the request URI for
   #   the current page will be used.
   # @param params [Hash{#to_s => #to_s}] A hash of query parameters to add to the URI.
@@ -65,7 +65,7 @@ module ApplicationHelper
     end
 
     query = query.merge(params.to_h { |k, v| [k.to_s, v.to_s] })
-    uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
+    uri.query = Rack::Utils.build_nested_query(query)
     uri.to_s
   end
 
@@ -339,7 +339,7 @@ module ApplicationHelper
   # Gets the special System user
   # @return [User, nil]
   def system_user
-    User.find(-1)
+    User.system
   end
 
   ##

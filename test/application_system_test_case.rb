@@ -1,5 +1,7 @@
 require 'test_helper'
 
+WebMock.allow_net_connect!
+
 # This class serves as the base for all system test cases.
 #
 # The DRIVER environment variable is used to determine the browser that is used. Possible options are:

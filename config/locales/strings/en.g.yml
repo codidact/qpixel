@@ -24,6 +24,3 @@ en:
     type: 'type'
     user: 'user'
     version: 'version'
-
-  platform:
-    network_name: 'Codidact'

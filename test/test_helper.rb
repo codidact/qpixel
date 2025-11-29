@@ -11,6 +11,8 @@ require 'minitest/ci'
 require 'minitest/mock'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
+require 'webmock/minitest'
+
 # cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)
 Minitest.after_run do
   # IMPORTANT: the order is very specific to prevent FK constraint errors without disabling them
@@ -78,8 +80,27 @@ end
 
 Dir.glob(Rails.root.join('test/support/**/*.rb')).each { |f| require f }
 
+module WebMockStubs
+  extend ActiveSupport::Concern
+
+  included do
+    setup do
+      # TODO: for now just stubbing out the whole response is enough.
+      # Consider returning something resembling the real response
+      stub_request(:get, lambda do |uri|
+        uri.origin == 'https://cdn.jsdelivr.net'
+      end)
+    end
+
+    teardown do
+      WebMock.reset!
+    end
+  end
+end
+
 class ActiveSupport::TestCase
   include ActiveJob::TestHelper
+  include WebMockStubs
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
@@ -209,6 +230,8 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
@@ -217,9 +240,19 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
     integration_session.host = Community.first.host
+  end
+end
+
+class ActionMailer::TestCase
+  include WebMockStubs
+
+  def default_url_options
+    Rails.application.config.action_mailer.default_url_options
   end
 end

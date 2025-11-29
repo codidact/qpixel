@@ -70,3 +70,14 @@ new_user_on_own_post:
   comment_thread: new_user_on_own_post
   created_at: 2020-01-01T00:00:00.000000Z
   updated_at: 2021-01-01T00:00:00.000000Z
+
+with_user_pings:
+  user: standard_user
+  post: question_one
+  content: >
+    special ping for @#-1 user (system)
+    and for @#<%= ActiveRecord::FixtureSet.identify :standard_user %> (user)
+  community: sample
+  comment_thread: with_user_pings
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z

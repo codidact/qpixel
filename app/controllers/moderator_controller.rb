@@ -83,7 +83,7 @@ class ModeratorController < ApplicationController
     spam = User.where(id: params[:spam_ids])
     spam.each do |user|
       user.block('Profile spam', length: 10.years, automatic: false)
-      user.do_soft_delete(current_user)
+      user.soft_delete(current_user)
     end
     flash[:success] = "#{spam.size} users blocked and deleted."
     redirect_to mod_spammers_path

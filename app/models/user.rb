@@ -60,6 +60,12 @@ class User < ApplicationRecord
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 
+  # Gets the system user
+  # @return [User, nil]
+  def self.system
+    find_by(id: -1)
+  end
+
   # Safely gets the user's reputation even if they don't have a community user
   # @return [Integer] user's reputation
   def reputation
@@ -476,12 +482,31 @@ class User < ApplicationRecord
     post.flags.where(user: self, status: nil)
   end
 
-  def do_soft_delete(attribute_to)
+  # Anonymizes the user (f.e., for the purpose of soft deletion)
+  # @param persist_changes [Boolean] if set to +false+, will persist the changes
+  def anonymize(persist_changes: false)
+    assign_attributes(username: "user#{id}",
+                      email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+
+    unless persist_changes
+      skip_reconfirmation!
+      save
+    end
+  end
+
+  # Soft-deletes the user (username, password, and email are irrevocably reset!)
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
                              comment: attributes_print(join: "\n"))
-    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
-                      username: "user#{id}", email: "#{id}@deleted.localhost",
-                      password: SecureRandom.hex(32))
+
+    assign_attributes(deleted: true,
+                      deleted_by_id: attribute_to.id,
+                      deleted_at: DateTime.now)
+
+    anonymize(persist_changes: true)
+
     skip_reconfirmation!
     save
   end

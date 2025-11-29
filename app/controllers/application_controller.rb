@@ -144,6 +144,14 @@ class ApplicationController < ActionController::Base
     helpers.post_type_ids(is_top_level: false, has_parent: true)
   end
 
+  [:json, :html, :xml].each do |format|
+    define_method "#{format}_request?" do
+      return false unless request.format.respond_to?("#{format}?")
+
+      request.format.send("#{format}?")
+    end
+  end
+
   private
 
   def distinguish_fake_community
@@ -379,16 +387,20 @@ class ApplicationController < ActionController::Base
     helpers.devise_sign_in_enabled?
   end
 
+  def redirect_to_sign_in
+    if devise_sign_in_enabled?
+      redirect_to new_user_session_path
+    else
+      redirect_to new_saml_user_session_path
+    end
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          if devise_sign_in_enabled?
-            redirect_to new_user_session_path
-          else
-            redirect_to new_saml_user_session_path
-          end
+          redirect_to_sign_in
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401

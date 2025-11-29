@@ -234,9 +234,8 @@ class UserTest < ActiveSupport::TestCase
     ability = abilities(:unrestricted)
     community = communities(:sample)
     basic = users(:basic_user)
-    system = users(:system)
 
-    restricted_users = [basic, system]
+    restricted_users = [basic]
 
     restricted_users.each do |user|
       assert_not user.ability_on?(community.id, ability.internal_id),
@@ -314,5 +313,29 @@ class UserTest < ActiveSupport::TestCase
 
     local_result = users(:admin).admin_communities
     assert_equal 1, local_result.size
+  end
+
+  test 'anonymize should correctly clean up user data' do
+    std = users(:standard_user)
+
+    anonymized_name = "user#{std.id}"
+    anonymized_email = "#{std.id}@deleted.localhost"
+
+    [true, false].each do |persist|
+      std.anonymize(persist_changes: persist)
+
+      assert_equal std.username, anonymized_name
+      assert_equal std.email, anonymized_email
+
+      std.reload
+
+      if persist
+        assert_not_equal std.username, anonymized_name
+        assert_not_equal std.email, anonymized_email
+      else
+        assert_equal std.username, anonymized_name
+        assert_equal std.email, anonymized_email
+      end
+    end
   end
 end

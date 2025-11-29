@@ -1,7 +1,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<% desc = "#{SiteSetting['SiteName']} on #{t('platform.network_name')} - open, community-run Q&A knowledge sharing" %>
+<% desc = "#{SiteSetting['SiteName']} on #{SiteSetting['NetworkName']} - open, community-run Q&A knowledge sharing" %>
 <meta name="description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />
 
 <% page_title = (Rails.env.development? ? '[DEV] ' : '') +
@@ -13,8 +13,10 @@
 
 <% icon_path = SiteSetting['IconPath'] %>
 <link rel="icon" href="<%= icon_path.present? ? icon_path : '/assets/favicon.ico' %>" />
-<link rel="search" type="application/opensearchdescription+xml"
-      title="Codidact <%= RequestContext.community.name %> search" href="<%= osd_url(format: :xml) %>" />
+<link rel="search"
+      type="application/opensearchdescription+xml"
+      title="<%= SiteSetting['NetworkName'] %> <%= RequestContext.community.name %> search"
+      href="<%= osd_url(format: :xml) %>" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
@@ -81,7 +83,7 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:creator" content="@CodidactQA" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="<%= RequestContext.community.name %> - Codidact" />
+  <meta property="og:site_name" content="<%= RequestContext.community.name %> - <%= SiteSetting['NetworkName'] %>" />
   <meta property="og:url" content="<%= request.original_url %>" />
   <meta property="og:title" content="<%= page_title %>" />
   <meta property="og:description" content="<%= content_for?(:description) ? content_for(:description) : desc %>" />

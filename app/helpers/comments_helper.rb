@@ -37,7 +37,7 @@ module CommentsHelper
   # @param content [String] content to get pinged users from
   # @return [Hash{String => User}] list of pinged users
   def pinged_users(content)
-    user_ids = content.scan(/@#(\d+)/).map { |g| g[0].to_i }
+    user_ids = content.scan(Comment::USER_PING_REG_EXP).map { |g| g[0].to_i }
     User.where(id: user_ids).to_a.to_h { |u| [u.id, u] }
   end
 
@@ -49,7 +49,7 @@ module CommentsHelper
   def render_pings(content, pingable: nil, host: nil)
     users = pinged_users(content)
 
-    content.gsub(/@#(\d+)/) do |ping|
+    content.gsub(Comment::USER_PING_REG_EXP) do |ping|
       user = users[Regexp.last_match(1).to_i]
       if user.nil?
         ping
@@ -70,7 +70,7 @@ module CommentsHelper
   def render_pings_text(content)
     users = pinged_users(content)
 
-    content.gsub(/@#(\d+)/) do |ping|
+    content.gsub(Comment::USER_PING_REG_EXP) do |ping|
       user = users[Regexp.last_match(1).to_i]
       user.nil? ? ping : "@#{rtl_safe_username(user)}"
     end

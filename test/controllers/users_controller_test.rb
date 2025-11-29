@@ -69,26 +69,67 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
+  test 'moderators and higher should be able to delete user profiles' do
+    std_usr = users(:standard_user)
+
+    users.select(&:at_least_moderator?).each do |user|
+      sign_in(user)
+
+      try_soft_delete_user('profile', std_usr)
+      @user = assigns(:user)
+
+      assert_response(:success)
+      assert_not_nil @user
+      assert @user.community_user.deleted
+    end
+  end
+
   test 'should soft-delete user' do
     sign_in users(:global_admin)
-    delete :soft_delete, params: { id: users(:standard_user).id, type: 'user' }
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:success)
     assert_not_nil assigns(:user)
-    assert_equal true, assigns(:user).deleted
+    assert assigns(:user).deleted
+  end
+
+  test 'only global moderators or admins should be able to soft-delete users' do
+    std_usr = users(:standard_user)
+
+    ([nil] + users).each do |user|
+      if user.present?
+        sign_in(user)
+      end
+
+      try_soft_delete_user('user', std_usr)
+
+      if user&.at_least_global_moderator?
+        assert_json_success
+      elsif user&.at_least_moderator?
+        assert_json_failure(:forbidden)
+      else
+        assert_json_failure(:not_found)
+      end
+    end
   end
 
   test 'should require authentication to soft-delete user' do
     sign_out :user
-    delete :soft_delete, params: { id: users(:standard_user).id, transfer: users(:editor).id }
-    assert_nil assigns(:user)
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:not_found)
+    assert_nil assigns(:user)
   end
 
   test 'should require admin status to soft-delete user' do
     sign_in users(:standard_user)
-    delete :soft_delete, params: { id: users(:standard_user).id, transfer: users(:editor).id }
-    assert_nil assigns(:user)
+
+    try_soft_delete_user('user', users(:standard_user))
+
     assert_response(:not_found)
+    assert_nil assigns(:user)
   end
 
   test 'should require authentication to get edit profile page' do
@@ -259,29 +300,49 @@ class UsersControllerTest < ActionController::TestCase
     assert_not_nil assigns(:user)
   end
 
-  # We can only test for one user per test block, hence there are
-  # three test blocks of users with different permission models to
-  # have a more unbiased check.
+  test 'my_activity should redirect to user activity or to sign in for anonymous access' do
+    users.each do |user|
+      sign_in user
+      get :my_activity
 
-  test 'my vote summary redirects to current user summary (#1 deleter)' do
-    sign_in users(:deleter)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:deleter))
-    sign_out :user
+      if user.deleted? || user.community_user.deleted?
+        assert_redirected_to_sign_in
+      else
+        assert_redirected_to user_activity_path(user), "user #{user.name} is incorrectly redirected"
+      end
+
+      sign_out :user
+    end
   end
 
-  test 'my vote summary redirects to current user summary (#2 std user)' do
-    sign_in users(:standard_user)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:standard_user))
-    sign_out :user
+  test 'my_network should redirect to user network profile or to sign in for anonymous access' do
+    users.each do |user|
+      sign_in user
+      get :my_network
+
+      if user.deleted? || user.community_user.deleted?
+        assert_redirected_to_sign_in
+      else
+        assert_redirected_to network_path(user), "user #{user.name} is incorrectly redirected"
+      end
+
+      sign_out :user
+    end
   end
 
-  test 'my vote summary redirects to current user summary (#3 global_admin)' do
-    sign_in users(:global_admin)
-    get :my_vote_summary
-    assert_redirected_to vote_summary_path(users(:global_admin))
-    sign_out :user
+  test 'my_vote_summary should redirect to user summary or to sign in for anonymous access' do
+    users.each do |user|
+      sign_in user
+      get :my_vote_summary
+
+      if user.deleted? || user.community_user.deleted?
+        assert_redirected_to_sign_in
+      else
+        assert_redirected_to vote_summary_path(user), "user #{user.name} is incorrectly redirected"
+      end
+
+      sign_out :user
+    end
   end
 
   test 'vote summary rendered for all users, signed in or out, own or others' do
@@ -565,6 +626,24 @@ class UsersControllerTest < ActionController::TestCase
     assert_json_success
   end
 
+  test 'HTML filters should redirect to sign in for anonymous users' do
+    try_filters(format: :html)
+    assert_redirected_to_sign_in
+  end
+
+  test 'JSON filters should return system filters for anonymous users' do
+    try_filters(format: :json)
+
+    assert_response(:success)
+    assert_valid_json_response
+
+    parsed = JSON.parse(response.body)
+    assert parsed.any?
+    parsed.each do |name, filter|
+      assert filter['system'], "'#{name}' is not a system filter"
+    end
+  end
+
   private
 
   def create_other_user
@@ -573,6 +652,10 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
+  end
+
+  def try_filters(format: :json)
+    get :filters, params: { format: format }
   end
 
   def try_default_filter(category)
@@ -585,6 +668,14 @@ class UsersControllerTest < ActionController::TestCase
   def try_save_filter(**opts)
     filter = { name: 'test filter' }.merge(opts)
     post :set_filter, params: filter.merge({ format: :json })
+  end
+
+  # @param type [String] deletion type (user or profile)
+  # @param user [User] user to soft delete
+  def try_soft_delete_user(type, user)
+    delete :soft_delete, params: { id: user.id,
+                                   type: type,
+                                   format: :json }
   end
 
   def try_save_preference(name, value, community: nil)

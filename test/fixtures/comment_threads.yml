@@ -68,3 +68,9 @@ new_user_on_own_post:
   reply_count: 0
   post: new_user_question
   community: sample
+
+with_user_pings:
+  title: Pings for @#-1 and @#<%= ActiveRecord::FixtureSet.identify :standard_user %> users
+  reply_count: 1
+  post: question_one
+  community: sample

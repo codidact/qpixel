@@ -194,6 +194,7 @@ Rails.application.routes.draw do
     get    '/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
     get    '/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
     get    '/me',                       to: 'users#me', as: :users_me
+    get    '/me/activity',              to: 'users#my_activity', as: :my_activity
     get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
     post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
     get    '/me/filters',               to: 'users#filters', as: :user_filters

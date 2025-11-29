@@ -85,3 +85,14 @@ approved_edit_scorer:
   decided_at: 2000-01-01T00:00:00.000000Z
   decided_by: editor
   title: approved suggested edit by the user used for edit score tests
+
+on_deleted_post:
+  post: deleted
+  user: standard_user
+  community: sample
+  body: This suggested edit is on a deleted post
+  title: Edit on a deleted post
+  body_markdown: <p>This suggested edit is on a deleted post</p>
+  comment: for users with access only
+  active: true
+  accepted: false
