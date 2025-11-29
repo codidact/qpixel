@@ -29,14 +29,7 @@
     <h2>Unread</h2>
   <% end %>
   <% unread_notifications.each do |notif| %>
-    <div class="notification">
-      <div class="notification-content">
-        <div class="form-caption">
-          <%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %>
-        </div>
-        <a href="<%= notif.link %>"><%= render_pings_text(notif.content) %></a>
-      </div>
-    </div>
+    <%= render 'notifications/notification', notification: notif %>
   <% end %>
 <% end %>
 
@@ -45,14 +38,7 @@
     <h2>Read</h2>
   <% end %>
   <% read_notifications.each do |notif| %>
-    <div class="notification">
-      <div class="notification-content">
-        <div class="form-caption">
-          <%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %>
-        </div>
-        <a href="<%= notif.link %>"><%= render_pings_text(notif.content) %></a>
-      </div>
-    </div>
+    <%= render 'notifications/notification', notification: notif %>
   <% end %>
 <% end %>
 
