@@ -261,14 +261,14 @@
     row.href = answer.answerURL;
 
     row.innerHTML = `
-    <div class="toc--badge"><span class="badge is-tag is-green">${answer.score}</span></div>
+    <div class="toc--badge"><span class="badge is-tag is-green">${answer.score ?? 'N/A'}</span></div>
     <div class="toc--full"><p class="row-summary"><span class='username has-padding-right-1'></span></p></div>
     ${answer.placement === 1 ? '<div class="toc--badge"><span class="badge is-tag is-yellow"><i class="fas fa-trophy"></i></span></div>'
       : (settings.showPlacements ? `<div class="toc--badge"><span class="badge is-tag">#${answer.placement}</span></div>` : '')}
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
     row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = answer.full_language;
+    row.querySelector('.language-badge').innerText = answer.full_language ?? 'N/A';
     if (answer.code) {
       row.querySelector('.username').after(document.createElement('code'));
       row.querySelector('code').innerText = answer.code.split('\n')[0].substring(0, 200);
