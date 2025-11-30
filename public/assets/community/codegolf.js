@@ -106,10 +106,9 @@
       const text = await pagePromises[i];
       const doc = dom_parser.parseFromString(text.toString(), 'text/html');
       const [question, ...page_answers] = doc.querySelectorAll('.post');
-      const non_deleted_answers = page_answers.filter((answer) => answer.querySelector('.deleted-content') === null);
+      const non_deleted_answers = page_answers.filter((answer) => answer.querySelector('.js-deleted-post') === null);
 
       for (const answerPost of non_deleted_answers) {
-
         /** @type {HTMLElement | null} */
         const header = answerPost.querySelector('h1, h2, h3');
         const code = header?.parentElement.querySelector(':scope > pre > code');
@@ -128,8 +127,8 @@
           answerID: answerPost.id,
           answerURL: answerPost.querySelector('.js-permalink').href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
-          username: userlink.firstChild.data.trim(),
-          userid: userlink.href.match(/\d+/)[0],
+          username: userlink?.firstChild?.data?.trim() || 'deleted user',
+          userid: userlink?.href?.match(/\d+/)?.[0] || '',
           full_language,
           language,
           variant,
