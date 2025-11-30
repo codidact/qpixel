@@ -23,7 +23,7 @@
 
 <% if @post.post_type.has_answers %>
   <% if num_answers > 0 %>
-    <h2><%= pluralize(num_answers, 'answer') %></h2>
+    <h2 class="js-answers-header"><%= pluralize(num_answers, 'answer') %></h2>
   <% end %>
   <% if num_answers > 1 %>
     <div class="button-list is-gutterless has-float-right">

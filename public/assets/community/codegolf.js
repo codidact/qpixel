@@ -330,9 +330,7 @@
       // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
       sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
 
-      document
-        .querySelector(".post:first-child")
-        .nextElementSibling.insertAdjacentElement("afterend", embed);
+      document.querySelector(".js-answers-header")?.insertAdjacentElement('beforebegin', embed);
 
       refreshBoard(sort);
     } else if (
@@ -342,9 +340,7 @@
       // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
       sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;
 
-      document
-        .querySelector(".post:first-child")
-        .nextElementSibling.insertAdjacentElement("afterend", embed);
+      document.querySelector(".js-answers-header")?.insertAdjacentElement("beforebegin", embed);
 
       refreshBoard(sort);
     }
