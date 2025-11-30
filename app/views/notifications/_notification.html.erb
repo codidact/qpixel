@@ -1,0 +1,15 @@
+<%#
+   "Renders an inbox notification
+
+    Variables:
+      notification : Notification to render
+"%>
+
+<div class="notification">
+  <div class="notification-content">
+    <div class="form-caption">
+      <%= notification.rendered_timestamp %>
+    </div>
+    <a href="<%= notification.link %>"><%= render_pings_text(notification.content) %></a>
+  </div>
+</div>

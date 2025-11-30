@@ -10,7 +10,7 @@ window.QPixel ||= {};
     for (const { target } of records) {
       for (const [selector, callbacks] of watchers) {
         if (QPixel.DOM?.isHTMLElement(target) && target.matches(selector)) {
-          for(const callback of callbacks) {
+          for (const callback of callbacks) {
             callback(target);
           }
         }
@@ -18,7 +18,7 @@ window.QPixel ||= {};
     }
   }).observe(document, {
     attributeFilter: ['class'],
-    subtree: true,
+    subtree: true
   });
 
   QPixel.DOM ||= {
@@ -54,6 +54,10 @@ window.QPixel ||= {};
       setTimeout(() => {
         element.remove();
       }, duration);
+    },
+
+    getModifierState: (e) => {
+      return !!e.altKey || !!e.ctrlKey || !!e.metaKey || !!e.shiftKey;
     },
 
     isHTMLElement: (node) => {

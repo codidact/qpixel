@@ -11,12 +11,14 @@ $key: #335;
 $muted-text: #666;
 $muted-graphic: #DDD;
 $primary: #4B68FF;
+$primary-graphic: #2980b9;
 $secondary: #EA7317;
 $warning: #FDD835;
 $danger: #EB5959;
 $success: #2ECC71;
 $info: #58A09A;
 $brand: #4B68FF;
+
 
 $data: (
   #4B68FF,
@@ -31,6 +33,7 @@ $data: (
   --muted-text: #{$muted-text};
   --muted-graphic: #{$muted-graphic};
   --primary: #{$primary};
+  --primary-graphic: #{$primary-graphic};
   --secondary: #{$secondary};
   --warning: #{$warning};
   --danger: #{$danger};
