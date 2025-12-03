@@ -59,11 +59,11 @@ class CommentsController < ApplicationController
         @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
       end
 
-      ThreadFollower.where(post: @post).each do |tf|
-        unless tf.user == current_user || tf.user == @comment.post.user
-          tf.user.create_notification(notification, helpers.comment_link(@comment))
+      NewThreadFollower.where(post: @post).each do |ntf|
+        unless ntf.user == current_user || ntf.user == @comment.post.user
+          ntf.user.create_notification(notification, helpers.comment_link(@comment))
         end
-        ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
+        ThreadFollower.create(user: ntf.user, comment_thread: @comment_thread)
       end
 
       apply_pings(pings)
@@ -330,8 +330,8 @@ class CommentsController < ApplicationController
   end
 
   def post_follow
-    if ThreadFollower.where(post: @post, user: current_user).none?
-      ThreadFollower.create(post: @post, user: current_user)
+    if NewThreadFollower.where(post: @post, user: current_user).none?
+      NewThreadFollower.create(post: @post, user: current_user)
     end
 
     respond_to do |format|
@@ -341,7 +341,7 @@ class CommentsController < ApplicationController
   end
 
   def post_unfollow
-    ThreadFollower.where(post: @post, user: current_user).destroy_all
+    NewThreadFollower.where(post: @post, user: current_user).destroy_all
 
     respond_to do |format|
       format.html { redirect_to post_path(@post) }
