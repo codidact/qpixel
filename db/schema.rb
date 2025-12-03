@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_15_121326) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_03_164131) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -399,6 +399,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_15_121326) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
+  end
+
+  create_table "new_thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "post_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_new_thread_followers_on_post_id"
+    t.index ["user_id"], name: "index_new_thread_followers_on_user_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
