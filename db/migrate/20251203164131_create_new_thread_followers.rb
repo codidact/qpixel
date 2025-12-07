@@ -17,7 +17,10 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
 
   def move_rows_with_non_nil_post_id
     NewThreadFollower.insert_all(
-      ThreadFollower.select(:user_id, :post_id, :created_at, :updated_at).where.not(post_id:nil)
+      ThreadFollower.select(:user_id, :post_id, :created_at, :updated_at)
+        .where.not(post_id:nil)
+        .to_a
+        .map(&:attributes)
     )
     ThreadFollower.where.not(post_id:nil).delete_all
   end
