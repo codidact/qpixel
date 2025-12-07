@@ -1,8 +1,10 @@
 class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   def change
     create_table_new_thread_followers
-    move_rows_with_non_nil_post_id
-    remove_post_id_column_from_thread_followers
+    if column_exists?(:thread_followers, :post_id)
+      move_rows_with_non_nil_post_id
+      remove_post_id_column_from_thread_followers
+    end
   end
 
   def create_table_new_thread_followers
