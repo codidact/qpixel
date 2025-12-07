@@ -6,13 +6,13 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   end
 
   def create_table_new_thread_followers
-    create_table :new_thread_followers do |t|
+    create_table :new_thread_followers, if_not_exists: true do |t|
       t.bigint :user_id
       t.bigint :post_id
 
       t.timestamps
     end
-    add_index :new_thread_followers, [:user_id, :post_id]
+    add_index :new_thread_followers, [:user_id, :post_id], if_not_exists: true
   end
 
   def move_rows_with_non_nil_post_id
