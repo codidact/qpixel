@@ -56,6 +56,6 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
     remove_index :new_thread_followers, [:user_id, :post_id], if_exists: true
     remove_reference :new_thread_followers, :user_id, foreign_key: true, if_exists: true
     remove_reference :new_thread_followers, :post_id, foreign_key: true, if_exists: true
-    drop_table :new_thread_followers
+    drop_table :new_thread_followers, if_exists: true
   end
 end
