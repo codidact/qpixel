@@ -36,11 +36,11 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   end
 
   def remove_post_id_column_from_thread_followers
-    remove_reference :thread_followers, :post, index: true, foreign_key: true
+    remove_reference :thread_followers, :post, index: true, foreign_key: true, if_exists: true
   end
 
   def add_post_id_column_to_thread_followers
-    add_reference :thread_followers, :post, index: true, foreign_key: true
+    add_reference :thread_followers, :post, index: true, foreign_key: true, if_not_exists: true
   end
 
   def move_rows_back_from_new_thread_followers
@@ -54,8 +54,8 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
 
   def delete_table_new_thread_followers
     remove_index :new_thread_followers, [:user_id, :post_id], if_exists: true
-    remove_reference :new_thread_followers, :user_id, foreign_key: true
-    remove_reference :new_thread_followers, :post_id, foreign_key: true
+    remove_reference :new_thread_followers, :user_id, foreign_key: true, if_exists: true
+    remove_reference :new_thread_followers, :post_id, foreign_key: true, if_exists: true
     drop_table :new_thread_followers
   end
 end
