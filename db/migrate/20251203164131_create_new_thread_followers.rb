@@ -40,7 +40,7 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   end
 
   def add_post_id_column_to_thread_followers
-    add_reference :thread_followers, :post, :index: true, foreign_key: true
+    add_reference :thread_followers, :post, index: true, foreign_key: true
   end
 
   def move_rows_back_from_new_thread_followers
