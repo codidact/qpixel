@@ -2,3 +2,7 @@
 standard_author_question_one:
   user: standard_user
   post: question_one
+
+merge_source_question_one:
+  user: merge_source
+  post: question_one

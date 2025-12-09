@@ -30,6 +30,14 @@ pp_eo:
   community_user: sample_post_scorer
   ability: everyone
 
+ms_eo:
+  community_user: sample_merge_source
+  ability: everyone
+
+mt_eo:
+  community_user: sample_merge_target
+  ability: everyone
+
 stu_ur:
   community_user: sample_standard_user
   ability: unrestricted
@@ -60,6 +68,14 @@ pf_ur:
 
 pp_ur:
   community_user: sample_post_scorer
+  ability: unrestricted
+
+ms_ur:
+  community_user: sample_merge_source
+  ability: unrestricted
+
+mt_ur:
+  community_user: sample_merge_target
   ability: unrestricted
 
 c_fc:
