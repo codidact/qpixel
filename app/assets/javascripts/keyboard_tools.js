@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           (QPixel.Keyboard.is_mod ? '\nf   Flags (mod only)' : '')
       );
       QPixel.Keyboard.state = 'goto';
-    } else if (e.key === 'k') {
+    } else if (e.key === 'j') {
       if (QPixel.Keyboard.selectedItem == null) {
         QPixel.Keyboard.selectedItem = $('[data-ckb-list-item]:first-of-type')[0];
       } else {
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           $(QPixel.Keyboard.selectedItem).nextAll('[data-ckb-list-item]')[0] || QPixel.Keyboard.selectedItem;
       }
       QPixel.Keyboard.updateSelected();
-    } else if (e.key === 'j') {
+    } else if (e.key === 'k') {
       if (QPixel.Keyboard.selectedItem == null) {
         QPixel.Keyboard.selectedItem = $('[data-ckb-list-item]:first-of-type')[0];
       } else {
