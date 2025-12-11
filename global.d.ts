@@ -364,7 +364,7 @@ interface QPixel {
 
   // private properties
   _filters?: QPixelFilter[] | null;
-  _pendingUserResponse?: Promise<Response> | null;
+  _pendingUser?: Promise<QPixelUser> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
   _user?: QPixelUser | null;
@@ -384,7 +384,7 @@ interface QPixel {
   /**
    * FIFO-style fetch wrapper for /users/me requests
    */
-  _fetchUser?: () => Promise<Response>;
+  _fetchUser?: () => Promise<QPixelUser | null>;
 
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
