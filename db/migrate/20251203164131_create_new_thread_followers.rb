@@ -23,6 +23,7 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
       t.timestamps
     end
     add_index :new_thread_followers, [:user_id, :post_id], if_not_exists: true
+    add_index :new_thread_followers, :post_id, if_not_exists: true
   end
 
   def move_rows_with_non_nil_post_id
@@ -53,6 +54,7 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   end
 
   def delete_table_new_thread_followers
+    remove_index :new_thread_followers, :post_id, if_exists: true
     remove_index :new_thread_followers, [:user_id, :post_id], if_exists: true
     remove_reference :new_thread_followers, :user_id, foreign_key: true, if_exists: true
     remove_reference :new_thread_followers, :post_id, foreign_key: true, if_exists: true
