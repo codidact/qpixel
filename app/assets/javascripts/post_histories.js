@@ -1,19 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const openRelevantEditOnly = () => {
+    const [[, historyId]] = location.hash.split(':~:');
+
     document.querySelectorAll('details.history-event').forEach((el) => {
       if (el instanceof HTMLDetailsElement) {
-        el.open = false;
+        el.open = el.id === historyId;
       }
     });
-
-    const [hash] = location.hash.split(':~:');
-    const historyId = hash.slice(1);
-
-    const historyItem = document.getElementById(historyId);
-
-    if (historyItem instanceof HTMLDetailsElement) {
-      historyItem.open = true;
-    }
   };
 
   window.addEventListener('hashchange', openRelevantEditOnly);
