@@ -16,6 +16,8 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
+  before_save :bump_last_activity_at
+
   # Gets threads appropriately scoped for a given user & post
   # @param user [User, nil] user to check
   # @para post [Post] post to check
@@ -87,6 +89,10 @@ class CommentThread < ApplicationRecord
   end
 
   private
+
+  def bump_last_activity_at
+    self.last_activity_at = DateTime.now
+  end
 
   # Comment author and post author are automatically followed to the thread. Question author is NOT
   # automatically followed on new answer comment threads. Comment author follower creation is done
