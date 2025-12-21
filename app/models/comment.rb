@@ -17,15 +17,11 @@ class Comment < ApplicationRecord
   after_create :create_follower
   after_update :delete_thread
 
+  before_save :bump_last_activity_at
+
   counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
   validate :content_length
-
-  # Gets last activity date and time on the comment
-  # @return [DateTime] last activity date and time
-  def last_activity_at
-    [created_at, updated_at].compact.max
-  end
 
   def root
     # If parent_question is nil, the comment is already on a question, so we can just return post.
@@ -48,6 +44,10 @@ class Comment < ApplicationRecord
   end
 
   private
+
+  def bump_last_activity_at
+    self.last_activity_at = DateTime.now
+  end
 
   def create_follower
     if user.preference('auto_follow_comment_threads') == 'true'

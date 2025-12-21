@@ -52,7 +52,7 @@ class CommentThread < ApplicationRecord
   # Gets last activity date and time on the thread
   # @return [DateTime] last activity date and time
   def last_activity_at
-    last_comment_activity_at = comments.map(&:last_activity_at).max
+    last_comment_activity_at = comments.map(&:last_activity_at).compact.max
     [created_at, locked_at, updated_at, last_comment_activity_at].compact.max
   end
 
