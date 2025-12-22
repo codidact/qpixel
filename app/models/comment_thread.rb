@@ -88,6 +88,13 @@ class CommentThread < ApplicationRecord
     end
   end
 
+  # Registers a given user as a follower of the thread
+  # @param user [User] user to register as a follower
+  # @return [Boolean] status of the operation
+  def add_follower(user)
+    ThreadFollower.create(comment_thread: self, user: user)
+  end
+
   def bump_last_activity
     self.last_activity_at = DateTime.now
   end

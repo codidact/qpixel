@@ -27,6 +27,11 @@ class CommentThreadTest < ActiveSupport::TestCase
     assert_operator thread.updated_at, '<=', last_activity_after_update
 
     thread.bump_last_activity
-    assert_operator last_activity_after_update, '<=', thread.last_activity
+    last_activity_after_bump = thread.last_activity
+    assert_operator last_activity_after_update, '<=', last_activity_after_bump
+
+    thread.add_follower(users(:editor))
+    thread.reload
+    assert_operator last_activity_after_bump, '<=', thread.last_activity
   end
 end

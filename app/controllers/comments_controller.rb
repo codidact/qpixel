@@ -266,7 +266,7 @@ class CommentsController < ApplicationController
   end
 
   def follow_thread
-    status = ThreadFollower.create(comment_thread: @comment_thread, user: current_user)
+    status = @comment_thread.add_follower(current_user)
     restrict_thread_response(@comment_thread, status)
   end
 
