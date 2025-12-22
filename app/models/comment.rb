@@ -17,7 +17,7 @@ class Comment < ApplicationRecord
   after_create :create_follower
   after_update :delete_thread
 
-  before_save :bump_last_activity_at
+  before_save :bump_last_activity
 
   counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
@@ -49,7 +49,7 @@ class Comment < ApplicationRecord
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
-  def bump_last_activity_at
+  def bump_last_activity
     self.last_activity_at = DateTime.now
   end
 

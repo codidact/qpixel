@@ -16,7 +16,7 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
-  before_save :bump_last_activity_at
+  before_save :bump_last_activity
 
   # Gets threads appropriately scoped for a given user & post
   # @param user [User, nil] user to check
@@ -88,7 +88,7 @@ class CommentThread < ApplicationRecord
     end
   end
 
-  def bump_last_activity_at
+  def bump_last_activity
     self.last_activity_at = DateTime.now
   end
 
