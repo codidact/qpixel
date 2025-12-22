@@ -52,9 +52,10 @@ class CommentTest < ActiveSupport::TestCase
     comment.update!(content: 'this should bump last_activity')
     comment.reload
     last_activity_after_update = comment.last_activity
-    assert_operator comment.updated_at, '<=', last_activity_after_update
+    assert_operator comment.updated_at, '<', last_activity_after_update
 
-    comment.bump_last_activity
-    assert_operator last_activity_after_update, '<=', comment.last_activity
+    comment.bump_last_activity(persist_changes: true)
+    comment.reload
+    assert_operator last_activity_after_update, '<', comment.last_activity
   end
 end

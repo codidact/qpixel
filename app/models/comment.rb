@@ -49,8 +49,14 @@ class Comment < ApplicationRecord
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
-  def bump_last_activity
+  # Directly bumps the comment's last activity date & time
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def bump_last_activity(persist_changes: false)
     self.last_activity_at = DateTime.now
+
+    if persist_changes
+      save
+    end
   end
 
   private
