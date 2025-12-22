@@ -37,6 +37,12 @@ class Comment < ApplicationRecord
     end
   end
 
+  # Gets last activity date and time on the comment
+  # @return [DateTime] last activity date and time
+  def last_activity
+    [created_at, updated_at, last_activity_at].compact.max
+  end
+
   def pings
     pingable = comment_thread.pingable
     matches = content.scan(USER_PING_REG_EXP)
