@@ -188,14 +188,16 @@ class CommentsController < ApplicationController
   end
 
   def thread
-    respond_to do |format|
-      format.html { render 'comments/thread' }
-      format.json { render json: @comment_thread }
+    if stale?(last_modified: @comment_thread.last_activity.utc)
+      respond_to do |format|
+        format.html { render 'comments/thread' }
+        format.json { render json: @comment_thread }
+      end
     end
   end
 
   def thread_content
-    if stale?(last_modified: @comment_thread.last_activity_at.utc)
+    if stale?(last_modified: @comment_thread.last_activity.utc)
       render partial: 'comment_threads/expanded',
              locals: { inline: params[:inline] == 'true',
                        show_deleted: params[:show_deleted_comments] == '1',
