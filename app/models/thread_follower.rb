@@ -11,8 +11,7 @@ class ThreadFollower < ApplicationRecord
   private
 
   def bump_thread_last_activity
-    comment_thread&.bump_last_activity
-    comment_thread&.save
+    comment_thread&.bump_last_activity(persist_changes: true)
   end
 
   def thread_or_post

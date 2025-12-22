@@ -95,8 +95,14 @@ class CommentThread < ApplicationRecord
     ThreadFollower.create(comment_thread: self, user: user)
   end
 
-  def bump_last_activity
+  # Directly bumps the thread's last activity date & time
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def bump_last_activity(persist_changes: false)
     self.last_activity_at = DateTime.now
+
+    if persist_changes
+      save
+    end
   end
 
   # Removes a given user from the thread's followers
