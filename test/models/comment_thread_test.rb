@@ -16,16 +16,17 @@ class CommentThreadTest < ActiveSupport::TestCase
     end
   end
 
-  test 'last_activity_at should correctly get last activity' do
-    normal = comment_threads(:normal)
-    normal_two = comment_threads(:normal_two)
-    locked = comment_threads(:locked)
+  test 'last_activity should correctly get the thread\'s last activity date & time' do
+    thread = comment_threads(:without_activity)
 
-    assert_not_equal locked.last_activity_at, locked.created_at
-    assert_not_equal normal_two.last_activity_at, normal_two.created_at
+    assert_equal thread.created_at, thread.last_activity
 
-    assert_equal locked.last_activity_at, locked.locked_at
-    assert_equal normal.last_activity_at, normal.created_at
-    assert_equal normal_two.last_activity_at, normal_two.updated_at
+    thread.update!(title: 'this should bump last_activity')
+    thread.reload
+    last_activity_after_update = thread.last_activity
+    assert_operator thread.updated_at, '<=', last_activity_after_update
+
+    thread.bump_last_activity
+    assert_operator last_activity_after_update, '<=', thread.last_activity
   end
 end
