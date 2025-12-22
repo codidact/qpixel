@@ -34,7 +34,7 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  test 'pings should correctly' do
+  test 'pings should correctly get pinged user ids' do
     std_user = users(:standard_user)
     with_pings = comments(:with_user_pings)
 
