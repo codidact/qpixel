@@ -88,11 +88,11 @@ class CommentThread < ApplicationRecord
     end
   end
 
-  private
-
   def bump_last_activity_at
     self.last_activity_at = DateTime.now
   end
+
+  private
 
   # Comment author and post author are automatically followed to the thread. Question author is NOT
   # automatically followed on new answer comment threads. Comment author follower creation is done

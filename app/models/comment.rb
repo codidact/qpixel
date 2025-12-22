@@ -49,11 +49,11 @@ class Comment < ApplicationRecord
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
   end
 
-  private
-
   def bump_last_activity_at
     self.last_activity_at = DateTime.now
   end
+
+  private
 
   def create_follower
     if user.preference('auto_follow_comment_threads') == 'true'
