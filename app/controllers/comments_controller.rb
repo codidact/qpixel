@@ -295,7 +295,7 @@ class CommentsController < ApplicationController
   end
 
   def unfollow_thread
-    status = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)&.destroy
+    status = @comment_thread.remove_follower(current_user)
     restrict_thread_response(@comment_thread, status)
   end
 

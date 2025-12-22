@@ -28,10 +28,15 @@ class CommentThreadTest < ActiveSupport::TestCase
 
     thread.bump_last_activity
     last_activity_after_bump = thread.last_activity
-    assert_operator last_activity_after_update, '<=', last_activity_after_bump
+    assert_operator last_activity_after_update, '<', last_activity_after_bump
 
     thread.add_follower(users(:editor))
     thread.reload
-    assert_operator last_activity_after_bump, '<=', thread.last_activity
+    last_activity_after_follow = thread.last_activity
+    assert_operator last_activity_after_bump, '<', last_activity_after_follow
+
+    thread.remove_follower(users(:editor))
+    thread.reload
+    assert_operator last_activity_after_follow, '<', thread.last_activity
   end
 end

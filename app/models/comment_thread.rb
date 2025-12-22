@@ -99,6 +99,13 @@ class CommentThread < ApplicationRecord
     self.last_activity_at = DateTime.now
   end
 
+  # Removes a given user from the thread's followers
+  # @param user [User] user to remove from followers
+  # @return [Boolean] status of the operation
+  def remove_follower(user)
+    ThreadFollower.find_by(comment_thread: self, user: user)&.destroy || false
+  end
+
   private
 
   # Comment author and post author are automatically followed to the thread. Question author is NOT
