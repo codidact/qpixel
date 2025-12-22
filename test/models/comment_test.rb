@@ -43,4 +43,18 @@ class CommentTest < ActiveSupport::TestCase
     assert pings.include?(std_user.id)
     assert_not pings.include?(User.system.id)
   end
+
+  test 'last_activity should correctly get the comment\'s last activity date & time' do
+    comment = comments(:without_activity)
+
+    assert_equal comment.created_at, comment.last_activity
+
+    comment.update!(content: 'this should bump last_activity')
+    comment.reload
+    last_activity_after_update = comment.last_activity
+    assert_operator comment.updated_at, '<=', last_activity_after_update
+
+    comment.bump_last_activity
+    assert_operator last_activity_after_update, '<=', comment.last_activity
+  end
 end
