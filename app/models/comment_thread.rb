@@ -109,7 +109,7 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to remove from followers
   # @return [Boolean] status of the operation
   def remove_follower(user)
-    ThreadFollower.find_by(comment_thread: self, user: user)&.destroy || false
+    ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
   end
 
   private
