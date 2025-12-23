@@ -82,3 +82,10 @@ without_activity:
   community: sample
   created_at: 2020-01-01T00:00:00.000000Z
   updated_at: 2020-01-01T00:00:00.000000Z
+
+without_followers:
+  title: Comment thread without any followers
+  title: Comment thread without activity
+  reply_count: 0
+  post: question_one
+  community: sample
