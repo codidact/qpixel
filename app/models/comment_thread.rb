@@ -92,7 +92,9 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to register as a follower
   # @return [Boolean] status of the operation
   def add_follower(user)
-    ThreadFollower.create(comment_thread: self, user: user)
+    if ThreadFollower.where(comment_thread: self, user: user).none?
+      ThreadFollower.create(comment_thread: self, user: user)
+    end
   end
 
   # Directly bumps the thread's last activity date & time
