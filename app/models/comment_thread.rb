@@ -92,9 +92,9 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to register as a follower
   # @return [Boolean] status of the operation
   def add_follower(user)
-    if ThreadFollower.where(comment_thread: self, user: user).none?
-      ThreadFollower.create(comment_thread: self, user: user)
-    end
+    return true if ThreadFollower.where(comment_thread: self, user: user).any?
+
+    ThreadFollower.create(comment_thread: self, user: user)
   end
 
   # Directly bumps the thread's last activity date & time
@@ -111,6 +111,8 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to remove from followers
   # @return [Boolean] status of the operation
   def remove_follower(user)
+    return true if ThreadFollower.where(comment_thread: self, user: user).none?
+
     ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
   end
 
