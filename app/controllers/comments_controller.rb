@@ -12,6 +12,7 @@ class CommentsController < ApplicationController
                                     :archive_thread,
                                     :delete_thread,
                                     :follow_thread,
+                                    :unfollow_thread,
                                     :lock_thread,
                                     :thread_unrestrict,
                                     :thread_followers]
@@ -313,8 +314,6 @@ class CommentsController < ApplicationController
       unarchive_thread
     when 'delete'
       undelete_thread
-    when 'follow'
-      unfollow_thread
     else
       not_found!
     end
