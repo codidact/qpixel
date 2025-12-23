@@ -250,8 +250,11 @@ $(() => {
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      const inline = isInlineCommentThread(wrapper);
-      openThread(wrapper, threadID, { inline });
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
     });
   });
 
@@ -265,8 +268,11 @@ $(() => {
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      const inline = isInlineCommentThread(wrapper);
-      openThread(wrapper, threadID, { inline });
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
     });
   })
 
