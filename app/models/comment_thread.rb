@@ -92,7 +92,10 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to register as a follower
   # @return [Boolean] status of the operation
   def add_follower(user)
-    return true if ThreadFollower.where(comment_thread: self, user: user).any?
+    if ThreadFollower.where(comment_thread: self, user: user).any?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
 
     ThreadFollower.create(comment_thread: self, user: user)
   end
@@ -111,7 +114,10 @@ class CommentThread < ApplicationRecord
   # @param user [User] user to remove from followers
   # @return [Boolean] status of the operation
   def remove_follower(user)
-    return true if ThreadFollower.where(comment_thread: self, user: user).none?
+    if ThreadFollower.where(comment_thread: self, user: user).none?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
 
     ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
   end
