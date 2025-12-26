@@ -17,15 +17,11 @@ class Comment < ApplicationRecord
   after_create :create_follower
   after_update :delete_thread
 
+  before_save :bump_last_activity
+
   counter_culture :comment_thread, column_name: proc { |model| model.deleted? ? nil : 'reply_count' }, touch: true
 
   validate :content_length
-
-  # Gets last activity date and time on the comment
-  # @return [DateTime] last activity date and time
-  def last_activity_at
-    [created_at, updated_at].compact.max
-  end
 
   def root
     # If parent_question is nil, the comment is already on a question, so we can just return post.
@@ -41,10 +37,26 @@ class Comment < ApplicationRecord
     end
   end
 
+  # Gets last activity date and time on the comment
+  # @return [DateTime] last activity date and time
+  def last_activity
+    [created_at, updated_at, last_activity_at].compact.max
+  end
+
   def pings
     pingable = comment_thread.pingable
     matches = content.scan(USER_PING_REG_EXP)
     matches.flatten.select { |m| pingable.include?(m.to_i) }.map(&:to_i)
+  end
+
+  # Directly bumps the comment's last activity date & time
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def bump_last_activity(persist_changes: false)
+    self.last_activity_at = DateTime.now
+
+    if persist_changes
+      save
+    end
   end
 
   private

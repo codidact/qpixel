@@ -68,7 +68,7 @@ module CommentsControllerTestHelpers
   # Attempts to unfollow a given comment thread
   # @param thread [CommentThread] thread to unfollow
   def try_unfollow_thread(thread)
-    post :thread_unrestrict, params: { id: thread.id, type: 'follow' }
+    post :unfollow_thread, params: { id: thread.id }
   end
 
   # Attempts to follow new threads on a given post

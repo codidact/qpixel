@@ -247,6 +247,7 @@ Rails.application.routes.draw do
     post   'thread/:id/archive',           to: 'comments#archive_thread', as: :archive_comment_thread
     post   'thread/:id/delete',            to: 'comments#delete_thread', as: :delete_comment_thread
     post   'thread/:id/follow',            to: 'comments#follow_thread', as: :follow_comment_thread
+    post   'thread/:id/unfollow',          to: 'comments#unfollow_thread', as: :unfollow_comment_thread
     post   'thread/:id/lock',              to: 'comments#lock_thread', as: :lock_comment_thread
 
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread

@@ -321,7 +321,7 @@ class UserTest < ActiveSupport::TestCase
     anonymized_name = "user#{std.id}"
     anonymized_email = "#{std.id}@deleted.localhost"
 
-    [true, false].each do |persist|
+    [false, true].each do |persist|
       std.anonymize(persist_changes: persist)
 
       assert_equal std.username, anonymized_name
@@ -330,11 +330,11 @@ class UserTest < ActiveSupport::TestCase
       std.reload
 
       if persist
-        assert_not_equal std.username, anonymized_name
-        assert_not_equal std.email, anonymized_email
-      else
         assert_equal std.username, anonymized_name
         assert_equal std.email, anonymized_email
+      else
+        assert_not_equal std.username, anonymized_name
+        assert_not_equal std.email, anonymized_email
       end
     end
   end
