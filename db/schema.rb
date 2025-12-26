@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_21_142105) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_26_185531) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -403,6 +403,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_21_142105) do
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
   end
 
+  create_table "new_thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "post_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_new_thread_followers_on_post_id"
+    t.index ["user_id", "post_id"], name: "index_new_thread_followers_on_user_id_and_post_id"
+  end
+
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.text "content"
     t.string "link"
@@ -725,9 +734,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_21_142105) do
     t.bigint "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.bigint "post_id"
     t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
-    t.index ["post_id"], name: "index_thread_followers_on_post_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
@@ -895,7 +902,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_21_142105) do
   add_foreign_key "tag_synonyms", "tags"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
-  add_foreign_key "thread_followers", "posts"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
   add_foreign_key "user_websites", "users"
