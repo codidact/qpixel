@@ -62,7 +62,7 @@ interface QPixelDOM {
    * Checks common modifier states on a given keyboard event
    * @param event 
    */
-  getModifierState: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
+  getModifierState?: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
   /**
    * Is a given event target an HTMLElement?
    * @param target event target to check
@@ -97,24 +97,24 @@ interface QPixelMD {
    * @param start text to insert at selection start
    * @param end text to insert at selection end, if any
    */
-  insertIntoField($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null): void;
+  insertIntoField?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null) => void;
   /**
    * Replace the selected text in an input field with a provided replacement.
    * @param $field the field in which to replace text
    * @param text the text with which to replace the selection
    */
-  replaceSelection($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string): void;
+  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
    /**
     * Inserts text at a given {@link idx} in a given {@link str}
     * @param str text to insert into
     * @param idx position to insert at
     * @param insert text to insert
     */
-  stringInsert(str: string, idx: number, insert: string): string;
+  stringInsert?: (str: string, idx: number, insert: string) => string;
   /**
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
-  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+  stripMarkdown?: (content: string, options?: StripMarkdownOptions) => string;
 }
 
 interface QPixelStorageGetOptions {

@@ -1,7 +1,7 @@
 window.QPixel = window.QPixel || {};
 
 QPixel.MD = {
-  insertIntoField($field, start, end) {
+  insertIntoField: ($field, start, end) => {
     let value = $field.val();
 
     value = QPixel.MD.stringInsert(value, $field[0].selectionStart, start);
@@ -13,7 +13,7 @@ QPixel.MD = {
     $field.val(value).trigger('markdown');
   },
 
-  replaceSelection($field, text) {
+  replaceSelection: ($field, text) => {
     const prev = $field.val()?.toString();
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
   },
