@@ -1,13 +1,4 @@
 $(() => {
-  const insertIntoField = ($field, start, end) => {
-    let value = $field.val();
-    value = QPixel.MD.stringInsert(value, $field[0].selectionStart, start);
-    if (end) {
-      value = QPixel.MD.stringInsert(value, $field[0].selectionEnd + start.length, end);
-    }
-    $field.val(value).trigger('markdown');
-  };
-
   const replaceSelection = ($field, text) => {
     const prev = $field.val();
     $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
@@ -36,7 +27,7 @@ $(() => {
 
     if (Object.keys(actions).indexOf(action) !== -1) {
       const preSelection = [$field[0].selectionStart, $field[0].selectionEnd];
-      insertIntoField($field, actions[action][0], actions[action][1]);
+      QPixel.MD.insertIntoField($field, actions[action][0], actions[action][1]);
       $field.focus();
       $field[0].selectionStart = preSelection[0] + actions[action][0].length;
       $field[0].selectionEnd = preSelection[1] + actions[action][0].length;
@@ -100,7 +91,7 @@ $(() => {
       replaceSelection($field, markdown);
     }
     else {
-      insertIntoField($field, markdown);
+      QPixel.MD.insertIntoField($field, markdown);
     }
 
     $field.trigger('markdown');

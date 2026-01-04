@@ -91,6 +91,13 @@ interface StripMarkdownOptions {
 }
 
 interface QPixelMD {
+  /**
+   * Inserts text around a given {@link $field}'s selection
+   * @param $field field to insert text into
+   * @param start text to insert at selection start
+   * @param end text to insert at selection end, if any
+   */
+   insertIntoField($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null): void;
    /**
     * Inserts text at a given {@link idx} in a given {@link str}
     * @param str text to insert into
