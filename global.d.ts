@@ -97,7 +97,13 @@ interface QPixelMD {
    * @param start text to insert at selection start
    * @param end text to insert at selection end, if any
    */
-   insertIntoField($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null): void;
+  insertIntoField($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null): void;
+  /**
+   * Replace the selected text in an input field with a provided replacement.
+   * @param $field the field in which to replace text
+   * @param text the text with which to replace the selection
+   */
+  replaceSelection($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string): void;
    /**
     * Inserts text at a given {@link idx} in a given {@link str}
     * @param str text to insert into
@@ -482,12 +488,6 @@ interface QPixel {
    */
   preference?: (name: string, community?: boolean) => Promise<string>;
 
-  /**
-   * Replace the selected text in an input field with a provided replacement.
-   * @param $field the field in which to replace text
-   * @param text the text with which to replace the selection
-   */
-  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
   setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
 
   /**

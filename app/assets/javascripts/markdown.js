@@ -83,7 +83,7 @@ $(() => {
     const $field = $('.js-post-field');
 
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
-      QPixel.replaceSelection($field, markdown);
+      QPixel.MD.replaceSelection($field, markdown);
     }
     else {
       QPixel.MD.insertIntoField($field, markdown);

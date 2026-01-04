@@ -13,6 +13,11 @@ QPixel.MD = {
     $field.val(value).trigger('markdown');
   },
 
+  replaceSelection($field, text) {
+    const prev = $field.val()?.toString();
+    $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
+  },
+
   stringInsert: (str, idx, insert) => {
     return str.slice(0, idx) + insert + str.slice(idx);
   },

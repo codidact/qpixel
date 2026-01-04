@@ -306,7 +306,7 @@ $(() => {
     const $field = $('.js-post-field');
     const $tgt = $(ev.target);
     const text = $tgt.attr('data-text');
-    QPixel.replaceSelection($field, text);
+    QPixel.MD.replaceSelection($field, text);
     $field.trigger('markdown');
   };
 
