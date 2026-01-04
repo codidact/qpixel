@@ -1,9 +1,4 @@
 $(() => {
-  const replaceSelection = ($field, text) => {
-    const prev = $field.val();
-    $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
-  };
-
   $(document).on('click', '.js-markdown-tool', (ev) => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
@@ -88,7 +83,7 @@ $(() => {
     const $field = $('.js-post-field');
 
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
-      replaceSelection($field, markdown);
+      QPixel.replaceSelection($field, markdown);
     }
     else {
       QPixel.MD.insertIntoField($field, markdown);
