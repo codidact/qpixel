@@ -275,11 +275,11 @@
       <tr>
         <td colspan="2">
           <% if current_user&.id == @user.id %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:3"), 'aria-label': 'View your articles' do %>
+            <%= link_to search_path(search: "user:#{@user.id} post_type:5"), 'aria-label': 'View your articles' do %>
               Articles
             <% end %>
           <% else %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:3"), 'aria-label': "View articles from #{rtl_safe_username(@user)}" do %>
+            <%= link_to search_path(search: "user:#{@user.id} post_type:5"), 'aria-label': "View articles from #{rtl_safe_username(@user)}" do %>
               Articles
             <% end %>
           <% end %>
