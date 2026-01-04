@@ -204,13 +204,13 @@
         <% end %>
         <div class="widget--footer">
           <% if current_user&.id == @user.id %>
-           <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
-             Abilities &raquo;
-           <% end %>
+            <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
+              Abilities &raquo;
+            <% end %>
           <% else %>
-           <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold', 'aria-label': "View abilities of #{rtl_safe_username(@user)}" do %>
-             Abilities &raquo;
-           <% end %>
+            <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold', 'aria-label': "View abilities of #{rtl_safe_username(@user)}" do %>
+              Abilities &raquo;
+            <% end %>
           <% end %>
         </div>
       </div>
