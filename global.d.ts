@@ -702,6 +702,10 @@ declare var hljs: any;
 declare var MathJax: any;
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
+// Sefaria Linker (no known types)
+declare var sefaria: {
+  link: () => void
+} | undefined;
 declare var QPixel: QPixel;
 
 declare var getCaretCoordinates: (

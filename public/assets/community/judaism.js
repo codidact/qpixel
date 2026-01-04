@@ -38,6 +38,7 @@ THE SOFTWARE.
     },
   };
 
+  /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
   var currentTextfield = $('textarea, input[type=text]');
   $(document).ready(function(){
     $(document).on('focus', 'textarea, input[type=text]', function(){
@@ -150,7 +151,7 @@ THE SOFTWARE.
 
     /* Event handling for buttons and checkboxes*/
     kb.find('.hbkey').click(function () {
-      t = currentTextfield[0];
+      var t = currentTextfield[0];
       var start = t.selectionStart,
         end = t.selectionEnd,
         text = t.value,
@@ -164,7 +165,7 @@ THE SOFTWARE.
     });
 
     kb.find('.hbins').click(function () {
-      t = currentTextfield[0];
+      var t = currentTextfield[0];
       var start = t.selectionStart,
         end = t.selectionEnd,
         text = t.value,
@@ -303,6 +304,7 @@ $(() => {
   const doReplacement = (ev) => {
     ev.preventDefault();
 
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const $tgt = $(ev.target);
     const text = $tgt.attr('data-text');
@@ -318,6 +320,7 @@ $(() => {
   };
 
   QPixel.addEditorButton(`<i class="fas fa-torah"></i>`, 'Suggest Reference', async () => {
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd) || '';
     if (!selection) {
