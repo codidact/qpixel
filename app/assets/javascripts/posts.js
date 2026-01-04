@@ -20,15 +20,6 @@ $(() => {
   /** @type {JQuery<HTMLFormElement>} */
   const $uploadForm = $('.js-upload-form');
 
-  /**
-   * Inserts text at a given {@link idx} in a given {@link str}
-   * @param {string} str text to insert into
-   * @param {number} idx position to insert at
-   * @param {string} insert text to insert
-   * @returns {string}
-   */
-  const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
-
   const placeholder = '![Uploading, please wait...]()';
 
   $uploadForm.find('input[type="file"]').on('change', async (evt) => {
@@ -37,7 +28,7 @@ $(() => {
     const postText = postField.value;
     const cursorPos = postField.selectionStart;
 
-    postField.value = stringInsert(postText, cursorPos, placeholder);
+    postField.value = QPixel.MD.stringInsert(postText, cursorPos, placeholder);
 
     $uploadForm.trigger('submit');
   });

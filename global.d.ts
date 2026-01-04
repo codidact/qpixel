@@ -91,6 +91,13 @@ interface StripMarkdownOptions {
 }
 
 interface QPixelMD {
+   /**
+    * Inserts text at a given {@link idx} in a given {@link str}
+    * @param str text to insert into
+    * @param idx position to insert at
+    * @param insert text to insert
+    */
+  stringInsert(str: string, idx: number, insert: string): string;
   /**
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
