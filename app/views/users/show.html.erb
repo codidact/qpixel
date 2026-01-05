@@ -20,6 +20,7 @@
   </div>
 <% end %>
 
+<% is_me = @user.same_as?(current_user) %>
 <div class="grid <%= deleted_user?(@user) ? 'deleted-content' : '' %>">
   <div class="grid--cell is-9-lg is-12">
     <div class="h-p-0 h-p-t-0">
@@ -153,28 +154,19 @@
       <tr>
         <td colspan="2">
             <i class="fas fa-fw fa-reply-all"></i>
-            <% if current_user&.id == @user.id %>
-              <%= link_to search_path(search: "user:#{@user.id} post_type:2"), 'aria-label': 'View your answers' do %>
-                Answers
-              <% end %>
-            <% else %>
-              <%= link_to search_path(search: "user:#{@user.id} post_type:2"), 'aria-label': "View answers from #{rtl_safe_username(@user)}" do %>
-                Answers
-              <% end %>
+            <%= link_to search_path(search: "user:#{@user.id} post_type:2"),
+              'aria-label': is_me ? 'View your answers' : "View answers from #{rtl_safe_username(@user)}" do %>
+              Answers
             <% end %>
         </td>
         <td class="overflow-ellipsis" title="<%= @user.metric '2' %>"><%= @user.metric '2' %></td>
       </tr>
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-star-half-alt"></i>
-          <% if current_user&.id == @user.id %>
-            <%= link_to my_vote_summary_path, 'aria-label': 'View your received votes' do %>
-              Received votes
-            <% end %>
-          <% else %>
-            <%= link_to vote_summary_path, 'aria-label': "View received votes for #{rtl_safe_username(@user)}" do %>
-              Received votes
-            <% end %>
+          <%= link_to is_me ? my_vote_summary_path : vote_summary_path,
+            'aria-label':
+              is_me ? 'View your received votes' : "View received votes for #{rtl_safe_username(@user)}" do %>
+            Received votes
           <% end %>
           <br>(up minus down)
         </td>
@@ -184,7 +176,7 @@
         <td colspan="2"><i class="fas fa-fw fa-pen"></i> Edits made</td>
         <td class="overflow-ellipsis" title="<%= @user.metric 'E' %>"><%= @user.metric 'E' %></td>
       </tr>
-      <% if current_user&.id == @user.id || current_user&.at_least_moderator? %>
+      <% if is_me || current_user&.at_least_moderator? %>
         <tr><td colspan="3">Joined <%= @user.community_user.created_at %></td></tr>
       <% end %>
     </table>
@@ -204,14 +196,10 @@
         <% end %>
         <% end %>
         <div class="widget--footer">
-          <% if current_user&.id == @user.id %>
-            <%= link_to abilities_path, class: 'has-font-weight-bold', 'aria-label': 'View your abilities' do %>
-              Abilities &raquo;
-            <% end %>
-          <% else %>
-            <%= link_to abilities_path(for: @user.id), class: 'has-font-weight-bold', 'aria-label': "View abilities of #{rtl_safe_username(@user)}" do %>
-              Abilities &raquo;
-            <% end %>
+          <%= link_to is_me ? abilities_path : abilities_path(for: @user.id),
+            class: 'has-font-weight-bold',
+            'aria-label': is_me ? 'View your abilities' : "View abilities of #{rtl_safe_username(@user)}" do %>
+            Abilities &raquo;
           <% end %>
         </div>
       </div>
@@ -227,14 +215,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <% if current_user&.id == @user.id %>
-            <%= link_to user_posts_path, 'aria-label': 'View your posts' do %>
-              Total
-            <% end %>
-          <% else %>
-            <%= link_to user_posts_path, 'aria-label': "View posts for #{rtl_safe_username(@user)}" do %>
-              Total
-            <% end %>
+          <%= link_to user_posts_path,
+            'aria-label': is_me ? 'View your posts' : "View posts for #{rtl_safe_username(@user)}" do %>
+            Total
           <% end %>
         </td>
         <td class="overflow-ellipsis" title="<%= @user.posts.undeleted.count %>">
@@ -243,14 +226,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <% if current_user&.id == @user.id %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:1"), 'aria-label': 'View your questions' do %>
-              Questions
-            <% end %>
-          <% else %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:1"), 'aria-label': "View questions from #{rtl_safe_username(@user)}" do %>
-              Questions
-            <% end %>
+          <%= link_to search_path(search: "user:#{@user.id} post_type:1"),
+            'aria-label': is_me ? 'View your questions' : "View questions from #{rtl_safe_username(@user)}" do %>
+            Questions
           <% end %>
         </td>
         <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Question) %>">
@@ -259,14 +237,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <% if current_user&.id == @user.id %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:2"), 'aria-label': 'View your answers' do %>
-              Answers
-            <% end %>
-          <% else %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:2"), 'aria-label': "View answers from #{rtl_safe_username(@user)}" do %>
-              Answers
-            <% end %>
+          <%= link_to search_path(search: "user:#{@user.id} post_type:2"),
+            'aria-label': is_me ? 'View your answers' : "View answers from #{rtl_safe_username(@user)}" do %>
+            Answers
           <% end %>
         </td>
         <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Answer) %>">
@@ -275,14 +248,9 @@
       </tr>
       <tr>
         <td colspan="2">
-          <% if current_user&.id == @user.id %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:5"), 'aria-label': 'View your articles' do %>
-              Articles
-            <% end %>
-          <% else %>
-            <%= link_to search_path(search: "user:#{@user.id} post_type:5"), 'aria-label': "View articles from #{rtl_safe_username(@user)}" do %>
-              Articles
-            <% end %>
+          <%= link_to search_path(search: "user:#{@user.id} post_type:5"),
+            'aria-label': is_me ? 'View your articles' : "View articles from #{rtl_safe_username(@user)}" do %>
+            Articles
           <% end %>
         </td>
         <td class="overflow-ellipsis" title="<%= posts_for(posts_by_post_type, Article) %>">
@@ -304,45 +272,45 @@
         <td colspan="2">Total</td>
         <td class="overflow-ellipsis" title="<%= @user.votes.count %>"><%= @user.votes.count %></td>
       </tr>
-      <% if @user.id == current_user&.id || current_user&.admin? %>
-      <tr>
-        <td colspan="2">
-          <div class="flex items-center gap-sm">
-            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
-              <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
-            </svg>Upvotes
-          </div>
-        </td>
-        <td class="overflow-ellipsis" title="<%= votes_by_type[1] || 0 %>"><%= votes_by_type[1] || 0 %></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <div class="flex items-center gap-sm">
-            <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
-              <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
-            </svg>Downvotes
-          </div>
-        </td>
-        <td class="overflow-ellipsis" title="<%= votes_by_type[-1] || 0 %>"><%= votes_by_type[-1] || 0 %></td>
-      </tr>
-      <tr>
-        <td colspan="2">on Questions</td>
-        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Question) %>">
-          <%= votes_for(votes_by_post_type, Question) %>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">on Answers</td>
-        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Answer) %>">
-          <%= votes_for(votes_by_post_type, Answer) %>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">on Articles</td>
-        <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Article) %>">
-          <%= votes_for(votes_by_post_type, Article) %>
-        </td>
-      </tr>
+      <% if is_me || current_user&.admin? %>
+        <tr>
+          <td colspan="2">
+            <div class="flex items-center gap-sm">
+              <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+                <path d="M50,0 L100,50 L0,50 Z" fill="currentColor" />
+              </svg>Upvotes
+            </div>
+          </td>
+          <td class="overflow-ellipsis" title="<%= votes_by_type[1] || 0 %>"><%= votes_by_type[1] || 0 %></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="flex items-center gap-sm">
+              <svg class="has-color-tertiary-600" width="1em" height="0.67em" viewbox="0 0 100 50">
+                <path d="M0,0 L100,0 L50,50 Z" fill="currentColor" />
+              </svg>Downvotes
+            </div>
+          </td>
+          <td class="overflow-ellipsis" title="<%= votes_by_type[-1] || 0 %>"><%= votes_by_type[-1] || 0 %></td>
+        </tr>
+        <tr>
+          <td colspan="2">on Questions</td>
+          <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Question) %>">
+            <%= votes_for(votes_by_post_type, Question) %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">on Answers</td>
+          <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Answer) %>">
+            <%= votes_for(votes_by_post_type, Answer) %>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">on Articles</td>
+          <td class="overflow-ellipsis" title="<%= votes_for(votes_by_post_type, Article) %>">
+            <%= votes_for(votes_by_post_type, Article) %>
+          </td>
+        </tr>
       <% end %>
     </table>
     <br>
@@ -353,7 +321,7 @@
       <tr>
         <td colspan="2">Total</td>
         <td class="overflow-ellipsis" title="<%= @user.flags.count %>">
-          <% if current_user&.id == @user.id || at_least_moderator? %>
+          <% if is_me || at_least_moderator? %>
             <%= link_to @user.flags.count, flag_history_path(@user.id), class: 'is-muted',
                         'aria-label': "View flag history for #{@user.flags.count} flags" %>
           <% else %>
