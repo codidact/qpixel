@@ -358,8 +358,8 @@ window.addEventListener("load", async () => {
   container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
   container.classList.add('widget', 'has-margin-4');
 
-  const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
-  disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
+  const disclaimerNotice = document.querySelector('.js-sidebar-notice');
+  disclaimerNotice?.parentNode?.insertBefore(container, disclaimerNotice.nextSibling);
 
   let todayDate = new Date();
 
