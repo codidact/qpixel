@@ -266,13 +266,19 @@ THE SOFTWARE.
 
 
 $(() => {
+  const link = () => {
+    sefaria.link({
+      excludeFromLinking: '.js-post-field',
+    });
+  };
+
   const el = document.createElement('script');
   el.src = 'https://www.sefaria.org/linker.js';
   el.addEventListener('load', () => {
-    sefaria.link();
+    link();
 
     $(document).on('ajax:success', '.post--comments', () => {
-      sefaria.link();
+      link();
     });
 
     let linkTimeout = null;
@@ -283,7 +289,7 @@ $(() => {
       }
 
       linkTimeout = setTimeout(() => {
-        sefaria.link();
+        link();
       }, 1000);
     });
   });
