@@ -702,9 +702,21 @@ declare var hljs: any;
 declare var MathJax: any;
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
-// Sefaria Linker (no known types)
+// Sefaria Linker (no known types), see https://developers.sefaria.org/docs/linker-v2
 declare var sefaria: {
-  link: () => void
+  link: (options?: {
+    contentLang?: 'bilingual' | 'english' | 'hebrew',
+    dynamic?: boolean,
+    excludeFromLinking?: string,
+    excludeFromTracking?: string,
+    hidePopupsOnMobile?: boolean,
+    interfaceLang?: 'english' | 'hebrew',
+    mode?: 'link' | 'popup-click',
+    parenthesesOnly?: boolean,
+    popupStyles?: Record<string, string>,
+    selector?: string,
+    quotationOnly?: boolean
+  }) => void
 } | undefined;
 declare var QPixel: QPixel;
 
