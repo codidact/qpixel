@@ -38,6 +38,7 @@ THE SOFTWARE.
     },
   };
 
+  /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
   var currentTextfield = $('textarea, input[type=text]');
   $(document).ready(function(){
     $(document).on('focus', 'textarea, input[type=text]', function(){
@@ -150,7 +151,7 @@ THE SOFTWARE.
 
     /* Event handling for buttons and checkboxes*/
     kb.find('.hbkey').click(function () {
-      t = currentTextfield[0];
+      var t = currentTextfield[0];
       var start = t.selectionStart,
         end = t.selectionEnd,
         text = t.value,
@@ -164,7 +165,7 @@ THE SOFTWARE.
     });
 
     kb.find('.hbins').click(function () {
-      t = currentTextfield[0];
+      var t = currentTextfield[0];
       var start = t.selectionStart,
         end = t.selectionEnd,
         text = t.value,
@@ -265,13 +266,19 @@ THE SOFTWARE.
 
 
 $(() => {
+  const link = () => {
+    sefaria.link({
+      excludeFromLinking: '.js-post-field',
+    });
+  };
+
   const el = document.createElement('script');
   el.src = 'https://www.sefaria.org/linker.js';
   el.addEventListener('load', () => {
-    sefaria.link();
+    link();
 
     $(document).on('ajax:success', '.post--comments', () => {
-      sefaria.link();
+      link();
     });
 
     let linkTimeout = null;
@@ -282,7 +289,7 @@ $(() => {
       }
 
       linkTimeout = setTimeout(() => {
-        sefaria.link();
+        link();
       }, 1000);
     });
   });
@@ -303,10 +310,11 @@ $(() => {
   const doReplacement = (ev) => {
     ev.preventDefault();
 
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const $tgt = $(ev.target);
     const text = $tgt.attr('data-text');
-    QPixel.replaceSelection($field, text);
+    QPixel.MD.replaceSelection($field, text);
     $field.trigger('markdown');
   };
 
@@ -318,6 +326,7 @@ $(() => {
   };
 
   QPixel.addEditorButton(`<i class="fas fa-torah"></i>`, 'Suggest Reference', async () => {
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd) || '';
     if (!selection) {
@@ -355,8 +364,14 @@ window.addEventListener("load", async () => {
   container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
   container.classList.add('widget', 'has-margin-4');
 
-  const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
-  disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
+  const disclaimerNotice = document.querySelector('.js-sidebar-notice');
+  const sidebar = document.querySelector('.js-sidebar');
+
+  if (disclaimerNotice) {
+    disclaimerNotice.insertAdjacentElement('afterend', container);
+  } else {
+    sidebar?.prepend(container);
+  }
 
   let todayDate = new Date();
 

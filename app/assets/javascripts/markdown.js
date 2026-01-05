@@ -1,20 +1,4 @@
 $(() => {
-  const stringInsert = (str, idx, insert) => str.slice(0, idx) + insert + str.slice(idx);
-
-  const insertIntoField = ($field, start, end) => {
-    let value = $field.val();
-    value = stringInsert(value, $field[0].selectionStart, start);
-    if (end) {
-      value = stringInsert(value, $field[0].selectionEnd + start.length, end);
-    }
-    $field.val(value).trigger('markdown');
-  };
-
-  const replaceSelection = ($field, text) => {
-    const prev = $field.val();
-    $field.val(prev.substring(0, $field[0].selectionStart) + text + prev.substring($field[0].selectionEnd));
-  };
-
   $(document).on('click', '.js-markdown-tool', (ev) => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
@@ -38,7 +22,7 @@ $(() => {
 
     if (Object.keys(actions).indexOf(action) !== -1) {
       const preSelection = [$field[0].selectionStart, $field[0].selectionEnd];
-      insertIntoField($field, actions[action][0], actions[action][1]);
+      QPixel.MD.insertIntoField($field, actions[action][0], actions[action][1]);
       $field.focus();
       $field[0].selectionStart = preSelection[0] + actions[action][0].length;
       $field[0].selectionEnd = preSelection[1] + actions[action][0].length;
@@ -99,10 +83,10 @@ $(() => {
     const $field = $('.js-post-field');
 
     if ($field[0].selectionStart != null && $field[0].selectionStart !== $field[0].selectionEnd) {
-      replaceSelection($field, markdown);
+      QPixel.MD.replaceSelection($field, markdown);
     }
     else {
-      insertIntoField($field, markdown);
+      QPixel.MD.insertIntoField($field, markdown);
     }
 
     $field.trigger('markdown');

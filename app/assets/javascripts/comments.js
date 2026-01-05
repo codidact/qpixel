@@ -380,7 +380,7 @@ $(() => {
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = caretPos - posInWord + currentWord.length;
-      QPixel.replaceSelection($tgt, `@#${id}`);
+      QPixel.MD.replaceSelection($tgt, `@#${id}`);
       popup.destroy();
       $tgt.focus();
     };

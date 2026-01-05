@@ -8,7 +8,7 @@
     "target": "ES2021",
     "types": ["./global.d.ts", "@types/jquery", "@types/select2"]
   },
-  "include": ["./app/assets/javascripts"],
+  "include": ["./app/assets/javascripts", "./public/assets/community"],
   "exclude": [
     "config",
     "db",
@@ -17,7 +17,6 @@
     "img",
     "lib",
     "log",
-    "public",
     "scripts",
     "static",
     "test",

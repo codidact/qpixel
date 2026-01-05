@@ -15,6 +15,7 @@
  *   variant?: string
  *   extensions?: string
  *   code?: string
+ *   placement?: number
  *   score?: number
  * }} ChallengeEntry
  * 
@@ -31,6 +32,10 @@
   }
 
   const CHALLENGE_ID = match[0];
+
+  /**
+   * @type {ChallengeEntry[] | undefined}
+   */
   let leaderboard;
 
   /**
@@ -53,14 +58,13 @@
       return this._get('groupByLanguage');
     },
     set groupByLanguage(value) {
-      return this._set('groupByLanguage', value);
+      this._set('groupByLanguage', value);
     },
-
     get showPlacements() {
       return this._get('showPlacements');
     },
     set showPlacements(value) {
-      return this._set('showPlacements', value);
+      this._set('showPlacements', value);
     },
 
     _get(name) {
@@ -92,7 +96,7 @@
     const doc = dom_parser.parseFromString(text.toString(), 'text/html');
 
     const pagination = doc.querySelector('.pagination');
-    const num_pages = pagination ? parseInt(pagination.querySelector('.next').previousElementSibling.innerText) : 1;
+    const num_pages = pagination ? parseInt(pagination.querySelector('.next').previousElementSibling.textContent) : 1;
 
     const pagePromises = [];
     for (let i = 1; i <= num_pages; i++) {
@@ -111,13 +115,15 @@
       for (const answerPost of non_deleted_answers) {
         /** @type {HTMLElement | null} */
         const header = answerPost.querySelector('h1, h2, h3');
-        const code = header?.parentElement.querySelector(':scope > pre > code');
+        /** @type {HTMLElement | null} */
+        const codeEl = header?.parentElement.querySelector(':scope > pre > code');
         const full_language = header?.innerText.split(',')[0].trim();
         const regexGroups = full_language?.match(/(?<language>.+?)(?: \((?<variant>.+)\))?(?: \+ (?<extensions>.+))?$/)?.groups ?? {};
         const { language, variant, extensions } = regexGroups;
-        const userlink = answerPost.querySelector(
-          ".user-card--content .user-card--link",
-        );
+        /** @type {HTMLAnchorElement | null} */
+        const userlinkEl = answerPost.querySelector(".user-card--content .user-card--link");
+        /** @type {HTMLAnchorElement | null} */
+        const answerLinkEl = answerPost.querySelector('.js-permalink');
 
         // https://regex101.com/r/BjIjk5/2
         const matchedScore = header?.innerText.match(/\d+(?:\.\d+)?/g)?.pop();
@@ -125,15 +131,15 @@
         /** @type {ChallengeEntry} */
         const entry = {
           answerID: answerPost.id,
-          answerURL: answerPost.querySelector('.js-permalink').href,
+          answerURL: answerLinkEl?.href,
           page: i + 1, // +1 because pages are 1-indexed while arrays are 0-indexed
-          username: userlink?.firstChild?.data?.trim() || 'deleted user',
-          userid: userlink?.href?.match(/\d+/)?.[0] || '',
+          username: userlinkEl?.firstChild?.textContent?.trim() || 'deleted user',
+          userid: userlinkEl?.href?.match(/\d+/)?.[0] || '',
           full_language,
           language,
           variant,
           extensions,
-          code: code?.innerText,
+          code: codeEl?.innerText,
           score: isFinite(+matchedScore) ? +matchedScore : void 0
         };
 
@@ -192,6 +198,7 @@
   <div id="toc-rows"></div>
 </div>`;
 
+  /** @type {HTMLElement | null} */
   const leaderboardsTable = embed.querySelector('#toc-rows');
   const toggle = embed.querySelector('#leaderboards-header');
   toggle.addEventListener('click', (_) => { 
@@ -202,7 +209,10 @@
       leaderboardsTable.style.display = 'none';
     }
   });
+
+  /** @type {HTMLInputElement | null} */
   const groupByLanguageInput = embed.querySelector('#group-by-lang');
+  /** @type {HTMLInputElement | null} */
   const showPlacementsInput = embed.querySelector('#show-placement');
 
   groupByLanguageInput.addEventListener('click', (_) => {
@@ -237,6 +247,7 @@
    * @returns {Record<string, T[]>}
    */
   function createGroups(array, categorizer) {
+    /** @type {Record<string, T[]>} */
     const groups = {};
 
     for (const item of array) {
@@ -267,13 +278,19 @@
       : (settings.showPlacements ? `<div class="toc--badge"><span class="badge is-tag">#${answer.placement}</span></div>` : '')}
     <div class="toc--badge"><span class="language-badge badge is-tag is-blue"></span></div>`;
 
-    row.querySelector('.username').innerText = answer.username
-    row.querySelector('.language-badge').innerText = answer.full_language ?? 'N/A';
+    /** @type {HTMLElement | null} */
+    const usernameEl = row.querySelector('.username');
+    /** @type {HTMLElement | null} */
+    const langBadgeEl = row.querySelector('.language-badge');
+
+    usernameEl.innerText = answer.username;
+    langBadgeEl.innerText = answer.full_language ?? 'N/A';
+
     if (answer.code) {
-      row.querySelector('.username').after(document.createElement('code'));
+      usernameEl.after(document.createElement('code'));
       row.querySelector('code').innerText = answer.code.split('\n')[0].substring(0, 200);
     } else if (answer.code !== '') {
-      row.querySelector('.username').insertAdjacentHTML('afterend', '<em>Invalid entry format</em>');
+      usernameEl.insertAdjacentHTML('afterend', '<em>Invalid entry format</em>');
     }
 
     return row;
@@ -313,19 +330,23 @@
   }
 
   window.addEventListener("DOMContentLoaded", (_) => {
-    const categoryName = document.querySelector(".category-header--name").innerText.trim();
+    /** @type {HTMLElement | null} */
+    const categoryNameEl = document.querySelector(".category-header--name");
+
+    const categoryName = categoryNameEl.innerText.trim();
 
     if (categoryName !== 'Challenges') {
       return;
     }
 
-    const question_tags = [
-      ...document.querySelector(".post--tags").children,
-    ].map((el) => el.innerText);
+    /** @type {NodeListOf<HTMLElement>} */
+    const questionTagsElements = document.querySelectorAll(".post--tags > a");
+
+    const questionTags = [...questionTagsElements].map((el) => el.innerText);
 
     if (
-      question_tags.includes("code-golf") ||
-      question_tags.includes("lowest-score")
+      questionTags.includes("code-golf") ||
+      questionTags.includes("lowest-score")
     ) {
       // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
       sort = (x, y) => typeof x.score === "undefined" ? 1 : x.score - y.score;
@@ -334,8 +355,8 @@
 
       refreshBoard(sort);
     } else if (
-      question_tags.includes("code-bowling") ||
-      question_tags.includes("highest-score")
+      questionTags.includes("code-bowling") ||
+      questionTags.includes("highest-score")
     ) {
       // If x were undefined, it would be automatically sorted to the end, but not so if x.score is undefined, so this needs to be stated explicitly.
       sort = (x, y) => typeof x.score === "undefined" ? 1 : y.score - x.score;

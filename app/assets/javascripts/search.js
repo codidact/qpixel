@@ -27,7 +27,7 @@ $(() => {
       const id = $item.data('post-type-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
-      QPixel.replaceSelection($tgt, `post_type:${id}`);
+      QPixel.MD.replaceSelection($tgt, `post_type:${id}`);
       popup.destroy();
       $tgt.focus();
     };

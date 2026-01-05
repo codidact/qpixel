@@ -62,7 +62,7 @@ interface QPixelDOM {
    * Checks common modifier states on a given keyboard event
    * @param event 
    */
-  getModifierState: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
+  getModifierState?: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
   /**
    * Is a given event target an HTMLElement?
    * @param target event target to check
@@ -92,9 +92,29 @@ interface StripMarkdownOptions {
 
 interface QPixelMD {
   /**
+   * Inserts text around a given {@link $field}'s selection
+   * @param $field field to insert text into
+   * @param start text to insert at selection start
+   * @param end text to insert at selection end, if any
+   */
+  insertIntoField?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null) => void;
+  /**
+   * Replace the selected text in an input field with a provided replacement.
+   * @param $field the field in which to replace text
+   * @param text the text with which to replace the selection
+   */
+  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
+   /**
+    * Inserts text at a given {@link idx} in a given {@link str}
+    * @param str text to insert into
+    * @param idx position to insert at
+    * @param insert text to insert
+    */
+  stringInsert?: (str: string, idx: number, insert: string) => string;
+  /**
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
-  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+  stripMarkdown?: (content: string, options?: StripMarkdownOptions) => string;
 }
 
 interface QPixelStorageGetOptions {
@@ -468,12 +488,6 @@ interface QPixel {
    */
   preference?: (name: string, community?: boolean) => Promise<string>;
 
-  /**
-   * Replace the selected text in an input field with a provided replacement.
-   * @param $field the field in which to replace text
-   * @param text the text with which to replace the selection
-   */
-  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
   setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
 
   /**
@@ -688,6 +702,22 @@ declare var hljs: any;
 declare var MathJax: any;
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
+// Sefaria Linker (no known types), see https://developers.sefaria.org/docs/linker-v2
+declare var sefaria: {
+  link: (options?: {
+    contentLang?: 'bilingual' | 'english' | 'hebrew',
+    dynamic?: boolean,
+    excludeFromLinking?: string,
+    excludeFromTracking?: string,
+    hidePopupsOnMobile?: boolean,
+    interfaceLang?: 'english' | 'hebrew',
+    mode?: 'link' | 'popup-click',
+    parenthesesOnly?: boolean,
+    popupStyles?: Record<string, string>,
+    selector?: string,
+    quotationOnly?: boolean
+  }) => void
+} | undefined;
 declare var QPixel: QPixel;
 
 declare var getCaretCoordinates: (
