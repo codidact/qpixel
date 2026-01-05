@@ -359,7 +359,13 @@ window.addEventListener("load", async () => {
   container.classList.add('widget', 'has-margin-4');
 
   const disclaimerNotice = document.querySelector('.js-sidebar-notice');
-  disclaimerNotice?.parentNode?.insertBefore(container, disclaimerNotice.nextSibling);
+  const sidebar = document.querySelector('.js-sidebar');
+
+  if (disclaimerNotice) {
+    disclaimerNotice.insertAdjacentElement('afterend', container);
+  } else {
+    sidebar?.prepend(container);
+  }
 
   let todayDate = new Date();
 
