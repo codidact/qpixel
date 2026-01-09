@@ -602,6 +602,13 @@ interface QPixel {
   followThread?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to unfollow a comment thread
+   * @param id id of the thread to unfollow
+   * @returns result of the operation
+   */
+  unfollowThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to start following comments on a given post
    * @param postId id of the post to follow comments on
    * @returns result of the operation

@@ -16,6 +16,8 @@ class CommentThread < ApplicationRecord
 
   after_create :create_follower
 
+  before_save :bump_last_activity
+
   # Gets threads appropriately scoped for a given user & post
   # @param user [User, nil] user to check
   # @para post [Post] post to check
@@ -51,9 +53,9 @@ class CommentThread < ApplicationRecord
 
   # Gets last activity date and time on the thread
   # @return [DateTime] last activity date and time
-  def last_activity_at
-    last_comment_activity_at = comments.map(&:last_activity_at).max
-    [created_at, locked_at, updated_at, last_comment_activity_at].compact.max
+  def last_activity
+    last_comment_activity = comments.map(&:last_activity).compact.max
+    [created_at, updated_at, last_activity_at, last_comment_activity].compact.max
   end
 
   # Gets a list of user IDs who should be pingable in the thread.
@@ -84,6 +86,40 @@ class CommentThread < ApplicationRecord
     if title.length > [max_len, 255].min
       errors.add(:title, "can't be more than #{max_len} characters")
     end
+  end
+
+  # Registers a given user as a follower of the thread
+  # @param user [User] user to register as a follower
+  # @return [Boolean] status of the operation
+  def add_follower(user)
+    if ThreadFollower.where(comment_thread: self, user: user).any?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
+
+    ThreadFollower.create(comment_thread: self, user: user)
+  end
+
+  # Directly bumps the thread's last activity date & time
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def bump_last_activity(persist_changes: false)
+    self.last_activity_at = DateTime.now
+
+    if persist_changes
+      save
+    end
+  end
+
+  # Removes a given user from the thread's followers
+  # @param user [User] user to remove from followers
+  # @return [Boolean] status of the operation
+  def remove_follower(user)
+    if ThreadFollower.where(comment_thread: self, user: user).none?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
+
+    ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
   end
 
   private

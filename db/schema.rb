@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_15_121326) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_21_142105) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -176,6 +176,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_15_121326) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
     t.datetime "locked_at", precision: nil
+    t.datetime "last_activity_at"
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -195,6 +196,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_15_121326) do
     t.boolean "has_reference", default: false, null: false
     t.text "reference_text"
     t.bigint "references_comment_id"
+    t.datetime "last_activity_at"
     t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
     t.index ["community_id"], name: "index_comments_on_community_id"
     t.index ["post_id"], name: "index_comments_on_post_type_and_post_id"

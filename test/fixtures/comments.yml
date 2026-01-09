@@ -81,3 +81,12 @@ with_user_pings:
   comment_thread: with_user_pings
   created_at: 2020-01-01T00:00:00.000000Z
   updated_at: 2021-01-01T00:00:00.000000Z
+
+without_activity:
+  user: standard_user
+  post: question_one
+  content: This comment must be without any initial activity
+  community: sample
+  comment_thread: normal
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2020-01-01T00:00:00.000000Z

@@ -12,6 +12,7 @@ class CommentsController < ApplicationController
                                     :archive_thread,
                                     :delete_thread,
                                     :follow_thread,
+                                    :unfollow_thread,
                                     :lock_thread,
                                     :thread_unrestrict,
                                     :thread_followers]
@@ -188,14 +189,16 @@ class CommentsController < ApplicationController
   end
 
   def thread
-    respond_to do |format|
-      format.html { render 'comments/thread' }
-      format.json { render json: @comment_thread }
+    if stale?(last_modified: @comment_thread.last_activity.utc)
+      respond_to do |format|
+        format.html { render 'comments/thread' }
+        format.json { render json: @comment_thread }
+      end
     end
   end
 
   def thread_content
-    if stale?(last_modified: @comment_thread.last_activity_at.utc)
+    if stale?(last_modified: @comment_thread.last_activity.utc)
       render partial: 'comment_threads/expanded',
              locals: { inline: params[:inline] == 'true',
                        show_deleted: params[:show_deleted_comments] == '1',
@@ -264,7 +267,7 @@ class CommentsController < ApplicationController
   end
 
   def follow_thread
-    status = ThreadFollower.create(comment_thread: @comment_thread, user: current_user)
+    status = @comment_thread.add_follower(current_user)
     restrict_thread_response(@comment_thread, status)
   end
 
@@ -293,7 +296,7 @@ class CommentsController < ApplicationController
   end
 
   def unfollow_thread
-    status = ThreadFollower.find_by(comment_thread: @comment_thread, user: current_user)&.destroy
+    status = @comment_thread.remove_follower(current_user)
     restrict_thread_response(@comment_thread, status)
   end
 
@@ -311,8 +314,6 @@ class CommentsController < ApplicationController
       unarchive_thread
     when 'delete'
       undelete_thread
-    when 'follow'
-      unfollow_thread
     else
       not_found!
     end

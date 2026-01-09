@@ -250,10 +250,31 @@ $(() => {
 
     QPixel.handleJSONResponse(data, () => {
       const wrapper = getCommentThreadWrapper($tgt);
-      const inline = isInlineCommentThread(wrapper);
-      openThread(wrapper, threadID, { inline });
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
     });
   });
+
+  $(document).on('click', '.js--unfollow-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+
+    const data = await QPixel.unfollowThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
+    });
+  })
 
   /**
    * @param {Element} target
