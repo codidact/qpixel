@@ -547,3 +547,17 @@ deleted_spam_question:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: moderator
+
+without_new_thread_followers:
+  post_type: question
+  title: This post does not have any new thread followers
+  body: This is the body of the post used to test new thread followers
+  body_markdown: <p>This is the body of the post used to test new thread followers</p>
+  tags_cache:
+    - support
+  tags:
+    - test
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
