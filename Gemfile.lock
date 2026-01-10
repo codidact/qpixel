@@ -77,19 +77,20 @@ GEM
     ast (2.4.3)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1126.0)
-    aws-sdk-core (3.226.2)
+    aws-partitions (1.1202.0)
+    aws-sdk-core (3.241.3)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       base64
+      bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.106.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-kms (1.120.0)
+      aws-sdk-core (~> 3, >= 3.241.3)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.192.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-s3 (1.208.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sdk-sns (1.100.0)
@@ -478,7 +479,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print (~> 1.9)
-  aws-sdk-s3 (~> 1.61)
+  aws-sdk-s3 (~> 1.208)
   aws-sdk-sns (~> 1.72)
   aws-ses-v4
   byebug (~> 11.1)
