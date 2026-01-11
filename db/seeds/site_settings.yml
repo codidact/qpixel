@@ -360,17 +360,19 @@
 
 - name: JSPath
   value: ~
-  value_type: string
+  value_type: uri_path
   category: SiteDetails
   description: >
     Path to a file containing site-specific JavaScript.
+    Only accepts domain-relative URLs (such as `/assets/community.js`).
 
 - name: CSSPath
   value: ~
-  value_type: string
+  value_type: uri_path
   category: SiteDetails
   description: >
     Path to a file containing site-specific CSS.
+    Only accepts domain-relative URLs (such as `/assets/community.css`).
 
 - name: AllowContentTransfer
   value: true
