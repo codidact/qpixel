@@ -19,6 +19,7 @@ tables_columns.each do |t, cs|
   puts '  ALTER MODIFY...'
   cs.select { |c| %i[string text].include? c.type }.each do |c|
     puts "    #{c.name}"
-    ActiveRecord::Base.connection.execute "ALTER TABLE `#{t}` MODIFY `#{c.name}` #{c.sql_type} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    sql = "ALTER TABLE `#{t}` MODIFY `#{c.name}` #{c.sql_type} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    ActiveRecord::Base.connection.execute sql
   end
 end
