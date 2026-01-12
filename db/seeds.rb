@@ -46,7 +46,7 @@ def create_objects(type, seed)
   objs = type.create seeds
 
   skipped = objs.select { |o| o.errors.any? }.size
-  created = objs.select { |o| !o.errors.any? }.size
+  created = objs.reject { |o| o.errors.any? }.size
 
   # Post type cache must be manually cleared \
   # (its mappings need it, but only the controller clears the cache on create)
@@ -62,8 +62,8 @@ def ensure_system_user_abilities
 
   system_users.each do |su|
     abilities = Ability.unscoped
-      .where(internal_id: ['everyone', 'mod', 'unrestricted'])
-      .where(community_id: su.community_id)
+                       .where(internal_id: ['everyone', 'mod', 'unrestricted'])
+                       .where(community_id: su.community_id)
 
     user_abilities = UserAbility.unscoped.where(community_user_id: su.id)
 
@@ -86,7 +86,7 @@ end
 def not_edited?(post)
   PostHistory.where(post: post)
              .where.not(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
-             .count.zero?
+             .none?
 end
 
 sorted.each do |f, type|
@@ -99,8 +99,8 @@ sorted.each do |f, type|
     updated = 0
     data.each do |seed|
       seed.each do |attr, value|
-        if value.is_a?(String) && value.start_with?("$FILE ")
-          seed[attr] = File.read(Rails.root.join('db/seeds', value.gsub("$FILE ", '')))
+        if value.is_a?(String) && value.start_with?('$FILE ')
+          seed[attr] = File.read(Rails.root.join('db/seeds', value.gsub('$FILE ', '')))
         end
       end
 
@@ -118,8 +118,8 @@ sorted.each do |f, type|
             post.update(seed.merge('community_id' => c.id))
 
             no_initial = PostHistory.where(post: post)
-                       .where(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
-                       .count.zero?
+                                    .where(post_history_type: PostHistoryType.find_by(name: 'initial_revision'))
+                                    .none?
 
             if no_initial
               puts "[#{c.name}:#{seed['doc_slug']}] missing initial revision, creating..."
@@ -156,7 +156,7 @@ sorted.each do |f, type|
       end
     end
     unless Rails.env.test?
-      puts "#{type}: errored #{errored}, created #{created}, #{updated > 0 ? "updated #{updated}, " : ''}skipped #{skipped}"
+      puts "#{type}: errored #{errored}, created #{created}, #{"updated #{updated}, " if updated.positive?}skipped #{skipped}"
     end
   rescue StandardError => e
     puts "Got error #{e}. Continuing..."
