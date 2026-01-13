@@ -8,26 +8,6 @@ sorted = SeedsHelper.prioritize(types, files)
 
 should_update_posts = ENV['UPDATE_POSTS'] == 'true'
 
-Stats = Struct.new('Stats', :created, :updated, :errored, :skipped) do |struct|
-  struct.members.each do |member|
-    define_method "add_#{member}" do |num|
-      self[member] += num
-    end
-  end
-
-  def <<(other)
-    members.each do |member|
-      send("add_#{member}", other[member])
-    end
-  end
-
-  def print
-    members.map { |m| self[m]&.positive? ? "#{m} #{self[m]}" : nil }
-           .compact
-           .join(', ')
-  end
-end
-
 def expand_communities(type, seed)
   if type.column_names.include?('community_id') && !seed.include?('community_id')
     # if model includes a community_id, create the seed for every community
@@ -111,7 +91,7 @@ end
 # @param seed [Hash] initialized seed
 # @return [Stats] operation stats
 def create_post(user, community, seed)
-  stats = Stats.new(0, 0, 0, 0)
+  stats = SeedsHelper::Stats.new(0, 0, 0, 0)
   created = Post.create seed.merge('community_id' => community.id, 'user' => user)
 
   if created.errors.any?
@@ -133,7 +113,7 @@ end
 # @param seed [Hash] initialized seed
 # @return [Stats] operation stats
 def update_post(user, community, post, seed)
-  stats = Stats.new(0, 0, 0, 0)
+  stats = SeedsHelper::Stats.new(0, 0, 0, 0)
   updated = post.update(seed.merge('community_id' => community.id))
 
   if no_initial_revision?(post)
@@ -175,7 +155,7 @@ def seed_objects(type, seed)
     ensure_system_user_abilities
   end
 
-  Stats.new(created, 0, 0, skipped)
+  SeedsHelper::Stats.new(created, 0, 0, skipped)
 end
 
 # @param seed [Hash] initialized seed
@@ -183,7 +163,7 @@ end
 # @return [Stats] operation stats
 def seed_posts(seed, update_posts)
   system_usr = User.find(-1)
-  stats = Stats.new(0, 0, 0, 0)
+  stats = SeedsHelper::Stats.new(0, 0, 0, 0)
 
   Community.all.each do |community|
     RequestContext.community = community
@@ -222,7 +202,7 @@ end
 sorted.each do |f, type|
   processed = ERB.new(File.read(f)).result(binding)
   data = YAML.load(processed)
-  stats = Stats.new(0, 0, 0, 0)
+  stats = SeedsHelper::Stats.new(0, 0, 0, 0)
   data.each do |seed|
     init_seed(type, seed)
 
