@@ -201,6 +201,24 @@ def seed_posts(user, seed, update_posts)
   stats
 end
 
+def seed_community_assets
+  Community.all.each do |community|
+    RequestContext.community = community
+    host = community.host.split('.')[0]
+
+    [:css, :js].each do |ext|
+      setting_name = "#{ext.to_s.upcase}Path"
+      asset_path = Rails.public_path.join('./assets/community', "#{host}.#{ext}")
+
+      if SiteSetting[setting_name].blank? && File.exist?(asset_path)
+        SiteSetting[setting_name] = "/assets/community/#{host}.#{ext}"
+      end
+    rescue => e
+      puts "[#{community.name}] failed to seed asset: #{e.message}"
+    end
+  end
+end
+
 sorted.each do |f, type|
   processed = ERB.new(File.read(f)).result(binding)
   data = YAML.load(processed)
@@ -223,3 +241,5 @@ rescue StandardError => e
 end
 
 Post.where(community_id: nil).destroy_all
+
+seed_community_assets
