@@ -178,11 +178,11 @@ def seed_objects(type, seed)
   Stats.new(created, 0, 0, skipped)
 end
 
-# @param user [User] user to assign changes to
 # @param seed [Hash] initialized seed
 # @param update_posts [Boolean] whether to update existing posts
 # @return [Stats] operation stats
-def seed_posts(user, seed, update_posts)
+def seed_posts(seed, update_posts)
+  system_usr = User.find(-1)
   stats = Stats.new(0, 0, 0, 0)
 
   Community.all.each do |community|
@@ -190,9 +190,9 @@ def seed_posts(user, seed, update_posts)
     post = Post.find_by(doc_slug: seed['doc_slug'])
 
     if post.present? && update_posts && not_edited?(post)
-      stats << update_post(user, community, post, seed)
+      stats << update_post(system_usr, community, post, seed)
     elsif post.nil?
-      stats << create_post(user, community, seed)
+      stats << create_post(system_usr, community, seed)
     else
       stats.add_skipped(1)
     end
@@ -223,12 +223,11 @@ sorted.each do |f, type|
   processed = ERB.new(File.read(f)).result(binding)
   data = YAML.load(processed)
   stats = Stats.new(0, 0, 0, 0)
-  system_usr = User.find(-1)
   data.each do |seed|
     init_seed(type, seed)
 
     stats << if type == Post
-               seed_posts(system_usr, seed, should_update_posts)
+               seed_posts(seed, should_update_posts)
              else
                seed_objects(type, seed)
              end
