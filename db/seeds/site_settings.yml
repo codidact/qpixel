@@ -364,7 +364,7 @@
   category: SiteDetails
   description: >
     Path to a file containing site-specific JavaScript.
-    Only accepts domain-relative URLs (such as `/assets/community.js`).
+    Must be a domain-relative URL (such as `/assets/community.js`).
 
 - name: CSSPath
   value: ~
@@ -372,7 +372,7 @@
   category: SiteDetails
   description: >
     Path to a file containing site-specific CSS.
-    Only accepts domain-relative URLs (such as `/assets/community.css`).
+    Must be a domain-relative URL (such as `/assets/community.css`).
 
 - name: AllowContentTransfer
   value: true
