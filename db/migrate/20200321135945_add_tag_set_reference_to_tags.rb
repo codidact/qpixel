@@ -5,7 +5,7 @@ class AddTagSetReferenceToTags < ActiveRecord::Migration[5.2]
       RequestContext.community = community
       main_set = TagSet.find_or_create_by(community: community, name: 'Main')
       meta_set = TagSet.find_or_create_by(community: community, name: 'Meta')
-      in_sql = "in (select id from posts where community_id = #{community.id} and category = '$cat')"
+      in_sql = "(select id from posts where community_id = #{community.id} and category = '$cat')"
       sql = "select tag_id from posts_tags where post_id in #{in_sql}"
       main_sql = sql.gsub('$cat', 'Main')
       meta_sql = sql.gsub('$cat', 'Meta')
