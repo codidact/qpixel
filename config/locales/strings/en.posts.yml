@@ -1,6 +1,8 @@
 en:
   posts:
     #alert/notice
+    create_requires_post: >
+      Can't create a post without content. Please try again later or contact us.
     category_low_trust_level: >
       You don't have a high enough trust level to post in the :name category.
     type_requires_category: >

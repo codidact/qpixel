@@ -36,15 +36,23 @@ class PostsController < ApplicationController
   end
 
   def create
+    submitted = params[:post]
+
+    unless submitted.present?
+      flash[:danger] = helpers.i18ns('posts.create_requires_post')
+      redirect_back fallback_location: root_path
+      return
+    end
+
     @parent = Post.where(id: params[:parent]).first
     @post_type = if @parent.present? && @parent.post_type.answer_type.present?
                    @parent.post_type.answer_type
                  else
-                   PostType.find(params[:post][:post_type_id])
+                   PostType.find(submitted[:post_type_id])
                  end
     @category = if @post_type.has_category
-                  if params[:post][:category_id].present?
-                    Category.find(params[:post][:category_id])
+                  if submitted[:category_id].present?
+                    Category.find(submitted[:category_id])
                   elsif @parent.present?
                     @parent.category
                   end
