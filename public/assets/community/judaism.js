@@ -22,10 +22,20 @@ THE SOFTWARE.
 // Thanks to all who've helped debug and discuss, especially the Mac users, nebech.
 
 (function HBKeyboard() {
-  var docCookies = { //from developer.mozilla.org/en-US/docs/Web/API/document.cookie
+  // see https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+  var docCookies = {
+    /**
+     * @param {string} sKey
+     * @returns {string | null}
+     */
     getItem: function (sKey) {
       return unescape(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
     },
+    /**
+     * @param {string} sKey
+     * @param {string} sValue
+     * @returns {boolean}
+     */
     setItem: function (sKey, sValue) {
       if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
         return false;
@@ -33,6 +43,10 @@ THE SOFTWARE.
       document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=stackexchange.com; path=/";
       return true;
     },
+    /**
+     * @param {string} sKey
+     * @returns {boolean}
+     */
     hasItem: function (sKey) {
       return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
     },
