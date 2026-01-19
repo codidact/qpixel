@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 (function HBKeyboard() {
   // see https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
-  var docCookies = {
+  const docCookies = {
     /**
      * @param {string} sKey
      * @returns {string | null}
@@ -53,21 +53,23 @@ THE SOFTWARE.
   };
 
   /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
-  var currentTextfield = $('textarea, input[type=text]');
+  let currentTextfield = $('textarea, input[type=text]');
   $(document).ready(function(){
     $(document).on('focus', 'textarea, input[type=text]', function(){
       currentTextfield = $(this);
     });
 
-    var wh = $(window).height(),
-      ww = $(window).width(),
-      kb = createKeyboard().hide();
+    let wh = $(window).height(),
+        ww = $(window).width(),
+        kb = createKeyboard().hide();
+
     $('#hbk-toggle span').css({
       'padding': '3px',
       'text-align': 'center',
       'background-image': "none",
       'font-weight':'bolder'
     });
+
     $(window).resize(function(){
       kb.css({
         top: '+=' + ($(window).height() - wh) + 'px',
@@ -84,7 +86,7 @@ THE SOFTWARE.
   });
 
   function createKeyboard() {
-    var stand = "קראטוןםפשדגכעיחלךףזסבהנמצתץ",
+    const stand = "קראטוןםפשדגכעיחלךףזסבהנמצתץ",
       alpha = "חזוהדגבאסןנםמלךכיטתשרקץצףפע",
       nek = ["שׁ", "שׂ", "וְ", "וֱ", "וֲ", "וֳ", "וִ", "וֵ", "וֶ", "וַ", "וָ", "וֹ", "וֻ", "וּ"],
       x = 50,
@@ -165,27 +167,34 @@ THE SOFTWARE.
 
     /* Event handling for buttons and checkboxes*/
     kb.find('.hbkey').click(function () {
-      var t = currentTextfield[0];
-      var start = t.selectionStart,
-        end = t.selectionEnd,
-        text = t.value,
-        chr = $(this).data('t');
+      const t = currentTextfield[0];
+
+      const start = t.selectionStart,
+            end = t.selectionEnd,
+            text = t.value;
+
+      let chr = $(this).data('t');
 
       if (chr === '‏' && $('#rlm').is(':checked') && t.id !== 'input') chr = '&rlm;';//special case for rlm.
-      var res = text.slice(0, start) + chr + text.slice(end),
-        len = chr.length;
+
+      const res = text.slice(0, start) + chr + text.slice(end),
+            len = chr.length;
+
       $(t).val(res).trigger('input').focus();
       t.setSelectionRange(start + len, start + len);
     });
 
     kb.find('.hbins').click(function () {
-      var t = currentTextfield[0];
-      var start = t.selectionStart,
-        end = t.selectionEnd,
-        text = t.value,
-        chr = $(this).data('t');
-      var res = text.slice(0, start) + chr + text.slice(end),
-        len = chr.length;
+      const t = currentTextfield[0];
+
+      const start = t.selectionStart,
+            end = t.selectionEnd,
+            text = t.value,
+            chr = $(this).data('t');
+
+      const res = text.slice(0, start) + chr + text.slice(end),
+            len = chr.length;
+
       $(t).val(res).trigger('input').focus();
       t.setSelectionRange(start + len, start + len);
     });
@@ -217,7 +226,7 @@ THE SOFTWARE.
     });
 
     $('#keylayout').change(function(){
-      var layout = $(this).prop('checked') ? stand : alpha;
+      const layout = $(this).prop('checked') ? stand : alpha;
       $('.hbkey').slice(0, 27).each(function (index) {
         $(this).data('t', layout[index]).text(layout[index]);
       });
@@ -236,7 +245,7 @@ THE SOFTWARE.
 
 
   //Draggability
-  var drag = {
+  const drag = {
       elem: null,
       x: 0,
       y: 0,
@@ -259,7 +268,7 @@ THE SOFTWARE.
     if (drag.state) {
       delta.x = e.pageX - drag.x;
       delta.y = e.pageY - drag.y;
-      var cur_offset = $(drag.elem).offset();
+      const cur_offset = $(drag.elem).offset();
 
       $(drag.elem).offset({
         left: (cur_offset.left + delta.x),
@@ -362,8 +371,12 @@ $(() => {
   // Use *local* time for ISO string (Date.toISOString() uses UTC).
   // We only need the date here, so punting on time.
   function toIsoDate(date) {
-  var pad = function(num) {
-          var norm = Math.floor(Math.abs(num));
+  /**
+   * @param {number} num
+   * @returns {string}
+   */
+  const pad = function(num) {
+          const norm = Math.floor(Math.abs(num));
           return (norm < 10 ? '0' : '') + norm;
       };
 
