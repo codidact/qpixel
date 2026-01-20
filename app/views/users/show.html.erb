@@ -10,7 +10,7 @@
 
 <% if @user.community_user.suspended? %>
   <div class="notice is-danger h-m-b-4">
-  <% if @user.community_user.suspension_public_comment.nil? %>
+  <% if @user.community_user.suspension_public_comment.blank? %>
     <p>This user has been <strong>temporarily suspended</strong>.
   <% else %>
     <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
