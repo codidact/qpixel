@@ -1,0 +1,2 @@
+class DumpsController < ApplicationController
+end
