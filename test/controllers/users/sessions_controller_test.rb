@@ -30,7 +30,8 @@ class Users::SessionsControllerTest < ActionController::TestCase
 
   private
 
-  # @param user [User] user to very code for
+  # @param user [User] user to verify code for
+  # @param opts [Hash] options hash - any additional optional params to merge in
   def try_verify_2fa_code(user, **opts)
     post :verify_code, params: { uid: user.id, code: 'M8lENyehyCvo9F9MbyTl1aOL' }.merge(opts)
   end
