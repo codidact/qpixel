@@ -54,8 +54,8 @@ THE SOFTWARE.
 
   /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
   let currentTextfield = $('textarea, input[type=text]');
-  $(document).ready(function(){
-    $(document).on('focus', 'textarea, input[type=text]', function(){
+  $(document).ready(function () {
+    $(document).on('focus', 'textarea, input[type=text]', function () {
       currentTextfield = $(this);
     });
 
@@ -87,11 +87,11 @@ THE SOFTWARE.
 
   function createKeyboard() {
     const stand = "קראטוןםפשדגכעיחלךףזסבהנמצתץ",
-      alpha = "חזוהדגבאסןנםמלךכיטתשרקץצףפע",
-      nek = ["שׁ", "שׂ", "וְ", "וֱ", "וֲ", "וֳ", "וִ", "וֵ", "וֶ", "וַ", "וָ", "וֹ", "וֻ", "וּ"],
-      x = 50,
-      y = 50,
-      kb = $('<div class="hbkeyboard"></div>').appendTo($("body"));
+          alpha = "חזוהדגבאסןנםמלךכיטתשרקץצףפע",
+          nek = ["שׁ", "שׂ", "וְ", "וֱ", "וֲ", "וֳ", "וִ", "וֵ", "וֶ", "וַ", "וָ", "וֹ", "וֻ", "וּ"],
+          x = 50,
+          y = 50,
+          kb = $('<div class="hbkeyboard"></div>').appendTo($("body"));
 
     $.each(alpha.split('').concat(nek), function (i, letter) {
       kb.append('<button type="button" class="hbkey" data-t="' + letter.slice(-1) + '">' + letter + '</button>');
@@ -225,7 +225,7 @@ THE SOFTWARE.
       kb.fadeToggle('medium');
     });
 
-    $('#keylayout').change(function(){
+    $('#keylayout').change(function () {
       const layout = $(this).prop('checked') ? stand : alpha;
       $('.hbkey').slice(0, 27).each(function (index) {
         $(this).data('t', layout[index]).text(layout[index]);
@@ -242,8 +242,6 @@ THE SOFTWARE.
     return kb;
   }
 
-
-
   //Draggability
   const drag = {
       elem: null,
@@ -255,6 +253,7 @@ THE SOFTWARE.
       x: 0,
       y: 0
     };
+
   $(document).on('mousedown', '.hbkeyboard', function (e) {
     if (!drag.state) {
       drag.elem = this;
@@ -262,8 +261,10 @@ THE SOFTWARE.
       drag.y = e.pageY;
       drag.state = true;
     }
+
     return false;
   });
+
   $(document).mousemove(function (e) {
     if (drag.state) {
       delta.x = e.pageX - drag.x;
@@ -279,6 +280,7 @@ THE SOFTWARE.
       drag.y = e.pageY;
     }
   });
+
   $(document).mouseup(function () {
     drag.state && (drag.state = false);
   });
@@ -316,6 +318,7 @@ $(() => {
       }, 1000);
     });
   });
+
   document.body.appendChild(el);
 });
 
@@ -324,12 +327,19 @@ $(() => {
 
 
 $(() => {
+  /**
+   * @param {string} term
+   * @returns {Promise<string[]>}
+   */
   const getSuggestions = async (term) => {
     const resp = await fetch(`https://sefaria.org/api/name/${term}`);
     const data = await resp.json();
     return data.completions;
   };
 
+  /**
+   * @param {JQuery.ClickEvent} ev
+   */
   const doReplacement = (ev) => {
     ev.preventDefault();
 
@@ -341,6 +351,9 @@ $(() => {
     $field.trigger('markdown');
   };
 
+  /**
+   * @param {string[]} suggestions
+   */
   const createPopup = (suggestions) => {
     const $itemTemplate = $(`<a class="item" href="#"></a>`);
     return suggestions.map((s) => {
@@ -363,26 +376,32 @@ $(() => {
   });
 });
 
+
 // ============================================================================================== //
-/** 
+
+
+/**
  * Calendar script, added 2021-04-01 by @luap42
  */
 
-  // Use *local* time for ISO string (Date.toISOString() uses UTC).
-  // We only need the date here, so punting on time.
-  function toIsoDate(date) {
-  /**
-   * @param {number} num
-   * @returns {string}
-   */
-  const pad = function(num) {
-          const norm = Math.floor(Math.abs(num));
-          return (norm < 10 ? '0' : '') + norm;
-      };
+/**
+ * @param {number} num
+ * @returns {string}
+ */
+const pad = (num) => {
+  const norm = Math.floor(Math.abs(num));
+  return (norm < 10 ? '0' : '') + norm;
+};
 
+/**
+ * Use *local* time when converting to ISO string (Date.toISOString() uses UTC).
+ * @param {Date} date
+ * @returns {string}
+ */
+const toIsoDate = (date) => {
   return date.getFullYear() +
-      '-' + pad(date.getMonth() + 1) +
-      '-' + pad(date.getDate());
+    '-' + pad(date.getMonth() + 1) +
+    '-' + pad(date.getDate());
 }
 
 
