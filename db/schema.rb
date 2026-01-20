@@ -268,6 +268,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
     t.index ["user_id"], name: "index_complaints_on_user_id"
   end
 
+  create_table "dumps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "log_type"
     t.string "destination"
