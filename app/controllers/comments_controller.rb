@@ -395,7 +395,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user&.at_least_moderator? || current_user.same_as?(@comment.user)
+    unless current_user&.at_least_moderator? || current_user&.same_as?(@comment.user)
       render template: 'errors/forbidden', status: :forbidden
     end
   end
