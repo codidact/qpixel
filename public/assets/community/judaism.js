@@ -40,7 +40,7 @@ THE SOFTWARE.
       if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
         return false;
       }
-      document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=stackexchange.com; path=/";
+      document.cookie = `${escape(sKey)}=${escape(sValue)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=${location.hostname}; path=/`;
       return true;
     },
     /**
