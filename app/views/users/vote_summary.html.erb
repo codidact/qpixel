@@ -1,6 +1,12 @@
+<%
+  title = sanitize("Vote summary for #{user_link(@user)}")
+%>
+
+<% content_for :title, strip_tags(title) %>
+
 <%= render 'tabs', user: @user %>
 
-<h1>Vote summary for <%= user_link @user %></h1>
+<h1><%= title %></h1>
 
 <p class="is-lead">A daily summary of votes received for posts.</p>
 

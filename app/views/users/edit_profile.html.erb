@@ -1,10 +1,16 @@
+<%
+  title = 'Edit Profile'
+%>
+
 <% content_for :head do %>
   <%= render 'posts/markdown_script' %>
 <% end %>
 
+<% content_for :title, title %>
+
 <%= render 'tabs', user: current_user %>
 
-<h1>Edit Profile</h1>
+<h1><%= title %></h1>
 
 <% if defined?(@user) && @user.errors.any? %>
   <div class="notice is-danger">
