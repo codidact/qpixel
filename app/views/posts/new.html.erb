@@ -1,4 +1,6 @@
-<% title = "New Post#{ " in #{@category.name}" if @category.present? }" %>
+<%
+  title = "New Post#{ " in #{@category.name}" if @category.present? }"
+%>
 
 <% content_for :title, title %>
 
