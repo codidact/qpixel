@@ -253,7 +253,7 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
   .vote-summary-item--tags {
     display: flex;
     gap: 0.35em;
-    flex-wrap: wrap;
+    flex-grow: 1;
     justify-content: end;
     max-width: max-content;
   }
