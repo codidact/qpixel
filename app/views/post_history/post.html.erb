@@ -1,11 +1,16 @@
-<% @show_content = !!defined?(show_content) ? show_content : true %>
+<%
+  title = 'Post History'
+  @show_content = !!defined?(show_content) ? show_content : true
+%>
 
-<h1>Post History</h1>
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <% if @show_content %>
-<div class="item-list">
-  <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
-</div>
+  <div class="item-list">
+    <%= render 'posts/type_agnostic', post: @post, show_category_tag: true, show_type_tag: true, last_activity: false %>
+  </div>
 <% end %>
 
 <% @history.each.with_index do |event, index| %>
@@ -25,7 +30,8 @@
           <%= event.created_at.iso8601 %> (<%= time_ago_in_words(event.created_at) %> ago)
         </span>
         <% if event.comment.present? %>
-          <br/><em><%= event.comment %></em>
+          <br/>
+          <em><%= event.comment %></em>
         <% end %>
       </span>
       <%= render 'shared/copy_link', classes: ["button", "is-small", "is-muted", "is-outlined"],
@@ -64,9 +70,9 @@
     <% elsif [event.before_title, event.after_title,
               event.before_state, event.after_state,
               event.before_tags, event.after_tags].any?(&:present?) %>
-      <p>
-        <em>The detailed changes of this event are hidden because of a redaction.</em>
-      </p>
-    <% end %>
-  </details>
+    <p>
+      <em>The detailed changes of this event are hidden because of a redaction.</em>
+    </p>
+  <% end %>
+</details>
 <% end %>
