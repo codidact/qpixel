@@ -1,0 +1,22 @@
+<%#
+   "Rends a notice of a given type
+
+    Variables:
+      content : notice content
+    ? icon    : optional icon to show on the notice (without the fa- prefix)
+      type    : notice type (see the shared/_notices partial for the list of defined types)
+"%>
+
+<%
+  # Defaults
+  icon = (defined?(icon) ? icon : nil)
+%>
+
+<div class="notice is-<%= type %>">
+  <p>
+    <% if icon.present? %>
+      <i class="fas fa-<%= icon %>"></i>
+    <% end %>
+    <%= content %>
+  </p>
+</div>
