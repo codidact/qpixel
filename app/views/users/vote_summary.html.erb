@@ -20,33 +20,35 @@
       <% vote_list.each do |post, vote_data| %>
         <% vote_data = { -1 => [], 1 => [] }.merge(vote_data.group_by { |vd| vd.vote_type }) %>
         <div class="item-list--item">
-          <div class="item-list--number-value">
-            <span class="item-list--number">
-              <% if vote_data[+1].count == 0 %>
-                <span class="has-color-tertiary-600 has-font-size-subheading">+0</span>
-              <% else %>
-                <span class="has-color-green-800 has-font-weight-bold has-font-size-subheading">+<%= vote_data[+1].first.vote_count %></span>
-              <% end %>
-            </span>
-          </div>
-          <div class="item-list--number-value">
-            <span class="item-list--number">
-              <% if vote_data[-1].count == 0 %>
-                <span class="has-color-tertiary-600 has-font-size-subheading">&minus;0</span>
-              <% else %>
-                <span class="has-color-red-800 has-font-weight-bold has-font-size-subheading">&minus;<%= vote_data[-1].first.vote_count %></span>
-              <% end %>
-            </span>
+          <div class="vote-summary-item--counts">
+            <div class="item-list--number-value">
+              <span class="item-list--number">
+                <% if vote_data[+1].count == 0 %>
+                  <span class="has-color-tertiary-600 has-font-size-subheading">+0</span>
+                <% else %>
+                  <span class="has-color-green-800 has-font-weight-bold has-font-size-subheading">+<%= vote_data[+1].first.vote_count %></span>
+                <% end %>
+              </span>
+            </div>
+            <div class="item-list--number-value">
+              <span class="item-list--number">
+                <% if vote_data[-1].count == 0 %>
+                  <span class="has-color-tertiary-600 has-font-size-subheading">&minus;0</span>
+                <% else %>
+                  <span class="has-color-red-800 has-font-weight-bold has-font-size-subheading">&minus;<%= vote_data[-1].first.vote_count %></span>
+                <% end %>
+              </span>
+            </div>
           </div>
           <div class="item-list--text-value is-primary grid">
             <div class="grid grid--cell is-12">
               <% if post.present? %>
-                <div class="grid--cell is-flexible">
+                <div class="grid--cell is-flexible is-12-sm is-8-md is-10-lg">
                   <%= link_to generic_share_link(post) do %>
                     <%= post.post_type.is_top_level ? post.title : post.parent.title %>
                   <% end %>
                 </div>
-                <div class="grid--cell">
+                <div class="vote-summary-item--tags grid--cell is-12-sm is-4-md is-2-lg">
                   <span class="badge is-tag is-muted is-filled"><%= post.post_type.name %></span>
                   <a href="<%= category_path(post.category) %>" class="badge is-tag is-muted"><%= post.category.name %></a>
                 </div>
