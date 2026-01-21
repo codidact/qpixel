@@ -7,11 +7,9 @@
 
 <%= render 'posts/markdown_script' %>
 
-<div class="notice is-danger">
-  <p>
-    <i class="fas fa-exclamation-triangle"></i> Please be careful, as this tool sends a lot of emails.
-  </p>
-</div>
+<%= render 'shared/notice', content: 'Please be careful, as this tool sends a lot of emails.',
+                            icon: 'exclamation-triangle',
+                            type: 'danger' %>
 
 <h1><%= title %></h1>
 <p><%= blurb %></p>
