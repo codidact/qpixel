@@ -4,8 +4,9 @@ class Users::SessionsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
 
+  setup :set_mapping
+
   test 'should sign in with 2fa backup code' do
-    @request.env['devise.mapping'] = Devise.mappings[:user]
     Users::SessionsController.first_factor << users(:enabled_2fa).id
 
     try_verify_2fa_code(users(:enabled_2fa))
@@ -18,7 +19,6 @@ class Users::SessionsControllerTest < ActionController::TestCase
   end
 
   test 'should remember users with 2FA if requested' do
-    @request.env['devise.mapping'] = Devise.mappings[:user]
     Users::SessionsController.first_factor << users(:enabled_2fa).id
 
     try_verify_2fa_code(users(:enabled_2fa), remember_me: true)
@@ -29,6 +29,10 @@ class Users::SessionsControllerTest < ActionController::TestCase
   end
 
   private
+
+  def set_mapping
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+  end
 
   # @param user [User] user to verify code for
   # @param opts [Hash] options hash - any additional optional params to merge in
