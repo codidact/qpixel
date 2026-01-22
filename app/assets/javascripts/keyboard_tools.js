@@ -1,5 +1,13 @@
 window.QPixel ||= {};
 
+/**
+ * @typedef {{
+ *   key: string,
+ *   text: string,
+ *   if?: boolean
+ * }} KeyboardShortcut
+ */
+
 document.addEventListener('DOMContentLoaded', async () => {
   const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
   const preference = await QPixel.preference('keyboard_tools');
@@ -63,7 +71,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Use html, so that all prior attempts to access keyup event have priority
   $('html').on('keyup', function (e) {
-    if (e.target !== document.body) return;
+    if (e.target !== document.body) {
+      return;
+    }
+
     if (e.key === 'Escape') {
       QPixel.Keyboard.dialogClose();
     } else if (QPixel.Keyboard.state === 'home') {
@@ -84,6 +95,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   /**
+   * @param {number} len
+   * @returns {string}
+   */
+  const delimitShortcutsGroup = (len) => {
+    return `${'='.repeat(len)}\n`;
+  };
+
+  /**
+   * @param {KeyboardShortcut} shortcut
+   * @param {number} [gap]
+   * @returns {string}
+   */
+  const formatShortcut = ({ key, text }, gap = 4) => {
+    return `${key}${' '.repeat(gap - (key.length - 1))}${text}`;
+  };
+
+  /**
+   * @param {KeyboardShortcut[]} shortcuts
+   * @param {number} [gap]
+   * @returns {string}
+   */
+  const formatShortcuts = (shortcuts, gap = 4) => {
+    return shortcuts.filter((s) => s.if === void 0 || s.if)
+                    .map((s) => formatShortcut(s, gap))
+                    .join('\n');
+  };
+
+  /**
    * Handles the "home" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
@@ -95,22 +134,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (isHelp) {
+      /** @type {KeyboardShortcut[]} */
+      const generalShortcuts = [
+        { key: '?', text: 'Open this help' },
+        { key: 'esc', text: 'Close this help' },
+        { key: 'n', text: 'New post in the category' },
+        { key: 's', text: 'Search for something' },
+        { key: 'g', text: 'Go to ...' },
+        { key: 'a', text: 'Go to answer field' }
+      ];
+
+      /** @type {KeyboardShortcut[]} */
+      const selectionShortcuts = [
+        { key: 'j', text: 'Move one item down' },
+        { key: 'k', text: 'Move one item up' },
+        { key: 't',
+          text: 'Use a tool (on selection)',
+          if: !!QPixel.Keyboard.selectedItemData && QPixel.Keyboard.selectedItemData.type !== 'link'
+        }
+      ];
+
       QPixel.Keyboard.dialog(
         'Keyboard Shortcuts\n' +
-          '=================================\n' +
-          '?    Open this help\n' +
-          'esc  Close this help\n' +
-          'n    New post\n' +
-          '     (in current category)\n' +
-          's    Search for something\n' +
-          'g    Go to a page...\n\n' +
-          'a    Go to answer field\n\n' +
-          'Selection shortcuts:\n\n' +
-          'j    Move one item down\n' +
-          'k    Move one item up\n' +
-          't    Use a tool (on selection)\n\n' +
-          '(Selection shortcuts will select\n' +
-          'first post, if none selected)'
+        delimitShortcutsGroup(33) +
+        formatShortcuts(generalShortcuts, 4) +
+        '\n\n' +
+        'Selection shortcuts:\n\n' +
+        formatShortcuts(selectionShortcuts, 4) +
+        '\n\n' +
+        'Selection shortcuts will select\n' +
+        'first post, if none selected'
       );
     } else if (e.key === 'n') {
       const new_post_link = $('a.category-header--nav-item.is-button').attr('href');
@@ -118,18 +171,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = new_post_link;
       }
     } else if (e.key === 'g') {
+      /** @type {KeyboardShortcut[]} */
+      const shortcuts = [
+        { key: 'm', text: 'Main page' },
+        { key: 'u', text: 'User list' },
+        { key: 'h', text: 'Help' },
+        { key: 'd', text: 'Dashboard' },
+        { key: 'p', text: 'Your profile page' },
+        { key: 'c', text: 'Category ...' },
+        { key: 't', text: 'Tags of category ...' },
+        { key: 'e', text: 'Suggested Edits of ...' },
+        { key: 'f', text: 'Flags (mod only)', if: QPixel.Keyboard.is_mod }
+      ];
+
       QPixel.Keyboard.dialog(
         'Go to ...\n' +
-          '=========\n' +
-          'm   Main page\n' +
-          'u   User list\n' +
-          'h   Help\n' +
-          'd   Dashboard\n' +
-          'p   Your profile page\n' +
-          'c   Category ...\n' +
-          't   Tags of category ...\n' +
-          'e   Suggested Edits of category ...' +
-          (QPixel.Keyboard.is_mod ? '\nf   Flags (mod only)' : '')
+        delimitShortcutsGroup(26) +
+        formatShortcuts(shortcuts, 3)
       );
       QPixel.Keyboard.state = 'goto';
     } else if (e.key === 'j') {
@@ -155,16 +213,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       QPixel.Keyboard.updateSelected();
 
       if (QPixel.Keyboard.selectedItemData.type === 'post') {
+        /** @type {KeyboardShortcut[]} */
+        const shortcuts = [
+          { key: 'f', text: 'Flag' },
+          { key: 'e', text: 'Edit' },
+          { key: 'c', text: 'Comment' },
+          { key: 'l', text: 'Get permalink' },
+          { key: 'h', text: 'View history' },
+          { key: 'v', text: 'Vote ...' },
+          { key: 't', text: 'Use tools', if: QPixel.Keyboard.is_mod }
+        ];
+
         QPixel.Keyboard.dialog(
           'Use tool ...\n' +
-            '============\n' +
-            'f  Flag\n' +
-            'e  Edit\n' +
-            'c  Comment\n' +
-            'l  Get permalink\n' +
-            'h  View history\n' +
-            'v  Vote ...' +
-            (QPixel.Keyboard.is_mod ? '\nt  Use tools' : '')
+          delimitShortcutsGroup(17) +
+          formatShortcuts(shortcuts, 3)
         );
         QPixel.Keyboard.state = 'tools';
       }
@@ -181,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Handles "goto" keyboard state
+   * Handles the "goto" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
   function gotoMenu(e) {
@@ -205,30 +268,46 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = Object.entries(QPixel.Keyboard.categories());
       let string_response = '';
       for (let i = 0; i < data.length; i++) {
-        const entry = data[i];
-        string_response += i + 1 + '  ' + entry[0] + '\n';
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
       }
-      QPixel.Keyboard.dialog('Go to tags of category ...\n' + '==================\n' + string_response.trim());
+      QPixel.Keyboard.dialog(
+        'Go to tags of ...\n' +
+        delimitShortcutsGroup(18) +
+        string_response.trim()
+      );
       QPixel.Keyboard.state = 'goto/category-tags';
     } else if (e.key === 'e') {
       const data = Object.entries(QPixel.Keyboard.categories());
       let string_response = '';
       for (let i = 0; i < data.length; i++) {
-        const entry = data[i];
-        string_response += i + 1 + '  ' + entry[0] + '\n';
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
       }
       QPixel.Keyboard.dialog(
-        'Go to suggested edits of category ...\n' + '==================\n' + string_response.trim()
+        'Go to suggested edits of ...\n' +
+        delimitShortcutsGroup(28) +
+        string_response.trim()
       );
       QPixel.Keyboard.state = 'goto/category-edits';
     } else if (e.key === 'c') {
       const data = Object.entries(QPixel.Keyboard.categories());
       let string_response = '';
       for (let i = 0; i < data.length; i++) {
-        const entry = data[i];
-        string_response += i + 1 + '  ' + entry[0] + '\n';
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
       }
-      QPixel.Keyboard.dialog('Go to category ...\n' + '==================\n' + string_response.trim());
+      QPixel.Keyboard.dialog(
+        'Go to category ...\n' +
+        delimitShortcutsGroup(18) +
+        string_response.trim()
+      );
       QPixel.Keyboard.state = 'goto/category';
     }
   }
@@ -319,7 +398,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       cl.find('.js-flag-comment').focus();
       QPixel.Keyboard.dialogClose();
     } else if (e.key === 'v') {
-      QPixel.Keyboard.dialog('Vote ...\n' + '========\n' + 'u  Up\n' + 'd  Down\n' + 'c  Close');
+      /** @type {KeyboardShortcut[]} */
+      const shortcuts = [
+        { key: 'u', text: 'Up' },
+        { key: 'd', text: 'Down' },
+        { key: 'c', text: 'Close' }
+      ];
+
+      QPixel.Keyboard.dialog(
+        'Vote ...\n' +
+        delimitShortcutsGroup(9) +
+        formatShortcuts(shortcuts, 3)
+      );
       QPixel.Keyboard.state = 'tools/vote';
     } else if (e.key === 't') {
       let cl = $(QPixel.Keyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
