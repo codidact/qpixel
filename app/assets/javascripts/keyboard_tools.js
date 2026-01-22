@@ -97,18 +97,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isHelp) {
       QPixel.Keyboard.dialog(
         'Keyboard Shortcuts\n' +
-          '===========================\n' +
-          '?   Open this help\n' +
-          'esc Close this help\n' +
-          'n   New post\n' +
-          '    (in current category)\n' +
-          's   Search for something\n' +
-          'g   Go to a page...\n\n' +
-          'a   Go to answer field\n\n' +
+          '=================================\n' +
+          '?    Open this help\n' +
+          'esc  Close this help\n' +
+          'n    New post\n' +
+          '     (in current category)\n' +
+          's    Search for something\n' +
+          'g    Go to a page...\n\n' +
+          'a    Go to answer field\n\n' +
           'Selection shortcuts:\n\n' +
-          'j   Move one item down\n' +
-          'k   Move one item up\n' +
-          't  Use a tool (on selection)\n\n' +
+          'j    Move one item down\n' +
+          'k    Move one item up\n' +
+          't    Use a tool (on selection)\n\n' +
           '(Selection shortcuts will select\n' +
           'first post, if none selected)'
       );
