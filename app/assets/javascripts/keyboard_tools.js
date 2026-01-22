@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // Use html, so that all prior attempts to access keyup event have priority
-  $('html').on('keyup', function (e) {
+  $('html').on('keyup', (e) => {
     if (e.target !== document.body) {
       return;
     }
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * Handles the "home" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function homeMenu(e) {
+  const homeMenu = (e) => {
     const isHelp = e.key === '?';
 
     if (!isHelp && QPixel.DOM?.getModifierState(e)) {
@@ -241,13 +241,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = $(QPixel.Keyboard.selectedItem).find('[data-ckb-item-link]').attr('href');
       }
     }
-  }
+  };
 
   /**
    * Handles the "goto" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function gotoMenu(e) {
+  const gotoMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -310,13 +310,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       );
       QPixel.Keyboard.state = 'goto/category';
     }
-  }
+  };
 
   /**
    * Handles the "goto/category" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function categoryMenu(e) {
+  const categoryMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -329,13 +329,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const category = data_entries[number - 1];
       window.location.href = category[1];
     }
-  }
+  };
 
   /**
    * Handles the "goto/category-tags" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function categoryTagsMenu(e) {
+  const categoryTagsMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -347,13 +347,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const category = data[number - 1];
       window.location.href = category[1] + '/tags';
     }
-  }
+  };
 
   /**
    * Handles the "goto/category-edits" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function categorySuggestedEditsMenu(e) {
+  const categorySuggestedEditsMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -365,13 +365,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const category = data[number - 1];
       window.location.href = category[1] + '/suggested-edits';
     }
-  }
+  };
 
   /**
    * Handles the "tools" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function toolsMenu(e) {
+  const toolsMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -418,13 +418,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       cl.focus();
       QPixel.Keyboard.dialogClose();
     }
-  }
+  };
 
   /**
    * Handles the "tools/vote" keyboard state
    * @param {JQuery.KeyboardEventBase} e
    */
-  function voteMenu(e) {
+  const voteMenu = (e) => {
     if (QPixel.DOM?.getModifierState(e)) {
       return;
     }
@@ -444,5 +444,5 @@ document.addEventListener('DOMContentLoaded', async () => {
       cl.focus();
       QPixel.Keyboard.dialogClose();
     }
-  }
+  };
 });
