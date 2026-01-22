@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           post_id: this.selectedItem.getAttribute('data-ckb-post-id')
         };
       }
+
+      if (this.state === 'home') {
+        renderHelpMenu();
+      }
     }
   };
 
@@ -122,6 +126,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .join('\n');
   };
 
+  const renderHelpMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const generalShortcuts = [
+      { key: '?', text: 'Open this help' },
+      { key: 'esc', text: 'Close this help' },
+      { key: 'n', text: 'New post in the category' },
+      { key: 's', text: 'Search for something' },
+      { key: 'g', text: 'Go to ...' },
+      { key: 'a', text: 'Go to answer field' }
+    ];
+
+    /** @type {KeyboardShortcut[]} */
+    const selectionShortcuts = [
+      { key: 'j', text: 'Move one item down' },
+      { key: 'k', text: 'Move one item up' },
+      { key: 't',
+        text: 'Use a tool (on selection)',
+        if: !!QPixel.Keyboard.selectedItemData && QPixel.Keyboard.selectedItemData.type !== 'link'
+      }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Keyboard Shortcuts\n' +
+      delimitShortcutsGroup(33) +
+      formatShortcuts(generalShortcuts, 4) +
+      '\n\n' +
+      'Selection shortcuts:\n\n' +
+      formatShortcuts(selectionShortcuts, 4) +
+      '\n\n' +
+      'Selection shortcuts will select\n' +
+      'first post, if none selected'
+    );
+  };
+
   /**
    * Handles the "home" keyboard state
    * @param {JQuery.KeyboardEventBase} e
@@ -134,37 +172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (isHelp) {
-      /** @type {KeyboardShortcut[]} */
-      const generalShortcuts = [
-        { key: '?', text: 'Open this help' },
-        { key: 'esc', text: 'Close this help' },
-        { key: 'n', text: 'New post in the category' },
-        { key: 's', text: 'Search for something' },
-        { key: 'g', text: 'Go to ...' },
-        { key: 'a', text: 'Go to answer field' }
-      ];
-
-      /** @type {KeyboardShortcut[]} */
-      const selectionShortcuts = [
-        { key: 'j', text: 'Move one item down' },
-        { key: 'k', text: 'Move one item up' },
-        { key: 't',
-          text: 'Use a tool (on selection)',
-          if: !!QPixel.Keyboard.selectedItemData && QPixel.Keyboard.selectedItemData.type !== 'link'
-        }
-      ];
-
-      QPixel.Keyboard.dialog(
-        'Keyboard Shortcuts\n' +
-        delimitShortcutsGroup(33) +
-        formatShortcuts(generalShortcuts, 4) +
-        '\n\n' +
-        'Selection shortcuts:\n\n' +
-        formatShortcuts(selectionShortcuts, 4) +
-        '\n\n' +
-        'Selection shortcuts will select\n' +
-        'first post, if none selected'
-      );
+      renderHelpMenu();
     } else if (e.key === 'n') {
       const new_post_link = $('a.category-header--nav-item.is-button').attr('href');
       if (new_post_link) {
