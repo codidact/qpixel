@@ -15,6 +15,13 @@ module TagsHelper
       end
   end
 
+  # Renders wiki for a given tag
+  # @param tag [Tag] tag to render the wiki for
+  # @return [ActiveSupport::SafeBuffer] rendered usage wiki
+  def rendered_wiki(tag)
+    sanitize(tag.wiki, scrubber: scrubber)
+  end
+
   ##
   # Generate a list of classes to be applied to a tag.
   # @param tag [Tag]
@@ -37,5 +44,15 @@ module TagsHelper
   def post_ids_for_tags(tag_ids)
     sql = "SELECT post_id FROM posts_tags WHERE tag_id IN #{ApplicationRecord.sanitize_sql_in(tag_ids)}"
     ActiveRecord::Base.connection.execute(sql).to_a.flatten
+  end
+
+  class TagWikiScrubber < PostsHelper::PostScrubber
+    def allowed_node?(node)
+      super && !node.matches?("a[href=''], p:only-child:empty")
+    end
+  end
+
+  def scrubber
+    TagsHelper::TagWikiScrubber.new
   end
 end
