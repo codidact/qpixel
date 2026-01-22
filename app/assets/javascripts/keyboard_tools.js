@@ -160,6 +160,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   };
 
+  const renderGoToMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'm', text: 'Main page' },
+      { key: 'u', text: 'User list' },
+      { key: 'h', text: 'Help' },
+      { key: 'd', text: 'Dashboard' },
+      { key: 'p', text: 'Your profile page' },
+      { key: 'c', text: 'Category ...' },
+      { key: 't', text: 'Tags of category ...' },
+      { key: 'e', text: 'Suggested Edits of ...' },
+      { key: 'f', text: 'Flags (mod only)', if: QPixel.Keyboard.is_mod }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Go to ...\n' +
+      delimitShortcutsGroup(26) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
+  const renderToolsMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'f', text: 'Flag' },
+      { key: 'e', text: 'Edit' },
+      { key: 'c', text: 'Comment' },
+      { key: 'l', text: 'Get permalink' },
+      { key: 'h', text: 'View history' },
+      { key: 'v', text: 'Vote ...' },
+      { key: 't', text: 'Use tools', if: QPixel.Keyboard.is_mod }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Use tool ...\n' +
+      delimitShortcutsGroup(17) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
+  const renderToolsVoteMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'u', text: 'Up' },
+      { key: 'd', text: 'Down' },
+      { key: 'c', text: 'Close' }
+    ];
+    
+    QPixel.Keyboard.dialog(
+      'Vote ...\n' +
+      delimitShortcutsGroup(9) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
   /**
    * Handles the "home" keyboard state
    * @param {JQuery.KeyboardEventBase} e
@@ -179,24 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = new_post_link;
       }
     } else if (e.key === 'g') {
-      /** @type {KeyboardShortcut[]} */
-      const shortcuts = [
-        { key: 'm', text: 'Main page' },
-        { key: 'u', text: 'User list' },
-        { key: 'h', text: 'Help' },
-        { key: 'd', text: 'Dashboard' },
-        { key: 'p', text: 'Your profile page' },
-        { key: 'c', text: 'Category ...' },
-        { key: 't', text: 'Tags of category ...' },
-        { key: 'e', text: 'Suggested Edits of ...' },
-        { key: 'f', text: 'Flags (mod only)', if: QPixel.Keyboard.is_mod }
-      ];
-
-      QPixel.Keyboard.dialog(
-        'Go to ...\n' +
-        delimitShortcutsGroup(26) +
-        formatShortcuts(shortcuts, 3)
-      );
+      renderGoToMenu();
       QPixel.Keyboard.state = 'goto';
     } else if (e.key === 'j') {
       if (QPixel.Keyboard.selectedItem == null) {
@@ -221,22 +259,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       QPixel.Keyboard.updateSelected();
 
       if (QPixel.Keyboard.selectedItemData.type === 'post') {
-        /** @type {KeyboardShortcut[]} */
-        const shortcuts = [
-          { key: 'f', text: 'Flag' },
-          { key: 'e', text: 'Edit' },
-          { key: 'c', text: 'Comment' },
-          { key: 'l', text: 'Get permalink' },
-          { key: 'h', text: 'View history' },
-          { key: 'v', text: 'Vote ...' },
-          { key: 't', text: 'Use tools', if: QPixel.Keyboard.is_mod }
-        ];
-
-        QPixel.Keyboard.dialog(
-          'Use tool ...\n' +
-          delimitShortcutsGroup(17) +
-          formatShortcuts(shortcuts, 3)
-        );
+        renderToolsMenu();
         QPixel.Keyboard.state = 'tools';
       }
     } else if (e.key === 'a') {
@@ -406,18 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       cl.find('.js-flag-comment').focus();
       QPixel.Keyboard.dialogClose();
     } else if (e.key === 'v') {
-      /** @type {KeyboardShortcut[]} */
-      const shortcuts = [
-        { key: 'u', text: 'Up' },
-        { key: 'd', text: 'Down' },
-        { key: 'c', text: 'Close' }
-      ];
-
-      QPixel.Keyboard.dialog(
-        'Vote ...\n' +
-        delimitShortcutsGroup(9) +
-        formatShortcuts(shortcuts, 3)
-      );
+      renderToolsVoteMenu();
       QPixel.Keyboard.state = 'tools/vote';
     } else if (e.key === 't') {
       let cl = $(QPixel.Keyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
