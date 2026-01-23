@@ -28,6 +28,22 @@
                         class: "button is-muted is-outlined #{(params[:filter] == 'all') ? 'is-active' : ''}" %>
         </div>
     </div>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <%= link_to 'past',
+                        query_url(period: 'past'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'past'}" %>
+            <%= link_to 'present',
+                        query_url(period: 'present'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'present'}" %>
+            <%= link_to 'future',
+                        query_url(period: 'future'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'future'}" %>
+            <%= link_to 'any',
+                        query_url(period: 'any'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'any'}" %>
+        </div>
+    </div>
     <div class="grid--cell is-flexible">
     </div>
     <div class="grid--cell">
