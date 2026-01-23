@@ -154,6 +154,7 @@ jobs:
       - rubocop
       - typescript
       - tests
+      - system-tests
 
     env:
       SSH_IP: ${{ secrets.DEV_SSH_IP }}
