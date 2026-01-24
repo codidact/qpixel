@@ -3,6 +3,17 @@ require 'test_helper'
 class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  test ':index should correctly filter by community' do
+    sign_in users(:global_moderator)
+
+    get :index, params: { global: '1' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    assert @links.none?(&:community_id?)
+  end
+
   test ':index should correctly filter by activity status' do
     sign_in users(:moderator)
 

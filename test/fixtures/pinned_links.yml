@@ -37,3 +37,9 @@ timed_future:
   active: true
   shown_after: <%= DateTime.now + 1 %>
   shown_before: <%= DateTime.now + 1 %>
+
+global_active_with_label:
+  community: ~
+  label: test global link
+  link: https://example.com
+  active: true
