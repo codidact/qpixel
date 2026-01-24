@@ -233,6 +233,17 @@
     The address to send moderator distribution list emails from (can be a fake address).
     Make sure your server is allowed to send email from this address, or your mails will not be received.
 
+- name: FriendlyEmailFooter
+  value: >
+    <hr/>
+    <p><em>Thanks!</em></p>
+    <p><em>Your Friendly Neighbourhood Codidactyl</em></p>
+  value_type: text
+  category: Email
+  community_id: ~
+  description: >
+    Friendly footer to add to emails such as new user confirmation instructions. Markdown allowed.
+
 - name: NoReplySenderName
   value: Codidact
   value_type: string
