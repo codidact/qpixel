@@ -711,6 +711,14 @@
   description: >
     Network mascot name tto use where appropriate.
 
+- name: NetworkMascotLogoPath
+  value: /assets/codidactyl.png
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    The path, relative to the root of the domain, to the site's mascot logo file. Can also be an absolute URL.
+
 - name: NetworkName
   value: Codidact
   value_type: string
