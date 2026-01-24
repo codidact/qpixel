@@ -3,6 +3,15 @@ require 'test_helper'
 class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  test 'only mods or higher should be able to see pinned links' do
+    users.each do |user|
+      sign_in user
+      get :index
+
+      assert_response(user.at_least_moderator? ? :success : :not_found)
+    end
+  end
+
   test 'only mods or higher should be able to create pinned links' do
     post = posts(:question_one)
 
@@ -61,7 +70,7 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_equal 'updated label', assigns(:link).label
   end
 
-  test 'update should correctly handle invlid pinned links' do
+  test 'update should correctly handle invalid pinned links' do
     sign_in users(:moderator)
     try_update_pinned_link(pinned_links(:active_with_label), link: nil)
     assert_response(:bad_request)
