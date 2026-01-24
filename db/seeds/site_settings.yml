@@ -692,6 +692,14 @@
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
 
+- name: NetworkMascotName
+  value: Codidactyl
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network mascot name tto use where appropriate.
+
 - name: NetworkName
   value: Codidact
   value_type: string
