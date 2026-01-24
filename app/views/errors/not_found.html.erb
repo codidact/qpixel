@@ -5,8 +5,11 @@
 
 <p class="is-lead">The page you're looking for couldn't be found.</p>
 
-<p>You might have followed an old link, or a post might have been deleted.</p>
+<%
+  is_user = request.original_fullpath.include?(user_path)
+%>
 
+<p>You might have followed an old link, or the <%= is_user ? 'user' : 'post' %> might have been deleted.</p>
 
 <p>
   <%= link_to 'Go back', :back, class: 'button is-outlined' %>
