@@ -6,7 +6,7 @@
 <p class="is-lead">The page you're looking for couldn't be found.</p>
 
 <%
-  is_user = request.original_fullpath.include?(user_path)
+  is_user = params[:id].present? ? request.original_fullpath.include?(user_path(id: params[:id])) : false
 %>
 
 <p>You might have followed an old link, or the <%= is_user ? 'user' : 'post' %> might have been deleted.</p>
