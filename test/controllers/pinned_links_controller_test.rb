@@ -3,6 +3,21 @@ require 'test_helper'
 class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  test ':index should correctly filter byt activity status' do
+    sign_in users(:moderator)
+
+    get :index, params: { filter: 'all' }
+    assert_response(:success)
+    assert assigns(:links).any?
+
+    get :index, params: { filter: 'inactive' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    assert @links.none?(&:active?)
+  end
+
   test 'only mods or higher should be able to see pinned links' do
     users.each do |user|
       sign_in user
