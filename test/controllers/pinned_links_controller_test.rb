@@ -12,6 +12,16 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_response(:success)
     assert @links.any?
     assert @links.none?(&:community_id?)
+
+    get :index, params: { global: '2' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+
+    links_ids = pinned_links.map(&:id)
+
+    assert(@links.all? { |link| links_ids.include?(link.id) })
   end
 
   test ':index should correctly filter by activity status' do
