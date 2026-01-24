@@ -3,7 +3,7 @@ require 'test_helper'
 class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
-  test ':index should correctly filter byt activity status' do
+  test ':index should correctly filter by activity status' do
     sign_in users(:moderator)
 
     get :index, params: { filter: 'all' }
@@ -16,6 +16,39 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_response(:success)
     assert @links.any?
     assert @links.none?(&:active?)
+  end
+
+  test ':index should correctly filter by period' do
+    sign_in users(:moderator)
+
+    now = DateTime.now
+
+    get :index, params: { period: 'past' }
+    @links = assigns(:links)
+    assert_response(:success)
+    assert @links.any?
+
+    @links.each do |link|
+      assert link.timed? && link.shown_before < now
+    end
+
+    get :index, params: { period: 'present' }
+    @links = assigns(:links)
+    assert_response(:success)
+    assert @links.any?
+
+    @links.each do |link|
+      assert !link.timed? || (link.shown_before > now && link.shown_after <= now)
+    end
+
+    get :index, params: { period: 'future' }
+    @links = assigns(:links)
+    assert_response(:success)
+    assert @links.any?
+
+    @links.each do |link|
+      assert link.timed? && link.shown_before > now && link.shown_after > now
+    end
   end
 
   test 'only mods or higher should be able to see pinned links' do
