@@ -44,6 +44,15 @@ class PinnedLinksControllerTest < ActionController::TestCase
 
     now = DateTime.now
 
+    get :index
+    @links = assigns(:links)
+    assert_response(:success)
+    assert @links.any?
+
+    links_ids = pinned_links.map(&:id)
+
+    assert(@links.all? { |link| links_ids.include?(link.id) })
+
     get :index, params: { period: 'past' }
     @links = assigns(:links)
     assert_response(:success)
