@@ -8,6 +8,11 @@
 <div class="notification">
   <div class="notification-content">
     <div class="form-caption">
+      <% if SiteSetting['SiteLogoPath'].present? %>
+        <img class="notification--icon"
+             src="<%= SiteSetting['SiteLogoPath'] %>"
+             alt="<% notification.community_name %> logo" />
+      <% end %>
       <%= notification.community_name %> &middot; <%= notification.rendered_timestamp %>
     </div>
     <a href="<%= notification.link %>"><%= render_pings_text(notification.content) %></a>
