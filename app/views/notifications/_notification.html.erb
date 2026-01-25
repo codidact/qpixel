@@ -5,12 +5,18 @@
       notification : Notification to render
 "%>
 
+<%
+  mobile_logo_path = SiteSetting['MobileLogoPath', community: notification.community]
+  full_logo_path = SiteSetting['SiteLogoPath', community: notification.community]
+  logo_path = mobile_logo_path.presence || full_logo_path
+%>
+
 <div class="notification">
   <div class="notification-content">
     <div class="form-caption">
-      <% if SiteSetting['SiteLogoPath', community: notification.community].present? %>
+      <% if logo_path.present? %>
         <img class="notification--icon"
-             src="<%= SiteSetting['SiteLogoPath', community: notification.community] %>"
+             src="<%= logo_path %>"
              alt="<% notification.community_name %> logo" />
       <% end %>
       <%= notification.community_name %> &middot; <%= notification.rendered_timestamp %>
