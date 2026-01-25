@@ -709,7 +709,7 @@
   category: SiteDetails
   community_id: ~
   description: >
-    Network mascot name tto use where appropriate.
+    Network mascot name to use where appropriate, for example, in the tour.
 
 - name: NetworkMascotLogoPath
   value: /assets/codidactyl.png
