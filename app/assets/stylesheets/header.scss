@@ -1,7 +1,7 @@
 @import 'variables';
 
-a.header--site-name {
-  display: flex !important;
+a.header--site-name:any-link {
+  display: flex;
 }
 
 .header .header--item.is-complex:not(.is-mobile-menu) {
