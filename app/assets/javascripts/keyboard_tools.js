@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       QPixel.Keyboard.updateSelected();
 
-      if (QPixel.Keyboard.selectedItemData.type === 'post') {
+      if (QPixel.Keyboard.selectedItemData?.type === 'post') {
         renderToolsMenu();
         QPixel.Keyboard.state = 'tools';
       }
