@@ -417,10 +417,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (e.key === 'l') {
       window.location.href = $(QPixel.Keyboard.selectedItem).find('.tools--item i.fa.fa-link').parent().attr('href');
     } else if (e.key === 'c') {
-      const cl = $(QPixel.Keyboard.selectedItem).find('.js-add-comment');
-      cl.nextAll('form').css('display', 'block');
-      cl.nextAll('form')[0].scrollIntoView({ behavior: 'smooth' });
-      cl.nextAll('form').find('.js-comment-content').focus();
+      const selected = $(QPixel.Keyboard.selectedItem);
+
+      const $replyToThreadLink = selected.find('.js-reply-to-thread-link');
+
+      if (!$replyToThreadLink.length) {
+        const $newThreadLink = selected.find('.js-new-thread-link');
+        const newThreadLink = $newThreadLink?.get(0);
+        newThreadLink?.scrollIntoView({ behavior: 'smooth' });
+        newThreadLink?.click();
+      } else {
+        const replyToThreadLink = $replyToThreadLink?.get(0);
+        replyToThreadLink?.scrollIntoView({ behavior: 'smooth' });
+        replyToThreadLink?.click();
+      }
+
       QPixel.Keyboard.dialogClose();
     } else if (e.key === 'f') {
       const cl = $(QPixel.Keyboard.selectedItem).find('.post--action-dialog.js-flag-box');
