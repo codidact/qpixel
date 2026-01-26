@@ -230,14 +230,31 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
 
 
   .item-list--item {
+    flex-wrap: nowrap;
     padding: 0 !important;
 
     .item-list--number-value {
-      width: 60px !important;
+      width: max-content !important;
     }
 
     .grid {
       align-items: center;
     }
+  }
+
+  .vote-summary-item--counts {
+    justify-content: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    padding: 5px;
+  }
+
+  .vote-summary-item--tags {
+    display: flex;
+    gap: 0.35em;
+    flex-grow: 1;
+    justify-content: end;
+    max-width: max-content;
   }
 }

@@ -375,6 +375,12 @@ span.spoiler {
   white-space: nowrap;
 }
 
+@each $size in $gap-sizes {
+  .gap-#{$size} {
+    gap: $size;
+  }
+}
+
 @each $side in $sides {
   .border-#{$side}-none {
     border-#{$side}: none;
