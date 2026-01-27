@@ -11,6 +11,11 @@ class ApplicationRecord < ActiveRecord::Base
     select(Arel.sql("`#{table_name}`.*, #{sanitized} AS search_score")).where(sanitized)
   end
 
+  def self.exclusion_search(term, **cols)
+    matched = match_search(term[1..], **cols)
+    select(Arel.sql("`#{table_name}`.*, 1 AS search_score")).excluding(matched)
+  end
+
   def self.sanitize_name(name)
     name.to_s.delete('`').insert(0, '`').insert(-1, '`')
   end

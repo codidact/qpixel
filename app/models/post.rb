@@ -76,7 +76,11 @@ class Post < ApplicationRecord
   # @param term [String] the search term
   # @return [ActiveRecord::Relation<Post>]
   def self.search(term)
-    match_search term, posts: [:body_markdown, :title]
+    if term.match(/^(?:\s*?-\S+?)+?$/)
+      exclusion_search term, posts: [:body_markdown, :title]
+    else
+      match_search term, posts: [:body_markdown, :title]
+    end
   end
 
   def self.by_slug(slug, user)
