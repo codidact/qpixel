@@ -106,6 +106,10 @@ class Users::SessionsController < Devise::SessionsController
 
   def handle_2fa_login(user, remember_me = false)
     sign_out user
+
+    # prevents premature sign in confirmation
+    flash[:notice] = nil
+
     case user.two_factor_method
     when 'app'
       id = user.id
@@ -113,7 +117,6 @@ class Users::SessionsController < Devise::SessionsController
       redirect_to login_verify_2fa_path(uid: id, remember_me: remember_me)
     when 'email'
       TwoFactorMailer.with(user: user, host: request.hostname).login_email.deliver_now
-      flash[:notice] = nil
       flash[:info] = 'Please check your email inbox for a link to sign in.'
       redirect_to after_sign_in_path_for(user)
     end
