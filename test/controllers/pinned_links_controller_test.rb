@@ -50,7 +50,6 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert @links.any?
 
     links_ids = pinned_links.map(&:id)
-
     assert(@links.all? { |link| links_ids.include?(link.id) })
 
     get :index, params: { period: 'past' }
@@ -79,6 +78,17 @@ class PinnedLinksControllerTest < ActionController::TestCase
     @links.each do |link|
       assert link.timed? && link.shown_before > now && link.shown_after > now
     end
+  end
+
+  test ':index should treat invalid period filter as no filter' do
+    sign_in users(:moderator)
+
+    get :index, params: { period: 'invalid' }
+    @links = assigns(:links)
+    assert_response(:success)
+
+    links_ids = pinned_links.map(&:id)
+    assert(@links.all? { |link| links_ids.include?(link.id) })
   end
 
   test 'only mods or higher should be able to see pinned links' do
