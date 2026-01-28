@@ -29,6 +29,7 @@ class PinnedLink < ApplicationRecord
     before.or(after)
   }
 
+  validate :check_period
   validate :check_post_or_url
 
   # Is the link not timed or started in the past & hasn't ended yet?
@@ -56,6 +57,14 @@ class PinnedLink < ApplicationRecord
   # @return [Boolean] check result
   def timed?
     shown_before.present? || shown_after.present?
+  end
+
+  def check_period
+    return unless shown_before.present? && shown_after.present?
+
+    if shown_before < shown_after
+      errors.add(:base, 'end date cannot be earlier than the start date')
+    end
   end
 
   def check_post_or_url

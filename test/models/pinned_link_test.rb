@@ -39,4 +39,19 @@ class PinnedLinkTest < ActiveSupport::TestCase
       assert link.future?(now)
     end
   end
+
+  test 'pinned links should be correctly validated' do
+    valid_with_link = PinnedLink.new(link: 'https://example.com')
+    valid_with_post = PinnedLink.new(post: posts(:question_one))
+    period_mismatch = PinnedLink.new(shown_before: DateTime.now - 1, shown_after: DateTime.now)
+
+    [
+      [valid_with_link, true],
+      [valid_with_post, true],
+      [period_mismatch, false]
+    ].each do |test|
+      link, status = test
+      assert_equal status, link.valid?
+    end
+  end
 end
