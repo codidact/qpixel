@@ -7,23 +7,20 @@ class PinnedLink < ApplicationRecord
     includes(:post, post: [:community])
   }
 
-  # a past link is one that ended in the past
   scope :past, lambda {
     timed.where('shown_before < ?', DateTime.now)
   }
 
-  # a current link is not timed or started in the past and ends in the future
   scope :current, lambda {
     where(shown_after: nil, shown_before: nil).or(
-      timed.where('shown_after <= ?', DateTime.now)
-           .where('shown_before > ?', DateTime.now)
+      timed.where('shown_after is null or shown_after <= ?', DateTime.now)
+           .where.not('shown_before < ?', DateTime.now)
     )
   }
 
-  # a future link is one that both starts and ends in the future
   scope :future, lambda {
     timed.where('shown_after > ?', DateTime.now)
-         .where('shown_before > ?', DateTime.now)
+         .where('shown_before is null or shown_before >= ?', DateTime.now)
   }
 
   scope :timed, lambda {
@@ -33,6 +30,27 @@ class PinnedLink < ApplicationRecord
   }
 
   validate :check_post_or_url
+
+  # Is the link not timed or started in the past & hasn't ended yet?
+  # @param now [DateTime, nil] timestamp to compare to
+  # @return [Boolean] check result
+  def current?(now = DateTime.now)
+    !timed? || !(future?(now) || past?(now))
+  end
+
+  # Does the link start in the future?
+  # @param now [DateTime, nil] timestamp to compare to
+  # @return [Boolean] check result
+  def future?(now = DateTime.now)
+    shown_after.present? && shown_after > now && (shown_before.nil? || shown_before >= now)
+  end
+
+  # Has the link ended in the past?
+  # @param now [DateTime, nil] timestamp to compare to
+  # @return [Boolean] check result
+  def past?(now = DateTime.now)
+    shown_before.present? && shown_before < now
+  end
 
   # Is the link time-constrained?
   # @return [Boolean] check result

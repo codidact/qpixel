@@ -5,7 +5,6 @@ class PinnedLinkTest < ActiveSupport::TestCase
     timed = PinnedLink.timed
 
     assert timed.any?
-
     timed.each do |link|
       assert link.timed?, "link \"#{link.label}\" is not timed"
     end
@@ -16,9 +15,8 @@ class PinnedLinkTest < ActiveSupport::TestCase
     current = PinnedLink.current
 
     assert current.any?
-
     current.each do |link|
-      assert !link.timed? || (link.shown_before > now && link.shown_after <= now)
+      assert link.current?(now)
     end
   end
 
@@ -27,9 +25,8 @@ class PinnedLinkTest < ActiveSupport::TestCase
     past = PinnedLink.past
 
     assert past.any?
-
     past.each do |link|
-      assert link.timed? && link.shown_before < now
+      assert link.past?(now)
     end
   end
 
@@ -38,9 +35,8 @@ class PinnedLinkTest < ActiveSupport::TestCase
     future = PinnedLink.future
 
     assert future.any?
-
     future.each do |link|
-      assert link.timed? && link.shown_before > now && link.shown_after > now
+      assert link.future?(now)
     end
   end
 end

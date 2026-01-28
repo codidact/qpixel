@@ -52,31 +52,31 @@ class PinnedLinksControllerTest < ActionController::TestCase
     links_ids = pinned_links.map(&:id)
     assert(@links.all? { |link| links_ids.include?(link.id) })
 
-    get :index, params: { period: 'past' }
-    @links = assigns(:links)
-    assert_response(:success)
-    assert @links.any?
-
-    @links.each do |link|
-      assert link.timed? && link.shown_before < now
-    end
-
     get :index, params: { period: 'current' }
     @links = assigns(:links)
+
     assert_response(:success)
     assert @links.any?
-
     @links.each do |link|
-      assert !link.timed? || (link.shown_before > now && link.shown_after <= now)
+      assert link.current?(now)
+    end
+
+    get :index, params: { period: 'past' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    @links.each do |link|
+      assert link.past?(now)
     end
 
     get :index, params: { period: 'future' }
     @links = assigns(:links)
+
     assert_response(:success)
     assert @links.any?
-
     @links.each do |link|
-      assert link.timed? && link.shown_before > now && link.shown_after > now
+      assert link.future?(now)
     end
   end
 
