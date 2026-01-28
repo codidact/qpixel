@@ -61,7 +61,7 @@ class PinnedLinksControllerTest < ActionController::TestCase
       assert link.timed? && link.shown_before < now
     end
 
-    get :index, params: { period: 'present' }
+    get :index, params: { period: 'current' }
     @links = assigns(:links)
     assert_response(:success)
     assert @links.any?

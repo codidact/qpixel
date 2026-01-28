@@ -4,7 +4,7 @@ class PinnedLinksController < ApplicationController
   before_action :verify_mod_on_current_community, only: [:edit, :update]
 
   def index
-    @period = params[:period].presence || 'present'
+    @period = params[:period].presence || 'current'
 
     @links = if current_user.at_least_global_moderator? && params[:global] == '2'
                PinnedLink.unscoped
@@ -17,8 +17,8 @@ class PinnedLinksController < ApplicationController
     @links = case @period
              when 'past'
                @links.past
-             when 'present'
-               @links.present
+             when 'current'
+               @links.current
              when 'future'
                @links.future
              else

@@ -33,9 +33,9 @@
             <%= link_to 'past',
                         query_url(period: 'past'),
                         class: "button is-muted is-outlined #{'is-active' if @period == 'past'}" %>
-            <%= link_to 'present',
-                        query_url(period: 'present'),
-                        class: "button is-muted is-outlined #{'is-active' if @period == 'present'}" %>
+            <%= link_to 'current',
+                        query_url(period: 'current'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'current'}" %>
             <%= link_to 'future',
                         query_url(period: 'future'),
                         class: "button is-muted is-outlined #{'is-active' if @period == 'future'}" %>

@@ -11,13 +11,13 @@ class PinnedLinkTest < ActiveSupport::TestCase
     end
   end
 
-  test ':present scope should return non-timed or current links' do
+  test ':current scope should return non-timed or current links' do
     now = DateTime.now
-    present = PinnedLink.present
+    current = PinnedLink.current
 
-    assert present.any?
+    assert current.any?
 
-    present.each do |link|
+    current.each do |link|
       assert !link.timed? || (link.shown_before > now && link.shown_after <= now)
     end
   end
