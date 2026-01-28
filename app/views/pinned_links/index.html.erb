@@ -70,7 +70,7 @@
         <% pl_link = pl.post.nil? ? pl.link : ('Post #' + pl.post.id.to_s) %>
         <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
         <tr>
-            <td>
+            <td class="nowrap">
                 <% if pl.shown_before.nil? %>
                     <% if pl.post.nil? %>
                         link
