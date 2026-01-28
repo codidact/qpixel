@@ -9,15 +9,7 @@
 <h1><span dir="ltr"><%= rtl_safe_username(@user) %></span></h1>
 
 <% if @user.community_user.suspended? %>
-  <div class="notice is-danger h-m-b-4">
-  <% if @user.community_user.suspension_public_comment.nil? %>
-    <p>This user has been <strong>temporarily suspended</strong>.
-  <% else %>
-    <p>This user has been <strong>temporarily suspended</strong> <%= @user.community_user.suspension_public_comment %>.
-  <% end %>
-
-    The suspension ends <span title="<%= @user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(@user.community_user.suspension_end) %></span>.</p>
-  </div>
+  <%= render 'users/notices/suspension', user: @user %>
 <% end %>
 
 <% is_me = @user.same_as?(current_user) %>
