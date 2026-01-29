@@ -20,6 +20,7 @@ Minitest.after_run do
     WarningTemplate,
     ModWarning,
     ThreadFollower,
+    NewThreadFollower,
     Comment,
     CommentThread,
     Reaction,

@@ -6,6 +6,6 @@ standard_author_normal:
   user: standard_user
   comment_thread: normal
 
-standard_author_question_one:
-  user: standard_user
-  post: question_one
+merge_source_normal:
+  user: merge_source
+  comment_thread: normal

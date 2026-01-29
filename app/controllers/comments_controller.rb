@@ -56,15 +56,15 @@ class CommentsController < ApplicationController
 
     if success
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
-      unless @comment.post.user == current_user
+      unless @comment.post.user.same_as?(current_user)
         @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
       end
 
-      ThreadFollower.where(post: @post).each do |tf|
-        unless tf.user == current_user || tf.user == @comment.post.user
-          tf.user.create_notification(notification, helpers.comment_link(@comment))
+      NewThreadFollower.where(post: @post).each do |ntf|
+        unless ntf.user.same_as?(current_user) || ntf.user.same_as?(@comment.post.user)
+          ntf.user.create_notification(notification, helpers.comment_link(@comment))
         end
-        ThreadFollower.create(user: tf.user, comment_thread: @comment_thread)
+        ThreadFollower.create(user: ntf.user, comment_thread: @comment_thread)
       end
 
       apply_pings(pings)
@@ -87,7 +87,7 @@ class CommentsController < ApplicationController
     if status
       apply_pings(pings)
       @comment_thread.thread_follower.each do |follower|
-        next if follower.user_id == current_user.id
+        next if follower.user.same_as?(current_user)
         next if pings.include? follower.user_id
 
         thread_url = comment_thread_url(@comment_thread, host: @comment_thread.community.host)
@@ -118,7 +118,7 @@ class CommentsController < ApplicationController
     before = @comment.content
     before_pings = check_for_pings(@comment_thread, before)
     if @comment.update comment_params
-      unless current_user.id == @comment.user_id
+      unless current_user.same_as?(@comment.user)
         audit('comment_update', @comment, "from <<#{before}>>\nto <<#{@comment.content}>>")
       end
 
@@ -139,7 +139,7 @@ class CommentsController < ApplicationController
     if @comment.update(deleted: true)
       @comment_thread = @comment.comment_thread
 
-      unless current_user.id == @comment.user_id
+      unless current_user.same_as?(@comment.user)
         audit('comment_delete', @comment, "content <<#{@comment.content}>>")
       end
 
@@ -162,7 +162,7 @@ class CommentsController < ApplicationController
     if @comment.update(deleted: false)
       @comment_thread = @comment.comment_thread
 
-      unless current_user.id == @comment.user_id
+      unless current_user.same_as?(@comment.user)
         audit('comment_undelete', @comment, "content <<#{@comment.content}>>")
       end
 
@@ -331,8 +331,8 @@ class CommentsController < ApplicationController
   end
 
   def post_follow
-    if ThreadFollower.where(post: @post, user: current_user).none?
-      ThreadFollower.create(post: @post, user: current_user)
+    if NewThreadFollower.where(post: @post, user: current_user).none?
+      NewThreadFollower.create(post: @post, user: current_user)
     end
 
     respond_to do |format|
@@ -342,7 +342,7 @@ class CommentsController < ApplicationController
   end
 
   def post_unfollow
-    ThreadFollower.where(post: @post, user: current_user).destroy_all
+    NewThreadFollower.where(post: @post, user: current_user).destroy_all
 
     respond_to do |format|
       format.html { redirect_to post_path(@post) }
@@ -395,7 +395,7 @@ class CommentsController < ApplicationController
   end
 
   def check_privilege
-    unless current_user&.at_least_moderator? || current_user == @comment.user
+    unless current_user&.at_least_moderator? || current_user&.same_as?(@comment.user)
       render template: 'errors/forbidden', status: :forbidden
     end
   end
@@ -480,7 +480,7 @@ class CommentsController < ApplicationController
       user = User.where(id: p).first
       next if user.nil?
 
-      next if user.id == @comment.post.user_id
+      next if user.same_as?(@comment.post.user)
 
       title = @post.parent.nil? ? @post.title : @post.parent.title
       user.create_notification("You were mentioned in a comment in the thread '#{@comment_thread.title}' " \

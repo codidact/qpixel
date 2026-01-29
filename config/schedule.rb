@@ -30,6 +30,10 @@ every 7.days, at: '02:35' do
   runner 'scripts/run_thread_followers_cleanup.rb'
 end
 
+every 7.days, at: '02:40' do
+  runner 'scripts/run_new_thread_followers_cleanup.rb'
+end
+
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end

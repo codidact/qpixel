@@ -1,11 +1,11 @@
 select
   user_id,
-  comment_thread_id,
+  post_id,
   count(*) as count
 from
-  thread_followers
+  new_thread_followers
 group by
   user_id,
-  comment_thread_id
+  post_id
 having
   count > 1;
