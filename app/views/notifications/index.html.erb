@@ -1,3 +1,9 @@
+<%
+  title = 'Your Inbox'
+%>
+
+<% content_for :title, title %>
+
 <%= render 'users/tabs', user: current_user %>
 
 <%
@@ -6,7 +12,7 @@
   read_notifications = @notifications.select(&:read?)
 %>
 
-<h1>Your Inbox</h1>
+<h1><%= title %></h1>
 <p>You'll find all your inbox messages here, as far back as your account goes.</p>
 
 <div class="notifications-list-header has-margin-bottom-2">

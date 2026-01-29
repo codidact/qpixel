@@ -1,7 +1,9 @@
 <div class="widget<%= " #{classes}" if defined?(classes) %>">
   <div class="widget--header">
-    <img src="/assets/codidactyl.png" alt="Codidactyl" class="codidactyl-small">
-    Codidactyl's Hints
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>"
+         alt="<%= SiteSetting['NetworkMascotName'] %>"
+         class="mascot-small">
+    <%= SiteSetting['NetworkMascotName'] %>'s Hints
   </div>
   <div class="widget--body">
     <%= yield %>

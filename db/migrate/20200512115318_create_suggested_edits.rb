@@ -10,13 +10,12 @@ class CreateSuggestedEdits < ActiveRecord::Migration[5.2]
       t.string :tags_cache, null: true
       t.text :body_markdown, null: true
 
-
       t.string :comment, null: true
 
       t.boolean :active
       t.boolean :accepted
       t.datetime :decided_at
-      t.references :decided_by, foreign_key: {to_table: :users}, null: true
+      t.references :decided_by, foreign_key: { to_table: :users }, null: true
       t.string :rejected_comment
 
       t.timestamps

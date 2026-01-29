@@ -22,7 +22,7 @@ class CreateCommunitiesTable < ActiveRecord::Migration[5.2]
       dir.up do
         @community = Community.create(name: 'Sample', host: 'sample.qpixel.com')
         community_users = MigrationSafeUser.pluck(:id, :reputation).map do |user_id, reputation|
-          {community_id: @community.id, user_id: user_id, reputation: reputation}
+          { community_id: @community.id, user_id: user_id, reputation: reputation }
         end
         CommunityUser.create(community_users)
         change_table :users do |t|
@@ -38,15 +38,14 @@ class CreateCommunitiesTable < ActiveRecord::Migration[5.2]
           t.integer :reputation, after: 'is_admin'
         end
         @community = Community.first
-        CommunityUser.where(community_id: @community.id).pluck(:user_id,:reputation).map do |user_id, reputation|
+        CommunityUser.where(community_id: @community.id).pluck(:user_id, :reputation).map do |user_id, reputation|
           MigrationSafeUser.find(user_id).update(reputation: reputation)
         end
       end
     end
 
-    %i(posts comments flags post_histories votes
-       notifications privileges site_settings subscriptions tags
-      ).each do |table|
+    %i[posts comments flags post_histories votes
+       notifications privileges site_settings subscriptions tags].each do |table|
       change_table table do |t|
         t.references :community
       end
