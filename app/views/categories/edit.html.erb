@@ -1,4 +1,10 @@
-<h1>Edit Category</h1>
+<%
+  title = "Edit Category \"#{@category.name}\""
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 <p>
   If you need to change something about one of your site's categories, this is the place to do it.
 </p>

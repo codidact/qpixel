@@ -4,21 +4,36 @@ class PinnedLinksController < ApplicationController
   before_action :verify_mod_on_current_community, only: [:edit, :update]
 
   def index
-    links = if current_user.at_least_global_moderator? && params[:global] == '2'
-              PinnedLink.unscoped
-            elsif current_user.at_least_global_moderator? && params[:global] == '1'
-              PinnedLink.where(community: nil)
-            else
-              PinnedLink.where(community: @community)
-            end
+    @period = params[:period].presence || 'current'
+
+    @links = if current_user.at_least_global_moderator? && params[:global] == '2'
+               PinnedLink.unscoped
+             elsif current_user.at_least_global_moderator? && params[:global] == '1'
+               PinnedLink.where(community: nil)
+             else
+               PinnedLink.where(community: @community)
+             end
+
+    @links = case @period
+             when 'past'
+               @links.past
+             when 'current'
+               @links.current
+             when 'future'
+               @links.future
+             else
+               @links
+             end
+
     @links = case params[:filter]
              when 'all'
-               links.all
+               @links.all
              when 'inactive'
-               links.where(active: false).all
+               @links.where(active: false).all
              else
-               links.where(active: true).all
+               @links.where(active: true).all
              end
+
     render layout: 'without_sidebar'
   end
 

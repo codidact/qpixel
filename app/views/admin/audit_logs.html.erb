@@ -1,5 +1,10 @@
-<h1><%= t 'admin.tools.audit_logs' %></h1>
+<%
+  title = t('admin.tools.audit_logs')
+%>
 
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 <div>
   <h3>Filters</h3>
   <%= form_tag audit_logs_path, method: :get, class: 'form-inline audit-log-filters' do %>

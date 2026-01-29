@@ -1,6 +1,12 @@
+<%
+  title = 'Filters'
+%>
+
+<% content_for :title, title %>
+
 <%= render 'tabs', user: current_user %>
 
-<h1>Filters</h1>
+<h1><%= title %></h1>
 <p>
   Manage your filters here
 </p>
@@ -8,4 +14,4 @@
 <%# Just a nominal form so that stuff like validation works %>
 <form>
   <%= render 'search/filters', allow_apply: false, allow_delete: true %>
-<form>
+  <form>

@@ -1,10 +1,16 @@
-<% if @user.present? && @user.id == current_user&.id %>
-  <h1>Your Abilities</h1>
-<% elsif @user.present? %>
-  <h1>Abilities of <%= @user.username %></h1>
-<% else %>
-  <h1>Abilities</h1>
-<% end %>
+<%
+  title = if @user&.same_as?(current_user)
+            'Your Abilities'
+          elsif @user.present?
+            sanitize("Abilities for #{user_link(@user)}")
+          else
+            'Abilities'
+          end
+%>
+
+<% content_for :title, strip_tags(title) %>
+
+<h1><%= title %></h1>
 
 <p class="is-lead">Abilities show what the community trusts you to do. You earn them by writing good posts, suggesting
   good edits or raising good flags.</p>
