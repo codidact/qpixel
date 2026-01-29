@@ -369,6 +369,22 @@
   description: >
     Path to a file to use as the site's favicon. Must be an .ICO file.
 
+- name: JSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific JavaScript.
+    Must be a domain-relative URL (such as `/assets/community.js`).
+
+- name: CSSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific CSS.
+    Must be a domain-relative URL (such as `/assets/community.css`).
+
 - name: AllowContentTransfer
   value: true
   value_type: boolean

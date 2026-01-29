@@ -5,6 +5,7 @@ $(() => {
   const settingEditFields = {
     'array': $(`<select class="form-element js-setting-edit" multiple></select>`),
     'string': $(`<input type="text" class="form-element js-setting-edit" />`),
+    'uri_path': $(`<input type="text" class="form-element js-setting-edit" />`),
     'integer': $('<input type="number" class="form-element js-setting-edit" />'),
     'float': $('<input type="number" step="0.0001" class="form-element js-setting-edit" />'),
     'boolean': $(`<select class="form-element js-setting-edit">

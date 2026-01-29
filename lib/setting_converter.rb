@@ -30,4 +30,11 @@ class SettingConverter
   def as_json
     JSON.parse(@value)
   end
+
+  def as_uri_path
+    normalized = @value.blank? || @value&.start_with?('/') ? @value : "/#{@value}"
+    URI.parse(normalized).path
+  rescue
+    nil
+  end
 end
