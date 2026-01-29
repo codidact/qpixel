@@ -1,9 +1,11 @@
-<h1>
-  Edit <%= @post_type.name.underscore.humanize.titleize %>
-  <% if @category.present? %>
-    in <%= @category.name %>
-  <% end %>
-</h1>
+<%
+  post_type_title = @post_type.name.underscore.humanize.titleize
+  title = "Edit #{post_type_title}#{ " in #{@category.name}" if @category.present? }"
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <% if @category.present? %>
   <div class="notice is-info">

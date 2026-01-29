@@ -1,4 +1,10 @@
-<h1>Edit featured link</h1>
+<%
+  title = 'Edit featured link'
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <% if @link.errors.any? %>
   <div class="notice is-danger">

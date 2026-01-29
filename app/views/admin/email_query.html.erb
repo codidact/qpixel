@@ -1,5 +1,12 @@
-<h1><%= t 'admin.tools.email_query' %></h1>
-<p><%= t 'admin.email_query_blurb' %></p>
+<%
+  title = t('admin.tools.email_query')
+  blurb = t('admin.email_query_blurb')
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
+<p><%= blurb %></p>
 
 <% if defined?(@user) %>
   <p>Your query for <strong><%= params[:email] %></strong> returned profiles in these communities:</p>
