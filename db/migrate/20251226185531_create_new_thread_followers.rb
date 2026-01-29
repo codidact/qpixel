@@ -8,7 +8,7 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   end
 
   def down
-    if !column_exists?(:thread_followers, :post_id)
+    unless column_exists?(:thread_followers, :post_id)
       add_post_id_column_to_thread_followers
     end
     move_rows_back_from_new_thread_followers
@@ -29,11 +29,11 @@ class CreateNewThreadFollowers < ActiveRecord::Migration[7.2]
   def move_rows_with_non_nil_post_id
     NewThreadFollower.insert_all(
       ThreadFollower.select(:user_id, :post_id, :created_at, :updated_at)
-        .where.not(post_id:nil)
+        .where.not(post_id: nil)
         .to_a
         .map(&:attributes)
     )
-    ThreadFollower.where.not(post_id:nil).delete_all
+    ThreadFollower.where.not(post_id: nil).delete_all
   end
 
   def remove_post_id_column_from_thread_followers
