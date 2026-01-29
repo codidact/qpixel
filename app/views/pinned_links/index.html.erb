@@ -35,6 +35,22 @@
                         class: "button is-muted is-outlined #{(params[:filter] == 'all') ? 'is-active' : ''}" %>
         </div>
     </div>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <%= link_to 'past',
+                        query_url(period: 'past'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'past'}" %>
+            <%= link_to 'current',
+                        query_url(period: 'current'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'current'}" %>
+            <%= link_to 'future',
+                        query_url(period: 'future'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'future'}" %>
+            <%= link_to 'any',
+                        query_url(period: 'any'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'any'}" %>
+        </div>
+    </div>
     <div class="grid--cell is-flexible">
     </div>
     <div class="grid--cell">
@@ -61,7 +77,7 @@
         <% pl_link = pl.post.nil? ? pl.link : ('Post #' + pl.post.id.to_s) %>
         <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
         <tr>
-            <td>
+            <td class="nowrap">
                 <% if pl.shown_before.nil? %>
                     <% if pl.post.nil? %>
                         link

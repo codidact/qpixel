@@ -14,3 +14,32 @@ inactive:
   label: test link
   link: https://example.com
   active: false
+
+timed_past:
+  community: sample
+  label: link in the past
+  link: https://example.com
+  active: true
+  shown_before: 2019-01-01T00:00:00.000000Z
+
+timed_present:
+  community: sample
+  label: link in the present
+  link: https://example.com
+  active: true
+  shown_after: 2019-01-01T00:00:00.000000Z
+  shown_before: <%= DateTime.now + 1 %>
+
+timed_future:
+  community: sample
+  label: link in the future
+  link: https://example.com
+  active: true
+  shown_after: <%= DateTime.now + 1 %>
+  shown_before: <%= DateTime.now + 1 %>
+
+global_active_with_label:
+  community: ~
+  label: test global link
+  link: https://example.com
+  active: true
