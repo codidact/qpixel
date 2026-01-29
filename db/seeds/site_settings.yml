@@ -233,6 +233,17 @@
     The address to send moderator distribution list emails from (can be a fake address).
     Make sure your server is allowed to send email from this address, or your mails will not be received.
 
+- name: FriendlyEmailFooter
+  value: >
+    <hr/>
+    <p><em>Thanks!</em></p>
+    <p><em>Your Friendly Neighbourhood Codidactyl</em></p>
+  value_type: text
+  category: Email
+  community_id: ~
+  description: >
+    Friendly footer to add to emails such as new user confirmation instructions. Markdown allowed.
+
 - name: NoReplySenderName
   value: Codidact
   value_type: string
@@ -582,6 +593,17 @@
   description: >
     Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
 
+- name: TourBeginningDescription
+  value: >
+    <p>Hi!</p>
+    <p>I'm your friendly neighbourhood <a href="https://en.wikipedia.org/wiki/Pterodactylus">Codidactyl</a> and I'd like to introduce you to this website.
+    Don't worry: It doesn't take long and you can abort at any time.</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the first element on the tour page. Markdown allowed.
+
 - name: TourMoreBeginningDescription
   value: >
     <p>Yay!</p>
@@ -680,6 +702,22 @@
   description: >
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
+
+- name: NetworkMascotName
+  value: Codidactyl
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network mascot name to use where appropriate, for example, in the tour.
+
+- name: NetworkMascotLogoPath
+  value: /assets/codidactyl.png
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    The path, relative to the root of the domain, to the site's mascot logo file. Can also be an absolute URL.
 
 - name: NetworkName
   value: Codidact

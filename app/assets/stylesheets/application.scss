@@ -17,6 +17,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display&family=Roboto&family=Roboto+Mono&display=swap');
 @import 'variables';
 
+html, body {
+  height: 100%;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }

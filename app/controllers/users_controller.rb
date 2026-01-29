@@ -682,7 +682,7 @@ class UsersController < ApplicationController
     go_to_not_found = !current_user&.at_least_moderator? || params[:deleted_screen].present?
 
     if deleted && go_to_not_found
-      render :deleted_user, layout: 'without_sidebar', status: 404
+      not_found!
     end
   end
 end
