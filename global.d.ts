@@ -383,7 +383,7 @@ interface QPixel {
   readonly ALLOWED_POST_ATTRS?: readonly string[]
 
   // private properties
-  _filters?: QPixelFilter[] | null;
+  _filters?: Record<string, QPixelFilter> | null;
   _pendingUser?: Promise<QPixelUser> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;

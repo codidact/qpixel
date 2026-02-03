@@ -99,7 +99,7 @@ window.QPixel = {
   },
 
   /**
-   * @type {QPixelFilter[]|null}
+   * @type {Record<string, QPixelFilter>|null}
    */
   _filters: null,
 
@@ -203,16 +203,16 @@ window.QPixel = {
   },
 
   filters: async () => {
-    if (this._filters == null) {
+    if (QPixel._filters == null) {
       // If they're still absent after loading from storage, load from the API.
       const resp = await QPixel.getJSON('/users/me/filters');
       const data = await resp.json();
 
       QPixel.Storage?.set('user_filters', data);
-      this._filters = data;
+      QPixel._filters = data;
     }
 
-    return this._filters;
+    return QPixel._filters;
   },
 
   defaultFilter: async (categoryId) => {
@@ -234,12 +234,12 @@ window.QPixel = {
         headers: { 'Accept': 'application/json' }
       });
 
-    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    /** @type {QPixelResponseJSON<{ filters: Record<string, QPixelFilter> }>} */
     const data = await QPixel.parseJSONResponse(resp, 'Failed to save filter');
     
     QPixel.handleJSONResponse(data, (data) => {
-      this._filters = data.filters;
-      QPixel.Storage?.set('user_filters', this._filters);
+      QPixel._filters = data.filters;
+      QPixel.Storage?.set('user_filters', QPixel._filters);
     });
   },
 
@@ -249,12 +249,12 @@ window.QPixel = {
       method: 'DELETE'
     });
 
-    /** @type {QPixelResponseJSON<{ filters: QPixelFilter[] }>} */
+    /** @type {QPixelResponseJSON<{ filters: Record<string, QPixelFilter> }>} */
     const data = await QPixel.parseJSONResponse(resp, 'Failed to delete filter');
 
     QPixel.handleJSONResponse(data, (data) => {
-      this._filters = data.filters;
-      QPixel.Storage?.set('user_filters', this._filters);
+      QPixel._filters = data.filters;
+      QPixel.Storage?.set('user_filters', QPixel._filters);
     });
   },
 
