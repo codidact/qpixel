@@ -22,7 +22,7 @@
     <%= form_tag create_comment_thread_path do %>
       <%= hidden_field_tag :post_id, post.id %>
 
-      <%= label_tag :body, 'Your comment', class: 'form-element' %>
+      <%= label_tag :body, t('comments.labels.comment_body_input'), class: 'form-element' %>
       <div class="form-caption">Start the thread with a comment.</div>
       <%= text_area_tag :body, '',
                         class: 'form-element js-comment-field',

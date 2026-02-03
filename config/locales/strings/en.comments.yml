@@ -38,6 +38,8 @@ en:
       comment_not_posted: >
         Failed to create comment.
     labels:
+      comment_body_input: >
+        Your comment
       create_new_thread: >
         Start new comment thread
       reply_to_thread: >
