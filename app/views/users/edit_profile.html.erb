@@ -35,7 +35,7 @@
          height="64"
          width="64" />
     <%= f.label :avatar, class: "form-element" %>
-    <div class="form-caption">
+    <div class="form-caption js-max-size" for="<%= f.field_id(:avatar) %>">
       An optional profile picture. Max file size <%= SiteSetting['MaxUploadSize'] %>.
     </div>
     <%= f.file_field :avatar, class: "form-element" %>
@@ -95,7 +95,7 @@
   </div>
     
   
-  <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= f.submit 'Save', class: 'button is-filled js-submit-profile-edit' %>
   <%= link_to 'Cancel',
               users_me_path,
               class: 'button is-muted is-outlined js-cancel-edit',
