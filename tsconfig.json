@@ -3,10 +3,12 @@
     "allowJs": true,
     "checkJs": true,
     "declaration": false,
-    "module": "none",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "es2022",
+    "moduleResolution": "node",
     "noEmit": true,
     "target": "ES2021",
-    "types": ["./global.d.ts", "@types/jquery", "@types/select2"]
+    "types": ["./global.d.ts", "@types/jquery", "moment", "@types/select2"]
   },
   "include": ["./app/assets/javascripts", "./public/assets/community"],
   "exclude": [

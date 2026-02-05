@@ -10,6 +10,7 @@
     "@types/prettier": "2.7.3",
     "@types/select2": "^4.0.63",
     "dompurify": "2.5.8",
+    "moment": "2.13.0",
     "prettier-plugin-brace-style": "0.8.1",
     "typescript": "5.6.3"
   }

@@ -707,6 +707,8 @@ declare var Chartkick: any;
 declare var hljs: any;
 // MathJax lib, TODO: types
 declare var MathJax: any;
+// Moment.js lib
+declare var moment: typeof import('moment');
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
 // Sefaria Linker (no known types), see https://developers.sefaria.org/docs/linker-v2
