@@ -19,7 +19,9 @@
              src="<%= logo_path %>"
              alt="<% notification.community_name %> logo" />
       <% end %>
-      <%= notification.community_name %> &middot; <%= notification.rendered_timestamp %>
+      <%= notification.community_name %> &middot; <span title="<%= notification.created_at.iso8601 %>">
+        <%= notification.rendered_timestamp %>
+      </span>
     </div>
     <a href="<%= notification.link %>"><%= render_pings_text(notification.content) %></a>
   </div>
