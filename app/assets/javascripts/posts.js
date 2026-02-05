@@ -50,6 +50,8 @@ $(() => {
     const files = /** @type {HTMLInputElement} */ ($fileInput[0]).files;
     const form = /** @type {HTMLFormElement} */ ($tgt[0]);
 
+    const maxUploadSize = QPixel.MAX_UPLOAD_SIZE || '2MB';
+
     // TODO: MaxUploadSize is a site setting and can be changed
     if (files.length > 0 && files[0].size >= 2000000) {
       const isUploadModalOpened = $('#markdown-image-upload').hasClass('is-active');
@@ -58,7 +60,7 @@ $(() => {
       postField.val(postField.val()?.toString().replace(placeholder, ''));
 
       if (!isUploadModalOpened) {
-        QPixel.createNotification('danger', `Can't upload files with size more than 2MB`);
+        QPixel.createNotification('danger', `Can't upload files with size more than ${maxUploadSize}`);
       }
       else {
         $tgt.find('.js-max-size').addClass('has-color-red-700 error-shake');
