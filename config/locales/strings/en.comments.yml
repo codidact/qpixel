@@ -1,5 +1,10 @@
 en:
   comments:
+    captions:
+      first_thread_on_post: >
+        Be the first to create a new comment thread.
+      new_thread_on_post: >
+        Please check if an existing comment thread already covers what you need first.
     errors:
       disabled_on_archived_threads: >
         Archived threads cannot be replied to.
