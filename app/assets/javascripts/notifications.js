@@ -7,15 +7,26 @@ $(() => {
         <div class="widget--body h-p-2">
             <div class="h-c-tertiary-600 h-fs-caption">
                 ${notification.community_name} &middot;
-                <span class="js-notif-state">${notification.is_read ? 'read' : `<strong>unread</strong>`}</span> &middot;
-                <span title="${notification.created_at}">${QPixel.DOM.formatTimestamp(notification.created_at)}</span>
+                <span data-relstamp="${notification.created_at}"
+                      title="${notification.created_at}">
+                  ${QPixel.DOM.formatTimestamp(notification.created_at)}
+                </span>
             </div>
-            <p><a href="${notification.link}" data-id="${notification.id}"
-                  class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''} notification-link">${notification.content}</a></p>
-            <p class="has-font-size-caption"><a href="javascript:void(0)" data-notif-id="${notification.id}" class="js-notification-toggle">
+            <p>
+              <a href="${notification.link}"
+                 data-id="${notification.id}"
+                 class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''} notification-link">
+                 ${notification.content}
+              </a>
+            </p>
+            <p class="has-font-size-caption has-margin-bottom-0">
+              <a href="javascript:void(0)"
+                 data-notif-id="${notification.id}"
+                 class="js-notification-toggle">
                 <i class="fas fa-${notification.is_read ? 'envelope' : 'envelope-open'}"></i>
                 mark ${notification.is_read ? 'unread' : 'read'}
-            </a></p>
+              </a>
+            </p>
         </div>
     </div>`;
     return template;
@@ -87,7 +98,6 @@ $(() => {
     $('.inbox-count').remove();
 
     $('.js-notification').removeClass('is-teal').addClass('read');
-    $('.js-notif-state').text('read');
     $('.js-notification-toggle').html(`<i class="fas fa-envelope"></i> mark unread`);
   });
 
