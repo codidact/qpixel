@@ -19,7 +19,8 @@
              src="<%= logo_path %>"
              alt="<% notification.community_name %> logo" />
       <% end %>
-      <%= notification.community_name %> &middot; <span title="<%= notification.created_at.iso8601 %>">
+      <%= notification.community_name %> &middot; <span data-relstamp="<%= notification.created_at.iso8601 %>"
+                                                        title="<%= notification.created_at.iso8601 %>">
         <%= notification.created_at.utc %>
       </span>
     </div>
