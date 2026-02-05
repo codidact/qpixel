@@ -386,6 +386,10 @@ interface QPixel {
    * List of attributes allowed on HTML tags in posts, supplied by the server
    */
   readonly ALLOWED_POST_ATTRS?: readonly string[]
+  /**
+   * Maximum file upload size (arbitrary unit)
+   */
+  readonly MAX_UPLOAD_SIZE?: string
 
   // private properties
   _filters?: Record<string, QPixelFilter> | null;
