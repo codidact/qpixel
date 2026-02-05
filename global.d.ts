@@ -59,6 +59,11 @@ interface QPixelDOM {
    */
   fadeOut?: (element: HTMLElement, duration: number) => void;
   /**
+   * Formats a given {@link timestamp} with the standard format
+   * @param timestamp timestamp to format
+   */
+  formatTimestamp?: (timestamp: string | number | Date) => string;
+  /**
    * Checks common modifier states on a given keyboard event
    * @param event 
    */
