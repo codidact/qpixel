@@ -387,6 +387,10 @@ interface QPixel {
    */
   readonly ALLOWED_POST_ATTRS?: readonly string[]
   /**
+   * Currently used locale (BCP 47 language tag), supplied by the server
+   */
+  readonly LOCALE?: string
+  /**
    * Maximum file upload size (arbitrary unit)
    */
   readonly MAX_UPLOAD_SIZE?: string
