@@ -52,6 +52,36 @@ window.QPixel = {
     popped_modals_ct += 1;
   },
 
+  supportedNumberLocales: () => {
+    try {
+      return Intl.NumberFormat.supportedLocalesOf(
+        Intl.getCanonicalLocales(QPixel.LOCALE ?? 'en')
+      );
+    } catch {
+      return ['en']
+    }
+  },
+
+  numberToHumanSize: (value) => {
+    /** @type {[number, string][]} */
+    const unitMap = [
+      [1024 ** 4, 'terabyte'],
+      [1024 ** 3, 'gigabyte'],
+      [1024 ** 2, 'megabyte'],
+      [1024 ** 1, 'kilobyte'],
+      [0, 'byte']
+    ];
+
+    const [size, unit] = unitMap.find(([size]) => value >= size) ?? [0, 'byte'];
+
+    return new Intl.NumberFormat(QPixel.supportedNumberLocales(), {
+      notation: 'compact',
+      style: 'unit',
+      unit,
+      unitDisplay: 'narrow',
+    }).format(size ? value / size : value).toUpperCase();
+  },
+
   offset: function (el) {
     const topLeft = $(el).offset();
     return {

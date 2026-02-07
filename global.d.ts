@@ -487,6 +487,17 @@ interface QPixel {
   filters?: () => Promise<Record<string, QPixelFilter>>;
 
   /**
+   * Get a list of supported canonical locales for {@link Intl.NumberFormat} based on {@link QPixel.LOCALE}.
+   */
+  supportedNumberLocales?: () => string[];
+
+  /**
+   * Format a given {@link value} into a human-friendly representation.
+   * @param value value (in bytes) to format
+   */
+  numberToHumanSize?: (value: number) => string;
+
+  /**
    * Get the absolute offset of an element.
    * @param element the element for which to find the offset.
    * @returns element offset information
