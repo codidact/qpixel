@@ -391,9 +391,9 @@ interface QPixel {
    */
   readonly LOCALE?: string
   /**
-   * Maximum file upload size (arbitrary unit)
+   * Maximum file upload size (in bytes), supplied by the server
    */
-  readonly MAX_UPLOAD_SIZE?: string
+  readonly MAX_UPLOAD_SIZE?: number
 
   // private properties
   _filters?: Record<string, QPixelFilter> | null;

@@ -189,6 +189,15 @@
     set by your web server configuration. This setting should be set to the same value so that the correct limit
     can be displayed to users.
 
+- name: MaxRequestBodySize
+  value: 2097152
+  value_type: integer
+  category: AdvancedSettings
+  description: >
+    The maximum allowed size of request body (in bytes). This setting must be kept in sync with your web server or
+    reverse proxy configuration that governs request body size limits - **do not** change it if you don't know what
+    that means.
+
 - name: FirstVisitGuidance
   value: ~
   value_type: text

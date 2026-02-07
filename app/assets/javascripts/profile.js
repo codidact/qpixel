@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     profileForm?.querySelectorAll('input[type=file]').forEach((el) => {
       const files = /** @type {HTMLInputElement} */ (el).files;
 
-      // TODO: MaxUploadSize is a site setting and can be changed
-      if (files.length > 0 && files[0].size >= 2000000) {
+      const maxUploadSize = QPixel.MAX_UPLOAD_SIZE ?? 2 * 1024 * 1024;
+
+      if (files.length > 0 && files[0].size >= maxUploadSize) {
         if (!ev.defaultPrevented) {
           ev.preventDefault();
         }
