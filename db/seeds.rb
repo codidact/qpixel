@@ -217,6 +217,8 @@ def cleanup_posts
 end
 
 def cleanup_site_settings
+  return if Rails.env.test?
+
   to_remove = []
 
   $site_settings_map.each do |community_id, names|
