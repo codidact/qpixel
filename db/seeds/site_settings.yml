@@ -185,7 +185,7 @@
   value_type: integer
   category: AdvancedSettings
   description: >
-    The maximum allowed size of request body (in bytes). This setting must be kept in sync with your web server or
+    The maximum allowed size of request body in bytes (2MB by default). This setting must be kept in sync with your web server or
     reverse proxy configuration that governs request body size limits - **do not** change it if you don't know what
     that means.
 
