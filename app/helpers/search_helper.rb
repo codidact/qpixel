@@ -1,6 +1,8 @@
 module SearchHelper
   include SearchQualifierHelper
 
+  SOURCE_TYPES = [:any, :native, :imported].freeze
+
   ##
   # Search & sort a default posts list based on parameters in the current request.
   #
@@ -52,6 +54,7 @@ module SearchHelper
     qualifiers.append({ param: :include_tags, tag_ids: filter.include_tags }) unless filter.include_tags.nil?
     qualifiers.append({ param: :exclude_tags, tag_ids: filter.exclude_tags }) unless filter.exclude_tags.nil?
     qualifiers.append({ param: :status, value: filter.status }) unless filter.status.nil?
+    qualifiers.append({ param: :source, value: filter.source }) unless filter.source.nil?
     qualifiers
   end
 
@@ -68,7 +71,8 @@ module SearchHelper
       max_answers: params[:max_answers],
       include_tags: params[:include_tags],
       exclude_tags: params[:exclude_tags],
-      status: params[:status]
+      status: params[:status],
+      source: params[:source]
     }
   end
 
@@ -106,6 +110,10 @@ module SearchHelper
       filter_qualifiers.append({ param: :status, value: params[:status] })
     end
 
+    if valid_source_type?(params[:source])
+      filter_qualifiers.append({ param: :source, value: params[:source].to_sym })
+    end
+
     if params[:include_tags]&.all? { |id| id.match? valid_value[:integer] }
       filter_qualifiers.append({ param: :include_tags, tag_ids: params[:include_tags] })
     end
@@ -133,13 +141,11 @@ module SearchHelper
 
   ##
   # Parses a full qualifier string into an array of qualifier objects.
-  # @param qualifiers [String] A qualifier string as returned by {#parse_search}.
+  # @param qualifiers [Array<String>] Qualifier strings as returned by {#parse_search}.
   # @return [Array<Hash{Symbol => Object}>]
   def parse_qualifier_strings(qualifiers)
     qualifiers.map do |qualifier|
-      splat = qualifier.split ':'
-      parameter = splat[0]
-      value = splat[1]
+      parameter, value = qualifier.split(':')
 
       parsed = case parameter
                when 'score'
@@ -166,6 +172,8 @@ module SearchHelper
                  parse_answers_qualifier(value)
                when 'status'
                  parse_status_qualifier(value)
+               when 'source'
+                 parse_source_qualifier(value)
                end
 
       parsed
@@ -223,9 +231,23 @@ module SearchHelper
         when 'closed'
           query = query.where(closed: true)
         end
+      when :source
+        case qualifier[:value]
+        when :native
+          query = query.where(att_source: nil)
+        when :imported
+          query = query.where.not(att_source: nil)
+        end
       end
     end
 
     query
+  end
+
+  # Is a given param a valid source type?
+  # @param param [String, Symbol, nil] parameter to check
+  # @return [Boolean] check result
+  def valid_source_type?(param)
+    SOURCE_TYPES.include?(param&.to_sym)
   end
 end

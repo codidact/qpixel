@@ -5,11 +5,11 @@
       post          : a Post instance to work on (either via .new or .find - doesn't matter if it has content or not)
       submit_path   : the URL to submit the form to (must accept POST requests)
       post_type     : a PostType instance describing the requested post type
-      category      : a Category instance, required if the post type has a category, indicating which category to post in
-      parent        : a Post instance containing the parent for this post (required if the post type has a parent)
-      inline_parent : optional, default  true: display an inline copy of the parent? (if present)
-      type_summary  : optional, default  true: display a summary of the requested post type?
-      edit_comment  : optional, default false: include a field for an edit comment?
+    ? category      : a Category instance, required if the post type has a category, indicating which category to post in
+    ? parent        : a Post instance containing the parent for this post (required if the post type has a parent)
+    ? inline_parent : optional, default  true: display an inline copy of the parent? (if present)
+    ? type_summary  : optional, default  true: display a summary of the requested post type?
+    ? edit_comment  : optional, default false: include a field for an edit comment?
 "%>
 
 <%

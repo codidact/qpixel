@@ -31,6 +31,20 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
+  test 'create requires post' do
+    sign_in users(:standard_user)
+
+    post :create, params: {
+      category: categories(:main).id,
+      post_type: post_types(:question).id
+    }
+
+    assert_response(:found)
+    assert_redirected_to root_path
+    assert_not_nil flash[:danger]
+    assert_nil assigns(:post)
+  end
+
   test 'can create help post' do
     sign_in users(:moderator)
 

@@ -40,6 +40,15 @@ editor:
   login_token_expires_at: 2000-01-01T00:00:00.000000Z
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
+tags_editor:
+  email: editor@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: tags-editor
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 deleter:
   email: delete@qpixel-test.net
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
@@ -103,6 +112,16 @@ staff:
   staff: true
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
+other_staff:
+  email: other_staff@qpixel-test.net
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 42
+  username: other_staff
+  is_global_admin: true
+  is_global_moderator: true
+  staff: true
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
 no_community_user:
   email: no_community_user@qpixel-test.net
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
@@ -110,16 +129,6 @@ no_community_user:
   username: no_community_user
   is_global_admin: false
   is_global_moderator: false
-  confirmed_at: 2020-01-01T00:00:00.000000Z
-
-system:
-  id: -99
-  email: system@qpixel-test.net
-  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
-  sign_in_count: 1337
-  username: system
-  is_global_admin: true
-  is_global_moderator: true
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
 deleted_account:
@@ -146,6 +155,7 @@ enabled_2fa:
   username: enabled_2fa
   confirmed_at: 2020-01-01T00:00:00.000000Z
   enabled_2fa: true
+  two_factor_method: app
   two_factor_token: WT65ANYXBB2SBR7III7IVWNJDS4PQF2T
   backup_2fa_code: M8lENyehyCvo9F9MbyTl1aOL
 
@@ -162,4 +172,54 @@ spammer:
   username: BestSpamOnTheNet
   is_global_admin: false
   is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+profile_spammer:
+  email: profile-spammer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  profile: > 
+    Find the worst spam <a href="https://example.com">here</a>!
+    The yuckiest spam you've ever tasted.
+  profile_markdown: >
+    Find the best spam [here](https://example.com)!
+    The yuckiest spam you've ever tasted.
+  sign_in_count: 1
+  username: WorstProfileSpam
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+edit_scorer:
+  email: edit-scorer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: edit_scorer
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+flag_scorer:
+  email: flag-scorer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: flag_scorer
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+post_scorer:
+  email: post-scorer@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: post_scorer
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+merge_source:
+  email: merge-source@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: merge_source
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+
+merge_target:
+  email: merge-target@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  sign_in_count: 1337
+  username: merge_target
   confirmed_at: 2020-01-01T00:00:00.000000Z

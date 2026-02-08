@@ -1,0 +1,26 @@
+<%#
+  Complaint comment partial rendered in a widget.
+
+  Variables:
+    comment: [ComplaintComment] The comment to render.
+%>
+
+<div class="widget <%= 'is-yellow' if comment.internal? %>">
+  <div class="widget--header">
+    <span class="has-font-size-caption">
+      <strong>
+        <% if comment.user.nil? || comment.user == @complaint.user %>
+          Reporter
+        <% elsif current_user&.staff? %>
+          <%= comment.user.rtl_safe_username %>
+        <% else %>
+          Staff
+        <% end %>
+      </strong>
+      <%= time_ago_in_words(comment.created_at) %> ago
+    </span>
+  </div>
+  <div class="widget--body has-font-size-caption">
+    <%= comment.content %>
+  </div>
+</div>

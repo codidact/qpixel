@@ -12,9 +12,13 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING']) || false
+  # Set this to +true+ unless you want to skip exceptions_app:
+  config.consider_all_requests_local = ActiveRecord::Type::Boolean.new.cast(ENV['ALL_REQUESTS_LOCAL'] || 'true')
+
+  # Controller caching (+false+ by default, can be overridden via the env variable):
+  perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING'])
+  config.action_controller.perform_caching = perform_caching || false
+  Rack::MiniProfiler.config.disable_caching = !perform_caching
 
   # Enable server timing
   config.server_timing = true

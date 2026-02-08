@@ -1,367 +1,479 @@
-$(() => {
-  (async () => {
-    const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
-    const preference = await QPixel.preference('keyboard_tools');
-    const keyboardToolsAreEnabled = preference === 'true';
+window.QPixel ||= {};
 
-    $(".js-keyboard_tools-status").text(keyboardToolsAreEnabled ? "activated" : "inactive");
-    $(".js-keyboard_tools-toggle").click(() => {
-      if (keyboardToolsAreEnabled) {
-        QPixel.setPreference('keyboard_tools', 'false');
+/**
+ * @typedef {{
+ *   key: string,
+ *   text: string,
+ *   if?: boolean
+ * }} KeyboardShortcut
+ */
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const userLink = $('.header--item.is-complex.is-visible-on-mobile[href^="/users/"]').attr('href');
+  const preference = await QPixel.preference('keyboard_tools');
+  const keyboardToolsAreEnabled = preference === 'true';
+
+  $('.js-keyboard_tools-status').text(keyboardToolsAreEnabled ? 'activated' : 'inactive');
+  $('.js-keyboard_tools-toggle').click(() => {
+    if (keyboardToolsAreEnabled) {
+      QPixel.setPreference('keyboard_tools', 'false');
+    } else {
+      QPixel.setPreference('keyboard_tools', 'true');
+    }
+    window.location.reload();
+  });
+
+  if (!keyboardToolsAreEnabled) {
+    return;
+  }
+
+  QPixel.Keyboard ||= {
+    state: 'home',
+    selectedItem: null,
+    user_id: !!userLink ? parseInt(userLink.split('/').pop(), 10) : null,
+    is_mod: !!$('.header--item[href="/mod/flags"]').length,
+    categories: function () {
+      const category_elements = $('a.category-header--tab');
+      /**
+       * @type {Record<string, string>}
+       */
+      const return_obj = {};
+      category_elements.each(function () {
+        return_obj[this.innerText] = this.getAttribute('href');
+      });
+      return return_obj;
+    },
+    dialog: function (msg) {
+      this.dialogClose();
+      const d = document.createElement('div');
+      d.classList.add('__keyboard_help');
+      d.innerText = msg;
+      document.body.appendChild(d);
+    },
+    dialogClose: function () {
+      $('.__keyboard_help').remove();
+      this.state = 'home';
+    },
+    updateSelected: function () {
+      $('.__keyboard_selected').removeClass('__keyboard_selected');
+      if (this.selectedItem) {
+        this.selectedItem.classList.add('__keyboard_selected');
+        this.selectedItem.scrollIntoView({ behavior: 'smooth' });
+        this.selectedItem.focus();
+
+        this.selectedItemData = {
+          type: /** @type {SelectedItemType} */ (this.selectedItem.getAttribute('data-ckb-item-type')),
+          post_id: this.selectedItem.getAttribute('data-ckb-post-id')
+        };
+      }
+
+      if (this.state === 'home') {
+        renderHelpMenu();
+      }
+    }
+  };
+
+  // Use html, so that all prior attempts to access keyup event have priority
+  $('html').on('keyup', (e) => {
+    if (e.target !== document.body) {
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      QPixel.Keyboard.dialogClose();
+    } else if (QPixel.Keyboard.state === 'home') {
+      homeMenu(e);
+    } else if (QPixel.Keyboard.state === 'goto') {
+      gotoMenu(e);
+    } else if (QPixel.Keyboard.state === 'goto/category') {
+      categoryMenu(e);
+    } else if (QPixel.Keyboard.state === 'goto/category-tags') {
+      categoryTagsMenu(e);
+    } else if (QPixel.Keyboard.state === 'goto/category-edits') {
+      categorySuggestedEditsMenu(e);
+    } else if (QPixel.Keyboard.state === 'tools') {
+      toolsMenu(e);
+    } else if (QPixel.Keyboard.state === 'tools/vote') {
+      voteMenu(e);
+    }
+  });
+
+  /**
+   * @param {number} len
+   * @returns {string}
+   */
+  const delimitShortcutsGroup = (len) => {
+    return `${'='.repeat(len)}\n`;
+  };
+
+  /**
+   * @param {KeyboardShortcut} shortcut
+   * @param {number} [gap]
+   * @returns {string}
+   */
+  const formatShortcut = ({ key, text }, gap = 4) => {
+    return `${key}${' '.repeat(gap - (key.length - 1))}${text}`;
+  };
+
+  /**
+   * @param {KeyboardShortcut[]} shortcuts
+   * @param {number} [gap]
+   * @returns {string}
+   */
+  const formatShortcuts = (shortcuts, gap = 4) => {
+    return shortcuts.filter((s) => s.if === void 0 || s.if)
+                    .map((s) => formatShortcut(s, gap))
+                    .join('\n');
+  };
+
+  const renderHelpMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const generalShortcuts = [
+      { key: '?', text: 'Open this help' },
+      { key: 'esc', text: 'Close this help' },
+      { key: 'n', text: 'New post in the category' },
+      { key: 's', text: 'Search for something' },
+      { key: 'g', text: 'Go to ...' },
+      { key: 'a', text: 'Go to answer field' }
+    ];
+
+    /** @type {KeyboardShortcut[]} */
+    const selectionShortcuts = [
+      { key: 'j', text: 'Move one item down' },
+      { key: 'k', text: 'Move one item up' },
+      { key: 't',
+        text: 'Use a tool (on selection)',
+        if: !!QPixel.Keyboard.selectedItemData && QPixel.Keyboard.selectedItemData.type !== 'link'
+      }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Keyboard Shortcuts\n' +
+      delimitShortcutsGroup(33) +
+      formatShortcuts(generalShortcuts, 4) +
+      '\n\n' +
+      'Selection shortcuts:\n\n' +
+      formatShortcuts(selectionShortcuts, 4) +
+      '\n\n' +
+      'Selection shortcuts will select\n' +
+      'first post, if none selected'
+    );
+  };
+
+  const renderGoToMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'm', text: 'Main page' },
+      { key: 'u', text: 'User list' },
+      { key: 'h', text: 'Help' },
+      { key: 'd', text: 'Dashboard' },
+      { key: 'p', text: 'Your profile page' },
+      { key: 'c', text: 'Category ...' },
+      { key: 't', text: 'Tags of category ...' },
+      { key: 'e', text: 'Suggested Edits of ...' },
+      { key: 'f', text: 'Flags (mod only)', if: QPixel.Keyboard.is_mod }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Go to ...\n' +
+      delimitShortcutsGroup(26) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
+  const renderToolsMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'f', text: 'Flag' },
+      { key: 'e', text: 'Edit' },
+      { key: 'c', text: 'Comment' },
+      { key: 'l', text: 'Get permalink' },
+      { key: 'h', text: 'View history' },
+      { key: 'v', text: 'Vote ...' },
+      { key: 't', text: 'Use tools', if: QPixel.Keyboard.is_mod }
+    ];
+
+    QPixel.Keyboard.dialog(
+      'Use tool ...\n' +
+      delimitShortcutsGroup(17) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
+  const renderToolsVoteMenu = () => {
+    /** @type {KeyboardShortcut[]} */
+    const shortcuts = [
+      { key: 'u', text: 'Up' },
+      { key: 'd', text: 'Down' },
+      { key: 'c', text: 'Close' }
+    ];
+    
+    QPixel.Keyboard.dialog(
+      'Vote ...\n' +
+      delimitShortcutsGroup(9) +
+      formatShortcuts(shortcuts, 3)
+    );
+  };
+
+  /**
+   * Handles the "home" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const homeMenu = (e) => {
+    const isHelp = e.key === '?';
+
+    if (!isHelp && QPixel.DOM?.getModifierState(e)) {
+      return;
+    }
+
+    if (isHelp) {
+      renderHelpMenu();
+    } else if (e.key === 'n') {
+      const new_post_link = $('a.category-header--nav-item.is-button').attr('href');
+      if (new_post_link) {
+        window.location.href = new_post_link;
+      }
+    } else if (e.key === 'g') {
+      renderGoToMenu();
+      QPixel.Keyboard.state = 'goto';
+    } else if (e.key === 'j') {
+      if (QPixel.Keyboard.selectedItem == null) {
+        QPixel.Keyboard.selectedItem = $('[data-ckb-list-item]:first-of-type')[0];
       } else {
-        QPixel.setPreference('keyboard_tools', 'true');
+        QPixel.Keyboard.selectedItem =
+          $(QPixel.Keyboard.selectedItem).nextAll('[data-ckb-list-item]')[0] || QPixel.Keyboard.selectedItem;
       }
-      window.location.reload();
-    })
+      QPixel.Keyboard.updateSelected();
+    } else if (e.key === 'k') {
+      if (QPixel.Keyboard.selectedItem == null) {
+        QPixel.Keyboard.selectedItem = $('[data-ckb-list-item]:first-of-type')[0];
+      } else {
+        QPixel.Keyboard.selectedItem =
+          $(QPixel.Keyboard.selectedItem).prevAll('[data-ckb-list-item]')[0] || QPixel.Keyboard.selectedItem;
+      }
+      QPixel.Keyboard.updateSelected();
+    } else if (e.key === 't') {
+      if (QPixel.Keyboard.selectedItem == null) {
+        QPixel.Keyboard.selectedItem = $('[data-ckb-list-item]:first-of-type')[0];
+      }
+      QPixel.Keyboard.updateSelected();
 
-    if (!keyboardToolsAreEnabled) return;
-
-    window._CodidactKeyboard = {
-      state: 'home',
-      selectedItem: null,
-      user_id: !!userLink ? parseInt(userLink.split("/").pop(), 10) : null,
-      is_mod: !!$('.header--item[href="/mod/flags"]').length,
-      categories: function () {
-        const category_elements = $("a.category-header--tab");
-        /**
-         * @type {Record<string, string>}
-         */
-        const return_obj = {};
-        category_elements.each(function () {
-          return_obj[this.innerText] = this.getAttribute('href');
-        });
-        return return_obj;
-      },
-      dialog: function (msg) {
-        _CodidactKeyboard.dialogClose();
-        const d = document.createElement("div")
-        d.classList.add("__keyboard_help");
-        d.innerText = msg;
-        document.body.appendChild(d);
-      },
-      dialogClose: function () {
-        $(".__keyboard_help").remove();
-        _CodidactKeyboard.state = 'home';
-      },
-      updateSelected: function () {
-        $(".__keyboard_selected").removeClass('__keyboard_selected');
-        if (_CodidactKeyboard.selectedItem) {
-          _CodidactKeyboard.selectedItem.classList.add('__keyboard_selected');
-          _CodidactKeyboard.selectedItem.scrollIntoView({behavior: 'smooth'});
-          _CodidactKeyboard.selectedItem.focus();
-
-          _CodidactKeyboard.selectedItemData = {
-            type: /** @type {SelectedItemType} */(_CodidactKeyboard.selectedItem.getAttribute("data-ckb-item-type")),
-            post_id: _CodidactKeyboard.selectedItem.getAttribute("data-ckb-post-id")
-          };
-        }
+      if (QPixel.Keyboard.selectedItemData?.type === 'post') {
+        renderToolsMenu();
+        QPixel.Keyboard.state = 'tools';
+      }
+    } else if (e.key === 'a') {
+      const cl = $('#answer_body_markdown');
+      cl[0].scrollIntoView({ behavior: 'smooth' });
+      cl.focus();
+      QPixel.Keyboard.dialogClose();
+    } else if (e.key === 'Enter') {
+      if (QPixel.Keyboard.selectedItemData.type === 'link') {
+        window.location.href = $(QPixel.Keyboard.selectedItem).find('[data-ckb-item-link]').attr('href');
       }
     }
+  };
 
-    // Use html, so that all prior attempts to access keyup event have priority
-    $("html").on("keyup", function (e) {
-      if (e.target !== document.body) return;
-      if (e.key === "Escape") {
-        _CodidactKeyboard.dialogClose();
-      } else if (_CodidactKeyboard.state === 'home') {
-        homeMenu(e);
-      } else if (_CodidactKeyboard.state === 'goto') {
-        gotoMenu(e);
-      } else if (_CodidactKeyboard.state === 'goto/category') {
-        categoryMenu(e);
-      } else if (_CodidactKeyboard.state === 'goto/category-tags') {
-        categoryTagsMenu(e);
-      } else if (_CodidactKeyboard.state === 'goto/category-edits') {
-        categorySuggestedEditsMenu(e);
-      } else if (_CodidactKeyboard.state === 'tools') {
-        toolsMenu(e);
-      } else if (_CodidactKeyboard.state === 'tools/vote') {
-        voteMenu(e);
-      }
-    });
-
-    /**
-     * Checks common modifier states on a given keyboard event
-     * @param {JQuery.KeyboardEventBase} e
-     * @returns {boolean}
-     */
-    const getModifierState = (e) => {
-      return !!e.altKey || !!e.ctrlKey || !!e.metaKey || !!e.shiftKey;
-    };
-
-    /**
-     * Handles the "home" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function homeMenu(e) {
-      const isHelp = e.key === "?";
-
-      if (!isHelp && getModifierState(e)) {
-        return;
-      }
-
-      if (isHelp) {
-        _CodidactKeyboard.dialog(
-          'Codidact Keyboard Shortcuts\n' +
-          '===========================\n' +
-          '?   Open this help\n' +
-          'esc Close this help\n' +
-          'n   New post\n' +
-          '    (in current category)\n' +
-          's   Search for something\n' +
-          'g   Go to a page...\n\n' +
-          'a   Go to answer field\n\n' +
-          'Selection shortcuts:\n\n' +
-          'j   Move one item down\n' +
-          'k   Move one item up\n' +
-          't  Use a tool (on selection)\n\n' +
-          '(Selection shortcuts will select\n' +
-          'first post, if none selected)'
-        );
-      } else if (e.key === 'n') {
-        const new_post_link = $('a.category-header--nav-item.is-button').attr('href');
-        if (new_post_link) {
-          window.location.href = new_post_link;
-        }
-      } else if (e.key === 'g') {
-        _CodidactKeyboard.dialog('Go to ...\n' +
-          '=========\n' +
-          'm   Main page\n' +
-          'u   User list\n' +
-          'h   Help\n' +
-          'd   Dashboard\n' +
-          'p   Your profile page\n' +
-          'c   Category ...\n' +
-          't   Tags of category ...\n' +
-          'e   Suggested Edits of category ...' +
-          (_CodidactKeyboard.is_mod ? '\nf   Flags (mod only)' : '')
-        );
-        _CodidactKeyboard.state = 'goto';
-      } else if (e.key === 'k') {
-        if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
-        else {
-          _CodidactKeyboard.selectedItem = $(_CodidactKeyboard.selectedItem).nextAll('[data-ckb-list-item]')[0] || _CodidactKeyboard.selectedItem;
-        }
-        _CodidactKeyboard.updateSelected();
-      } else if (e.key === 'j') {
-        if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
-        else {
-          _CodidactKeyboard.selectedItem = $(_CodidactKeyboard.selectedItem).prevAll('[data-ckb-list-item]')[0] || _CodidactKeyboard.selectedItem;
-        }
-        _CodidactKeyboard.updateSelected();
-      } else if (e.key === 't') {
-        if (_CodidactKeyboard.selectedItem == null) _CodidactKeyboard.selectedItem = $("[data-ckb-list-item]:first-of-type")[0];
-        _CodidactKeyboard.updateSelected();
-
-        if (_CodidactKeyboard.selectedItemData.type === "post") {
-          _CodidactKeyboard.dialog('Use tool ...\n' +
-            '============\n' +
-            'f  Flag\n' +
-            'e  Edit\n' +
-            'c  Comment\n' +
-            'l  Get permalink\n' +
-            'h  View history\n' +
-            'v  Vote ...' +
-            (_CodidactKeyboard.is_mod ? '\nt  Use tools' : '')
-          );
-          _CodidactKeyboard.state = 'tools';
-        }
-      } else if (e.key === 'a') {
-        const cl = $('#answer_body_markdown');
-        cl[0].scrollIntoView({behavior: "smooth"});
-        cl.focus();
-        _CodidactKeyboard.dialogClose();
-      } else if (e.key === 'Enter') {
-        if (_CodidactKeyboard.selectedItemData.type === "link") {
-          window.location.href = $(_CodidactKeyboard.selectedItem).find("[data-ckb-item-link]").attr("href");
-        }
-      }
+  /**
+   * Handles the "goto" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const gotoMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles "goto" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function gotoMenu(e) {
-      if (getModifierState(e)) {
-        return;
+    if (e.key === 'm') {
+      window.location.href = '/';
+    } else if (e.key === 'u') {
+      window.location.href = '/users';
+    } else if (e.key === 'd') {
+      window.location.href = '/dashboard';
+    } else if (e.key === 'h') {
+      window.location.href = '/help';
+    } else if (e.key === 'p') {
+      window.location.href = '/users/' + QPixel.Keyboard.user_id;
+    } else if (e.key === 'f') {
+      window.location.href = '/mod/flags';
+    } else if (e.key === 't') {
+      const data = Object.entries(QPixel.Keyboard.categories());
+      let string_response = '';
+      for (let i = 0; i < data.length; i++) {
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
       }
+      QPixel.Keyboard.dialog(
+        'Go to tags of ...\n' +
+        delimitShortcutsGroup(18) +
+        string_response.trim()
+      );
+      QPixel.Keyboard.state = 'goto/category-tags';
+    } else if (e.key === 'e') {
+      const data = Object.entries(QPixel.Keyboard.categories());
+      let string_response = '';
+      for (let i = 0; i < data.length; i++) {
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
+      }
+      QPixel.Keyboard.dialog(
+        'Go to suggested edits of ...\n' +
+        delimitShortcutsGroup(28) +
+        string_response.trim()
+      );
+      QPixel.Keyboard.state = 'goto/category-edits';
+    } else if (e.key === 'c') {
+      const data = Object.entries(QPixel.Keyboard.categories());
+      let string_response = '';
+      for (let i = 0; i < data.length; i++) {
+        string_response += formatShortcut({
+          key: (i + 1).toString(),
+          text: data[i][0]
+        }, 3) + '\n';
+      }
+      QPixel.Keyboard.dialog(
+        'Go to category ...\n' +
+        delimitShortcutsGroup(18) +
+        string_response.trim()
+      );
+      QPixel.Keyboard.state = 'goto/category';
+    }
+  };
 
-      if (e.key === 'm') {
-        window.location.href = '/';
-      } else if (e.key === 'u') {
-        window.location.href = '/users';
-      } else if (e.key === 'd') {
-        window.location.href = '/dashboard';
-      } else if (e.key === 'h') {
-        window.location.href = '/help';
-      } else if (e.key === 'p') {
-        window.location.href = '/users/' + _CodidactKeyboard.user_id;
-      } else if (e.key === 'f') {
-        window.location.href = '/mod/flags';
-      } else if (e.key === "t") {
-        const data = Object.entries(_CodidactKeyboard.categories());
-        let string_response = "";
-        for (let i = 0; i < data.length; i++) {
-          const entry = data[i];
-          string_response += (i + 1) + "  " + entry[0] + "\n"
-        }
-        _CodidactKeyboard.dialog('Go to tags of category ...\n' +
-          '==================\n' +
-          string_response.trim()
-        );
-        _CodidactKeyboard.state = 'goto/category-tags';
-      } else if (e.key === "e") {
-        const data = Object.entries(_CodidactKeyboard.categories());
-        let string_response = "";
-        for (let i = 0; i < data.length; i++) {
-          const entry = data[i];
-          string_response += (i + 1) + "  " + entry[0] + "\n"
-        }
-        _CodidactKeyboard.dialog('Go to suggested edits of category ...\n' +
-          '==================\n' +
-          string_response.trim()
-        );
-        _CodidactKeyboard.state = 'goto/category-edits';
-      } else if (e.key === 'c') {
-        const data = Object.entries(_CodidactKeyboard.categories());
-        let string_response = "";
-        for (let i = 0; i < data.length; i++) {
-          const entry = data[i];
-          string_response += (i + 1) + "  " + entry[0] + "\n"
-        }
-        _CodidactKeyboard.dialog('Go to category ...\n' +
-          '==================\n' +
-          string_response.trim()
-        );
-        _CodidactKeyboard.state = 'goto/category';
-      }
+  /**
+   * Handles the "goto/category" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const categoryMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles the "goto/category" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function categoryMenu(e) {
-      if (getModifierState(e)) {
-        return;
-      }
+    const number = parseInt(e.key);
+    if (!isNaN(number)) {
+      const data = QPixel.Keyboard.categories();
+      const data_entries = Object.entries(data);
 
-      const number = parseInt(e.key);
-      if (!isNaN(number)) {
-        const data = _CodidactKeyboard.categories();
-        const data_entries = Object.entries(data);
+      const category = data_entries[number - 1];
+      window.location.href = category[1];
+    }
+  };
 
-        const category = data_entries[number - 1];
-        window.location.href = category[1];
-      }
+  /**
+   * Handles the "goto/category-tags" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const categoryTagsMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles the "goto/category-tags" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function categoryTagsMenu(e) {
-      if (getModifierState(e)) {
-        return;
-      }
+    const number = parseInt(e.key);
+    if (!isNaN(number)) {
+      const data = Object.entries(QPixel.Keyboard.categories());
 
-      const number = parseInt(e.key);
-      if (!isNaN(number)) {
-        const data = Object.entries(_CodidactKeyboard.categories());
+      const category = data[number - 1];
+      window.location.href = category[1] + '/tags';
+    }
+  };
 
-        const category = data[number - 1];
-        window.location.href = category[1] + "/tags";
-      }
+  /**
+   * Handles the "goto/category-edits" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const categorySuggestedEditsMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles the "goto/category-edits" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function categorySuggestedEditsMenu(e) {
-      if (getModifierState(e)) {
-        return;
-      }
+    const number = parseInt(e.key);
+    if (!isNaN(number)) {
+      const data = Object.entries(QPixel.Keyboard.categories());
 
-      const number = parseInt(e.key);
-      if (!isNaN(number)) {
-        const data = Object.entries(_CodidactKeyboard.categories());
+      const category = data[number - 1];
+      window.location.href = category[1] + '/suggested-edits';
+    }
+  };
 
-        const category = data[number - 1];
-        window.location.href = category[1] + "/suggested-edits";
-      }
+  /**
+   * Handles the "tools" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const toolsMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles the "tools" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function toolsMenu(e) {
-      if (getModifierState(e)) {
-        return;
+    if (e.key === 'e') {
+      window.location.href = $(QPixel.Keyboard.selectedItem)
+        .find('.tools--item i.fa.fa-pencil-alt')
+        .parent()
+        .attr('href');
+    } else if (e.key === 'h') {
+      window.location.href = $(QPixel.Keyboard.selectedItem).find('.tools--item i.fa.fa-history').parent().attr('href');
+    } else if (e.key === 'l') {
+      window.location.href = $(QPixel.Keyboard.selectedItem).find('.tools--item i.fa.fa-link').parent().attr('href');
+    } else if (e.key === 'c') {
+      const selected = $(QPixel.Keyboard.selectedItem);
+
+      const $replyToThreadLink = selected.find('.js-reply-to-thread-link');
+
+      if (!$replyToThreadLink.length) {
+        const $newThreadLink = selected.find('.js-new-thread-link');
+        const newThreadLink = $newThreadLink?.get(0);
+        newThreadLink?.scrollIntoView({ behavior: 'smooth' });
+        newThreadLink?.click();
+      } else {
+        const replyToThreadLink = $replyToThreadLink?.get(0);
+        replyToThreadLink?.scrollIntoView({ behavior: 'smooth' });
+        replyToThreadLink?.click();
       }
 
-      if (e.key === 'e') {
-        window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-pencil-alt').parent().attr("href");
-      } else if (e.key === 'h') {
-        window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-history').parent().attr("href");
-      } else if (e.key === 'l') {
-        window.location.href = $(_CodidactKeyboard.selectedItem).find('.tools--item i.fa.fa-link').parent().attr("href");
-      } else if (e.key === 'c') {
-        const cl = $(_CodidactKeyboard.selectedItem).find('.js-add-comment');
-        cl.nextAll("form").css("display", "block");
-        cl.nextAll("form")[0].scrollIntoView({behavior: "smooth"});
-        cl.nextAll("form").find(".js-comment-content").focus();
-        _CodidactKeyboard.dialogClose();
-      } else if (e.key === 'f') {
-        const cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-flag-box');
-        cl.addClass("is-active");
-        cl[0].scrollIntoView({behavior: "smooth"});
-        cl.find(".js-flag-comment").focus();
-        _CodidactKeyboard.dialogClose();
-      } else if (e.key === 'v') {
-        _CodidactKeyboard.dialog('Vote ...\n' +
-          '========\n' +
-          'u  Up\n' +
-          'd  Down\n' +
-          'c  Close'
-        );
-        _CodidactKeyboard.state = 'tools/vote';
-      } else if (e.key === 't') {
-        let cl = $(_CodidactKeyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
-        cl = $(cl.attr("data-modal"));
-        cl.toggleClass("is-active");
-        cl.focus();
-        _CodidactKeyboard.dialogClose();
-      }
+      QPixel.Keyboard.dialogClose();
+    } else if (e.key === 'f') {
+      const cl = $(QPixel.Keyboard.selectedItem).find('.post--action-dialog.js-flag-box');
+      cl.addClass('is-active');
+      cl[0].scrollIntoView({ behavior: 'smooth' });
+      cl.find('.js-flag-comment').focus();
+      QPixel.Keyboard.dialogClose();
+    } else if (e.key === 'v') {
+      renderToolsVoteMenu();
+      QPixel.Keyboard.state = 'tools/vote';
+    } else if (e.key === 't') {
+      let cl = $(QPixel.Keyboard.selectedItem).find('a.tools--item i.fa.fa-wrench').parent();
+      cl = $(cl.attr('data-modal'));
+      cl.toggleClass('is-active');
+      cl.focus();
+      QPixel.Keyboard.dialogClose();
+    }
+  };
 
+  /**
+   * Handles the "tools/vote" keyboard state
+   * @param {JQuery.KeyboardEventBase} e
+   */
+  const voteMenu = (e) => {
+    if (QPixel.DOM?.getModifierState(e)) {
+      return;
     }
 
-    /**
-     * Handles the "tools/vote" keyboard state
-     * @param {JQuery.KeyboardEventBase} e
-     */
-    function voteMenu(e) {
-      if (getModifierState(e)) {
-        return;
-      }
-
-      if (e.key === 'u') {
-        const cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="1"]');
-        cl.click();
-        _CodidactKeyboard.dialogClose();
-      } else if (e.key === 'd') {
-        const cl = $(_CodidactKeyboard.selectedItem).find('.vote-button[data-vote-type="-1"]');
-        cl.click();
-        _CodidactKeyboard.dialogClose();
-      } else if (e.key === 'c') {
-        const cl = $(_CodidactKeyboard.selectedItem).find('.post--action-dialog.js-close-box');
-        cl.addClass("is-active");
-        cl[0].scrollIntoView({behavior: "smooth"});
-        cl.focus();
-        _CodidactKeyboard.dialogClose();
-      }
+    if (e.key === 'u') {
+      const cl = $(QPixel.Keyboard.selectedItem).find('.vote-button[data-vote-type="1"]');
+      cl.click();
+      QPixel.Keyboard.dialogClose();
+    } else if (e.key === 'd') {
+      const cl = $(QPixel.Keyboard.selectedItem).find('.vote-button[data-vote-type="-1"]');
+      cl.click();
+      QPixel.Keyboard.dialogClose();
+    } else if (e.key === 'c') {
+      const cl = $(QPixel.Keyboard.selectedItem).find('.post--action-dialog.js-close-box');
+      cl.addClass('is-active');
+      cl[0].scrollIntoView({ behavior: 'smooth' });
+      cl.focus();
+      QPixel.Keyboard.dialogClose();
     }
-  })();
+  };
 });

@@ -26,6 +26,13 @@ sample_editor:
   is_moderator: false
   reputation: 501
 
+sample_tags_editor:
+  user: tags_editor
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 42
+
 sample_deleter:
   user: deleter
   community: sample
@@ -105,3 +112,45 @@ sample_spammer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_profile_spammer:
+  user: profile_spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_edit_scorer:
+  user: edit_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_flag_scorer:
+  user: flag_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_post_scorer:
+  user: post_scorer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+sample_merge_source:
+  user: merge_source
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 42
+
+sample_merge_target:
+  user: merge_target
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 24

@@ -1,5 +1,12 @@
-<h1>New Subscription</h1>
-<p>Fine-tune your subscription below, then click Subscribe to confirm it.</p>
+<%
+  title = 'New Subscription'
+  blurb = 'Fine-tune your subscription below, then click Subscribe to confirm it.'
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
+<p><%= blurb %></p>
 
 <% if @subscription.errors.any? %>
   <%= render 'subscriptions/error', subscription: @subscription %>

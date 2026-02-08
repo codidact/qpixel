@@ -5,6 +5,7 @@ $(() => {
   const settingEditFields = {
     'array': $(`<select class="form-element js-setting-edit" multiple></select>`),
     'string': $(`<input type="text" class="form-element js-setting-edit" />`),
+    'uri_path': $(`<input type="text" class="form-element js-setting-edit" />`),
     'integer': $('<input type="number" class="form-element js-setting-edit" />'),
     'float': $('<input type="number" step="0.0001" class="form-element js-setting-edit" />'),
     'boolean': $(`<select class="form-element js-setting-edit">
@@ -27,9 +28,7 @@ $(() => {
     const valueType = $tgt.data('type');
     const communityId = $tgt.data('community-id');
 
-    const resp = await fetch(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`, {
-      credentials: 'include'
-    });
+    const resp = await QPixel.getJSON(`/admin/settings/${name}${!!communityId ? '?community_id=' + communityId : ''}`);
 
     const data = await resp.json();
     const value = data.typed;

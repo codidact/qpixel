@@ -1,6 +1,12 @@
+<%
+  title = 'Edit Account Settings'
+%>
+
+<% content_for :title, title %>
+
 <%= render 'users/tabs', user: current_user %>
 
-<h1>Edit Account Settings</h1>
+<h1><%= title %></h1>
 
 <%= link_to two_factor_status_path, class: 'button is-outlined' do %>
   Two-factor authentication &raquo;
@@ -67,13 +73,13 @@
     Moderators and admins cannot be self-deleted. Contact support if you wish to delete your account.
   </p>
 <% elsif current_user.enabled_2fa %>
-  <%= link_to 'javascript:void(8)', class: 'button is-outlined is-danger', disabled: true do %>  
+  <%= link_to 'javascript:void(8)', class: 'button is-outlined is-danger', disabled: true do %>
     Delete my account &raquo;
   <% end %>
   <p class="has-color-red has-font-size-caption">
     Your account uses two-factor authentication (2FA). In order to delete your account, you must first disable 2FA.
   </p>
-  <% else %>
+<% else %>
   <%= link_to delete_account_path, class: 'button is-outlined is-danger' do %>
     Delete my account &raquo;
   <% end %>

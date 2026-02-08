@@ -8,9 +8,7 @@ class VotesControllerTest < ActionController::TestCase
 
     post :create, params: { post_id: posts(:question_without_votes).id, vote_type: 1 }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should cast downvote' do
@@ -18,9 +16,7 @@ class VotesControllerTest < ActionController::TestCase
 
     post :create, params: { post_id: posts(:question_without_votes).id, vote_type: -1 }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should return correct modified status' do
@@ -31,9 +27,7 @@ class VotesControllerTest < ActionController::TestCase
     post :create, params: { post_id: post_id, vote_type: 1 }
     post :create, params: { post_id: post_id, vote_type: -1 }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'modified', JSON.parse(response.body)['status']
+    assert_json_success(status: 'modified')
   end
 
   test 'should silently accept duplicate votes' do
@@ -44,9 +38,7 @@ class VotesControllerTest < ActionController::TestCase
     post :create, params: { post_id: post_id, vote_type: 1 }
     post :create, params: { post_id: post_id, vote_type: 1 }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'modified', JSON.parse(response.body)['status']
+    assert_json_success(status: 'modified')
   end
 
   test 'should prevent self voting' do
@@ -64,9 +56,7 @@ class VotesControllerTest < ActionController::TestCase
 
     delete :destroy, params: { id: votes(:one).id }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should prevent users removing others votes' do

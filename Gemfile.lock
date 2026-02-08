@@ -77,19 +77,20 @@ GEM
     ast (2.4.3)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1126.0)
-    aws-sdk-core (3.226.2)
+    aws-partitions (1.1202.0)
+    aws-sdk-core (3.241.3)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       base64
+      bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.106.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-kms (1.120.0)
+      aws-sdk-core (~> 3, >= 3.241.3)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.192.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-s3 (1.208.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sdk-sns (1.100.0)
@@ -137,6 +138,9 @@ GEM
     counter_culture (3.11.2)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
+    crack (1.0.1)
+      bigdecimal
+      rexml
     crass (1.0.6)
     css_parser (1.21.1)
       addressable
@@ -166,6 +170,7 @@ GEM
       activesupport (>= 6.1)
     groupdate (6.5.1)
       activesupport (>= 7)
+    hashdiff (1.2.1)
     hashie (5.0.0)
     htmlentities (4.3.4)
     i18n (1.14.7)
@@ -281,7 +286,7 @@ GEM
     puma (5.6.9)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.17)
+    rack (2.2.20)
     rack-mini-profiler (3.3.1)
       rack (>= 1.2.0)
     rack-protection (3.2.0)
@@ -344,7 +349,7 @@ GEM
       railties (>= 5.2)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.4.1)
+    rexml (3.4.2)
     rmagick (5.5.0)
       observer (~> 0.1)
       pkg-config (~> 1.4)
@@ -448,6 +453,10 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (~> 4.0, < 4.11)
+    webmock (3.26.0)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     webrick (1.9.1)
     websocket (1.2.11)
     websocket-driver (0.8.0)
@@ -470,7 +479,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print (~> 1.9)
-  aws-sdk-s3 (~> 1.61)
+  aws-sdk-s3 (~> 1.208)
   aws-sdk-sns (~> 1.72)
   aws-ses-v4
   byebug (~> 11.1)
@@ -530,6 +539,7 @@ DEPENDENCIES
   tzinfo-data (~> 1.2022.3)
   web-console (~> 4.2)
   webdrivers (~> 5.2)
+  webmock (~> 3.26)
   whenever (~> 1.0)
   will_paginate (~> 3.3)
   will_paginate-bootstrap (~> 1.0)

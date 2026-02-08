@@ -4,9 +4,14 @@ require 'net/http'
 class UsersController < ApplicationController
   include Devise::Controllers::Rememberable
 
-  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect, :transfer_se_content,
-                                            :qr_login_code, :me, :preferences, :set_preference, :my_vote_summary,
-                                            :disconnect_sso, :confirm_disconnect_sso, :filters]
+  before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect,
+                                            :transfer_se_content, :qr_login_code,
+                                            :me, :my_activity, :my_network, :my_vote_summary,
+                                            :preferences, :set_preference,
+                                            :disconnect_sso, :confirm_disconnect_sso]
+
+  before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
+
   before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
   before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
@@ -94,7 +99,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # Helper method to convert it to the form expected by the client
+  # Converts a given filter to JSON
+  # @param filter {Filter} filter to convert
+  # @return {Hash}
   def filter_json(filter)
     {
       min_score: filter.min_score,
@@ -103,21 +110,25 @@ class UsersController < ApplicationController
       max_answers: filter.max_answers,
       include_tags: Tag.where(id: filter.include_tags).map { |tag| [tag.name, tag.id] },
       exclude_tags: Tag.where(id: filter.exclude_tags).map { |tag| [tag.name, tag.id] },
+      source: filter.source,
       status: filter.status,
-      system: filter.user_id == -1
+      system: filter.system?
     }
   end
 
-  def filters_json
-    system_filters = Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
-      User.find(-1).filters.to_h { |filter| [filter.name, filter_json(filter)] }
+  # Gets system filters as JSON
+  # @return [Hash{String => Hash}]
+  def system_filters_json
+    Rails.cache.fetch 'default_system_filters', expires_in: 1.day do
+      system_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
     end
+  end
 
+  def filters_json
     if user_signed_in?
-      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }
-                  .merge(system_filters)
+      current_user.filters.to_h { |filter| [filter.name, filter_json(filter)] }.merge(system_filters_json)
     else
-      system_filters
+      system_filters_json
     end
   end
 
@@ -177,13 +188,12 @@ class UsersController < ApplicationController
   end
 
   def default_filter
-    if user_signed_in? && params[:category]
+    if user_signed_in? && params[:category].present?
       default_filter = helpers.default_filter(current_user.id, params[:category].to_i)
-      render json: { status: 'success', success: true, name: default_filter&.name },
-             status: 200
+      render json: { status: 'success', success: true, name: default_filter&.name }
     else
       render json: { status: 'failed', success: false },
-             status: 400
+             status: :bad_request
     end
   end
 
@@ -233,6 +243,10 @@ class UsersController < ApplicationController
   def network
     @communities = Community.all
     render layout: 'without_sidebar'
+  end
+
+  def my_activity
+    redirect_to user_activity_path(current_user)
   end
 
   def activity
@@ -321,17 +335,15 @@ class UsersController < ApplicationController
 
     case params[:type]
     when 'profile'
-      AuditLog.moderator_audit(event_type: 'profile_delete', related: @user.community_user, user: current_user,
-                               comment: @user.community_user.attributes_print(join: "\n"))
-      @user.community_user.update(deleted: true, deleted_by: current_user, deleted_at: DateTime.now)
+      @user.community_user.soft_delete(current_user)
     when 'user'
-      unless current_user.is_global_moderator || current_user.is_global_admin
+      unless current_user.at_least_global_moderator?
         render json: { status: 'failed', message: 'Non-global moderator cannot perform global deletion.' },
-               status: 403
+               status: :forbidden
         return
       end
 
-      @user.do_soft_delete(current_user)
+      @user.soft_delete(current_user)
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return
@@ -643,7 +655,9 @@ class UsersController < ApplicationController
   private
 
   def filter_params
-    params.permit(:min_score, :max_score, :min_answers, :max_answers, :status, :include_tags, :exclude_tags,
+    params.permit(:min_score, :max_score, :min_answers, :max_answers,
+                  :status, :source,
+                  :include_tags, :exclude_tags,
                   include_tags: [], exclude_tags: [])
   end
 
@@ -668,7 +682,7 @@ class UsersController < ApplicationController
     go_to_not_found = !current_user&.at_least_moderator? || params[:deleted_screen].present?
 
     if deleted && go_to_not_found
-      render :deleted_user, layout: 'without_sidebar', status: 404
+      not_found!
     end
   end
 end

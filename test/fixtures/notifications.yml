@@ -1,11 +1,13 @@
-one:
-  content: ABCDEF GHIJKL MNOPQR STUVWX YZ
+read:
+  content: This is a test notification that is marked as read
   link: /
   user: standard_user
   community: sample
+  is_read: true
 
-two:
-  content: ABCDEF GHIJKL MNOPQR STUVWX
+unread:
+  content: This is a test notification that is NOT marked as read
   link: /
   user: standard_user
   community: sample
+  is_read: false

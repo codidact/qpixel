@@ -2,12 +2,12 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   def self.fuzzy_search(term, **cols)
-    sanitized = sanitize_for_search term, **cols
+    sanitized = sanitize_for_search(term, **cols)
     select(Arel.sql("`#{table_name}`.*, #{sanitized} AS search_score"))
   end
 
   def self.match_search(term, **cols)
-    sanitized = sanitize_for_search term, **cols
+    sanitized = sanitize_for_search(term, **cols)
     select(Arel.sql("`#{table_name}`.*, #{sanitized} AS search_score")).where(sanitized)
   end
 
@@ -80,7 +80,7 @@ class ApplicationRecord < ActiveRecord::Base
       'random data again.',
       'This community has reached a critical mass and collapsed into a black hole. Currently trying to ' \
       'recover using Hawking radiation.',
-      'Operations are on pause while we attempt to recapture the codidactyl. Please hold.',
+      'Operations are on pause while we attempt to recapture the pixel. Please hold.',
       'The data center is on fire. Please hold while we activate fire suppression systems.',
       'The reciprocal controller flag is set incorrectly. Please stand on your head and rickroll yourself to fix this.',
       'The quantum cache has become uncertain. Please observe it again after making a cup of tea.',

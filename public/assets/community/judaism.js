@@ -22,37 +22,54 @@ THE SOFTWARE.
 // Thanks to all who've helped debug and discuss, especially the Mac users, nebech.
 
 (function HBKeyboard() {
-  var docCookies = { //from developer.mozilla.org/en-US/docs/Web/API/document.cookie
+  // see https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+  const docCookies = {
+    /**
+     * @param {string} sKey
+     * @returns {string | null}
+     */
     getItem: function (sKey) {
       return unescape(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
     },
+    /**
+     * @param {string} sKey
+     * @param {string} sValue
+     * @returns {boolean}
+     */
     setItem: function (sKey, sValue) {
       if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
         return false;
       }
-      document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=stackexchange.com; path=/";
+      document.cookie = `${escape(sKey)}=${escape(sValue)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=${location.hostname}; path=/`;
       return true;
     },
+    /**
+     * @param {string} sKey
+     * @returns {boolean}
+     */
     hasItem: function (sKey) {
       return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
     },
   };
 
-  var currentTextfield = $('textarea, input[type=text]');
-  $(document).ready(function(){
-    $(document).on('focus', 'textarea, input[type=text]', function(){
+  /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
+  let currentTextfield = $('textarea, input[type=text]');
+  $(document).ready(function () {
+    $(document).on('focus', 'textarea, input[type=text]', function () {
       currentTextfield = $(this);
     });
 
-    var wh = $(window).height(),
-      ww = $(window).width(),
-      kb = createKeyboard().hide();
+    let wh = $(window).height(),
+        ww = $(window).width(),
+        kb = createKeyboard().hide();
+
     $('#hbk-toggle span').css({
       'padding': '3px',
       'text-align': 'center',
       'background-image': "none",
       'font-weight':'bolder'
     });
+
     $(window).resize(function(){
       kb.css({
         top: '+=' + ($(window).height() - wh) + 'px',
@@ -69,12 +86,12 @@ THE SOFTWARE.
   });
 
   function createKeyboard() {
-    var stand = "קראטוןםפשדגכעיחלךףזסבהנמצתץ",
-      alpha = "חזוהדגבאסןנםמלךכיטתשרקץצףפע",
-      nek = ["שׁ", "שׂ", "וְ", "וֱ", "וֲ", "וֳ", "וִ", "וֵ", "וֶ", "וַ", "וָ", "וֹ", "וֻ", "וּ"],
-      x = 50,
-      y = 50,
-      kb = $('<div class="hbkeyboard"></div>').appendTo($("body"));
+    const stand = "קראטוןםפשדגכעיחלךףזסבהנמצתץ",
+          alpha = "חזוהדגבאסןנםמלךכיטתשרקץצףפע",
+          nek = ["שׁ", "שׂ", "וְ", "וֱ", "וֲ", "וֳ", "וִ", "וֵ", "וֶ", "וַ", "וָ", "וֹ", "וֻ", "וּ"],
+          x = 50,
+          y = 50,
+          kb = $('<div class="hbkeyboard"></div>').appendTo($("body"));
 
     $.each(alpha.split('').concat(nek), function (i, letter) {
       kb.append('<button type="button" class="hbkey" data-t="' + letter.slice(-1) + '">' + letter + '</button>');
@@ -150,27 +167,34 @@ THE SOFTWARE.
 
     /* Event handling for buttons and checkboxes*/
     kb.find('.hbkey').click(function () {
-      t = currentTextfield[0];
-      var start = t.selectionStart,
-        end = t.selectionEnd,
-        text = t.value,
-        chr = $(this).data('t');
+      const t = currentTextfield[0];
+
+      const start = t.selectionStart,
+            end = t.selectionEnd,
+            text = t.value;
+
+      let chr = $(this).data('t');
 
       if (chr === '‏' && $('#rlm').is(':checked') && t.id !== 'input') chr = '&rlm;';//special case for rlm.
-      var res = text.slice(0, start) + chr + text.slice(end),
-        len = chr.length;
+
+      const res = text.slice(0, start) + chr + text.slice(end),
+            len = chr.length;
+
       $(t).val(res).trigger('input').focus();
       t.setSelectionRange(start + len, start + len);
     });
 
     kb.find('.hbins').click(function () {
-      t = currentTextfield[0];
-      var start = t.selectionStart,
-        end = t.selectionEnd,
-        text = t.value,
-        chr = $(this).data('t');
-      var res = text.slice(0, start) + chr + text.slice(end),
-        len = chr.length;
+      const t = currentTextfield[0];
+
+      const start = t.selectionStart,
+            end = t.selectionEnd,
+            text = t.value,
+            chr = $(this).data('t');
+
+      const res = text.slice(0, start) + chr + text.slice(end),
+            len = chr.length;
+
       $(t).val(res).trigger('input').focus();
       t.setSelectionRange(start + len, start + len);
     });
@@ -201,8 +225,8 @@ THE SOFTWARE.
       kb.fadeToggle('medium');
     });
 
-    $('#keylayout').change(function(){
-      var layout = $(this).prop('checked') ? stand : alpha;
+    $('#keylayout').change(function () {
+      const layout = $(this).prop('checked') ? stand : alpha;
       $('.hbkey').slice(0, 27).each(function (index) {
         $(this).data('t', layout[index]).text(layout[index]);
       });
@@ -218,10 +242,8 @@ THE SOFTWARE.
     return kb;
   }
 
-
-
   //Draggability
-  var drag = {
+  const drag = {
       elem: null,
       x: 0,
       y: 0,
@@ -231,6 +253,7 @@ THE SOFTWARE.
       x: 0,
       y: 0
     };
+
   $(document).on('mousedown', '.hbkeyboard', function (e) {
     if (!drag.state) {
       drag.elem = this;
@@ -238,13 +261,15 @@ THE SOFTWARE.
       drag.y = e.pageY;
       drag.state = true;
     }
+
     return false;
   });
+
   $(document).mousemove(function (e) {
     if (drag.state) {
       delta.x = e.pageX - drag.x;
       delta.y = e.pageY - drag.y;
-      var cur_offset = $(drag.elem).offset();
+      const cur_offset = $(drag.elem).offset();
 
       $(drag.elem).offset({
         left: (cur_offset.left + delta.x),
@@ -255,6 +280,7 @@ THE SOFTWARE.
       drag.y = e.pageY;
     }
   });
+
   $(document).mouseup(function () {
     drag.state && (drag.state = false);
   });
@@ -265,13 +291,19 @@ THE SOFTWARE.
 
 
 $(() => {
+  const link = () => {
+    sefaria.link({
+      excludeFromLinking: '.js-post-field',
+    });
+  };
+
   const el = document.createElement('script');
   el.src = 'https://www.sefaria.org/linker.js';
   el.addEventListener('load', () => {
-    sefaria.link();
+    link();
 
     $(document).on('ajax:success', '.post--comments', () => {
-      sefaria.link();
+      link();
     });
 
     let linkTimeout = null;
@@ -282,10 +314,11 @@ $(() => {
       }
 
       linkTimeout = setTimeout(() => {
-        sefaria.link();
+        link();
       }, 1000);
     });
   });
+
   document.body.appendChild(el);
 });
 
@@ -294,22 +327,33 @@ $(() => {
 
 
 $(() => {
+  /**
+   * @param {string} term
+   * @returns {Promise<string[]>}
+   */
   const getSuggestions = async (term) => {
     const resp = await fetch(`https://sefaria.org/api/name/${term}`);
     const data = await resp.json();
     return data.completions;
   };
 
+  /**
+   * @param {JQuery.ClickEvent} ev
+   */
   const doReplacement = (ev) => {
     ev.preventDefault();
 
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const $tgt = $(ev.target);
     const text = $tgt.attr('data-text');
-    QPixel.replaceSelection($field, text);
+    QPixel.MD.replaceSelection($field, text);
     $field.trigger('markdown');
   };
 
+  /**
+   * @param {string[]} suggestions
+   */
   const createPopup = (suggestions) => {
     const $itemTemplate = $(`<a class="item" href="#"></a>`);
     return suggestions.map((s) => {
@@ -318,6 +362,7 @@ $(() => {
   };
 
   QPixel.addEditorButton(`<i class="fas fa-torah"></i>`, 'Suggest Reference', async () => {
+    /** @type {JQuery<HTMLInputElement | HTMLTextAreaElement>} */
     const $field = $('.js-post-field');
     const selection = $field.val().substring($field[0].selectionStart, $field[0].selectionEnd) || '';
     if (!selection) {
@@ -331,22 +376,32 @@ $(() => {
   });
 });
 
+
 // ============================================================================================== //
-/** 
+
+
+/**
  * Calendar script, added 2021-04-01 by @luap42
  */
 
-  // Use *local* time for ISO string (Date.toISOString() uses UTC).
-  // We only need the date here, so punting on time.
-  function toIsoDate(date) {
-  var pad = function(num) {
-          var norm = Math.floor(Math.abs(num));
-          return (norm < 10 ? '0' : '') + norm;
-      };
+/**
+ * @param {number} num
+ * @returns {string}
+ */
+const pad = (num) => {
+  const norm = Math.floor(Math.abs(num));
+  return (norm < 10 ? '0' : '') + norm;
+};
 
+/**
+ * Use *local* time when converting to ISO string (Date.toISOString() uses UTC).
+ * @param {Date} date
+ * @returns {string}
+ */
+const toIsoDate = (date) => {
   return date.getFullYear() +
-      '-' + pad(date.getMonth() + 1) +
-      '-' + pad(date.getDate());
+    '-' + pad(date.getMonth() + 1) +
+    '-' + pad(date.getDate());
 }
 
 
@@ -355,8 +410,14 @@ window.addEventListener("load", async () => {
   container.innerHTML = "<div class='widget--body'><div class='_cal_label'>Today is:</div><div class='_cal_val'>loading date...</div></div>";
   container.classList.add('widget', 'has-margin-4');
 
-  const disclaimerNotice = document.querySelector('.widget.is-yellow:first-child');
-  disclaimerNotice.parentNode.insertBefore(container, disclaimerNotice.nextSibling);
+  const disclaimerNotice = document.querySelector('.js-sidebar-notice');
+  const sidebar = document.querySelector('.js-sidebar');
+
+  if (disclaimerNotice) {
+    disclaimerNotice.insertAdjacentElement('afterend', container);
+  } else {
+    sidebar?.prepend(container);
+  }
 
   let todayDate = new Date();
 

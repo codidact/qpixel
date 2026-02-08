@@ -1,0 +1,38 @@
+<%#
+   "Renders post flags modal
+
+    Variables:
+      post : Post to render the modal for
+      user : User that will handle the flags
+"%>
+
+<div class="post--action-dialog js-flags">
+  <div class="widget">
+    <div class="widget--header">Flags on this post</div>
+    <% Flag.accessible_to(user, post).unhandled.each do |flag| %>
+      <% next if !user.at_least_moderator? && flag.user.same_as?(user) %>
+      <div class="widget--body">
+        <div>
+          <p>
+            <strong><%= flag.post_flag_type&.name || 'Flag reason' %>:</strong> <%= flag.reason %> &mdash;
+            <%= user_link flag.user %>
+          </p>
+          <input class="form-element flag-resolve-comment has-float-left"
+                 style="max-width: 300px;"
+                 placeholder="Optional comment for flagger">
+          <div class="has-float-right has-padding-1">
+            <a href="#"
+               class="flag-resolve button"
+               data-result='helpful'
+               data-flag-id="<%= flag.id %>">Helpful</a>
+            <a href="#"
+               class="flag-resolve button"
+               data-result='declined'
+               data-flag-id="<%= flag.id %>">Decline</a>
+          </div>
+          <div class="has-clear-clear"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

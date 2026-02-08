@@ -22,6 +22,18 @@ every 1.day, at: '02:25' do
   runner 'scripts/cleanup_votes.rb'
 end
 
+every 1.day, at: '02:30' do
+  runner 'scripts/run_complaints_closure.rb'
+end
+
+every 7.days, at: '02:35' do
+  runner 'scripts/run_thread_followers_cleanup.rb'
+end
+
+every 7.days, at: '02:40' do
+  runner 'scripts/run_new_thread_followers_cleanup.rb'
+end
+
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end

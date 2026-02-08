@@ -1,6 +1,10 @@
-<% content_for :title, 'Tag Sets' %>
+<%
+  title = 'Tag Sets'
+%>
 
-<h1>Tag Sets</h1>
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 <p>
   Tag sets define which tags a post in each category is allowed to have. For instance, a post in the Main category cannot have tags
   from the Meta category - this does not preclude creating a tag in the Main tag set with the same name, but the Main and Meta tags

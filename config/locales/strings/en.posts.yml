@@ -1,6 +1,8 @@
 en:
   posts:
     #alert/notice
+    create_requires_post: >
+      Can't create a post without content. Please try again later or contact us.
     category_low_trust_level: >
       You don't have a high enough trust level to post in the :name category.
     type_requires_category: >
@@ -33,6 +35,8 @@ en:
       Can't restore a post that isn't deleted.
     cant_restore_deleted_by_moderator: >
       You cannot restore this post deleted by a moderator.
+    cant_restore_deleted_by_staff: >
+      You cannot restore this post deleted by staff.
     cant_change_category: >
       You don't have permission to make that change.
     type_not_included: >

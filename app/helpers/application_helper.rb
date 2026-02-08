@@ -48,7 +48,7 @@ module ApplicationHelper
   end
 
   ##
-  # Utility to add additional query parameters to a URI.
+  # Adds additional query parameters to a URI.
   # @param base_url [String, nil] A base URI to which to add parameters. If none is specified then the request URI for
   #   the current page will be used.
   # @param params [Hash{#to_s => #to_s}] A hash of query parameters to add to the URI.
@@ -65,7 +65,7 @@ module ApplicationHelper
     end
 
     query = query.merge(params.to_h { |k, v| [k.to_s, v.to_s] })
-    uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
+    uri.query = Rack::Utils.build_nested_query(query)
     uri.to_s
   end
 
@@ -114,12 +114,29 @@ module ApplicationHelper
 
   ##
   # Render a markdown string to HTML with consistent options.
-  # @param markdown [String] The markdown string to render.
-  # @return [String] The rendered HTML string.
-  def render_markdown(markdown)
-    CommonMarker.render_doc(markdown,
-                            [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
-                            [:table, :strikethrough, :autolink]).to_html(:UNSAFE)
+  # @param markdown [String] markdown string to render
+  # @option opts :footnotes [Boolean] render footnotes?
+  # @option opts :strikethrough [Boolean] render strikethrough?
+  # @option opts :tables [Boolean] render tables?
+  # @return [String] rendered HTML string
+  def render_markdown(markdown, **opts)
+    extensions = [:autolink]
+    options = [:LIBERAL_HTML_TAG]
+
+    unless opts[:footnotes] == false
+      options << :FOOTNOTES
+    end
+
+    unless opts[:strikethrough] == false
+      extensions << :strikethrough
+      options << :STRIKETHROUGH_DOUBLE_TILDE
+    end
+
+    unless opts[:tables] == false
+      extensions << :table
+    end
+
+    CommonMarker.render_doc(markdown, options, extensions).to_html(:UNSAFE)
   end
 
   ##
@@ -317,6 +334,12 @@ module ApplicationHelper
       @current_user = nil
     end
     @current_user
+  end
+
+  # Gets the special System user
+  # @return [User, nil]
+  def system_user
+    User.system
   end
 
   ##

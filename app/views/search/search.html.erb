@@ -14,19 +14,19 @@
       </span>
       <div class="search-sorting-types button-list is-gutterless">
         <%= link_to 'Relevance',
-                    request.params.merge(sort: 'relevance'),
+                    query_url(sort: 'relevance'),
                     class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'relevance' || params[:sort].nil?}",
                     role: 'button', 'aria-label': 'Sort by relevance' %>
         <%= link_to 'Activity',
-                    request.params.merge(sort: 'activity'),
+                    query_url(sort: 'activity'),
                     class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'activity'}",
                     role: 'button', 'aria-label': 'Sort by activity' %>
         <%= link_to 'Age',
-                    request.params.merge(sort: 'age'),
+                    query_url(sort: 'age'),
                     class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'age'}",
                     role: 'button', 'aria-label': 'Sort by age' %>
         <%= link_to 'Score',
-                    request.params.merge(sort: 'score'),
+                    query_url(sort: 'score'),
                     class: "button is-outlined is-muted #{'is-active' if params[:sort] == 'score'}",
                     role: 'button', 'aria-label': 'Sort by score' %>
       </div>

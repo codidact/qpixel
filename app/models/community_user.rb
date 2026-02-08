@@ -187,4 +187,13 @@ class CommunityUser < ApplicationRecord
     update(trust_level: trust)
     trust
   end
+
+  # Soft-deletes the community user
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'profile_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: true, deleted_by: attribute_to, deleted_at: DateTime.now)
+  end
 end

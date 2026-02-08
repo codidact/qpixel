@@ -12,6 +12,13 @@ interface PostValidatorMessage {
 
 type PostValidator = (postText: string) => [boolean, PostValidatorMessage[]];
 
+ interface ProcessedTag {
+  id: number | string
+  text: string
+  desc: string
+  synonyms?: string | QPixelTagSynonym[]
+ }
+
 interface UserPreferences {
   community: Record<string, string | null>;
   global: Record<string, string | null>;
@@ -22,6 +29,8 @@ interface DelegatedListener {
   selector: string;
   callback: EventListener;
 }
+
+type ClassWatcherCallback = (element: HTMLElement) => void;
 
 interface QPixelDOM {
   // private properties
@@ -50,6 +59,11 @@ interface QPixelDOM {
    */
   fadeOut?: (element: HTMLElement, duration: number) => void;
   /**
+   * Checks common modifier states on a given keyboard event
+   * @param event 
+   */
+  getModifierState?: (event: KeyboardEvent | MouseEvent | JQuery.KeyboardEventBase) => boolean;
+  /**
    * Is a given event target an HTMLElement?
    * @param target event target to check
    */
@@ -60,6 +74,12 @@ interface QPixelDOM {
    * @param visible Whether or not the elements should be visible.
    */
   setVisible?: (elements: HTMLElement | HTMLElement[], visible: boolean) => void;
+  /**
+   * Registers a callback to run on class list change
+   * @param selector CSS selector to watch for
+   * @param callback callback to call on match
+   */
+  watchClass?: (selector: string, callback: ClassWatcherCallback) => void;
 }
 
 interface StripMarkdownOptions {
@@ -72,9 +92,63 @@ interface StripMarkdownOptions {
 
 interface QPixelMD {
   /**
+   * Inserts text around a given {@link $field}'s selection
+   * @param $field field to insert text into
+   * @param start text to insert at selection start
+   * @param end text to insert at selection end, if any
+   */
+  insertIntoField?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, start: string, end?: string | null) => void;
+  /**
+   * Replace the selected text in an input field with a provided replacement.
+   * @param $field the field in which to replace text
+   * @param text the text with which to replace the selection
+   */
+  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
+   /**
+    * Inserts text at a given {@link idx} in a given {@link str}
+    * @param str text to insert into
+    * @param idx position to insert at
+    * @param insert text to insert
+    */
+  stringInsert?: (str: string, idx: number, insert: string) => string;
+  /**
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
    */
-  stripMarkdown(content: string, options?: StripMarkdownOptions): string;
+  stripMarkdown?: (content: string, options?: StripMarkdownOptions) => string;
+}
+
+interface QPixelStorageGetOptions {
+  /**
+   * Whether the value is supposed to be parsed after retrieval
+   */
+  parse?: boolean
+}
+
+interface QPixelStorage {
+  /**
+   * Storage prefix to avoid collisions
+   */
+  readonly prefix: string
+  /**
+   * Gets a value from storage by a given key
+   * @param key key to get a value by
+   * @param options optional configuration
+   */
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: true }): object | null;
+  get(key: string, options: Omit<QPixelStorageGetOptions, 'parse'> & { parse: false }): string | null;
+  get(key: string): string | null;
+  get(key: string, options?: QPixelStorageGetOptions): unknown;
+  /**
+   * Removes a value from storage by a given key
+   * @param key key to remove a value by
+   */
+  remove(key: string): this
+  /**
+   * Saves a given value to storage under a given key
+   * @param key key to save the value under
+   * @param value value to save (objects will be serialized)
+   */
+  set(key: string, value: unknown): this
 }
 
 type QPixelKeyboardState =
@@ -88,7 +162,6 @@ type QPixelKeyboardState =
 
 type SelectedItemType = "link" | "post";
 
-// TODO: rename CodidactKeyboard
 interface QPixelKeyboard {
   is_mod: boolean;
   state: QPixelKeyboardState;
@@ -148,11 +221,45 @@ declare class QPixelPopup {
   updatePosition: () => void;
 }
 
-type QPixelResponseJSON = {
-  status: 'success' | 'failed',
-  message?: string,
+type QPixelSuccessResponseStatusJSON = 'success' | 'modified'
+
+type QPixelFailedResponseStatusJSON = 'failed'
+
+type QPixelResponseStatusJSON = QPixelSuccessResponseStatusJSON | QPixelFailedResponseStatusJSON
+
+type QPixelBaseResponseJSON = {
+  status: QPixelResponseStatusJSON
+  message?: string
+}
+
+type QPixelSuccessResponseJSON = QPixelBaseResponseJSON & {
+  status: QPixelSuccessResponseStatusJSON
+}
+
+type QPixelFailedResponseJSON = QPixelBaseResponseJSON & {
   errors?: string[]
 }
+
+type QPixelResponseJSON<
+  Success extends object = object
+> = (Success & QPixelSuccessResponseJSON) | QPixelFailedResponseJSON
+
+type QPixelUploadResponseJSON = QPixelResponseJSON<{
+  link: string
+}>
+
+type QPixelVoteResponseJSON = QPixelResponseJSON<{
+  vote_id: number
+  upvotes: number
+  downvotes: number
+  score: number
+}>
+
+type QPixelRetractVoteResponseJSON = QPixelResponseJSON<{
+  score: number
+  downvotes: number
+  upvotes: number
+}>
 
 type QPixelComment = {
   id: number
@@ -169,6 +276,68 @@ type QPixelComment = {
   references_comment_id: string | null
 }
 
+type QPixelFilterSource = 'any' | 'native' | 'imported'
+
+type QPixelFilterStatus = 'any' | 'closed' | 'open'
+
+type QPixelFilter = {
+  exclude_tags: [string, number][]
+  include_tags: [string, number][]
+  max_answers: number | null
+  max_score: number | null
+  min_answers: number | null
+  min_score: number | null
+  source: QPixelFilterSource
+  status: QPixelFilterStatus
+  system: boolean
+}
+
+type QPixelSuggestedEditActionResult = {
+  message?: string
+  redirect_url?: string
+  status: 'success' | 'error'
+}
+
+type QPixelTag = {
+  community_id: number
+  created_at: string
+  excerpt: string
+  id: number
+  name: string
+  parent_id: number | null
+  tag_set_id: number
+  tag_synonyms: QPixelTagSynonym[]
+  updated_at: string
+  wiki: string | null
+  wiki_markdown: string
+}
+
+type QPixelTagSynonym = {
+  name: string
+}
+
+type QPixelUser = {
+  id: number
+  is_standard: boolean
+  is_moderator: boolean
+  is_admin: boolean
+  is_global_moderator: boolean
+  is_global_admin: boolean
+  se_acct_id: string | null
+  trust_level: number
+  username: string
+}
+
+type QPixelDraft = {
+  body: string
+  comment?: string
+  excerpt?: string
+  license?: string
+  tag_name?: string
+  tags?: string[]
+  title?: string
+}
+
 type QPixelFlagData = {
   flag_type: number | null
   post_id: string
@@ -181,13 +350,44 @@ interface GetThreadContentOptions {
   showDeleted?: boolean
 }
 
+type QPixelPostType = {
+  id: number
+  name: string
+  description: string | null
+  has_answers: boolean
+  has_votes: boolean
+  has_tags: boolean
+  has_parent: boolean
+  has_category: boolean
+  has_license: boolean
+  is_public_editable: boolean
+  is_closeable: boolean
+  is_top_level: boolean
+  is_freely_editable: boolean
+  icon_name: string | null
+  has_reactions: boolean
+  answer_type_id: number | null
+  has_only_specific_reactions: boolean
+ }
+
 interface QPixel {
+  // constants
+
+  /**
+   * List of HTML tags allowed in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_TAGS?: readonly string[]
+  /**
+   * List of attributes allowed on HTML tags in posts, supplied by the server
+   */
+  readonly ALLOWED_POST_ATTRS?: readonly string[]
+
   // private properties
-  _filters?: Filter[] | null;
-  _pendingUserResponse?: Promise<Response> | null;
+  _filters?: QPixelFilter[] | null;
+  _pendingUser?: Promise<QPixelUser> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
-  _user?: User | null;
+  _user?: QPixelUser | null;
 
   // private methods
 
@@ -197,30 +397,30 @@ interface QPixel {
   _cachedFetchPreferences?: () => Promise<void>;
 
   /**
-   * Update local variable _preferences and localStorage with an AJAX call for the user preferences
+   * Update local variable _preferences and storage with an AJAX call for the user preferences
    */
   _fetchPreferences?: () => Promise<void>;
 
   /**
    * FIFO-style fetch wrapper for /users/me requests
    */
-  _fetchUser?: () => Promise<Response>;
+  _fetchUser?: () => Promise<QPixelUser | null>;
 
   /**
    * Get an object containing the current user's preferences. Loads, in order of precedence, from local variable,
-   * {@link localStorage}, or Redis via AJAX.
+   * {@link QPixelStorage}, or Redis via AJAX.
    * @returns user preferences or `null` on failure
    */
   _getPreferences?: () => Promise<UserPreferences | null>;
 
   /**
-   * Get the key to use for storing user preferences in localStorage, to avoid conflating users
-   * @returns string the localStorage key
+   * Get the key to use for storing user preferences in storage, to avoid conflating users
+   * @returns string the storage key
    */
   _preferencesLocalStorageKey?: () => string;
 
   /**
-   * Set local variable _preferences and localStorage to new preferences data
+   * Set local variable _preferences and storage to new preferences data
    * @param data an object, containing the new preferences data
    */
   _updatePreferencesLocally?: (data: UserPreferences) => void;
@@ -252,12 +452,6 @@ interface QPixel {
   addPrePostValidation?: (callback: PostValidator) => void;
 
   /**
-   * Get the current CSRF anti-forgery token. Should be passed as the X-CSRF-Token header when
-   * making AJAX POST requests.
-   */
-  csrfToken?: () => string;
-
-  /**
    * Create a notification popup - not an inbox notification.
    * @param type the type to apply to the popup - warning, danger, etc.
    * @param message the message to show
@@ -277,7 +471,7 @@ interface QPixel {
    */
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
-  filters?: () => Promise<Record<string, Filter>>;
+  filters?: () => Promise<Record<string, QPixelFilter>>;
 
   /**
    * Get the absolute offset of an element.
@@ -294,19 +488,12 @@ interface QPixel {
    */
   preference?: (name: string, community?: boolean) => Promise<string>;
 
-  /**
-   * Replace the selected text in an input field with a provided replacement.
-   * @param $field the field in which to replace text
-   * @param text the text with which to replace the selection
-   */
-  replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-  setFilter?: (name: string, filter: Filter, category: string, isDefault: boolean) => Promise<void>;
-  setFilterAsDefault?: (categoryId: string, name: string) => Promise<void>;
+  setFilter?: (name: string, filter: QPixelFilter, category: string, isDefault: boolean) => Promise<void>;
 
   /**
    * Set a user preference by name to the value provided.
    * @param name the name of the preference to set
-   * @param value the value to set to - must respond to toString() for {@link localStorage} and Redis
+   * @param value the value to set to - must respond to toString() for {@link QPixelStorage} and Redis
    * @param community is this preference community-local (true), or network-wide (false)?
    */
   setPreference?: (name: string, value: unknown, community?: boolean) => Promise<void>;
@@ -315,13 +502,20 @@ interface QPixel {
    * Get the user object for the current user.
    * @returns JSON object containing user details
    */
-  user?: () => Promise<User>;
+  user?: () => Promise<QPixelUser>;
 
   /**
    * Internal. Called just before a post is sent to the server to validate that it passes
    * all custom checks.
    */
   validatePost?: (postText: string) => [boolean, PostValidatorMessage[]];
+
+  /**
+   * Wrapper around {@link fetch} to ensure credentials, CSRF token, and X-Requested-With are always sent
+   * @param uri target URI of the request
+   * @param options options to pass to {@link fetch}
+   */
+  fetch?: (uri: string | URL, options?: RequestInit) => Promise<Response>
 
   /**
    * Send a request with JSON data, pre-authorized with QPixel credentials for the signed in user.
@@ -335,15 +529,19 @@ interface QPixel {
   /**
    * @param uri The URI to which to send the request.
    * @param options An optional {@link RequestInit} to override the defaults provided by {@link fetchJSON}
-   * @returns 
    */
   getJSON?: (uri: string, options?: Omit<RequestInit, 'method'>) => Promise<Response>;
 
   /**
-   * Attempts get a JSON reprentation of a comment
+   * Attempts to get a JSON reprentation of a comment
    * @param id id of the comment to get
    */
   getComment?: (id: string) => Promise<QPixelComment>
+
+  /**
+   * Attempts to get a list of notifications for the current user
+   */
+  getNotifications?: () => Promise<QPixelNotification[]>
 
   /**
    * Attempts to dynamically load thread content
@@ -359,14 +557,28 @@ interface QPixel {
   getThreadsListContent?: (id: string) => Promise<string>
 
   /**
+   * Safely parses a JSON response from QPixel API
+   * @param response API response to parse
+   * @param errorMessage error to set on failure to parse
+   */
+  parseJSONResponse?: <T extends QPixelResponseJSON>(response: Response, errorMessage: string) => Promise<T>
+
+  /**
    * Processes JSON responses from QPixel API
-   * @param data 
+   * @param data parsed response JSON body from the API
    * @param onSuccess callback to call for successful requests
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
-                                                      onSuccess: (data: T) => void,
-                                                      onFinally?: (data: T) => void) => void
+                                                      onSuccess: (data: Extract<T, QPixelSuccessResponseJSON>) => void,
+                                                      onFinally?: (data: T) => void) => boolean
+
+  /**
+   * Attempts to archive a comment thread
+   * @param id id of the thread to archive
+   * @returns result of the operation
+   */
+  archiveThread?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to delete a comment
@@ -376,11 +588,45 @@ interface QPixel {
   deleteComment?: (id: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to delete a comment thread
+   * @param id id of the thread to delete
+   * @returns result of the operation
+   */
+  deleteThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to follow a comment thread
+   * @param id id of the thread to follow
+   * @returns result of the operation
+   */
+  followThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to unfollow a comment thread
+   * @param id id of the thread to unfollow
+   * @returns result of the operation
+   */
+  unfollowThread?: (id: string) => Promise<QPixelResponseJSON>
+
+  /**
    * Attempts to start following comments on a given post
    * @param postId id of the post to follow comments on
    * @returns result of the operation
    */
   followComments?: (postId: string) => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to delete a given post draft
+   * @returns result of the operation
+   */
+  deleteDraft?: () => Promise<QPixelResponseJSON>
+
+  /**
+   * Attempts to save a post draft
+   * @param draft draft to save
+   * @returns result of the operation
+   */
+  saveDraft?: (draft: QPixelDraft) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to undelete a comment
@@ -399,9 +645,10 @@ interface QPixel {
   /**
    * Attempts to lock a comment thread
    * @param id id of the comment thread to lock
+   * @param duration how long should the thread be locked for, in days
    * @returns result of the operation
    */
-  lockThread?: (id: string) => Promise<QPixelResponseJSON>
+  lockThread?: (id: string, duration?: number) => Promise<QPixelResponseJSON>
 
   /**
    * Attempts to rename a tag
@@ -413,31 +660,71 @@ interface QPixel {
   renameTag?: (categoryId: string, tagId: string, name: string) => Promise<QPixelResponseJSON>
 
   /**
+   * Attempts to retract a vote
+   * @param id id of the vote to retract
+   * @returns result of the operation
+   */
+  retractVote?: (id: string) => Promise<QPixelRetractVoteResponseJSON>
+
+  /**
    * Attempts to raise a flag
    * @param flag new flag data
    * @returns result of the operation
    */
   flag?: (flag: QPixelFlagData) => Promise<QPixelResponseJSON>
 
+  /**
+   * Attempts to vote on a given post
+   * @param postId id of the post to vote on
+   * @param voteType type of the vote
+   * @returns result of the operation
+   */
+  vote?: (postId: string, voteType: string) => Promise<QPixelVoteResponseJSON>
+
+  /**
+   * @param url upload endpoint URL (differs between routes)
+   * @param form upload form to get the file from
+   */
+  upload?: (url: string, form: HTMLFormElement) => Promise<QPixelUploadResponseJSON>
+
   // qpixel_dom
   DOM?: QPixelDOM;
+  // qpixel keyboard actions
+  Keyboard?: QPixelKeyboard;
   // qpixel Markdown
   MD?: QPixelMD;
   // qpixel popups
   Popup?: typeof QPixelPopup;
+  // qpixel storage management
+  Storage?: QPixelStorage;
   // Stripe integration, TODO: types
   stripe?: any;
 }
 
 // Chartkick, TODO: types
 declare var Chartkick: any;
-declare var _CodidactKeyboard: QPixelKeyboard;
 // Highlight.js lib, TODO: types
 declare var hljs: any;
 // MathJax lib, TODO: types
 declare var MathJax: any;
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
+// Sefaria Linker (no known types), see https://developers.sefaria.org/docs/linker-v2
+declare var sefaria: {
+  link: (options?: {
+    contentLang?: 'bilingual' | 'english' | 'hebrew',
+    dynamic?: boolean,
+    excludeFromLinking?: string,
+    excludeFromTracking?: string,
+    hidePopupsOnMobile?: boolean,
+    interfaceLang?: 'english' | 'hebrew',
+    mode?: 'link' | 'popup-click',
+    parenthesesOnly?: boolean,
+    popupStyles?: Record<string, string>,
+    selector?: string,
+    quotationOnly?: boolean
+  }) => void
+} | undefined;
 declare var QPixel: QPixel;
 
 declare var getCaretCoordinates: (

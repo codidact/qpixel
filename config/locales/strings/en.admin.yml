@@ -16,6 +16,7 @@ en:
       organisation-wide changes like privacy policy or TOS changes. Format in a way that will be legible when Markdown
       is removed.
     error_search_uuid: 'Search for an error UUID'
+    error_search_version: 'Errors from version (commit)'
     privileges_blurb: >
       Here you can define the reputation required to gain each available privilege. Click on a value to edit it.
     email_query_blurb: >
@@ -32,7 +33,7 @@ en:
       privileges: 'Privileges'
       close_reasons: 'Close Reasons'
       licenses: 'Licenses'
-      audit_log: 'Audit Log'
+      audit_logs: 'Audit Log'
       post_types: 'Post Types'
       email_query: 'User Lookup by Email'
     user_fed_stat: 'User fed to STAT.'

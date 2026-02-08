@@ -1,8 +1,13 @@
-<h1><%= t 'admin.tools.audit_log' %></h1>
+<%
+  title = t('admin.tools.audit_logs')
+%>
 
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 <div>
   <h3>Filters</h3>
-  <%= form_tag audit_log_path, method: :get, class: 'form-inline audit-log-filters' do %>
+  <%= form_tag audit_logs_path, method: :get, class: 'form-inline audit-log-filters' do %>
     <div class="form-group-horizontal">
       <div class="form-group">
         <%= label_tag :log_type, 'Log category', class: 'form-element' %>
@@ -35,20 +40,22 @@
 
   <div class="button-list is-gutterless">
     <% classes = 'button is-outlined is-muted' %>
-    <%= link_to t('g.age'), request.params.merge(sort: 'age'),
+    <%= link_to t('g.age'), query_url(sort: 'age'),
                 class: "#{classes} #{params[:sort] == 'age' || params[:sort].nil? ? 'is-active' : ''}" %>
-    <%= link_to t('g.type'), request.params.merge(sort: 'type'),
+    <%= link_to t('g.type'), query_url(sort: 'type'),
                 class: "#{classes} #{params[:sort] == 'type' ? 'is-active' : ''}" %>
-    <%= link_to t('g.event'), request.params.merge(sort: 'event'),
+    <%= link_to t('g.event'), query_url(sort: 'event'),
                 class: "#{classes} #{params[:sort] == 'event' ? 'is-active' : ''}" %>
-    <%= link_to t('g.related'), request.params.merge(sort: 'related'),
+    <%= link_to t('g.related'), query_url(sort: 'related'),
                 class: "#{classes} #{params[:sort] == 'related' ? 'is-active' : ''}" %>
-    <%= link_to t('g.user'), request.params.merge(sort: 'user'),
+    <%= link_to t('g.user'), query_url(sort: 'user'),
                 class: "#{classes} #{params[:sort] == 'user' ? 'is-active' : ''}" %>
   </div>
 </div>
 
-<%= render 'log_table' %>
+<% @logs.each do |log| %>
+  <%= render 'admin/audit_log', log: log %>
+<% end %>
 
 <div class="has-padding-top-4">
   <%= will_paginate @logs, renderer: BootstrapPagination::Rails %>

@@ -3,6 +3,103 @@ require 'test_helper'
 class PinnedLinksControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  test ':index should correctly filter by community' do
+    sign_in users(:global_moderator)
+
+    get :index, params: { global: '1' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    assert @links.none?(&:community_id?)
+
+    get :index, params: { global: '2' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+
+    links_ids = pinned_links.map(&:id)
+
+    assert(@links.all? { |link| links_ids.include?(link.id) })
+  end
+
+  test ':index should correctly filter by activity status' do
+    sign_in users(:moderator)
+
+    get :index, params: { filter: 'all' }
+    assert_response(:success)
+    assert assigns(:links).any?
+
+    get :index, params: { filter: 'inactive' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    assert @links.none?(&:active?)
+  end
+
+  test ':index should correctly filter by period' do
+    sign_in users(:moderator)
+
+    now = DateTime.now
+
+    get :index
+    @links = assigns(:links)
+    assert_response(:success)
+    assert @links.any?
+
+    links_ids = pinned_links.map(&:id)
+    assert(@links.all? { |link| links_ids.include?(link.id) })
+
+    get :index, params: { period: 'current' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    @links.each do |link|
+      assert link.current?(now)
+    end
+
+    get :index, params: { period: 'past' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    @links.each do |link|
+      assert link.past?(now)
+    end
+
+    get :index, params: { period: 'future' }
+    @links = assigns(:links)
+
+    assert_response(:success)
+    assert @links.any?
+    @links.each do |link|
+      assert link.future?(now)
+    end
+  end
+
+  test ':index should treat invalid period filter as no filter' do
+    sign_in users(:moderator)
+
+    get :index, params: { period: 'invalid' }
+    @links = assigns(:links)
+    assert_response(:success)
+
+    links_ids = pinned_links.map(&:id)
+    assert(@links.all? { |link| links_ids.include?(link.id) })
+  end
+
+  test 'only mods or higher should be able to see pinned links' do
+    users.each do |user|
+      sign_in user
+      get :index
+
+      assert_response(user.at_least_moderator? ? :success : :not_found)
+    end
+  end
+
   test 'only mods or higher should be able to create pinned links' do
     post = posts(:question_one)
 
@@ -61,7 +158,7 @@ class PinnedLinksControllerTest < ActionController::TestCase
     assert_equal 'updated label', assigns(:link).label
   end
 
-  test 'update should correctly handle invlid pinned links' do
+  test 'update should correctly handle invalid pinned links' do
     sign_in users(:moderator)
     try_update_pinned_link(pinned_links(:active_with_label), link: nil)
     assert_response(:bad_request)

@@ -1,10 +1,10 @@
-<div class="grid--cell is-4-lg is-12" role="complementary">
+<div class="grid--cell is-4-lg is-12 js-sidebar" role="complementary">
   <%= yield(:sidebar) %>
 
   <% notice_text = SiteSetting['SidebarNoticeText'] %>
   <% if notice_text.present? %>
     <% cache SiteSetting.find_by(name: 'SidebarNoticeText') do %>
-      <div class="widget has-margin-4 is-yellow">
+      <div class="widget has-margin-4 is-yellow js-sidebar-notice">
         <div class="widget--body">
           <%= raw(sanitize(render_markdown(notice_text), scrubber: scrubber)) %>
         </div>
@@ -49,9 +49,9 @@
     <% end %>
 
     <%# Related Posts widget %>
-    <% if defined?(@post) && @post.inbound_duplicates.any? %>
+    <% if defined?(@post) && @post.related_posts_for?(current_user) %>
       <% collapse_related = user_preference('collapse_related_posts') == 'true' %>
-      <% cache [@post, @post.inbound_duplicates] do %>
+      <% cache [@post, @post.related_posts_for(current_user)] do %>
         <div class="widget has-margin-4 is-green" data-collapsed="<%= user_preference('collapse_related_posts') %>">
           <div class="widget--header">
             Related Posts
@@ -60,7 +60,7 @@
               <i class="fas <%= collapse_related ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
             </button>
           </div>
-          <% @post.inbound_duplicates.each do |dp| %>
+          <% @post.related_posts_for(current_user).each do |dp| %>
             <div class="widget--body <%= 'hidden' if collapse_related %>">
               <% unless dp.category.nil? %>
                 <%= dp.category.name %>
@@ -75,32 +75,7 @@
       <% end %>
     <% end %>
 
-    <%# Hot Posts widget %>
-    <% if Rails.env.development? || @hot_questions.to_a.size > 0 %>
-      <% collapse_hot = user_preference('collapse_hot_posts') == 'true' %>
-      <% cache @hot_questions do %>
-        <div class="widget has-margin-4 is-tertiary" data-collapsed="<%= user_preference('collapse_hot_posts') %>">
-          <div class="widget--header">
-            Hot Posts
-            <button type="button" class="widget--header-link button is-icon-only-button js-widget-hide"
-                    aria-label="Collapse Hot Posts">
-              <i class="fas <%= collapse_hot ? 'fa-chevron-down' : 'fa-chevron-up' %>"></i>
-            </button>
-          </div>
-          <% @hot_questions.each do |hq| %>
-            <div class="widget--body <%= 'hidden' if collapse_hot %>">
-              <% unless hq.category.nil? %>
-                <%= hq.category.name %>
-                &mdash;
-              <% end %>
-              <%= link_to generic_share_link(hq) do %>
-                <%= hq.title %>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    <% end %>
+    <%= render 'shared/hot_posts', posts: @hot_questions %>
   <% end %>
 
   <% if Rails.env.development? || rand(100) <= 10 %>

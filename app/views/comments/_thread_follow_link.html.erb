@@ -8,8 +8,7 @@
 
 <% if thread.followed_by?(user) %>
   <a href="#"
-     class="widget--header-link js--unrestrict-thread"
-     data-action="follow"
+     class="widget--header-link js--unfollow-thread"
      data-thread="<%= thread.id %>"
      title="You are following this thread and will be notified of every response. You can unfollow at any time."
      role="button"
@@ -18,8 +17,7 @@
   </a>
 <% else %>
   <a href="#"
-     class="widget--header-link js--restrict-thread"
-     data-action="follow"
+     class="widget--header-link js-follow-thread"
      data-thread="<%= thread.id %>"
      title="Follow this thread to be notified of every response."
      role="button"

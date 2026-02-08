@@ -57,11 +57,40 @@ class FlagsControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should retrieve flag queue' do
+  test 'flag queues should require authentication' do
+    [:escalated_queue, :handled, :queue].each do |action|
+      get action
+      assert_redirected_to_sign_in
+    end
+  end
+
+  test 'unprivileged users should not be able to access flag queues' do
+    sign_in users(:standard_user)
+
+    [:escalated_queue, :handled, :queue].each do |action|
+      get action
+      assert_response(:not_found)
+    end
+  end
+
+  test 'moderators should be able to access flag queues' do
     sign_in users(:moderator)
-    get :queue
-    assert_not_nil assigns(:flags)
+
+    [:handled, :queue].each do |action|
+      get action
+      assert_response(:success)
+      assert_not_nil assigns(:flags)
+      # TODO: add assertions for correct flag types
+    end
+  end
+
+  test 'admins should be able to access escalated flag queues' do
+    sign_in users(:admin)
+
+    get :escalated_queue
+
     assert_response(:success)
+    assert_not_nil assigns(:flags)
   end
 
   test 'should add status to flag' do
@@ -80,18 +109,6 @@ class FlagsControllerTest < ActionController::TestCase
     sign_out :user
     post :new
     assert_response(:found)
-  end
-
-  test 'should require authentication to get queue' do
-    sign_out :user
-    get :queue
-    assert_response(:found)
-  end
-
-  test 'should require moderator status to get queue' do
-    sign_in users(:standard_user)
-    get :queue
-    assert_response(:not_found)
   end
 
   test 'should require authentication to resolve flag' do
@@ -115,24 +132,6 @@ class FlagsControllerTest < ActionController::TestCase
   test 'should not allow non-moderator users to resolve confidential flags' do
     sign_in users(:deleter)
     try_resolve_flag(flags(:confidential_on_deleter))
-    assert_response(:not_found)
-  end
-
-  test 'should get handled flags list' do
-    sign_in users(:moderator)
-    get :handled
-    assert_response(:success)
-    assert_not_nil assigns(:flags)
-  end
-
-  test 'should require authentication to get handled flags list' do
-    get :handled
-    assert_response(:found)
-  end
-
-  test 'should require moderator status to get handled flags list' do
-    sign_in users(:standard_user)
-    get :handled
     assert_response(:not_found)
   end
 

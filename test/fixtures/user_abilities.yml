@@ -10,8 +10,32 @@ e_eo:
   community_user: sample_editor
   ability: everyone
 
+et_eo:
+  community_user: sample_tags_editor
+  ability: everyone
+
 d_eo:
   community_user: sample_deleter
+  ability: everyone
+
+pe_eo:
+  community_user: sample_edit_scorer
+  ability: everyone
+
+pf_eo:
+  community_user: sample_flag_scorer
+  ability: everyone
+
+pp_eo:
+  community_user: sample_post_scorer
+  ability: everyone
+
+ms_eo:
+  community_user: sample_merge_source
+  ability: everyone
+
+mt_eo:
+  community_user: sample_merge_target
   ability: everyone
 
 stu_ur:
@@ -26,8 +50,32 @@ e_ur:
   community_user: sample_editor
   ability: unrestricted
 
+et_ur:
+  community_user: sample_tags_editor
+  ability: unrestricted
+
 d_ur:
   community_user: sample_deleter
+  ability: unrestricted
+
+pe_ur:
+  community_user: sample_edit_scorer
+  ability: unrestricted
+
+pf_ur:
+  community_user: sample_flag_scorer
+  ability: unrestricted
+
+pp_ur:
+  community_user: sample_post_scorer
+  ability: unrestricted
+
+ms_ur:
+  community_user: sample_merge_source
+  ability: unrestricted
+
+mt_ur:
+  community_user: sample_merge_target
   ability: unrestricted
 
 c_fc:
@@ -52,6 +100,10 @@ d_ep:
 
 d_et:
   community_user: sample_deleter
+  ability: edit_tags
+
+te_et:
+  community_user: sample_tags_editor
   ability: edit_tags
 
 b_eo:
@@ -79,4 +131,12 @@ sp_eo:
 
 sp_ur:
   community_user: sample_spammer
+  ability: unrestricted
+
+profile_spammer_everyone:
+  community_user: sample_profile_spammer
+  ability: everyone
+
+profile_spammer_unrestricted:
+  community_user: sample_profile_spammer
   ability: unrestricted

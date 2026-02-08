@@ -1,0 +1,42 @@
+<%#
+   "Renders closed state notice for a given post
+
+    Variables:
+      post : Post to render the notice for
+      user : User to show the notice for
+"%>
+
+<% if post.user.same_as?(user) %>
+  <div class="notice is-info has-margin-2">
+    <p>
+      <i class="fas fa-info-circle"></i>
+      <%= t 'posts.post_closed_guidance' %>
+    </p>
+  </div>
+<% end %>
+
+<div class="notice has-margin-2">
+  <p class="has-font-weight-normal">
+    <strong>Closed</strong>
+    <% unless post.close_reason.nil? %>
+      as <%= post.close_reason.name %>
+    <% end %>
+    by <%= user_link(post.closed_by) %>
+    on <%= post.closed_at.strftime('%b %e, %Y at %H:%M') %>
+  </p>
+  <% unless post.close_reason.nil? %>
+    <p>
+      <%= post.close_reason.description.gsub "$SiteName", SiteSetting['SiteName'] %>
+      <% if post.close_reason.requires_other_post %>
+        See: <%= link_to post.duplicate_post.title,
+                           post_path(post.duplicate_post),
+                           class: "has-font-size-larger" %>
+      <% end %>
+    </p>
+  <% end %>
+  <p>
+    This question was closed; new answers can no longer be added.
+    Users with the <%= ability_link('flag_close') %> ability may vote to reopen this question if
+    it has been improved or closed incorrectly.
+  </p>
+</div>
