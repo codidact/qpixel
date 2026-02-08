@@ -139,7 +139,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_response(:found)
 
     # Assert user follows post
-    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
+    assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
   end
 
   private

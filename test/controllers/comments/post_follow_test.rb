@@ -56,18 +56,18 @@ class CommentsControllerTest < ActionController::TestCase
     question = posts(:question_one)
 
     # Assert user follows post
-    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
+    assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
 
     try_post_unfollow(question)
     assert_response(:found)
 
     # Assert user does not follow post
-    assert_equal 0, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
+    assert_equal 0, NewThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
 
     try_post_follow(question)
     assert_response(:found)
 
     # Assert user follows post
-    assert_equal 1, ThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
+    assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', question, user]).count
   end
 end
