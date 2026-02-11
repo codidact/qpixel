@@ -21,7 +21,7 @@
 
   Object.defineProperty(QPixel, 'MAX_UPLOAD_SIZE', {
     configurable: false,
-    value: <%= SiteSetting['MaxRequestBodySize'] %> ?? 2 * 1024 * 1024,
+    value: <%= SiteSetting['MaxRequestBodySize'].presence || 2 * 1024 * 1024 %>,
     writable: false,
   });
 </script>
