@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   const updateInterval = 6e4; // updates relative time once a minute
-  let lastRunAt = -1;
 
   /**
    * @param {Node} el element to process
@@ -19,24 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = `${QPixel.DOM.formatTimestamp(relstamp)} (${moment(relstamp).fromNow()})`;
   };
 
-  /**
-   * @type {FrameRequestCallback}
-   */
-  const updateRelativeTime = (timestamp) => {
-    const elapsed = timestamp - lastRunAt;
-
-    if (elapsed < updateInterval && lastRunAt !== -1) {
-      requestAnimationFrame(updateRelativeTime);
-      return;
-    }
-
+  const updateRelativeTime = () => {
     document.querySelectorAll('[data-relstamp]').forEach(processNode);
-
-    lastRunAt = timestamp;
-    requestAnimationFrame(updateRelativeTime);
+    setTimeout(updateRelativeTime, updateInterval);
   };
 
-  requestAnimationFrame(updateRelativeTime);
+  updateRelativeTime();
 
   new MutationObserver(() => {
     document.querySelectorAll('[data-relstamp]').forEach(processNode);
