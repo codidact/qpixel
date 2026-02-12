@@ -71,7 +71,7 @@ display_import_labels:
 auto_follow_comment_threads:
   type: boolean
   description: >
-    Automatically follow any comment thread you participate in.
+    Automatically follow any comment thread you create or participate in.
   default: 'true'
   global: true
 
