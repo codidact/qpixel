@@ -323,7 +323,7 @@ class CommentsController < ApplicationController
     @post = Post.find(params[:post_id])
     @comment_threads = CommentThread.accessible_to(current_user, @post)
                                     .where(post: @post)
-                                    .order(deleted: :asc, archived: :asc, reply_count: :desc)
+                                    .priority_order
     respond_to do |format|
       format.html { render layout: false }
       format.json { render json: @comment_threads }

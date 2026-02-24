@@ -59,6 +59,11 @@ interface QPixelDOM {
    */
   fadeOut?: (element: HTMLElement, duration: number) => void;
   /**
+   * Formats a given {@link timestamp} with the standard format
+   * @param timestamp timestamp to format
+   */
+  formatTimestamp?: (timestamp: string | number | Date) => string;
+  /**
    * Checks common modifier states on a given keyboard event
    * @param event 
    */
@@ -381,9 +386,17 @@ interface QPixel {
    * List of attributes allowed on HTML tags in posts, supplied by the server
    */
   readonly ALLOWED_POST_ATTRS?: readonly string[]
+  /**
+   * Currently used locale (BCP 47 language tag), supplied by the server
+   */
+  readonly LOCALE?: string
+  /**
+   * Maximum file upload size (in bytes), supplied by the server
+   */
+  readonly MAX_UPLOAD_SIZE?: number
 
   // private properties
-  _filters?: QPixelFilter[] | null;
+  _filters?: Record<string, QPixelFilter> | null;
   _pendingUser?: Promise<QPixelUser> | null;
   _popups?: Record<string, QPixelPopup>;
   _preferences?: UserPreferences | null;
@@ -472,6 +485,17 @@ interface QPixel {
   defaultFilter?: (categoryId: string) => Promise<string>;
   deleteFilter?: (name: string, system?: boolean) => Promise<void>;
   filters?: () => Promise<Record<string, QPixelFilter>>;
+
+  /**
+   * Get a list of supported canonical locales for {@link Intl.NumberFormat} based on {@link QPixel.LOCALE}.
+   */
+  supportedNumberLocales?: () => string[];
+
+  /**
+   * Format a given {@link value} into a human-friendly representation.
+   * @param value value (in bytes) to format
+   */
+  numberToHumanSize?: (value: number) => string;
 
   /**
    * Get the absolute offset of an element.
@@ -707,6 +731,8 @@ declare var Chartkick: any;
 declare var hljs: any;
 // MathJax lib, TODO: types
 declare var MathJax: any;
+// Moment.js lib
+declare var moment: typeof import('moment');
 // DOMPurify lib, TODO: types
 declare var DOMPurify: any;
 // Sefaria Linker (no known types), see https://developers.sefaria.org/docs/linker-v2

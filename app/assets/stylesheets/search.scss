@@ -1,5 +1,28 @@
 @import 'variables';
 
+.search-widget {
+  gap: 0.5em;
+
+  .search-widget-input {
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  @media screen and (max-width: $screen-md) {
+    flex-direction: row;
+  }
+
+  @media screen and (max-width: $screen-sm) {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.15em;
+
+    .search-widget-input {
+      width: 100%;
+    }
+  }
+}
+
 .search-filters:not([open]) {
   border-top: 1px solid $muted-graphic;
 }

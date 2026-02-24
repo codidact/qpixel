@@ -180,14 +180,14 @@
   description: >
     The maximum number of characters an edit comment may contain. Defaults to 255.
 
-- name: MaxUploadSize
-  value: 2MB
-  value_type: string
+- name: MaxRequestBodySize
+  value: 2097152
+  value_type: integer
   category: AdvancedSettings
   description: >
-    The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
-    set by your web server configuration. This setting should be set to the same value so that the correct limit
-    can be displayed to users.
+    The maximum allowed size of request body in bytes (2MB by default). This setting must be kept in sync with your web server or
+    reverse proxy configuration that governs request body size limits - **do not** change it if you don't know what
+    that means.
 
 - name: FirstVisitGuidance
   value: ~

@@ -9,7 +9,9 @@
       <%= form_tag upload_path, multipart: true, class: 'form-inline upload-form js-upload-form' do %>
         <div class="form-group">
           <%= label_tag :file, 'Insert an image', class: 'form-element' %>
-          <div class="form-caption js-max-size">Max file size <%= SiteSetting['MaxUploadSize'] %>.</div>
+          <div class="form-caption js-max-size">
+            Max file size is <%= human_max_upload_size %>.
+          </div>
           <%= file_field_tag :file, class: 'form-element' %>
         </div>
       <% end %>

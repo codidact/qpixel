@@ -7,6 +7,7 @@ class CommentThread < ApplicationRecord
   has_many :thread_follower
   belongs_to :archived_by, class_name: 'User', optional: true
 
+  scope :priority_order, -> { order(deleted: :asc, archived: :asc, updated_at: :desc, reply_count: :desc) }
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }

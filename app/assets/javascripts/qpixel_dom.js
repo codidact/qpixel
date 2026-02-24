@@ -56,6 +56,10 @@ window.QPixel ||= {};
       }, duration);
     },
 
+    formatTimestamp: (timestamp) => {
+     return moment(timestamp).format('YYYY-MM-DD hh:mm:ss UTC');
+    },
+
     getModifierState: (e) => {
       return !!e.altKey || !!e.ctrlKey || !!e.metaKey || !!e.shiftKey;
     },

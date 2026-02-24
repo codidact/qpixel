@@ -134,6 +134,11 @@ def update_post(user, community, post, seed)
   stats
 end
 
+# a map of community_id to an array of SiteSetting seed names - a partial
+# solution to making our seeds mutable. For now this map facilitates removal
+# of no longer present site settings during cleanup
+$site_settings_map = {}
+
 # @return [Stats] operation stats
 def seed_objects(type, seed)
   seeds = expand_communities(type, seed)
@@ -153,6 +158,14 @@ def seed_objects(type, seed)
 
   if type == CommunityUser
     ensure_system_user_abilities
+  end
+
+  if type == SiteSetting
+    seeds.each do |seed|
+      community_id = seed[:community]&.id
+      $site_settings_map[community_id] ||= []
+      $site_settings_map[community_id] << seed[:name]
+    end
   end
 
   SeedsHelper::Stats.new(created, 0, 0, skipped)
@@ -199,6 +212,31 @@ def seed_community_assets
   end
 end
 
+def cleanup_posts
+  Post.where(community_id: nil).destroy_all
+end
+
+def cleanup_site_settings
+  return if Rails.env.test?
+
+  to_remove = []
+
+  $site_settings_map.each do |community_id, names|
+    stale_settings = SiteSetting.unscoped
+                                .where(community_id: community_id)
+                                .where.not(name: names)
+    to_remove.push(*stale_settings)
+  end
+
+  return unless to_remove.any?
+
+  ActiveRecord::Base.transaction do
+    to_remove.each(&:destroy!)
+  end
+
+  puts "#{SiteSetting.model_name}: removed #{to_remove.size}"
+end
+
 sorted.each do |f, type|
   processed = ERB.new(File.read(f)).result(binding)
   data = YAML.load(processed)
@@ -219,6 +257,7 @@ rescue StandardError => e
   puts "Got error #{e}. Continuing..."
 end
 
-Post.where(community_id: nil).destroy_all
-
 seed_community_assets
+
+cleanup_posts
+cleanup_site_settings
