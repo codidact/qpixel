@@ -5,7 +5,7 @@ module Rails
     def job_logger
       if @job_logger.nil?
         logger = ActiveSupport::Logger.new(Rails.root.join('log/jobs.log'))
-        logger.level = ActiveSupport::Logger::INFO
+        logger.level = Rails.configuration.log_level
         logger.formatter = ::Logger::Formatter.new
         @job_logger = ActiveSupport::TaggedLogging.new(logger)
       else
