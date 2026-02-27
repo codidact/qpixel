@@ -21,7 +21,6 @@ class CleanUpThreadFollowersJob < ApplicationJob
       duplicate.errors.full_messages.each do |msg|
         logger.warn msg
       end
-      duplicate.errors.each { |e| puts e.full_message }
     end
 
     logger.info "Processed #{threads.size} threads."
