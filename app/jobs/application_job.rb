@@ -7,6 +7,7 @@ class ApplicationJob < ActiveJob::Base
 
   def initialize
     @job_id = SecureRandom.uuid
+    super
   end
 
   def logger
