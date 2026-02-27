@@ -57,7 +57,7 @@ window.QPixel ||= {};
     },
 
     formatTimestamp: (timestamp) => {
-     return moment(timestamp).format('YYYY-MM-DD hh:mm:ss UTC');
+     return moment(timestamp).format('YYYY-MM-DD HH:mm:ss UTC');
     },
 
     getModifierState: (e) => {
