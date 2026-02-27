@@ -28,7 +28,6 @@ class CleanupVotesJob < ApplicationJob
             v.errors.full_messages.each do |msg|
               logger.warn msg
             end
-            v.errors.each { |e| puts e.full_message }
           end
         end
       end
