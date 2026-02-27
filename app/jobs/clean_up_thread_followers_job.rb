@@ -15,10 +15,14 @@ class CleanUpThreadFollowersJob < ApplicationJob
       duplicate = followers.first
       result = duplicate.destroy
 
-      unless result
-        puts "failed to destroy thread follower duplicate \"#{duplicate.id}\""
-        duplicate.errors.each { |e| puts e.full_message }
+      next if result
+
+      logger.warn "Failed to destroy thread follower duplicate \"#{duplicate.id}. Validations follow."
+      duplicate.errors.full_messages.each do |msg|
+        logger.warn msg
       end
     end
+
+    logger.info "Processed #{threads.size} threads."
   end
 end
