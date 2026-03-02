@@ -1,1 +1,1 @@
-CleanUpThreadFollowersJob.perform_later
+CleanUpThreadFollowersJob.perform_now

@@ -1,1 +1,1 @@
-SendSummaryEmailsJob.perform_later
+SendSummaryEmailsJob.perform_now

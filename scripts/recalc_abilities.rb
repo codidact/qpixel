@@ -36,7 +36,7 @@ all.each do |q|
       puts "Scope: CommunityUser : #{cu.id}"
     end
 
-    cu.recalc_abilities
+    cu.recalc_abilities!
 
     # Grant mod ability if mod status is given
     if cu.at_least_moderator? && !cu.ability?('mod')

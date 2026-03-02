@@ -1,2 +1,2 @@
-CleanUpSpammyUsersJob.perform_later
-PotentialSpamProfilesJob.perform_later
+CleanUpSpammyUsersJob.perform_now
+PotentialSpamProfilesJob.perform_now
