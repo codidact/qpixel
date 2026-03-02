@@ -3,8 +3,8 @@ class RecalcAbilitiesJob < ApplicationJob
 
   ##
   # Perform ability recalculations.
-  # @param options [OpenStruct] additional options for the job. Currently supports +verbose+ and +quiet+.
-  def perform(options)
+  # @param options [Hash] additional options for the job. Currently supports +verbose+ and +quiet+.
+  def perform(**options)
     resolved = []
     destroy = []
     all = AbilityQueue.pending.to_a
@@ -20,11 +20,11 @@ class RecalcAbilitiesJob < ApplicationJob
 
       RequestContext.community = cu.community
 
-      if options.verbose && !options.quiet
+      if options[:verbose] && !options[:quiet]
         logger.debug "Scope: Community     : #{cu.community.name} (#{cu.community.host})"
         logger.debug "       User          : #{u.username} (#{cu.user_id})"
         logger.debug "       CommunityUser : #{cu.id}"
-      elsif !options.verbose && !options.quiet
+      elsif !options[:verbose] && !options[:quiet]
         logger.debug "Scope: CommunityUser : #{cu.id}"
       end
 
@@ -48,7 +48,7 @@ class RecalcAbilitiesJob < ApplicationJob
     AbilityQueue.where(id: resolved).update(completed: true)
     AbilityQueue.where(id: destroy).delete_all
 
-    unless options.quiet
+    unless options[:quiet]
       logger.info "Completed, #{resolved.size}/#{all.size} tasks successful, #{destroy.size} tasks invalid"
     end
   end
