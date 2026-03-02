@@ -5,9 +5,9 @@ class ApplicationJob < ActiveJob::Base
   # Most jobs are safe to ignore if the underlying records are no longer available
   discard_on ActiveJob::DeserializationError
 
-  def initialize
+  def initialize(*args, **opts)
     @job_id = SecureRandom.uuid
-    super
+    super(*args, **opts)
   end
 
   def logger
