@@ -10,40 +10,38 @@ class RecalcAbilitiesJob < ApplicationJob
     all = AbilityQueue.pending.to_a
 
     all.each do |q|
-      begin
-        cu = q.community_user
-        u = cu&.user
+      cu = q.community_user
+      u = cu&.user
 
-        if cu.nil? || u.nil?
-          destroy << q.id
-          next
-        end
+      if cu.nil? || u.nil?
+        destroy << q.id
+        next
+      end
 
-        RequestContext.community = cu.community
+      RequestContext.community = cu.community
 
-        if options.verbose && !options.quiet
-          logger.debug "Scope: Community     : #{cu.community.name} (#{cu.community.host})"
-          logger.debug "       User          : #{u.username} (#{cu.user_id})"
-          logger.debug "       CommunityUser : #{cu.id}"
-        elsif !options.verbose && !options.quiet
-          logger.debug "Scope: CommunityUser : #{cu.id}"
-        end
+      if options.verbose && !options.quiet
+        logger.debug "Scope: Community     : #{cu.community.name} (#{cu.community.host})"
+        logger.debug "       User          : #{u.username} (#{cu.user_id})"
+        logger.debug "       CommunityUser : #{cu.id}"
+      elsif !options.verbose && !options.quiet
+        logger.debug "Scope: CommunityUser : #{cu.id}"
+      end
 
-        cu.recalc_abilities!
+      cu.recalc_abilities!
 
-        # Grant mod ability if mod status is given
-        if cu.at_least_moderator? && !cu.ability?('mod')
-          cu.grant_ability!('mod')
-        end
+      # Grant mod ability if mod status is given
+      if cu.at_least_moderator? && !cu.ability?('mod')
+        cu.grant_ability!('mod')
+      end
 
-        resolved << q.id
-      rescue => e
-        logger.error "  Failed: #{e.class.name}: #{e.message}"
-        logger.error e.backtrace
+      resolved << q.id
+    rescue => e
+      logger.error "  Failed: #{e.class.name}: #{e.message}"
+      logger.error e.backtrace
 
-        if Rails.env.test?
-          raise e
-        end
+      if Rails.env.test?
+        raise e
       end
     end
 

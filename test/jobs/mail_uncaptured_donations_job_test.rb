@@ -1,4 +1,4 @@
-require "test_helper"
+require 'test_helper'
 
 class MailUncapturedDonationsJobTest < ActiveJob::TestCase
   test 'should run job successfully' do
