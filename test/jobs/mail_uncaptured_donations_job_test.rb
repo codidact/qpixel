@@ -10,6 +10,7 @@ class MailUncapturedDonationsJobTest < ActiveJob::TestCase
   end
 
   test 'should run job successfully' do
+    skip unless Stripe.api_key
     WebMock.allow_net_connect!
     perform_enqueued_jobs do
       MailUncapturedDonationsJob.perform_later
