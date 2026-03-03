@@ -6,7 +6,8 @@
 <p>
   Thank you for taking the time to make a report. If you've seen harmful, abusive, or illegal content on our
   communities, you can report this to us here. You can also use this page if you've received a message saying we've
-  classified your content as harmful, abusive, or illegal and you wish to contest it.
+  classified your content as harmful, abusive, or illegal and you wish to contest it, or if you have a complaint
+  about our processes or our compliance with our duties.
 </p>
 
 <div class="notice is-warning has-color-yellow-900 flex-row-always ai-c has-font-size-caption h-m-b-4">
@@ -45,7 +46,8 @@
       <%= label_tag :reported_url, 'Where is this content?' %>
       <div class="form-caption">
         Enter a URL or link to where we can find this content on our network. You can use the Copy Link button under
-        posts to get a direct link to a post.
+        posts to get a direct link to a post. Enter N/A if you are not complaining about specific content; add more
+        details below.
       </div>
       <%= text_field_tag :reported_url, nil, class: 'form-element', required: true %>
     </div>
@@ -94,6 +96,11 @@
       <div class="form-caption hidden" data-report-type="appeal">
         Tell us any additional information you have about this report. Is there any additional content we removed that
         you would like to include? Provide detailed reasoning explaining why you disagree with our classification.
+      </div>
+      <div class="form-caption hidden" data-report-type="process">
+        Tell us the details of your complaint. Do you believe we have failed to comply with our statutory duties, or
+        that we have failed to follow our policies and procedures? In what way? Provide any relevant examples or
+        evidence.
       </div>
       <%= text_area_tag :content, nil, class: 'form-element', required: true, rows: 10 %>
     </div>
