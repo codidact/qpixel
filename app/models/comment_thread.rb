@@ -15,8 +15,6 @@ class CommentThread < ApplicationRecord
   validate :maximum_title_length
   validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
 
-  after_create :create_follower
-
   before_save :bump_last_activity
 
   # Gets threads appropriately scoped for a given user & post
@@ -121,16 +119,5 @@ class CommentThread < ApplicationRecord
     end
 
     ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
-  end
-
-  private
-
-  # Comment author and post author are automatically followed to the thread. Question author is NOT
-  # automatically followed on new answer comment threads. Comment author follower creation is done
-  # on the Comment model.
-  def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
-      ThreadFollower.create comment_thread: self, user: post.user
-    end
   end
 end

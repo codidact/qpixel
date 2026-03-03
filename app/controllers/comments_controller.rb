@@ -25,7 +25,7 @@ class CommentsController < ApplicationController
   before_action :check_lock_thread_access, only: [:lock_thread]
   before_action :check_thread_access, only: [:thread, :thread_content, :thread_followers]
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
-  before_action :check_if_target_post_locked, only: [:create, :post_follow]
+  before_action :check_if_target_post_locked, only: [:create, :create_thread]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
   before_action :verify_moderator, only: [:thread_followers]
 
@@ -56,12 +56,9 @@ class CommentsController < ApplicationController
 
     if success
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
-      unless @comment.post.user.same_as?(current_user)
-        @comment.post.user.create_notification(notification, helpers.comment_link(@comment))
-      end
 
       NewThreadFollower.where(post: @post).each do |ntf|
-        unless ntf.user.same_as?(current_user) || ntf.user.same_as?(@comment.post.user)
+        unless ntf.user.same_as?(current_user)
           ntf.user.create_notification(notification, helpers.comment_link(@comment))
         end
         ThreadFollower.create(user: ntf.user, comment_thread: @comment_thread)
