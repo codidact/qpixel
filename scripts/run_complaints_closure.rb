@@ -1,1 +1,1 @@
-AutoCloseComplaintsJob.perform_later
+AutoCloseComplaintsJob.perform_now

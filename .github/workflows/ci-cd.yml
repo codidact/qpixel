@@ -87,6 +87,7 @@ jobs:
           bundler-cache: true
       - name: Prepare for testing
         run: |
+          echo "${{ secrets.MASTER_KEY }}" > config/master.key
           cp config/database.sample.yml config/database.yml
           cp config/storage.sample.yml config/storage.yml
           bundle exec rails db:create
