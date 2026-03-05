@@ -3,6 +3,7 @@ class ComplaintsController < ApplicationController
   before_action :access_check, only: [:show, :comment]
   before_action :write_access_check, only: [:self_assign, :update_status, :change_content_type]
   before_action :verify_staff, only: [:reports, :reporting]
+  before_action :training_access, only: [:training]
 
   def index
     render layout: 'without_sidebar'
@@ -202,6 +203,16 @@ class ComplaintsController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def training
+    pages = Dir.glob(Rails.root.join('app', 'views', 'complaints', 'training', '*.html.erb'))
+               .map { |page| File.basename(page, '.html.erb') }
+    if pages.include?(params[:page])
+      render "complaints/training/#{params[:page]}", layout: 'osa_training'
+    else
+      not_found!
+    end
+  end
+
   private
 
   def access_check
@@ -234,5 +245,11 @@ class ComplaintsController < ApplicationController
     end
 
     @complaint
+  end
+
+  def training_access
+    unless user_signed_in? && (current_user.staff? || current_user.at_least_moderator?)
+      not_found!
+    end
   end
 end
