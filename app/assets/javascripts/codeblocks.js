@@ -1,4 +1,4 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   const buttonTemplate = `<button class="copy-button button is-muted is-outlined has-margin-2">Copy</button>`;
 
   $('.post--content pre > code')
@@ -6,7 +6,7 @@ $(() => {
     .each(function () {
       const $button = $(buttonTemplate);
       const $content = $(this).text();
-      const numLines = $content.trim().split(/\r?\n/).length
+      const numLines = $content.trim().split(/\r?\n/).length;
 
       if (numLines <= 1) {
         $button.addClass('is-small');
