@@ -45,12 +45,13 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
+    @limit = params[:limit]&.to_i || 15
 
     @posts = set_posts.user_sort({ term: params[:sort], default: :score },
                                  age: :created_at, score: :score)
-                      .first(15)
 
     @total_post_count = @posts.count
+    @posts = @posts.first(@limit)
     render layout: 'without_sidebar'
   end
 
