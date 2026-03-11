@@ -57,9 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const { textContent } = element;
-    const numLines = textContent.trim().split(/\r?\n/).length;
 
-    const button = createCopyButton(textContent, numLines <= 1);
+    // code blocks always have a trailing newline added
+    const normalizedText = textContent.replace(/\n$/, '');
+
+    if (!normalizedText) {
+      return;
+    }
+
+    const numLines = normalizedText.split(/\r?\n/).length;
+
+    if (numLines < 1) {
+      return;
+    }
+
+    const button = createCopyButton(textContent, numLines === 1);
     const wrapper = wrapRelative(element);
     wrapper.prepend(button);
   });
