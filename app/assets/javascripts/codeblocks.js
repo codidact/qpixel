@@ -1,29 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const buttonTemplate = `<button class="copy-button button is-muted is-outlined has-margin-2">Copy</button>`;
+  /**
+   * @param {string} content
+   * @returns {HTMLButtonElement}
+   */
+  const createCopyButton = (content, isSmall = false) => {
+    const button = document.createElement('button');
+    button.classList.add('copy-button', 'button', 'is-muted', 'is-outlined', 'has-margin-2');
+    button.textContent = 'Copy';
+
+    if (isSmall) {
+      button.classList.add('is-small');
+    }
+
+    button.addEventListener('click', async () => {
+      const originalButtonText = button.textContent;
+
+      try {
+        await navigator.clipboard.writeText(content);
+        button.textContent = 'Copied!';
+      }
+      catch (e) {
+        console.warn(e);
+        button.textContent = 'Failed!';
+      }
+      finally {
+        setTimeout(() => {
+          button.textContent = originalButtonText;
+        }, 2000);
+      }
+    });
+
+    return button;
+  };
+
+  /**
+   * @param {HTMLElement} element
+   * @returns {HTMLDivElement}
+   */
+  const wrapRelative = (element) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.append(element.cloneNode(true));
+    element.replaceWith(wrapper);
+    return wrapper;
+  };
+
+  if (!window.isSecureContext) {
+    return;
+  }
 
   $('.post--content pre > code')
     .parent()
-    .each(function () {
-      const $button = $(buttonTemplate);
+    .each(function (_, element) {
       const $content = $(this).text();
       const numLines = $content.trim().split(/\r?\n/).length;
 
-      if (numLines <= 1) {
-        $button.addClass('is-small');
-      }
-
-      $(this)
-        .wrap('<div style="position:relative;"></div>')
-        .parent()
-        .prepend(
-          $button.click(function () {
-            navigator.clipboard.writeText($content);
-            $(this).text('Copied!');
-            setTimeout(() => {
-              $(this).text('Copy');
-            }, 2000);
-          }),
-        );
+      const button = createCopyButton($content, numLines <= 1);
+      const wrapper = wrapRelative(element);
+      wrapper.prepend(button);
     });
 });
-
