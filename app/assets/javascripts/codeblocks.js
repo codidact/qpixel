@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * @param {HTMLElement} element
+   * @param {Element} element
    * @returns {HTMLDivElement}
    */
   const wrapRelative = (element) => {
@@ -49,14 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  $('.post--content pre > code')
-    .parent()
-    .each(function (_, element) {
-      const $content = $(this).text();
-      const numLines = $content.trim().split(/\r?\n/).length;
+  document.querySelectorAll('.post--content pre > code').forEach((child) => {
+    const { parentElement: element } = child;
 
-      const button = createCopyButton($content, numLines <= 1);
-      const wrapper = wrapRelative(element);
-      wrapper.prepend(button);
-    });
+    if (!element) {
+      return;
+    }
+
+    const { textContent } = element;
+    const numLines = textContent.trim().split(/\r?\n/).length;
+
+    const button = createCopyButton(textContent, numLines <= 1);
+    const wrapper = wrapRelative(element);
+    wrapper.prepend(button);
+  });
 });
