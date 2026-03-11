@@ -248,7 +248,7 @@ module SearchHelper
   # @param param [String, Array<String>, nil] parameter to check
   # @return [Boolean] check result
   def valid_tags_list?(param)
-    param&.is_a?(Array) && param&.all? { |id| id.match?(/^\d+$/) }
+    param.is_a?(Array) && param&.all? { |id| id.match?(/^\d+$/) }
   end
 
   # Is a given param a valid source type?
