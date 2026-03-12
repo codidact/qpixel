@@ -48,6 +48,20 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
+  test 'should correctly show user post count' do
+    std = users(:standard_user)
+    post_count = Post.all.by(std).count
+    limit = post_count - 1
+
+    assert post_count.positive? && limit.positive?
+
+    sign_in std
+    get :show, params: { id: std.id, limit: limit }
+
+    assert_equal assigns(:posts)&.count, limit
+    assert_equal assigns(:total_post_count), post_count
+  end
+
   test 'should get mod tools page' do
     sign_in users(:moderator)
     get :mod, params: { id: users(:standard_user).id }

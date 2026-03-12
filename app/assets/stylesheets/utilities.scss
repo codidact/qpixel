@@ -123,6 +123,10 @@ pre.pre-wrap {
   display: none;
   position: absolute;
   right: 0;
+
+  &.is-small {
+    top: -1px;
+  }
 }
 
 div:hover > .copy-button {

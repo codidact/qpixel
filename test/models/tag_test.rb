@@ -12,7 +12,7 @@ class TagTest < ActiveSupport::TestCase
 
     tags = Tag.search(term).to_a
 
-    name_match_sorted = tags.select { |t| t.name.include?(term) }.sort { |a, b| a.name <=> b.name }
+    name_match_sorted = tags.select { |t| t.name.include?(term) }.sort { |a, b| a.name.length <=> b.name.length }
     excerpt_match_sorted = tags.select { |t| t.excerpt&.include?(term) }.sort { |a, b| a.name <=> b.name }
     sorted_tags = name_match_sorted + excerpt_match_sorted
 

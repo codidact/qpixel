@@ -45,20 +45,13 @@ class UsersController < ApplicationController
 
   def show
     @abilities = Ability.on_user(@user)
+    @limit = params[:limit]&.to_i || 15
 
-    all_posts = if current_user&.privilege?('flag_curate') || @user == current_user
-                  @user.posts
-                else
-                  @user.posts.undeleted
-                end
-                .list_includes
-                .joins(:category)
-                .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-                .user_sort({ term: params[:sort], default: :score },
-                           age: :created_at, score: :score)
+    @posts = set_posts.user_sort({ term: params[:sort], default: :score },
+                                 age: :created_at, score: :score)
 
-    @posts = all_posts.first(15)
-    @total_post_count = all_posts.count
+    @total_post_count = @posts.count
+    @posts = @posts.first(@limit)
     render layout: 'without_sidebar'
   end
 
@@ -215,17 +208,13 @@ class UsersController < ApplicationController
   end
 
   def posts
-    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
-               Post.all
-             else
-               Post.undeleted
-             end.by(@user).list_includes.joins(:category)
-             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
-             .user_sort({ term: params[:sort], default: :score },
-                        activity: :last_activity,
-                        age: :created_at,
-                        score: :score)
-             .paginate(page: params[:page], per_page: 25)
+    @posts = set_posts.user_sort({ term: params[:sort], default: :score },
+                                 activity: :last_activity,
+                                 age: :created_at,
+                                 score: :score)
+                      .order(created_at: :desc)
+                      .paginate(page: params[:page], per_page: 25)
+
     respond_to do |format|
       format.html do
         render :posts
@@ -659,6 +648,17 @@ class UsersController < ApplicationController
                   :status, :source,
                   :include_tags, :exclude_tags,
                   include_tags: [], exclude_tags: [])
+  end
+
+  def set_posts
+    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
+               @user.posts
+             else
+               @user.posts.undeleted
+             end
+             .list_includes
+             .joins(:category)
+             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
   end
 
   def set_user

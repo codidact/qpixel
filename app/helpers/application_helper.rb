@@ -1,7 +1,5 @@
 # Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
-  include Warden::Test::Helpers
-
   ##
   # Is the current user a moderator or admin on the current community?
   # @return [Boolean]
@@ -330,7 +328,7 @@ module ApplicationHelper
     @current_user ||= warden.authenticate(scope: :user)
     if @current_user&.deleted? || @current_user&.community_user&.deleted?
       scope = Devise::Mapping.find_scope!(:user)
-      logout scope
+      warden.logout(scope)
       @current_user = nil
     end
     @current_user
