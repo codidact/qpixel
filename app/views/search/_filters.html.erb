@@ -1,9 +1,10 @@
 <% allow_delete ||= false %>
 <% allow_apply = true if allow_apply.nil? %>
 <% @active_filter ||= {} %>
+<% @default_sort_type ||= '' %>
 
 <div class="form-group">
-  <input name="sort" type="hidden" value="<%= params[:sort] || '' %>" />
+  <input name="sort" type="hidden" value="<%= params[:sort] || @default_sort_type %>" />
 
   <div class="search-filters-filter">
     <div>
