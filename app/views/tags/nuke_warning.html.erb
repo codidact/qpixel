@@ -6,6 +6,10 @@
 
 <h1>Delete tag <%= @tag.name %></h1>
 
+<% if @tag.children.any? %>
+<p><strong>Tags with children cannot be deleted. Please reparent the children first.</strong></p>
+<% else %>
+
 <div class="notice is-danger has-color-red-900">
   <p>
     Deleting a tag results in making it seem to have never existed in the first place. No record will be kept of the tag.
@@ -26,4 +30,5 @@
 <%= link_to nuke_tag_path(id: @category.id, tag_id: @tag.id), class: 'button is-danger is-filled', method: :delete,
             role: 'button' do %>
   I understand, delete <%= @tag.name %>
+<% end %>
 <% end %>

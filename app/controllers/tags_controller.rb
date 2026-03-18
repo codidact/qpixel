@@ -225,6 +225,10 @@ class TagsController < ApplicationController
   end
 
   def nuke
+    if @tag.children.any?
+      flash[:error] = "Cannot delete a tag that has children."
+    else
+
     Post.transaction do
       AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
                            comment: "#{@tag.name} (#{@tag.id})"
@@ -250,6 +254,7 @@ class TagsController < ApplicationController
 
     flash[:success] = "Deleted #{@tag.name}"
     redirect_to category_tags_path(@category)
+    end
   end
 
   def nuke_warning; end
