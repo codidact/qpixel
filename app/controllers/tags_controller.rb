@@ -226,34 +226,34 @@ class TagsController < ApplicationController
 
   def nuke
     if @tag.children.any?
-      flash[:error] = "Cannot delete a tag that has children."
+      flash[:error] = 'Cannot delete a tag that has children.'
     else
 
-    Post.transaction do
-      AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
-                           comment: "#{@tag.name} (#{@tag.id})"
+      Post.transaction do
+        AuditLog.admin_audit event_type: 'tag_nuke', related: @tag, user: current_user,
+                             comment: "#{@tag.name} (#{@tag.id})"
 
-      tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
-                'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
+        tables = ['posts_tags', 'categories_moderator_tags', 'categories_required_tags', 'categories_topic_tags',
+                  'post_history_tags', 'suggested_edits_tags', 'suggested_edits_before_tags']
 
-      # Remove tag from caches
-      caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
-                   'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
-                   'WHERE posts_tags.tag_id = ?'
-      exec_sql([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
+        # Remove tag from caches
+        caches_sql = 'UPDATE posts INNER JOIN posts_tags ON posts.id = posts_tags.post_id ' \
+                     'SET posts.tags_cache = REPLACE(posts.tags_cache, ?, ?) ' \
+                     'WHERE posts_tags.tag_id = ?'
+        exec_sql([caches_sql, "\n- #{@tag.name}\n", "\n", @tag.id])
 
-      # Delete all references to the tag
-      tables.each do |tbl|
-        sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
-        exec_sql([sql, @tag.id])
+        # Delete all references to the tag
+        tables.each do |tbl|
+          sql = "DELETE FROM #{tbl} WHERE tag_id = ?"
+          exec_sql([sql, @tag.id])
+        end
+
+        # Nuke it
+        @tag.destroy
       end
 
-      # Nuke it
-      @tag.destroy
-    end
-
-    flash[:success] = "Deleted #{@tag.name}"
-    redirect_to category_tags_path(@category)
+      flash[:success] = "Deleted #{@tag.name}"
+      redirect_to category_tags_path(@category)
     end
   end
 
