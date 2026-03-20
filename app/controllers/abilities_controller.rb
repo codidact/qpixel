@@ -9,7 +9,6 @@ class AbilitiesController < ApplicationController
   end
 
   def show
-    @ability = Ability.where(internal_id: params[:id]).first
     @your_ability = @user&.community_user&.privilege @ability.internal_id
   end
 
