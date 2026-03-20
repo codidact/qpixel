@@ -1,5 +1,7 @@
 class AbilitiesController < ApplicationController
+  before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
+  before_action :verify_global_admin, only: [:edit, :update]
   before_action :verify_moderator, only: [:recalc]
 
   def index
@@ -8,9 +10,20 @@ class AbilitiesController < ApplicationController
 
   def show
     @ability = Ability.where(internal_id: params[:id]).first
-    return not_found! if @ability.nil?
-
     @your_ability = @user&.community_user&.privilege @ability.internal_id
+  end
+
+  def edit end
+
+  def update
+    update_params = {}
+
+    if @ability.update(update_params)
+
+      redirect_to ability_path(id: @ability.id)
+    else
+      render :edit, status: :bad_request
+    end
   end
 
   def recalc
@@ -19,6 +32,11 @@ class AbilitiesController < ApplicationController
   end
 
   private
+
+  def set_ability
+    @ability = Ability.where(internal_id: params[:id]).first
+    return not_found! unless @ability.present?
+  end
 
   def set_user
     @user = if params[:for].present?
