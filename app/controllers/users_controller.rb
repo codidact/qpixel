@@ -50,7 +50,15 @@ class UsersController < ApplicationController
     @posts = set_posts.user_sort({ term: params[:sort], default: :score },
                                  age: :created_at, score: :score)
 
-    @total_post_count = Post.all.by(@user).count
+    @total_post_count = if @user == current_user || current_user&.at_least_moderator?
+                          Post.all.by(@user).count
+                        else
+                          Post.all.by(@user)
+                              .undeleted
+                              .joins(:category)
+                              .where('categories.min_view_trust_level <= ?', current_user&.trust_level || 0)
+                              .count
+                        end
     @posts = @posts.first(@limit)
     render layout: 'without_sidebar'
   end
