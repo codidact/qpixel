@@ -50,7 +50,11 @@ class UsersController < ApplicationController
     @posts = set_posts.user_sort({ term: params[:sort], default: :score },
                                  age: :created_at, score: :score)
 
-    @total_post_count = @posts.count
+    @total_post_count = if @user == current_user
+                          @user.posts.undeleted.count
+                        else
+                          @user.posts.count
+                        end
     @posts = @posts.first(@limit)
     render layout: 'without_sidebar'
   end
@@ -651,14 +655,16 @@ class UsersController < ApplicationController
   end
 
   def set_posts
-    @posts = if current_user&.privilege?('flag_curate') || @user == current_user
-               @user.posts
-             else
-               @user.posts.undeleted
-             end
-             .list_includes
-             .joins(:category)
-             .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+    Rack::MiniProfiler.step('set_posts') do
+      @posts = if current_user&.privilege?('flag_curate') || @user == current_user
+                 @user.posts
+               else
+                 @user.posts.undeleted
+               end
+               .list_includes
+               .joins(:category)
+               .where('categories.min_view_trust_level <= ?', current_user&.trust_level || 0)
+    end
   end
 
   def set_user
