@@ -1,0 +1,15 @@
+<%= render 'posts/markdown_script' %>
+
+<%= render 'posts/image_upload' %>
+
+<% if @ability.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving this ability:
+
+    <ul>
+      <% @ability.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

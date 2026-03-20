@@ -13,7 +13,7 @@ class AbilitiesController < ApplicationController
     @your_ability = @user&.community_user&.privilege @ability.internal_id
   end
 
-  def edit end
+  def edit; end
 
   def update
     update_params = {}

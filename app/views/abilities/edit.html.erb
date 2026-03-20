@@ -1,0 +1,14 @@
+<%#
+   "Instance variables:
+      @ability : Ability to edit
+"%>
+
+<%
+  title = "Edit ability \"#{@ability.name}\""
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
+
+<%= render 'form', submit_path: update_ability_path(id: @ability.id) %>
