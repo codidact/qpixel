@@ -387,7 +387,7 @@ $(() => {
 
     const $tgt = $(ev.target);
     const content = $tgt.val();
-    const splat = content.split(' ');
+    const splat = content.split(/\s+/);
     const caretPos = $tgt[0].selectionStart;
     const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
