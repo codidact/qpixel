@@ -50,11 +50,7 @@ class UsersController < ApplicationController
     @posts = set_posts.user_sort({ term: params[:sort], default: :score },
                                  age: :created_at, score: :score)
 
-    @total_post_count = if @user == current_user
-                          @user.posts.undeleted.count
-                        else
-                          @user.posts.count
-                        end
+    @total_post_count = Post.all.by(@user).count
     @posts = @posts.first(@limit)
     render layout: 'without_sidebar'
   end
