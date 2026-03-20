@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_04_104100) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_04_104100) do
     t.string "color_code"
     t.text "asking_guidance_override", size: :medium
     t.text "answering_guidance_override", size: :medium
-    t.integer "min_view_trust_level"
+    t.integer "min_view_trust_level", default: 0, null: false
     t.bigint "license_id"
     t.integer "sequence"
     t.boolean "use_for_hot_posts", default: true
