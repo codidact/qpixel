@@ -7,7 +7,9 @@
 <h1>Delete tag <%= @tag.name %></h1>
 
 <% if @tag.children.any? %>
-<p><strong>Tags with children cannot be deleted. Please reparent the children first.</strong></p>
+<div class="notice is-warning has-color-yellow-900">
+  <p>Tags with children cannot be deleted. Please reparent the children first.</p>
+</div>
 <% else %>
 
 <div class="notice is-danger has-color-red-900">
