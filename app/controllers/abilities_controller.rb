@@ -34,7 +34,7 @@ class AbilitiesController < ApplicationController
 
   def set_ability
     @ability = Ability.where(internal_id: params[:id]).first
-    return not_found! unless @ability.present?
+    not_found! unless @ability.present?
   end
 
   def set_user
