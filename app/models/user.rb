@@ -224,11 +224,17 @@ class User < ApplicationRecord
     privilege?('flag_curate') || false
   end
 
-  # Can the user push a given post type to network?
-  # @param post_type [PostType] type of the post to be pushed
+  # Can the user push a given target network-wide?
+  # @param target [Ability, PostType] target to be pushed
   # @return [Boolean] check result
-  def can_push_to_network?(post_type)
-    post_type.system? && (is_global_moderator || is_global_admin)
+  def can_push_to_network?(target)
+    return false unless global_moderator? || global_admin?
+
+    if target.is_a?(PostType)
+      target.system?
+    else
+      true
+    end
   end
 
   # Can the user directly update a given post?
