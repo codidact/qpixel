@@ -45,7 +45,7 @@ class AbilitiesController < ApplicationController
   private
 
   def ability_update_params
-    params.require(:ability).permit(:description)
+    params.require(:ability).permit(:description, :name)
   end
 
   # Actually update a given set of abilities network-wide
