@@ -1,6 +1,7 @@
 class AbilitiesController < ApplicationController
   include DraftManagement
 
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
   before_action :verify_global_admin, only: [:edit, :update]
