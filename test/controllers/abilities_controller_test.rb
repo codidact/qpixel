@@ -92,13 +92,34 @@ class AbilitiesControllerTest < ActionController::TestCase
     end
   end
 
+  test ':update should allow global mods & admins to network push' do
+    ability = abilities(:everyone)
+
+    users.select { |u| u.can_push_to_network?(ability) }.each do |user|
+      description = "#{user.name}'s edit"
+
+      sign_in user
+      try_update_ability(ability, description: description, network_push: true)
+
+      network_abilities = Ability.unscoped.where(internal_id: ability.internal_id)
+      assert network_abilities.any?
+
+      network_abilities.each do |network_ability|
+        assert_equal network_ability.description, description
+      end
+    end
+  end
+
   private
 
   # @param ability [Ability] ability to update
   def try_update_ability(ability, **opts)
+    network_push = opts.delete(:network_push) || false
+
     patch :update, params: {
       ability: {}.merge(opts),
-      id: ability.internal_id
+      id: ability.internal_id,
+      network_push: network_push
     }
   end
 end
