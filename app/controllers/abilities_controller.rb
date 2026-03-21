@@ -19,6 +19,7 @@ class AbilitiesController < ApplicationController
   def update
     if @ability.update(ability_update_params)
       do_delete_draft(current_user, URI(request.referer || '').path)
+      flash[:success] = I18n.t('abilities.success.update_generic')
       redirect_to ability_path(id: @ability.internal_id)
     else
       render :edit, status: :bad_request
