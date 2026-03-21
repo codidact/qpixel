@@ -22,7 +22,23 @@
              cur_length: @ability.description.length,
              min_length: 15,
              max_length: 30_000 %>
-  <div class="post-preview"></div>
+           <div class="post-preview"></div>
+
+
+  <% if current_user&.can_push_to_network?(@ability) %>
+    <div class="form-group">
+      <div class="checkbox-setting">
+        <div class="checkbox-setting--desc">
+          <%= label_tag :network_push, 'Push to network', class: 'form-element' %>
+          <span class="form-caption">Copy to all communities (where the ability has not been edited)?</span>
+        </div>
+        <div class="checkbox-setting--value">
+          <%= check_box_tag :network_push, true, false, class: 'form-checkbox-element' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <%= f.submit 'Save', class: 'button is-filled' %>
   <%= link_to t('g.cancel').titlecase,
               ability_path(id: @ability.internal_id),
