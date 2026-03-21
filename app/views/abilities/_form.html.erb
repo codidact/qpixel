@@ -1,0 +1,33 @@
+<%= render 'posts/markdown_script' %>
+<%= render 'posts/image_upload' %>
+
+<% if @ability.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving this ability:
+
+    <ul>
+      <% @ability.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @ability, url: submit_path do |f| %>
+  <%= render 'shared/body_field',
+             f: f,
+             field_name: :description,
+             field_label: t('abilities.body_label'),
+             post: @ability,
+             cur_length: @ability.description.length,
+             min_length: 15,
+             max_length: 30_000 %>
+  <div class="post-preview"></div>
+  <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= link_to t('g.cancel').titlecase,
+              ability_path(id: @ability.internal_id),
+              class: 'button is-muted is-outlined is-danger js-cancel-edit',
+              data: {
+                question_body: t('abilities.unsaved_changes_confirmation')
+              } %>
+<% end %>

@@ -155,6 +155,12 @@ class User < ApplicationRecord
     privilege?('flag_curate') && !target.deleted?
   end
 
+  # Can the user edit abilities?
+  # @return [Boolean] check result
+  def can_edit_abilities?
+    global_admin?
+  end
+
   # Can the user edit tags?
   # @return [Boolean] check result
   def can_edit_tags?

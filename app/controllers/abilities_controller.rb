@@ -1,4 +1,6 @@
 class AbilitiesController < ApplicationController
+  include DraftManagement
+
   before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
   before_action :verify_global_admin, only: [:edit, :update]
@@ -15,11 +17,9 @@ class AbilitiesController < ApplicationController
   def edit; end
 
   def update
-    update_params = {}
-
-    if @ability.update(update_params)
-
-      redirect_to ability_path(id: @ability.id)
+    if @ability.update(ability_update_params)
+      do_delete_draft(current_user, URI(request.referer || '').path)
+      redirect_to ability_path(id: @ability.internal_id)
     else
       render :edit, status: :bad_request
     end
@@ -31,6 +31,10 @@ class AbilitiesController < ApplicationController
   end
 
   private
+
+  def ability_update_params
+    params.require(:ability).permit(:description)
+  end
 
   def set_ability
     @ability = Ability.where(internal_id: params[:id]).first
