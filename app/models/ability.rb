@@ -2,6 +2,7 @@ class Ability < ApplicationRecord
   include CommunityRelated
   include AbilitiesHelper
 
+  validates :name, presence: true
   validates :internal_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   def manual?
