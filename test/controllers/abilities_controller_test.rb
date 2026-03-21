@@ -94,16 +94,20 @@ class AbilitiesControllerTest < ActionController::TestCase
 
   test ':update should prevent invalid updates' do
     ability = abilities(:everyone)
+    old_name = ability.name
     user = users(:global_admin)
 
-    old_name = ability.name
-
     sign_in user
-    try_update_ability(ability, description: 'valid', name: '')
-    assert_response(:bad_request)
 
-    ability.reload
-    assert_equal ability.name, old_name
+    [false, true].each do |network_push|
+      try_update_ability(ability, description: 'valid',
+                                  name: '',
+                                  network_push: network_push)
+      assert_response(:bad_request)
+
+      ability.reload
+      assert_equal ability.name, old_name
+    end
   end
 
   test ':update should allow global mods & admins to network push' do
