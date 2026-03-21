@@ -19,7 +19,7 @@
              field_name: :description,
              field_label: t('abilities.body_label'),
              post: @ability,
-             cur_length: @ability.description.length,
+             cur_length: @ability.description&.length,
              min_length: 15,
              max_length: 30_000 %>
            <div class="post-preview"></div>
