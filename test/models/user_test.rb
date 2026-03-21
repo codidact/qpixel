@@ -89,7 +89,6 @@ class UserTest < ActiveSupport::TestCase
     global_mod = users(:global_moderator)
     global_adm = users(:global_admin)
     std_user = users(:standard_user)
-    post_type = post_types(:help_doc)
     network_users = [global_mod, global_adm]
 
     abilities.each do |ability|
