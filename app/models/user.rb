@@ -158,7 +158,7 @@ class User < ApplicationRecord
   # Can the user edit abilities?
   # @return [Boolean] check result
   def can_edit_abilities?
-    global_admin?
+    at_least_moderator?
   end
 
   # Can the user edit tags?

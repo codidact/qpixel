@@ -4,8 +4,7 @@ class AbilitiesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
-  before_action :verify_global_admin, only: [:edit, :update]
-  before_action :verify_moderator, only: [:recalc]
+  before_action :verify_moderator, only: [:edit, :recalc, :update]
 
   def index
     @abilities = Ability.all
