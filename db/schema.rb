@@ -115,6 +115,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
+    t.index ["min_view_trust_level"], name: "index_categories_on_min_view_trust_level"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end

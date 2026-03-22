@@ -85,11 +85,27 @@ class UserTest < ActiveSupport::TestCase
     assert_equal true, basic_user.can_update?(post, post_types(:free_edit))
   end
 
-  test 'can_push_to_network? should determine if the user can push updates to network' do
-    post_type = post_types(:help_doc)
-    assert_equal false, users(:standard_user).can_push_to_network?(post_type)
-    assert_equal true, users(:global_moderator).can_push_to_network?(post_type)
-    assert_equal true, users(:global_admin).can_push_to_network?(post_type)
+  test 'can_push_to_network? should correctly check network push permissions' do
+    global_mod = users(:global_moderator)
+    global_adm = users(:global_admin)
+    std_user = users(:standard_user)
+    network_users = [global_mod, global_adm]
+
+    abilities.each do |ability|
+      assert_equal false, std_user.can_push_to_network?(ability)
+
+      network_users.each do |user|
+        assert user.can_push_to_network?(ability)
+      end
+    end
+
+    post_types.each do |type|
+      assert_equal false, std_user.can_push_to_network?(type)
+
+      network_users.each do |user|
+        assert_equal type.system?, user.can_push_to_network?(type)
+      end
+    end
   end
 
   test 'community_user is based on context' do
