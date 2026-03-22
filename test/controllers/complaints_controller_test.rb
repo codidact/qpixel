@@ -346,6 +346,38 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_response(:not_found)
   end
 
+  test 'anon should not be able to access training' do
+    get osa_training_path('home')
+    assert_response(:not_found)
+  end
+
+  test 'basic user should not be able to access training' do
+    sign_in users(:basic_user)
+    get osa_training_path('home')
+    assert_response(:not_found)
+  end
+
+  test 'moderator should be able to access training' do
+    sign_in users(:moderator)
+    get osa_training_path('home')
+    assert_response(:success)
+  end
+
+  test 'staff should be able to access training' do
+    sign_in users(:staff)
+    get osa_training_path('home')
+    assert_response(:success)
+  end
+
+  test 'should be able to complete training' do
+    sign_in users(:staff)
+    post osa_training_complete_path
+    assert_response(:found)
+    assert_redirected_to safety_center_path
+    assert_equal 'Thank you. Your training has been marked as complete.', flash[:success]
+    assert_not_nil current_user.osa_training
+  end
+
   private
 
   def try_create_report(**params)
