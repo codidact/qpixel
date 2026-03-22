@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -115,6 +115,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
+    t.index ["min_view_trust_level"], name: "index_categories_on_min_view_trust_level"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
@@ -802,6 +803,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.string "backup_2fa_code"
+    t.datetime "osa_training"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true

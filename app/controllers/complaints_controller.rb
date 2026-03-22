@@ -3,7 +3,7 @@ class ComplaintsController < ApplicationController
   before_action :access_check, only: [:show, :comment]
   before_action :write_access_check, only: [:self_assign, :update_status, :change_content_type]
   before_action :verify_staff, only: [:reports, :reporting]
-  before_action :training_access, only: [:training]
+  before_action :training_access, only: [:training, :training_complete]
 
   def index
     render layout: 'without_sidebar'
@@ -211,6 +211,15 @@ class ComplaintsController < ApplicationController
     else
       not_found!
     end
+  end
+
+  def training_complete
+    if current_user.update(osa_training: DateTime.now)
+      flash[:success] = 'Thank you. Your training has been marked as complete.'
+    else
+      flash[:danger] = 'Something went wrong. Please tell a staff member about this.'
+    end
+    redirect_to safety_center_path
   end
 
   private

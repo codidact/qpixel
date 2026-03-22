@@ -25,6 +25,20 @@
       </div>
     </div>
   </div>
+  <div class="grid--cell is-12 is-6-lg">
+    <div class="widget">
+      <div class="widget--body">
+        <h2 class="has-font-size-larger h-m-t-0">
+          <%= link_to osa_training_path('home') do %>
+            Moderator training &raquo;
+          <% end %>
+        </h2>
+        <p class="has-font-size-caption">
+          Complete your training for volunteer moderation staff.
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <% if user_signed_in? && current_user.staff? %>
