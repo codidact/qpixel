@@ -29,10 +29,9 @@ $(() => {
     }
   });
 
-  $('#markdown-link-name, #markdown-link-url').on('keydown', (ev) => {
-    if (ev.keyCode === 13) {
-      // don't submit post form on enter in link modal
-      ev.stopPropagation();
+  QPixel.DOM?.addSelectorListener('keypress', '#markdown-link-name, #markdown-link-url', (ev) => {
+    if (ev instanceof KeyboardEvent && ev.key === 'Enter') {
+      ev.preventDefault();
     }
   });
 

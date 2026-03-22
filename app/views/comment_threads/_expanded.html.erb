@@ -59,8 +59,9 @@
           <%= render 'comments/skip_deleted', inline: inline, num_skipped: skipped_deleted, thread: thread %>
           <% skipped_deleted = 0 %>
         <% end %>
-        <% if shown_comments_count > max_shown_comments && comment.id.to_i == comment_id.to_i %>
-          <%= render 'comments/skip_more', shown_count: shown_comments_count, thread: thread %>
+        <% skipped_more = thread.reply_count - shown_comments_count %>
+        <% if shown_comments_count > max_shown_comments && skipped_more.positive? && comment.id.to_i == comment_id.to_i %>
+          <%= render 'comments/skip_more', num_skipped: skipped_more, thread: thread %>
         <% end %>
         <div class="widget--body" role="listitem">
           <%= render 'comments/comment', comment: comment, pingable: pingable %>

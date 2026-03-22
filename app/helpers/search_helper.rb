@@ -114,11 +114,11 @@ module SearchHelper
       filter_qualifiers.append({ param: :source, value: params[:source].to_sym })
     end
 
-    if params[:include_tags]&.all? { |id| id.match? valid_value[:integer] }
+    if valid_tags_list?(params[:include_tags])
       filter_qualifiers.append({ param: :include_tags, tag_ids: params[:include_tags] })
     end
 
-    if params[:exclude_tags]&.all? { |id| id.match? valid_value[:integer] }
+    if valid_tags_list?(params[:exclude_tags])
       filter_qualifiers.append({ param: :exclude_tags, tag_ids: params[:exclude_tags] })
     end
 
@@ -242,6 +242,13 @@ module SearchHelper
     end
 
     query
+  end
+
+  # Is a given param a valid list of tags?
+  # @param param [String, Array<String>, nil] parameter to check
+  # @return [Boolean] check result
+  def valid_tags_list?(param)
+    param.is_a?(Array) && param&.all? { |id| id.match?(/^\d+$/) }
   end
 
   # Is a given param a valid source type?
