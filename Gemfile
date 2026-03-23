@@ -7,6 +7,7 @@ gem 'counter_culture', '~> 3.2'
 gem 'fastimage', '~> 2.2'
 gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
+gem 'mime-types', '~> 3.7'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 5.6'
 gem 'rails', '~> 7.2'
@@ -41,7 +42,7 @@ gem 'will_paginate', '~> 3.3'
 gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
-gem 'aws-sdk-s3', '~> 1.61', require: false
+gem 'aws-sdk-s3', '~> 1.208', require: false
 gem 'aws-sdk-sns', '~> 1.72'
 gem 'aws-ses-v4', require: 'aws/ses'
 
@@ -92,6 +93,7 @@ group :test do
   gem 'capybara', '~> 3.38'
   gem 'selenium-webdriver', '~> 4.7'
   gem 'webdrivers', '~> 5.2'
+  gem 'webmock', '~> 3.26'
 end
 
 group :development, :test do

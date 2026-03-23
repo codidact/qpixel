@@ -1,10 +1,14 @@
 @import 'variables';
 
 .audit-log-filters {
+
+  .form-group-horizontal .actions,
   .select2-container {
     height: 37px;
     margin: 4px 0px;
+  }
 
+  .select2-container {
     .selection {
       .select2-selection {
         border-color: $muted-graphic;
@@ -17,5 +21,33 @@
         translate: 0 -50%;
       }
     }
+  }
+
+  .form-group-horizontal {
+    .actions {
+      .button {
+        height: 100%;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.audit-log-summary {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  word-break: break-word;
+
+  &[open] {
+    margin: 0;
+  }
+
+  &::before {
+    top: unset;
+  }
+
+  .details {
+    flex: 1;
   }
 }

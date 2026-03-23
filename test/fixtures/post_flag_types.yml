@@ -19,3 +19,8 @@ not_confidential:
   community: sample
   confidential: false
   name: Definitely not confidential
+
+spam:
+  community: sample
+  confidential: false
+  name: it's spam

@@ -35,3 +35,7 @@ component_management:
       name: models
       paths:
         - app/models/**
+    - component_id: module_tasks
+      name: tasks
+      paths:
+        - app/tasks/**

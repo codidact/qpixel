@@ -1,12 +1,12 @@
 <%#
-    List of comment threads below a post.
+   "List of comment threads below a post.
 
     Variables:
       comment_threads : an Array of CommentThread instances to list
     ? comment_id      : Comment to show even if it would be hidden otherwise
     ? thread_id       : CommentThread ID to render expanded view for
     ? show_deleted    : whether to display deleted comments in the expanded view
-%>
+"%>
 
 <%
   comment_id ||= defined?(comment_id) ? comment_id : nil

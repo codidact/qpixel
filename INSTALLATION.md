@@ -233,6 +233,16 @@ Add the tags to the "Required tags" section:
 
 ![img/required-tags.png](img/required-tags.png)
 
+## Optional: Email blocklists
+
+If you want to block some known-bad actors from using the deployment, you can setup the following email blocklists:
+
+- Bad email patterns for granular control over which email addresses to block.
+  To enable it, add a file named `qpixel-email-patterns.txt` to the deployment root's parent directory.
+  Each line in the file should be a valid regular expression that a given email will be checked against.
+- Bad email domains for bulk blocks on emails from known bad domains.
+  To enable it, add a file named `qpixel-domain-blocklist.txt` to the deployment root's parent directory.
+  Each line in the file corresponds to a domain that should be blocked.
 
 ## Optional: Help Topics
 

@@ -5,6 +5,7 @@ module Advertisements::CommunityHelper
 
   # rubocop:disable Metrics/BlockLength
   def community_ad
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'

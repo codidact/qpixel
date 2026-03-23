@@ -77,4 +77,16 @@ $(() => {
       location.reload();
     }
   });
+
+  $('.js-user-select').each((_i, el) => {
+    const $tgt = $(el);
+    $tgt.select2({
+      ajax: {
+        url: '/users',
+        headers: { 'Accept': 'application/json' },
+        delay: 100,
+        processResults: (data) => ({results: data.map((u) => ({id: u.id, text: u.username}))}),
+      }
+    });
+  });
 });

@@ -5,14 +5,52 @@ class NotificationsControllerTest < ActionController::TestCase
 
   test 'should get index as JSON' do
     sign_in users(:standard_user)
-    get :index, params: { format: :json }
-    assert_not_nil assigns(:notifications)
-    assert_response(:success)
+
+    [:json, :html].each do |format|
+      try_notifications(format: format)
+
+      assert_response(:success)
+
+      if format == :html
+        @notifications = assigns(:notifications)
+        assert_not_nil @notifications
+      else
+        assert_valid_json_response
+        notifications = JSON.parse(response.body)
+
+        notifications.each do |notification|
+          assert notification['content'].present?
+          assert notification['community_name'].present?
+        end
+
+      end
+    end
+  end
+
+  test ':index should correctly filter notifications' do
+    sign_in users(:standard_user)
+
+    ['any', 'read', 'unread'].each do |status|
+      try_notifications(format: :html, status: status)
+
+      assert_response(:success)
+
+      @notifications = assigns(:notifications)
+      assert @notifications&.any?, "Expected at least one #{status} notification"
+
+      if status == 'read'
+        assert @notifications.none?(&:unread?)
+      elsif status == 'unread'
+        assert @notifications.none?(&:read?)
+      end
+    end
   end
 
   test 'should mark notification as read' do
     sign_in users(:standard_user)
-    post :read, params: { id: notifications(:one).id, format: :json }
+
+    post :read, params: { id: notifications(:unread).id, format: :json }
+
     assert_not_nil assigns(:notification)
     assert_equal true, assigns(:notification).is_read
     assert_equal 'success', JSON.parse(response.body)['status']
@@ -21,7 +59,9 @@ class NotificationsControllerTest < ActionController::TestCase
 
   test 'should mark all notifications as read' do
     sign_in users(:standard_user)
+
     post :read_all, params: { format: :json }
+
     assert_not_nil assigns(:notifications)
     assigns(:notifications).each do |notification|
       assert_equal true, notification.is_read
@@ -32,13 +72,19 @@ class NotificationsControllerTest < ActionController::TestCase
 
   test 'should prevent users marking others notifications read' do
     sign_in users(:editor)
-    post :read, params: { id: notifications(:one).id, format: :json }
+    post :read, params: { id: notifications(:unread).id, format: :json }
     assert_response(:forbidden)
   end
 
   test 'should require authentication to get index' do
     sign_out :user
-    get :index, params: { format: :json }
+    try_notifications
     assert_response(:unauthorized) # Devise seems to respond 401 for JSON requests.
+  end
+
+  private
+
+  def try_notifications(**opts)
+    get :index, params: { format: :json }.merge(opts)
   end
 end

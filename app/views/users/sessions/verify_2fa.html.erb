@@ -6,6 +6,7 @@
 
 <%= form_tag login_verify_code_path, autocomplete: 'off' do %>
   <%= hidden_field_tag 'uid', params[:uid] %>
+  <%= hidden_field_tag 'remember_me', params[:remember_me] %>
 
   <div class="form-group">
     <%= label_tag 'code', 'Code', class: 'form-element' %>

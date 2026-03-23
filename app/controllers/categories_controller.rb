@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.all.order(sequence: :asc, id: :asc)
+    @categories = Category.accessible_to(current_user).all.order(sequence: :asc, id: :asc)
     respond_to do |format|
       format.html
       format.json do
@@ -21,6 +21,12 @@ class CategoriesController < ApplicationController
 
   def homepage
     @category = Category.where(is_homepage: true).first
+
+    unless @category.present?
+      redirect_to categories_path
+      return
+    end
+
     update_last_visit(@category)
     set_list_posts
     render :show
@@ -41,9 +47,7 @@ class CategoriesController < ApplicationController
       AuditLog.admin_audit(event_type: 'category_create', related: @category, user: current_user,
                            comment: "<<Category #{before}>>")
       flash[:success] = 'Your category was created.'
-      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete 'categories/by_lowercase_name'
-      Rails.cache.delete 'categories/by_id'
+      clear_categories_cache
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
@@ -63,9 +67,7 @@ class CategoriesController < ApplicationController
       AuditLog.admin_audit(event_type: 'category_update', related: @category, user: current_user,
                            comment: "from <<Category #{before}>>\nto <<Category #{after}>>")
       flash[:success] = 'Your category was updated.'
-      Rails.cache.delete "#{RequestContext.community_id}/header_categories"
-      Rails.cache.delete 'categories/by_lowercase_name'
-      Rails.cache.delete 'categories/by_id'
+      clear_categories_cache
       redirect_to category_path(@category)
     else
       flash[:danger] = 'There were some errors while trying to save your category.'
@@ -156,13 +158,19 @@ class CategoriesController < ApplicationController
   end
 
   def set_list_posts
-    sort_params = { activity: { last_activity: :desc }, age: { created_at: :desc }, score: { score: :desc },
+    @default_sort_type = :activity
+    @sort_type = params[:sort]&.to_sym || @default_sort_type
+
+    sort_params = { activity: { last_activity: :desc },
+                    age: { created_at: :desc },
+                    score: { score: :desc },
                     lottery: [Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
-                              SiteSetting['LotteryAgeDeprecationSpeed']],
-                    native: Arel.sql('att_source IS NULL DESC, last_activity DESC') }
-    sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
-    @posts = @category.posts.undeleted.where(post_type_id: @category.display_post_types)
-                      .includes(:post_type, :tags).list_includes
+                              SiteSetting['LotteryAgeDeprecationSpeed']] }
+
+    @posts = @category.posts
+                      .undeleted
+                      .where(post_type_id: @category.display_post_types)
+                      .list_includes
     filter_qualifiers = helpers.params_to_qualifiers(params)
     @active_filter = helpers.active_filter
 
@@ -179,7 +187,7 @@ class CategoriesController < ApplicationController
       end
 
       unless default_filter.nil?
-        filter_qualifiers = helpers.filter_to_qualifiers default_filter
+        filter_qualifiers = helpers.filter_to_qualifiers(default_filter)
         @active_filter = {
           default: default,
           name: default_filter.name,
@@ -189,16 +197,27 @@ class CategoriesController < ApplicationController
           max_answers: default_filter.max_answers,
           include_tags: default_filter.include_tags,
           exclude_tags: default_filter.exclude_tags,
-          status: default_filter.status
+          status: default_filter.status,
+          source: default_filter.source
         }
       end
     end
 
     @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts, current_user)
     @filtered = filter_qualifiers.any?
-    @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
+    @posts = @posts.paginate(page: params[:page], per_page: 50)
+                   .order(sort_params[@sort_type])
   end
 
+  def clear_categories_cache
+    Rails.cache.delete 'header_categories'
+    Rails.cache.delete 'categories/by_lowercase_name'
+    Rails.cache.delete 'categories/by_id'
+  end
+
+  # Updates last visit cache for a given category
+  # @param category [Category] category to update
+  # @return [Boolean] whether the cache entry is deleted
   def update_last_visit(category)
     return if current_user.blank?
 

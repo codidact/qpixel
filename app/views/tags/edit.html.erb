@@ -1,7 +1,9 @@
-<% content_for :title, 'Edit tag' %>
+<%
+  title = "Edit tag \"#{@tag.name}\""
+%>
 
-<h1>
-  Edit <span class="<%= @classes %> is-large"><%= @tag.name %></span>
-</h1>
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <%= render 'form', submit_path: update_tag_path(id: @category.id, tag_id: @tag.id) %>

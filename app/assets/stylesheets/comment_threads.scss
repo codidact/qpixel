@@ -1,3 +1,5 @@
+@import 'variables';
+
 .post--comments-thread-wrapper {
   .post--comments-thread {
     .widget--body:not(.widget--deleted-comments):not(.widget--more-comments) {
@@ -19,6 +21,33 @@
 }
 
 .thread {
+  &.widget {
+    .widget--header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      justify-content: space-between;
+    }
+
+    .widget--header-link {
+      font-size: 0.75em;
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+    }
+  }
+
+  .thread--actions {
+    display: flex;
+    flex-wrap:wrap;
+    gap: 0.5em;
+    justify-content: end;
+    margin-top: 0.2rem;
+
+    @media screen and (max-width: $screen-sm) {
+      justify-content: start;
+    }
+  }
 
   .widget--full-thread,
   .widget--more-comments,

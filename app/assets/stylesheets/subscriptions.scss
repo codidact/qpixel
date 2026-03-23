@@ -1,3 +1,23 @@
-// Place all the styles related to the Subscriptions controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import 'variables';
+
+.new_subscription {
+  .select2-container {
+    height: 37px;
+    margin: 4px 0px;
+  }
+
+  .select2-container {
+    .selection {
+      .select2-selection {
+        border-color: $muted-graphic;
+        height: 100%;
+        padding: 4px 0;
+      }
+
+      .select2-selection__arrow {
+        top: 50%;
+        translate: 0 -50%;
+      }
+    }
+  }
+}

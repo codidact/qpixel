@@ -143,6 +143,13 @@
   description: >
     A link to the full legal code of the license specified in ContentLicenseName.
 
+- name: MaxFlagReasonLength
+  value: 1000
+  value_type: integer
+  category: SiteDetails
+  description: >
+    The maximum number of characters a single flag's reason may contain. Default is 1000
+
 - name: MaxTagLength
   value: 35
   value_type: integer
@@ -150,6 +157,13 @@
   description: >
     The maximum characters a single tag name may contain. Default is 35 for compatibility with Stack Exchange; going lower
     may introduce validation issues with content imported from SE.
+
+- name: MaxThreadTitleLength
+  value: 255
+  value_type: integer
+  category: SiteDetails
+  description: >
+    The maximum characters a comment thread title may contain. Defaults to 255.
 
 - name: MaxTitleLength
   value: 150
@@ -166,14 +180,14 @@
   description: >
     The maximum number of characters an edit comment may contain. Defaults to 255.
 
-- name: MaxUploadSize
-  value: 2MB
-  value_type: string
+- name: MaxRequestBodySize
+  value: 2097152
+  value_type: integer
   category: AdvancedSettings
   description: >
-    The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
-    set by your web server configuration. This setting should be set to the same value so that the correct limit
-    can be displayed to users.
+    The maximum allowed size of request body in bytes (2MB by default). This setting must be kept in sync with your web server or
+    reverse proxy configuration that governs request body size limits - **do not** change it if you don't know what
+    that means.
 
 - name: FirstVisitGuidance
   value: ~
@@ -184,7 +198,7 @@
 
 - name: InterestingSubscriptionScoreThreshold
   value: 1
-  value_type: integer
+  value_type: float
   category: Email
   description: >
     The minimum score a question must have to qualify for selection for the Interesting email subscription.
@@ -218,6 +232,17 @@
   description: >
     The address to send moderator distribution list emails from (can be a fake address).
     Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: FriendlyEmailFooter
+  value: >
+    <hr/>
+    <p><em>Thanks!</em></p>
+    <p><em>Your Friendly Neighbourhood Codidactyl</em></p>
+  value_type: text
+  category: Email
+  community_id: ~
+  description: >
+    Friendly footer to add to emails such as new user confirmation instructions. Markdown allowed.
 
 - name: NoReplySenderName
   value: Codidact
@@ -343,6 +368,22 @@
   category: SiteDetails
   description: >
     Path to a file to use as the site's favicon. Must be an .ICO file.
+
+- name: JSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific JavaScript.
+    Must be a domain-relative URL (such as `/assets/community.js`).
+
+- name: CSSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific CSS.
+    Must be a domain-relative URL (such as `/assets/community.css`).
 
 - name: AllowContentTransfer
   value: true
@@ -568,6 +609,17 @@
   description: >
     Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
 
+- name: TourBeginningDescription
+  value: >
+    <p>Hi!</p>
+    <p>I'm your friendly neighbourhood <a href="https://en.wikipedia.org/wiki/Pterodactylus">Codidactyl</a> and I'd like to introduce you to this website.
+    Don't worry: It doesn't take long and you can abort at any time.</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the first element on the tour page. Markdown allowed.
+
 - name: TourMoreBeginningDescription
   value: >
     <p>Yay!</p>
@@ -667,6 +719,38 @@
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
 
+- name: NetworkMascotName
+  value: Codidactyl
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network mascot name to use where appropriate, for example, in the tour.
+
+- name: NetworkMascotLogoPath
+  value: /assets/codidactyl.png
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    The path, relative to the root of the domain, to the site's mascot logo file. Can also be an absolute URL.
+
+- name: NetworkName
+  value: Codidact
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network name to use in headers, footers, emails, and any other place as appropriate.
+
+- name: NetworkURL
+  value: https://codidact.com/
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network URL to use in headers, footers, emails, and any other place as appropriate.
+
 - name: NetworkPitch
   value: $FILE site_settings/widgets_network_pitch.html
   value_type: text
@@ -749,3 +833,32 @@
   description: >
     This setting only has an effect when RestrictedAccess is enabled.
     Whether the policy pages are publicly accessible (Terms of Service, Privacy Policy, etc.).
+
+- name: AllowedUploadTypes
+  value: image/png image/jpeg image/gif image/webp
+  options:
+    - image/png
+    - image/jpeg
+    - image/gif
+    - image/webp
+  value_type: array
+  category: SiteDetails
+  community_id: ~
+  description: >
+    File types that users will be able to upload.
+
+- name: AllowedPostTitleFormattingTypes
+  value: code italic keyboard
+  options:
+    - bold
+    - code
+    - italic
+    - keyboard
+    - strikethrough
+    - subscript
+    - superscript
+  value_type: array
+  category: Display
+  description: >
+    Formatting types allowed in post titles.
+    By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.

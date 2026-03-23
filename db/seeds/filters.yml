@@ -12,3 +12,7 @@
   min_answers: 0
   max_answers: 0
   status: 'open'
+
+- name: Open
+  user_id: -1
+  status: 'open'

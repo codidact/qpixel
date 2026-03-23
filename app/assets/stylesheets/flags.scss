@@ -1,0 +1,22 @@
+@import 'variables';
+
+.flags-list-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header {
+  .header--menu {
+    .header--item {
+      .header--alert {
+        min-width: 2em;
+        padding: 0 0.5em;
+        height: unset;
+
+        &.is-red {
+          background: $danger;
+        }
+      }
+    }
+  }
+}

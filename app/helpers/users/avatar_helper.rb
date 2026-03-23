@@ -37,6 +37,7 @@ module Users::AvatarHelper
                   "network/avatars/#{letter}+#{color}/#{size}px"
                 end
 
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch cache_key, include_community: false, expires_in: 24.hours do
       ava = Image.new(size, size)
       text_color = yiq_contrast(color, 'black', 'white')

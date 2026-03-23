@@ -7,12 +7,12 @@ class CreateReactionTypes < ActiveRecord::Migration[5.2]
 
       t.string :icon
       t.string :color
-      
+
       t.boolean :requires_comment
-      
+
       t.references :community
       t.integer :position
-      
+
       t.timestamps
     end
   end

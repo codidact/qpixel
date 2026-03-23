@@ -1,0 +1,62 @@
+<%
+  title = t('admin.tools.audit_logs')
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
+<div>
+  <h3>Filters</h3>
+  <%= form_tag audit_logs_path, method: :get, class: 'form-inline audit-log-filters' do %>
+    <div class="form-group-horizontal">
+      <div class="form-group">
+        <%= label_tag :log_type, 'Log category', class: 'form-element' %>
+        <%= select_tag :log_type, options_for_select(@log_types.map { |lt| [lt, lt] }, selected: params[:log_type]),
+                       include_blank: true, class: 'form-element js-log-type-select' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :event_type, 'Event', class: 'form-element' %>
+        <%= select_tag :event_type, options_for_select(@event_types.map { |et| [et, et] },
+                                                       selected: params[:event_type]),
+                       include_blank: true, class: 'form-element js-event-type-select' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :from, 'From date', class: 'form-element' %>
+        <%= date_field_tag :from, params[:from], class: 'form-element' %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :to, 'To date', class: 'form-element' %>
+        <%= date_field_tag :to, params[:to], class: 'form-element' %>
+      </div>
+      <div class="actions">
+        <%= submit_tag 'Filter', class: 'button is-filled' %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="category-meta">
+  <h3><%= pluralize(@logs.count, t('g.log')) %></h3>
+
+  <div class="button-list is-gutterless">
+    <% classes = 'button is-outlined is-muted' %>
+    <%= link_to t('g.age'), query_url(sort: 'age'),
+                class: "#{classes} #{params[:sort] == 'age' || params[:sort].nil? ? 'is-active' : ''}" %>
+    <%= link_to t('g.type'), query_url(sort: 'type'),
+                class: "#{classes} #{params[:sort] == 'type' ? 'is-active' : ''}" %>
+    <%= link_to t('g.event'), query_url(sort: 'event'),
+                class: "#{classes} #{params[:sort] == 'event' ? 'is-active' : ''}" %>
+    <%= link_to t('g.related'), query_url(sort: 'related'),
+                class: "#{classes} #{params[:sort] == 'related' ? 'is-active' : ''}" %>
+    <%= link_to t('g.user'), query_url(sort: 'user'),
+                class: "#{classes} #{params[:sort] == 'user' ? 'is-active' : ''}" %>
+  </div>
+</div>
+
+<% @logs.each do |log| %>
+  <%= render 'admin/audit_log', log: log %>
+<% end %>
+
+<div class="has-padding-top-4">
+  <%= will_paginate @logs, renderer: BootstrapPagination::Rails %>
+</div>

@@ -9,6 +9,38 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:categories)
   end
 
+  test 'homepage should show categories in the correct order' do
+    get :homepage
+    assert_not_nil assigns(:header_categories)
+    seq = 0
+    id = 0
+    assigns(:header_categories).each do |category|
+      if category.sequence.nil?
+        assert category.id > id, "Category #{category.id} not after #{id}"
+      else
+        assert category.sequence >= seq, "Category #{category.id} sequence #{category.sequence} not greater than #{seq}"
+      end
+      seq = category.sequence || seq
+      id = category.id
+    end
+  end
+
+  test ':homepage should correctly show the homepage category' do
+    get :homepage
+    assert_response(:success)
+    @category = assigns(:category)
+    assert_not_nil @category
+    assert @category.homepage?
+  end
+
+  test ':homepage should redirect to the categories list if there is no default category' do
+    Category.where(is_homepage: true).destroy_all
+
+    get :homepage
+    assert_response(:found)
+    assert_redirected_to(categories_path)
+  end
+
   test 'should correctly show public categories' do
     public_categories = categories.select(&:public?)
 

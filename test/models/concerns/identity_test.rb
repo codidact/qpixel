@@ -4,6 +4,7 @@ class IdentityTest < ActiveSupport::TestCase
   def setup
     @klass1 = Class.new do
       include Identity
+
       def initialize(id)
         super()
         @id = id
@@ -13,6 +14,7 @@ class IdentityTest < ActiveSupport::TestCase
 
     @klass2 = Class.new do
       include Identity
+
       def initialize(id)
         super()
         @id = id

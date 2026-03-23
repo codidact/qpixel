@@ -1,6 +1,6 @@
 <%#
-    Start new comment thread dialog.
-%>
+   "Start new comment thread dialog.
+"%>
 
 <%
   # TODO: make configurable
@@ -13,16 +13,16 @@
     <b>Start a new comment thread</b>
   </div>
   <div class="modal--body">
-    <% if post.comment_threads.size > 0 %>
-      <p>You can create a new comment thread. Please check first whether an existing comment thread covers already what you need.</p>
+    <% if post.comment_threads.any? %>
+      <p><%= t('comments.captions.new_thread_on_post') %></p>
     <% else %>
-      <p>Be the first to create a new comment thread.</p>
+      <p><%= t('comments.captions.first_thread_on_post') %></p>
     <% end %>
 
     <%= form_tag create_comment_thread_path do %>
       <%= hidden_field_tag :post_id, post.id %>
 
-      <%= label_tag :body, 'Your comment', class: 'form-element' %>
+      <%= label_tag :body, t('comments.labels.comment_body_input'), class: 'form-element' %>
       <div class="form-caption">Start the thread with a comment.</div>
       <%= text_area_tag :body, '',
                         class: 'form-element js-comment-field',
@@ -31,18 +31,28 @@
                         required: true,
                         data: { post: post.id,
                                 thread: '-1',
-                                character_count: ".js-character-count-#{post.id}" } %>
-      <%= render 'shared/char_count', type: post.id, min: min_chars, max: max_chars %>
+                                character_count: ".js-character-count-new-thread-#{post.id}" } %>
+      <%= render 'shared/char_count', type: "new-thread-#{post.id}", min: min_chars, max: max_chars %>
 
       <%= label_tag :title, 'Comment thread title (optional)', class: 'form-element' %>
       <span class="form-caption">
         You can give your comment thread a title. If you leave this blank, the beginning of the initial comment will
         be shown.
       </span>
-      <%= text_field_tag :title, '', class: 'form-element', data: { character_count: ".js-character-count-thread-title" } %>
-      <%= render 'shared/char_count', type: 'thread-title' %>
+      <%= text_field_tag :title, '',
+                         class: 'form-element js-thread-title-field',
+                         data: { post: post.id,
+                                 thread: '-1',
+                                 character_count: ".js-character-count-thread-title-#{post.id}",
+                                 markdown: 'strip' } %>
+      <%= render 'shared/char_count',
+                 type: "thread-title-#{post.id}",
+                 max: maximum_thread_title_length %>
 
-      <%= submit_tag 'Create thread', class: 'button is-filled', id: "create_thread_button_#{post.id}", disabled: true %>
+      <%= submit_tag 'Create thread',
+                     class: 'button is-filled',
+                     id: "create_thread_button_#{post.id}",
+                     disabled: true %>
     <% end %>
   </div>
 </div>

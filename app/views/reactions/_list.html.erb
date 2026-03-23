@@ -22,6 +22,9 @@
     <% end %>
 </div>
 
+<%# TODO: eager load instead %>
+<% host = post.community.host %>
+
 <% post.reaction_list.each do |rt, rr| %>
     <div class="modal is-with-backdrop reaction-info-modal"
          id="reaction-info-<%= post.id %>-<%= rt.id %>">
@@ -43,9 +46,7 @@
                     </tr>
                     <% rr.each do |r| %>
                     <tr>
-                        <td>
-                            <%= link_to rtl_safe_username(r.user), user_path(r.user), dir: 'ltr'%>
-                        </td>
+                        <td><%= user_link(r.user, { host: host }) %></td>
                         <td class="comment-col">
                             <% if r.comment %>
                                 <div class="muted-p">

@@ -4,11 +4,11 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, store: :cookie
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :enforce_signed_in, unless: :devise_controller?
-  before_action :check_if_warning_or_suspension_pending
+  before_action :check_if_warning_or_suspension_pending, if: [:user_signed_in?], unless: [:devise_controller?]
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
@@ -108,6 +108,14 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def verify_staff
+    if !user_signed_in? || !current_user.staff?
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      return false
+    end
+    true
+  end
+
   def check_your_privilege(name, post = nil, render_error = true)
     unless current_user&.privilege?(name) || (current_user&.post_privilege?(name, post) if post)
       @privilege = Ability.find_by(name: name)
@@ -134,6 +142,14 @@ class ApplicationController < ActionController::Base
 
   def second_level_post_types
     helpers.post_type_ids(is_top_level: false, has_parent: true)
+  end
+
+  [:json, :html, :xml].each do |format|
+    define_method "#{format}_request?" do
+      return false unless request.format.respond_to?("#{format}?")
+
+      request.format.send("#{format}?")
+    end
   end
 
   private
@@ -199,15 +215,20 @@ class ApplicationController < ActionController::Base
     if current_user&.admin?
       Rack::MiniProfiler.authorize_request
     end
+
+    if current_user&.staff?
+      @complaints_count = Complaint.where(status: 'new').count
+    end
   end
 
   def setup_request_context
     RequestContext.clear!
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
-    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
-      Community.unscoped.find_by(host: host_name)
-    end
+    @community = Rails.cache.fetch_collection("#{host_name}/community", expires_in: 1.hour) do
+      Community.unscoped.where(host: host_name)
+    end.first
+    RequestContext.community = @community
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
                       "(#{RequestContext.community&.name})"
@@ -230,7 +251,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch_collection('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
@@ -247,7 +268,7 @@ class ApplicationController < ActionController::Base
     # I.e., if pinned_post_ids contains null, the selection will never return records
     pinned_post_ids = @pinned_links.map(&:post_id).compact
 
-    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch_collection('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
         Post.undeleted.not_locked.where(closed: false)
             .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
@@ -255,25 +276,23 @@ class ApplicationController < ActionController::Base
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
             .where.not(id: pinned_post_ids)
-            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
+            .limit(SiteSetting['HotQuestionsCount'])
       end
-    end
+    end.order('score DESC')
+
+    # eager loading revived collections' used relation to prevent N+1 queries
+    @pinned_links = @pinned_links.list_includes
+    @hot_questions = @hot_questions.list_includes
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch('header_categories') do
-      Category.all.order(sequence: :asc, id: :asc)
-    end
+    @header_categories = Rails.cache.fetch_collection('header_categories') do
+      Category.all
+    end.order(sequence: :asc, id: :asc)
   end
 
   def check_if_warning_or_suspension_pending
-    return if current_user.nil?
-
-    warning = ModWarning.to(current_user).active.any?
-    return unless warning
-
-    # Ignore devise and warning routes
-    return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
+    return unless ModWarning.to(current_user).active.any?
 
     flash.clear
 
@@ -317,7 +336,7 @@ class ApplicationController < ActionController::Base
                    path.start_with?('/assets/') ||
                    path.end_with?('.css') || path.end_with?('.js')
 
-    # Make available to controller that the we should not leak posts in the sidebar
+    # Used by derived controllers to avoid leaking featured posts to the sidebar
     @prevent_sidebar = true
 
     # Allow /help (help center), /help/* and /policy/* depending on settings
@@ -352,6 +371,10 @@ class ApplicationController < ActionController::Base
     helpers.current_user
   end
 
+  def system_user
+    helpers.system_user
+  end
+
   def user_signed_in?
     helpers.user_signed_in?
   end
@@ -364,16 +387,20 @@ class ApplicationController < ActionController::Base
     helpers.devise_sign_in_enabled?
   end
 
+  def redirect_to_sign_in
+    if devise_sign_in_enabled?
+      redirect_to new_user_session_path
+    else
+      redirect_to new_saml_user_session_path
+    end
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          if devise_sign_in_enabled?
-            redirect_to new_user_session_path
-          else
-            redirect_to new_saml_user_session_path
-          end
+          redirect_to_sign_in
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
@@ -411,5 +438,11 @@ class ApplicationController < ActionController::Base
       session[:sudo_return] = request.fullpath
       redirect_to user_sudo_path
     end
+  end
+
+  # default request_authenticity_tokens only checks form tokens and request.x_csrf_token
+  # for some reason, even if cookie-based strategy is officially supported, it's not checked here
+  def request_authenticity_tokens
+    super << csrf_token_storage_strategy.fetch(request)
   end
 end

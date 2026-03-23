@@ -2,9 +2,8 @@ Hi <%= @user&.username %>,
 
 Re: Your two-factor authentication backup code
 
-
-You're receiving this email because you have two-factor authentication enabled on your Codidact network account. We've
-recently added backup codes for every account using 2FA, so that you can still log in if you lose access to your
+You're receiving this email because you have two-factor authentication enabled on your <%= SiteSetting['NetworkName'] %> network account.
+We've added backup codes for every account using 2FA, so that you can still log in if you lose access to your
 authenticator app.
 
 Your backup code can be found in your user account settings, under Two-Factor Authentication settings. Please save it
@@ -12,4 +11,4 @@ somewhere safe. Please note that logging in using this backup code will disable 
 reconfigure it using a new app or device &mdash; this will also reset your backup code.
 
 Thanks,
-The Codidact Team
+The <%= SiteSetting['NetworkName'] %> Team

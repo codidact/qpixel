@@ -1,0 +1,49 @@
+<%= render 'posts/markdown_script' %>
+<%= render 'posts/image_upload' %>
+
+<% if @ability.errors.any? %>
+  <div class="notice is-danger">
+    There were some errors while saving this ability:
+
+    <ul>
+      <% @ability.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for @ability, url: submit_path do |f| %>
+  <%= render 'shared/body_field',
+             f: f,
+             field_name: :description,
+             field_label: t('abilities.body_label'),
+             post: @ability,
+             cur_length: @ability.description&.length,
+             min_length: 15,
+             max_length: 30_000 %>
+           <div class="post-preview"></div>
+
+
+  <% if current_user&.can_push_to_network?(@ability) %>
+    <div class="form-group">
+      <div class="checkbox-setting">
+        <div class="checkbox-setting--desc">
+          <%= label_tag :network_push, 'Push to network', class: 'form-element' %>
+          <span class="form-caption">Copy to all communities (where the ability has not been edited)?</span>
+        </div>
+        <div class="checkbox-setting--value">
+          <%= check_box_tag :network_push, true, false, class: 'form-checkbox-element' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= f.submit 'Save', class: 'button is-filled' %>
+  <%= link_to t('g.cancel').titlecase,
+              ability_path(id: @ability.internal_id),
+              class: 'button is-muted is-outlined is-danger js-cancel-edit',
+              data: {
+                question_body: t('abilities.unsaved_changes_confirmation')
+              } %>
+<% end %>

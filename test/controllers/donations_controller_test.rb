@@ -3,6 +3,14 @@ require 'test_helper'
 class DonationsControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
 
+  setup do
+    WebMock.allow_net_connect!
+  end
+
+  teardown do
+    WebMock.disable_net_connect!
+  end
+
   test 'should get index' do
     get :index
     assert_response(:success)

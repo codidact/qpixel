@@ -1,5 +1,10 @@
 en:
   comments:
+    captions:
+      first_thread_on_post: >
+        Be the first to create a new comment thread.
+      new_thread_on_post: >
+        Please check if an existing comment thread already covers what you need first.
     errors:
       disabled_on_archived_threads: >
         Archived threads cannot be replied to.
@@ -29,7 +34,17 @@ en:
         Something went wrong when trying to delete the comment.
       undelete_comment_server_error: >
         Something went wrong when trying to undelete the comment.
+      rename_thread_generic: >
+        Failed to rename the thread.
+      no_rename_thread_to_current_title: >
+        Cannot rename a thread to its current title.
+      title_presence: >
+        can't be empty after Markdown is removed.
+      comment_not_posted: >
+        Failed to create comment.
     labels:
+      comment_body_input: >
+        Your comment
       create_new_thread: >
         Start new comment thread
       reply_to_thread: >

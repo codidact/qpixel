@@ -1,23 +1,40 @@
 $(() => {
+  /**
+   * @param {QPixelNotification} notification
+   */
   const makeNotification = (notification) => {
     const template = `<div class="js-notification widget h-m-0 h-m-b-2 ${notification.is_read ? 'read' : 'is-teal'}">
         <div class="widget--body h-p-2">
             <div class="h-c-tertiary-600 h-fs-caption">
                 ${notification.community_name} &middot;
-                <span class="js-notif-state">${notification.is_read ? 'read' : `<strong>unread</strong>`}</span> &middot;
-                <span data-livestamp="${notification.created_at}">${notification.created_at}</span>
+                <span data-relstamp="${notification.created_at}"
+                      title="${notification.created_at}">
+                  ${QPixel.DOM.formatTimestamp(notification.created_at)}
+                </span>
             </div>
-            <p><a href="${notification.link}" data-id="${notification.id}"
-                  class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''} notification-link">${notification.content}</a></p>
-            <p class="has-font-size-caption"><a href="javascript:void(0)" data-notif-id="${notification.id}" class="js-notification-toggle">
+            <p>
+              <a href="${notification.link}"
+                 data-id="${notification.id}"
+                 class="h-fw-bold is-not-underlined ${notification.is_read ? 'read' : ''} notification-link">
+                 ${notification.content}
+              </a>
+            </p>
+            <p class="has-font-size-caption has-margin-bottom-0">
+              <a href="javascript:void(0)"
+                 data-notif-id="${notification.id}"
+                 class="js-notification-toggle">
                 <i class="fas fa-${notification.is_read ? 'envelope' : 'envelope-open'}"></i>
                 mark ${notification.is_read ? 'unread' : 'read'}
-            </a></p>
+              </a>
+            </p>
         </div>
     </div>`;
     return template;
   };
 
+  /**
+   * @param {number} change
+   */
   const changeInboxCount = (change) => {
     const counter = $('.inbox-count');
     let count;
@@ -42,27 +59,23 @@ $(() => {
     }
   };
 
-  $('.inbox-toggle').on('click', async (evt) => {
-    evt.preventDefault();
+  $('.inbox-toggle').on('click', async (ev) => {
+    ev.preventDefault();
     const $inbox = $('.inbox');
-    if($inbox.hasClass("is-active")) {
-      const resp = await fetch(`/users/me/notifications`, {
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' }
-      });
+    if ($inbox.hasClass('is-active')) {
+      const data = await QPixel.getNotifications();
 
-      const data = await resp.json();
-      const $inboxContainer = $inbox.find(".inbox--container");
+      const $inboxContainer = $inbox.find('.inbox--container');
       $inboxContainer.html('');
-  
+
       const unread = data.filter((n) => !n.is_read);
       const read = data.filter((n) => n.is_read);
-  
+
       unread.forEach((notification) => {
         const item = $(makeNotification(notification));
         $inboxContainer.append(item);
       });
-  
+
       $inboxContainer.append(`<div role="separator" class="header-slide--separator"></div>`);
       read.forEach((notification) => {
         const item = $(makeNotification(notification));
@@ -74,14 +87,17 @@ $(() => {
   $('.js-read-all-notifs').on('click', async (ev) => {
     ev.preventDefault();
 
-    await QPixel.fetchJSON('/notifications/read_all', {}, {
-      headers: { 'Accept': 'application/json' }
-    });
+    await QPixel.fetchJSON(
+      '/notifications/read_all',
+      {},
+      {
+        headers: { Accept: 'application/json' },
+      },
+    );
 
     $('.inbox-count').remove();
 
     $('.js-notification').removeClass('is-teal').addClass('read');
-    $('.js-notif-state').text('read');
     $('.js-notification-toggle').html(`<i class="fas fa-envelope"></i> mark unread`);
   });
 
@@ -89,9 +105,13 @@ $(() => {
     const $tgt = $(evt.target);
     const id = $tgt.data('id');
 
-    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.fetchJSON(
+      `/notifications/${id}/read`,
+      {},
+      {
+        headers: { Accept: 'application/json' },
+      },
+    );
 
     const data = await resp.json();
     $tgt.parents('.js-notification')[0].outerHTML = makeNotification(data.notification);
@@ -104,9 +124,13 @@ $(() => {
     const $tgt = $(ev.target).is('a') ? $(ev.target) : $(ev.target).parents('a');
     const id = $tgt.attr('data-notif-id');
 
-    const resp = await QPixel.fetchJSON(`/notifications/${id}/read`, {}, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await QPixel.fetchJSON(
+      `/notifications/${id}/read`,
+      {},
+      {
+        headers: { Accept: 'application/json' },
+      },
+    );
 
     const data = await resp.json();
     if (data.status !== 'success') {
@@ -121,6 +145,10 @@ $(() => {
   });
 
   $(document).on('click', '.notification-link', async (ev) => {
+    if (ev.ctrlKey || ev.metaKey) {
+      return;
+    }
+
     $(ev.target).parents('.inbox').removeClass('is-active');
   });
 });

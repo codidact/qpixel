@@ -1,11 +1,11 @@
 <%#
-    Single flag handling view.
+   "Single flag handling view.
 
-    Params:
-     * flag : the flag to display
-     * controls : boolean, whether or not to display handling controls - true by default
-     * escalation : boolean, if true will display escalation comment - false by default
-%>
+    Variables:
+      flag : the flag to display
+      controls : boolean, whether or not to display handling controls - true by default
+      escalation : boolean, if true will display escalation comment - false by default
+"%>
 
 <% controls ||= defined?(controls) && !controls.nil? ? controls : true %>
 <% escalation ||= defined?(escalation) && !escalation.nil? ? escalation : false %>
@@ -36,7 +36,7 @@
         <%= user_link flag.escalated_by, { host: flag.community.host } %> at <%= flag.escalated_at.iso8601 %>
       </p>
       <p>
-	      <strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this
+        <strong>Attention</strong>: The reply to the flag will be shown to the flagger, not the mod escalating this
         flag. Do not share sensitive, mod-only information.
       </p>
     </div>

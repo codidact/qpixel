@@ -11,6 +11,8 @@ require 'minitest/ci'
 require 'minitest/mock'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
+require 'webmock/minitest'
+
 # cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)
 Minitest.after_run do
   # IMPORTANT: the order is very specific to prevent FK constraint errors without disabling them
@@ -18,6 +20,7 @@ Minitest.after_run do
     WarningTemplate,
     ModWarning,
     ThreadFollower,
+    NewThreadFollower,
     Comment,
     CommentThread,
     Reaction,
@@ -52,6 +55,8 @@ Minitest.after_run do
     Subscription,
     MicroAuth::Token,
     MicroAuth::App,
+    ComplaintComment,
+    Complaint,
     User,
     Notification,
     SiteSetting,
@@ -76,8 +81,27 @@ end
 
 Dir.glob(Rails.root.join('test/support/**/*.rb')).each { |f| require f }
 
+module WebMockStubs
+  extend ActiveSupport::Concern
+
+  included do
+    setup do
+      # TODO: for now just stubbing out the whole response is enough.
+      # Consider returning something resembling the real response
+      stub_request(:get, lambda do |uri|
+        uri.origin == 'https://cdn.jsdelivr.net'
+      end)
+    end
+
+    teardown do
+      WebMock.reset!
+    end
+  end
+end
+
 class ActiveSupport::TestCase
   include ActiveJob::TestHelper
+  include WebMockStubs
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
@@ -129,10 +153,52 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_audit_log(event_type, related: nil)
+    log_entry = AuditLog.where(event_type: event_type)
+                        .order(created_at: :desc)
+                        .last
+    assert_not_nil(log_entry)
+    assert_equal event_type, log_entry['event_type']
+
+    if related.present?
+      assert_equal related.id, log_entry['related_id']
+    else
+      assert_nil(log_entry['related_id'])
+    end
+  end
+
+  def assert_draft_deleted(user, path, *fields)
+    base_key = "saved_post.#{user.id}.#{path}"
+
+    fields.each do |key|
+      key_name = DraftManagement::NESTED_DRAFTABLE_FIELDS.include?(key) ? base_key : "#{base_key}.#{key}"
+      assert_not(RequestContext.redis.exists?(key_name),
+                 "Expected '#{key_name}' draft to be deleted")
+    end
+  end
+
   def assert_valid_json_response
     assert_nothing_raised do
       parsed = JSON.parse(response.body)
       assert_not_nil(parsed)
+    end
+  end
+
+  def assert_json_failure(code, status: 'failed')
+    assert_response(code)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal status, parsed['status']
+    end
+  end
+
+  def assert_json_success(status: 'success')
+    assert_response(:success)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal status, parsed['status']
     end
   end
 
@@ -165,6 +231,8 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
@@ -173,9 +241,19 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
     integration_session.host = Community.first.host
+  end
+end
+
+class ActionMailer::TestCase
+  include WebMockStubs
+
+  def default_url_options
+    Rails.application.config.action_mailer.default_url_options
   end
 end

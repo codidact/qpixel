@@ -1,5 +1,9 @@
 <% content_for :title, "Posts tagged #{@tag.name}" %>
 
+<%
+  wiki = rendered_wiki(@tag)
+%>
+
 <h1 class="has-margin-0 has-margin-top-4">
   Posts tagged <span class="<%= tag_classes(@tag, @category) %> is-large wrap-anywhere"><%= @tag.name %></span>
   <% if at_least_moderator? %>
@@ -60,17 +64,17 @@
     <% end %>
   </div>
   <div class="widget--body">
-    <% if @tag.wiki.present? %>
-      <% if @tag.wiki.length < 600 %>
-        <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+    <% if wiki.present? %>
+      <% if wiki.length < 600 %>
+        <%= wiki %>
       <% else %>
         <details>
           <summary>Tag Wiki</summary>
-          <%= raw(sanitize(@tag.wiki, scrubber: scrubber)) %>
+          <%= wiki %>
         </details>
       <% end %>
     <% end %>
-    <% unless @tag.wiki.present? %>
+    <% unless wiki.present? %>
       <p class="has-font-size-caption has-margin-0">
         <em>
           This tag doesn't have a detailed wiki yet.

@@ -9,14 +9,19 @@ normal_two:
   reply_count: 0
   post: question_two
   community: sample
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2022-01-01T00:00:00.000000Z
 
 locked:
   title: locked
   reply_count: 0
   post: question_one
   community: sample
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2020-01-01T00:00:00.000000Z
   locked: true
   locked_by: admin
+  locked_at: 2021-01-01T00:00:00.000000Z
 
 deleted:
   title: deleted
@@ -62,4 +67,25 @@ new_user_on_own_post:
   title: new user on own post
   reply_count: 0
   post: new_user_question
+  community: sample
+
+with_user_pings:
+  title: Pings for @#-1 and @#<%= ActiveRecord::FixtureSet.identify :standard_user %> users
+  reply_count: 1
+  post: question_one
+  community: sample
+
+without_activity:
+  title: Comment thread without activity
+  reply_count: 0
+  post: question_one
+  community: sample
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2020-01-01T00:00:00.000000Z
+
+without_followers:
+  title: Comment thread without any followers
+  title: Comment thread without activity
+  reply_count: 0
+  post: question_one
   community: sample

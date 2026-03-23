@@ -26,7 +26,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     get :new, params: { type: 'all' }
     assert_response(:success)
-    assert_not_nil assigns(:phrasing)
     assert_not_nil assigns(:subscription)
   end
 
@@ -44,10 +43,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sign_in users(:standard_user)
     post :create, params: { subscription: { type: 'tag', qualifier: 'nope', name: 'test', frequency: 7 } }
 
-    assert_response(:internal_server_error)
+    assert_response(:bad_request)
     assert_not_nil assigns(:subscription)
-    assert assigns(:subscription).errors.any?,
-           '@subscription instance variable has no errors attached but failed to save'
+    assert assigns(:subscription).errors.any?, '@subscription failed to save without errors'
   end
 
   test 'should prevent users updating subscriptions belonging to others' do
@@ -110,5 +108,31 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:subscription)
     assert_valid_json_response
     assert_equal 'success', JSON.parse(response.body)['status']
+  end
+
+  test 'qualifiers should correctly return available items based on type' do
+    sign_in users(:admin)
+
+    Subscription::TYPES.each do |type|
+      try_subscription_qualifiers(type)
+
+      assert_response(:success)
+      assert_valid_json_response
+
+      items = JSON.parse(response.body)
+
+      if Subscription::QUALIFIED_TYPES.include?(type)
+        assert_not items.empty?
+        assert(items.all? { |i| i['id'].present? && i['text'].present? })
+      else
+        assert items.empty?
+      end
+    end
+  end
+
+  private
+
+  def try_subscription_qualifiers(type, search: nil)
+    get :qualifiers, params: { type: type, q: search }
   end
 end

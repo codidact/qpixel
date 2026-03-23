@@ -4,8 +4,7 @@ module CommentsHelper
   # @param body [String] coment thread body
   # @return [String] generated title
   def generate_thread_title(body)
-    body = strip_markdown(body)
-    body = body.gsub(/^>.+?$/, '') # also remove leading blockquotes
+    body = strip_markdown(body, strip_leading_quote: true)
 
     if body.length > 100
       "#{body[0..100]}..."
@@ -38,7 +37,7 @@ module CommentsHelper
   # @param content [String] content to get pinged users from
   # @return [Hash{String => User}] list of pinged users
   def pinged_users(content)
-    user_ids = content.scan(/@#(\d+)/).map { |g| g[0].to_i }
+    user_ids = content.scan(Comment::USER_PING_REG_EXP).map { |g| g[0].to_i }
     User.where(id: user_ids).to_a.to_h { |u| [u.id, u] }
   end
 
@@ -47,18 +46,20 @@ module CommentsHelper
   # @param content [String] content to convert ping-strings for
   # @param pingable [Array<Integer>, nil] A list of user IDs. Any user ID not present will be displayed as 'unpingable'.
   # @return [ActiveSupport::SafeBuffer]
-  def render_pings(content, pingable: nil)
+  def render_pings(content, pingable: nil, host: nil)
     users = pinged_users(content)
 
-    content.gsub(/@#(\d+)/) do |ping|
+    content.gsub(Comment::USER_PING_REG_EXP) do |ping|
       user = users[Regexp.last_match(1).to_i]
       if user.nil?
         ping
       else
         was_pung = pingable.present? && pingable.include?(user.id)
         classes = "ping #{'me' if user.same_as?(current_user)} #{'unpingable' unless was_pung}"
-        user_link user, class: classes, dir: 'ltr',
-                  title: was_pung ? '' : I18n.t('comments.warnings.unrelated_user_not_pinged')
+        user_link(user, { host: host },
+                  class: classes,
+                  dir: 'ltr',
+                  title: was_pung ? '' : I18n.t('comments.warnings.unrelated_user_not_pinged'))
       end
     end.html_safe
   end
@@ -69,7 +70,7 @@ module CommentsHelper
   def render_pings_text(content)
     users = pinged_users(content)
 
-    content.gsub(/@#(\d+)/) do |ping|
+    content.gsub(Comment::USER_PING_REG_EXP) do |ping|
       user = users[Regexp.last_match(1).to_i]
       user.nil? ? ping : "@#{rtl_safe_username(user)}"
     end
@@ -181,6 +182,12 @@ module CommentsHelper
     end
 
     [true, message]
+  end
+
+  # Get the maximum comment thread title length for the current community, with a maximum of 255.
+  # @return [Integer]
+  def maximum_thread_title_length
+    [SiteSetting['MaxThreadTitleLength'] || 255, 255].min
   end
 end
 

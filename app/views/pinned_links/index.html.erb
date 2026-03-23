@@ -1,9 +1,16 @@
+<%
+  title = t('mod.tools.pinned_links')
+  blurb = t('mod.tools.pinned_links_blurb')
+%>
+
+<% content_for :title, title %>
+
 <%= link_to moderator_path, class: 'has-font-size-small' do %>
   &laquo; Return to moderator tools
 <% end %>
 
-<h1>Featured Links</h1>
-<p class="is-lead">Featured links allow you as a moderator to draw attention to issues or posts of importance to the community. Use them sparingly and only when needed, because they tend to get ignored if used too often.</p>
+<h1><%= title %></h1>
+<p class="is-lead"><%= blurb %></p>
 
 <div class="grid has-margin-bottom-4">
     <% if current_user.is_global_moderator %>
@@ -26,6 +33,22 @@
                         class: "button is-muted is-outlined #{(params[:filter] == 'inactive') ? 'is-active' : ''}" %>
             <%= link_to "all", query_url(global: params[:global] || '0', filter: 'all'),
                         class: "button is-muted is-outlined #{(params[:filter] == 'all') ? 'is-active' : ''}" %>
+        </div>
+    </div>
+    <div class="grid--cell">
+        <div class="button-list is-gutterless">
+            <%= link_to 'past',
+                        query_url(period: 'past'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'past'}" %>
+            <%= link_to 'current',
+                        query_url(period: 'current'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'current'}" %>
+            <%= link_to 'future',
+                        query_url(period: 'future'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'future'}" %>
+            <%= link_to 'any',
+                        query_url(period: 'any'),
+                        class: "button is-muted is-outlined #{'is-active' if @period == 'any'}" %>
         </div>
     </div>
     <div class="grid--cell is-flexible">
@@ -54,7 +77,7 @@
         <% pl_link = pl.post.nil? ? pl.link : ('Post #' + pl.post.id.to_s) %>
         <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
         <tr>
-            <td>
+            <td class="nowrap">
                 <% if pl.shown_before.nil? %>
                     <% if pl.post.nil? %>
                         link

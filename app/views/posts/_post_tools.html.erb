@@ -6,7 +6,7 @@
     </div>
     <div class="modal--body">
       <% unless post.locked? && !at_least_moderator? %>
-        <% if post.answer? %>
+        <% if post.answer? && current_user&.post_privilege?('flag_curate', post) %>
           <details>
             <summary>Convert to comment</summary>
             <p>
@@ -35,7 +35,7 @@
                 <%= label_tag :target_id, 'Target Category', class: 'form-element', for: "target_id_#{post.id}" %>
                 <span class="form-caption">Choose a category to move this post to.</span>
                 <%= select_tag :target_id, options_for_select([]), include_blank: true,
-                               class: 'form-element js-category-change-select', id: "target_id_#{post.id}" %>
+                               class: 'form-element js-category-select', id: "target_id_#{post.id}" %>
               </div>
 
               <%= submit_tag 'Move', class: 'button is-filled' %>
@@ -127,6 +127,40 @@
             <a href="javascript:void(0)" class="js-nominate-promotion button is-filled" data-post-id="<%= post.id %>">
               Nominate
             </a>
+          <% end %>
+        </details>
+      <% end %>
+      <% if current_user&.staff? %>
+        <details>
+          <summary>Delete for legal reasons</summary>
+          <p>
+            If this post contains harmful or illegal content, delete it for legal reasons. This will clear the contents
+            of the post, hide its history, and delete it. Children will also be deleted but <em>not</em> cleared or
+            have their history hidden.
+          </p>
+          <%= form_tag legal_delete_post_path(post), method: :delete do %>
+            <div class="form-group complaints-container">
+              <%= label_tag :content_type, 'Does this content fall into any of the following types of content?',
+                            class: 'form-element' %>
+              <div class="form-caption">
+                This will be used to automatically generate a content report for this post to ensure it is included
+                in our reporting.
+              </div>
+              <% content_types.each do |key, type| %>
+                <div class="form-radio-group">
+                  <%= radio_button_tag :content_type, key, id: "content_type_#{key}", class: 'form-radio-element' %>
+                  <div>
+                    <%= label_tag "content_type_#{key}", type['name'] %>
+                    <div class="form-caption">
+                      <%= type['description'] %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="form-group">
+              <%= submit_tag 'Delete', class: 'button is-danger is-filled' %>
+            </div>
           <% end %>
         </details>
       <% end %>

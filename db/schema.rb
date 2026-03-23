@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_20_104406) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.string "color_code"
     t.text "asking_guidance_override", size: :medium
     t.text "answering_guidance_override", size: :medium
-    t.integer "min_view_trust_level"
+    t.integer "min_view_trust_level", default: 0, null: false
     t.bigint "license_id"
     t.integer "sequence"
     t.boolean "use_for_hot_posts", default: true
@@ -115,6 +115,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
+    t.index ["min_view_trust_level"], name: "index_categories_on_min_view_trust_level"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
@@ -175,6 +176,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "community_id", null: false
+    t.datetime "locked_at", precision: nil
+    t.datetime "last_activity_at"
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -194,6 +197,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.boolean "has_reference", default: false, null: false
     t.text "reference_text"
     t.bigint "references_comment_id"
+    t.datetime "last_activity_at"
     t.index ["comment_thread_id"], name: "index_comments_on_comment_thread_id"
     t.index ["community_id"], name: "index_comments_on_community_id"
     t.index ["post_id"], name: "index_comments_on_post_type_and_post_id"
@@ -232,6 +236,38 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.index ["user_id"], name: "index_community_users_on_user_id"
   end
 
+  create_table "complaint_comments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "complaint_id", null: false
+    t.bigint "user_id"
+    t.text "content", null: false
+    t.boolean "internal", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["complaint_id"], name: "index_complaint_comments_on_complaint_id"
+    t.index ["user_id"], name: "index_complaint_comments_on_user_id"
+  end
+
+  create_table "complaints", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "report_type"
+    t.string "status"
+    t.bigint "assignee_id"
+    t.boolean "user_wants_updates"
+    t.string "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "content_type"
+    t.string "email"
+    t.string "reported_url"
+    t.datetime "status_updated_at"
+    t.string "outcome"
+    t.index ["access_token"], name: "index_complaints_on_access_token", unique: true
+    t.index ["assignee_id"], name: "index_complaints_on_assignee_id"
+    t.index ["report_type"], name: "index_complaints_on_report_type"
+    t.index ["status"], name: "index_complaints_on_status"
+    t.index ["user_id"], name: "index_complaints_on_user_id"
+  end
+
   create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "log_type"
     t.string "destination"
@@ -252,6 +288,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "uuid"
     t.string "user_agent"
+    t.string "version"
     t.index ["community_id"], name: "index_error_logs_on_community_id"
     t.index ["user_id"], name: "index_error_logs_on_user_id"
   end
@@ -268,6 +305,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.string "exclude_tags"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "source", default: "any", null: false
     t.index ["user_id"], name: "index_filters_on_user_id"
   end
 
@@ -364,6 +402,15 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
+  end
+
+  create_table "new_thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "post_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_new_thread_followers_on_post_id"
+    t.index ["user_id", "post_id"], name: "index_new_thread_followers_on_user_id_and_post_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -505,7 +552,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.datetime "locked_at", precision: nil
     t.datetime "locked_until", precision: nil
     t.index ["att_source"], name: "index_posts_on_att_source"
-    t.index ["body_markdown"], name: "index_posts_on_body_markdown", type: :fulltext
+    t.index ["body_markdown", "title"], name: "index_posts_on_body_markdown_and_title", type: :fulltext
     t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["close_reason_id"], name: "index_posts_on_close_reason_id"
     t.index ["community_id"], name: "index_posts_on_community_id"
@@ -589,6 +636,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.text "description"
     t.string "category"
     t.bigint "community_id"
+    t.string "options"
     t.index ["category"], name: "index_site_settings_on_category"
     t.index ["community_id"], name: "index_site_settings_on_community_id"
     t.index ["name"], name: "index_site_settings_on_name"
@@ -687,9 +735,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
     t.bigint "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.bigint "post_id"
     t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
-    t.index ["post_id"], name: "index_thread_followers_on_post_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
@@ -820,6 +866,10 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
   add_foreign_key "community_users", "communities"
   add_foreign_key "community_users", "users"
   add_foreign_key "community_users", "users", column: "deleted_by_id"
+  add_foreign_key "complaint_comments", "complaints"
+  add_foreign_key "complaint_comments", "users"
+  add_foreign_key "complaints", "users"
+  add_foreign_key "complaints", "users", column: "assignee_id"
   add_foreign_key "error_logs", "communities"
   add_foreign_key "error_logs", "users"
   add_foreign_key "filters", "users"
@@ -853,7 +903,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_28_030361) do
   add_foreign_key "tag_synonyms", "tags"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
-  add_foreign_key "thread_followers", "posts"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
   add_foreign_key "user_websites", "users"
