@@ -9,6 +9,23 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:categories)
   end
 
+  test ':index should  correctly search categories' do
+    get :index
+    assert_response(:success)
+    @all_categories = assigns(:categories)
+    assert_not_nil @all_categories
+    assert @all_categories.any?
+
+    get :index, params: { term: 'meta' }
+    assert_response(:success)
+    @search_categories = assigns(:categories)
+    assert_not_nil @search_categories
+    assert @search_categories.any?
+    assigns(@search_categories.all? { |c| c.name.downcase.match?('meta') })
+
+    assert_not_equal @all_categories.size, @search_categories.size
+  end
+
   test 'homepage should show categories in the correct order' do
     get :homepage
     assert_not_nil assigns(:header_categories)

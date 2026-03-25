@@ -5,7 +5,15 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.accessible_to(current_user).all.order(sequence: :asc, id: :asc)
+    @categories = if params[:term].present?
+                    Category.search(params[:term])
+                  else
+                    Category.all
+                  end
+
+    @categories = @categories.accessible_to(current_user)
+                             .order(sequence: :asc, id: :asc)
+
     respond_to do |format|
       format.html
       format.json do
