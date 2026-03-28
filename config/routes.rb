@@ -344,9 +344,11 @@ Rails.application.routes.draw do
   end
 
   scope 'abilities' do
-    root                                   to: 'abilities#index', as: :abilities
-    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
-    get ':id',                             to: 'abilities#show', as: :ability
+    root                                     to: 'abilities#index', as: :abilities
+    get   'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get   ':id',                             to: 'abilities#show', as: :ability
+    get   ':id/edit',                        to: 'abilities#edit', as: :edit_ability
+    patch ':id/edit',                        to: 'abilities#update', as: :update_ability
   end
 
   scope 'donate' do
