@@ -8,7 +8,8 @@
     "moduleResolution": "node",
     "noEmit": true,
     "target": "ES2021",
-    "types": ["./global.d.ts", "@types/jquery", "moment", "@types/select2"]
+    "types": ["./global.d.ts", "@types/jquery", "moment", "@types/select2"],
+    "ignoreDeprecations": "6.0"
   },
   "include": ["./app/assets/javascripts", "./public/assets/community"],
   "exclude": [
