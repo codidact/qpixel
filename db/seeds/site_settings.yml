@@ -877,4 +877,12 @@
   category: SafetyCenter
   community_id: ~
   description: >
-    The user ID of the Director with responsibility for OSA compliance. 
+    The user ID of the Director with responsibility for OSA compliance.
+
+- name: ContentPolicyURL
+  value: https://codidact.org/OP02
+  value_type: string
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    A URL where this instance's online safety & content policy can be found.
