@@ -381,7 +381,7 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     post osa_training_complete_path
     assert_response(:found)
     assert_redirected_to safety_center_path
-    assert_equal 'Thank you. Your training has been marked as complete.', flash[:success]
+    assert_equal I18n.t('safety_center.training_complete'), flash[:success]
     assert_not_nil users(:staff).osa_training
   end
 

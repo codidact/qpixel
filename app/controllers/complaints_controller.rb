@@ -214,10 +214,13 @@ class ComplaintsController < ApplicationController
   end
 
   def training_complete
-    if current_user.update(osa_training: DateTime.now)
-      flash[:success] = 'Thank you. Your training has been marked as complete.'
+    user_update = current_user.update(osa_training: DateTime.now)
+    audit_log = AuditLog.moderator_audit(event_type: 'osa_training_completed', user: current_user,
+                                         comment: 'OSA training completed.')
+    if user_update && audit_log
+      flash[:success] = I18n.t('safety_center.training_complete')
     else
-      flash[:danger] = 'Something went wrong. Please tell a staff member about this.'
+      flash[:danger] = I18n.t('safety_center.training_complete_failed')
     end
     redirect_to safety_center_path
   end
