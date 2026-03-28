@@ -369,6 +369,13 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_response(:success)
   end
 
+  test 'training should not be accessible if disabled' do
+    SiteSetting['OSATrainingEnabled'] = false
+    sign_in users(:staff)
+    get osa_training_path('home')
+    assert_response(:not_found)
+  end
+
   test 'should be able to complete training' do
     sign_in users(:staff)
     post osa_training_complete_path

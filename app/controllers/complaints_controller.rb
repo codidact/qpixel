@@ -257,7 +257,8 @@ class ComplaintsController < ApplicationController
   end
 
   def training_access
-    unless user_signed_in? && (current_user.staff? || current_user.at_least_moderator?)
+    osa_training_enabled = SiteSetting['OSATrainingEnabled']
+    unless user_signed_in? && (current_user.staff? || current_user.at_least_moderator?) && osa_training_enabled
       not_found!
     end
   end

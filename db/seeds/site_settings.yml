@@ -862,3 +862,13 @@
   description: >
     Formatting types allowed in post titles.
     By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.
+
+- name: OSATrainingEnabled
+  value: true
+  value_type: boolean
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    Should Online Safety Act moderator training be available on this instance?
+    
+
