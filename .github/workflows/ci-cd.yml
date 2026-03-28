@@ -49,6 +49,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - run: npx tsc -v
+      - run: npm ls typescript
       - run: tsc
 
   tests:
