@@ -49,9 +49,9 @@ jobs:
         with:
           node-version: 22
       - run: npm ci --verbose
-      - run: npm ls -g
       - run: npx tsc -v
       - run: npm ls typescript
+      - run: grep "var version" node_modules/typescript/lib/typescript.js
       - run: tsc
 
   tests:
