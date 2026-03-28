@@ -871,4 +871,10 @@
   description: >
     Should Online Safety Act moderator training be available on this instance?
     
-
+- name: OSADirector
+  value: 8045
+  value_type: integer
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    The user ID of the Director with responsibility for OSA compliance. 
