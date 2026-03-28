@@ -48,7 +48,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 22
-      - run: npm install
+      - run: npm ci
       - run: npx tsc -v
       - run: npm ls typescript
       - run: tsc
