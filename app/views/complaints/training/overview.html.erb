@@ -28,7 +28,7 @@
   Responsibility for compliance with the requirements of the Act obviously falls on us (meaning the Codidact Foundation
   as the organisation running the platform). The Foundation designates one of the Board of Directors as a named
   individual with ultimate responsibility for compliance with the Act, which is currently
-  <%= user_link(User.find(SiteSetting['OSADirector'])) %>.
+  <%= user_link(User.find_by(id: SiteSetting['OSADirector'])) %>.
 </p>
 <p>
   One of our responsibilities is to ensure that our volunteer moderators (that's you) have an awareness of the Act and

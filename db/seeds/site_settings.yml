@@ -864,7 +864,7 @@
     By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.
 
 - name: OSATrainingEnabled
-  value: true
+  value: false
   value_type: boolean
   category: SafetyCenter
   community_id: ~
@@ -872,7 +872,7 @@
     Should Online Safety Act moderator training be available on this instance?
     
 - name: OSADirector
-  value: 8045
+  value: 1
   value_type: integer
   category: SafetyCenter
   community_id: ~
@@ -880,7 +880,7 @@
     The user ID of the Director with responsibility for OSA compliance.
 
 - name: ContentPolicyURL
-  value: https://codidact.org/OP02
+  value: https://example.com/content-policy
   value_type: string
   category: SafetyCenter
   community_id: ~
