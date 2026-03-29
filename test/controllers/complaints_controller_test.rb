@@ -346,6 +346,10 @@ class ComplaintsControllerTest < ActionDispatch::IntegrationTest
     assert_response(:not_found)
   end
 
+  setup do
+    SiteSetting['OSATrainingEnabled'] = true
+  end
+
   test 'anon should not be able to access training' do
     get osa_training_path('home')
     assert_response(:not_found)
