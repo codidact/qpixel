@@ -48,8 +48,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 22
-      - run: npm install
-      - run: tsc
+      - run: npm ci --verbose
+      - run: npx tsc --version
+      - run: npm run typecheck
 
   tests:
     name: Ruby on Rails tests

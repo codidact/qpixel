@@ -1,0 +1,52 @@
+<h1 class="is-brand-comp with-subtitle">Online Safety Act</h1>
+<h2 class="subtitle">Moderator Training</h2>
+
+<p>
+  As part of our responsibilities under the Online Safety Act, we're obligated to provide training to all staff and
+  volunteers undertaking moderation duties.
+</p>
+<p>
+  This training should take around an hour to read through all the content. Once you've finished all the modules you'll
+  be able to mark it as complete, but you'll be able to come back here any time if you need a reminder.
+</p>
+
+<div class="modules">
+  <%= link_to osa_training_path('overview'), class: 'module-widget' do %>
+    <h4>Overview</h4>
+    <p class="has-font-size-small">
+      An overview of the Online Safety Act, our duties, and your responsibilities as a volunteer moderator.
+    </p>
+  <% end %>
+  <%= link_to osa_training_path('illegal-content'), class: 'module-widget' do %>
+    <h4>Priority & Non-Priority Illegal Content</h4>
+    <p class="has-font-size-small">
+      An explanation of the difference between the 17 types of priority illegal content, and other applicable types of
+      non-priority illegal content.
+    </p>
+  <% end %>
+  <%= link_to osa_training_path('definitions'), class: 'module-widget' do %>
+    <h4>Definitions</h4>
+    <p class="has-font-size-small">
+      Definitions of all the types of illegal content which apply to us.
+    </p>
+  <% end %>
+  <%= link_to osa_training_path('handling'), class: 'module-widget' do %>
+    <h4>Handling Illegal Content</h4>
+    <p class="has-font-size-small">
+      Your responsibilities and the steps you need to take in response to identifying potentially illegal content.
+    </p>
+  <% end %>
+  <%= link_to osa_training_path('higher-risk'), class: 'module-widget' do %>
+    <h4>Higher-Risk Content</h4>
+    <p class="has-font-size-small">
+      Some types of content are more likely to occur in our communities than others. More detail on those here.
+    </p>
+  <% end %>
+  <%= link_to osa_training_path('conclusion'), class: 'module-widget' do %>
+    <h4>Conclusion</h4>
+    <p class="has-font-size-small">
+      Thank you for taking the time to complete this training. Mark it as complete here and come back here if you need
+      to refer back to it.
+    </p>
+  <% end %>
+</div>
