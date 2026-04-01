@@ -60,3 +60,44 @@
 .is-lead + h1.complaint-title {
   margin-top: -1rem;
 }
+
+.is-brand-comp {
+  color: $brand-comp;
+}
+
+.with-subtitle {
+  margin-bottom: 0;
+}
+
+.subtitle {
+  margin-top: 0;
+  font-weight: normal;
+  font-size: 1.2rem;
+}
+
+.modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 0.5rem;
+}
+
+.module-widget {
+  border: 1px solid $muted-graphic;
+  border-radius: 0.2rem;
+  padding: 0.5rem;
+  color: $key !important;
+
+  > h4 {
+    text-decoration: underline;
+  }
+
+  > p {
+    text-decoration: none;
+  }
+
+  &:hover {
+    background: $primary;
+    color: white !important;
+    text-decoration: none !important;
+  }
+}

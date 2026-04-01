@@ -390,6 +390,8 @@ Rails.application.routes.draw do
     post   'report/:token/content_type',   to: 'complaints#change_content_type', as: :update_complaint_content_type
     get    'reports',                      to: 'complaints#reports', as: :complaints
     get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
+    get    'training/:page',               to: 'complaints#training', as: :osa_training
+    post   'training/complete',            to: 'complaints#training_complete', as: :osa_training_complete
   end
 
   get   '403',                             to: 'errors#forbidden'

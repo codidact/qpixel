@@ -3,6 +3,7 @@ class ComplaintsController < ApplicationController
   before_action :access_check, only: [:show, :comment]
   before_action :write_access_check, only: [:self_assign, :update_status, :change_content_type]
   before_action :verify_staff, only: [:reports, :reporting]
+  before_action :training_access, only: [:training, :training_complete]
 
   def index
     render layout: 'without_sidebar'
@@ -202,6 +203,28 @@ class ComplaintsController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def training
+    pages = Dir.glob(Rails.root.join('app', 'views', 'complaints', 'training', '*.html.erb'))
+               .map { |page| File.basename(page, '.html.erb') }
+    if pages.include?(params[:page])
+      render "complaints/training/#{params[:page]}", layout: 'osa_training'
+    else
+      not_found!
+    end
+  end
+
+  def training_complete
+    user_update = current_user.update(osa_training: DateTime.now)
+    audit_log = AuditLog.moderator_audit(event_type: 'osa_training_completed', user: current_user,
+                                         comment: 'OSA training completed.')
+    if user_update && audit_log
+      flash[:success] = I18n.t('safety_center.training_complete')
+    else
+      flash[:danger] = I18n.t('safety_center.training_complete_failed')
+    end
+    redirect_to safety_center_path
+  end
+
   private
 
   def access_check
@@ -234,5 +257,12 @@ class ComplaintsController < ApplicationController
     end
 
     @complaint
+  end
+
+  def training_access
+    osa_training_enabled = SiteSetting['OSATrainingEnabled']
+    unless user_signed_in? && (current_user.staff? || current_user.at_least_moderator?) && osa_training_enabled
+      not_found!
+    end
   end
 end
