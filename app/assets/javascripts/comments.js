@@ -27,6 +27,11 @@ $(() => {
     return !!wrapper.querySelector('[data-inline=true]');
   };
 
+  const afterThreadRender = () => {
+    window.MathJax && MathJax.typeset();
+    window.hljs && hljs.highlightAll();
+  };
+
   /**
    * @param {HTMLElement} wrapper
    * @param {string} threadId
@@ -42,8 +47,15 @@ $(() => {
 
     wrapper.innerHTML = data;
 
-    window.MathJax && MathJax.typeset();
-    window.hljs && hljs.highlightAll();
+    if (window.MathJax) {
+      const titleElem = wrapper.querySelector('.js-thread-title');
+
+      if (titleElem && QPixel.DOM.isHTMLElement(titleElem)) {
+        titleElem.dataset.title = titleElem.textContent;
+      }
+    }
+
+    afterThreadRender();
   }
 
   $(document).on('click', '.js--comment-link', async (ev) => {
@@ -78,13 +90,14 @@ $(() => {
   $(document).on('click', '.js-collapse-thread', async (ev) => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
+    const $title = $widget.find('.js-thread-title');
     const $embed = $tgt.parents('.post--comments-thread');
 
     const threadId = $widget.data('thread');
     const isLocked = $widget.data('locked');
     const isDeleted = $widget.data('deleted');
     const isArchived = $widget.data('archived');
-    const threadTitle = $widget.find('.js-thread-title').text();
+    const threadTitle = $title.data('title') || $title.text();
     const replyCount = $widget.data('comments');
 
     const $container = $(`<div class="post--comments-thread is-inline"></div>`);
@@ -111,6 +124,8 @@ $(() => {
     $container.append($link);
     $container.append(`(${replyCount} comment${replyCount !== 1 ? 's' : ''})`);
     $embed[0].outerHTML = $container[0].outerHTML;
+
+    afterThreadRender();
   });
 
   $(document).on('click', '.js-comment-edit', async (evt) => {
