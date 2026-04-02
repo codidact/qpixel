@@ -415,6 +415,10 @@ window.QPixel = {
       headers: { 'Accept': 'text/html' }
     });
 
+    if (!resp.ok) {
+      return '';
+    }
+
     const content = await resp.text();
 
     return content;

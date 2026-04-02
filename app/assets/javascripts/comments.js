@@ -35,6 +35,11 @@ $(() => {
   async function openThread(wrapper, threadId, options) {
     const data = await QPixel.getThreadContent(threadId, options);
 
+    if (!data) {
+      QPixel.createNotification('danger', 'Failed to open thread');
+      return;
+    }
+
     wrapper.innerHTML = data;
 
     window.MathJax && MathJax.typeset();
@@ -93,7 +98,7 @@ $(() => {
 
     if (isDeleted) {
       $container.append(
-        `<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`
+        `<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`,
       );
       $container.addClass('is-deleted');
     }
@@ -185,7 +190,8 @@ $(() => {
       if (isDelete) {
         $comment.addClass('deleted-content');
         $tgt.removeClass('js-comment-delete').addClass('js-comment-undelete').val('undelete');
-      } else {
+      }
+      else {
         $comment.removeClass('deleted-content');
         $tgt.removeClass('js-comment-undelete').addClass('js-comment-delete').val('delete');
       }
@@ -202,7 +208,7 @@ $(() => {
     const $modal = $($tgt.data('modal'));
 
     const resp = await QPixel.fetch(`/comments/thread/${threadId}/followers`, {
-      headers: { Accept: 'text/html' }
+      headers: { Accept: 'text/html' },
     });
 
     const data = await resp.text();
@@ -274,7 +280,7 @@ $(() => {
         openThread(wrapper, threadID, { inline });
       }
     });
-  })
+  });
 
   /**
    * @param {Element} target
@@ -287,7 +293,7 @@ $(() => {
       const $submitter = $form.find('.js-rename-thread');
 
       const newStripped = QPixel.MD.stripMarkdown($tgt.val(), {
-        removeLeadingQuote: true
+        removeLeadingQuote: true,
       });
 
       if (newStripped === $tgt.data('old')) {
@@ -316,7 +322,7 @@ $(() => {
       const { old } = dataset;
 
       const newStripped = QPixel.MD.stripMarkdown(newTitle, {
-        removeLeadingQuote: true
+        removeLeadingQuote: true,
       });
 
       if (newStripped === old) {
@@ -344,7 +350,8 @@ $(() => {
         const inline = isInlineCommentThread(wrapper);
         openThread(wrapper, threadID, { inline });
       });
-    } else {
+    }
+    else {
       QPixel.createNotification('danger', 'Failed to find thread to lock');
     }
   });
@@ -434,7 +441,8 @@ $(() => {
             .attr('data-user-id', id);
         });
       QPixel.Popup.getPopup(items, $tgt[0], callback);
-    } else {
+    }
+    else {
       QPixel.Popup.destroyAll();
     }
   }
@@ -448,7 +456,8 @@ $(() => {
     if ($thread.is(':hidden')) {
       $thread.show();
       $thread.find('.js-comment-field').trigger('focus');
-    } else {
+    }
+    else {
       $thread.hide();
     }
   });
@@ -463,7 +472,8 @@ $(() => {
     if ($reply.is(':hidden')) {
       $reply.show();
       $reply.find('.js-comment-field').trigger('focus');
-    } else {
+    }
+    else {
       $reply.hide();
     }
   });
