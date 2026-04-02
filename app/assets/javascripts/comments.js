@@ -41,14 +41,14 @@ $(() => {
     window.hljs && hljs.highlightAll();
   }
 
-  $(document).on('click', '.post--comments-thread.is-inline a', async (ev) => {
+  $(document).on('click', '.js--comment-link', async (ev) => {
     if (ev.ctrlKey || ev.metaKey) {
       return;
     }
 
     ev.preventDefault();
 
-    const $tgt = $(ev.target);
+    const $tgt = $(ev.currentTarget);
     const $threadId = $tgt.data('thread');
     const wrapper = getCommentThreadWrapper($tgt);
 
