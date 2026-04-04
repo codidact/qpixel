@@ -25,9 +25,9 @@ module Advertisements::CommunityHelper
         img.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
-      if icon_path.present?
-        icon = community_icon(icon_path)
+      icon = community_icon(SiteSetting['SiteLogoPath'])
+
+      if icon.present?
         icon.resize_to_fit!(400, 200)
         ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
       else
