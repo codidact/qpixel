@@ -498,7 +498,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_response(:success)
       items = assigns(:items)
 
-      assert(items.all? { |x| x.instance_of?(model) })
+      assert(items.all?(model))
     end
   end
 
@@ -554,7 +554,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_response(:success)
       items = assigns(:items)
 
-      assert(items.all? { |x| x.instance_of?(model) })
+      assert(items.all?(model))
     end
   end
 

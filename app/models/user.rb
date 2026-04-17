@@ -463,7 +463,7 @@ class User < ApplicationRecord
   def category_preference(category_id)
     category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
     AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
-             .merge(RequestContext.redis.hgetall(category_key))
+                                                         .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!
