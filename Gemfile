@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '>= 3.3', '<= 3.4'
+ruby '>= 3.3', '< 3.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 5.0.0'
