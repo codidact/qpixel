@@ -3,6 +3,7 @@ ruby '>= 3.3', '< 3.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
 gem 'coffee-rails', '~> 5.0.0'
+gem 'connection_pool', '< 3.0' # mperham/connection_pool#210
 gem 'counter_culture', '~> 3.2'
 gem 'fastimage', '~> 2.2'
 gem 'image_processing', '~> 1.12'
