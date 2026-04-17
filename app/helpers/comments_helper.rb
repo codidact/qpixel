@@ -1,4 +1,5 @@
 # Helpers related to comments.
+# rubocop:disable Style/OneClassPerFile
 module CommentsHelper
   # Generates a comment thread title from its body
   # @param body [String] coment thread body
@@ -203,3 +204,4 @@ class CommentScrubber < Rails::Html::PermitScrubber
     node.text?
   end
 end
+# rubocop:enable Style/OneClassPerFile
