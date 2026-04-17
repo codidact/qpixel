@@ -247,6 +247,7 @@ GEM
       minitest (>= 5.0.6)
     mize (0.6.1)
     msgpack (1.8.0)
+    mutex_m (0.3.0)
     mysql2 (0.5.7)
       bigdecimal
     net-imap (0.6.3)
@@ -520,6 +521,7 @@ DEPENDENCIES
   minitest (~> 5.16.0)
   minitest-ci (~> 3.4.0)
   msgpack (~> 1.8)
+  mutex_m
   mysql2 (~> 0.5.4)
   net-smtp (~> 0.3)
   omniauth (~> 2.1)
@@ -559,7 +561,7 @@ DEPENDENCIES
   will_paginate-bootstrap (~> 1.0)
 
 RUBY VERSION
-   ruby 3.1.6p260
+   ruby 3.4.7p58
 
 BUNDLED WITH
    2.4.13
