@@ -521,7 +521,7 @@ DEPENDENCIES
   minitest (~> 5.16.0)
   minitest-ci (~> 3.4.0)
   msgpack (~> 1.8)
-  mutex_m
+  mutex_m (~> 0.3)
   mysql2 (~> 0.5.4)
   net-smtp (~> 0.3)
   omniauth (~> 2.1)
