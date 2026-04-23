@@ -13,11 +13,11 @@ class UsersController < ApplicationController
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
   before_action :verify_moderator, only: [:mod, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete,]
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete]
   before_action :verify_global_moderator, only: [:mod_failban, :mod_delete_network_account]
-  before_action :set_user, only: [:show, :mod, :mod_delete, :mod_failban, :mod_delete_network_account, :soft_delete, :posts, :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :network, :avatar]
+  before_action :set_user, only: [:show, :mod, :mod_delete, :mod_failban, :mod_delete_network_account, :soft_delete,
+                                  :posts, :role_toggle, :full_log, :activity, :annotate, :annotations, :mod_privileges,
+                                  :mod_privilege_action, :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
 
   def index
