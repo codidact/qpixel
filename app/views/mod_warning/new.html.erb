@@ -4,6 +4,7 @@
 
 <% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
+<%= render 'posts/image_upload' %>
 <%= render 'users/tabs', user: @user %>
 
 <div class="grid">
