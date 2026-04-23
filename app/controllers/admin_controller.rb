@@ -2,9 +2,9 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban, :all_email, :send_all_email]
+                                             :setup_save, :failban, :all_email, :send_all_email]
   before_action :verify_developer, only: [:change_users, :impersonate]
-  before_action :set_user, only: [:change_users, :hellban, :impersonate]
+  before_action :set_user, only: [:change_users, :failban, :impersonate]
 
   skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
 
@@ -204,7 +204,7 @@ class AdminController < ApplicationController
     render
   end
 
-  def hellban
+  def failban
     @user.block("user manually blocked by admin ##{current_user.id}")
     flash[:success] = t 'admin.user_fed_stat'
     redirect_back fallback_location: admin_path

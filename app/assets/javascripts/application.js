@@ -37,6 +37,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     dialog.classList.toggle('is-active');
   });
 
+  QPixel.DOM.addSelectorListener('click', '.is-partial-only:not(.open)', (ev) => {
+    if (ev.target.classList.contains("open")) {
+      return;
+    }
+
+    ev.target.classList.add("open");
+    ev.stopPropagation();
+  });
+
   if (document.cookie.indexOf('dismiss_fvn') === -1) {
     QPixel.DOM.addSelectorListener('click', '#fvn-dismiss', (_ev) => {
       document.cookie = 'dismiss_fvn=true; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT';

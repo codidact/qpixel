@@ -69,6 +69,7 @@ class ModeratorController < ApplicationController
         total: Vote.for(@user).count
       )
     )
+    render layout: 'without_sidebar'
   end
 
   def spammy_users

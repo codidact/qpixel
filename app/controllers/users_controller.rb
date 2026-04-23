@@ -12,9 +12,10 @@ class UsersController < ApplicationController
 
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+  before_action :verify_moderator, only: [:mod, :soft_delete, :role_toggle, :full_log,
+                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action, :mod_delete,]
+  before_action :verify_global_moderator, only: [:mod_failban, :mod_delete_network_account]
+  before_action :set_user, only: [:show, :mod, :mod_delete, :mod_failban, :mod_delete_network_account, :soft_delete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
@@ -275,7 +276,9 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
-  def mod; end
+  def mod
+    render layout: 'without_sidebar'
+  end
 
   def full_log
     @posts = Post.by(@user).count
@@ -319,8 +322,21 @@ class UsersController < ApplicationController
     render layout: 'without_sidebar'
   end
 
+  def mod_delete_network_account
+    render layout: 'without_sidebar'
+  end
+
+  def mod_failban
+    render layout: 'without_sidebar'
+  end
+
   def mod_privileges
     @abilities = Ability.all
+    render layout: 'without_sidebar'
+  end
+
+  def mod_delete
+    render layout: 'without_sidebar'
   end
 
   def soft_delete
