@@ -39,8 +39,9 @@ class UsersController < ApplicationController
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
 
     respond_to do |format|
-      format.html
+      format.html do
         render layout: 'application'
+      end
       format.json do
         render json: @users
       end
