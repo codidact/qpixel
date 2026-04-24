@@ -2,6 +2,8 @@ require 'net/http'
 
 # rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
+  layout 'without_sidebar'
+
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect,
@@ -41,6 +43,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html
+        render layout: 'application'
       format.json do
         render json: @users
       end
@@ -64,7 +67,6 @@ class UsersController < ApplicationController
                               .count
                         end
     @posts = @posts.first(@limit)
-    render layout: 'without_sidebar'
   end
 
   def me
@@ -96,7 +98,6 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
-        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -139,9 +140,7 @@ class UsersController < ApplicationController
 
   def filters
     respond_to do |format|
-      format.html do
-        render layout: 'without_sidebar'
-      end
+      format.html
       format.json do
         render json: filters_json
       end
@@ -229,7 +228,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render :posts
+        render :posts, layout: 'application'
       end
       format.json do
         render json: @posts
@@ -243,7 +242,6 @@ class UsersController < ApplicationController
 
   def network
     @communities = Community.all
-    render layout: 'without_sidebar'
   end
 
   def my_activity
@@ -276,11 +274,6 @@ class UsersController < ApplicationController
             end
 
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
-    render layout: 'without_sidebar'
-  end
-
-  def mod
-    render layout: 'without_sidebar'
   end
 
   def full_log
@@ -321,73 +314,10 @@ class UsersController < ApplicationController
                   SuggestedEdit.by(@user).all + PostHistory.by(@user).all +
                   ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
-
-    render layout: 'without_sidebar'
   end
 
   def mod_privileges
     @abilities = Ability.all
-    render layout: 'without_sidebar'
-  end
-
-  def mod_reset_profile
-    render layout: 'without_sidebar'
-  end
-
-  def mod_clear_profile
-    before = @user.attributes_print
-    @user.update(username: "user#{@user.id}", profile: '', website: '', twitter: '',
-                 profile_markdown: '', discord: '')
-    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
-                              'notification to update your profile.', edit_user_profile_path)
-    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>",
-                             related: @user)
-    redirect_to mod_user_path(@user)
-  end
-
-  def mod_delete
-    render layout: 'without_sidebar'
-  end
-
-  def mod_delete_network_account
-    render layout: 'without_sidebar'
-  end
-
-  def mod_failban
-    render layout: 'without_sidebar'
-  end
-
-  def destroy
-    if @user.votes.count > 100
-      render json: { status: 'failed', message: 'Users with more than 100 votes cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    if @user.is_admin || @user.is_moderator
-      render json: { status: 'failed', message: 'Admins and moderators cannot be destroyed.' },
-             status: :unprocessable_entity
-      return
-    end
-
-    before = @user.attributes_print
-    @user.block('user destroyed')
-
-    if @user.destroy
-      Post.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                                        deleted: true, deleted_at: DateTime.now,
-                                                        deleted_by_id: SiteSetting['SoftDeleteTransferUser'])
-      Comment.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'],
-                                                           deleted: true)
-      Flag.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      SuggestedEdit.unscoped.where(user_id: @user.id).update_all(user_id: SiteSetting['SoftDeleteTransferUser'])
-      AuditLog.moderator_audit(event_type: 'user_destroy', user: current_user, comment: "<<User #{before}>>")
-      render json: { status: 'success' }
-    else
-      render json: { status: 'failed',
-                     message: 'Failed to destroy user; ask a dev.' },
-             status: :internal_server_error
-    end
   end
 
   def soft_delete
@@ -414,10 +344,6 @@ class UsersController < ApplicationController
     end
 
     render json: { status: 'success', user: @user.id }
-  end
-
-  def edit_profile
-    render layout: 'without_sidebar'
   end
 
   def cleaned_profile_websites(profile_params)
@@ -642,7 +568,6 @@ class UsersController < ApplicationController
     @logs = AuditLog.where(log_type: 'user_annotation', related: @user)
                     .newest_first
                     .paginate(page: params[:page], per_page: 20)
-    render layout: 'without_sidebar'
   end
 
   def annotate
@@ -672,8 +597,6 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end
                    .paginate(page: params[:page], per_page: 15)
-
-    render layout: 'without_sidebar'
   end
 
   def avatar
@@ -693,10 +616,6 @@ class UsersController < ApplicationController
                   type: 'image/png', disposition: 'inline'
       end
     end
-  end
-
-  def disconnect_sso
-    render layout: 'without_sidebar'
   end
 
   def confirm_disconnect_sso
