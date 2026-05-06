@@ -1,4 +1,4 @@
-FROM ruby:3.1.2-bullseye AS ruby
+FROM ruby:3.3.11-trixie AS ruby
 FROM node:12.18.3-slim AS node
 
 FROM ruby AS build
