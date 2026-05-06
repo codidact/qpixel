@@ -1,3 +1,4 @@
+# rubocop:disable Style/OneClassPerFile
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
@@ -191,3 +192,4 @@ klasses << if defined? ActiveRecord::Associations::CollectionProxy
 
 ActiveRecord::Base.extend UserSortable
 klasses.each { |klass| klass.send(:include, UserSortable) }
+# rubocop:enable Style/OneClassPerFile
