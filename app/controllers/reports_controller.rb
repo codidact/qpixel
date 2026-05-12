@@ -21,7 +21,7 @@ class ReportsController < ApplicationController
     @answers = Answer.recent(1.year.ago).undeleted
     @comments = Comment.recent(1.year.ago).undeleted
     @this_month = Post.recent(1.month.ago).undeleted
-    @categories = Category.where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+    @categories = Category.where('categories.min_view_trust_level <= ?', current_user&.trust_level || 0)
                           .order(:sequence)
     @posts_categories = Post.in(@categories).group(:category_id).count
   end
@@ -51,7 +51,7 @@ class ReportsController < ApplicationController
     @comments = Comment.unscoped.recent(1.year.ago).undeleted
     @this_month = Post.unscoped.recent(1.month.ago).undeleted
     @categories = Category.unscoped
-                          .where('IFNULL(categories.min_view_trust_level, 0) <= ?', current_user&.trust_level || 0)
+                          .where('categories.min_view_trust_level <= ?', current_user&.trust_level || 0)
                           .includes(:community).order(:community_id, :sequence)
     @posts_categories = Post.unscoped.in(@categories).group(:category_id).count
     @global = true

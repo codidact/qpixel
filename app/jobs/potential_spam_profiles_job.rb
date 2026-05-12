@@ -14,5 +14,7 @@ class PotentialSpamProfilesJob < ApplicationJob
       UserAbility.where(community_user_id: cu_ids, ability_id: ability_ids)
                  .update_all(is_suspended: true, suspension_message: 'This ability has been automatically suspended.')
     end
+
+    logger.info "Found #{users.size} likely spam profiles & suspended abilities."
   end
 end

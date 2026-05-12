@@ -140,3 +140,17 @@ sample_post_scorer:
   is_admin: false
   is_moderator: false
   reputation: 1
+
+sample_merge_source:
+  user: merge_source
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 42
+
+sample_merge_target:
+  user: merge_target
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 24

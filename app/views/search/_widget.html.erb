@@ -1,9 +1,9 @@
-<div class="form-group-horizontal">
-  <div class="form-group">
+<div class="form-group-horizontal search-widget">
+  <div class="form-group search-widget-input">
     <%= label_tag :search, 'Search term', class: "form-element" %>
     <%= search_field_tag :search, params[:search], class: 'form-element' %>
   </div>
-  <div class="actions has-padding-bottom-1">
+  <div class="actions">
     <%= submit_tag 'Search', class: 'button is-medium is-outlined', name: nil %>
   </div>
 </div>

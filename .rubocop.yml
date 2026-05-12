@@ -7,7 +7,7 @@ AllCops:
   TargetRubyVersion: 3.1
   Exclude:
     - 'config/**/*'
-    - 'db/**/*'
+    - 'db/schema.rb'
     - 'scripts/**/*'
     - 'bin/**/*'
     - 'lib/namespaced_env_cache.rb'
@@ -25,6 +25,8 @@ Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: true
+Layout/EndOfLine:
+  EnforcedStyle: lf
 
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true

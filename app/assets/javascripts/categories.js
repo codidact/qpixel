@@ -45,7 +45,10 @@ $(() => {
 
   $('.js-category-select').each((_i, el) => {
     const $tgt = $(el);
+    /** @type {HTMLElement|undefined} */
+    const modal = el.closest('.modal--container') || void 0;
     $tgt.select2({
+      dropdownParent: modal,
       ajax: {
         url: '/categories',
         headers: { 'Accept': 'application/json' },

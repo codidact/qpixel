@@ -48,7 +48,7 @@
                                                id: "reply-to-thread-form-#{post.id}-#{thread.id}" do %>
     <%= hidden_field_tag :post_id, post.id %>
     <%= hidden_field_tag :inline, inline %>
-    <%= label_tag :content, 'Your message', class: 'form-element' %>
+    <%= label_tag :content, t('comments.labels.comment_body_input'), class: 'form-element' %>
     <%= text_area_tag :content, '',
                       class: 'form-element js-comment-field',
                       minlength: min_chars,

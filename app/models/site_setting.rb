@@ -51,7 +51,7 @@ class SiteSetting < ApplicationRecord
   end
 
   # Defines predicates for each value type
-  [:array, :boolean, :float, :integer, :string, :text].each do |method|
+  [:array, :boolean, :float, :integer, :string, :text, :uri_path].each do |method|
     define_method "#{method}?" do
       value_type.downcase.to_sym == method
     end

@@ -180,14 +180,14 @@
   description: >
     The maximum number of characters an edit comment may contain. Defaults to 255.
 
-- name: MaxUploadSize
-  value: 2MB
-  value_type: string
+- name: MaxRequestBodySize
+  value: 2097152
+  value_type: integer
   category: AdvancedSettings
   description: >
-    The maximum size of images that users may upload. Changing this setting DOES NOT change the limit - the limit is
-    set by your web server configuration. This setting should be set to the same value so that the correct limit
-    can be displayed to users.
+    The maximum allowed size of request body in bytes (2MB by default). This setting must be kept in sync with your web server or
+    reverse proxy configuration that governs request body size limits - **do not** change it if you don't know what
+    that means.
 
 - name: FirstVisitGuidance
   value: ~
@@ -232,6 +232,17 @@
   description: >
     The address to send moderator distribution list emails from (can be a fake address).
     Make sure your server is allowed to send email from this address, or your mails will not be received.
+
+- name: FriendlyEmailFooter
+  value: >
+    <hr/>
+    <p><em>Thanks!</em></p>
+    <p><em>Your Friendly Neighbourhood Codidactyl</em></p>
+  value_type: text
+  category: Email
+  community_id: ~
+  description: >
+    Friendly footer to add to emails such as new user confirmation instructions. Markdown allowed.
 
 - name: NoReplySenderName
   value: Codidact
@@ -357,6 +368,22 @@
   category: SiteDetails
   description: >
     Path to a file to use as the site's favicon. Must be an .ICO file.
+
+- name: JSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific JavaScript.
+    Must be a domain-relative URL (such as `/assets/community.js`).
+
+- name: CSSPath
+  value: ~
+  value_type: uri_path
+  category: SiteDetails
+  description: >
+    Path to a file containing site-specific CSS.
+    Must be a domain-relative URL (such as `/assets/community.css`).
 
 - name: AllowContentTransfer
   value: true
@@ -582,6 +609,17 @@
   description: >
     Automatically expand vote summary entries for the last X days, X being the value of this setting. Set to 0 to expand all entries.
 
+- name: TourBeginningDescription
+  value: >
+    <p>Hi!</p>
+    <p>I'm your friendly neighbourhood <a href="https://en.wikipedia.org/wiki/Pterodactylus">Codidactyl</a> and I'd like to introduce you to this website.
+    Don't worry: It doesn't take long and you can abort at any time.</p>
+  value_type: text
+  community_id: ~
+  category: Tour
+  description: >
+    Displayed as the first element on the tour page. Markdown allowed.
+
 - name: TourMoreBeginningDescription
   value: >
     <p>Yay!</p>
@@ -680,6 +718,22 @@
   description: >
     The content of a post is shown in short in lists (e.g. category post overview or in search).
     This setting controls how many characters of a post are shown.
+
+- name: NetworkMascotName
+  value: Codidactyl
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    Network mascot name to use where appropriate, for example, in the tour.
+
+- name: NetworkMascotLogoPath
+  value: /assets/codidactyl.png
+  value_type: string
+  category: SiteDetails
+  community_id: ~
+  description: >
+    The path, relative to the root of the domain, to the site's mascot logo file. Can also be an absolute URL.
 
 - name: NetworkName
   value: Codidact
@@ -808,3 +862,27 @@
   description: >
     Formatting types allowed in post titles.
     By default, only <code>code</code>, <kbd>keyboard</kbd>, and <em>italic</em> are enabled.
+
+- name: OSATrainingEnabled
+  value: false
+  value_type: boolean
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    Should Online Safety Act moderator training be available on this instance?
+    
+- name: OSADirector
+  value: 1
+  value_type: integer
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    The user ID of the Director with responsibility for OSA compliance.
+
+- name: ContentPolicyURL
+  value: https://example.com/content-policy
+  value_type: string
+  category: SafetyCenter
+  community_id: ~
+  description: >
+    A URL where this instance's online safety & content policy can be found.

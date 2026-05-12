@@ -14,3 +14,7 @@ en:
               blank: 'is required (please answer "Where is this content?")'
             report_type:
               blank: 'is required (please answer "What are you reporting?")'
+  number:
+    human:
+      storage_units:
+        format: '%n%u'

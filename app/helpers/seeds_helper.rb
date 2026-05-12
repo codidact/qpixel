@@ -34,4 +34,24 @@ module SeedsHelper
       (priority.index(a.second) || 999) <=> (priority.index(b.second) || 999)
     end.to_h
   end
+
+  Stats = Struct.new('Stats', :created, :updated, :errored, :skipped) do |struct|
+    struct.members.each do |member|
+      define_method "add_#{member}" do |num|
+        self[member] += num
+      end
+    end
+
+    def <<(other)
+      members.each do |member|
+        send("add_#{member}", other[member])
+      end
+    end
+
+    def print
+      members.map { |m| self[m]&.positive? ? "#{m} #{self[m]}" : nil }
+             .compact
+             .join(', ')
+    end
+  end
 end

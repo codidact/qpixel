@@ -5,7 +5,15 @@ class CategoriesController < ApplicationController
   before_action :verify_view_access, except: [:index, :homepage, :new, :create, :post_types]
 
   def index
-    @categories = Category.accessible_to(current_user).all.order(sequence: :asc, id: :asc)
+    @categories = if params[:term].present?
+                    Category.search(params[:term])
+                  else
+                    Category.all
+                  end
+
+    @categories = @categories.accessible_to(current_user)
+                             .order(sequence: :asc, id: :asc)
+
     respond_to do |format|
       format.html
       format.json do
@@ -158,10 +166,15 @@ class CategoriesController < ApplicationController
   end
 
   def set_list_posts
-    sort_params = { activity: { last_activity: :desc }, age: { created_at: :desc }, score: { score: :desc },
+    @default_sort_type = :activity
+    @sort_type = params[:sort]&.to_sym || @default_sort_type
+
+    sort_params = { activity: { last_activity: :desc },
+                    age: { created_at: :desc },
+                    score: { score: :desc },
                     lottery: [Arel.sql('(RAND() - ? * DATEDIFF(CURRENT_TIMESTAMP, posts.created_at)) DESC'),
                               SiteSetting['LotteryAgeDeprecationSpeed']] }
-    sort_param = sort_params[params[:sort]&.to_sym] || { last_activity: :desc }
+
     @posts = @category.posts
                       .undeleted
                       .where(post_type_id: @category.display_post_types)
@@ -200,7 +213,8 @@ class CategoriesController < ApplicationController
 
     @posts = helpers.qualifiers_to_sql(filter_qualifiers, @posts, current_user)
     @filtered = filter_qualifiers.any?
-    @posts = @posts.paginate(page: params[:page], per_page: 50).order(sort_param)
+    @posts = @posts.paginate(page: params[:page], per_page: 50)
+                   .order(sort_params[@sort_type])
   end
 
   def clear_categories_cache

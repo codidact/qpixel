@@ -123,6 +123,10 @@ pre.pre-wrap {
   display: none;
   position: absolute;
   right: 0;
+
+  &.is-small {
+    top: -1px;
+  }
 }
 
 div:hover > .copy-button {
@@ -263,13 +267,15 @@ div:hover > .copy-button {
   }
 }
 
-.__mobile-only {
+.__mobile-only,
+a.__mobile-only:any-link {
   @media screen and (min-width: $screen-sm) {
     display: none;
   }
 }
 
-.__desktop-only {
+.__desktop-only,
+a.__desktop-only:any-link {
   @media screen and (max-width: $screen-sm) {
     display: none;
   }

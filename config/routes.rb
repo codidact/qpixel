@@ -344,9 +344,11 @@ Rails.application.routes.draw do
   end
 
   scope 'abilities' do
-    root                                   to: 'abilities#index', as: :abilities
-    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
-    get ':id',                             to: 'abilities#show', as: :ability
+    root                                     to: 'abilities#index', as: :abilities
+    get   'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get   ':id',                             to: 'abilities#show', as: :ability
+    get   ':id/edit',                        to: 'abilities#edit', as: :edit_ability
+    patch ':id/edit',                        to: 'abilities#update', as: :update_ability
   end
 
   scope 'donate' do
@@ -388,6 +390,8 @@ Rails.application.routes.draw do
     post   'report/:token/content_type',   to: 'complaints#change_content_type', as: :update_complaint_content_type
     get    'reports',                      to: 'complaints#reports', as: :complaints
     get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
+    get    'training/:page',               to: 'complaints#training', as: :osa_training
+    post   'training/complete',            to: 'complaints#training_complete', as: :osa_training_complete
   end
 
   get   '403',                             to: 'errors#forbidden'
@@ -403,8 +407,4 @@ Rails.application.routes.draw do
   scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
-
-  # Communities can have custom js or css defined (placed in public/assets/community).
-  # If these are not defined for a community, respond with 204 (ok but empty)
-  get '/assets/community/*path', to: ->(env) { [204, {}, ['']] }
 end

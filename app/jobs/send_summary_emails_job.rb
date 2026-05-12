@@ -15,5 +15,7 @@ class SendSummaryEmailsJob < ApplicationJob
                    .content_summary
                    .deliver_later
     end
+
+    logger.info "Scheduled send of #{staff.size} emails."
   end
 end

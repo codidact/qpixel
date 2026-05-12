@@ -247,7 +247,7 @@
           <% end %>
         </div>
         <div class="post--comments has-padding-4">
-          <% comment_threads = post.comment_threads.initially_visible.order(updated_at: :desc) %>
+          <% comment_threads = post.comment_threads.initially_visible.priority_order %>
           <% public_count = comment_threads.count %>
           <% available_count = current_user&.post_privilege?('flag_curate', post) ?
                                  post.comment_threads.count : post.comment_threads.publicly_available.count %>

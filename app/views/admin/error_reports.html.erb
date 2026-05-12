@@ -1,4 +1,10 @@
-<h1><%= t 'admin.tools.error_reports' %></h1>
+<%
+  title = t('admin.tools.error_reports')
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 <p class="is-lead"><%= pluralize(@reports.count, t('g.error')) %> <%= t('g.logged') %></p>
 
 <div class="error-reports-filters flex-row items-end">

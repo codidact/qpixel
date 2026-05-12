@@ -236,6 +236,16 @@ class SearchHelperTest < ActionView::TestCase
     assert_not(posts.any? { |p| p.category.id == admin_category.id })
   end
 
+  test 'valid_tags_list? should correctly determine if the param is valid' do
+    [[], ['42'], ['7', '747']].each do |valid|
+      assert valid_tags_list?(valid)
+    end
+
+    ['', '[\"42\"]', nil].each do |invalid|
+      assert_not valid_tags_list?(invalid)
+    end
+  end
+
   test 'valid_source_type? should correctly determine if the param is valid' do
     SearchHelper::SOURCE_TYPES.each do |type|
       assert valid_source_type?(type)

@@ -1,6 +1,10 @@
-<%= content_for :title, 'Dashboard' %>
+<%
+  title = 'Dashboard'
+%>
 
-<h1>Dashboard</h1>
+<%= content_for :title, title %>
+
+<h1><%= title %></h1>
 <p>All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of each page.</p>
 <div class="grid community-list">
   <% @communities.each do |c| %>

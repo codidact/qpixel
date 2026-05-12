@@ -72,7 +72,7 @@ class Category < ApplicationRecord
     end
 
     trust_level = user&.trust_level || 0
-    Category.where('IFNULL(min_view_trust_level, -1) <= ?', trust_level)
+    Category.where('min_view_trust_level <= ?', trust_level)
   end
 
   # Gets category matching a given name

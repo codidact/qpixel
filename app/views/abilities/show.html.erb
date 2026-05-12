@@ -4,6 +4,9 @@
   <% else %>
     <a href="<%= abilities_url %>" class="button is-muted">Return to list</a>
   <% end %>
+  <% if current_user&.can_edit_abilities? %>
+    <%= link_to 'edit', edit_ability_path(id: @ability.internal_id), class: "button is-outlined is-muted" %>
+  <% end %>
 </div>
 <h1 class="h-m-t-0"><%= @ability.name %> Ability</h1>
 

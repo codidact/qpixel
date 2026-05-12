@@ -7,14 +7,13 @@ class CommentThread < ApplicationRecord
   has_many :thread_follower
   belongs_to :archived_by, class_name: 'User', optional: true
 
+  scope :priority_order, -> { order(deleted: :asc, archived: :asc, updated_at: :desc, reply_count: :desc) }
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   validate :maximum_title_length
   validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
-
-  after_create :create_follower
 
   before_save :bump_last_activity
 
@@ -120,16 +119,5 @@ class CommentThread < ApplicationRecord
     end
 
     ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
-  end
-
-  private
-
-  # Comment author and post author are automatically followed to the thread. Question author is NOT
-  # automatically followed on new answer comment threads. Comment author follower creation is done
-  # on the Comment model.
-  def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
-      ThreadFollower.create comment_thread: self, user: post.user
-    end
   end
 end

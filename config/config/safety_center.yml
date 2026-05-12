@@ -45,16 +45,24 @@ outcomes:
       copyright: *illegal_upheld
       appeal:
         content: our community team agreed with your appeal and have reversed the action taken in your case.
+      process:
+        content: our community team have reviewed your complaint and found information to substantiate it.
+
   actionable:
     name: Actionable
-    description: The content is actionable but the reported classification is not correct. NOT applicable to appeals.
+    description: The content is actionable but the reported classification is not correct. NOT applicable to appeals or
+      process complaints.
     user_facing:
       illegal: &illegal_actionable
         content: our community team agreed that the content you reported was actionable and have taken appropriate
           action, but have changed your classification of the content for reporting purposes.
       abusive: *illegal_actionable
       copyright: *illegal_actionable
-      appeal: ~
+      appeal:
+        content: ~
+      process:
+        content: ~
+
   disputed:
     name: Disputed
     description: The reporter's classification is disputed; the content does not appear to be actionable; in the case of
@@ -69,6 +77,8 @@ outcomes:
       appeal:
         content: our community team have reviewed your appeal and have decided that the action taken in your case was
           appropriate.
+      process:
+        content: our community team have reviewed your complaint but found no information to substantiate it.
 
 report_types:
   illegal:
@@ -87,6 +97,10 @@ report_types:
     enabled: true
     name: Classification Appeal
     description: an appeal regarding how we've handled your content
+  process:
+    enabled: true
+    name: Complaint about our process
+    description: a complaint about our processes or compliance with our duties
 
 # This list is sourced from Ofcom's list of the 17 types of priority illegal content, which is in turn sourced from
 # Schedules 5-7 of the Online Safety Act.

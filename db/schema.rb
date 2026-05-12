@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
     t.string "color_code"
     t.text "asking_guidance_override", size: :medium
     t.text "answering_guidance_override", size: :medium
-    t.integer "min_view_trust_level"
+    t.integer "min_view_trust_level", default: 0, null: false
     t.bigint "license_id"
     t.integer "sequence"
     t.boolean "use_for_hot_posts", default: true
@@ -115,6 +115,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
     t.index ["community_id"], name: "index_categories_on_community_id"
     t.index ["default_filter_id"], name: "index_categories_on_default_filter_id"
     t.index ["license_id"], name: "index_categories_on_license_id"
+    t.index ["min_view_trust_level"], name: "index_categories_on_min_view_trust_level"
     t.index ["sequence"], name: "index_categories_on_sequence"
     t.index ["tag_set_id"], name: "index_categories_on_tag_set_id"
   end
@@ -408,6 +409,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["app_id"], name: "index_micro_auth_tokens_on_app_id"
     t.index ["user_id"], name: "index_micro_auth_tokens_on_user_id"
+  end
+
+  create_table "new_thread_followers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "post_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_new_thread_followers_on_post_id"
+    t.index ["user_id", "post_id"], name: "index_new_thread_followers_on_user_id_and_post_id"
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -732,9 +742,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
     t.bigint "user_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.bigint "post_id"
     t.index ["comment_thread_id"], name: "index_thread_followers_on_comment_thread_id"
-    t.index ["post_id"], name: "index_thread_followers_on_post_id"
     t.index ["user_id"], name: "index_thread_followers_on_user_id"
   end
 
@@ -802,6 +810,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
     t.datetime "deleted_at", precision: nil
     t.bigint "deleted_by_id"
     t.string "backup_2fa_code"
+    t.datetime "osa_training"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["deleted_by_id"], name: "index_users_on_deleted_by_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -902,7 +911,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_032240) do
   add_foreign_key "tag_synonyms", "tags"
   add_foreign_key "tags", "communities"
   add_foreign_key "tags", "tags", column: "parent_id"
-  add_foreign_key "thread_followers", "posts"
   add_foreign_key "user_abilities", "abilities"
   add_foreign_key "user_abilities", "community_users"
   add_foreign_key "user_websites", "users"

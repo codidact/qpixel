@@ -243,7 +243,7 @@ class Post < ApplicationRecord
   # @param user [User] user to check
   # @return [Boolean] check result
   def followed_by?(user)
-    ThreadFollower.where(post: self, user: user).any?
+    NewThreadFollower.where(post: self, user: user).any?
   end
 
   # Is the post an imported post?

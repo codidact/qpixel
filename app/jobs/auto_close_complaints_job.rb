@@ -4,8 +4,10 @@ class AutoCloseComplaintsJob < ApplicationJob
   def perform(*_args)
     complaints = Complaint.where(status: 'reviewed')
                           .where(Arel.sql('status_updated_at <= ?', 14.days.ago))
-    complaints.each do |complaint|
+    statuses = complaints.map do |complaint|
       complaint.update_status 'closed'
     end
+    successful = statuses.compact_blank.size
+    logger.info "Found #{complaints.size} inactive complaints, successfully closed #{successful} of them."
   end
 end
