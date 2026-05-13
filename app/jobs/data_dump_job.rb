@@ -1,8 +1,8 @@
 class DataDumpJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
-    permitted = YAML.safe_load(File.read(Rails.root.join('db/scripts/dump_permitted_columns.yml')))
+  def perform(*_args)
+    permitted = YAML.safe_load_file(Rails.root.join('db/scripts/dump_permitted_columns.yml'))
     logger.info "Found #{permitted&.size} tables to dump."
 
     begin
