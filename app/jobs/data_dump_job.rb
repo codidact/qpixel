@@ -7,7 +7,7 @@ class DataDumpJob < ApplicationJob
 
     begin
       exec('SET FOREIGN_KEY_CHECKS = 0;')
-      exec('DROP DATABASE qpixel_dump;')
+      exec('DROP DATABASE IF EXISTS qpixel_dump;')
       exec('CREATE DATABASE qpixel_dump;')
 
       @db_creds = Rails.configuration.database_configuration[Rails.env]
@@ -43,9 +43,11 @@ class DataDumpJob < ApplicationJob
 
       logger.info 'Exported database.'
 
-      Dump.create(title: "Data Dump #{Time.now.strftime('%Y-%m-%d')}",
-                  comment: "Automatically generated data dump as of #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.",
-                  file: File.open(file_path))
+      dump = Dump.create(title: "Data Dump #{Time.now.strftime('%Y-%m-%d')}",
+                         comment: "Automatically generated data dump as of #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.",
+                         file: File.open(file_path),
+                         automatic: true)
+      Dump.where(automatic: true).where.not(id: dump.id).destroy_all
     ensure
       exec('DROP DATABASE qpixel_dump;')
       exec('SET FOREIGN_KEY_CHECKS = 1;')
