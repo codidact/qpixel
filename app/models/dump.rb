@@ -3,6 +3,9 @@ class Dump < ApplicationRecord
 
   before_destroy :delete_file
 
+  scope :automatic, -> { where(automatic: true) }
+  scope :manual, -> { where(automatic: false) }
+
   private
 
   def delete_file

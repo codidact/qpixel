@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_13_160917) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_13_185013) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -274,6 +274,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_160917) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "automatic", default: false, null: false
+    t.string "link"
   end
 
   create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
