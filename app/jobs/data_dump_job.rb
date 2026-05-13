@@ -24,15 +24,30 @@ class DataDumpJob < ApplicationJob
         return
       end
 
+      logger.info 'Copied database structure.'
+
       permitted&.each do |table, data|
         migrate_table(table, data)
       end
 
-      # Export backup DB to file
-      # Upload dump somewhere
-      # Create Dump record
-      # Delete backup DB
+      logger.info 'Migrated data.'
+
+      file_path = Rails.root.join('tmp/qpixel_export.sql')
+      export_cmd = "mysqldump -u #{@username} -p#{@password} qpixel_dump --no-tablespaces > #{file_path}"
+      export_success = system(export_cmd)
+
+      unless export_success
+        logger.fatal "Couldn't export database: nonzero exit code"
+        return
+      end
+
+      logger.info 'Exported database.'
+
+      Dump.create(title: "Data Dump #{Time.now.strftime('%Y-%m-%d')}",
+                  comment: "Automatically generated data dump as of #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.",
+                  file: File.open(file_path))
     ensure
+      exec('DROP DATABASE qpixel_dump;')
       exec('SET FOREIGN_KEY_CHECKS = 1;')
     end
   end
