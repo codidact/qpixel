@@ -180,7 +180,7 @@ flags:
     - post_flag_type_id
     - post_type
   query: >
-    INNER JOIN post_flag_type pft ON pft.id = flags.post_flag_type_id
+    INNER JOIN post_flag_types pft ON pft.id = flags.post_flag_type_id
     WHERE pft.confidential = FALSE
 
 licenses:
