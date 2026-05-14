@@ -1,7 +1,7 @@
 class DataDumpJob < ApplicationJob
   queue_as :default
 
-  def perform(*_args)
+  def perform(drop_db_after: true)
     permitted = YAML.safe_load_file(Rails.root.join('db/scripts/dump_permitted_columns.yml'))
     logger.info "Found #{permitted&.size} tables to dump."
 
@@ -49,8 +49,10 @@ class DataDumpJob < ApplicationJob
                          automatic: true)
       Dump.where(automatic: true).where.not(id: dump.id).destroy_all
     ensure
-      exec('DROP DATABASE qpixel_dump;')
       exec('SET FOREIGN_KEY_CHECKS = 1;')
+      if drop_db_after
+        exec('DROP DATABASE qpixel_dump;')
+      end
     end
   end
 
