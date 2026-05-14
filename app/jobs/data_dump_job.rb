@@ -14,9 +14,10 @@ class DataDumpJob < ApplicationJob
       @username = @db_creds['username']
       @password = @db_creds['password']
       @database = @db_creds['database']
+      @host = @db_creds['host']
 
-      mysqldump_command = "mysqldump -u #{@username} -p#{@password} -d #{@database} --no-tablespaces"
-      mysql_command = "mysql -u #{@username} -p#{@password} -D qpixel_dump"
+      mysqldump_command = "mysqldump -h #{@host} -u #{@username} -p#{@password} -d #{@database} --no-tablespaces"
+      mysql_command = "mysql -h #{@host} -u #{@username} -p#{@password} -D qpixel_dump"
       copy_success = system("#{mysqldump_command} | #{mysql_command}")
 
       unless copy_success
@@ -33,7 +34,7 @@ class DataDumpJob < ApplicationJob
       logger.info 'Migrated data.'
 
       file_path = Rails.root.join('tmp/qpixel_export.sql')
-      export_cmd = "mysqldump -u #{@username} -p#{@password} qpixel_dump --no-tablespaces > #{file_path}"
+      export_cmd = "mysqldump -h #{@host} -u #{@username} -p#{@password} qpixel_dump --no-tablespaces > #{file_path}"
       export_success = system(export_cmd)
 
       unless export_success
