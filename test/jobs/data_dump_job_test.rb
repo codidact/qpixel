@@ -11,7 +11,7 @@ class DataDumpJobTest < ActiveJob::TestCase
   end
 
   test 'no excluded data present in final dump DB' do
-    perform_enqueued_jobs do
+    assert_performed_jobs 1 do
       DataDumpJob.perform_later(drop_db_after: false)
     end
 
