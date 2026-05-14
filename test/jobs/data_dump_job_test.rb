@@ -22,7 +22,8 @@ class DataDumpJobTest < ActiveJob::TestCase
         t,
         cols.reject { |c| permitted.include?(t) && permitted[t]['columns'].include?(c) }
       ]
-    end.reject { |_t, cols| cols.empty? }
+    end
+    excluded_cols = excluded_cols.reject { |_t, cols| cols.empty? }
 
     excluded_cols.each do |table, cols|
       query = "SELECT #{cols.map { |c| "`#{c}`" }.join(', ')} FROM qpixel_dump.`#{table}`"
