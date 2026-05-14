@@ -5,10 +5,9 @@ class DataDumpJobTest < ActiveJob::TestCase
   teardown :i_dont_know_better_than_activerecord
 
   test 'job runs successfully' do
-    perform_enqueued_jobs do
+    assert_performed_jobs 1 do
       DataDumpJob.perform_later
     end
-    assert_performed_jobs 1
   end
 
   test 'no excluded data present in final dump DB' do
@@ -46,20 +45,17 @@ class DataDumpJobTest < ActiveJob::TestCase
   # the savepoints, which then causes the RELEASE query to fail. I think. There's no convenient way to have AR not run
   # the +create+ call in a transaction, so we have to monkeypatch it out.
   def i_know_better_than_activerecord
-    ActiveRecord::ConnectionAdapters::Mysql2Adapter.class_eval do
-      def begin_db_transaction(*)
-      end
-
-      def commit_db_transaction(*)
-      end
-
+    ActiveRecord::ConnectionAdapters::AbstractAdapter.class_eval do
       def create_savepoint(*)
+        logger.warn 'create_savepoint ignored: this should only happen during data dump tests'
       end
 
       def rollback_to_savepoint(*)
+        logger.warn 'rollback_to_savepoint ignored: this should only happen during data dump tests'
       end
 
       def release_savepoint(*)
+        logger.warn 'release_savepoint ignored: this should only happen during data dump tests'
       end
     end
   end
@@ -67,9 +63,8 @@ class DataDumpJobTest < ActiveJob::TestCase
   ##
   # Let's not let the terrible idea affect everything else too.
   def i_dont_know_better_than_activerecord
-    $LOADED_FEATURES.delete_if { |f| f.include?('mysql2_adapter') }
-    unless require 'active_record/connection_adapters/mysql2_adapter'
-      Rails.logger.warn "Couldn't re-require mysql2 adapter. Everything after this point will not run in transactions."
+    ActiveRecord::ConnectionAdapters::AbstractAdapter.class_eval do
+      include ActiveRecord::ConnectionAdapters::Savepoints
     end
   end
 end
