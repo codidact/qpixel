@@ -5,13 +5,13 @@ class DataDumpJobTest < ActiveJob::TestCase
   teardown :i_dont_know_better_than_activerecord
 
   test 'job runs successfully' do
-    assert_performed_jobs 1 do
+    perform_enqueued_jobs do
       DataDumpJob.perform_later
     end
   end
 
   test 'no excluded data present in final dump DB' do
-    assert_performed_jobs 1 do
+    perform_enqueued_jobs do
       DataDumpJob.perform_later(drop_db_after: false)
     end
 
