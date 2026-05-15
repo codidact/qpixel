@@ -18,24 +18,28 @@
 </div>
 
 <h2>Latest data dump</h2>
-<table class="table is-with-hover is-full-width">
-  <thead>
+<% if @latest.nil? %>
+  <p>No data dumps available yet. Check back next week.</p>
+<% else %>
+  <table class="table is-with-hover is-full-width">
+    <thead>
     <tr>
       <th></th>
       <th>Filename</th>
       <th>Created</th>
       <th>Download</th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     <tr>
       <td><%= @latest.title %></td>
       <td><%= @latest.file.filename %></td>
       <td><%= @latest.created_at.strftime('%Y-%m-%d') %></td>
       <td><%= link_to 'Download', rails_blob_path(@latest.file, disposition: 'attachment') %></td>
     </tr>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+<% end %>
 
 <% if @others.any? %>
   <h2>Other data dumps</h2>
