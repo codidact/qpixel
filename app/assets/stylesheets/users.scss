@@ -256,3 +256,18 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
 }
 
 .mod-warnings-clear-form { display: inline; }
+
+.modtools--top-list {
+  display: none;
+}
+
+
+@media screen and (max-width: 850px) {
+  .modtools--top-list {
+    display: block;
+  }
+
+  .modtools--sidebar {
+    display: none;
+  }
+}

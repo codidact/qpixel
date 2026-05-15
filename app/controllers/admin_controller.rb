@@ -214,6 +214,8 @@ class AdminController < ApplicationController
     if Rails.env.development?
       change_users
     end
+
+    render layout: 'without_sidebar'
   end
 
   def change_users

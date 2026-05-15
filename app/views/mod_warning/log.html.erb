@@ -2,10 +2,12 @@
 
 <%= render 'users/tabs', user: @user %>
 
+<%= render 'shared/user_mod_mobile_list', user: @user %>
+
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-9">
+  <div class="grid--cell is-9-desktop-12-mobile">
     <h1>Previously Sent Warnings</h1>
 
     <% if @warnings.size == 0 %>

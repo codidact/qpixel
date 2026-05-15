@@ -2,10 +2,12 @@
 
 <%= render 'users/tabs', user: @user %>
 
+<%= render 'shared/user_mod_mobile_list', user: @user %>
+
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-9">
+  <div class="grid--cell is-9-desktop-12-mobile">
     <h1>Vote Summary</h1>
     <p>
       This is a summary of votes cast and received by this user. This may help you to identify voting patterns and

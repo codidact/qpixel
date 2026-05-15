@@ -1,0 +1,13 @@
+<div class="modtools--top-list">
+  <details>
+    <summary>
+      User Moderation Tools
+    </summary>
+    <%= render 'shared/user_mod_tools_list', user: user %>
+  </details>
+  <div class="widget--body">
+    <div class="modtools--usercard">
+      <%= render 'users/common_card', user: user, ckb: false %>
+    </div>
+  </div>
+</div>
