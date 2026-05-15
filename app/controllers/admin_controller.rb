@@ -213,9 +213,9 @@ class AdminController < ApplicationController
   def impersonate
     if Rails.env.development?
       change_users
+    else
+      render layout: 'without_sidebar'
     end
-
-    render layout: 'without_sidebar'
   end
 
   def change_users
