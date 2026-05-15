@@ -1,0 +1,72 @@
+<h3>Comparing with <%= user_link @target %></h3>
+
+<h4>Email address</h4>
+<table class="table is-full-width is-striped is-with-hover">
+  <thead>
+  <tr>
+    <th></th>
+    <th><%= @user.rtl_safe_username %></th>
+    <th><%= @target.rtl_safe_username %></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><strong>Handle</strong></td>
+    <% user_handle = Digest::SHA2.hexdigest(@user.email.split('@')[0]) %>
+    <% target_handle = Digest::SHA2.hexdigest(@target.email.split('@')[0]) %>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_handle == target_handle %>">
+        <%= user_handle[0..7] %>
+      </code>
+    </td>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_handle == target_handle %>">
+        <%= target_handle[0..7] %>
+      </code>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Domain</strong></td>
+    <td>
+      <code><%= Digest::SHA2.hexdigest(@user.email.split('@')[1])[0..7] %></code><br/>
+      <% domain_users = Rails.cache.hget 'user_email_domains', @user.email.split('@')[1] %>
+      <% if domain_users.nil? %>
+        (unknown number of users)
+      <% else %>
+        Used by <%= pluralize(domain_users, 'user') %>
+      <% end %>
+    </td>
+    <td>
+      <code><%= Digest::SHA2.hexdigest(@target.email.split('@')[1])[0..7] %></code><br/>
+      <% domain_users = Rails.cache.hget 'user_email_domains', @target.email.split('@')[1] %>
+      <% if domain_users.nil? %>
+        (unknown number of users)
+      <% else %>
+        Used by <%= pluralize(domain_users, 'user') %>
+      <% end %>
+    </td>
+  </tr>
+  </tbody>
+</table><br/>
+
+<h4>IP addresses</h4>
+
+<% user_current_family, user_current_ip = split_hash_ip(@user.current_sign_in_ip, @user) %>
+<% target_current_family, target_current_ip = split_hash_ip(@target.current_sign_in_ip, @user) %>
+<strong>Current sign-in</strong><br/>
+<table class="table is-striped is-with-hover">
+  <tr>
+    <td><%= @user.rtl_safe_username %></td>
+    <td>
+      <%= user_current_family %><br/>
+      <code><%= user_current_ip.map { |p| p[0..3] }.join(user_current_family == 'IPv4' ? '.' : ':') %></code>
+    </td>
+  </tr>
+  <tr>
+    <td><%= @target.rtl_safe_username %></td>
+    <td>
+      <%= target_current_family %><br/>
+      <code><%= target_current_ip.map { |p| p[0..3] }.join(target_current_family == 'IPv4' ? '.' : ':') %></code>
+    </td>
+  </tr>
+</table>

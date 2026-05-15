@@ -181,6 +181,7 @@ GEM
       mini_magick (>= 4.9.5, < 6)
       ruby-vips (>= 2.0.17, < 3)
     io-console (0.8.2)
+    ipaddress (0.8.3)
     irb (1.17.0)
       pp (>= 0.6.0)
       prism (>= 1.3.0)
@@ -497,6 +498,7 @@ DEPENDENCIES
   aws-sdk-s3 (~> 1.208)
   aws-sdk-sns (~> 1.72)
   aws-ses-v4
+  bcrypt (~> 3.1)
   byebug (~> 11.1)
   capybara (~> 3.38)
   chartkick (~> 4.2)
@@ -512,6 +514,7 @@ DEPENDENCIES
   flamegraph (~> 0.9)
   groupdate (~> 6.1)
   image_processing (~> 1.12)
+  ipaddress (~> 0.8)
   jbuilder (~> 2.11)
   jquery-rails (~> 4.5.0)
   letter_opener_web (~> 2.0)
