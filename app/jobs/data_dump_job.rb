@@ -14,10 +14,15 @@ class DataDumpJob < ApplicationJob
       @username = @db_creds['username']
       @password = @db_creds['password']
       @database = @db_creds['database']
+      @port = @db_creds['port']
       @host = @db_creds['host']
 
-      mysqldump_command = "mysqldump -h #{@host} -u #{@username} -p#{@password} -d #{@database} --no-tablespaces"
-      mysql_command = "mysql -h #{@host} -u #{@username} -p#{@password} -D qpixel_dump"
+      mysqldump_command = build_command('mysqldump', '-h', @host, '-u', @username, "-p#{@password}", @database,
+                                        '--no-tablespaces', "--port=#{@port}", ssl_state)
+      mysql_command = build_command('mysql', '-h', @host, '-u', @username, "-p#{@password}", "--port=#{@port}",
+                                    '-D', 'qpixel_dump', ssl_state)
+      logger.debug 'Running system command:'
+      logger.debug "#{mysqldump_command} | #{mysql_command}"
       copy_success = system("#{mysqldump_command} | #{mysql_command}")
 
       unless copy_success
@@ -34,7 +39,10 @@ class DataDumpJob < ApplicationJob
       logger.info 'Migrated data.'
 
       file_path = Rails.root.join('tmp/qpixel_export.sql')
-      export_cmd = "mysqldump -h #{@host} -u #{@username} -p#{@password} qpixel_dump --no-tablespaces > #{file_path}"
+      export_cmd = build_command('mysqldump', '-h', @host, '-u', @username, "-p#{@password}", "--port=#{@port}",
+                                 'qpixel_dump', '--no-tablespaces', ssl_state, '>', file_path)
+      logger.debug 'Running system command:'
+      logger.debug export_cmd
       export_success = system(export_cmd)
 
       unless export_success
@@ -59,6 +67,8 @@ class DataDumpJob < ApplicationJob
     end
   end
 
+  private
+
   def migrate_table(table, data)
     columns = data['columns']
     query = data['query']
@@ -70,5 +80,13 @@ class DataDumpJob < ApplicationJob
 
   def exec(sql)
     ApplicationRecord.connection.execute(sql)
+  end
+
+  def build_command(cmd, *args)
+    "#{cmd} #{args.join(' ')}"
+  end
+
+  def ssl_state
+    "--ssl=#{Rails.env.development? ? 'OFF' : 'ON'}"
   end
 end
