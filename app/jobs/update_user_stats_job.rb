@@ -3,8 +3,8 @@ class UpdateUserStatsJob < ApplicationJob
 
   def perform(*)
     domains = User.all.select(:email)
-                  .group_by { |u| u.email&.split('@')[1] }
-                  .to_h { |d, u| [d, u.size] }
+                  .group_by { |u| u.email&.split('@')&.[](1) }
+                  .transform_values(&:size)
                   .reject { |d, _u| d.include? 'localhost' }
     Rails.cache.hmset('user_email_domains', domains)
   end

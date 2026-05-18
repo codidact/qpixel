@@ -12,6 +12,7 @@ AllCops:
     - 'bin/**/*'
     - 'lib/namespaced_env_cache.rb'
     - 'vendor/bundle/**/*'
+    - 'docker/**/*'
   NewCops: enable
   SuggestExtensions: false
 
