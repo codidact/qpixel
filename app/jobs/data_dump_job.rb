@@ -87,6 +87,6 @@ class DataDumpJob < ApplicationJob
   end
 
   def ssl_state
-    "--ssl=#{Rails.env.development? ? 'OFF' : 'ON'}"
+    "--ssl-mode=#{Rails.env.development? ? 'DISABLED' : 'PREFERRED'}"
   end
 end
