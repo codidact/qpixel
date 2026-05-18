@@ -51,7 +51,7 @@ $(() => {
   QPixel.DOM.addSelectorListener('submit', '#pii-correlation-form', async (ev) => {
     ev.preventDefault();
 
-    const targetId = document.querySelector('input[name="target_id"]').value;
+    const targetId = /** @type {HTMLInputElement}*/(document.querySelector('input[name="target_id"]')).value;
     const resp = await QPixel.fetch(`${location.pathname}?format=template&target_id=${targetId}`);
     const html = await resp.text();
 
