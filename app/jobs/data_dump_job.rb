@@ -17,7 +17,7 @@ class DataDumpJob < ApplicationJob
       @port = @db_creds['port']
       @host = @db_creds['host']
 
-      mysqldump_command = build_command('mysqldump', '-h', @host, '-u', @username, "-p#{@password}", @database,
+      mysqldump_command = build_command('mysqldump', '-h', @host, '-u', @username, "-p#{@password}", '-d', @database,
                                         '--no-tablespaces', "--port=#{@port}", ssl_state)
       mysql_command = build_command('mysql', '-h', @host, '-u', @username, "-p#{@password}", "--port=#{@port}",
                                     '-D', 'qpixel_dump', ssl_state)
