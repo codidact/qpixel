@@ -83,10 +83,10 @@ class DataDumpJob < ApplicationJob
   end
 
   def build_command(cmd, *args)
-    "#{cmd} #{args.join(' ')}"
+    "#{cmd} #{args.compact_blank.join(' ')}"
   end
 
   def ssl_state
-    "--ssl-mode=#{Rails.env.development? ? 'DISABLED' : 'PREFERRED'}"
+    return "--skip-ssl" if Rails.env.development? or Rails.env.test?
   end
 end
