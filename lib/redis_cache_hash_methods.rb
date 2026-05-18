@@ -67,7 +67,7 @@ module QPixel
     # @return [Integer] The number of keys that were removed from the hash
     def hdel(hash_key, *keys)
       with_redis do |rd|
-        if keys.size.zero?
+        if keys.empty?
           rd.del hash_key
         else
           rd.hdel hash_key, *keys
@@ -80,12 +80,12 @@ module QPixel
     ##
     # Check a connection out of the connection pool and provides it to the block to run Redis commands.
     # @yield [Redis::Client]
-    def with_redis
+    def with_redis(&block)
       reject_unless_redis_cache!
       redis_cache_store = ActiveSupport::Cache::RedisCacheStore
       redis_cache = is_a?(redis_cache_store) ? self : underlying
       redis_cache.redis.with do |rd|
-        yield rd
+        block.call rd
       end
     end
 
@@ -96,7 +96,7 @@ module QPixel
     def reject_unless_redis_cache!
       redis_cache_store = ActiveSupport::Cache::RedisCacheStore
       unless is_a?(redis_cache_store) || (respond_to?(:underlying) && underlying.is_a?(redis_cache_store))
-        raise NotImplementedError, "This cache implementation is not backed by Redis and cannot use Hash methods."
+        raise NotImplementedError, 'This cache implementation is not backed by Redis and cannot use Hash methods.'
       end
     end
   end
