@@ -87,6 +87,6 @@ class DataDumpJob < ApplicationJob
   end
 
   def ssl_state
-    return "--skip-ssl" if Rails.env.development? or Rails.env.test?
+    '--skip-ssl' if Rails.env.development? || Rails.env.test?
   end
 end
