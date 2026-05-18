@@ -49,7 +49,7 @@ class DataDumpJob < ApplicationJob
                          file: File.open(file_path),
                          automatic: true)
       Dump.where(automatic: true).where.not(id: dump.id).destroy_all
-    rescue ActiveRecord::ConnectionError
+    rescue ActiveRecord::ConnectionFailed
       logger.fatal "Couldn't connect to database. Have you run `GRANT ALL ON qpixel_dump.*` for your DB user?"
     ensure
       exec('SET FOREIGN_KEY_CHECKS = 1;')
