@@ -1,1 +1,1 @@
-DataDumpJob.perform_later
+DataDumpJob.perform_now
