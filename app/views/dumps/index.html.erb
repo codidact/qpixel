@@ -22,21 +22,23 @@
   <p>No data dumps available yet. Check back next week.</p>
 <% else %>
   <table class="table is-with-hover is-full-width">
-    <thead>
-    <tr>
-      <th></th>
-      <th>Filename</th>
-      <th>Created</th>
-      <th>Download</th>
-    </tr>
-    </thead>
     <tbody>
-    <tr>
-      <td><%= @latest.title %></td>
-      <td><%= @latest.file.filename %></td>
-      <td><%= @latest.created_at.strftime('%Y-%m-%d') %></td>
-      <td><%= link_to 'Download', rails_blob_path(@latest.file, disposition: 'attachment') %></td>
-    </tr>
+      <tr>
+        <td><strong>Name</strong></td>
+        <td><%= @latest.title %></td>
+      </tr>
+      <tr>
+        <td><strong>Download</strong></td>
+        <td><%= link_to 'Download', rails_blob_path(@latest.file, disposition: 'attachment') %></td>
+      </tr>
+      <tr>
+        <td><strong>Created</strong></td>
+        <td><%= @latest.created_at.strftime('%Y-%m-%d') %></td>
+      </tr>
+      <tr>
+        <td class="fit-content wrap-word"><strong>Checksum</strong></td>
+        <td><%= @latest.checksum %></td>
+      </tr>
     </tbody>
   </table>
 <% end %>
