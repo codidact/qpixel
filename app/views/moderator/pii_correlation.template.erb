@@ -14,13 +14,17 @@
     <td><strong><%= @user.rtl_safe_username %></strong></td>
     <% user_handle = Digest::SHA2.hexdigest(@user.email.split('@')[0]) %>
     <% target_handle = Digest::SHA2.hexdigest(@target.email.split('@')[0]) %>
+    <% user_domain = Digest::SHA2.hexdigest(@user.email.split('@')[1]) %>
+    <% target_domain = Digest::SHA2.hexdigest(@target.email.split('@')[1]) %>
     <td>
       <code class="<%= 'has-background-color-red' if user_handle == target_handle %>">
         <%= user_handle[0..7] %>
       </code>
     </td>
     <td>
-      <code><%= Digest::SHA2.hexdigest(@user.email.split('@')[1])[0..7] %></code><br/>
+      <code class="<%= 'has-background-color-red' if user_domain == target_domain %>">
+        <%= user_domain[0..7] %>
+      </code><br/>
       <% domain_users = Rails.cache.hget 'user_email_domains', @user.email.split('@')[1] %>
       <% if domain_users.nil? %>
         (unknown number of users)
@@ -37,7 +41,9 @@
       </code>
     </td>
     <td>
-      <code><%= Digest::SHA2.hexdigest(@target.email.split('@')[1])[0..7] %></code><br/>
+      <code class="<%= 'has-background-color-red' if user_domain == target_domain %>">
+        <%= target_domain[0..7] %>
+      </code><br/>
       <% domain_users = Rails.cache.hget 'user_email_domains', @target.email.split('@')[1] %>
       <% if domain_users.nil? %>
         (unknown number of users)
