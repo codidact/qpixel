@@ -477,8 +477,6 @@ class CommentsController < ApplicationController
       user = User.where(id: p).first
       next if user.nil?
 
-      next if user.same_as?(@comment.post.user)
-
       title = @post.parent.nil? ? @post.title : @post.parent.title
       user.create_notification("You were mentioned in a comment in the thread '#{@comment_thread.title}' " \
                                "on the post '#{title}'",

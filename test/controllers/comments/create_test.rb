@@ -26,6 +26,23 @@ class CommentsControllerTest < ActionController::TestCase
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for thread author'
   end
 
+  test 'should correctly notify post author of created thread pinging post author' do
+    sign_in users(:editor)
+
+    before_author_notifs = users(:standard_user).notifications.count
+
+    try_create_thread(posts(:question_one), mentions: [users(:standard_user)])
+
+    assert_response(:found)
+    assert_redirected_to post_path(assigns(:post))
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:comment)&.id
+    assert_not_nil assigns(:comment_thread)&.id
+    assert_nil flash[:danger]
+    assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
+                 'Author notification not created when it should have been'
+  end
+
   test 'should correctly default thread title if not provided' do
     sign_in users(:editor)
 
@@ -117,6 +134,21 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal before_uninvolved_notifs, users(:moderator).notifications.count,
                  'Uninvolved notification created when it should not have been'
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for comment author'
+  end
+
+  test 'should correctly notify post author of comment pinging post author in thread' do
+    sign_in users(:editor)
+    before_author_notifs = users(:standard_user).notifications.count
+
+    try_create_comment(comment_threads(:normal), mentions: [users(:standard_user)])
+
+    assert_response(:found)
+    assert_redirected_to comment_thread_path(assigns(:comment_thread))
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:comment_thread)
+    assert_not_nil assigns(:comment)&.id
+    assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
+                 'Post author notification not created when it should have been'
   end
 
   test 'should correctly redirect depending on the inline parameter' do
