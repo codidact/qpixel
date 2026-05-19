@@ -10,6 +10,12 @@ class ApplicationJob < ActiveJob::Base
     super
   end
 
+  # Executes a given SQL statement in the context of the current connection
+  # @param [String] sql SQL statement to execute
+  def exec(sql)
+    ApplicationRecord.connection.execute(sql)
+  end
+
   def logger
     Rails.job_logger.tagged(self.class.name, @job_id)
   end

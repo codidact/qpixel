@@ -82,10 +82,6 @@ class DataDumpJob < ApplicationJob
     exec(full_query)
   end
 
-  def exec(sql)
-    ApplicationRecord.connection.execute(sql)
-  end
-
   def build_command(cmd, *args)
     "#{cmd} #{args.compact_blank.join(' ')}"
   end
