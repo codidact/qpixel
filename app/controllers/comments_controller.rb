@@ -472,12 +472,14 @@ class CommentsController < ApplicationController
 
   # @param pings [Array<Integer>] list of pinged user ids
   def apply_pings(pings)
-    context = @comment_thread.comments.first.same_as?(@comment) ? "new" : "comment in the"
-    notification_text = "You were mentioned in a #{context} thread '#{@comment_thread.title}' on the post '#{@comment.root.title}'"
+    context = @comment_thread.comments.first.same_as?(@comment) ? 'new' : 'comment in the'
+    notification_text =
+      "You were mentioned in a #{context} thread '#{@comment_thread.title}' on the post '#{@comment.root.title}'"
 
     pings.each do |p|
       user = User.where(id: p).first
       next if user.nil?
+
       user.create_notification(notification_text, helpers.comment_link(@comment))
     end
   end
