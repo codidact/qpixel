@@ -92,9 +92,8 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        title = @post.parent.nil? ? @post.title : @post.parent.title
         follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{title}'",
+                                          "on the post '#{@comment.root.title}'",
                                           helpers.comment_link(@comment))
       end
     else

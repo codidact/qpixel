@@ -24,6 +24,9 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal before_uninvolved_notifs, users(:moderator).notifications.count,
                  'Uninvolved notification created when it should not have been'
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for thread author'
+    assert_equal users(:standard_user).notifications.last.content,
+                 'New comment thread on Q1 - This is test question number one: sample thread title',
+                 'Post author notification of new thread has incorrect wording'
   end
 
   test 'should correctly notify post author of created thread pinging post author' do
@@ -41,6 +44,9 @@ class CommentsControllerTest < ActionController::TestCase
     assert_nil flash[:danger]
     assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
                  'Author notification not created when it should have been'
+    assert_equal users(:standard_user).notifications.last.content,
+                 "You were mentioned in a comment in the thread 'sample thread title' on the post 'Q1 - This is test question number one'",
+                 'Post author notification of mention in new thread has incorrect wording'
   end
 
   test 'should correctly default thread title if not provided' do
@@ -134,6 +140,9 @@ class CommentsControllerTest < ActionController::TestCase
     assert_equal before_uninvolved_notifs, users(:moderator).notifications.count,
                  'Uninvolved notification created when it should not have been'
     assert assigns(:comment_thread).followed_by?(users(:editor)), 'Follower record not created for comment author'
+    assert_equal users(:standard_user).notifications.last.content,
+                 "There are new comments in a followed thread 'sample' on the post 'Q1 - This is test question number one'",
+                 'Post author notification of new comment has incorrect wording'
   end
 
   test 'should correctly notify post author of comment pinging post author in thread' do
@@ -149,6 +158,9 @@ class CommentsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:comment)&.id
     assert_equal before_author_notifs + 1, users(:standard_user).notifications.count,
                  'Post author notification not created when it should have been'
+    assert_equal users(:standard_user).notifications.last.content,
+                 "You were mentioned in a comment in the thread 'sample' on the post 'Q1 - This is test question number one'",
+                 'Post author notification of mention in comment has incorrect wording'
   end
 
   test 'should correctly redirect depending on the inline parameter' do
