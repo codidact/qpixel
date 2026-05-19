@@ -52,14 +52,14 @@ class DataDumpJob < ApplicationJob
 
       logger.info 'Exported database.'
 
-      raw_checksum = `sha256sum #{file_path}`.split(' ')[0]
+      raw_checksum = `sha256sum #{file_path}`.split[0]
       logger.debug "Export checksum: #{raw_checksum}"
 
       dump = Dump.create(title: "Data Dump #{Time.now.strftime('%Y-%m-%d')}",
                          comment: "Automatically generated data dump as of #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}.",
                          file: File.open(file_path),
                          automatic: true,
-                         checksum: "SHA256:" + raw_checksum.split('').in_groups_of(8).map(&:join).join('-'))
+                         checksum: "SHA256:#{raw_checksum.chars.in_groups_of(8).map(&:join).join('-')}")
       Dump.where(automatic: true).where.not(id: dump.id).destroy_all
     rescue ActiveRecord::ConnectionFailed
       logger.fatal "Couldn't connect to database. Have you run `GRANT ALL ON qpixel_dump.*` for your DB user?"
