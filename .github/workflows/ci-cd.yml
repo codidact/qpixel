@@ -80,7 +80,9 @@ jobs:
       - name: Setup dependencies
         run: |
           sudo apt-get -qq update
-          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+          sudo apt-get -yqq install libmariadb-dev \
+                                    libmagickwand-dev \
+                                    mariadb-client
       - name: Report database client versions
         run: |
           mysql --version
