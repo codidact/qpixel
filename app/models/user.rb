@@ -1,13 +1,13 @@
 class User < ApplicationRecord
-  include ::EmailValidations
-  include ::UsernameValidations
-  include ::UserRateLimits
-  include ::UserMerge
-  include ::Timestamped
-  include ::SoftDeletable
-  include ::SamlInit
-  include ::Inspectable
-  include ::Identity
+  include EmailValidations
+  include UsernameValidations
+  include UserRateLimits
+  include UserMerge
+  include Timestamped
+  include SoftDeletable
+  include SamlInit
+  include Inspectable
+  include Identity
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
