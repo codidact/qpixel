@@ -58,7 +58,7 @@ class CommentsController < ApplicationController
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
 
       NewThreadFollower.where(post: @post).each do |ntf|
-        unless ntf.user.same_as?(current_user)
+        unless ntf.user.same_as?(current_user) || pings.include?(ntf.user_id)
           ntf.user.create_notification(notification, helpers.comment_link(@comment))
         end
         ThreadFollower.create(user: ntf.user, comment_thread: @comment_thread)
