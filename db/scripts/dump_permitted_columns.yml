@@ -158,7 +158,6 @@ community_users:
 filters:
   columns:
     - id
-    - name
     - min_score
     - max_score
     - min_answers
