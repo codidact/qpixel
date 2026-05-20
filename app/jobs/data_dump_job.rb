@@ -92,7 +92,7 @@ class DataDumpJob < ApplicationJob
   end
 
   def mariadb?
-    result = exec('SELECT VERSION()').to_a[0][0]
+    result = `mysql --version`
     result.downcase.include? 'mariadb'
   end
 end
