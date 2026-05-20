@@ -196,6 +196,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Fetch everything
+        run: git fetch origin
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

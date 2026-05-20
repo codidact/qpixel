@@ -26,9 +26,7 @@ module QPixel
 
     def relevant_lines(migration_file)
       lines = File.readlines(migration_file)
-      lines.select do |line|
-        line.match?(Regexp.new("^\\s*[a-z_]*(?:#{RelevantMethods.join('|')})"))
-      end.map(&:strip)
+      lines.grep(Regexp.new("^\\s*[a-z_]*(?:#{RelevantMethods.join('|')})")).map(&:strip)
     end
 
     def existing_comment
