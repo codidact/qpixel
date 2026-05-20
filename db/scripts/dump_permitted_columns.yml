@@ -174,7 +174,6 @@ flags:
     - id
     - created_at
     - updated_at
-    - post_id
     - status
     - community_id
     - post_flag_type_id
