@@ -104,7 +104,7 @@ comment_threads:
     - locked_at
     - last_activity_at
   query: >
-    INNER JOIN posts on p.post_id = comment_threads.post_id
+    INNER JOIN posts on p.id = comment_threads.post_id
     WHERE comment_threads.deleted = FALSE AND posts.deleted = FALSE
 
 comments:
