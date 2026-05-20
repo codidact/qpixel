@@ -11,7 +11,7 @@ module QPixel
     end
 
     def changed_migrations
-      `git diff --name-only #{@prev_head}..#{@current_head} db/migrate`.split("\n")
+      `git diff --name-only #{@prev_head}..#{@current_head} -- db/migrate`.split("\n")
     end
 
     def self.relevant_methods
