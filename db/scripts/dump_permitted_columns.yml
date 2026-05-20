@@ -147,8 +147,6 @@ community_users:
     - is_moderator
     - is_admin
     - reputation
-    - created_at
-    - updated_at
     - trust_level
     - deleted
     - post_count
@@ -440,8 +438,6 @@ user_websites:
 users:
   columns:
     - id
-    - created_at
-    - updated_at
     - is_global_moderator
     - is_global_admin
     - username
