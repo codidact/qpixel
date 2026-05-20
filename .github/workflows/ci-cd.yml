@@ -15,8 +15,8 @@ env:
 permissions:
   actions: write
   contents: read
-  issues: read
-  pull-requests: read
+  issues: write
+  pull-requests: write
 
 jobs:
   rubocop:
@@ -187,3 +187,20 @@ jobs:
               -i ~/.ssh/deploy.key \
               "$SSH_USER"@"$SSH_IP" \
               "sudo su -l qpixel /var/apps/deploy-dev"
+
+  db_changes:
+    name: Check for data dump changes
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+          bundler-cache: true
+      - name: Check for changes
+        run: |
+          ruby lib/database_changes_checker.rb ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }} ${{ secrets.GITHUB_TOKEN }} \
+            ${{ github.event.pull_request.number }}
