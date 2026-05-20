@@ -205,6 +205,6 @@ jobs:
           bundler-cache: true
       - name: Check for changes
         run: |
-          bundle exec ruby lib/database_changes_checker.rb ${{ github.event.pull_request.base.ref }} \
-            ${{ github.event.pull_request.head.ref }} ${{ secrets.GITHUB_TOKEN }} \
+          bundle exec ruby lib/database_changes_checker.rb origin/${{ github.event.pull_request.base.ref }} \
+            origin/${{ github.event.pull_request.head.ref }} ${{ secrets.GITHUB_TOKEN }} \
             ${{ github.event.pull_request.number }}
