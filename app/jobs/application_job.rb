@@ -11,6 +11,8 @@ class ApplicationJob < ActiveJob::Base
   end
 
   # Executes a given SQL statement in the context of the current connection
+  # @note CAUTION: This method does NOT parametrize or escape the SQL statement in any way. YOU are responsible
+  #   for ensuring +sql+ is safe.
   # @param [String] sql SQL statement to execute
   def exec(sql)
     ApplicationRecord.connection.execute(sql)
