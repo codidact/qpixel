@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_19_211432) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_20_085943) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -823,8 +823,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_19_211432) do
 
   create_table "votes", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "vote_type"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, default: "2000-01-01 00:00:00", null: false
+    t.datetime "updated_at", precision: nil, default: "2000-01-01 00:00:00", null: false
     t.integer "user_id"
     t.integer "post_id"
     t.integer "recv_user_id"

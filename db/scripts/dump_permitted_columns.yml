@@ -105,7 +105,7 @@ comment_threads:
     - last_activity_at
   query: >
     INNER JOIN posts p on p.id = comment_threads.post_id
-    WHERE comment_threads.deleted = FALSE AND posts.deleted = FALSE
+    WHERE comment_threads.deleted = FALSE AND p.deleted = FALSE
 
 comments:
   columns:

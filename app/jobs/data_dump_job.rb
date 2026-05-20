@@ -87,6 +87,12 @@ class DataDumpJob < ApplicationJob
   end
 
   def ssl_state
-    '--skip-ssl' if Rails.env.development? || Rails.env.test?
+    command = mariadb? ? '--skip-ssl' : '--ssl-mode=DISABLED'
+    command if Rails.env.development? || Rails.env.test?
+  end
+
+  def mariadb?
+    result = exec('SELECT VERSION()').to_a[0][0]
+    result.downcase.include? 'mariadb'
   end
 end
