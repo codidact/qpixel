@@ -104,7 +104,8 @@ comment_threads:
     - locked_at
     - last_activity_at
   query: >
-    WHERE deleted = FALSE
+    INNER JOIN posts on p.post_id = comment_threads.post_id
+    WHERE comment_threads.deleted = FALSE AND posts.deleted = FALSE
 
 comments:
   columns:
@@ -122,7 +123,9 @@ comments:
     - references_comment_id
     - last_activity_at
   query: >
-    WHERE deleted = FALSE
+    INNER JOIN comment_threads ct on ct.id = comments.comment_thread_id
+    INNER JOIN posts p ON p.id = ct.post_id
+    WHERE comments.deleted = FALSE AND ct.deleted = FALSE AND p.deleted = FALSE
 
 communities:
   columns:
@@ -148,8 +151,6 @@ community_users:
     - updated_at
     - trust_level
     - deleted
-    - deleted_at
-    - deleted_by_id
     - post_count
   query: >
     WHERE deleted = FALSE
@@ -353,6 +354,9 @@ reactions:
     - comment_id
     - created_at
     - updated_at
+  query: >
+    INNER JOIN posts p ON p.id = reactions.post_id
+    WHERE p.deleted = FALSE
 
 suggested_edits:
   columns:
@@ -422,8 +426,6 @@ user_abilities:
     - community_user_id
     - ability_id
     - is_suspended
-    - suspension_end
-    - suspension_message
     - created_at
     - updated_at
   query: >
@@ -456,8 +458,6 @@ votes:
   columns:
     - id
     - vote_type
-    - created_at
-    - updated_at
     - post_id
     - recv_user_id
     - community_id
