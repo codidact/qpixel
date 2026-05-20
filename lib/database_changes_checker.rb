@@ -69,7 +69,7 @@ if __FILE__ == $PROGRAM_NAME
   unless lines.empty?
     title = '### Data dump-affecting changes'
     blurb = 'This pull request changes DB schema and may affect what data is included in the data dump. Please review:'
-    lines_text = lines.map { |m, l| "**#{m}**\n```\n#{l.join("\n")}\n```" }.join("\n\n")
+    lines_text = lines.map { |m, l| "**#{m}**\n```ruby\n#{l.join("\n")}\n```" }.join("\n\n")
     checker.update_comment("#{title}\n\n#{blurb}\n\n#{lines_text}")
   end
 end
