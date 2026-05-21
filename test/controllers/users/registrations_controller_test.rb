@@ -15,7 +15,12 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   end
 
   test 'should prevent rapid registrations from same IP' do
-    User.create(username: 'test', email: 'test2@example.com', password: 'testtest', current_sign_in_ip: '0.0.0.0')
+    User.create(username: 'test',
+                email: 'test2@example.com',
+                password: 'testtest',
+                current_sign_in_ip: '0.0.0.0',
+                created_at: 1.second.ago.utc)
+
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)
