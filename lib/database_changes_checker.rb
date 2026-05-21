@@ -3,11 +3,11 @@ require 'octokit'
 
 module QPixel
   class DatabaseChangesChecker
-    def initialize(prev_head, current_head, gh_token, pr_number)
+    def initialize(prev_head, current_head, access_token, pr_number)
       @prev_head = prev_head
       @current_head = current_head
       @pr_number = pr_number
-      @client = Octokit::Client.new(access_token: gh_token)
+      @client = Octokit::Client.new(access_token: access_token)
     end
 
     def changed_migrations
@@ -50,18 +50,18 @@ end
 # When executed as a ruby script, arguments:
 # [0]: Previous head position from the base branch, for git comparison
 # [1]: Current head position from the source branch, for git comparison
-# [2]: A GitHub access token to be used to add a comment to the pull request
+# [2]: Access token to be used to add a comment to the pull request
 # [3]: The pull request number to be commented on
 ##
 if __FILE__ == $PROGRAM_NAME
-  prev_head, current_head, gh_token, pr_number = ARGV
+  prev_head, current_head, access_token, pr_number = ARGV
 
-  if [prev_head, current_head, gh_token, pr_number].any?(&:nil?)
-    puts "Missing arguments. Usage: ruby #{__FILE__} <prev_head> <current_head> <gh_token> <pr_number>"
+  if [prev_head, current_head, access_token, pr_number].any?(&:nil?)
+    puts "Missing arguments. Usage: ruby #{__FILE__} <prev_head> <current_head> <access_token> <pr_number>"
     exit 1
   end
 
-  checker = QPixel::DatabaseChangesChecker.new(prev_head, current_head, gh_token, pr_number)
+  checker = QPixel::DatabaseChangesChecker.new(prev_head, current_head, access_token, pr_number)
 
   migrations = checker.changed_migrations
   lines = migrations.to_h { |m| [m, checker.relevant_lines(m)] }
