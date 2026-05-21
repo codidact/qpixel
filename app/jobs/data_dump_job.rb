@@ -1,6 +1,8 @@
 class DataDumpJob < ApplicationJob
   queue_as :default
 
+  DEFAULT_TIMESTAMP = '1970-01-01 00:00:00'
+
   def perform(drop_db_after: true)
     permitted = YAML.safe_load_file(Rails.root.join('db/scripts/dump_permitted_columns.yml'))
     logger.info "Found #{permitted&.size} tables to dump."
@@ -31,6 +33,14 @@ class DataDumpJob < ApplicationJob
       end
 
       logger.info 'Copied database structure.'
+
+      [:community_users, :votes, :users].each do |table|
+        [:created_at, :updated_at].each do |column|
+          change_column_default(table, column, "'#{DEFAULT_TIMESTAMP}'")
+        end
+      end
+
+      logger.info 'Initialized defaults.'
 
       permitted&.each do |table, data|
         migrate_table(table, data)
@@ -72,6 +82,11 @@ class DataDumpJob < ApplicationJob
   end
 
   private
+
+  def change_column_default(table, column, value)
+    query = "ALTER TABLE qpixel_dump.`#{table}` ALTER COLUMN `#{column}` SET DEFAULT #{value}"
+    exec(query)
+  end
 
   def migrate_table(table, data)
     columns = data['columns']
