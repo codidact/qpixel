@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_20_112652) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_20_175923) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -221,8 +221,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_20_112652) do
     t.boolean "is_moderator"
     t.boolean "is_admin"
     t.integer "reputation"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, default: "2000-01-01 00:00:00", null: false
+    t.datetime "updated_at", precision: nil, default: "2000-01-01 00:00:00", null: false
     t.boolean "is_suspended"
     t.datetime "suspension_end", precision: nil
     t.string "suspension_public_comment"
@@ -781,8 +781,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_20_112652) do
     t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, default: "2000-01-01 00:00:00", null: false
+    t.datetime "updated_at", precision: nil, default: "2000-01-01 00:00:00", null: false
     t.boolean "is_global_moderator"
     t.boolean "is_global_admin"
     t.string "username"
