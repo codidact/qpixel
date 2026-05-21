@@ -8,6 +8,7 @@ AllCops:
   Exclude:
     - 'config/**/*'
     - 'db/schema.rb'
+    - 'docker/mysql/**/*'
     - 'scripts/**/*'
     - 'bin/**/*'
     - 'lib/namespaced_env_cache.rb'
