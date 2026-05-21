@@ -5,10 +5,10 @@ services:
       context: "."
       dockerfile: docker/Dockerfile.db
     volumes:
+      - ./docker/db-entrypoint.sh:/docker/entrypoint.sh
       - ./docker/mysql:/var/lib/mysql
     env_file:
       - ${ENV_FILE_LOCATION}
-    command: mysqld --mysql-native-password=on --skip-mysqlx
     cap_add:
       - SYS_NICE
     healthcheck:

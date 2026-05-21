@@ -6,16 +6,25 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   setup :devise_setup
 
-  test 'should register user' do
+  test 'should correctly register user' do
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)
-    assert_not_nil assigns(:user).id
     assert_redirected_to root_path
+
+    @user = assigns(:user)
+    assert_not_nil @user
+    assert_not_nil @user.id
+    assert_operator 1.minute.ago, :<, @user.created_at
   end
 
   test 'should prevent rapid registrations from same IP' do
-    User.create(username: 'test', email: 'test2@example.com', password: 'testtest', current_sign_in_ip: '0.0.0.0')
+    User.create(username: 'test',
+                email: 'test2@example.com',
+                password: 'testtest',
+                current_sign_in_ip: '0.0.0.0',
+                created_at: 1.second.ago.utc)
+
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)

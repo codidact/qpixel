@@ -381,6 +381,10 @@ span.spoiler {
   white-space: nowrap;
 }
 
+.fit-content {
+  min-width: fit-content;
+}
+
 @each $side in $sides {
   .border-#{$side}-none {
     border-#{$side}: none;

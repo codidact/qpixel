@@ -131,6 +131,7 @@ the MySQL server with `sudo mysql -u root` and create a new database user for QP
 CREATE USER qpixel@localhost IDENTIFIED BY 'choose_a_password_here';
 GRANT ALL ON qpixel_dev.* TO qpixel@localhost;
 GRANT ALL ON qpixel_test.* TO qpixel@localhost;
+GRANT ALL ON qpixel_dump.* TO qpixel@localhost;
 GRANT ALL ON qpixel.* TO qpixel@localhost;
 ```
 

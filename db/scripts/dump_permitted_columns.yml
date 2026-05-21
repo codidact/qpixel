@@ -1,0 +1,457 @@
+abilities:
+  columns:
+    - id
+    - community_id
+    - name
+    - description
+    - internal_id
+    - icon
+    - post_score_threshold
+    - edit_score_threshold
+    - flag_score_threshold
+    - created_at
+    - updated_at
+    - summary
+
+categories:
+  columns:
+    - id
+    - name
+    - short_wiki
+    - community_id
+    - created_at
+    - updated_at
+    - display_post_types
+    - is_homepage
+    - tag_set_id
+    - min_trust_level
+    - button_text
+    - color_code
+    - asking_guidance_override
+    - answering_guidance_override
+    - min_view_trust_level
+    - license_id
+    - sequence
+    - use_for_hot_posts
+    - use_for_advertisement
+    - min_title_length
+    - min_body_length
+    - default_filter_id
+  query: >
+    WHERE min_view_trust_level IS NULL OR min_view_trust_level = 0
+
+categories_moderator_tags:
+  columns:
+    - category_id
+    - tag_id
+  query: >
+    INNER JOIN categories c ON c.id = categories_moderator_tags.category_id
+    WHERE c.min_view_trust_level IS NULL OR c.min_view_trust_level = 0
+
+categories_post_types:
+  columns:
+    - id
+    - category_id
+    - post_type_id
+    - upvote_rep
+    - downvote_rep
+  query: >
+    INNER JOIN categories c ON c.id = categories_post_types.category_id
+    WHERE c.min_view_trust_level IS NULL OR c.min_view_trust_level = 0
+
+categories_required_tags:
+  columns:
+    - category_id
+    - tag_id
+  query: >
+    INNER JOIN categories c ON c.id = categories_required_tags.category_id
+    WHERE c.min_view_trust_level IS NULL OR c.min_view_trust_level = 0
+
+categories_topic_tags:
+  columns:
+    - category_id
+    - tag_id
+  query: >
+    INNER JOIN categories c ON c.id = categories_topic_tags.category_id
+    WHERE c.min_view_trust_level IS NULL OR c.min_view_trust_level = 0
+
+close_reasons:
+  columns:
+    - id
+    - name
+    - description
+    - active
+    - requires_other_post
+    - community_id
+
+comment_threads:
+  columns:
+    - id
+    - title
+    - reply_count
+    - post_id
+    - locked
+    - locked_by_id
+    - locked_until
+    - archived
+    - archived_by_id
+    - ever_archived_before
+    - deleted
+    - deleted_by_id
+    - created_at
+    - updated_at
+    - community_id
+    - locked_at
+    - last_activity_at
+  query: >
+    INNER JOIN posts p on p.id = comment_threads.post_id
+    WHERE comment_threads.deleted = FALSE AND p.deleted = FALSE
+
+comments:
+  columns:
+    - id
+    - created_at
+    - updated_at
+    - post_id
+    - content
+    - deleted
+    - user_id
+    - community_id
+    - comment_thread_id
+    - has_reference
+    - reference_text
+    - references_comment_id
+    - last_activity_at
+  query: >
+    INNER JOIN comment_threads ct on ct.id = comments.comment_thread_id
+    INNER JOIN posts p ON p.id = ct.post_id
+    WHERE comments.deleted = FALSE AND ct.deleted = FALSE AND p.deleted = FALSE
+
+communities:
+  columns:
+    - id
+    - name
+    - host
+    - created_at
+    - updated_at
+    - is_fake
+    - hidden
+  query: >
+    WHERE is_fake = FALSE AND hidden = FALSE
+
+community_users:
+  columns:
+    - id
+    - community_id
+    - user_id
+    - is_moderator
+    - is_admin
+    - reputation
+    - trust_level
+    - deleted
+    - post_count
+  query: >
+    WHERE deleted = FALSE
+
+filters:
+  columns:
+    - id
+    - min_score
+    - max_score
+    - min_answers
+    - max_answers
+    - status
+    - include_tags
+    - exclude_tags
+    - created_at
+    - updated_at
+    - source
+
+flags:
+  columns:
+    - id
+    - created_at
+    - updated_at
+    - status
+    - community_id
+    - post_flag_type_id
+    - post_type
+  query: >
+    INNER JOIN post_flag_types pft ON pft.id = flags.post_flag_type_id
+    WHERE pft.confidential = FALSE
+
+licenses:
+  columns:
+    - id
+    - name
+    - url
+    - default
+    - community_id
+    - created_at
+    - updated_at
+    - enabled
+    - description
+
+pinned_links:
+  columns:
+    - id
+    - community_id
+    - label
+    - link
+    - post_id
+    - active
+    - shown_after
+    - shown_before
+    - created_at
+    - updated_at
+
+post_flag_types:
+  columns:
+    - id
+    - community_id
+    - name
+    - description
+    - confidential
+    - active
+    - post_type_id
+    - created_at
+    - updated_at
+    - requires_details
+
+post_histories:
+  columns:
+    - id
+    - post_history_type_id
+    - user_id
+    - created_at
+    - updated_at
+    - post_id
+    - before_state
+    - after_state
+    - comment
+    - community_id
+    - before_title
+    - after_title
+    - hidden
+  query: >
+    WHERE hidden = FALSE
+
+post_history_tags:
+  columns:
+    - id
+    - post_history_id
+    - tag_id
+    - relationship
+    - created_at
+    - updated_at
+
+post_history_types:
+  columns:
+    - id
+    - name
+    - description
+    - created_at
+    - updated_at
+
+post_types:
+  columns:
+    - id
+    - name
+    - description
+    - has_answers
+    - has_votes
+    - has_tags
+    - has_parent
+    - has_category
+    - has_license
+    - is_public_editable
+    - is_closeable
+    - is_top_level
+    - is_freely_editable
+    - icon_name
+    - has_reactions
+    - answer_type_id
+    - has_only_specific_reactions
+
+posts:
+  columns:
+    - id
+    - title
+    - body
+    - tags_cache
+    - score
+    - parent_id
+    - user_id
+    - closed
+    - closed_by_id
+    - closed_at
+    - deleted
+    - deleted_by_id
+    - deleted_at
+    - created_at
+    - updated_at
+    - post_type_id
+    - body_markdown
+    - answer_count
+    - last_activity
+    - att_source
+    - att_license_name
+    - att_license_link
+    - doc_slug
+    - last_activity_by_id
+    - community_id
+    - close_reason_id
+    - duplicate_post_id
+    - category_id
+    - license_id
+    - help_category
+    - help_ordering
+    - upvote_count
+    - downvote_count
+    - comments_disabled
+    - last_edited_at
+    - last_edited_by_id
+    - locked
+    - locked_by_id
+    - locked_at
+    - locked_until
+  query: >
+    INNER JOIN categories c ON c.id = posts.category_id
+    WHERE posts.deleted = FALSE AND posts.doc_slug IS NULL
+    AND (c.min_view_trust_level IS NULL OR c.min_view_trust_level = 0)
+
+posts_tags:
+  columns:
+    - tag_id
+    - post_id
+
+reaction_types:
+  columns:
+    - id
+    - name
+    - description
+    - on_post_label
+    - icon
+    - color
+    - requires_comment
+    - community_id
+    - position
+    - created_at
+    - updated_at
+    - active
+    - post_type_id
+
+reactions:
+  columns:
+    - id
+    - user_id
+    - reaction_type_id
+    - post_id
+    - comment_id
+    - created_at
+    - updated_at
+  query: >
+    INNER JOIN posts p ON p.id = reactions.post_id
+    WHERE p.deleted = FALSE
+
+suggested_edits:
+  columns:
+    - id
+    - post_id
+    - user_id
+    - community_id
+    - body
+    - title
+    - tags_cache
+    - body_markdown
+    - comment
+    - active
+    - accepted
+    - decided_at
+    - decided_by_id
+    - rejected_comment
+    - created_at
+    - updated_at
+    - before_title
+    - before_body
+    - before_body_markdown
+    - before_tags_cache
+
+suggested_edits_before_tags:
+    columns:
+    - suggested_edit_id
+    - tag_id
+
+suggested_edits_tags:
+  columns:
+    - suggested_edit_id
+    - tag_id
+
+tag_sets:
+  columns:
+    - id
+    - name
+    - community_id
+    - created_at
+    - updated_at
+
+tag_synonyms:
+  columns:
+    - id
+    - tag_id
+    - name
+    - created_at
+    - updated_at
+
+tags:
+  columns:
+    - id
+    - name
+    - created_at
+    - updated_at
+    - community_id
+    - tag_set_id
+    - wiki_markdown
+    - wiki
+    - excerpt
+    - parent_id
+
+user_abilities:
+  columns:
+    - id
+    - community_user_id
+    - ability_id
+    - is_suspended
+    - created_at
+    - updated_at
+  query: >
+    WHERE is_suspended = FALSE
+
+user_websites:
+  columns:
+    - id
+    - label
+    - url
+    - position
+    - user_id
+
+users:
+  columns:
+    - id
+    - is_global_moderator
+    - is_global_admin
+    - username
+    - profile
+    - profile_markdown
+    - staff
+    - trust_level
+  query: >
+    WHERE deleted = FALSE
+
+votes:
+  columns:
+    - id
+    - vote_type
+    - post_id
+    - recv_user_id
+    - community_id
