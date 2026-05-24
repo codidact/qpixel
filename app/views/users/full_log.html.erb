@@ -1,49 +1,49 @@
-<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+<% content_for :title, "Full Activity Log: #{rtl_safe_username(@user)}" %>
 
 <%= render 'tabs', user: @user %>
 
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-9">
+  <div class="grid--cell is-12-sm is-12-md is-9-lg">
     <h1>Full activity log</h1>
 
     <p class="is-lead">This is a filterable log for all activity by the user. You can consult it for moderation decisions. Do not share this information to people, who do not have access to it.</p>
 
     <% if params[:filter] == 'interesting' %>
-        <p>You are looking at <em>negative</em> interactions the user had with this site. These are not necessarily bad, just actions at which you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
+      <p>You are looking at <em>negative</em> interactions the user had with this site. These are not necessarily bad, just actions at which you should look more closely. This list includes deleted comments, rejected flags and edit suggestions and negatively received posts.</p>
     <% end %>
 
     <div class="button-list is-gutterless h-m-v-4">
-        <a class="button is-muted is-outlined" href="?" role="button">
-            Show all events
-        </a>
-        <% if @interesting > 0 %>
+      <a class="button is-muted is-outlined" href="?" role="button">
+        Show all events
+      </a>
+      <% if @interesting > 0 %>
         <a class="button is-muted is-outlined <%= params[:filter] == 'interesting' ? 'is-active' : '' %>" href="?filter=interesting" role="button">
-            Negative
-            <span class="badge is-status"><%= @interesting %></span>
+          Negative
+          <span class="badge is-status"><%= @interesting %></span>
         </a>
-        <% end %>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts" role="button">
-            Posts
-            <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span><% end %>
-        </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments" role="button">
-            Comments
-            <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span><% end %>
-        </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags" role="button">
-            Flags
-            <% if @flags > 0 %><span class="badge is-status"><%= @flags %></span><% end %>
-        </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits" role="button">
-            Edits
-            <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span><% end %>
-        </a>
-        <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings" role="button">
-            Warnings
-            <% if @mod_warnings_received > 0 %><span class="badge is-status"><%= @mod_warnings_received %></span><% end %>
-        </a>
+      <% end %>
+      <a class="button is-muted is-outlined <%= params[:filter] == 'posts' ? 'is-active' : '' %>" href="?filter=posts" role="button">
+        Posts
+        <% if @posts > 0 %><span class="badge is-status"><%= @posts %></span><% end %>
+      </a>
+      <a class="button is-muted is-outlined <%= params[:filter] == 'comments' ? 'is-active' : '' %>" href="?filter=comments" role="button">
+        Comments
+        <% if @comments > 0 %><span class="badge is-status"><%= @comments %></span><% end %>
+      </a>
+      <a class="button is-muted is-outlined <%= params[:filter] == 'flags' ? 'is-active' : '' %>" href="?filter=flags" role="button">
+        Flags
+        <% if @flags > 0 %><span class="badge is-status"><%= @flags %></span><% end %>
+      </a>
+      <a class="button is-muted is-outlined <%= params[:filter] == 'edits' ? 'is-active' : '' %>" href="?filter=edits" role="button">
+        Edits
+        <% if @all_edits > 0 %><span class="badge is-status"><%= @all_edits %></span><% end %>
+      </a>
+      <a class="button is-muted is-outlined <%= params[:filter] == 'warnings' ? 'is-active' : '' %>" href="?filter=warnings" role="button">
+        Warnings
+        <% if @mod_warnings_received > 0 %><span class="badge is-status"><%= @mod_warnings_received %></span><% end %>
+      </a>
     </div>
 
     <%= render 'activity_items', mod: true %>

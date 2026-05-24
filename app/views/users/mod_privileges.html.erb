@@ -5,14 +5,13 @@
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-9">
+  <div class="grid--cell is-12-sm is-12-md is-9-lg">
     <h1>User Privileges</h1>
 
     <div class="widget">
       <div class="widget--header">
-        <a href="<%= abilities_url(for: @user.id) %>" class="widget--header-link has-float-right" target="_blank">
-          ability page
-        </a>
+        <a href="<%= abilities_url(for: @user.id) %>" class="widget--header-link has-float-right" target="_blank">ability
+          page</a>
         Abilities
       </div>
       <% @abilities.each do |a| %>
@@ -82,7 +81,7 @@
                 and may impose restrictions on user accounts.</p>
             </div>
             <div class="grid--cell">
-              <% if @user.community_user&.is_moderator %>
+              <% if @user.moderator? %>
                 <button class="button is-filled js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">revoke</button>
               <% else %>
                 <button class="button is-outlined js-role-grant-btn" data-role="mod" data-user="<%= @user.id %>">grant</button>
@@ -90,9 +89,8 @@
             </div>
           </div>
         </div>
-      </div>
     <% end %>
-    <% if current_user.global_admin? %>
+    <% if current_user.is_global_admin %>
       <div class="widget--body">
         <div class="grid">
           <div class="grid--cell">
@@ -105,7 +103,7 @@
             <p class="h-m-0 form-caption">Administrators can edit site settings and user roles.</p>
           </div>
           <div class="grid--cell">
-            <% if @user.community_user&.is_admin %>
+            <% if @user.is_global_moderator %>
               <button class="button is-filled js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">revoke</button>
             <% else %>
               <button class="button is-outlined js-role-grant-btn" data-role="admin" data-user="<%= @user.id %>">grant</button>
@@ -125,7 +123,7 @@
             <p class="h-m-0 form-caption">This user will have moderator status on every site in this network.</p>
           </div>
           <div class="grid--cell">
-            <% if @user.global_moderator? %>
+            <% if @user.is_global_moderator %>
               <button class="button is-filled js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">revoke</button>
             <% else %>
               <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">grant</button>
@@ -145,7 +143,7 @@
             <p class="h-m-0 form-caption">This user will have admin status on every site in this network.</p>
           </div>
           <div class="grid--cell">
-            <% if @user.global_admin? %>
+            <% if @user.is_global_admin %>
               <% if @user.id == current_user.id %>
                 <button class="button is-muted is-filled" disabled title="Nope. You cannot revoke your own network-wide admin status. 😉">granted</button>
               <% else %>
@@ -158,7 +156,7 @@
         </div>
       </div>
     <% end %>
-    <% if current_user.global_admin? && current_user.staff? %>
+    <% if current_user.is_global_admin && current_user.staff? %>
       <div class="widget--body">
         <div class="grid">
           <div class="grid--cell">
@@ -181,5 +179,7 @@
         </div>
       </div>
     <% end %>
+    </div>
+
   </div>
 </div>
