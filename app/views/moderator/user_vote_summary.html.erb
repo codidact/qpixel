@@ -34,27 +34,27 @@
         </tr>
         </thead>
         <tbody>
-        <% @vote_data[type].breakdown.each do |key, count| %>
-          <tr>
-            <td><%= user_link @users.select { |x| x.id == key[0] }[0] %></td>
-            <td><%= key[1] %></td>
-            <td><%= count %></td>
-            <% pct = count * 100.0 / @vote_data[type].total %>
-            <td>
-              <% if pct >= 50 %>
-                <%= text_bg 'red-700', number_to_percentage(pct, precision: 2), class: 'has-color-white has-padding-1' %>
-              <% elsif pct >= 40 %>
-                <%= text_bg 'red-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
-              <% elsif pct >= 30 %>
-                <%= text_bg 'yellow-700', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
-              <% elsif pct >= 20 %>
-                <%= text_bg 'yellow-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
-              <% else %>
-                <%= number_to_percentage(pct, precision: 2) %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
+          <% @vote_data[type].breakdown.each do |key, count| %>
+            <tr>
+              <td><%= user_link @users.select { |x| x.id == key[0] }[0] %></td>
+              <td><%= key[1] %></td>
+              <td><%= count %></td>
+              <% pct = count * 100.0 / @vote_data[type].total %>
+              <td>
+                <% if pct >= 50 %>
+                  <%= text_bg 'red-700', number_to_percentage(pct, precision: 2), class: 'has-color-white has-padding-1' %>
+                <% elsif pct >= 40 %>
+                  <%= text_bg 'red-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+                <% elsif pct >= 30 %>
+                  <%= text_bg 'yellow-700', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+                <% elsif pct >= 20 %>
+                  <%= text_bg 'yellow-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
+                <% else %>
+                  <%= number_to_percentage(pct, precision: 2) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
         </tbody>
       </table>
     <% end %>
