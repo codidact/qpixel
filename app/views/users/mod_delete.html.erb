@@ -2,12 +2,10 @@
 
 <%= render 'tabs', user: @user %>
 
-<%= render 'shared/user_mod_mobile_list', user: @user %>
-
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-9-desktop-12-mobile">
+  <div class="grid--cell is-12-sm is-12-md is-9-lg">
     <h1>Delete Account</h1>
 
     <p>Some users are just blatant spammers or trolls and some users are just unwilling to follow site rules, even after repeated warnings and suspensions. As a moderator, you may delete the user account in these cases.</p>

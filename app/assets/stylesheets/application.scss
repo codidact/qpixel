@@ -265,11 +265,3 @@ kbd {
     right: 0.15em;
   };
 }
-
-.is-9-desktop-12-mobile {
-  width: 75%;
-
-  @media screen and (max-width:850px) {
-    width: 100%;
-  }
-}
