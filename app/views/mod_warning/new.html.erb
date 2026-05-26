@@ -10,14 +10,12 @@
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
 
-  <div class="grid--cell is-12-sm is-12-md is-9-lg">
+  <div class="grid--cell is-9-lg is-12">
     <h1>Warn or Suspend User</h1>
 
     <div class="notice is-warning">
-      <p>
-        Use the warning tool only against users who have violated the site rules. Prefer other measures, such as a
-        friendly comment asking the user to stop certain behaviors.
-      </p>
+      <p>Use the warning tool only against users who have violated the site rules. Prefer other measures where possible, such as a public
+      comment.</p>
     </div>
 
     <%= form_for @warning, url: create_mod_warning_path(@user.id), method: :post do |f| %>
@@ -27,10 +25,8 @@
         </div>
         <div class="widget--body">
           <div class="h-p-4">
-            <p class="is-lead">
-              Choose a template that explains why you are contacting the user. If none are applicable, choose to send a
-              custom message.
-            </p>
+            <p class="is-lead">Choose a template that explains why you are contacting the user. If none are applicable, choose to send a
+            custom message.</p>
             <label class="form-element" for="template">Template</label>
             <select id="template" class="form-element js--warning-template-selection">
               <option value="">Send a custom message</option>
@@ -40,16 +36,13 @@
             </select>
           </div>
         </div>
-        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid
-                    has-border-color-tertiary-100">
+        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
           2. Review the message
         </div>
         <div class="widget--body">
           <div class="h-p-4">
-            <p class="is-lead">
-              Review the generated message and add details. Do not add salutations or information about possible
-              suspensions, as they are generated automatically.
-            </p>
+            <p class="is-lead">Review the generated message and add details. Do not add salutations or information about possible
+            suspensions, as they are generated automatically.</p>
 
             <div class="js--warning-template-target">
               <%= render 'shared/body_field', f: f, field_name: :body, field_label: 'Body' %>
@@ -57,37 +50,21 @@
             </div>
           </div>
         </div>
-        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid
-                    has-border-color-tertiary-100">
+        <div class="widget--header h-bg-tertiary-050 has-border-top-width-1 has-border-top-style-solid has-border-color-tertiary-100">
           3. Choose optional suspension
         </div>
         <div class="widget--body">
           <div class="h-p-4">
-            <p class="is-lead">
-              Decide whether or not to suspend the user, and if so for how long. Choose an optional message shown
-              publicly on the user profile.
-            </p>
+            <p class="is-lead">Decide whether or not to suspend the user, and if so for how long. Choose an optional message shown
+            publicly on the user profile.</p>
 
             <% if @prior_warning_count == 0 %>
-              <p>
-                <strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>">
-                  <strong>no prior warnings</strong>
-                </a>. The system recommends issuing only a warning, unless the user is destructive and needs to be
-                stopped immediately.
-              </p>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong>no prior warnings</strong></a>. The system recommends issuing only a warning, unless the user is destructive and needs to be stopped immediately.</p>
             <% elsif @prior_warning_count >= 5 %>
-              <p>
-                <strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>">
-                  <strong><%= @prior_warning_count %> prior warnings</strong>
-                </a>. The system recommends suspending them for 365 days (the maximum).
-              </p>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong><%= @prior_warning_count %> prior warnings</strong></a>. The system recommends suspending them for 365 days (the maximum).</p>
             <% else %>
               <% lengths = { 1 => 3, 2 => 7, 3 => 30, 4 => 180 } %>
-              <p>
-                <strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>">
-                  <strong><%= @prior_warning_count %> prior warnings</strong>
-                </a>. The system recommends suspending them for <%= lengths[@prior_warning_count] %> days.
-              </p>
+              <p><strong>Info:</strong> This user has <a href="<%= mod_warning_log_path(@user.id) %>"><strong><%= @prior_warning_count %> prior warnings</strong></a>. The system recommends suspending them for <%= lengths[@prior_warning_count] %> days.</p>
             <% end %>
 
             <div class="h-p-2">
@@ -103,14 +80,8 @@
             </div>
 
             <div class="h-p-2">
-              <%= f.label :suspension_public_notice,
-                          'If suspending, what public notice, if any, do you want to show?',
-                          class: 'form-element' %>
-              <%= f.select :suspension_public_notice,
-                           options_for_select([['for rule violations', 'for rule violations'],
-                                               ['to cool down', 'to cool down']]),
-                           { include_blank: true },
-                           class: 'form-element' %>
+              <%= f.label :suspension_public_notice, 'If suspending, what public notice, if any, do you want to show?', class: 'form-element' %>
+              <%= f.select :suspension_public_notice, options_for_select([['for rule violations', 'for rule violations'], ['to cool down', 'to cool down']]), { include_blank: true }, class: 'form-element' %>
             </div>
           </div>
         </div>
