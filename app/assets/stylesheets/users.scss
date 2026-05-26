@@ -259,8 +259,6 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
   margin-right: 1rem;
 }
 
-$grid-medium-to-large-breakpoint: 768px !default;
-
 .modtools--sidebar {
   > .widget--header {
     display: none;
@@ -281,7 +279,7 @@ $grid-medium-to-large-breakpoint: 768px !default;
   }
 }
 
-@media screen and (min-width: $grid-medium-to-large-breakpoint) {
+@media screen and (min-width: $mod-tools-medium-to-large-breakpoint) {
   .modtools--sidebar {
     > .widget--header {
       display: block;
