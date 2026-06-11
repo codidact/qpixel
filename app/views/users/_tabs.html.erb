@@ -29,7 +29,7 @@
   All Communities
   <% end %>
   <div class="tabs--push"></div>
-  <% if current_user&.is_moderator %>
+  <% if current_user&.moderator? %>
     <%= link_to mod_user_path(user), class: "tabs--item #{(
       current_page?(mod_user_path(user)) ||
       current_page?(full_user_log_path(user)) ||

@@ -11,7 +11,7 @@
     <%= f.text_field :link, class: "form-element" %>
   </div>
 
-  <% if current_user.is_global_moderator %>
+  <% if current_user.global_moderator? %>
   <div class="form-group has-padding-1">
     <%= f.label :community_id, "Community", class: "form-element" %>
     <div class="form-caption">Which sidebar this is shown in the sidebar. Global if blank.</div>

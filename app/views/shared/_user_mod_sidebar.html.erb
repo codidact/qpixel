@@ -67,7 +67,7 @@
           Delete Account
         <% end %>
 
-        <% if current_user.is_global_moderator || current_user.is_global_admin %>
+        <% if current_user.at_least_global_moderator? %>
         <div class="menu--heading">Global Mod Tools</div>
         <%= link_to mod_delete_network_account_path(user),
                     class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : ''}" do %>

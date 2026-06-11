@@ -85,7 +85,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_admin
-    if !user_signed_in? || !current_user.is_global_admin
+    if !user_signed_in? || !current_user.global_admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -307,8 +307,7 @@ class ApplicationController < ActionController::Base
        SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
        # Enable users to log out even if 2fa is enforced
        !request.fullpath.end_with?('/users/sign_out') &&
-       (current_user.is_global_admin ||
-         current_user.is_global_moderator) &&
+       current_user.at_least_global_moderator? &&
        (current_user.sso_profile.blank? || SiteSetting['Enable2FAForSsoUsers'])
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)

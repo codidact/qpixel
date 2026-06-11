@@ -13,7 +13,7 @@
     </div>
 
     <div class="widget">
-        <% if current_user.is_global_admin %>
+        <% if current_user.global_admin? %>
         <div class="widget--body">
             <h4>Feed to STAT</h4>
             <p>Blatant spammers and trolls may be fed into STAT ("Stop The Awful Troll") which causes the system to <a href="/418">fail-ban</a> them and limits the amount of damage they might possibly do. Only use for accounts where you are sure that they are never going to constructively use this site.</p>
