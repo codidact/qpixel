@@ -196,11 +196,11 @@ class AdminControllerTest < ActionController::TestCase
     end
   end
 
-  test 'hellban should correctly block the user' do
+  test 'failban should correctly block the user' do
     sign_in users(:global_admin)
 
     user = users(:standard_user)
-    try_hellban_user(user)
+    try_failban_user(user)
     user.reload
 
     assert_response(:found)
@@ -223,8 +223,8 @@ class AdminControllerTest < ActionController::TestCase
     get :audit_logs, params: params
   end
 
-  def try_hellban_user(user)
-    post :hellban, params: { id: user.id }
+  def try_failban_user(user)
+    post :failban, params: { id: user.id }
   end
 
   def try_impersonate_user(user)
