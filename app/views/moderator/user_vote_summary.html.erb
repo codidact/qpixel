@@ -42,7 +42,9 @@
             <% pct = count * 100.0 / @vote_data[type].total %>
             <td>
               <% if pct >= 50 %>
-                <%= text_bg 'red-700', number_to_percentage(pct, precision: 2), class: 'has-color-white has-padding-1' %>
+                <%= text_bg 'red-700',
+                            number_to_percentage(pct, precision: 2),
+                            class: 'has-color-white has-padding-1' %>
               <% elsif pct >= 40 %>
                 <%= text_bg 'red-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
               <% elsif pct >= 30 %>
